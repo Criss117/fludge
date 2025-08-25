@@ -14,6 +14,9 @@ export {
 
 export {
   groups,
+  groupUsers,
   type InsertGroup,
   type SelectGroup,
+  type InsertGroupUser,
+  type SelectGroupUser,
 } from "./schemas/groups.schema";

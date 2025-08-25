@@ -1,1 +1,1 @@
-export { users, business, groups } from '@repo/db';
+export { users, business, groups, groupUsers } from '@repo/db';

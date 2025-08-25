@@ -1,11 +1,21 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { LibSQLDatabase as LibSQLBase } from 'drizzle-orm/libsql';
 import { drizzle } from 'drizzle-orm/libsql';
+import { LibSQLDatabase as LibSQLBase } from 'drizzle-orm/libsql';
+import type { SQLiteTransaction } from 'drizzle-orm/sqlite-core';
+import type { ExtractTablesWithRelations } from 'drizzle-orm';
+import type { ResultSet } from '@libsql/client';
+
 import * as schemas from './schemas';
 
 export const DBSERVICE = Symbol('DBSERVICE');
 export type LibSQLDatabase = LibSQLBase<typeof schemas>;
+export type TX = SQLiteTransaction<
+  'async',
+  ResultSet,
+  typeof schemas,
+  ExtractTablesWithRelations<typeof schemas>
+>;
 
 @Module({
   providers: [
