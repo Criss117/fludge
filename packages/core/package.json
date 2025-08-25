@@ -1,0 +1,29 @@
+{
+  "name": "@repo/core",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./entities/*": {
+      "types": "./dist/entities/*.entity.d.ts",
+      "default": "./dist/entities/*.entity.js"
+    },
+    "./value-objects/*": {
+      "types": "./dist/value-objects/*.vo.d.ts",
+      "default": "./dist/value-objects/*.vo.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "lint": "eslint . --max-warnings 0",
+    "generate:component": "turbo gen react-component",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3",
+    "eslint": "^9.33.0",
+    "typescript": "5.9.2"
+  }
+}
