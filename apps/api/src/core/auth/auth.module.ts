@@ -2,12 +2,13 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { SignInUserUseCase } from './use-cases/sign-in.usecase';
-import { SignUpUserUseCase } from './use-cases/sign-up.usercase';
+import { SignInRootUserUseCase } from './use-cases/sign-in-root-user.usecase';
+import { SignUpRootUserUseCase } from './use-cases/sign-up-root-user.usecase';
 import { AuthController } from './controllers/auth.controller';
 import { UsersModule } from '../users/users.module';
 import { JWTStrategy } from './strategies/jwt.strategy';
 import { BusinessModule } from '@core/business/business.module';
+import { SignInEmployeeUseCase } from './use-cases/sign-in-employee.usecase';
 
 @Module({
   imports: [
@@ -31,6 +32,11 @@ import { BusinessModule } from '@core/business/business.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [SignInUserUseCase, SignUpUserUseCase, JWTStrategy],
+  providers: [
+    SignInRootUserUseCase,
+    SignUpRootUserUseCase,
+    JWTStrategy,
+    SignInEmployeeUseCase,
+  ],
 })
 export class AuthModule {}

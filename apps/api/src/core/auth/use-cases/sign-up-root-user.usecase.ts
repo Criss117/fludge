@@ -3,7 +3,7 @@ import { CreateRootUserDto } from 'src/core/users/dtos/create-root-user.dto';
 import { CreateRootUserUseCase } from 'src/core/users/use-cases/create-root-user.usecase';
 
 @Injectable()
-export class SignUpUserUseCase {
+export class SignUpRootUserUseCase {
   constructor(private readonly createRootUserUseCase: CreateRootUserUseCase) {}
 
   public async execute(data: CreateRootUserDto) {

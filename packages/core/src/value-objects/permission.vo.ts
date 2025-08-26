@@ -1,4 +1,10 @@
-export const resources = ["users", "tickets", "products", "clients"] as const;
+export const resources = [
+  "users",
+  "tickets",
+  "products",
+  "clients",
+  "businesses",
+] as const;
 export const actions = ["create", "read", "update", "delete"] as const;
 
 export type Resouce = (typeof resources)[number];
@@ -26,4 +32,9 @@ export const allPermissions: Permission[] = [
   "clients:read",
   "clients:update",
   "clients:delete",
+
+  "businesses:create",
+  "businesses:read",
+  "businesses:update",
+  "businesses:delete",
 ];

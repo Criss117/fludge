@@ -33,7 +33,7 @@ export class CreateBusinessUseCase {
       groups: [
         {
           name: 'Administradores',
-          permissions: allPermissions,
+          permissions: allPermissions.filter((p) => p !== 'businesses:delete'),
           description: 'Grupo de usuarios administradores',
         },
       ],

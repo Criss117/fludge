@@ -6,19 +6,19 @@ import { BadCredentialsExeption } from '../exeptions/unauthorized.exeptions';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
-export class SignInUserUseCase {
+export class SignInRootUserUseCase {
   constructor(
     private readonly jwtService: JwtService,
     private readonly findOneUserByUseCase: FindOneUserByUseCase,
   ) {}
 
-  public async execute(data: SignInDto) {
+  public async execute(meta: SignInDto) {
     const user = await this.findOneUserByUseCase.execute({
-      email: data.email,
+      email: meta.email,
     });
 
     const resultOfComparison = await comparePasswords(
-      data.password,
+      meta.password,
       user.password,
     );
 
