@@ -7,11 +7,13 @@ import { SignUpUserUseCase } from './use-cases/sign-up.usercase';
 import { AuthController } from './controllers/auth.controller';
 import { UsersModule } from '../users/users.module';
 import { JWTStrategy } from './strategies/jwt.strategy';
+import { BusinessModule } from '@core/business/business.module';
 
 @Module({
   imports: [
     UsersModule,
     ConfigModule,
+    BusinessModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

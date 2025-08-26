@@ -27,7 +27,7 @@ export class CreateBusinessUseCase {
       throw new BusinessAlreadyExistsException();
     }
 
-    await this.businessCommandsRepository.save({
+    return this.businessCommandsRepository.save({
       ...data,
       rootUserId,
       groups: [

@@ -1,9 +1,9 @@
 import { text } from "drizzle-orm/sqlite-core";
 import { sqliteTable } from "drizzle-orm/sqlite-core";
-import { auditMetadata } from "../helpers/audit-metadata";
-import { v4 } from "uuid";
-import { users } from "./users.schema";
 import { index } from "drizzle-orm/sqlite-core";
+import { v4 } from "uuid";
+import { auditMetadata } from "../helpers/audit-metadata";
+import { users } from "./users.schema";
 
 export const business = sqliteTable(
   "business",

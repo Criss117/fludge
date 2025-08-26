@@ -34,6 +34,7 @@ export const users = sqliteTable(
     })
       .default(false)
       .notNull(),
+
     ...auditMetadata,
   },
   (t) => [
