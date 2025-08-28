@@ -1,5 +1,6 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BusinessQueriesRepository } from '../repositories/business-queries.repository';
+import { UserCanNotAccessException } from '../exeptions/user-cannot-access.exeption';
 
 @Injectable()
 export class FindOneBusinessUseCase {
@@ -15,7 +16,7 @@ export class FindOneBusinessUseCase {
       business.employees.some((e) => e.id === logedUserId);
 
     if (!logedUserIsRootOrEmployee) {
-      throw new UnauthorizedException();
+      throw new UserCanNotAccessException();
     }
 
     return business;

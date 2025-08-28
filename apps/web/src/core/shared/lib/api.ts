@@ -30,6 +30,7 @@ export const API_ENDPOINTS = {
   },
   BUSINESS: {
     FIND_ONE: (id: string) => `/business/${id}`,
+    CREATE: "/business",
   },
 } as const;
 

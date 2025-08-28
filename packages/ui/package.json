@@ -4,6 +4,7 @@
   "private": true,
   "exports": {
     "./auth/*": "./src/auth/*.tsx",
+    "./business/*": "./src/business/*.tsx",
     "./utils/*": "./src/utils/*.ts"
   },
   "scripts": {
