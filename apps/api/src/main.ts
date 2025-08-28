@@ -21,6 +21,8 @@ async function bootstrap() {
   );
   app.useGlobalGuards(new JwtAuthGuard(reflector));
 
+  app.enableCors();
+
   await app.listen(PORT);
 
   const logger = app.get(Logger);

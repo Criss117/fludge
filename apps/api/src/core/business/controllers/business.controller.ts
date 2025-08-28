@@ -49,7 +49,7 @@ export class BusinessController {
   }
 
   @Get(':id')
-  @Permissions('businesses:delete')
+  @Permissions('businesses:read')
   public async findOne(@Param('id') id: string, @GetUser() user: LogedUser) {
     try {
       const business = await this.findOneBusinessUseCase.execute(id, user.id);

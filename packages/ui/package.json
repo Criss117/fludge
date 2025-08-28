@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./*": "./src/*.tsx"
+    "./auth/*": "./src/auth/*.tsx",
+    "./utils/*": "./src/utils/*.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -14,13 +15,16 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
-    "@types/react": "19.1.0",
-    "@types/react-dom": "19.1.1",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
     "eslint": "^9.33.0",
     "typescript": "5.9.2"
   },
   "dependencies": {
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "@hookform/resolvers": "^5.2.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-hook-form": "^7.62.0",
+    "zod": "^4.1.3"
   }
 }
