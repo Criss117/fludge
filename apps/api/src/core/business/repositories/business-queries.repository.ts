@@ -3,6 +3,7 @@ import { and, eq, or, SQL } from 'drizzle-orm';
 import { business, employees, groups, users } from '@repo/db';
 import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
 import { FindManyBusinessByDto } from './dtos/find-many-business-by.dto';
+import type { BusinessDetail } from '@repo/core/entities/business';
 
 type Options = {
   ensureActive?: boolean;
@@ -44,7 +45,7 @@ export class BusinessQueriesRepository {
       .where(and(or(...filters), ...optionsFilters));
   }
 
-  public async findOne(id: string, options?: Options) {
+  public async findOne(id: string, options?: Options): Promise<BusinessDetail> {
     const optionsFilters: SQL[] = [];
 
     if (options?.ensureActive) {

@@ -13,7 +13,6 @@ import { GetUser } from '@core/auth/decorators/get-user.decorator';
 import { UserNoRootException } from '@core/users/exeptions/user-no-root.exeption';
 import { HTTPResponse } from 'src/shared/http/response';
 import { FindOneBusinessUseCase } from '../use-cases/find-one-business.usecase';
-import { CreateEmployeeDto } from '@core/users/dtos/create-employee.dto';
 import { AssignEmployeeUseCase } from '../use-cases/assign-employee.usecase';
 import { Permissions } from '@core/auth/decorators/permissions.decorator';
 import type { LogedUser } from '@repo/core/entities/user';
@@ -55,25 +54,6 @@ export class BusinessController {
       const business = await this.findOneBusinessUseCase.execute(id, user.id);
 
       return HTTPResponse.ok(business);
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-
-      throw new InternalServerErrorException('Something went wrong');
-    }
-  }
-
-  @Post(':id/employees')
-  public async createEmployee(
-    @Param('id') id: string,
-    @Body() data: CreateEmployeeDto,
-    @GetUser() user: LogedUser,
-  ) {
-    try {
-      await this.assignEmployeeUseCase.execute(data, user, id);
-
-      return HTTPResponse.created(null);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

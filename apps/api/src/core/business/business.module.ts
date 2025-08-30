@@ -8,10 +8,11 @@ import { FindOneBusinessUseCase } from './use-cases/find-one-business.usecase';
 import { AssignEmployeeUseCase } from './use-cases/assign-employee.usecase';
 import { UsersModule } from '@core/users/users.module';
 import { FindUserIsInUseCase } from './use-cases/find-user-is-in.usecase';
+import { BusinessEmployeesController } from './controllers/business-employees.controller';
 
 @Module({
   imports: [DbModule, UsersModule],
-  controllers: [BusinessController],
+  controllers: [BusinessController, BusinessEmployeesController],
   providers: [
     AssignEmployeeUseCase,
     CreateBusinessUseCase,
