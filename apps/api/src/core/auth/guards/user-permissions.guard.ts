@@ -46,6 +46,7 @@ export class UserPermissionsGuard implements CanActivate {
       businessId,
       user.id,
     );
+    req.business = business;
     // return true;
 
     const userIsRootOrEmployeeInBusiness =
@@ -71,7 +72,6 @@ export class UserPermissionsGuard implements CanActivate {
     }
 
     // TODO: Check if the user has the required permissions
-    req.business = business;
     return true;
   }
 }

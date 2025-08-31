@@ -9,19 +9,30 @@ import { AssignEmployeeUseCase } from './use-cases/assign-employee.usecase';
 import { UsersModule } from '@core/users/users.module';
 import { FindUserIsInUseCase } from './use-cases/find-user-is-in.usecase';
 import { BusinessEmployeesController } from './controllers/business-employees.controller';
+import { GroupsCommandsRepository } from './repositories/groups-commands.repository';
+import { GroupsQueriesRepository } from './repositories/groups-queries.repository';
+import { CreateGroupUseCase } from './use-cases/create-group.usecase';
+import { BusinessGroupController } from './controllers/business-group.controller';
 
 @Module({
   imports: [DbModule, UsersModule],
-  controllers: [BusinessController, BusinessEmployeesController],
+  controllers: [
+    BusinessController,
+    BusinessEmployeesController,
+    BusinessGroupController,
+  ],
   providers: [
     AssignEmployeeUseCase,
     CreateBusinessUseCase,
     FindOneBusinessUseCase,
     AssignEmployeeUseCase,
     FindUserIsInUseCase,
+    CreateGroupUseCase,
 
     BusinessCommandsRepository,
     BusinessQueriesRepository,
+    GroupsCommandsRepository,
+    GroupsQueriesRepository,
   ],
   exports: [FindUserIsInUseCase],
 })

@@ -3,11 +3,13 @@ import {
   Permission,
 } from '@repo/core/value-objects/permission';
 import {
+  ArrayMinSize,
+  ArrayNotEmpty,
+  IsArray,
   IsEnum,
   IsOptional,
   IsString,
   MaxLength,
-  MinLength,
 } from 'class-validator';
 
 export class CreateGroupDto {
@@ -28,11 +30,18 @@ export class CreateGroupDto {
   @IsOptional()
   description?: string;
 
-  @IsEnum(allPermissions, {
+  @IsArray({
+    message: 'Los permisos deben ser un array válido',
+  })
+  @ArrayNotEmpty({
     message: 'Los permisos del grupo son obligatorios',
   })
-  @MinLength(1, {
+  @ArrayMinSize(1, {
     message: 'Los permisos del grupo deben tener al menos un permiso',
+  })
+  @IsEnum(allPermissions, {
+    each: true,
+    message: 'Cada permiso debe ser un valor válido',
   })
   permissions: Permission[];
 }

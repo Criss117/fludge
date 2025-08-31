@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DBSERVICE, TX, type LibSQLDatabase } from '@core/db/db.module';
-import { business, employees, groups, InsertGroup } from '@repo/db';
+import { business, employees } from '@repo/db';
+import { GroupsCommandsRepository } from './groups-commands.repository';
+import { InsertGroupDto } from './dtos/insert-groups.dto';
 import type { InsertBusinessDto } from './dtos/insert-bussines.dto';
 
 type Options = {
@@ -9,7 +11,10 @@ type Options = {
 
 @Injectable()
 export class BusinessCommandsRepository {
-  constructor(@Inject(DBSERVICE) private readonly db: LibSQLDatabase) {}
+  constructor(
+    @Inject(DBSERVICE) private readonly db: LibSQLDatabase,
+    private readonly groupsCommandsRepository: GroupsCommandsRepository,
+  ) {}
 
   public async save(data: InsertBusinessDto) {
     if (!data.groups || data.groups.length === 0) {
@@ -39,7 +44,7 @@ export class BusinessCommandsRepository {
           id: business.id,
         });
 
-      const groupsToSave: InsertGroup[] =
+      const groupsToSave: InsertGroupDto[] =
         data.groups?.map((g) => ({
           businessId: savedBusiness.id,
           name: g.name,
@@ -47,7 +52,9 @@ export class BusinessCommandsRepository {
           permissions: g.permissions,
         })) ?? [];
 
-      await trx.insert(groups).values(groupsToSave);
+      await this.groupsCommandsRepository.saveMany(groupsToSave, {
+        tx: trx,
+      });
 
       return savedBusiness;
     });
