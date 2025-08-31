@@ -1,5 +1,14 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { findOneBusinessAction } from "@/core/business/application/actions/find-one-business.action";
+import {
+  findOneBusinessQueryOptions,
+  useFindOneBusiness,
+} from "@/core/business/application/hooks/use.find-one-business";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/core/shared/components/ui/sidebar";
+import { BusinessSidebar } from "@/core/business/presentation/components/business-sidebar";
 
 export const Route = createFileRoute("/(private)/business/$id")({
   component: RouteComponent,
@@ -10,24 +19,35 @@ export const Route = createFileRoute("/(private)/business/$id")({
       });
     }
   },
-  loader: async ({ params }) => {
-    const data = await findOneBusinessAction(params.id);
+  loader: async ({ params, context }) => {
+    const d = await context.queryClient?.ensureQueryData(
+      findOneBusinessQueryOptions(params.id)
+    );
 
-    if (data.error) {
+    if (!d?.data) {
       throw redirect({
-        to: "/business/select-business",
+        to: "/",
       });
     }
-
-    return data;
   },
   pendingComponent: () => <div>Loading...</div>,
 });
 
 function RouteComponent() {
+  const { id } = Route.useParams();
+  const { data } = useFindOneBusiness(id);
+
+  if (!data) {
+    return <div>Not found</div>;
+  }
+
   return (
-    <>
-      <Outlet />
-    </>
+    <SidebarProvider>
+      <BusinessSidebar currentBusiness={data} />
+      <SidebarInset>
+        <SidebarTrigger />
+        <Outlet />
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

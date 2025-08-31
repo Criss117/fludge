@@ -8,6 +8,7 @@ import { Form } from "@/core/shared/components/ui/form";
 import { Button } from "@/core/shared/components/ui/button";
 import { createBusinessAction } from "../../application/actions/create-business.action";
 import { useRouter } from "@tanstack/react-router";
+import { useAuth } from "@/core/auth/application/providers/auth.provider";
 
 interface RootProps {
   children: React.ReactNode;
@@ -32,6 +33,7 @@ function useRegisterBusiness() {
 function Root({ children }: RootProps) {
   const form = useCreateBusinessForm();
   const router = useRouter();
+  const { refetchProfile } = useAuth();
 
   const onSubmit = form.handleSubmit(async (data) => {
     const res = await createBusinessAction(data);
@@ -49,6 +51,8 @@ function Root({ children }: RootProps) {
       });
       return;
     }
+
+    await refetchProfile();
 
     router.navigate({
       to: "/business/$id",

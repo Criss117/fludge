@@ -1,7 +1,7 @@
 import { Permission } from "../value-objects/permission.vo";
 import { AuditMetadata } from "./audit-metadata";
 
-export interface UserEntity extends AuditMetadata {
+export interface UserDetail extends AuditMetadata {
   id: string;
   firstName: string;
   lastName: string;
@@ -12,16 +12,15 @@ export interface UserEntity extends AuditMetadata {
   isAccountValidated: boolean;
 }
 
-export interface RootUserEntity extends Omit<UserEntity, "email" | "isRoot"> {
-  email: string;
-  isRoot: true;
+export interface UserSummary {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string | null;
+  username: string;
 }
 
-export interface EmployeeEntity extends Omit<UserEntity, "isRoot"> {
-  isRoot: false;
-}
-
-export interface LogedUser extends Omit<UserEntity, "password"> {
+export interface LogedUser extends Omit<UserDetail, "password"> {
   isEmployeeIn: {
     id: string;
     name: string;

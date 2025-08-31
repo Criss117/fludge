@@ -19,6 +19,7 @@ interface Context {
   user: LogedUser | null;
   signIn: (jwt: string, options?: SignInOptions) => Promise<void>;
   signOut: (options?: SignOutOptions) => void;
+  refetchProfile: (options?: SignInOptions) => Promise<void>;
 }
 
 const AuthContext = createContext<Context | null>(null);
@@ -35,6 +36,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [jwt, setJwt] = useState<string | null>(null);
   const [user, setUser] = useState<LogedUser | null>(null);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
+
+  const refetchProfile = async (options?: SignInOptions) => {
+    if (!jwt) {
+      options?.onError?.();
+      return;
+    }
+
+    await getProfileAction(jwt).then(async (res) => {
+      if (res.error) {
+        setUser(null);
+        options?.onError?.();
+        return;
+      }
+
+      if (!res.data) {
+        setUser(null);
+        options?.onError?.();
+        return;
+      }
+
+      setUser(res.data);
+      options?.onSuccess?.(res.data);
+    });
+  };
 
   const signIn = async (jwt: string, options?: SignInOptions) => {
     setJwt(jwt);
@@ -91,6 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         signIn,
         signOut,
+        refetchProfile,
       }}
     >
       {children}

@@ -29,7 +29,7 @@ export const API_ENDPOINTS = {
     GET_PROFILE: "/auth/profile",
   },
   BUSINESS: {
-    FIND_ONE: (id: string) => `/business/${id}`,
+    FIND_ONE: (id: string) => `/business/${id}` as `/business/${string}`,
     CREATE: "/business",
   },
 } as const;

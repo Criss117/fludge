@@ -1,12 +1,13 @@
-import api, { API_ENDPOINTS } from "@/core/shared/lib/api";
-import type { CommonResponse } from "@repo/ui/utils/reponse";
 import { AxiosError } from "axios";
+import api, { API_ENDPOINTS } from "@/core/shared/lib/api";
+import type { BusinessDetail } from "@repo/core/entities/business";
+import type { CommonResponse } from "@repo/ui/utils/reponse";
 
 export async function findOneBusinessAction(
   id: string
-): Promise<CommonResponse<unknown>> {
+): Promise<CommonResponse<BusinessDetail>> {
   try {
-    const res = await api.get<CommonResponse<unknown>>(
+    const res = await api.get<CommonResponse<BusinessDetail>>(
       API_ENDPOINTS.BUSINESS.FIND_ONE(id)
     );
     return res.data;

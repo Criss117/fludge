@@ -1,3 +1,4 @@
+import { SelectBusinessScreen } from "@/core/business/presentation/screens/select-business.screen";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(private)/business/select-business")({
@@ -38,5 +39,5 @@ export const Route = createFileRoute("/(private)/business/select-business")({
 });
 
 function RouteComponent() {
-  return <div>Hello "/(private)/business/select-business"!</div>;
+  return <SelectBusinessScreen />;
 }
