@@ -14,6 +14,7 @@ import { HTTPResponse } from 'src/shared/http/response';
 import { GetUser } from '../decorators/get-user.decorator';
 import { Public } from '../decorators/public-route.decorator';
 import { SignInEmployeeUseCase } from '../use-cases/sign-in-employee.usecase';
+import type { LogedUser } from '@repo/core/entities/user';
 
 @Controller('auth')
 export class AuthController {
@@ -72,7 +73,7 @@ export class AuthController {
   }
 
   @Get('profile')
-  public getUser(@GetUser() user: unknown) {
+  public getUser(@GetUser() user: LogedUser) {
     return HTTPResponse.ok(user);
   }
 }

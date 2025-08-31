@@ -77,7 +77,8 @@ export class BusinessQueriesRepository {
       })
       .from(employees)
       .innerJoin(users, eq(employees.userId, users.id))
-      .where(and(eq(employees.businessId, id), ...optionsFilters));
+      .where(and(eq(employees.businessId, id), ...optionsFilters))
+      .groupBy(users.id);
 
     const [[businessRes], groupsRes, employeesRes] = await Promise.all([
       findBusinessPromise,
@@ -125,9 +126,27 @@ export class BusinessQueriesRepository {
       employeeInPromise,
     ]);
 
+    const isEmployeeInMerge = isEmployeeIn.reduce(
+      (acc, item) => {
+        if (acc[item.id]) {
+          const combinedPermissions = new Set([
+            ...acc[item.id].permissions,
+            ...item.permissions,
+          ]);
+
+          acc[item.id].permissions = Array.from(combinedPermissions);
+          return acc;
+        }
+
+        acc[item.id] = item;
+        return acc;
+      },
+      {} as Record<string, (typeof isEmployeeIn)[number]>,
+    );
+
     return {
       isRootIn,
-      isEmployeeIn,
+      isEmployeeIn: Object.values(isEmployeeInMerge),
     };
   }
 }

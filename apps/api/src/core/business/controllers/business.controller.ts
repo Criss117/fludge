@@ -15,7 +15,9 @@ import { HTTPResponse } from 'src/shared/http/response';
 import { FindOneBusinessUseCase } from '../use-cases/find-one-business.usecase';
 import { AssignEmployeeUseCase } from '../use-cases/assign-employee.usecase';
 import { Permissions } from '@core/auth/decorators/permissions.decorator';
+import { GetBusiness } from '../decorators/get-business.decorator';
 import type { LogedUser } from '@repo/core/entities/user';
+import type { BusinessDetail } from '@repo/core/entities/business';
 
 @Controller('business')
 export class BusinessController {
@@ -49,7 +51,15 @@ export class BusinessController {
 
   @Get(':id')
   @Permissions('businesses:read')
-  public async findOne(@Param('id') id: string, @GetUser() user: LogedUser) {
+  public async findOne(
+    @Param('id') id: string,
+    @GetUser() user: LogedUser,
+    @GetBusiness() business: BusinessDetail,
+  ) {
+    if (business) {
+      return HTTPResponse.ok(business);
+    }
+
     try {
       const business = await this.findOneBusinessUseCase.execute(id, user.id);
 
