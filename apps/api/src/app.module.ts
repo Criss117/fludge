@@ -6,6 +6,7 @@ import { LoggerModule } from './shared/logger/logger.module';
 import { UsersModule } from './core/users/users.module';
 import { AuthModule } from './core/auth/auth.module';
 import { BusinessModule } from './core/business/business.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { BusinessModule } from './core/business/business.module';
     UsersModule,
     AuthModule,
     BusinessModule,
+    SeedModule,
   ],
   controllers: [],
   providers: [],
