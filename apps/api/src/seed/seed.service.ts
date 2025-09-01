@@ -17,6 +17,20 @@ import { fakerES as faker } from '@faker-js/faker';
 import { allPermissions } from '@repo/core/value-objects/permission';
 import { hashPassword } from 'src/shared/utils/passwords.utils';
 
+type Options = {
+  totaRootUsers: number;
+  totalEmployeesPerRoot: number;
+  totalBusinessesPerRoot: number;
+  groupsPerBusiness: number;
+};
+
+const defaultOptions: Options = {
+  totaRootUsers: 4,
+  totalEmployeesPerRoot: 5,
+  totalBusinessesPerRoot: 5,
+  groupsPerBusiness: 4,
+};
+
 @Injectable()
 export class SeedService {
   constructor(@Inject(DBSERVICE) private readonly db: LibSQLDatabase) {}
@@ -28,10 +42,19 @@ export class SeedService {
     await this.db.delete(users);
   }
 
-  public async seed() {
-    const { noRootUsers, rootUsers } = await this.insertUsers();
-    const insertedBusiness = await this.insertBusinesses(rootUsers);
-    const insertedGroups = await this.insertGroups(insertedBusiness);
+  public async seed(options = defaultOptions) {
+    const { groupsPerBusiness, totaRootUsers, totalBusinessesPerRoot } =
+      options;
+
+    const { noRootUsers, rootUsers } = await this.insertUsers(totaRootUsers);
+    const insertedBusiness = await this.insertBusinesses(
+      rootUsers,
+      totalBusinessesPerRoot,
+    );
+    const insertedGroups = await this.insertGroups(
+      insertedBusiness,
+      groupsPerBusiness,
+    );
     const insertedEmployees = await this.insertEmployees(
       insertedGroups,
       noRootUsers,
@@ -49,10 +72,32 @@ export class SeedService {
     };
   }
 
-  private async insertUsers() {
+  private async insertUsers(totalUsers: number) {
     const hashedPassword = await hashPassword('holiwis');
+    const mainRootUser: InsertUser = {
+      firstName: 'Cristian',
+      lastName: 'Viveros',
+      email: 'cristian@fludge.dev',
+      password: hashedPassword,
+      isRoot: true,
+      username: 'crviveros',
+    };
 
-    const rootUsersToInser: InsertUser[] = Array.from({ length: 4 }).map(() => {
+    const mainNoRootUser: InsertUser = {
+      firstName: 'Cristian',
+      lastName: 'Viveros',
+      password: hashedPassword,
+      isRoot: false,
+      username: 'cristian',
+    };
+
+    const rootUsersToInser: InsertUser[] = Array.from({
+      length: totalUsers,
+    }).map((_, i) => {
+      if (i === 0) {
+        return mainRootUser;
+      }
+
       return {
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
@@ -65,7 +110,11 @@ export class SeedService {
 
     const noRootUsersToInsert: InsertUser[] = Array.from({
       length: rootUsersToInser.length * 10,
-    }).map(() => {
+    }).map((_, i) => {
+      if (i === 0) {
+        return mainNoRootUser;
+      }
+
       return {
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
@@ -96,9 +145,12 @@ export class SeedService {
     };
   }
 
-  private async insertBusinesses(insertedUsers: SelectUser[]) {
+  private async insertBusinesses(
+    insertedUsers: SelectUser[],
+    totalBusinessesPerRoot: number,
+  ) {
     const businessesToInsert: InsertBusiness[] = Array.from({
-      length: insertedUsers.length * 4,
+      length: insertedUsers.length * totalBusinessesPerRoot,
     }).map(() => {
       return {
         name: faker.company.name(),
@@ -113,9 +165,12 @@ export class SeedService {
     return this.db.insert(business).values(businessesToInsert).returning();
   }
 
-  private async insertGroups(insertedBusinesses: SelectBusiness[]) {
+  private async insertGroups(
+    insertedBusinesses: SelectBusiness[],
+    groupsPerBusiness: number,
+  ) {
     const groupsToInsert: InsertGroup[] = Array.from({
-      length: insertedBusinesses.length * 4,
+      length: insertedBusinesses.length * groupsPerBusiness,
     }).map(() => {
       return {
         businessId: faker.helpers.arrayElement(insertedBusinesses).id,
