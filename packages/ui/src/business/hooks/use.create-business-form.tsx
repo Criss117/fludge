@@ -1,4 +1,4 @@
-import { useForm, UseFormReturn } from "react-hook-form";
+import { useForm, type UseFormReturn } from "react-hook-form";
 import {
   createBusinessDto as schema,
   type CreateBusinessDto as Schema,

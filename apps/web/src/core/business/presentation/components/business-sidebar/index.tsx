@@ -2,12 +2,14 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
   SidebarHeader,
 } from "@/core/shared/components/ui/sidebar";
-import { BusinessSwitcher } from "./business-switcher";
 import type { BusinessDetail } from "@repo/core/entities/business";
+
+import { BusinessSwitcher } from "./business-switcher";
 import { BusinessSidebarFooter } from "./footer";
+import { NavMain } from "./nav-main";
+import { NavSettings } from "./nav-settings";
 
 interface Props {
   currentBusiness: BusinessDetail;
@@ -20,8 +22,8 @@ export function BusinessSidebar({ currentBusiness }: Props) {
         <BusinessSwitcher currentBusiness={currentBusiness} />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup />
-        <SidebarGroup />
+        <NavMain currentBusiness={currentBusiness} />
+        <NavSettings currentBusiness={currentBusiness} />
       </SidebarContent>
       <SidebarFooter>
         <BusinessSidebarFooter />

@@ -17,7 +17,13 @@ import { Route as privateBusinessSelectBusinessRouteImport } from './routes/(pri
 import { Route as privateBusinessRegisterRouteImport } from './routes/(private)/business/register'
 import { Route as privateBusinessIdRouteImport } from './routes/(private)/business/$id'
 import { Route as privateBusinessIdIndexRouteImport } from './routes/(private)/business/$id/index'
+import { Route as privateBusinessIdSettingsRouteImport } from './routes/(private)/business/$id/settings'
+import { Route as privateBusinessIdSalesRouteImport } from './routes/(private)/business/$id/sales'
+import { Route as privateBusinessIdProductsRouteImport } from './routes/(private)/business/$id/products'
+import { Route as privateBusinessIdGroupsRouteImport } from './routes/(private)/business/$id/groups'
+import { Route as privateBusinessIdEmployeesRouteImport } from './routes/(private)/business/$id/employees'
 import { Route as privateBusinessIdConfigRouteImport } from './routes/(private)/business/$id/config'
+import { Route as privateBusinessIdClientsRouteImport } from './routes/(private)/business/$id/clients'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -60,11 +66,45 @@ const privateBusinessIdIndexRoute = privateBusinessIdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => privateBusinessIdRoute,
 } as any)
+const privateBusinessIdSettingsRoute =
+  privateBusinessIdSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => privateBusinessIdRoute,
+  } as any)
+const privateBusinessIdSalesRoute = privateBusinessIdSalesRouteImport.update({
+  id: '/sales',
+  path: '/sales',
+  getParentRoute: () => privateBusinessIdRoute,
+} as any)
+const privateBusinessIdProductsRoute =
+  privateBusinessIdProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
+    getParentRoute: () => privateBusinessIdRoute,
+  } as any)
+const privateBusinessIdGroupsRoute = privateBusinessIdGroupsRouteImport.update({
+  id: '/groups',
+  path: '/groups',
+  getParentRoute: () => privateBusinessIdRoute,
+} as any)
+const privateBusinessIdEmployeesRoute =
+  privateBusinessIdEmployeesRouteImport.update({
+    id: '/employees',
+    path: '/employees',
+    getParentRoute: () => privateBusinessIdRoute,
+  } as any)
 const privateBusinessIdConfigRoute = privateBusinessIdConfigRouteImport.update({
   id: '/config',
   path: '/config',
   getParentRoute: () => privateBusinessIdRoute,
 } as any)
+const privateBusinessIdClientsRoute =
+  privateBusinessIdClientsRouteImport.update({
+    id: '/clients',
+    path: '/clients',
+    getParentRoute: () => privateBusinessIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -74,7 +114,13 @@ export interface FileRoutesByFullPath {
   '/business/register': typeof privateBusinessRegisterRoute
   '/business/select-business': typeof privateBusinessSelectBusinessRoute
   '/auth/employee/sign-in': typeof AuthEmployeeSignInRoute
+  '/business/$id/clients': typeof privateBusinessIdClientsRoute
   '/business/$id/config': typeof privateBusinessIdConfigRoute
+  '/business/$id/employees': typeof privateBusinessIdEmployeesRoute
+  '/business/$id/groups': typeof privateBusinessIdGroupsRoute
+  '/business/$id/products': typeof privateBusinessIdProductsRoute
+  '/business/$id/sales': typeof privateBusinessIdSalesRoute
+  '/business/$id/settings': typeof privateBusinessIdSettingsRoute
   '/business/$id/': typeof privateBusinessIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -84,7 +130,13 @@ export interface FileRoutesByTo {
   '/business/register': typeof privateBusinessRegisterRoute
   '/business/select-business': typeof privateBusinessSelectBusinessRoute
   '/auth/employee/sign-in': typeof AuthEmployeeSignInRoute
+  '/business/$id/clients': typeof privateBusinessIdClientsRoute
   '/business/$id/config': typeof privateBusinessIdConfigRoute
+  '/business/$id/employees': typeof privateBusinessIdEmployeesRoute
+  '/business/$id/groups': typeof privateBusinessIdGroupsRoute
+  '/business/$id/products': typeof privateBusinessIdProductsRoute
+  '/business/$id/sales': typeof privateBusinessIdSalesRoute
+  '/business/$id/settings': typeof privateBusinessIdSettingsRoute
   '/business/$id': typeof privateBusinessIdIndexRoute
 }
 export interface FileRoutesById {
@@ -96,7 +148,13 @@ export interface FileRoutesById {
   '/(private)/business/register': typeof privateBusinessRegisterRoute
   '/(private)/business/select-business': typeof privateBusinessSelectBusinessRoute
   '/auth/employee/sign-in': typeof AuthEmployeeSignInRoute
+  '/(private)/business/$id/clients': typeof privateBusinessIdClientsRoute
   '/(private)/business/$id/config': typeof privateBusinessIdConfigRoute
+  '/(private)/business/$id/employees': typeof privateBusinessIdEmployeesRoute
+  '/(private)/business/$id/groups': typeof privateBusinessIdGroupsRoute
+  '/(private)/business/$id/products': typeof privateBusinessIdProductsRoute
+  '/(private)/business/$id/sales': typeof privateBusinessIdSalesRoute
+  '/(private)/business/$id/settings': typeof privateBusinessIdSettingsRoute
   '/(private)/business/$id/': typeof privateBusinessIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -109,7 +167,13 @@ export interface FileRouteTypes {
     | '/business/register'
     | '/business/select-business'
     | '/auth/employee/sign-in'
+    | '/business/$id/clients'
     | '/business/$id/config'
+    | '/business/$id/employees'
+    | '/business/$id/groups'
+    | '/business/$id/products'
+    | '/business/$id/sales'
+    | '/business/$id/settings'
     | '/business/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -119,7 +183,13 @@ export interface FileRouteTypes {
     | '/business/register'
     | '/business/select-business'
     | '/auth/employee/sign-in'
+    | '/business/$id/clients'
     | '/business/$id/config'
+    | '/business/$id/employees'
+    | '/business/$id/groups'
+    | '/business/$id/products'
+    | '/business/$id/sales'
+    | '/business/$id/settings'
     | '/business/$id'
   id:
     | '__root__'
@@ -130,7 +200,13 @@ export interface FileRouteTypes {
     | '/(private)/business/register'
     | '/(private)/business/select-business'
     | '/auth/employee/sign-in'
+    | '/(private)/business/$id/clients'
     | '/(private)/business/$id/config'
+    | '/(private)/business/$id/employees'
+    | '/(private)/business/$id/groups'
+    | '/(private)/business/$id/products'
+    | '/(private)/business/$id/sales'
+    | '/(private)/business/$id/settings'
     | '/(private)/business/$id/'
   fileRoutesById: FileRoutesById
 }
@@ -202,6 +278,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateBusinessIdIndexRouteImport
       parentRoute: typeof privateBusinessIdRoute
     }
+    '/(private)/business/$id/settings': {
+      id: '/(private)/business/$id/settings'
+      path: '/settings'
+      fullPath: '/business/$id/settings'
+      preLoaderRoute: typeof privateBusinessIdSettingsRouteImport
+      parentRoute: typeof privateBusinessIdRoute
+    }
+    '/(private)/business/$id/sales': {
+      id: '/(private)/business/$id/sales'
+      path: '/sales'
+      fullPath: '/business/$id/sales'
+      preLoaderRoute: typeof privateBusinessIdSalesRouteImport
+      parentRoute: typeof privateBusinessIdRoute
+    }
+    '/(private)/business/$id/products': {
+      id: '/(private)/business/$id/products'
+      path: '/products'
+      fullPath: '/business/$id/products'
+      preLoaderRoute: typeof privateBusinessIdProductsRouteImport
+      parentRoute: typeof privateBusinessIdRoute
+    }
+    '/(private)/business/$id/groups': {
+      id: '/(private)/business/$id/groups'
+      path: '/groups'
+      fullPath: '/business/$id/groups'
+      preLoaderRoute: typeof privateBusinessIdGroupsRouteImport
+      parentRoute: typeof privateBusinessIdRoute
+    }
+    '/(private)/business/$id/employees': {
+      id: '/(private)/business/$id/employees'
+      path: '/employees'
+      fullPath: '/business/$id/employees'
+      preLoaderRoute: typeof privateBusinessIdEmployeesRouteImport
+      parentRoute: typeof privateBusinessIdRoute
+    }
     '/(private)/business/$id/config': {
       id: '/(private)/business/$id/config'
       path: '/config'
@@ -209,16 +320,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateBusinessIdConfigRouteImport
       parentRoute: typeof privateBusinessIdRoute
     }
+    '/(private)/business/$id/clients': {
+      id: '/(private)/business/$id/clients'
+      path: '/clients'
+      fullPath: '/business/$id/clients'
+      preLoaderRoute: typeof privateBusinessIdClientsRouteImport
+      parentRoute: typeof privateBusinessIdRoute
+    }
   }
 }
 
 interface privateBusinessIdRouteChildren {
+  privateBusinessIdClientsRoute: typeof privateBusinessIdClientsRoute
   privateBusinessIdConfigRoute: typeof privateBusinessIdConfigRoute
+  privateBusinessIdEmployeesRoute: typeof privateBusinessIdEmployeesRoute
+  privateBusinessIdGroupsRoute: typeof privateBusinessIdGroupsRoute
+  privateBusinessIdProductsRoute: typeof privateBusinessIdProductsRoute
+  privateBusinessIdSalesRoute: typeof privateBusinessIdSalesRoute
+  privateBusinessIdSettingsRoute: typeof privateBusinessIdSettingsRoute
   privateBusinessIdIndexRoute: typeof privateBusinessIdIndexRoute
 }
 
 const privateBusinessIdRouteChildren: privateBusinessIdRouteChildren = {
+  privateBusinessIdClientsRoute: privateBusinessIdClientsRoute,
   privateBusinessIdConfigRoute: privateBusinessIdConfigRoute,
+  privateBusinessIdEmployeesRoute: privateBusinessIdEmployeesRoute,
+  privateBusinessIdGroupsRoute: privateBusinessIdGroupsRoute,
+  privateBusinessIdProductsRoute: privateBusinessIdProductsRoute,
+  privateBusinessIdSalesRoute: privateBusinessIdSalesRoute,
+  privateBusinessIdSettingsRoute: privateBusinessIdSettingsRoute,
   privateBusinessIdIndexRoute: privateBusinessIdIndexRoute,
 }
 

@@ -8,8 +8,8 @@ import {
 export function useSignInForm() {
   const form = useForm<Schema>({
     defaultValues: {
-      email: "cristian@email.com",
-      password: "holiwiss",
+      email: "",
+      password: "holiwis",
     },
     resolver: zodResolver(schema),
   });

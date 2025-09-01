@@ -24,11 +24,16 @@ import {
 } from "@/core/shared/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "@/core/shared/components/ui/avatar";
 import { useRouter } from "@tanstack/react-router";
+import { avatarFallback } from "@/core/shared/lib/utils";
 
 export function BusinessSidebarFooter() {
   const { user, signOut } = useAuth();
   const router = useRouter();
   const { isMobile } = useSidebar();
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <SidebarMenu>
@@ -40,7 +45,9 @@ export function BusinessSidebarFooter() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {avatarFallback(user.firstName, user.lastName)}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user?.firstName}</span>

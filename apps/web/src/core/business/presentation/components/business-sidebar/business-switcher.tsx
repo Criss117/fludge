@@ -16,6 +16,7 @@ import {
   useSidebar,
 } from "@/core/shared/components/ui/sidebar";
 import type { BusinessDetail } from "@repo/core/entities/business";
+import { cn } from "@/core/shared/lib/utils";
 
 interface Props {
   currentBusiness: BusinessDetail;
@@ -56,7 +57,10 @@ export function BusinessSwitcher({ currentBusiness }: Props) {
             {user?.isRootIn.map((business) => (
               <DropdownMenuItem
                 key={business.name}
-                className="gap-2 p-2"
+                className={cn(
+                  "gap-2 p-2",
+                  currentBusiness.id === business.id && "bg-accent"
+                )}
                 asChild
               >
                 <Link
