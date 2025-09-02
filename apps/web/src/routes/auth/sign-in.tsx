@@ -4,10 +4,31 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/auth/sign-in")({
   component: RouteComponent,
   beforeLoad: async ({ context }) => {
-    if (context.user) {
-      throw redirect({
-        to: "/business/register",
-      });
+    const { user } = context;
+
+    if (!user) return;
+
+    if (user.isRoot) {
+      if (user.isRootIn.length === 0) {
+        throw redirect({
+          to: "/business/register",
+        });
+      }
+
+      if (user.isRootIn.length === 1) {
+        throw redirect({
+          to: "/business/$id",
+          params: {
+            id: user.isRootIn[0].id,
+          },
+        });
+      }
+
+      if (user.isRootIn.length > 1) {
+        throw redirect({
+          to: "/business/select-business",
+        });
+      }
     }
   },
 });
