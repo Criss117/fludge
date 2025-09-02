@@ -6,7 +6,6 @@ import {
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/core/shared/components/ui/sidebar";
 import { BusinessSidebar } from "@/core/business/presentation/components/business-sidebar";
 
@@ -45,7 +44,6 @@ function RouteComponent() {
     <SidebarProvider>
       <BusinessSidebar currentBusiness={data} />
       <SidebarInset>
-        <SidebarTrigger />
         <Outlet />
       </SidebarInset>
     </SidebarProvider>

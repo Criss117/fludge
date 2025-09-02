@@ -1,13 +1,13 @@
 import { useForm, type UseFormReturn } from "react-hook-form";
 import {
-  createBusinessDto as schema,
-  type CreateBusinessDto as Schema,
+  createBusinessDto,
+  type CreateBusinessDto,
 } from "../dtos/create-business.dto";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export function useCreateBusinessForm() {
-  const form = useForm<Schema>({
-    resolver: zodResolver(schema),
+  const form = useForm<CreateBusinessDto>({
+    resolver: zodResolver(createBusinessDto),
     defaultValues: {
       name: "Pepito Perez",
       nit: "10617376742",
@@ -18,10 +18,6 @@ export function useCreateBusinessForm() {
 
   return form;
 }
-
-export type CreateBusinessDto = Schema;
-export const createBusinessDto = schema;
-
 export type FormType = UseFormReturn<
   CreateBusinessDto,
   unknown,

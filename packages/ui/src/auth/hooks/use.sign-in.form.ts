@@ -1,23 +1,17 @@
 import { useForm, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  signInDto as schema,
-  type SignInDto as Schema,
-} from "../dtos/sign-in.dto";
+import { signInDto, type SignInDto } from "../dtos/sign-in.dto";
 
 export function useSignInForm() {
-  const form = useForm<Schema>({
+  const form = useForm<SignInDto>({
     defaultValues: {
       email: "",
       password: "holiwis",
     },
-    resolver: zodResolver(schema),
+    resolver: zodResolver(signInDto),
   });
 
   return form;
 }
-
-export type SignInDto = Schema;
-export const signInDto = schema;
 
 export type FormType = UseFormReturn<SignInDto, unknown, SignInDto>;

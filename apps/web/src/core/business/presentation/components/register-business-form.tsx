@@ -1,4 +1,5 @@
 import { createContext, use } from "react";
+import { useRouter } from "@tanstack/react-router";
 import {
   type FormType,
   useCreateBusinessForm,
@@ -6,8 +7,7 @@ import {
 import { InputForm } from "@/core/shared/components/form/input-form";
 import { Form } from "@/core/shared/components/ui/form";
 import { Button } from "@/core/shared/components/ui/button";
-import { createBusinessAction } from "../../application/actions/create-business.action";
-import { useRouter } from "@tanstack/react-router";
+import { createBusinessAction } from "@/core/business/application/actions/create-business.action";
 import { useAuth } from "@/core/auth/application/providers/auth.provider";
 
 interface RootProps {

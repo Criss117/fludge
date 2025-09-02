@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./auth/*": "./src/auth/*.tsx",
-    "./business/*": "./src/business/*.tsx",
-    "./utils/*": "./src/utils/*.ts"
+    "./auth/*": "./src/auth/*.ts",
+    "./business/*": "./src/business/*.ts",
+    "./utils/*": "./src/utils/*.ts",
+    "./employees/*": "./src/employees/*.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -22,7 +23,9 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
+    "@repo/core": "workspace:*",
     "@hookform/resolvers": "^5.2.1",
+    "@tanstack/react-table": "8.21.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.62.0",
