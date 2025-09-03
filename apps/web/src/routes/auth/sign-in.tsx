@@ -1,4 +1,4 @@
-import { SignInRootUser } from "@/core/auth/presentation/screens/sign-in-root-user";
+import { SignInRootUserScreen } from "@/core/auth/presentation/screens/sign-in-root-user.screen";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/auth/sign-in")({
@@ -30,9 +30,18 @@ export const Route = createFileRoute("/auth/sign-in")({
         });
       }
     }
+
+    if (user.isEmployeeIn.length) {
+      throw redirect({
+        to: "/business/$id",
+        params: {
+          id: user.isEmployeeIn[0].id,
+        },
+      });
+    }
   },
 });
 
 function RouteComponent() {
-  return <SignInRootUser />;
+  return <SignInRootUserScreen />;
 }

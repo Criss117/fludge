@@ -2,12 +2,15 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/core/shared/components/ui/card";
 import { SignInRootUserForm } from "../components/sign-in-root-user-form";
+import { Button } from "@/core/shared/components/ui/button";
+import { Link } from "@tanstack/react-router";
 
-export function SignInRootUser() {
+export function SignInRootUserScreen() {
   return (
     <section className="w-full min-h-screen flex items-center justify-center">
       <Card className="w-full max-w-xl">
@@ -29,6 +32,11 @@ export function SignInRootUser() {
             </fieldset>
           </SignInRootUserForm.Root>
         </CardContent>
+        <CardFooter>
+          <Button asChild variant="link">
+            <Link to="/auth/employee/sign-in">Inicia Sesión como Empleado</Link>
+          </Button>
+        </CardFooter>
       </Card>
     </section>
   );

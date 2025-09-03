@@ -1,14 +1,14 @@
-import { AxiosError } from "axios";
 import api, { API_ENDPOINTS } from "@/core/shared/lib/api";
+import type { SignInEmployeeDto } from "@repo/ui/auth/dtos/sign-in.dto";
 import type { CommonResponse } from "@repo/ui/utils/reponse";
-import type { SignInDto } from "@repo/ui/auth/dtos/sign-in.dto";
+import { AxiosError } from "axios";
 
-export async function signInRootUserAction(
-  data: SignInDto
+export async function signInEmployeeUserAction(
+  data: SignInEmployeeDto
 ): Promise<CommonResponse<string>> {
   try {
     const res = await api.post<CommonResponse<string>>(
-      API_ENDPOINTS.AUTH.ROOT_SIGN_IN,
+      API_ENDPOINTS.AUTH.EMPLOYEE_SIGN_IN,
       data
     );
     return res.data;

@@ -26,6 +26,7 @@ export const API_ENDPOINTS = {
   AUTH: {
     SIGN_UP: "/auth/sign-up",
     ROOT_SIGN_IN: "/auth/sign-in",
+    EMPLOYEE_SIGN_IN: "/auth/sign-in-employee",
     GET_PROFILE: "/auth/profile",
     FIND_ALL_PERMISSIONS: "/auth/permissions",
   },

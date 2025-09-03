@@ -176,10 +176,7 @@ export class SeedService {
         businessId: faker.helpers.arrayElement(insertedBusinesses).id,
         name: faker.commerce.department(),
         description: faker.lorem.sentence(),
-        permissions: [
-          'businesses:read',
-          ...faker.helpers.arrayElements(allPermissions),
-        ],
+        permissions: faker.helpers.arrayElements(allPermissions),
       };
     });
 
