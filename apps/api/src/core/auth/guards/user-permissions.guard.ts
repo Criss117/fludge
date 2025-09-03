@@ -46,32 +46,43 @@ export class UserPermissionsGuard implements CanActivate {
       businessId,
       user.id,
     );
+
+    if (!business) throw new BadRequestException('El negocio no existe');
+
     req.business = business;
-    // return true;
 
     const userIsRootOrEmployeeInBusiness =
       business.rootUserId === user.id ||
       business.employees.some((e) => e.id === user.id);
 
     if (!userIsRootOrEmployeeInBusiness) {
-      throw new UnauthorizedException("You don't have permissions to do this");
+      throw new UnauthorizedException('No tiene permisos para hacer esto');
     }
 
     if (user.isRoot) {
       return true;
     }
 
+    //Here the user is an employee in the business
+
+    if (permissions.length === 1 && permissions[0] === 'businesses:read') {
+      return true;
+    }
+
+    const permissionsWitoutBusinessesRead = permissions.filter(
+      (p) => p !== 'businesses:read',
+    );
+
     const userPermissions = user.isEmployeeIn.map((e) => e.permissions);
 
-    const userHasPermissions = permissions.some((p) =>
+    const userHasPermissions = permissionsWitoutBusinessesRead.some((p) =>
       userPermissions.some((up) => up.includes(p)),
     );
 
     if (!userHasPermissions) {
-      throw new UnauthorizedException("You don't have permissions to do this");
+      throw new UnauthorizedException('No tiene permisos para hacer esto');
     }
 
-    // TODO: Check if the user has the required permissions
     return true;
   }
 }

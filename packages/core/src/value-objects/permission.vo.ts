@@ -35,7 +35,6 @@ export const allPermissions: Permission[] = [
   "clients:delete",
 
   "businesses:create",
-  "businesses:read",
   "businesses:update",
 
   "groups:create",
