@@ -13,7 +13,6 @@ import { columns } from "./columns";
 interface RootProps {
   children: React.ReactNode;
   data: GroupSummary[];
-  showComplete?: boolean;
 }
 
 interface ContentProps {
@@ -38,9 +37,9 @@ function useGroupsTable() {
   return context;
 }
 
-function Root({ children, data, showComplete = false }: RootProps) {
+function Root({ children, data }: RootProps) {
   const table = useReactTable({
-    columns: columns(showComplete),
+    columns: columns,
     data,
     getCoreRowModel: getCoreRowModel(),
   });

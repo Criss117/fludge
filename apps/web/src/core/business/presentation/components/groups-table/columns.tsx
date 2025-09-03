@@ -1,4 +1,5 @@
 import { PermissionBadge } from "@/core/shared/components/permission-badge";
+import { Checkbox } from "@/core/shared/components/ui/checkbox";
 import type { GroupSummary } from "@repo/core/entities/group";
 import { createColumnHelper } from "@tanstack/react-table";
 import { formatDistanceToNow } from "date-fns";
@@ -6,7 +7,27 @@ import { es } from "date-fns/locale";
 
 const columnsHelper = createColumnHelper<GroupSummary>();
 
-export const columns = (showCOmplete = false) => [
+export const columns = [
+  columnsHelper.display({
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+  }),
   columnsHelper.accessor("name", {
     header: "Nombre del grupo",
     cell: (info) => info.getValue(),
@@ -16,12 +37,8 @@ export const columns = (showCOmplete = false) => [
     cell: (info) => (info.getValue() ? info.getValue() : "-"),
   }),
   columnsHelper.accessor("permissions", {
-    header: showCOmplete ? "Permisos" : "",
+    header: "Permisos",
     cell: ({ getValue }) => {
-      if (!showCOmplete) {
-        return "-";
-      }
-
       const firstFivePermissions = getValue().slice(0, 5);
 
       return (
@@ -35,12 +52,8 @@ export const columns = (showCOmplete = false) => [
     },
   }),
   columnsHelper.accessor("createdAt", {
-    header: showCOmplete ? "Tiempo de creación" : "",
+    header: "Tiempo de creación",
     cell: ({ getValue }) => {
-      if (!showCOmplete) {
-        return "-";
-      }
-
       return formatDistanceToNow(getValue(), {
         addSuffix: true,
         locale: es,

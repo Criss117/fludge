@@ -8,6 +8,7 @@ import {
   SidebarProvider,
 } from "@/core/shared/components/ui/sidebar";
 import { BusinessSidebar } from "@/core/business/presentation/components/business-sidebar";
+import { findAllPermissionsQueryOptions } from "@/core/business/application/hooks/use.find-all-permissions";
 
 export const Route = createFileRoute("/(private)/business/$id")({
   component: RouteComponent,
@@ -19,11 +20,20 @@ export const Route = createFileRoute("/(private)/business/$id")({
     }
   },
   loader: async ({ params, context }) => {
-    const d = await context.queryClient?.ensureQueryData(
+    const prefectchBusinessPromise = context.queryClient?.ensureQueryData(
       findOneBusinessQueryOptions(params.id)
     );
 
-    if (!d?.data) {
+    const permissionsPrefetchPromise = context.queryClient?.ensureQueryData(
+      findAllPermissionsQueryOptions
+    );
+
+    const [businessPrefeched] = await Promise.all([
+      prefectchBusinessPromise,
+      permissionsPrefetchPromise,
+    ]);
+
+    if (!businessPrefeched?.data) {
       throw redirect({
         to: "/",
       });

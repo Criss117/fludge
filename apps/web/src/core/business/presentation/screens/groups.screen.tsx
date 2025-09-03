@@ -12,7 +12,7 @@ export function GroupsScreen({ businessId }: Props) {
 
   return (
     <section className="mx-2 space-y-4">
-      <GroupsTable.Root data={data?.groups} showComplete>
+      <GroupsTable.Root data={data?.groups}>
         <PageHeader title="Grupos" />
         <div className="mx-4">
           <GroupsHeaderSection

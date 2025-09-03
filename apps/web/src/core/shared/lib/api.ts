@@ -27,6 +27,7 @@ export const API_ENDPOINTS = {
     SIGN_UP: "/auth/sign-up",
     ROOT_SIGN_IN: "/auth/sign-in",
     GET_PROFILE: "/auth/profile",
+    FIND_ALL_PERMISSIONS: "/auth/permissions",
   },
   BUSINESS: {
     FIND_ONE: (id: string) => `/business/${id}` as `/business/${string}`,

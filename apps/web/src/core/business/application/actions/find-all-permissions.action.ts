@@ -1,17 +1,14 @@
-import api, { API_ENDPOINTS } from "@/core/shared/lib/api";
-import type { CreateBusinessDto } from "@repo/ui/business/dtos/create-business.dto";
-import type { CommonResponse } from "@repo/ui/utils/reponse";
 import { AxiosError } from "axios";
+import api, { API_ENDPOINTS } from "@/core/shared/lib/api";
+import type { Permission } from "@repo/core/value-objects/permission";
+import type { CommonResponse } from "@repo/ui/utils/reponse";
 
-export async function createBusinessAction(data: CreateBusinessDto): Promise<
-  CommonResponse<{
-    id: string;
-  }>
+export async function findAllPermissionsAction(): Promise<
+  CommonResponse<Permission[]>
 > {
   try {
-    const res = await api.post<CommonResponse<{ id: string }>>(
-      API_ENDPOINTS.BUSINESS.CREATE,
-      data
+    const res = await api.get<CommonResponse<Permission[]>>(
+      API_ENDPOINTS.AUTH.FIND_ALL_PERMISSIONS
     );
 
     return res.data;
