@@ -63,6 +63,7 @@ export class BusinessQueriesRepository {
         name: groups.name,
         description: groups.description,
         permissions: groups.permissions,
+        createdAt: groups.createdAt,
       })
       .from(groups)
       .where(and(eq(groups.businessId, id), ...optionsFilters));

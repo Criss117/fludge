@@ -8,10 +8,10 @@ export const resources = [
 ] as const;
 export const actions = ["create", "read", "update", "delete"] as const;
 
-export type Resouce = (typeof resources)[number];
+export type Resource = (typeof resources)[number];
 export type Action = (typeof actions)[number];
 
-export type Permission = `${Resouce}:${Action}`;
+export type Permission = `${Resource}:${Action}`;
 
 export const allPermissions: Permission[] = [
   "users:create",

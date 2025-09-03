@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/core/shared/components/ui/card";
 import type { BusinessDetail } from "@repo/core/entities/business";
-import { GroupsSummaryTable } from "../components/groups-summary-table";
+import { GroupsTable } from "../components/groups-table";
 
 interface Props {
   business: BusinessDetail;
@@ -38,10 +38,12 @@ export function HomeDataTablesSection({ business }: Props) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <GroupsSummaryTable.Root data={business.groups}>
-            <GroupsSummaryTable.Header />
-            <GroupsSummaryTable.Body />
-          </GroupsSummaryTable.Root>
+          <GroupsTable.Root data={business.groups}>
+            <GroupsTable.Content>
+              <GroupsTable.Header />
+              <GroupsTable.Body />
+            </GroupsTable.Content>
+          </GroupsTable.Root>
         </CardContent>
       </Card>
     </section>

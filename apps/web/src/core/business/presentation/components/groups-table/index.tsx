@@ -1,20 +1,27 @@
 import { createContext, use } from "react";
-import type { GroupSummary } from "@repo/core/entities/group";
 import {
-  useGroupsSummaryTable,
-  columns,
-} from "@repo/ui/business/hooks/use.groups-summary-table";
+  getCoreRowModel,
+  useReactTable,
+  type Table as RTable,
+} from "@tanstack/react-table";
+import type { GroupSummary } from "@repo/core/entities/group";
 import { Table } from "@/core/shared/components/ui/table";
 import { CommonTableHeader } from "@/core/shared/components/table/common-table-header";
 import { CommonTableBody } from "@/core/shared/components/table/common-table-body";
+import { columns } from "./columns";
 
 interface RootProps {
   children: React.ReactNode;
   data: GroupSummary[];
+  showComplete?: boolean;
+}
+
+interface ContentProps {
+  children: React.ReactNode;
 }
 
 interface Context {
-  table: ReturnType<typeof useGroupsSummaryTable>;
+  table: RTable<GroupSummary>;
 }
 
 const GroupTableContext = createContext<Context | null>(null);
@@ -31,14 +38,22 @@ function useGroupsTable() {
   return context;
 }
 
-function Root({ children, data }: RootProps) {
-  const table = useGroupsSummaryTable(data);
+function Root({ children, data, showComplete = false }: RootProps) {
+  const table = useReactTable({
+    columns: columns(showComplete),
+    data,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   return (
     <GroupTableContext.Provider value={{ table }}>
-      <Table>{children}</Table>
+      {children}
     </GroupTableContext.Provider>
   );
+}
+
+function Content({ children }: ContentProps) {
+  return <Table>{children}</Table>;
 }
 
 function Header() {
@@ -58,9 +73,10 @@ function Body() {
   );
 }
 
-export const GroupsSummaryTable = {
+export const GroupsTable = {
   useGroupsTable,
   Root,
   Header,
   Body,
+  Content,
 };
