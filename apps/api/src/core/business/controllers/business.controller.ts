@@ -13,7 +13,6 @@ import { GetUser } from '@core/auth/decorators/get-user.decorator';
 import { UserNoRootException } from '@core/users/exeptions/user-no-root.exeption';
 import { HTTPResponse } from 'src/shared/http/response';
 import { FindOneBusinessUseCase } from '../use-cases/find-one-business.usecase';
-import { AssignEmployeeUseCase } from '../use-cases/assign-employee.usecase';
 import { Permissions } from '@core/auth/decorators/permissions.decorator';
 import { GetBusiness } from '../decorators/get-business.decorator';
 import type { LogedUser } from '@repo/core/entities/user';
@@ -24,7 +23,6 @@ export class BusinessController {
   constructor(
     private readonly createBusinessUseCase: CreateBusinessUseCase,
     private readonly findOneBusinessUseCase: FindOneBusinessUseCase,
-    private readonly assignEmployeeUseCase: AssignEmployeeUseCase,
   ) {}
 
   @Post()

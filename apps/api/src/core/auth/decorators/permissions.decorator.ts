@@ -4,9 +4,9 @@ import type { Permission } from '@repo/core/value-objects/permission';
 
 export const META_PERMISSIONS = Symbol('permissioss');
 
-export const Permissions = (...args: Permission[]) => {
+export function Permissions(...args: Permission[]) {
   return applyDecorators(
     SetMetadata(META_PERMISSIONS, args),
     UseGuards(UserPermissionsGuard),
   );
-};
+}
