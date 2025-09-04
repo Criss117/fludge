@@ -1,6 +1,6 @@
 import type { Permission } from "@repo/core/value-objects/permission";
 
-export function userHasPermissions(
+export function checkUserPermissions(
   userPermissions: Permission[],
   permission: Permission[]
 ) {

@@ -9,6 +9,11 @@ import {
 } from "@/core/shared/components/ui/sidebar";
 import { BusinessSidebar } from "@/core/business/presentation/components/business-sidebar";
 import { findAllPermissionsQueryOptions } from "@/core/business/application/hooks/use.find-all-permissions";
+import {
+  PermissionsProvider,
+  usePermissions,
+} from "@/core/auth/application/providers/permissions.provider";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/(private)/business/$id")({
   component: RouteComponent,
@@ -43,8 +48,21 @@ export const Route = createFileRoute("/(private)/business/$id")({
 });
 
 function RouteComponent() {
+  return (
+    <PermissionsProvider>
+      <Page />
+    </PermissionsProvider>
+  );
+}
+
+function Page() {
   const { id } = Route.useParams();
   const { data } = useFindOneBusiness(id);
+  const { initialState } = usePermissions();
+
+  useEffect(() => {
+    initialState(data);
+  }, [data, initialState]);
 
   if (!data) {
     return <div>Not found</div>;

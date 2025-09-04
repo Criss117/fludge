@@ -2,9 +2,19 @@ import { PageHeader } from "@/core/shared/components/page-header";
 import { GroupsHeaderSection } from "../sections/groups-header.section";
 import { useFindOneBusiness } from "../../application/hooks/use.find-one-business";
 import { GroupsTable } from "../components/groups-table";
+import { UserHasNoPermissionAlert } from "@/core/shared/components/unauthorized-alerts";
 
 interface Props {
   businessId: string;
+}
+
+export function WithOutPermissionsGroupsScreen() {
+  return (
+    <section className="mx-2 space-y-4">
+      <PageHeader title="Grupos" />
+      <UserHasNoPermissionAlert />
+    </section>
+  );
 }
 
 export function GroupsScreen({ businessId }: Props) {
