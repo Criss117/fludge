@@ -1,5 +1,6 @@
 import { Permission } from "../value-objects/permission.vo";
 import { AuditMetadata } from "./audit-metadata";
+import { UserSummary } from "./user.entity";
 
 export interface GroupSummary {
   id: string;
@@ -12,6 +13,7 @@ export interface GroupSummary {
 export interface GroupDetail extends AuditMetadata {
   id: string;
   name: string;
-  description: string;
+  description?: string | null;
   permissions: Permission[];
+  users: UserSummary[];
 }
