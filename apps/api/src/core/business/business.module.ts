@@ -13,6 +13,7 @@ import { GroupsCommandsRepository } from './repositories/groups-commands.reposit
 import { GroupsQueriesRepository } from './repositories/groups-queries.repository';
 import { CreateGroupUseCase } from './use-cases/create-group.usecase';
 import { BusinessGroupController } from './controllers/business-group.controller';
+import { FindOneGroupUseCase } from './use-cases/find-one-group.usecase';
 
 @Module({
   imports: [DbModule, UsersModule],
@@ -28,6 +29,7 @@ import { BusinessGroupController } from './controllers/business-group.controller
     AssignEmployeeUseCase,
     FindUserIsInUseCase,
     CreateGroupUseCase,
+    FindOneGroupUseCase,
 
     BusinessCommandsRepository,
     BusinessQueriesRepository,

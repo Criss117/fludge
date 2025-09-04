@@ -2,6 +2,7 @@ import { Permissions } from '@core/auth/decorators/permissions.decorator';
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   InternalServerErrorException,
   Param,
@@ -10,10 +11,14 @@ import {
 import { CreateGroupDto } from '../dtos/create-group.dto';
 import { CreateGroupUseCase } from '../use-cases/create-group.usecase';
 import { HTTPResponse } from 'src/shared/http/response';
+import { FindOneGroupUseCase } from '../use-cases/find-one-group.usecase';
 
 @Controller('business')
 export class BusinessGroupController {
-  constructor(private readonly createGroupUseCase: CreateGroupUseCase) {}
+  constructor(
+    private readonly createGroupUseCase: CreateGroupUseCase,
+    private readonly findOneGroupUseCase: FindOneGroupUseCase,
+  ) {}
 
   @Post(':id/groups')
   @Permissions('groups:create')
@@ -22,6 +27,25 @@ export class BusinessGroupController {
       await this.createGroupUseCase.execute(id, data);
 
       return HTTPResponse.created(null);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException('Something went grong');
+    }
+  }
+
+  @Get(':id/groups/:groupId')
+  @Permissions('groups:read')
+  public async findOne(
+    @Param('id') id: string,
+    @Param('groupId') groupId: string,
+  ) {
+    try {
+      return HTTPResponse.ok(
+        await this.findOneGroupUseCase.execute(id, groupId),
+      );
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

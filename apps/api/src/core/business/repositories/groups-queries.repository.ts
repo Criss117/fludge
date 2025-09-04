@@ -1,8 +1,11 @@
-import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
-import { Inject, Injectable } from '@nestjs/common';
-import { groups } from '@repo/db';
 import { and, eq, or, SQL } from 'drizzle-orm';
-import { FindManyGroupsByDto } from './dtos/find-many-groups-by.dto';
+import { Inject, Injectable } from '@nestjs/common';
+import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
+import { employees, groups, users } from '@repo/db';
+import type { FindManyGroupsByDto } from './dtos/find-many-groups-by.dto';
+import type { FindOneGroupDto } from './dtos/find-one-group.dto';
+import { getTableColumns } from 'drizzle-orm';
+import { GroupDetail } from '@repo/core/entities/group';
 
 type Options = {
   ensureActive: boolean;
@@ -12,21 +15,61 @@ type Options = {
 export class GroupsQueriesRepository {
   constructor(@Inject(DBSERVICE) private readonly db: LibSQLDatabase) {}
 
-  public async findOne(id: string, options?: Options) {
+  public async findOne(
+    meta: FindOneGroupDto,
+    options?: Options,
+  ): Promise<GroupDetail | null> {
     const optionsFilters: SQL[] = [];
 
     if (options?.ensureActive) {
       optionsFilters.push(eq(groups.isActive, true));
     }
 
-    const [group] = await this.db
-      .select()
+    const groupRes = await this.db
+      .select({
+        ...getTableColumns(groups),
+        user: {
+          id: users.id,
+          firstName: users.firstName,
+          lastName: users.lastName,
+          username: users.username,
+          email: users.email,
+          createdAt: users.createdAt,
+        },
+      })
       .from(groups)
-      .where(and(eq(groups.id, id), ...optionsFilters));
+      .leftJoin(employees, eq(employees.groupId, groups.id))
+      .leftJoin(users, eq(users.id, employees.userId))
+      .where(
+        and(
+          eq(groups.id, meta.id),
+          eq(groups.businessId, meta.businessId),
+          ...optionsFilters,
+        ),
+      );
 
-    if (!group) return null;
+    if (!groupRes.length) return null;
 
-    return group;
+    const usersList: GroupDetail['users'] = [];
+
+    for (const group of groupRes) {
+      if (!group.user) continue;
+
+      usersList.push(group.user);
+    }
+
+    const group = groupRes[0];
+
+    return {
+      createdAt: group.createdAt,
+      description: group.description,
+      id: group.id,
+      name: group.name,
+      permissions: group.permissions,
+      isActive: group.isActive,
+      updatedAt: group.updatedAt,
+      users: usersList,
+    };
   }
 
   public async findManyBy(meta: FindManyGroupsByDto, options?: Options) {
