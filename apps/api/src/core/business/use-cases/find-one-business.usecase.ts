@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BusinessQueriesRepository } from '../repositories/business-queries.repository';
 import { UserCanNotAccessException } from '../exeptions/user-cannot-access.exeption';
+import type { BusinessDetail } from '@repo/core/entities/business';
 
 @Injectable()
 export class FindOneBusinessUseCase {
@@ -8,7 +9,10 @@ export class FindOneBusinessUseCase {
     private readonly businessQueriesRepository: BusinessQueriesRepository,
   ) {}
 
-  public async execute(id: string, logedUserId: string) {
+  public async execute(
+    id: string,
+    logedUserId: string,
+  ): Promise<BusinessDetail> {
     const business = await this.businessQueriesRepository.findOne(id);
 
     const logedUserIsRootOrEmployee =
@@ -19,6 +23,13 @@ export class FindOneBusinessUseCase {
       throw new UserCanNotAccessException();
     }
 
-    return business;
+    if (business.rootUserId === logedUserId) {
+      return business;
+    }
+
+    return {
+      ...business,
+      employees: business.employees.filter((e) => e.id === logedUserId),
+    };
   }
 }
