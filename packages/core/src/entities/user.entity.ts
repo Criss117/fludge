@@ -18,6 +18,7 @@ export interface UserSummary {
   lastName: string;
   email: string | null;
   username: string;
+  createdAt: Date;
 }
 
 export interface LogedUser extends Omit<UserDetail, "password"> {

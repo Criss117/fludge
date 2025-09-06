@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import {
   findOneBusinessQueryOptions,
@@ -13,7 +14,6 @@ import {
   PermissionsProvider,
   usePermissions,
 } from "@/core/auth/application/providers/permissions.provider";
-import { useEffect } from "react";
 
 export const Route = createFileRoute("/(private)/business/$id")({
   component: RouteComponent,

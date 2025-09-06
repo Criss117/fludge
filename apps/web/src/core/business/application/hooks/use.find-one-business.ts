@@ -3,7 +3,7 @@ import { findOneBusinessAction } from "../actions/find-one-business.action";
 
 export function findOneBusinessQueryOptions(id: string) {
   return queryOptions({
-    queryKey: ["business", { id }],
+    queryKey: ["business", id],
     queryFn: () => findOneBusinessAction(id),
   });
 }

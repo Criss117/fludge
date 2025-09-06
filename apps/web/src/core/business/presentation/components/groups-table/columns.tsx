@@ -1,13 +1,15 @@
 import { PermissionBadge } from "@/core/shared/components/permission-badge";
+import { Button } from "@/core/shared/components/ui/button";
 import { Checkbox } from "@/core/shared/components/ui/checkbox";
 import type { GroupSummary } from "@repo/core/entities/group";
+import { Link } from "@tanstack/react-router";
 import { createColumnHelper } from "@tanstack/react-table";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
 const columnsHelper = createColumnHelper<GroupSummary>();
 
-export const columns = [
+export const columns = (businessId: string) => [
   columnsHelper.display({
     id: "select",
     header: ({ table }) => (
@@ -30,7 +32,19 @@ export const columns = [
   }),
   columnsHelper.accessor("name", {
     header: "Nombre del grupo",
-    cell: (info) => info.getValue(),
+    cell: (info) => (
+      <Button variant="link" asChild>
+        <Link
+          to="/business/$id/groups/$groupid"
+          params={{
+            id: businessId,
+            groupid: info.row.original.id,
+          }}
+        >
+          {info.getValue()}
+        </Link>
+      </Button>
+    ),
   }),
   columnsHelper.accessor("description", {
     header: "Descripción del grupo",
@@ -44,7 +58,7 @@ export const columns = [
       return (
         <div className="space-x-2">
           {firstFivePermissions.map((p) => (
-            <PermissionBadge permission={p} />
+            <PermissionBadge permission={p} key={p} />
           ))}
           <span>{getValue().length > 5 && "..."}</span>
         </div>

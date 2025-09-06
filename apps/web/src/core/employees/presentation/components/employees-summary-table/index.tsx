@@ -1,20 +1,23 @@
 import { createContext, use } from "react";
 import {
-  useEmployeesSummaryTable,
-  columns,
-} from "@repo/ui/employees/hooks/use.employees-summary-table";
+  getCoreRowModel,
+  useReactTable,
+  type Table as RTable,
+} from "@tanstack/react-table";
 import { Table } from "@/core/shared/components/ui/table";
 import type { UserSummary } from "@repo/core/entities/user";
 import { CommonTableBody } from "@/core/shared/components/table/common-table-body";
 import { CommonTableHeader } from "@/core/shared/components/table/common-table-header";
+import { columns, completeColumns } from "./columns";
 
 interface RootProps {
   children: React.ReactNode;
   data: UserSummary[];
+  variant?: "detail" | "summary";
 }
 
 interface Context {
-  table: ReturnType<typeof useEmployeesSummaryTable>;
+  table: RTable<UserSummary>;
 }
 
 const EmployeesTableContext = createContext<Context | null>(null);
@@ -31,8 +34,12 @@ function useEmployeesTable() {
   return context;
 }
 
-function Root({ children, data }: RootProps) {
-  const table = useEmployeesSummaryTable(data);
+function Root({ children, data, variant = "summary" }: RootProps) {
+  const table = useReactTable({
+    columns: variant === "detail" ? completeColumns : columns,
+    data,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   return (
     <EmployeesTableContext.Provider

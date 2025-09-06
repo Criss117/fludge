@@ -75,6 +75,7 @@ export class BusinessQueriesRepository {
         lastName: users.lastName,
         email: users.email,
         username: users.username,
+        createdAt: users.createdAt,
       })
       .from(employees)
       .innerJoin(users, eq(employees.userId, users.id))

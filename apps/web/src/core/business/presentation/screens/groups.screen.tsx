@@ -22,7 +22,7 @@ export function GroupsScreen({ businessId }: Props) {
 
   return (
     <section className="mx-2 space-y-4">
-      <GroupsTable.Root data={data?.groups}>
+      <GroupsTable.Root data={data?.groups} busineesId={businessId}>
         <PageHeader title="Grupos" />
         <div className="mx-4">
           <GroupsHeaderSection

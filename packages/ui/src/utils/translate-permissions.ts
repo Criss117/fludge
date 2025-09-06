@@ -25,7 +25,9 @@ export function translatePermission(permission: Permission) {
 
   return {
     translate: `${actionsEs.get(action)} ${resourcesEs.get(resource)}`,
-    resource,
+    resourceEs: resourcesEs.get(resource),
+    actionEs: actionsEs.get(action),
     action,
+    resource,
   };
 }

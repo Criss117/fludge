@@ -32,7 +32,7 @@ export function SelectBusinessScreen() {
         </CardHeader>
         <CardContent className="space-y-5">
           {user.isRootIn.map((business) => (
-            <Button asChild variant="link">
+            <Button asChild variant="link" key={business.id}>
               <Link
                 to={"/business/$id"}
                 params={{
