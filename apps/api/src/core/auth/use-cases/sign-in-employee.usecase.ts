@@ -17,8 +17,6 @@ export class SignInEmployeeUseCase {
       username: meta.username,
     });
 
-    console.log(user);
-
     const resultOfComparison = await comparePasswords(
       meta.password,
       user.password,

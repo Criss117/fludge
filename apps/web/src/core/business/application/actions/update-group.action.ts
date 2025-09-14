@@ -14,8 +14,6 @@ export async function updateGroupAction({
   data,
   groupId,
 }: Data): Promise<CommonResponse<null>> {
-  console.log(data);
-
   try {
     const res = await api.patch<CommonResponse<null>>(
       API_ENDPOINTS.BUSINESS.GROUPS.UPDATE(businessId, groupId),

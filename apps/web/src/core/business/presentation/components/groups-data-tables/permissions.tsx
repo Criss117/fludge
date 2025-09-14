@@ -127,41 +127,76 @@ function PermissionsList({ businessId, group }: Props) {
   );
 }
 
+function PermissionsTableHeader({ group, businessId }: Props) {
+  const { update } = useMutateGroups();
+  const { table } = PermissionsDataTable.usePermissionsTable();
+
+  const selectedRows = table
+    .getSelectedRowModel()
+    .rows.map((row) => row.original);
+
+  const handleDelete = () => {
+    if (selectedRows.length === 0) return;
+
+    update.mutate({
+      businessId,
+      groupId: group.id,
+      data: {
+        name: group.name,
+        description: group.description ?? undefined,
+        permissions: group.permissions.filter(
+          (permission) => !selectedRows.includes(permission)
+        ),
+      },
+    });
+  };
+
+  return (
+    <CardHeader className="flex justify-between">
+      <div>
+        <CardTitle>Permisos</CardTitle>
+        <CardDescription>{group.permissions.length} permisons</CardDescription>
+      </div>
+
+      <div className="space-x-2">
+        <Button
+          variant="destructive"
+          disabled={selectedRows.length === 0}
+          className="rounded-full"
+          onClick={handleDelete}
+        >
+          Eliminar ({selectedRows.length}) permisos
+        </Button>
+        <Suspense
+          fallback={
+            <Button
+              variant="outline"
+              className="rounded-full border-2"
+              disabled
+            >
+              Agregar Permisos
+            </Button>
+          }
+        >
+          <PermissionsList group={group} businessId={businessId} />
+        </Suspense>
+      </div>
+    </CardHeader>
+  );
+}
+
 export function PermissionsTable({ group, businessId }: Props) {
   return (
     <Card>
-      <CardHeader className="flex justify-between">
-        <div>
-          <CardTitle>Permisos</CardTitle>
-          <CardDescription>
-            {group.permissions.length} permisons
-          </CardDescription>
-        </div>
-
-        <div>
-          <Suspense
-            fallback={
-              <Button
-                variant="outline"
-                className="rounded-full border-2"
-                disabled
-              >
-                Agregar Permisos
-              </Button>
-            }
-          >
-            <PermissionsList group={group} businessId={businessId} />
-          </Suspense>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <PermissionsDataTable.Root data={group.permissions}>
+      <PermissionsDataTable.Root data={group.permissions}>
+        <PermissionsTableHeader group={group} businessId={businessId} />
+        <CardContent>
           <PermissionsDataTable.Content>
             <PermissionsDataTable.Header />
             <PermissionsDataTable.Body />
           </PermissionsDataTable.Content>
-        </PermissionsDataTable.Root>
-      </CardContent>
+        </CardContent>
+      </PermissionsDataTable.Root>
     </Card>
   );
 }
