@@ -15,7 +15,7 @@ export function GroupScreen({ businessId, groupId }: Props) {
     <section className="mx-2 space-y-5">
       <PageHeader title={`Grupo - ${data.name}`} />
       <div className="space-y-8">
-        <GroupHeaderSection group={data} />
+        <GroupHeaderSection group={data} businessId={businessId} />
         <GroupDataTablesSection group={data} businessId={businessId} />
       </div>
     </section>

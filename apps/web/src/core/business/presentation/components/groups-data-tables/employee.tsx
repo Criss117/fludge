@@ -30,7 +30,7 @@ interface Props {
 }
 
 function EmployeeListDialog({ businessId, group }: Props) {
-  const { data } = useFindOneBusiness(businessId);
+  const { data: business } = useFindOneBusiness(businessId);
   const { assignEmployees } = useMutateGroups();
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
 
@@ -44,7 +44,7 @@ function EmployeeListDialog({ businessId, group }: Props) {
     }
   };
 
-  const employeesToShow = data.employees.filter(
+  const employeesToShow = business.employees.filter(
     (user) => !group.users.some((u) => u.id === user.id)
   );
 
@@ -86,7 +86,12 @@ function EmployeeListDialog({ businessId, group }: Props) {
               </span>
             </li>
           ))}
-          {!employeesToShow.length && (
+          {!business.employees.length && (
+            <p className="text-muted-foreground text-sm">
+              No hay empleados registrados en la empresa
+            </p>
+          )}
+          {business.employees.length > 0 && !employeesToShow.length && (
             <p className="text-muted-foreground text-sm">
               Los empleados registrados ya estan asignados al grupo o no hay
               empleados registrados

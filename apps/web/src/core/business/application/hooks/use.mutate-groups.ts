@@ -4,6 +4,7 @@ import { createGroupAction } from "../actions/create-group.action";
 import { findOneBusinessQueryOptions } from "./use.find-one-business";
 import { assignEmployeesToGroupAction } from "../actions/assign-employees-to-group.action";
 import { findOneGroupQueryOptions } from "./use.find-one-group";
+import { updateGroupAction } from "../actions/update-group.action";
 
 export function useMutateGroups() {
   const queryClient = useQueryClient();
@@ -64,8 +65,39 @@ export function useMutateGroups() {
     },
   });
 
+  const update = useMutation({
+    mutationFn: updateGroupAction,
+    onMutate: () => {
+      toast.loading("Actualizando grupo", {
+        id: "toast-loading-update-group",
+        position: "top-center",
+      });
+    },
+    onError: (err) => {
+      toast.dismiss("toast-loading-update-group");
+      toast.error(err.message, {
+        position: "top-center",
+      });
+    },
+    onSuccess: (_, variables) => {
+      toast.dismiss("toast-loading-update-group");
+      toast.success("Grupo actualizado exitosamente", {
+        position: "top-center",
+      });
+
+      queryClient.invalidateQueries(
+        findOneBusinessQueryOptions(variables.businessId)
+      );
+
+      queryClient.invalidateQueries(
+        findOneGroupQueryOptions(variables.businessId, variables.groupId)
+      );
+    },
+  });
+
   return {
     create,
+    update,
     assignEmployees,
   };
 }

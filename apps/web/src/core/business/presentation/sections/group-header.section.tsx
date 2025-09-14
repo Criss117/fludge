@@ -1,4 +1,3 @@
-import { Pencil } from "lucide-react";
 import { Button } from "@/core/shared/components/ui/button";
 import {
   Card,
@@ -11,12 +10,14 @@ import { Separator } from "@/core/shared/components/ui/separator";
 import type { GroupDetail } from "@repo/core/entities/group";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
+import { UpdateGroupDialog } from "../components/update-group-dialog";
 
 interface Props {
   group: GroupDetail;
+  businessId: string;
 }
 
-export function GroupHeaderSection({ group }: Props) {
+export function GroupHeaderSection({ group, businessId }: Props) {
   return (
     <header className="mx-2 space-y-5">
       <div className="flex justify-between">
@@ -39,10 +40,7 @@ export function GroupHeaderSection({ group }: Props) {
               </CardDescription>
             </div>
             <div>
-              <Button>
-                <Pencil />
-                Editar
-              </Button>
+              <UpdateGroupDialog group={group} businessId={businessId} />
             </div>
           </CardHeader>
           <CardContent className="flex justify-between h-12 items-center">
