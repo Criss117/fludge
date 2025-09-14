@@ -4,7 +4,7 @@ import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
 import { employees, groups, users } from '@repo/db';
 import type { FindManyGroupsByDto } from './dtos/find-many-groups-by.dto';
 import type { FindOneGroupDto } from './dtos/find-one-group.dto';
-import { GroupDetail } from '@repo/core/entities/group';
+import type { GroupDetail, GroupSummary } from '@repo/core/entities/group';
 
 type Options = {
   ensureActive: boolean;
@@ -76,7 +76,10 @@ export class GroupsQueriesRepository {
     };
   }
 
-  public async findManyBy(meta: FindManyGroupsByDto, options?: Options) {
+  public async findManyBy(
+    meta: FindManyGroupsByDto,
+    options?: Options,
+  ): Promise<GroupSummary[]> {
     const filters: SQL[] = [];
     const optionsFilters: SQL[] = [];
 
@@ -90,6 +93,10 @@ export class GroupsQueriesRepository {
 
     if (meta.id) {
       filters.push(eq(groups.id, meta.id));
+    }
+
+    if (meta.name) {
+      filters.push(eq(groups.name, meta.name));
     }
 
     return this.db

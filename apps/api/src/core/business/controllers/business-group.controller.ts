@@ -8,6 +8,7 @@ import {
   InternalServerErrorException,
   Param,
   Post,
+  Patch,
 } from '@nestjs/common';
 import { CreateGroupDto } from '../dtos/create-group.dto';
 import { CreateGroupUseCase } from '../use-cases/create-group.usecase';
@@ -15,6 +16,8 @@ import { HTTPResponse } from 'src/shared/http/response';
 import { FindOneGroupUseCase } from '../use-cases/find-one-group.usecase';
 import { AssignEmployeesToGroupUseCase } from '../use-cases/assign-employees-to-group.usecase';
 import { AssignEmployeesToGroupDto } from '../dtos/assign-employees-to-group';
+import { UpdateGroupDto } from '../dtos/update-group.dto';
+import { UpdateGroupUseCase } from '../use-cases/update-group.usecase';
 
 @Controller('business')
 export class BusinessGroupController {
@@ -22,6 +25,7 @@ export class BusinessGroupController {
     private readonly createGroupUseCase: CreateGroupUseCase,
     private readonly findOneGroupUseCase: FindOneGroupUseCase,
     private readonly assignEmployeesToGroupUseCase: AssignEmployeesToGroupUseCase,
+    private readonly updateGroupUseCase: UpdateGroupUseCase,
   ) {}
 
   @Post(':id/groups')
@@ -49,6 +53,28 @@ export class BusinessGroupController {
     try {
       return HTTPResponse.ok(
         await this.findOneGroupUseCase.execute(id, groupId),
+      );
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException('Something went grong');
+    }
+  }
+
+  @Patch(':id/groups/:groupId')
+  @Permissions('groups:read', 'groups:update')
+  public async update(
+    @Param('id') businessId: string,
+    @Param('groupId') groupId: string,
+    @Body() data: UpdateGroupDto,
+  ) {
+    try {
+      return HTTPResponse.ok(
+        await this.updateGroupUseCase.execute(businessId, groupId, data),
       );
     } catch (error) {
       console.log(error);
