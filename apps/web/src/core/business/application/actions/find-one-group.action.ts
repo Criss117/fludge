@@ -6,7 +6,7 @@ import { AxiosError } from "axios";
 export async function findOneGroupAction(
   businessId: string,
   groupId: string
-): Promise<CommonResponse<GroupDetail>> {
+): Promise<CommonResponse<GroupDetail | null>> {
   try {
     const res = await api.get<CommonResponse<GroupDetail>>(
       API_ENDPOINTS.BUSINESS.GROUPS.FIND_ONE(businessId, groupId)
@@ -19,6 +19,7 @@ export async function findOneGroupAction(
     }
 
     return {
+      data: null,
       message: "Error al obtener el grupo",
       statusCode: 500,
       error: "Error al obtener el grupo",

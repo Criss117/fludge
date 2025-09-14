@@ -9,10 +9,10 @@ export function useCreateBusinessForm() {
   const form = useForm<CreateBusinessDto>({
     resolver: zodResolver(createBusinessDto),
     defaultValues: {
-      name: "Pepito Perez",
-      nit: "10617376742",
-      address: "calle 22 #16-20",
-      city: "mercaderes",
+      name: "",
+      nit: "",
+      address: "",
+      city: "",
     },
   });
 

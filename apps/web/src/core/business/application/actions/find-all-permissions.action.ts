@@ -4,7 +4,7 @@ import type { Permission } from "@repo/core/value-objects/permission";
 import type { CommonResponse } from "@repo/ui/utils/reponse";
 
 export async function findAllPermissionsAction(): Promise<
-  CommonResponse<Permission[]>
+  CommonResponse<Permission[] | null>
 > {
   try {
     const res = await api.get<CommonResponse<Permission[]>>(
@@ -18,6 +18,7 @@ export async function findAllPermissionsAction(): Promise<
     }
 
     return {
+      data: null,
       message: "Error al registrar un negocio",
       statusCode: 500,
       error: "Error al registrar un negocio",

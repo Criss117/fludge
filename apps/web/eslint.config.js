@@ -21,6 +21,7 @@ export default tseslint.config([
     },
     rules: {
       "react-refresh/only-export-components": "off",
+      "react-hooks/exhaustive-deps": "off",
     },
   },
 ]);

@@ -36,6 +36,10 @@ export const API_ENDPOINTS = {
     GROUPS: {
       FIND_ONE: (businessId: string, groupId: string) =>
         `/business/${businessId}/groups/${groupId}` as `/business/${string}/groups/${string}`,
+      CREATE: (businessId: string) =>
+        `/business/${businessId}/groups` as `/business/${string}/groups`,
+      ASSIGN_EMPLOYEES: (businessId: string, groupId: string) =>
+        `/business/${businessId}/groups/${groupId}/assign-employees` as `/business/${string}/groups/${string}/assign-employees`,
     },
   },
 } as const;

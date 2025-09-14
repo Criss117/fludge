@@ -1,4 +1,4 @@
-import type { ComponentProps } from "react";
+import type { Control, FieldValues, Path } from "react-hook-form";
 import {
   FormControl,
   FormDescription,
@@ -7,41 +7,38 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Input } from "../ui/input";
-import type { FieldValues, Path, Control } from "react-hook-form";
+import { Textarea } from "../ui/textarea";
+import { cn } from "@/core/shared/lib/utils";
 
-interface Props<T extends FieldValues> extends ComponentProps<"input"> {
+interface Props<T extends FieldValues> {
   control: Control<T, unknown, T>;
   name: Path<T>;
   label: string;
   placeholder?: string;
   description?: string;
+  textAreaClassName?: string;
 }
 
-export function InputForm<T extends FieldValues>({
+export function TextAreaForm<T extends FieldValues>({
   control,
-  name,
   label,
-  placeholder,
+  name,
   description,
-  ...props
+  placeholder,
+  textAreaClassName,
 }: Props<T>) {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex-1">
-          <FormLabel>
-            {label}
-            {props.required && <span className="text-red-500">*</span>}
-          </FormLabel>
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input
-              {...field}
+            <Textarea
               placeholder={placeholder}
-              {...props}
-              className="flex-1"
+              className={cn(textAreaClassName)}
+              {...field}
             />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}

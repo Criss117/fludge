@@ -1,5 +1,10 @@
-import { EmployeesSummaryTable } from "@/core/employees/presentation/components/employees-summary-table";
-import { Card, CardContent } from "@/core/shared/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/core/shared/components/ui/card";
 import {
   Tabs,
   TabsContent,
@@ -8,12 +13,14 @@ import {
 } from "@/core/shared/components/ui/tabs";
 import type { GroupDetail } from "@repo/core/entities/group";
 import { PermissionsTable } from "../components/permissions-table";
+import { EmployeesTable } from "../components/groups-data-tables/employee";
 
 interface Props {
   group: GroupDetail;
+  businessId: string;
 }
 
-export function GroupDataTablesSection({ group }: Props) {
+export function GroupDataTablesSection({ group, businessId }: Props) {
   return (
     <div className="mx-2">
       <Tabs defaultValue="employees">
@@ -26,17 +33,16 @@ export function GroupDataTablesSection({ group }: Props) {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="employees">
-          <Card>
-            <CardContent>
-              <EmployeesSummaryTable.Root data={group.users} variant="detail">
-                <EmployeesSummaryTable.Header />
-                <EmployeesSummaryTable.Body />
-              </EmployeesSummaryTable.Root>
-            </CardContent>
-          </Card>
+          <EmployeesTable group={group} businessId={businessId} />
         </TabsContent>
         <TabsContent value="permissions">
           <Card>
+            <CardHeader>
+              <CardTitle>Permisos</CardTitle>
+              <CardDescription>
+                {group.permissions.length} permisons
+              </CardDescription>
+            </CardHeader>
             <CardContent>
               <PermissionsTable.Root data={group.permissions}>
                 <PermissionsTable.Content>

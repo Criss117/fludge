@@ -5,7 +5,7 @@ import type { CommonResponse } from "@repo/ui/utils/reponse";
 
 export async function findOneBusinessAction(
   id: string
-): Promise<CommonResponse<BusinessDetail>> {
+): Promise<CommonResponse<BusinessDetail | null>> {
   try {
     const res = await api.get<CommonResponse<BusinessDetail>>(
       API_ENDPOINTS.BUSINESS.FIND_ONE(id)
@@ -17,6 +17,7 @@ export async function findOneBusinessAction(
     }
 
     return {
+      data: null,
       message: "Error al obtener perfil",
       statusCode: 500,
       error: "Error al obtener perfil",
