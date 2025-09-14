@@ -20,12 +20,14 @@ import { Route as privateBusinessIdIndexRouteImport } from './routes/(private)/b
 import { Route as privateBusinessIdSettingsRouteImport } from './routes/(private)/business/$id/settings'
 import { Route as privateBusinessIdSalesRouteImport } from './routes/(private)/business/$id/sales'
 import { Route as privateBusinessIdProductsRouteImport } from './routes/(private)/business/$id/products'
-import { Route as privateBusinessIdEmployeesRouteImport } from './routes/(private)/business/$id/employees'
 import { Route as privateBusinessIdConfigRouteImport } from './routes/(private)/business/$id/config'
 import { Route as privateBusinessIdClientsRouteImport } from './routes/(private)/business/$id/clients'
 import { Route as privateBusinessIdGroupsIndexRouteImport } from './routes/(private)/business/$id/groups/index'
+import { Route as privateBusinessIdEmployeesIndexRouteImport } from './routes/(private)/business/$id/employees/index'
 import { Route as privateBusinessIdGroupsCreateRouteImport } from './routes/(private)/business/$id/groups/create'
 import { Route as privateBusinessIdGroupsGroupidRouteImport } from './routes/(private)/business/$id/groups/$groupid'
+import { Route as privateBusinessIdEmployeesCreateRouteImport } from './routes/(private)/business/$id/employees/create'
+import { Route as privateBusinessIdEmployeesEmployeeidRouteImport } from './routes/(private)/business/$id/employees/$employeeid'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -85,12 +87,6 @@ const privateBusinessIdProductsRoute =
     path: '/products',
     getParentRoute: () => privateBusinessIdRoute,
   } as any)
-const privateBusinessIdEmployeesRoute =
-  privateBusinessIdEmployeesRouteImport.update({
-    id: '/employees',
-    path: '/employees',
-    getParentRoute: () => privateBusinessIdRoute,
-  } as any)
 const privateBusinessIdConfigRoute = privateBusinessIdConfigRouteImport.update({
   id: '/config',
   path: '/config',
@@ -108,6 +104,12 @@ const privateBusinessIdGroupsIndexRoute =
     path: '/groups/',
     getParentRoute: () => privateBusinessIdRoute,
   } as any)
+const privateBusinessIdEmployeesIndexRoute =
+  privateBusinessIdEmployeesIndexRouteImport.update({
+    id: '/employees/',
+    path: '/employees/',
+    getParentRoute: () => privateBusinessIdRoute,
+  } as any)
 const privateBusinessIdGroupsCreateRoute =
   privateBusinessIdGroupsCreateRouteImport.update({
     id: '/groups/create',
@@ -118,6 +120,18 @@ const privateBusinessIdGroupsGroupidRoute =
   privateBusinessIdGroupsGroupidRouteImport.update({
     id: '/groups/$groupid',
     path: '/groups/$groupid',
+    getParentRoute: () => privateBusinessIdRoute,
+  } as any)
+const privateBusinessIdEmployeesCreateRoute =
+  privateBusinessIdEmployeesCreateRouteImport.update({
+    id: '/employees/create',
+    path: '/employees/create',
+    getParentRoute: () => privateBusinessIdRoute,
+  } as any)
+const privateBusinessIdEmployeesEmployeeidRoute =
+  privateBusinessIdEmployeesEmployeeidRouteImport.update({
+    id: '/employees/$employeeid',
+    path: '/employees/$employeeid',
     getParentRoute: () => privateBusinessIdRoute,
   } as any)
 
@@ -131,13 +145,15 @@ export interface FileRoutesByFullPath {
   '/auth/employee/sign-in': typeof AuthEmployeeSignInRoute
   '/business/$id/clients': typeof privateBusinessIdClientsRoute
   '/business/$id/config': typeof privateBusinessIdConfigRoute
-  '/business/$id/employees': typeof privateBusinessIdEmployeesRoute
   '/business/$id/products': typeof privateBusinessIdProductsRoute
   '/business/$id/sales': typeof privateBusinessIdSalesRoute
   '/business/$id/settings': typeof privateBusinessIdSettingsRoute
   '/business/$id/': typeof privateBusinessIdIndexRoute
+  '/business/$id/employees/$employeeid': typeof privateBusinessIdEmployeesEmployeeidRoute
+  '/business/$id/employees/create': typeof privateBusinessIdEmployeesCreateRoute
   '/business/$id/groups/$groupid': typeof privateBusinessIdGroupsGroupidRoute
   '/business/$id/groups/create': typeof privateBusinessIdGroupsCreateRoute
+  '/business/$id/employees': typeof privateBusinessIdEmployeesIndexRoute
   '/business/$id/groups': typeof privateBusinessIdGroupsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -149,13 +165,15 @@ export interface FileRoutesByTo {
   '/auth/employee/sign-in': typeof AuthEmployeeSignInRoute
   '/business/$id/clients': typeof privateBusinessIdClientsRoute
   '/business/$id/config': typeof privateBusinessIdConfigRoute
-  '/business/$id/employees': typeof privateBusinessIdEmployeesRoute
   '/business/$id/products': typeof privateBusinessIdProductsRoute
   '/business/$id/sales': typeof privateBusinessIdSalesRoute
   '/business/$id/settings': typeof privateBusinessIdSettingsRoute
   '/business/$id': typeof privateBusinessIdIndexRoute
+  '/business/$id/employees/$employeeid': typeof privateBusinessIdEmployeesEmployeeidRoute
+  '/business/$id/employees/create': typeof privateBusinessIdEmployeesCreateRoute
   '/business/$id/groups/$groupid': typeof privateBusinessIdGroupsGroupidRoute
   '/business/$id/groups/create': typeof privateBusinessIdGroupsCreateRoute
+  '/business/$id/employees': typeof privateBusinessIdEmployeesIndexRoute
   '/business/$id/groups': typeof privateBusinessIdGroupsIndexRoute
 }
 export interface FileRoutesById {
@@ -169,13 +187,15 @@ export interface FileRoutesById {
   '/auth/employee/sign-in': typeof AuthEmployeeSignInRoute
   '/(private)/business/$id/clients': typeof privateBusinessIdClientsRoute
   '/(private)/business/$id/config': typeof privateBusinessIdConfigRoute
-  '/(private)/business/$id/employees': typeof privateBusinessIdEmployeesRoute
   '/(private)/business/$id/products': typeof privateBusinessIdProductsRoute
   '/(private)/business/$id/sales': typeof privateBusinessIdSalesRoute
   '/(private)/business/$id/settings': typeof privateBusinessIdSettingsRoute
   '/(private)/business/$id/': typeof privateBusinessIdIndexRoute
+  '/(private)/business/$id/employees/$employeeid': typeof privateBusinessIdEmployeesEmployeeidRoute
+  '/(private)/business/$id/employees/create': typeof privateBusinessIdEmployeesCreateRoute
   '/(private)/business/$id/groups/$groupid': typeof privateBusinessIdGroupsGroupidRoute
   '/(private)/business/$id/groups/create': typeof privateBusinessIdGroupsCreateRoute
+  '/(private)/business/$id/employees/': typeof privateBusinessIdEmployeesIndexRoute
   '/(private)/business/$id/groups/': typeof privateBusinessIdGroupsIndexRoute
 }
 export interface FileRouteTypes {
@@ -190,13 +210,15 @@ export interface FileRouteTypes {
     | '/auth/employee/sign-in'
     | '/business/$id/clients'
     | '/business/$id/config'
-    | '/business/$id/employees'
     | '/business/$id/products'
     | '/business/$id/sales'
     | '/business/$id/settings'
     | '/business/$id/'
+    | '/business/$id/employees/$employeeid'
+    | '/business/$id/employees/create'
     | '/business/$id/groups/$groupid'
     | '/business/$id/groups/create'
+    | '/business/$id/employees'
     | '/business/$id/groups'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -208,13 +230,15 @@ export interface FileRouteTypes {
     | '/auth/employee/sign-in'
     | '/business/$id/clients'
     | '/business/$id/config'
-    | '/business/$id/employees'
     | '/business/$id/products'
     | '/business/$id/sales'
     | '/business/$id/settings'
     | '/business/$id'
+    | '/business/$id/employees/$employeeid'
+    | '/business/$id/employees/create'
     | '/business/$id/groups/$groupid'
     | '/business/$id/groups/create'
+    | '/business/$id/employees'
     | '/business/$id/groups'
   id:
     | '__root__'
@@ -227,13 +251,15 @@ export interface FileRouteTypes {
     | '/auth/employee/sign-in'
     | '/(private)/business/$id/clients'
     | '/(private)/business/$id/config'
-    | '/(private)/business/$id/employees'
     | '/(private)/business/$id/products'
     | '/(private)/business/$id/sales'
     | '/(private)/business/$id/settings'
     | '/(private)/business/$id/'
+    | '/(private)/business/$id/employees/$employeeid'
+    | '/(private)/business/$id/employees/create'
     | '/(private)/business/$id/groups/$groupid'
     | '/(private)/business/$id/groups/create'
+    | '/(private)/business/$id/employees/'
     | '/(private)/business/$id/groups/'
   fileRoutesById: FileRoutesById
 }
@@ -326,13 +352,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateBusinessIdProductsRouteImport
       parentRoute: typeof privateBusinessIdRoute
     }
-    '/(private)/business/$id/employees': {
-      id: '/(private)/business/$id/employees'
-      path: '/employees'
-      fullPath: '/business/$id/employees'
-      preLoaderRoute: typeof privateBusinessIdEmployeesRouteImport
-      parentRoute: typeof privateBusinessIdRoute
-    }
     '/(private)/business/$id/config': {
       id: '/(private)/business/$id/config'
       path: '/config'
@@ -354,6 +373,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateBusinessIdGroupsIndexRouteImport
       parentRoute: typeof privateBusinessIdRoute
     }
+    '/(private)/business/$id/employees/': {
+      id: '/(private)/business/$id/employees/'
+      path: '/employees'
+      fullPath: '/business/$id/employees'
+      preLoaderRoute: typeof privateBusinessIdEmployeesIndexRouteImport
+      parentRoute: typeof privateBusinessIdRoute
+    }
     '/(private)/business/$id/groups/create': {
       id: '/(private)/business/$id/groups/create'
       path: '/groups/create'
@@ -368,32 +394,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateBusinessIdGroupsGroupidRouteImport
       parentRoute: typeof privateBusinessIdRoute
     }
+    '/(private)/business/$id/employees/create': {
+      id: '/(private)/business/$id/employees/create'
+      path: '/employees/create'
+      fullPath: '/business/$id/employees/create'
+      preLoaderRoute: typeof privateBusinessIdEmployeesCreateRouteImport
+      parentRoute: typeof privateBusinessIdRoute
+    }
+    '/(private)/business/$id/employees/$employeeid': {
+      id: '/(private)/business/$id/employees/$employeeid'
+      path: '/employees/$employeeid'
+      fullPath: '/business/$id/employees/$employeeid'
+      preLoaderRoute: typeof privateBusinessIdEmployeesEmployeeidRouteImport
+      parentRoute: typeof privateBusinessIdRoute
+    }
   }
 }
 
 interface privateBusinessIdRouteChildren {
   privateBusinessIdClientsRoute: typeof privateBusinessIdClientsRoute
   privateBusinessIdConfigRoute: typeof privateBusinessIdConfigRoute
-  privateBusinessIdEmployeesRoute: typeof privateBusinessIdEmployeesRoute
   privateBusinessIdProductsRoute: typeof privateBusinessIdProductsRoute
   privateBusinessIdSalesRoute: typeof privateBusinessIdSalesRoute
   privateBusinessIdSettingsRoute: typeof privateBusinessIdSettingsRoute
   privateBusinessIdIndexRoute: typeof privateBusinessIdIndexRoute
+  privateBusinessIdEmployeesEmployeeidRoute: typeof privateBusinessIdEmployeesEmployeeidRoute
+  privateBusinessIdEmployeesCreateRoute: typeof privateBusinessIdEmployeesCreateRoute
   privateBusinessIdGroupsGroupidRoute: typeof privateBusinessIdGroupsGroupidRoute
   privateBusinessIdGroupsCreateRoute: typeof privateBusinessIdGroupsCreateRoute
+  privateBusinessIdEmployeesIndexRoute: typeof privateBusinessIdEmployeesIndexRoute
   privateBusinessIdGroupsIndexRoute: typeof privateBusinessIdGroupsIndexRoute
 }
 
 const privateBusinessIdRouteChildren: privateBusinessIdRouteChildren = {
   privateBusinessIdClientsRoute: privateBusinessIdClientsRoute,
   privateBusinessIdConfigRoute: privateBusinessIdConfigRoute,
-  privateBusinessIdEmployeesRoute: privateBusinessIdEmployeesRoute,
   privateBusinessIdProductsRoute: privateBusinessIdProductsRoute,
   privateBusinessIdSalesRoute: privateBusinessIdSalesRoute,
   privateBusinessIdSettingsRoute: privateBusinessIdSettingsRoute,
   privateBusinessIdIndexRoute: privateBusinessIdIndexRoute,
+  privateBusinessIdEmployeesEmployeeidRoute:
+    privateBusinessIdEmployeesEmployeeidRoute,
+  privateBusinessIdEmployeesCreateRoute: privateBusinessIdEmployeesCreateRoute,
   privateBusinessIdGroupsGroupidRoute: privateBusinessIdGroupsGroupidRoute,
   privateBusinessIdGroupsCreateRoute: privateBusinessIdGroupsCreateRoute,
+  privateBusinessIdEmployeesIndexRoute: privateBusinessIdEmployeesIndexRoute,
   privateBusinessIdGroupsIndexRoute: privateBusinessIdGroupsIndexRoute,
 }
 

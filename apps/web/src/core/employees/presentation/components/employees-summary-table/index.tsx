@@ -20,6 +20,10 @@ interface Context {
   table: RTable<UserSummary>;
 }
 
+interface ContentProps {
+  children: React.ReactNode;
+}
+
 const EmployeesTableContext = createContext<Context | null>(null);
 
 function useEmployeesTable() {
@@ -47,9 +51,13 @@ function Root({ children, data, variant = "summary" }: RootProps) {
         table,
       }}
     >
-      <Table>{children}</Table>
+      {children}
     </EmployeesTableContext.Provider>
   );
+}
+
+function Content({ children }: ContentProps) {
+  return <Table>{children}</Table>;
 }
 
 function Header() {
@@ -74,4 +82,5 @@ export const EmployeesSummaryTable = {
   Root,
   Header,
   Body,
+  Content,
 };

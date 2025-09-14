@@ -1,7 +1,7 @@
 import { PageHeader } from "@/core/shared/components/page-header";
-import { GroupsHeaderSection } from "../sections/groups-header.section";
-import { useFindOneBusiness } from "../../application/hooks/use.find-one-business";
-import { GroupsTable } from "../components/groups-table";
+import { GroupsHeaderSection } from "@/core/business/presentation/sections/groups-header.section";
+import { useFindOneBusiness } from "@/core/business/application/hooks/use.find-one-business";
+import { GroupsTable } from "@/core/business/presentation/components/groups-table";
 import { UserHasNoPermissionAlert } from "@/core/shared/components/unauthorized-alerts";
 
 interface Props {
