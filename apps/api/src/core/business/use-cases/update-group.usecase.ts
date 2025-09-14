@@ -36,7 +36,8 @@ export class UpdateGroupUseCase {
 
     if (
       data.name === currentGroup.name &&
-      data.description === currentGroup.description
+      data.description === currentGroup.description &&
+      data.permissions === currentGroup.permissions
     ) {
       return;
     }
