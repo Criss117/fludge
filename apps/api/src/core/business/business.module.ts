@@ -14,6 +14,7 @@ import { GroupsQueriesRepository } from './repositories/groups-queries.repositor
 import { CreateGroupUseCase } from './use-cases/create-group.usecase';
 import { BusinessGroupController } from './controllers/business-group.controller';
 import { FindOneGroupUseCase } from './use-cases/find-one-group.usecase';
+import { AssignEmployeesToGroupUseCase } from './use-cases/assign-employees-to-group.usecase';
 
 @Module({
   imports: [DbModule, UsersModule],
@@ -35,6 +36,7 @@ import { FindOneGroupUseCase } from './use-cases/find-one-group.usecase';
     BusinessQueriesRepository,
     GroupsCommandsRepository,
     GroupsQueriesRepository,
+    AssignEmployeesToGroupUseCase,
   ],
   exports: [FindUserIsInUseCase],
 })
