@@ -10,7 +10,7 @@ export class FindOneGroupUseCase {
   public async execute(businessId: string, groupId: string) {
     return this.groupsQueriesRepository.findOne({
       businessId,
-      id: groupId,
+      groupId,
     });
   }
 }

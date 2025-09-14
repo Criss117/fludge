@@ -1,4 +1,4 @@
 export interface FindOneGroupDto {
-  id: string;
+  groupId: string;
   businessId: string;
 }

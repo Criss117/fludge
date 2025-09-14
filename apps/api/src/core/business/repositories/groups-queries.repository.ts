@@ -1,10 +1,9 @@
-import { and, eq, or, SQL } from 'drizzle-orm';
+import { and, eq, or, sql, SQL } from 'drizzle-orm';
 import { Inject, Injectable } from '@nestjs/common';
 import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
 import { employees, groups, users } from '@repo/db';
 import type { FindManyGroupsByDto } from './dtos/find-many-groups-by.dto';
 import type { FindOneGroupDto } from './dtos/find-one-group.dto';
-import { getTableColumns } from 'drizzle-orm';
 import { GroupDetail } from '@repo/core/entities/group';
 
 type Options = {
@@ -25,39 +24,45 @@ export class GroupsQueriesRepository {
       optionsFilters.push(eq(groups.isActive, true));
     }
 
-    const groupRes = await this.db
+    const employessListPromise = this.db
       .select({
-        ...getTableColumns(groups),
-        user: {
-          id: users.id,
-          firstName: users.firstName,
-          lastName: users.lastName,
-          username: users.username,
-          email: users.email,
-          createdAt: users.createdAt,
-        },
+        id: users.id,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        username: users.username,
+        email: users.email,
+        createdAt: users.createdAt,
       })
-      .from(groups)
-      .leftJoin(users, eq(users.id, employees.userId))
+      .from(employees)
+      .innerJoin(users, eq(users.id, employees.userId))
       .where(
         and(
-          eq(groups.id, meta.id),
+          sql`EXISTS (
+              SELECT 1 FROM JSON_EACH(${employees.groupIds}) 
+              WHERE JSON_EACH.value = ${meta.groupId}
+            )`,
+          eq(employees.businessId, meta.businessId),
+          ...optionsFilters,
+        ),
+      );
+
+    const groupPromise = this.db
+      .select()
+      .from(groups)
+      .where(
+        and(
+          eq(groups.id, meta.groupId),
           eq(groups.businessId, meta.businessId),
           ...optionsFilters,
         ),
       );
 
-    if (!groupRes.length) return null;
+    const [[group], employessList] = await Promise.all([
+      groupPromise,
+      employessListPromise,
+    ]);
 
-    const usersList: GroupDetail['users'] = [];
-
-    for (const group of groupRes) {
-      if (!group.user) continue;
-
-      usersList.push(group.user);
-    }
-
-    const group = groupRes[0];
+    if (!group) return null;
 
     return {
       createdAt: group.createdAt,
@@ -67,7 +72,7 @@ export class GroupsQueriesRepository {
       permissions: group.permissions,
       isActive: group.isActive,
       updatedAt: group.updatedAt,
-      users: usersList,
+      users: employessList,
     };
   }
 
