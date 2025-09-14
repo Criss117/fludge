@@ -1,7 +1,6 @@
+import { v4 } from "uuid";
 import { text } from "drizzle-orm/sqlite-core";
 import { sqliteTable } from "drizzle-orm/sqlite-core";
-import { blob } from "drizzle-orm/sqlite-core";
-import { v4 } from "uuid";
 import type { Permission } from "@repo/core/value-objects/permission";
 
 import { auditMetadata } from "../helpers/audit-metadata";
@@ -17,7 +16,7 @@ export const groups = sqliteTable("groups", {
   description: text("description", {
     length: 255,
   }),
-  permissions: blob("permissions", {
+  permissions: text("permissions", {
     mode: "json",
   })
     .notNull()

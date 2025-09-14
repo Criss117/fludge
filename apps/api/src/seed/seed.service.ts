@@ -55,6 +55,7 @@ export class SeedService {
       insertedBusiness,
       groupsPerBusiness,
     );
+
     const insertedEmployees = await this.insertEmployees(
       insertedGroups,
       noRootUsers,
@@ -202,7 +203,7 @@ export class SeedService {
 
       return {
         businessId: business.id,
-        groupId: group.id,
+        groupIds: [group.id],
         userId: insertedNoRootUsers[i].id,
       };
     });

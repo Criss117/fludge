@@ -39,7 +39,7 @@ export const API_ENDPOINTS = {
       CREATE: (businessId: string) =>
         `/business/${businessId}/groups` as `/business/${string}/groups`,
       ASSIGN_EMPLOYEES: (businessId: string, groupId: string) =>
-        `/business/${businessId}/groups/${groupId}/assign-employees` as `/business/${string}/groups/${string}/assign-employees`,
+        `/business/${businessId}/groups/${groupId}/employees` as `/business/${string}/groups/${string}/employees`,
     },
   },
 } as const;

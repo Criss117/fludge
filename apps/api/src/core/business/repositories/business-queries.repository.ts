@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, eq, or, SQL } from 'drizzle-orm';
+import { and, eq, inArray, or, SQL } from 'drizzle-orm';
 import { business, employees, groups, users } from '@repo/db';
 import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
 import { FindManyBusinessByDto } from './dtos/find-many-business-by.dto';
 import type { BusinessDetail } from '@repo/core/entities/business';
+import { LogedUser } from '@repo/core/entities/user';
 
 type Options = {
   ensureActive?: boolean;
@@ -95,14 +96,20 @@ export class BusinessQueriesRepository {
     };
   }
 
-  public async findUserIsIn(userId: string, options?: Options) {
+  public async findUserIsIn(
+    userId: string,
+    options?: Options,
+  ): Promise<{
+    isEmployeeIn: LogedUser['isEmployeeIn'];
+    isRootIn: LogedUser['isRootIn'];
+  }> {
     const optionsFilters: SQL[] = [];
 
     if (options?.ensureActive) {
       optionsFilters.push(eq(business.isActive, true));
     }
 
-    const rootInPromise = this.db
+    const isRootIn = await this.db
       .select({
         id: business.id,
         name: business.name,
@@ -111,44 +118,60 @@ export class BusinessQueriesRepository {
       .from(business)
       .where(and(eq(business.rootUserId, userId), ...optionsFilters));
 
-    const employeeInPromise = this.db
+    if (isRootIn.length) {
+      return {
+        isEmployeeIn: [],
+        isRootIn,
+      };
+    }
+
+    const employeeInfo = await this.db
       .select({
-        id: business.id,
+        id: employees.businessId,
         name: business.name,
         nit: business.nit,
-        permissions: groups.permissions,
+        groupIds: employees.groupIds,
       })
       .from(employees)
-      .innerJoin(business, eq(business.id, employees.businessId))
-      .innerJoin(groups, eq(groups.id, employees.groupId))
+      .innerJoin(business, eq(employees.businessId, business.id))
       .where(and(eq(employees.userId, userId), ...optionsFilters));
 
-    const [isRootIn, isEmployeeIn] = await Promise.all([
-      rootInPromise,
-      employeeInPromise,
-    ]);
+    if (!employeeInfo.length) {
+      return {
+        isEmployeeIn: [],
+        isRootIn: [],
+      };
+    }
 
-    const isEmployeeInMerge = isEmployeeIn.reduce(
-      (acc, item) => {
-        if (acc[item.id]) {
-          const combinedPermissions = new Set([
-            ...acc[item.id].permissions,
-            ...item.permissions,
-          ]);
-
-          acc[item.id].permissions = Array.from(combinedPermissions);
-          return acc;
-        }
-
-        acc[item.id] = item;
-        return acc;
-      },
-      {} as Record<string, (typeof isEmployeeIn)[number]>,
+    const employeeGroupsPromises = employeeInfo.map(({ groupIds }) =>
+      this.db
+        .select({
+          id: groups.id,
+          name: groups.name,
+          permissions: groups.permissions,
+        })
+        .from(groups)
+        .where(inArray(groups.id, groupIds)),
     );
 
+    const [employeeGroups] = await Promise.all(employeeGroupsPromises);
+
+    const isEmployeeIn = employeeInfo.map((info) => {
+      const permissions = employeeGroups
+        .filter((e) => info.groupIds.includes(e.id))
+        .flatMap((e) => e.permissions);
+
+      return {
+        id: info.id,
+        name: info.name,
+        nit: info.nit,
+        permissions: Array.from(new Set(permissions)),
+      };
+    });
+
     return {
-      isRootIn,
-      isEmployeeIn: Object.values(isEmployeeInMerge),
+      isEmployeeIn,
+      isRootIn: [],
     };
   }
 }

@@ -2,6 +2,7 @@ import { Permissions } from '@core/auth/decorators/permissions.decorator';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   InternalServerErrorException,
@@ -58,9 +59,35 @@ export class BusinessGroupController {
     }
   }
 
-  @Post(':id/groups/:groupId/assign-employees')
+  @Post(':id/groups/:groupId/employees')
   @Permissions('groups:read', 'groups:update')
   public async assignEmployees(
+    @Param('id') businessId: string,
+    @Param('groupId') groupId: string,
+    @Body() data: AssignEmployeesToGroupDto,
+  ) {
+    try {
+      return HTTPResponse.ok(
+        await this.assignEmployeesToGroupUseCase.execute(
+          businessId,
+          groupId,
+          data,
+        ),
+      );
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException('Something went grong');
+    }
+  }
+
+  @Delete(':id/groups/:groupId/employees')
+  @Permissions('groups:read', 'groups:update')
+  public async deleteEmployees(
     @Param('id') businessId: string,
     @Param('groupId') groupId: string,
     @Body() data: AssignEmployeesToGroupDto,

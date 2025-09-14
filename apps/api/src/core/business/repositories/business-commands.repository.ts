@@ -71,7 +71,7 @@ export class BusinessCommandsRepository {
     await db.insert(employees).values({
       businessId,
       userId,
-      groupId,
+      groupIds: [groupId],
     });
   }
 }

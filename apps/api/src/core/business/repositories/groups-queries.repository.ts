@@ -38,7 +38,6 @@ export class GroupsQueriesRepository {
         },
       })
       .from(groups)
-      .leftJoin(employees, eq(employees.groupId, groups.id))
       .leftJoin(users, eq(users.id, employees.userId))
       .where(
         and(
