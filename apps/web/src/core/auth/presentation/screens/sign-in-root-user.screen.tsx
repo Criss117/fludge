@@ -32,9 +32,13 @@ export function SignInRootUserScreen() {
             </fieldset>
           </SignInRootUserForm.Root>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex justify-between">
           <Button asChild variant="link">
             <Link to="/auth/employee/sign-in">Inicia Sesión como Empleado</Link>
+          </Button>
+
+          <Button asChild variant="link">
+            <Link to="/auth/sign-up">No tienes una cuenta? Crea una</Link>
           </Button>
         </CardFooter>
       </Card>

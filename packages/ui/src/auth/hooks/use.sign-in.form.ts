@@ -5,7 +5,7 @@ import { signInDto, type SignInDto } from "../dtos/sign-in.dto";
 export function useSignInForm() {
   const form = useForm<SignInDto>({
     defaultValues: {
-      email: "",
+      email: "cristian@fludge.dev",
       password: "holiwis",
     },
     resolver: zodResolver(signInDto),

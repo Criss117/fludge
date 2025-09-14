@@ -8,8 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 export function useCreateRootUserForm() {
   const form = useForm<CreateRootUserDto>({
     defaultValues: {
-      email: "criscvc12@gmail.com",
-      password: "holiwiss",
+      email: "cristian@fludge.dev",
+      password: "holiwis",
       username: "criscvc",
       firstName: "cristian",
       lastName: "viveros",

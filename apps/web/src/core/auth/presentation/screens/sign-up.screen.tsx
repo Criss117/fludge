@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/core/shared/components/ui/card";
 import { SignUpForm } from "../components/sign-up-form";
+import { Link } from "@tanstack/react-router";
 
 export function SignUpScreen() {
   return (
@@ -42,18 +43,12 @@ export function SignUpScreen() {
           </SignUpForm.Root>
 
           <article className="flex justify-between">
-            <p className="text-sm text-muted-foreground">
-              Ya tienes una cuenta?
-              <Button asChild variant="link">
-                <a href="/auth/sign-in">Inicia sesión</a>
-              </Button>
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Olvidaste tu contraseña?{" "}
-              <Button asChild variant="link">
-                <a href="/auth/forgot-password">Recuperar</a>
-              </Button>
-            </p>
+            <Button asChild variant="link">
+              <Link to="/auth/sign-in">Ya tienes una cuenta?</Link>
+            </Button>
+            <Button asChild variant="link">
+              <a href="/auth/forgot-password">Olvidaste tu contraseña?</a>
+            </Button>
           </article>
         </CardContent>
       </Card>

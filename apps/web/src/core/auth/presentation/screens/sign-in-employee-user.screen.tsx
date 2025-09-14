@@ -36,6 +36,10 @@ export function SignInEMployeeUserScreen() {
           <Button asChild variant="link">
             <Link to="/auth/sign-in">Inicia Sesión como usuario root</Link>
           </Button>
+
+          <Button asChild variant="link">
+            <Link to="/auth/sign-up">No tienes una cuenta? Crea una</Link>
+          </Button>
         </CardFooter>
       </Card>
     </section>

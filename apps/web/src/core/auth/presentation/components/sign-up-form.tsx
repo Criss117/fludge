@@ -1,4 +1,5 @@
 import { createContext, use } from "react";
+import { useRouter } from "@tanstack/react-router";
 import {
   useCreateRootUserForm,
   type FormType,
@@ -30,6 +31,7 @@ function useSignUp() {
 
 function Root({ children }: RootProps) {
   const form = useCreateRootUserForm();
+  const router = useRouter();
 
   const onSubmit = form.handleSubmit(async (data) => {
     const res = await signUpRootUserAction(data);
@@ -39,6 +41,10 @@ function Root({ children }: RootProps) {
         message: res.message,
       });
     }
+
+    router.navigate({
+      to: "/auth/sign-in",
+    });
   });
 
   return (
