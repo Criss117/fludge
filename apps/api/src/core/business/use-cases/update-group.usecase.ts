@@ -17,6 +17,10 @@ export class UpdateGroupUseCase {
     groupId: string,
     data: UpdateGroupDto,
   ) {
+    if (!data.name && !data.description && !data.permissions) {
+      return;
+    }
+
     const existingGroupsInBusiness =
       await this.groupsQueriesRepository.findManyBy({
         businessId,
@@ -54,9 +58,9 @@ export class UpdateGroupUseCase {
     await this.groupsCommandsRepository.save({
       id: groupId,
       businessId,
-      name: data.name,
-      description: data.description,
-      permissions: currentGroup.permissions,
+      name: data.name ?? currentGroup.name,
+      description: data.description ?? currentGroup.description,
+      permissions: data.permissions ?? currentGroup.permissions,
       updatedAt: new Date(),
     });
   }
