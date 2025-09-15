@@ -6,11 +6,27 @@ import { assignEmployeesToGroupAction } from "../actions/assign-employees-to-gro
 import { findOneGroupQueryOptions } from "./use.find-one-group";
 import { updateGroupAction } from "../actions/update-group.action";
 
+type CreateData = Parameters<typeof createGroupAction>[number];
+type AssignEmployeesData = Parameters<
+  typeof assignEmployeesToGroupAction
+>[number];
+type UpdateData = Parameters<typeof updateGroupAction>[number];
+
 export function useMutateGroups() {
   const queryClient = useQueryClient();
 
   const create = useMutation({
-    mutationFn: createGroupAction,
+    mutationFn: async (data: CreateData) => {
+      const res = await createGroupAction(data);
+
+      if (res.error) {
+        throw new Error(res.message, {
+          cause: res.message,
+        });
+      }
+
+      return res;
+    },
     onMutate: () => {
       toast.loading("Creando grupo", {
         id: "toast-loading-create-business",
@@ -36,7 +52,17 @@ export function useMutateGroups() {
   });
 
   const assignEmployees = useMutation({
-    mutationFn: assignEmployeesToGroupAction,
+    mutationFn: async (data: AssignEmployeesData) => {
+      const res = await assignEmployeesToGroupAction(data);
+
+      if (res.error) {
+        throw new Error(res.message, {
+          cause: res.message,
+        });
+      }
+
+      return res;
+    },
     onMutate: () => {
       toast.loading("Asignando empleados a grupo", {
         id: "toast-loading-assign-employees-to-group",
@@ -66,7 +92,17 @@ export function useMutateGroups() {
   });
 
   const update = useMutation({
-    mutationFn: updateGroupAction,
+    mutationFn: async (data: UpdateData) => {
+      const res = await updateGroupAction(data);
+
+      if (res.error) {
+        throw new Error(res.message, {
+          cause: res.message,
+        });
+      }
+
+      return res;
+    },
     onMutate: () => {
       toast.loading("Actualizando grupo", {
         id: "toast-loading-update-group",

@@ -5,7 +5,9 @@ import type { CommonResponse } from "@repo/ui/utils/reponse";
 
 type Data = CreateGroupDto & { businessId: string };
 
-export async function createGroupAction(data: Data) {
+export async function createGroupAction(
+  data: Data
+): Promise<CommonResponse<null>> {
   const { businessId, ...rest } = data;
 
   try {
@@ -21,6 +23,7 @@ export async function createGroupAction(data: Data) {
     }
 
     return {
+      data: null,
       message: "Error al registrar un grupo",
       statusCode: 500,
       error: "Error al registrar un grupo",

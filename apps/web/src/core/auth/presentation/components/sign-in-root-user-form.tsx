@@ -7,8 +7,8 @@ import {
 import { InputForm } from "@/core/shared/components/form/input-form";
 import { Form } from "@/core/shared/components/ui/form";
 import { Button } from "@/core/shared/components/ui/button";
-import { signInRootUserAction } from "@/core/auth/application/actions/sign-in-root-user.action";
 import { useAuth } from "@/core/auth/application/providers/auth.provider";
+import { useSignInRootUser } from "@/core/auth/application/hooks/use.sign-in-root-user";
 
 interface RootProps {
   children: React.ReactNode;
@@ -31,25 +31,22 @@ function useSignInContext() {
 }
 
 function Root({ children }: RootProps) {
+  const { mutateAsync } = useSignInRootUser();
+  const { signIn } = useAuth();
   const form = useSignInForm();
   const router = useRouter();
-  const { signIn } = useAuth();
 
   const onSubmit = form.handleSubmit(async (data) => {
-    const res = await signInRootUserAction(data);
+    const res = await mutateAsync(data, {
+      onError: (err: Error) => {
+        form.setError("root", {
+          message: err.cause as string,
+        });
+      },
+    });
 
-    if (res.error) {
-      form.setError("root", {
-        message: res.message,
-      });
-
-      return;
-    }
-
-    if (!res.data) {
-      form.setError("root", {
-        message: "Error al iniciar sesión",
-      });
+    if (!res.data || res.error) {
+      form.setError("root", { message: res.message });
 
       return;
     }

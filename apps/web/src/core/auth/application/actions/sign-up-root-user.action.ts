@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import api, { API_ENDPOINTS } from "@/core/shared/lib/api";
 import type { CommonResponse } from "@repo/ui/utils/reponse";
-import type { CreateRootUserDto } from "@repo/ui/auth/hooks/use.create-root-user.form";
+import type { CreateRootUserDto } from "@repo/ui/auth/dtos/create-root-user.dto";
 
 export async function signUpRootUserAction(
   data: CreateRootUserDto
@@ -18,6 +18,7 @@ export async function signUpRootUserAction(
     }
 
     return {
+      data: null,
       message: "Error al crear usuario",
       statusCode: 500,
       error: "Error al crear usuario",
