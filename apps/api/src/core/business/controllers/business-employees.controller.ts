@@ -6,23 +6,23 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { AssignEmployeeUseCase } from '../use-cases/assign-employee.usecase';
 import { Permissions } from '@core/auth/decorators/permissions.decorator';
 import { CreateEmployeeDto } from '@core/users/dtos/create-employee.dto';
 import { HTTPResponse } from 'src/shared/http/response';
+import { CreateEmployeeUseCase } from '../use-cases/create-employee.usecase';
 
 @Controller('business')
 export class BusinessEmployeesController {
-  constructor(private readonly assignEmployeeUseCase: AssignEmployeeUseCase) {}
+  constructor(private readonly createEmployeeUseCase: CreateEmployeeUseCase) {}
 
   @Post(':id/employees')
   @Permissions('users:create')
   public async createEmployee(
-    @Param('id') id: string,
+    @Param('id') businessId: string,
     @Body() data: CreateEmployeeDto,
   ) {
     try {
-      await this.assignEmployeeUseCase.execute(data, id);
+      await this.createEmployeeUseCase.execute(businessId, data);
 
       return HTTPResponse.created(null);
     } catch (error) {

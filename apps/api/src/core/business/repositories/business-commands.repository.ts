@@ -63,7 +63,7 @@ export class BusinessCommandsRepository {
   public async assignEmployee(
     businessId: string,
     userId: string,
-    groupId: string,
+    groupIds: string[],
     options?: Options,
   ) {
     const db = options?.tx ?? this.db;
@@ -71,7 +71,7 @@ export class BusinessCommandsRepository {
     await db.insert(employees).values({
       businessId,
       userId,
-      groupIds: [groupId],
+      groupIds,
     });
   }
 }

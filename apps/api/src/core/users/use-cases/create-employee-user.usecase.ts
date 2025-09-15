@@ -11,7 +11,7 @@ type Options = {
 };
 
 @Injectable()
-export class CreateEmployeeUseCase {
+export class CreateEmployeeUserUseCase {
   constructor(
     private readonly usersQueriesRepository: UsersQueriesRepository,
     private readonly usersCommandsRepository: UsersCommandsRepository,
@@ -30,7 +30,9 @@ export class CreateEmployeeUseCase {
 
     return this.usersCommandsRepository.save(
       {
-        ...data,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        username: data.username,
         password: hashedPassword,
         isRoot: false,
       },

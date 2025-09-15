@@ -1,4 +1,12 @@
-import { IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
+import {
+  ArrayMinSize,
+  ArrayNotEmpty,
+  IsArray,
+  IsString,
+  IsUUID,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class CreateEmployeeDto {
   @IsString()
@@ -40,9 +48,9 @@ export class CreateEmployeeDto {
   })
   lastName: string;
 
-  @IsUUID()
-  @IsString({
-    message: 'El grupo no puede estar vacío',
-  })
-  groupId: string;
+  @IsArray()
+  @ArrayNotEmpty({ message: 'El arreglo no puede estar vacío' })
+  @ArrayMinSize(1, { message: 'Debe tener al menos 1 UUID' })
+  @IsUUID('4', { each: true, message: 'Cada elemento debe ser un UUID válido' })
+  groupIds: string[];
 }
