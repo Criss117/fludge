@@ -18,7 +18,7 @@ export class UsersCommandsRepository {
       .values(data)
       .onConflictDoUpdate({
         target: users.id,
-        set: data,
+        set: { ...data, updatedAt: new Date() },
       })
       .returning({
         id: users.id,

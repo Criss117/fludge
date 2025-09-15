@@ -23,7 +23,7 @@ export class BusinessCommandsRepository {
         .values(data)
         .onConflictDoUpdate({
           target: business.id,
-          set: data,
+          set: { ...data, updatedAt: new Date() },
         })
         .returning({
           id: business.id,
@@ -38,7 +38,7 @@ export class BusinessCommandsRepository {
         .values(data)
         .onConflictDoUpdate({
           target: business.id,
-          set: data,
+          set: { ...data, updatedAt: new Date() },
         })
         .returning({
           id: business.id,

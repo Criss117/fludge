@@ -23,9 +23,12 @@ export class GroupsCommandsRepository {
   public async saveMany(data: InsertGroupDto[], options?: Options) {
     const db = options?.tx ?? this.db;
 
-    await db.insert(groups).values(data).onConflictDoUpdate({
-      target: groups.id,
-      set: groups,
-    });
+    await db
+      .insert(groups)
+      .values(data)
+      .onConflictDoUpdate({
+        target: groups.id,
+        set: { ...groups, updatedAt: new Date() },
+      });
   }
 }
