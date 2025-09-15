@@ -60,7 +60,7 @@ export class BusinessCommandsRepository {
     });
   }
 
-  public async assignEmployee(
+  public async assignEmployees(
     businessId: string,
     userId: string,
     groupIds: string[],

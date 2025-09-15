@@ -19,11 +19,9 @@ export class AssignEmployeesToGroupUseCase {
     data: AssignEmployeesToGroupDto,
   ) {
     const assignEmployeesPromises = data.employeeIds.map((employeeId) =>
-      this.businessCommandsRepository.assignEmployee(
-        businessId,
-        employeeId,
+      this.businessCommandsRepository.assignEmployees(businessId, employeeId, [
         groupId,
-      ),
+      ]),
     );
 
     await Promise.all(assignEmployeesPromises);
