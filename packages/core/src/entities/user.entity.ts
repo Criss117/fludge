@@ -1,5 +1,7 @@
-import { Permission } from "../value-objects/permission.vo";
-import { AuditMetadata } from "./audit-metadata";
+import type { Permission } from "../value-objects/permission.vo";
+import type { AuditMetadata } from "./audit-metadata";
+import type { BusinessSummary } from "./business.entity";
+import type { GroupSummary } from "./group.entity";
 
 export interface UserDetail extends AuditMetadata {
   id: string;
@@ -33,4 +35,9 @@ export interface LogedUser extends Omit<UserDetail, "password"> {
     name: string;
     nit: string;
   }[];
+}
+
+export interface EmployeeDetail extends Omit<UserDetail, "password"> {
+  employeeIn: string;
+  groups: GroupSummary[];
 }

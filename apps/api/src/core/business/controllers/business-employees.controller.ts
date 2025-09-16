@@ -41,7 +41,7 @@ export class BusinessEmployeesController {
 
   @Get(':id/employees/:employeeId')
   @Permissions('users:read')
-  public async getEmployees(
+  public async findOneEmployee(
     @Param('id') businessId: string,
     @Param('employeeId') employeeId: string,
   ) {

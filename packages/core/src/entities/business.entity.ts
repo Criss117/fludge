@@ -13,3 +13,10 @@ export interface BusinessDetail extends AuditMetadata {
   groups: GroupSummary[];
   employees: UserSummary[];
 }
+
+export interface BusinessSummary {
+  id: string;
+  name: string;
+  nit: string;
+  createdAt: Date;
+}
