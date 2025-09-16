@@ -2,7 +2,7 @@ import { FindOneUserByUseCase } from '@core/users/use-cases/find-one-user-by.use
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { comparePasswords } from 'src/shared/utils/passwords.utils';
-import { BadCredentialsExeption } from '../exeptions/unauthorized.exeptions';
+import { BadCredentialsException } from '../exceptions/unauthorized.exception';
 import { SignInEmployeeDto } from '../dtos/sign-in.dto';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class SignInEmployeeUseCase {
     );
 
     if (!resultOfComparison) {
-      throw new BadCredentialsExeption();
+      throw new BadCredentialsException();
     }
 
     const jwt = this.jwtService.sign({

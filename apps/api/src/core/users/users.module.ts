@@ -5,6 +5,7 @@ import { UsersCommandsRepository } from './repositories/users-commands.repositor
 import { UsersQueriesRepository } from './repositories/users-queries.repository';
 import { FindOneUserByUseCase } from './use-cases/find-one-user-by.usecase';
 import { CreateEmployeeUserUseCase } from './use-cases/create-employee-user.usecase';
+import { FindOneEmployeeUseCase } from './use-cases/find-one-employee.usecase';
 
 @Module({
   imports: [DbModule],
@@ -12,6 +13,8 @@ import { CreateEmployeeUserUseCase } from './use-cases/create-employee-user.usec
     FindOneUserByUseCase,
     CreateRootUserUseCase,
     CreateEmployeeUserUseCase,
+    FindOneEmployeeUseCase,
+
     UsersCommandsRepository,
     UsersQueriesRepository,
   ],
@@ -19,6 +22,7 @@ import { CreateEmployeeUserUseCase } from './use-cases/create-employee-user.usec
     CreateRootUserUseCase,
     FindOneUserByUseCase,
     CreateEmployeeUserUseCase,
+    FindOneEmployeeUseCase,
   ],
 })
 export class UsersModule {}

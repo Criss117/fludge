@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BusinessQueriesRepository } from '../repositories/business-queries.repository';
-import { UserCanNotAccessException } from '../exeptions/user-cannot-access.exeption';
+import { UserCanNotAccessException } from '../exceptions/user-cannot-access.exception';
 import type { BusinessDetail } from '@repo/core/entities/business';
 
 @Injectable()

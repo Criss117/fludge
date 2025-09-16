@@ -4,7 +4,7 @@ import { business, employees, groups, users } from '@repo/db';
 import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
 import { FindManyBusinessByDto } from './dtos/find-many-business-by.dto';
 import type { BusinessDetail } from '@repo/core/entities/business';
-import { LogedUser } from '@repo/core/entities/user';
+import type { LogedUser } from '@repo/core/entities/user';
 
 type Options = {
   ensureActive?: boolean;

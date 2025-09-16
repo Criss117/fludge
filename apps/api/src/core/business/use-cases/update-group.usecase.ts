@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GroupsQueriesRepository } from '../repositories/groups-queries.repository';
 import { UpdateGroupDto } from '../dtos/update-group.dto';
-import { GroupAlreadyExistsException } from '../exeptions/group-already-exists.exeption';
+import { GroupAlreadyExistsException } from '../exceptions/group-already-exists.exception';
 import { GroupsCommandsRepository } from '../repositories/groups-commands.repository';
 import { GroupSummary } from '@repo/core/entities/group';
 

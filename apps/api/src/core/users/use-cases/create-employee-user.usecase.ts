@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UsersQueriesRepository } from '../repositories/users-queries.repository';
 import { UsersCommandsRepository } from '../repositories/users-commands.repository';
 import { CreateEmployeeDto } from '../dtos/create-employee.dto';
-import { UserAlreadyExistsExeption } from '../exeptions/user-already-exists.exeption';
+import { UserAlreadyExistsException } from '../exceptions/user-already-exists.exception';
 import { hashPassword } from 'src/shared/utils/passwords.utils';
 import type { TX } from '@core/db/db.module';
 
@@ -23,7 +23,7 @@ export class CreateEmployeeUserUseCase {
     });
 
     if (existingUsers.length > 0) {
-      throw new UserAlreadyExistsExeption();
+      throw new UserAlreadyExistsException();
     }
 
     const hashedPassword = await hashPassword(data.password);

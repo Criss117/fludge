@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UsersQueriesRepository } from '../repositories/users-queries.repository';
 import { FindManyUsersByDto } from '../repositories/dtos/find-many-users-by.dto';
-import { UserNotFoundExeption } from '../exeptions/user-not-found.exeption';
+import { UserNotFoundException } from '../exceptions/user-not-found.exception';
 
 @Injectable()
 export class FindOneUserByUseCase {
@@ -15,7 +15,7 @@ export class FindOneUserByUseCase {
     });
 
     if (!user) {
-      throw new UserNotFoundExeption();
+      throw new UserNotFoundException();
     }
 
     return user;

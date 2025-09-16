@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { BusinessCommandsRepository } from '../repositories/business-commands.repository';
 import { BusinessQueriesRepository } from '../repositories/business-queries.repository';
 import { CreateBusinessDto } from '../dtos/create-business.dto';
-import { BusinessAlreadyExistsException } from '../exeptions/business-already-exists.exeption';
+import { BusinessAlreadyExistsException } from '../exceptions/business-already-exists.exception';
 import { allPermissions } from '@repo/core/value-objects/permission';
 
 @Injectable()

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateRootUserDto } from '../dtos/create-root-user.dto';
 import { UsersCommandsRepository } from '../repositories/users-commands.repository';
 import { UsersQueriesRepository } from '../repositories/users-queries.repository';
-import { UserAlreadyExistsExeption } from '../exeptions/user-already-exists.exeption';
+import { UserAlreadyExistsException } from '../exceptions/user-already-exists.exception';
 import { hashPassword } from 'src/shared/utils/passwords.utils';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class CreateRootUserUseCase {
     );
 
     if (existingUsers.length > 0) {
-      throw new UserAlreadyExistsExeption();
+      throw new UserAlreadyExistsException();
     }
 
     const passwordHashed = await hashPassword(data.password);

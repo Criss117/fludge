@@ -3,7 +3,7 @@ import { CreateEmployeeDto } from '@core/users/dtos/create-employee.dto';
 import { CreateEmployeeUserUseCase } from '@core/users/use-cases/create-employee-user.usecase';
 import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
 import { BusinessQueriesRepository } from '../repositories/business-queries.repository';
-import { BusinessNotFoundException } from '../exeptions/business-no-exists.exeption';
+import { BusinessNotFoundException } from '../exceptions/business-no-exists.exception';
 import { EmployeesQueriesRepository } from '../repositories/employees-queries.repository';
 
 @Injectable()
