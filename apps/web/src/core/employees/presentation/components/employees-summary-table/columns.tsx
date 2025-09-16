@@ -3,6 +3,8 @@ import { es } from "date-fns/locale";
 import { formatDistanceToNow } from "date-fns";
 import { Checkbox } from "@/core/shared/components/ui/checkbox";
 import type { UserSummary } from "@repo/core/entities/user";
+import { Button } from "@/core/shared/components/ui/button";
+import { Link } from "@tanstack/react-router";
 
 const columnHelper = createColumnHelper<UserSummary>();
 
@@ -17,7 +19,7 @@ export const columns = [
   }),
 ];
 
-export const completeColumns = [
+export const completeColumns = (businessId: string) => [
   columnHelper.display({
     id: "select",
     header: ({ table }) => (
@@ -41,6 +43,19 @@ export const completeColumns = [
   columnHelper.accessor((row) => `${row.firstName} ${row.lastName}`, {
     id: "fullName",
     header: "Nombre completo",
+    cell: ({ row }) => (
+      <Button asChild variant="link">
+        <Link
+          to="/business/$id/employees/$employeeid"
+          params={{
+            id: businessId,
+            employeeid: row.original.id,
+          }}
+        >
+          {row.original.firstName} {row.original.lastName}
+        </Link>
+      </Button>
+    ),
   }),
   columnHelper.accessor("username", {
     header: "Nombre de usuario",

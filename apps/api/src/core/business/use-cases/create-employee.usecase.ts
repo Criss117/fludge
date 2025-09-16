@@ -25,12 +25,6 @@ export class CreateEmployeeUseCase {
       throw new BusinessNotFoundException();
     }
 
-    if (data.groupIds.length === 0) {
-      await this.createEmployeeUserUseCase.execute(data);
-
-      return;
-    }
-
     await this.db.transaction(async (tx) => {
       const newUser = await this.createEmployeeUserUseCase.execute(data, {
         tx,

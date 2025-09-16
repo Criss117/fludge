@@ -12,7 +12,11 @@ export function EmployeesScreen({ businessId }: Props) {
 
   return (
     <section className="mx-2 space-y-4">
-      <EmployeesSummaryTable.Root data={business.employees} variant="detail">
+      <EmployeesSummaryTable.Root
+        data={business.employees}
+        variant="detail"
+        businessId={businessId}
+      >
         <PageHeader title="Empleados" />
         <div className="mx-4">
           <EmployeesHeaderSection

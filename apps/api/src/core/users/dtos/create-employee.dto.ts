@@ -1,6 +1,4 @@
 import {
-  ArrayMinSize,
-  ArrayNotEmpty,
   IsArray,
   IsString,
   IsUUID,
@@ -49,8 +47,6 @@ export class CreateEmployeeDto {
   lastName: string;
 
   @IsArray()
-  @ArrayNotEmpty({ message: 'El arreglo no puede estar vacío' })
-  @ArrayMinSize(1, { message: 'Debe tener al menos 1 UUID' })
   @IsUUID('4', { each: true, message: 'Cada elemento debe ser un UUID válido' })
   groupIds: string[];
 }

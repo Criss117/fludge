@@ -23,7 +23,10 @@ export function HomeDataTablesSection({ business }: Props) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <EmployeesSummaryTable.Root data={business.employees}>
+          <EmployeesSummaryTable.Root
+            data={business.employees}
+            businessId={business.id}
+          >
             <EmployeesSummaryTable.Content>
               <EmployeesSummaryTable.Header />
               <EmployeesSummaryTable.Body />

@@ -14,6 +14,7 @@ interface RootProps {
   children: React.ReactNode;
   data: UserSummary[];
   variant?: "detail" | "summary";
+  businessId: string;
 }
 
 interface Context {
@@ -38,9 +39,9 @@ function useEmployeesTable() {
   return context;
 }
 
-function Root({ children, data, variant = "summary" }: RootProps) {
+function Root({ children, data, variant = "summary", businessId }: RootProps) {
   const table = useReactTable({
-    columns: variant === "detail" ? completeColumns : columns,
+    columns: variant === "detail" ? completeColumns(businessId) : columns,
     data,
     getCoreRowModel: getCoreRowModel(),
   });

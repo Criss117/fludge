@@ -130,8 +130,10 @@ export function EmployeesTable({ group, businessId }: Props) {
       </CardHeader>
       <CardContent>
         <EmployeesSummaryTable.Root data={group.users} variant="detail">
-          <EmployeesSummaryTable.Header />
-          <EmployeesSummaryTable.Body />
+          <EmployeesSummaryTable.Content>
+            <EmployeesSummaryTable.Header />
+            <EmployeesSummaryTable.Body />
+          </EmployeesSummaryTable.Content>
         </EmployeesSummaryTable.Root>
       </CardContent>
     </Card>

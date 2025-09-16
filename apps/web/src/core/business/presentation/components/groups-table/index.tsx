@@ -13,7 +13,7 @@ import { columns } from "./columns";
 interface RootProps {
   children: React.ReactNode;
   data: GroupSummary[];
-  busineesId: string;
+  businessId: string;
 }
 
 interface ContentProps {
@@ -38,9 +38,9 @@ function useGroupsTable() {
   return context;
 }
 
-function Root({ children, data, busineesId }: RootProps) {
+function Root({ children, data, businessId }: RootProps) {
   const table = useReactTable({
-    columns: columns(busineesId),
+    columns: columns(businessId),
     data,
     getCoreRowModel: getCoreRowModel(),
   });
