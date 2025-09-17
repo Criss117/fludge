@@ -53,9 +53,9 @@ export class BusinessGroupController {
     @Param('groupId') groupId: string,
   ) {
     try {
-      return HTTPResponse.ok(
-        await this.findOneGroupUseCase.execute(id, groupId),
-      );
+      await this.findOneGroupUseCase.execute(id, groupId);
+
+      return HTTPResponse.ok(null);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -73,9 +73,9 @@ export class BusinessGroupController {
     @Body() data: UpdateGroupDto,
   ) {
     try {
-      return HTTPResponse.ok(
-        await this.updateGroupUseCase.execute(businessId, groupId, data),
-      );
+      await this.updateGroupUseCase.execute(businessId, groupId, data);
+
+      return HTTPResponse.ok(null);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -93,13 +93,13 @@ export class BusinessGroupController {
     @Body() data: AssignEmployeesToGroupDto,
   ) {
     try {
-      return HTTPResponse.ok(
-        await this.assignEmployeesToGroupUseCase.execute(
-          businessId,
-          groupId,
-          data,
-        ),
+      await this.assignEmployeesToGroupUseCase.execute(
+        businessId,
+        groupId,
+        data,
       );
+
+      return HTTPResponse.ok(null);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
