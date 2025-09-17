@@ -20,6 +20,7 @@ import { UpdateGroupUseCase } from './use-cases/update-group.usecase';
 import { EmployeesQueriesRepository } from './repositories/employees-queries.repository';
 import { EmployeesCommandsRepository } from './repositories/employees-commands.repository';
 import { AssignGroupsToEmployeeUseCase } from './use-cases/assign-groups-to-employee.usecase';
+import { RemoveEmployeesFromGroupUseCase } from './use-cases/remove-employees-from-group.usecase';
 
 @Module({
   imports: [DbModule, UsersModule],
@@ -29,15 +30,18 @@ import { AssignGroupsToEmployeeUseCase } from './use-cases/assign-groups-to-empl
     BusinessGroupController,
   ],
   providers: [
-    CreateEmployeeUseCase,
     CreateBusinessUseCase,
     FindOneBusinessUseCase,
     FindUserIsInUseCase,
+    CreateEmployeeUseCase,
+
     CreateGroupUseCase,
     FindOneGroupUseCase,
     UpdateGroupUseCase,
     AssignEmployeesToGroupUseCase,
+
     AssignGroupsToEmployeeUseCase,
+    RemoveEmployeesFromGroupUseCase,
 
     BusinessCommandsRepository,
     BusinessQueriesRepository,

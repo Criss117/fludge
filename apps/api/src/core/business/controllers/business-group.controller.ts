@@ -18,14 +18,16 @@ import { AssignEmployeesToGroupUseCase } from '../use-cases/assign-employees-to-
 import { AssignEmployeesToGroupDto } from '../dtos/assign-employees-to-group.dto';
 import { UpdateGroupDto } from '../dtos/update-group.dto';
 import { UpdateGroupUseCase } from '../use-cases/update-group.usecase';
+import { RemoveEmployeesFromGroupUseCase } from '../use-cases/remove-employees-from-group.usecase';
 
 @Controller('business')
 export class BusinessGroupController {
   constructor(
     private readonly createGroupUseCase: CreateGroupUseCase,
     private readonly findOneGroupUseCase: FindOneGroupUseCase,
-    private readonly assignEmployeesToGroupUseCase: AssignEmployeesToGroupUseCase,
     private readonly updateGroupUseCase: UpdateGroupUseCase,
+    private readonly assignEmployeesToGroupUseCase: AssignEmployeesToGroupUseCase,
+    private readonly removeEmployeesFromGroupUseCase: RemoveEmployeesFromGroupUseCase,
   ) {}
 
   @Post(':id/groups')
@@ -55,8 +57,6 @@ export class BusinessGroupController {
         await this.findOneGroupUseCase.execute(id, groupId),
       );
     } catch (error) {
-      console.log(error);
-
       if (error instanceof HttpException) {
         throw error;
       }
@@ -77,8 +77,6 @@ export class BusinessGroupController {
         await this.updateGroupUseCase.execute(businessId, groupId, data),
       );
     } catch (error) {
-      console.log(error);
-
       if (error instanceof HttpException) {
         throw error;
       }
@@ -103,8 +101,6 @@ export class BusinessGroupController {
         ),
       );
     } catch (error) {
-      console.log(error);
-
       if (error instanceof HttpException) {
         throw error;
       }
@@ -121,16 +117,14 @@ export class BusinessGroupController {
     @Body() data: AssignEmployeesToGroupDto,
   ) {
     try {
-      return HTTPResponse.ok(
-        await this.assignEmployeesToGroupUseCase.execute(
-          businessId,
-          groupId,
-          data,
-        ),
+      await this.removeEmployeesFromGroupUseCase.execute(
+        businessId,
+        groupId,
+        data,
       );
-    } catch (error) {
-      console.log(error);
 
+      return HTTPResponse.ok(null);
+    } catch (error) {
       if (error instanceof HttpException) {
         throw error;
       }
