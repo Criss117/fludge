@@ -12,12 +12,15 @@ import { CreateEmployeeDto } from '@core/users/dtos/create-employee.dto';
 import { HTTPResponse } from 'src/shared/http/response';
 import { CreateEmployeeUseCase } from '../use-cases/create-employee.usecase';
 import { FindOneEmployeeUseCase } from '@core/users/use-cases/find-one-employee.usecase';
+import { AssignEmployeesToGroupDto } from '../dtos/assign-employees-to-group.dto';
+import { AssignEmployeesToGroupUseCase } from '../use-cases/assign-employees-to-group.usecase';
 
 @Controller('business')
 export class BusinessEmployeesController {
   constructor(
     private readonly createEmployeeUseCase: CreateEmployeeUseCase,
     private readonly findOneEmployeeUseCase: FindOneEmployeeUseCase,
+    private readonly assignEmployeesToGroupUseCase: AssignEmployeesToGroupUseCase,
   ) {}
 
   @Post(':id/employees')
@@ -51,6 +54,30 @@ export class BusinessEmployeesController {
         employeeId,
       );
       return HTTPResponse.ok(res);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException('Something went wrong');
+    }
+  }
+
+  @Post(':id/employees/:employeeId/groups')
+  @Permissions('users:update')
+  public async addGroupsToEmployee(
+    @Param('id') businessId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() data: AssignEmployeesToGroupDto,
+  ) {
+    try {
+      await this.assignEmployeesToGroupUseCase.execute(
+        businessId,
+        employeeId,
+        data,
+      );
+
+      return HTTPResponse.ok(null);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

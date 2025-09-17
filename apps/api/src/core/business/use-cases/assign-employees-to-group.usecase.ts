@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AssignEmployeesToGroupDto } from '../dtos/assign-employees-to-group';
+import { AssignEmployeesToGroupDto } from '../dtos/assign-employees-to-group.dto';
 import { EmployeesQueriesRepository } from '../repositories/employees-queries.repository';
 import { EmployeesCommandsRepository } from '../repositories/employees-commands.repository';
 import { EmployeeNotFoundException } from '../exceptions/employee-not-found.exception';

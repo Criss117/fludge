@@ -15,7 +15,7 @@ import { CreateGroupUseCase } from '../use-cases/create-group.usecase';
 import { HTTPResponse } from 'src/shared/http/response';
 import { FindOneGroupUseCase } from '../use-cases/find-one-group.usecase';
 import { AssignEmployeesToGroupUseCase } from '../use-cases/assign-employees-to-group.usecase';
-import { AssignEmployeesToGroupDto } from '../dtos/assign-employees-to-group';
+import { AssignEmployeesToGroupDto } from '../dtos/assign-employees-to-group.dto';
 import { UpdateGroupDto } from '../dtos/update-group.dto';
 import { UpdateGroupUseCase } from '../use-cases/update-group.usecase';
 

@@ -19,6 +19,7 @@ import { AssignEmployeesToGroupUseCase } from './use-cases/assign-employees-to-g
 import { UpdateGroupUseCase } from './use-cases/update-group.usecase';
 import { EmployeesQueriesRepository } from './repositories/employees-queries.repository';
 import { EmployeesCommandsRepository } from './repositories/employees-commands.repository';
+import { AssignGroupsToEmployeeUseCase } from './use-cases/assign-groups-to-employee.usecase';
 
 @Module({
   imports: [DbModule, UsersModule],
@@ -36,6 +37,7 @@ import { EmployeesCommandsRepository } from './repositories/employees-commands.r
     FindOneGroupUseCase,
     UpdateGroupUseCase,
     AssignEmployeesToGroupUseCase,
+    AssignGroupsToEmployeeUseCase,
 
     BusinessCommandsRepository,
     BusinessQueriesRepository,
