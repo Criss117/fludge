@@ -48,6 +48,8 @@ export const API_ENDPOINTS = {
         `/business/${businessId}/employees` as `/business/${string}/employees`,
       FIND_ONE: (businessId: string, employeeId: string) =>
         `/business/${businessId}/employees/${employeeId}` as `/business/${string}/employees/${string}`,
+      ASSIGN_GROUPS: (businessId: string, employeeId: string) =>
+        `/business/${businessId}/employees/${employeeId}/groups` as `/business/${string}/employees/${string}/groups`,
     },
   },
 } as const;

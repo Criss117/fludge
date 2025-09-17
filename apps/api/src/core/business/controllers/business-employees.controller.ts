@@ -12,15 +12,15 @@ import { CreateEmployeeDto } from '@core/users/dtos/create-employee.dto';
 import { HTTPResponse } from 'src/shared/http/response';
 import { CreateEmployeeUseCase } from '../use-cases/create-employee.usecase';
 import { FindOneEmployeeUseCase } from '@core/users/use-cases/find-one-employee.usecase';
-import { AssignEmployeesToGroupDto } from '../dtos/assign-employees-to-group.dto';
-import { AssignEmployeesToGroupUseCase } from '../use-cases/assign-employees-to-group.usecase';
+import { AssignGroupsToEmployeeDto } from '../dtos/assign-groups-to-employee.dto';
+import { AssignGroupsToEmployeeUseCase } from '../use-cases/assign-groups-to-employee.usecase';
 
 @Controller('business')
 export class BusinessEmployeesController {
   constructor(
     private readonly createEmployeeUseCase: CreateEmployeeUseCase,
     private readonly findOneEmployeeUseCase: FindOneEmployeeUseCase,
-    private readonly assignEmployeesToGroupUseCase: AssignEmployeesToGroupUseCase,
+    private readonly assignGroupsToEmployee: AssignGroupsToEmployeeUseCase,
   ) {}
 
   @Post(':id/employees')
@@ -68,14 +68,10 @@ export class BusinessEmployeesController {
   public async addGroupsToEmployee(
     @Param('id') businessId: string,
     @Param('employeeId') employeeId: string,
-    @Body() data: AssignEmployeesToGroupDto,
+    @Body() data: AssignGroupsToEmployeeDto,
   ) {
     try {
-      await this.assignEmployeesToGroupUseCase.execute(
-        businessId,
-        employeeId,
-        data,
-      );
+      await this.assignGroupsToEmployee.execute(businessId, employeeId, data);
 
       return HTTPResponse.ok(null);
     } catch (error) {

@@ -30,6 +30,7 @@ export function EmployeeDataTableSection({ employee }: Props) {
         </TabsList>
         <TabsContent value="groups">
           <EmployeeGroupsTable
+            employeeId={employee.id}
             groups={employee.groups}
             businessId={employee.employeeIn}
           />
