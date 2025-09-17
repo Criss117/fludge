@@ -46,6 +46,8 @@ export const API_ENDPOINTS = {
     EMPLOYEES: {
       CREATE: (businessId: string) =>
         `/business/${businessId}/employees` as `/business/${string}/employees`,
+      FIND_ONE: (businessId: string, employeeId: string) =>
+        `/business/${businessId}/employees/${employeeId}` as `/business/${string}/employees/${string}`,
     },
   },
 } as const;

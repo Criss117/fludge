@@ -15,7 +15,7 @@ interface Props {
 
 export function GroupDataTablesSection({ group, businessId }: Props) {
   return (
-    <div className="mx-2">
+    <section className="mx-2">
       <Tabs defaultValue="employees">
         <TabsList className="min-w-1/4 max-w-1/2">
           <TabsTrigger value="employees" className="flex-1">
@@ -32,6 +32,6 @@ export function GroupDataTablesSection({ group, businessId }: Props) {
           <PermissionsTable group={group} businessId={businessId} />
         </TabsContent>
       </Tabs>
-    </div>
+    </section>
   );
 }

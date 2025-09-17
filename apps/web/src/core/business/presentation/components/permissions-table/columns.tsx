@@ -8,6 +8,29 @@ const columnHelper = createColumnHelper<Permission>();
 
 export const columns = [
   columnHelper.display({
+    id: "name",
+    header: "Nombre",
+    cell: ({ row }) => translatePermission(row.original).translate,
+  }),
+  columnHelper.display({
+    id: "description",
+    header: "Descripción",
+    cell: ({ row }) => getPermissionDescription(row.original).description,
+  }),
+  columnHelper.display({
+    id: "resource",
+    header: "Recurso Afectado",
+    cell: ({ row }) => translatePermission(row.original).resourceEs,
+  }),
+  columnHelper.display({
+    id: "key",
+    header: "Clave",
+    cell: ({ row }) => row.original,
+  }),
+];
+
+export const columnsWithSelect = [
+  columnHelper.display({
     id: "select",
     header: ({ table }) => (
       <Checkbox

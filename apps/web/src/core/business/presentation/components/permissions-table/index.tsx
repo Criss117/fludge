@@ -7,12 +7,13 @@ import {
 import { CommonTableBody } from "@/core/shared/components/table/common-table-body";
 import { CommonTableHeader } from "@/core/shared/components/table/common-table-header";
 import { Table } from "@/core/shared/components/ui/table";
-import { columns } from "./columns";
+import { columns, columnsWithSelect } from "./columns";
 import type { Permission } from "@repo/core/value-objects/permission";
 
 interface RootProps {
   children: React.ReactNode;
   data: Permission[];
+  hiddeSelect?: boolean;
 }
 
 interface ContentProps {
@@ -37,9 +38,9 @@ function usePermissionsTable() {
   return context;
 }
 
-function Root({ children, data }: RootProps) {
+function Root({ children, data, hiddeSelect = false }: RootProps) {
   const table = useReactTable({
-    columns,
+    columns: hiddeSelect ? columns : columnsWithSelect,
     data,
     getCoreRowModel: getCoreRowModel(),
   });
