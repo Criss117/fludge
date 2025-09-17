@@ -18,6 +18,7 @@ import { FindOneGroupUseCase } from './use-cases/find-one-group.usecase';
 import { AssignEmployeesToGroupUseCase } from './use-cases/assign-employees-to-group.usecase';
 import { UpdateGroupUseCase } from './use-cases/update-group.usecase';
 import { EmployeesQueriesRepository } from './repositories/employees-queries.repository';
+import { EmployeesCommandsRepository } from './repositories/employees-commands.repository';
 
 @Module({
   imports: [DbModule, UsersModule],
@@ -41,6 +42,7 @@ import { EmployeesQueriesRepository } from './repositories/employees-queries.rep
     GroupsCommandsRepository,
     GroupsQueriesRepository,
     EmployeesQueriesRepository,
+    EmployeesCommandsRepository,
   ],
   exports: [FindUserIsInUseCase],
 })

@@ -1,13 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DBSERVICE, TX, type LibSQLDatabase } from '@core/db/db.module';
-import { business, employees } from '@repo/db';
+import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
+import { business } from '@repo/db';
 import { GroupsCommandsRepository } from './groups-commands.repository';
 import { InsertGroupDto } from './dtos/insert-groups.dto';
 import type { InsertBusinessDto } from './dtos/insert-bussines.dto';
-
-type Options = {
-  tx: TX;
-};
 
 @Injectable()
 export class BusinessCommandsRepository {
@@ -57,21 +53,6 @@ export class BusinessCommandsRepository {
       });
 
       return savedBusiness;
-    });
-  }
-
-  public async assignEmployees(
-    businessId: string,
-    userId: string,
-    groupIds: string[],
-    options?: Options,
-  ) {
-    const db = options?.tx ?? this.db;
-
-    await db.insert(employees).values({
-      businessId,
-      userId,
-      groupIds,
     });
   }
 }
