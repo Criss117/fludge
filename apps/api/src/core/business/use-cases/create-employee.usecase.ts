@@ -4,7 +4,7 @@ import { CreateEmployeeUserUseCase } from '@core/users/use-cases/create-employee
 import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
 import { BusinessQueriesRepository } from '../repositories/business-queries.repository';
 import { BusinessNotFoundException } from '../exceptions/business-no-exists.exception';
-import { EmployeesQueriesRepository } from '../repositories/employees-queries.repository';
+import { EmployeesCommandsRepository } from '../repositories/employees-commands.repository';
 
 @Injectable()
 export class CreateEmployeeUseCase {
@@ -12,7 +12,7 @@ export class CreateEmployeeUseCase {
     @Inject(DBSERVICE) private readonly db: LibSQLDatabase,
     private readonly createEmployeeUserUseCase: CreateEmployeeUserUseCase,
     private readonly businessQueriesRepository: BusinessQueriesRepository,
-    private readonly employeesQueriesRepository: EmployeesQueriesRepository,
+    private readonly employeesCommandsRepository: EmployeesCommandsRepository,
   ) {}
 
   //TODO: validate if the group exists
@@ -30,7 +30,7 @@ export class CreateEmployeeUseCase {
         tx,
       });
 
-      await this.employeesQueriesRepository.save(
+      await this.employeesCommandsRepository.save(
         {
           businessId,
           userId: newUser.id,
