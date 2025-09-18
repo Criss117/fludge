@@ -42,6 +42,8 @@ export const API_ENDPOINTS = {
         `/business/${businessId}/groups/${groupId}` as `/business/${string}/groups/${string}`,
       ASSIGN_EMPLOYEES: (businessId: string, groupId: string) =>
         `/business/${businessId}/groups/${groupId}/employees` as `/business/${string}/groups/${string}/employees`,
+      REMOVE_EMPLOYEES: (businessId: string, groupId: string) =>
+        `/business/${businessId}/groups/${groupId}/employees` as `/business/${string}/groups/${string}/employees`,
     },
     EMPLOYEES: {
       CREATE: (businessId: string) =>

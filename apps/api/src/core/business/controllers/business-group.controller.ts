@@ -53,9 +53,9 @@ export class BusinessGroupController {
     @Param('groupId') groupId: string,
   ) {
     try {
-      await this.findOneGroupUseCase.execute(id, groupId);
+      const res = await this.findOneGroupUseCase.execute(id, groupId);
 
-      return HTTPResponse.ok(null);
+      return HTTPResponse.ok(res);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

@@ -23,10 +23,26 @@ import type { GroupDetail } from "@repo/core/entities/group";
 import { Checkbox } from "@/core/shared/components/ui/checkbox";
 import type { UserSummary } from "@repo/core/entities/user";
 import { useMutateGroups } from "@/core/business/application/hooks/use.mutate-groups";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/core/shared/components/ui/alert-dialog";
 
 interface Props {
   group: GroupDetail;
   businessId: string;
+}
+
+interface RemoveEmployeesProps {
+  businessId: string;
+  groupId: string;
 }
 
 function EmployeeListDialog({ businessId, group }: Props) {
@@ -116,30 +132,98 @@ function EmployeeListDialog({ businessId, group }: Props) {
   );
 }
 
+function RemoveEmployees({ businessId, groupId }: RemoveEmployeesProps) {
+  const { table } = EmployeesSummaryTable.useEmployeesTable();
+  const { removeEmployees } = useMutateGroups();
+
+  const selectedEmployees = table
+    .getSelectedRowModel()
+    .rows.flatMap((r) => r.original);
+
+  const handleClick = () => {
+    removeEmployees.mutate({
+      businessId,
+      groupId,
+      employeeIds: selectedEmployees.map((e) => e.id),
+    });
+  };
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="destructive"
+          className="rounded-full"
+          disabled={!selectedEmployees.length}
+        >
+          Eliminar{" "}
+          {selectedEmployees.length > 0 && `(${selectedEmployees.length})`}{" "}
+          empleados
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Eliminar empleados</AlertDialogTitle>
+          <AlertDialogDescription>
+            Eliminar a los empleados de este grupo
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <p>
+          Se eliminaran ({selectedEmployees.length}) empleados de este grupo
+        </p>
+
+        <ul>
+          {selectedEmployees.map((user) => (
+            <li key={user.id}>
+              - {user.firstName} {user.lastName}
+            </li>
+          ))}
+        </ul>
+
+        <p className="text-muted-foreground text-sm">
+          Si un empleado no está asignado a ningún grupo, este no podrá acceder
+          a la aplicación
+        </p>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleClick}
+            disabled={removeEmployees.isPending}
+          >
+            Continuar
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
 export function EmployeesTable({ group, businessId }: Props) {
   return (
     <Card>
-      <CardHeader className="flex justify-between">
-        <div>
-          <CardTitle>Empleados</CardTitle>
-          <CardDescription>{group.users.length} empleados</CardDescription>
-        </div>
-        <div>
-          <EmployeeListDialog businessId={businessId} group={group} />
-        </div>
-      </CardHeader>
-      <CardContent>
-        <EmployeesSummaryTable.Root
-          data={group.users}
-          variant="detail"
-          businessId={businessId}
-        >
+      <EmployeesSummaryTable.Root
+        data={group.users}
+        variant="detail"
+        businessId={businessId}
+      >
+        <CardHeader className="flex justify-between">
+          <div>
+            <CardTitle>Empleados</CardTitle>
+            <CardDescription>{group.users.length} empleados</CardDescription>
+          </div>
+          <div className="space-x-2">
+            <RemoveEmployees businessId={businessId} groupId={group.id} />
+            <EmployeeListDialog businessId={businessId} group={group} />
+          </div>
+        </CardHeader>
+        <CardContent>
           <EmployeesSummaryTable.Content>
             <EmployeesSummaryTable.Header />
             <EmployeesSummaryTable.Body />
           </EmployeesSummaryTable.Content>
-        </EmployeesSummaryTable.Root>
-      </CardContent>
+        </CardContent>
+      </EmployeesSummaryTable.Root>
     </Card>
   );
 }
