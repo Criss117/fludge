@@ -21,6 +21,7 @@ import { EmployeesQueriesRepository } from './repositories/employees-queries.rep
 import { EmployeesCommandsRepository } from './repositories/employees-commands.repository';
 import { AssignGroupsToEmployeeUseCase } from './use-cases/assign-groups-to-employee.usecase';
 import { RemoveEmployeesFromGroupUseCase } from './use-cases/remove-employees-from-group.usecase';
+import { RemoveGroupsFromEmployeeUseCase } from './use-cases/remove-groups-from-employee.usecase';
 
 @Module({
   imports: [DbModule, UsersModule],
@@ -42,6 +43,7 @@ import { RemoveEmployeesFromGroupUseCase } from './use-cases/remove-employees-fr
 
     AssignGroupsToEmployeeUseCase,
     RemoveEmployeesFromGroupUseCase,
+    RemoveGroupsFromEmployeeUseCase,
 
     BusinessCommandsRepository,
     BusinessQueriesRepository,
