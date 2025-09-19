@@ -165,7 +165,7 @@ function RemoveEmployees({ businessId, groupId }: RemoveEmployeesProps) {
         <AlertDialogHeader>
           <AlertDialogTitle>Eliminar empleados</AlertDialogTitle>
           <AlertDialogDescription>
-            Eliminar a los empleados de este grupo
+            ¿Estas seguro que deseas eliminar los empleados?
           </AlertDialogDescription>
         </AlertDialogHeader>
 

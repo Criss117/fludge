@@ -22,11 +22,27 @@ import {
 import { DialogTitle } from "@radix-ui/react-dialog";
 import type { GroupSummary } from "@repo/core/entities/group";
 import { useMutateEmployees } from "@/core/employees/application/hooks/use.mutate-employees";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/core/shared/components/ui/alert-dialog";
 
 interface Props {
   businessId: string;
   employeeId: string;
   groups: GroupSummary[];
+}
+
+interface RemoveGroupsProps {
+  businessId: string;
+  employeeId: string;
 }
 
 function GroupsListDialog({ businessId, groups, employeeId }: Props) {
@@ -110,6 +126,65 @@ function GroupsListDialog({ businessId, groups, employeeId }: Props) {
   );
 }
 
+function RemoveGroups({ businessId, employeeId }: RemoveGroupsProps) {
+  const { table } = GroupsTable.useGroupsTable();
+  const { removeGroups } = useMutateEmployees();
+
+  const selectedGroups = table
+    .getSelectedRowModel()
+    .rows.flatMap((r) => r.original);
+
+  const handleClick = () => {
+    removeGroups.mutate({
+      businessId,
+      employeeId,
+      groupIds: selectedGroups.map((g) => g.id),
+    });
+  };
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="destructive"
+          className="rounded-full"
+          disabled={!selectedGroups.length}
+        >
+          Eliminar {selectedGroups.length > 0 && `(${selectedGroups.length})`}{" "}
+          Grupos
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Eliminar Grupos</AlertDialogTitle>
+          <AlertDialogDescription>
+            ¿Estas seguro que deseas eliminar los grupos?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <p>Se eliminaran ({selectedGroups.length}) grupos.</p>
+        <ul>
+          {selectedGroups.map((group) => (
+            <li key={group.id}>- {group.name}</li>
+          ))}
+        </ul>
+        <p className="text-muted-foreground text-sm">
+          Si un empleado no está asignado a ningún grupo, este no podrá acceder
+          a la aplicación
+        </p>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleClick}
+            disabled={removeGroups.isPending}
+          >
+            Continuar
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
 export function EmployeeGroupsTable({ groups, businessId, employeeId }: Props) {
   return (
     <Card>
@@ -121,7 +196,8 @@ export function EmployeeGroupsTable({ groups, businessId, employeeId }: Props) {
               {groups.length} {groups.length > 1 ? "grupos" : "grupo"}
             </CardDescription>
           </div>
-          <div>
+          <div className="space-x-2">
+            <RemoveGroups businessId={businessId} employeeId={employeeId} />
             <GroupsListDialog
               businessId={businessId}
               groups={groups}
