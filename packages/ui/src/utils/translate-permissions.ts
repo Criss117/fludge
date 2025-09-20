@@ -11,6 +11,9 @@ const resourcesEs = new Map<Resource, string>([
   ["clients", "Clientes"],
   ["businesses", "Negocios"],
   ["groups", "Grupos"],
+  ["categories", "Categorías"],
+  ["providers", "Proveedores"],
+  ["brands", "Marcas"],
 ]);
 
 const actionsEs = new Map<Action, string>([
