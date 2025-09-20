@@ -8,8 +8,6 @@ import type {
   CategorySummary,
 } from '@repo/core/entities/category';
 import { FindOneCategoryDto } from './dtos/find-one-category.dto';
-import { getTableColumns } from 'drizzle-orm';
-import { alias } from 'drizzle-orm/sqlite-core';
 
 type Options = {
   ensureActive?: boolean;
