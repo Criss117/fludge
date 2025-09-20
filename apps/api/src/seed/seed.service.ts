@@ -12,6 +12,8 @@ import {
   SelectBusiness,
   SelectGroup,
   SelectUser,
+  InsertCategory,
+  categories,
 } from '@repo/db';
 import { fakerES as faker } from '@faker-js/faker';
 import { allPermissions } from '@repo/core/value-objects/permission';
@@ -36,6 +38,7 @@ export class SeedService {
   constructor(@Inject(DBSERVICE) private readonly db: LibSQLDatabase) {}
 
   public async clearDB() {
+    await this.db.delete(categories);
     await this.db.delete(employees);
     await this.db.delete(groups);
     await this.db.delete(business);
@@ -62,6 +65,8 @@ export class SeedService {
       insertedBusiness,
     );
 
+    const insertedCategories = await this.insertCategories(insertedBusiness);
+
     return {
       users: {
         rootUsers: rootUsers,
@@ -70,6 +75,7 @@ export class SeedService {
       businesses: insertedBusiness,
       groups: insertedGroups,
       employees: insertedEmployees,
+      categories: insertedCategories,
     };
   }
 
@@ -209,5 +215,43 @@ export class SeedService {
     });
 
     return this.db.insert(employees).values(employeesToInsert).returning();
+  }
+
+  private async insertCategories(insertedBusinesses: SelectBusiness[]) {
+    const categoriesToInsert: InsertCategory[] = Array.from({
+      length: insertedBusinesses.length * 20,
+    }).map(() => {
+      return {
+        businessId: faker.helpers.arrayElement(insertedBusinesses).id,
+        name: faker.commerce.department(),
+        description: faker.lorem.sentence(),
+        parentId: null,
+      };
+    });
+
+    const categoriesInserted = await this.db
+      .insert(categories)
+      .values(categoriesToInsert)
+      .returning();
+
+    const subCategoriesToInsert: InsertCategory[] = Array.from({
+      length: categoriesToInsert.length * 2,
+    }).map(() => {
+      const parentCategory = faker.helpers.arrayElement(categoriesInserted);
+
+      return {
+        businessId: parentCategory.businessId,
+        name: faker.commerce.department(),
+        description: faker.lorem.sentence(),
+        parentId: parentCategory.id,
+      };
+    });
+
+    const subcategoriesInserted = await this.db
+      .insert(categories)
+      .values(subCategoriesToInsert)
+      .returning();
+
+    return [...categoriesInserted, ...subcategoriesInserted];
   }
 }
