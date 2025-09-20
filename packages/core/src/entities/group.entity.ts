@@ -1,6 +1,6 @@
-import { Permission } from "../value-objects/permission.vo";
-import { AuditMetadata } from "./audit-metadata";
-import { UserSummary } from "./user.entity";
+import type { Permission } from "../value-objects/permission.vo";
+import type { AuditMetadata } from "./audit-metadata";
+import type { UserSummary } from "./user.entity";
 
 export interface GroupSummary {
   id: string;

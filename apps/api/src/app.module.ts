@@ -7,6 +7,8 @@ import { UsersModule } from './core/users/users.module';
 import { AuthModule } from './core/auth/auth.module';
 import { BusinessModule } from './core/business/business.module';
 import { SeedModule } from './seed/seed.module';
+import { ProductsModule } from './core/products/products.module';
+import { ProvidersModule } from './core/providers/providers.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { SeedModule } from './seed/seed.module';
     AuthModule,
     BusinessModule,
     SeedModule,
+    ProductsModule,
+    ProvidersModule,
   ],
   controllers: [],
   providers: [],

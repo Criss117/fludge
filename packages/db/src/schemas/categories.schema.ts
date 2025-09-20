@@ -3,6 +3,7 @@ import { text } from "drizzle-orm/sqlite-core";
 import { sqliteTable } from "drizzle-orm/sqlite-core";
 import { auditMetadata } from "../helpers/audit-metadata";
 import { foreignKey } from "drizzle-orm/sqlite-core";
+import { business } from "./business.schema";
 
 export const categories = sqliteTable(
   "categories",
@@ -16,6 +17,7 @@ export const categories = sqliteTable(
     description: text("description", {
       length: 255,
     }),
+    businessId: text("business_id").references(() => business.id),
     parentId: text("parent_id"),
     ...auditMetadata,
   },

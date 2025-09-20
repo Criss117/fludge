@@ -1,6 +1,5 @@
 import type { Permission } from "../value-objects/permission.vo";
 import type { AuditMetadata } from "./audit-metadata";
-import type { BusinessSummary } from "./business.entity";
 import type { GroupSummary } from "./group.entity";
 
 export interface UserDetail extends AuditMetadata {
