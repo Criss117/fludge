@@ -7,9 +7,10 @@ import { CategoriesController } from './controllers/categories.controller';
 import { CreateCategoryUsecase } from './use-cases/create-category.usecase';
 import { CategoriesCommandRepository } from './repositories/categories-command.repository';
 import { CategoriesQueriesRepository } from './repositories/categories-queries.repository';
+import { BusinessModule } from '@core/business/business.module';
 
 @Module({
-  imports: [DbModule],
+  imports: [DbModule, BusinessModule],
   controllers: [ProductsController, CategoriesController],
   providers: [
     CreateProductUsecase,

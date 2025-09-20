@@ -14,13 +14,13 @@ export class CategoriesQueriesRepository {
   constructor(@Inject(DBSERVICE) private readonly db: LibSQLDatabase) {}
 
   public async findManyBy(
-    data: FindManyCategoriesByDto,
+    meta: FindManyCategoriesByDto,
     options?: Options,
   ): Promise<CategorySummary[]> {
     const filters: SQL[] = [];
     const optionsFilters: SQL[] = [];
 
-    if (!data.name && !data.id && !data.businessId && !data.parentId) {
+    if (!meta.name && !meta.id && !meta.businessId && !meta.parentId) {
       return [];
     }
 
@@ -28,21 +28,23 @@ export class CategoriesQueriesRepository {
       optionsFilters.push(eq(categories.isActive, true));
     }
 
-    if (data.name) {
-      filters.push(eq(categories.name, data.name));
+    if (meta.name) {
+      filters.push(eq(categories.name, meta.name));
     }
 
-    if (data.id) {
-      filters.push(eq(categories.id, data.id));
+    if (meta.id) {
+      filters.push(eq(categories.id, meta.id));
     }
 
-    if (data.businessId) {
-      filters.push(eq(categories.businessId, data.businessId));
+    if (meta.businessId) {
+      filters.push(eq(categories.businessId, meta.businessId));
     }
 
-    if (data.parentId) {
-      filters.push(eq(categories.parentId, data.parentId));
+    if (meta.parentId) {
+      filters.push(eq(categories.parentId, meta.parentId));
     }
+
+    console.log({ meta });
 
     return this.db
       .select()

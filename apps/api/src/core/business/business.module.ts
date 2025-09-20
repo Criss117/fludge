@@ -52,6 +52,6 @@ import { RemoveGroupsFromEmployeeUseCase } from './use-cases/remove-groups-from-
     EmployeesQueriesRepository,
     EmployeesCommandsRepository,
   ],
-  exports: [FindUserIsInUseCase],
+  exports: [FindUserIsInUseCase, FindOneBusinessUseCase],
 })
 export class BusinessModule {}

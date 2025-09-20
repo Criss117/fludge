@@ -1,5 +1,6 @@
 import { Permissions } from '@core/auth/decorators/permissions.decorator';
 import {
+  Body,
   Controller,
   HttpException,
   InternalServerErrorException,
@@ -10,15 +11,15 @@ import { CreateCategoryDto } from '../dtos/create-category.dto';
 import { CreateCategoryUsecase } from '../use-cases/create-category.usecase';
 import { HTTPResponse } from 'src/shared/http/response';
 
-@Controller('business/:businessId/categories')
+@Controller('business/:id/categories')
 export class CategoriesController {
   constructor(private readonly createCategoryUsecase: CreateCategoryUsecase) {}
 
   @Post()
   @Permissions('categories:create')
   public async create(
-    @Param('businessId') businessId: string,
-    data: CreateCategoryDto,
+    @Param('id') businessId: string,
+    @Body() data: CreateCategoryDto,
   ) {
     try {
       await this.createCategoryUsecase.execute(businessId, data);
