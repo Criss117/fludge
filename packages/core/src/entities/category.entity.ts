@@ -4,8 +4,8 @@ export interface CategoryDetail extends AuditMetadata {
   id: string;
   name: string;
   description: string | null;
-  parentId: CategoryDetail | null;
-  subCategories: CategorySummary[];
+  parent: CategorySummary | null;
+  subcategories: CategorySummary[];
 }
 
 export interface CategorySummary extends AuditMetadata {

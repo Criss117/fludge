@@ -3,7 +3,13 @@ import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
 import { Inject, Injectable } from '@nestjs/common';
 import { categories } from '@repo/db';
 import { FindManyCategoriesByDto } from './dtos/find-many-categories-by.dto';
-import type { CategorySummary } from '@repo/core/entities/category';
+import type {
+  CategoryDetail,
+  CategorySummary,
+} from '@repo/core/entities/category';
+import { FindOneCategoryDto } from './dtos/find-one-category.dto';
+import { getTableColumns } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/sqlite-core';
 
 type Options = {
   ensureActive?: boolean;
@@ -44,11 +50,71 @@ export class CategoriesQueriesRepository {
       filters.push(eq(categories.parentId, meta.parentId));
     }
 
-    console.log({ meta });
-
     return this.db
       .select()
       .from(categories)
       .where(and(...filters, ...optionsFilters));
+  }
+
+  public async findOne(
+    meta: FindOneCategoryDto,
+    options?: Options,
+  ): Promise<CategoryDetail | null> {
+    const optionsFilters: SQL[] = [];
+
+    if (options?.ensureActive) {
+      optionsFilters.push(eq(categories.isActive, true));
+    }
+
+    const [category] = await this.db
+      .select()
+      .from(categories)
+      .where(
+        and(
+          eq(categories.id, meta.categoryId),
+          eq(categories.businessId, meta.businessId),
+          ...optionsFilters,
+        ),
+      );
+
+    if (!category) return null;
+
+    if (!category.parentId) {
+      const subcategories = await this.db
+        .select()
+        .from(categories)
+        .where(
+          and(
+            eq(categories.parentId, category.id),
+            eq(categories.businessId, meta.businessId),
+            ...optionsFilters,
+          ),
+        );
+
+      return {
+        ...category,
+        parent: null,
+        subcategories,
+      };
+    }
+
+    const [parentCategory] = await this.db
+      .select()
+      .from(categories)
+      .where(
+        and(
+          eq(categories.id, category.parentId),
+          eq(categories.businessId, meta.businessId),
+          ...optionsFilters,
+        ),
+      );
+
+    if (!parentCategory) return null;
+
+    return {
+      ...category,
+      subcategories: [],
+      parent: parentCategory,
+    };
   }
 }

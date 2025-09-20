@@ -13,11 +13,16 @@ export class CreateCategoryUsecase {
   ) {}
 
   public async execute(businessId: string, data: CreateCategoryDto) {
-    const categories = await this.categoriesQueriesRepository.findManyBy({
-      businessId,
-      name: data.name,
-      parentId: data.parentId || undefined,
-    });
+    const categories = await this.categoriesQueriesRepository.findManyBy(
+      {
+        businessId,
+        name: data.name,
+        parentId: data.parentId || undefined,
+      },
+      {
+        ensureActive: true,
+      },
+    );
 
     if (categories.length > 0) {
       throw new CategoryAlreadyExistsException();
@@ -33,10 +38,15 @@ export class CreateCategoryUsecase {
       return;
     }
 
-    const [parentCategory] = await this.categoriesQueriesRepository.findManyBy({
-      businessId,
-      id: data.parentId,
-    });
+    const [parentCategory] = await this.categoriesQueriesRepository.findManyBy(
+      {
+        businessId,
+        id: data.parentId,
+      },
+      {
+        ensureActive: true,
+      },
+    );
 
     if (!parentCategory) {
       throw new CategoryNotFoundException('La categoría padre no existe');

@@ -8,6 +8,8 @@ import { CreateCategoryUsecase } from './use-cases/create-category.usecase';
 import { CategoriesCommandRepository } from './repositories/categories-command.repository';
 import { CategoriesQueriesRepository } from './repositories/categories-queries.repository';
 import { BusinessModule } from '@core/business/business.module';
+import { FindManyCategoriesUsecase } from './use-cases/find-many-categories.usecase';
+import { FindOneCategoryUsecase } from './use-cases/find-one-category.usecase';
 
 @Module({
   imports: [DbModule, BusinessModule],
@@ -15,6 +17,8 @@ import { BusinessModule } from '@core/business/business.module';
   providers: [
     CreateProductUsecase,
     CreateCategoryUsecase,
+    FindManyCategoriesUsecase,
+    FindOneCategoryUsecase,
 
     CategoriesCommandRepository,
     CategoriesQueriesRepository,
