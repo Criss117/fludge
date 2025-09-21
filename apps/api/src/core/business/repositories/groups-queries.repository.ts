@@ -1,4 +1,4 @@
-import { and, eq, or, sql, SQL } from 'drizzle-orm';
+import { and, desc, eq, or, sql, SQL } from 'drizzle-orm';
 import { Inject, Injectable } from '@nestjs/common';
 import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
 import { employees, groups, users } from '@repo/db';
@@ -102,6 +102,7 @@ export class GroupsQueriesRepository {
     return this.db
       .select()
       .from(groups)
-      .where(and(or(...filters), ...optionsFilters));
+      .where(and(or(...filters), ...optionsFilters))
+      .orderBy(desc(groups.createdAt));
   }
 }

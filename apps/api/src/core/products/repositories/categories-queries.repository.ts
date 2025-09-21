@@ -1,4 +1,4 @@
-import { and, eq, type SQL } from 'drizzle-orm';
+import { and, desc, eq, type SQL } from 'drizzle-orm';
 import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
 import { Inject, Injectable } from '@nestjs/common';
 import { categories } from '@repo/db';
@@ -51,7 +51,8 @@ export class CategoriesQueriesRepository {
     return this.db
       .select()
       .from(categories)
-      .where(and(...filters, ...optionsFilters));
+      .where(and(...filters, ...optionsFilters))
+      .orderBy(desc(categories.createdAt));
   }
 
   public async findOne(

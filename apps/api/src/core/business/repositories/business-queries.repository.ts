@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, eq, inArray, or, SQL } from 'drizzle-orm';
+import { and, desc, eq, inArray, or, SQL } from 'drizzle-orm';
 import { business, employees, groups, users } from '@repo/db';
 import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
 import { FindManyBusinessByDto } from './dtos/find-many-business-by.dto';
@@ -43,7 +43,8 @@ export class BusinessQueriesRepository {
     return this.db
       .select()
       .from(business)
-      .where(and(or(...filters), ...optionsFilters));
+      .where(and(or(...filters), ...optionsFilters))
+      .orderBy(desc(business.createdAt));
   }
 
   public async findOne(id: string, options?: Options): Promise<BusinessDetail> {
