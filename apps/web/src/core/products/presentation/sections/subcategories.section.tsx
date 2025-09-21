@@ -8,12 +8,19 @@ import {
 import type { CategorySummary } from "@repo/core/entities/category";
 import { CategorySummaryTable } from "../components/categories-summary-table";
 import { Button } from "@/core/shared/components/ui/button";
+import { CreateCategoryDialog } from "../components/create-category-dialog";
 
 interface Props {
   subcategories: CategorySummary[];
+  parentId: string;
+  businessId: string;
 }
 
-export function SubcategoriesSection({ subcategories }: Props) {
+export function SubcategoriesSection({
+  subcategories,
+  businessId,
+  parentId,
+}: Props) {
   return (
     <Card>
       <CardHeader className="flex justify-between">
@@ -24,12 +31,14 @@ export function SubcategoriesSection({ subcategories }: Props) {
           </CardDescription>
         </div>
         <div className="space-x-2">
-          <Button variant="destructive" className="rounded-full">
+          <Button variant="destructive" disabled>
             Eliminar subcategorías
           </Button>
-          <Button variant="secondary" className="rounded-full border-2">
-            Agreagar subcategoría
-          </Button>
+          <CreateCategoryDialog
+            businessId={businessId}
+            type="subcategory"
+            parentId={parentId}
+          />
         </div>
       </CardHeader>
       <CardContent>

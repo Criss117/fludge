@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCategoryAction } from "../actions/create-category.action";
 import { toast } from "sonner";
 import { findManyCategoriesQueryOptions } from "./use.find-many-categories";
+import { findOneCategoryQueryOptions } from "./use.find-one-category";
 
 type CreateParams = Parameters<typeof createCategoryAction>[number];
 
@@ -34,6 +35,12 @@ export function useMutateCategories() {
       queryClient.invalidateQueries(
         findManyCategoriesQueryOptions(varaibles.businessId)
       );
+
+      if (varaibles.parentId) {
+        queryClient.invalidateQueries(
+          findOneCategoryQueryOptions(varaibles.businessId, varaibles.parentId)
+        );
+      }
     },
     onError: (err) => {
       toast.dismiss("create-category");

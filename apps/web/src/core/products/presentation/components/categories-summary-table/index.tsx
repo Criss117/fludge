@@ -62,7 +62,13 @@ function Header() {
 function Body() {
   const { table } = useCategorySummaryTable();
 
-  return <CommonTableBody table={table} colSpan={4} />;
+  return (
+    <CommonTableBody
+      table={table}
+      colSpan={4}
+      emptyMessage="No hay categorías"
+    />
+  );
 }
 
 export const CategorySummaryTable = {

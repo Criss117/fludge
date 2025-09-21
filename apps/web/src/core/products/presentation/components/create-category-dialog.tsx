@@ -14,16 +14,26 @@ import { useState } from "react";
 
 interface Props {
   businessId: string;
+  type?: "category" | "subcategory";
+  parentId?: string;
 }
 
-export function CreateCategoryDialog({ businessId }: Props) {
+export function CreateCategoryDialog({
+  businessId,
+  type = "category",
+  parentId,
+}: Props) {
+  if (type === "subcategory" && !parentId) {
+    throw new Error("parentId is required");
+  }
+
   const [open, setOpen] = useState(false);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="rounded-full">
-          Crear Categoría
+        <Button>
+          {type === "category" ? "Crear Categoría" : "Crear Subcategoría"}
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -32,11 +42,16 @@ export function CreateCategoryDialog({ businessId }: Props) {
           actions={{
             onSuccess: () => setOpen(false),
           }}
+          type={type}
+          parentId={parentId}
         >
           <DialogHeader>
-            <DialogTitle>Crear Categoría</DialogTitle>
+            <DialogTitle>
+              {type === "category" ? "Crear Categoría" : "Crear Subcategoría"}
+            </DialogTitle>
             <DialogDescription>
-              Completa los datos para crear una categoría
+              Completa los datos para crear una{" "}
+              {type === "category" ? "categoría" : "subcategoría"}
             </DialogDescription>
           </DialogHeader>
 

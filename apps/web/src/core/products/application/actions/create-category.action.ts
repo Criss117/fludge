@@ -5,6 +5,7 @@ import { AxiosError } from "axios";
 
 type Params = CreateCategoryDto & {
   businessId: string;
+  parentId?: string;
 };
 
 export async function createCategoryAction(

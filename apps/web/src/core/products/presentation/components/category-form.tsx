@@ -13,11 +13,14 @@ interface Context {
   form: FormType;
   formId: string;
   onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
+  isPending: boolean;
 }
 
 interface RootProps {
   children: React.ReactNode;
   businessId: string;
+  type?: "category" | "subcategory";
+  parentId?: string;
   actions?: {
     onSuccess?: () => void;
     onError?: () => void;
@@ -42,28 +45,45 @@ function useCategoryForm() {
   return context;
 }
 
-function Root({ children, businessId, actions }: RootProps) {
+function Root({
+  children,
+  businessId,
+  actions,
+  type = "category",
+  parentId,
+}: RootProps) {
+  if (type === "subcategory" && !parentId) {
+    throw new Error("parentId is required");
+  }
+
   const form = useCreateCategoryForm();
   const formId = `category-form-${useId()}`;
   const { create } = useMutateCategories();
 
   const onSubmit = form.handleSubmit((data) => {
-    console.log({ data });
-
     create.mutate(
       {
         ...data,
         businessId,
+        parentId,
       },
       {
         onSuccess: actions?.onSuccess,
-        onError: actions?.onError,
+        onError: (err) => {
+          actions?.onError?.();
+
+          form.setError("root", {
+            message: err.message,
+          });
+        },
       }
     );
   });
 
   return (
-    <CategoryFormContext.Provider value={{ form, formId, onSubmit }}>
+    <CategoryFormContext.Provider
+      value={{ form, formId, onSubmit, isPending: create.isPending }}
+    >
       {children}
     </CategoryFormContext.Provider>
   );
@@ -86,8 +106,8 @@ function RootErrorMessage() {
   if (!form.formState.errors.root) return null;
 
   return (
-    <div>
-      <p className="text-error-foreground text-sm font-medium">
+    <div className="py-2">
+      <p className="text-red-400 text-md">
         {form.formState.errors.root.message}
       </p>
     </div>
@@ -103,6 +123,7 @@ function Name() {
       name="name"
       placeholder="Nombre de la categoría"
       control={form.control}
+      required
     />
   );
 }
@@ -122,10 +143,10 @@ function Description() {
 }
 
 function Submit() {
-  const { formId } = useCategoryForm();
+  const { formId, isPending } = useCategoryForm();
 
   return (
-    <Button type="submit" form={formId}>
+    <Button type="submit" form={formId} disabled={isPending}>
       Crear Categoría
     </Button>
   );

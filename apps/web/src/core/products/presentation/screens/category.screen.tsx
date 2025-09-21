@@ -17,9 +17,13 @@ export function CategoryScreen({ businessId, categoryId }: Props) {
       <section className="mx-4">
         <CategoryHeaderSection category={category} />
       </section>
-      {category.subcategories.length > 0 && !category.parent && (
+      {!category.parent && (
         <div className="mx-4">
-          <SubcategoriesSection subcategories={category.subcategories} />
+          <SubcategoriesSection
+            subcategories={category.subcategories}
+            businessId={businessId}
+            parentId={category.id}
+          />
         </div>
       )}
     </section>

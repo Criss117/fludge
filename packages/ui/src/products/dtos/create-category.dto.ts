@@ -14,12 +14,6 @@ export const createCategoryDto = z.object({
     })
     .optional()
     .nullable(),
-  parentId: z
-    .uuid({
-      error: "La categoría debe tener un ID padre",
-    })
-    .optional()
-    .nullable(),
 });
 
 export type CreateCategoryDto = z.infer<typeof createCategoryDto>;
