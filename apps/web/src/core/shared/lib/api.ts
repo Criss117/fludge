@@ -55,6 +55,14 @@ export const API_ENDPOINTS = {
       REMOVE_GROUPS: (businessId: string, employee: string) =>
         `/business/${businessId}/employees/${employee}/groups` as `/business/${string}/employees/${string}/groups`,
     },
+    CATEGORIES: {
+      FIND_MANY: (businessId: string) =>
+        `/business/${businessId}/categories` as `/business/${string}/categories`,
+      FIND_ONE: (businessId: string, categoryId: string) =>
+        `/business/${businessId}/categories/${categoryId}` as `/business/${string}/categories/${string}`,
+      CREATE: (businessId: string) =>
+        `/business/${businessId}/categories` as `/business/${string}/categories`,
+    },
   },
 } as const;
 

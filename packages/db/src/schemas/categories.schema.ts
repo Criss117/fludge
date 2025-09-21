@@ -17,7 +17,9 @@ export const categories = sqliteTable(
     description: text("description", {
       length: 255,
     }),
-    businessId: text("business_id").references(() => business.id),
+    businessId: text("business_id")
+      .references(() => business.id)
+      .notNull(),
     parentId: text("parent_id"),
     ...auditMetadata,
   },

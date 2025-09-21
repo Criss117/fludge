@@ -1,5 +1,12 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { HandCoins, Home, SquareChartGantt, Users2Icon } from "lucide-react";
+import {
+  Building2Icon,
+  ChartColumnStackedIcon,
+  HandCoins,
+  Home,
+  SquareChartGantt,
+  Users2Icon,
+} from "lucide-react";
 import type { BusinessDetail } from "@repo/core/entities/business";
 
 import {
@@ -30,6 +37,16 @@ const mainItems = [
     title: "Productos",
     icon: SquareChartGantt,
     href: "/business/$id/products",
+  },
+  {
+    title: "Categorias",
+    icon: ChartColumnStackedIcon,
+    href: "/business/$id/categories",
+  },
+  {
+    title: "Proveedores",
+    icon: Building2Icon,
+    href: "/business/$id/providers",
   },
   {
     title: "Ventas",

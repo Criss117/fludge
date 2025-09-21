@@ -1,0 +1,93 @@
+import { BackButton } from "@/core/shared/components/back-button";
+import { Button } from "@/core/shared/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/core/shared/components/ui/card";
+import { Separator } from "@/core/shared/components/ui/separator";
+import type { CategoryDetail } from "@repo/core/entities/category";
+import { Link } from "@tanstack/react-router";
+import { formatDistanceToNow } from "date-fns";
+import { es } from "date-fns/locale";
+
+interface Props {
+  category: CategoryDetail;
+}
+
+export function CategoryHeaderSection({ category }: Props) {
+  return (
+    <div className="space-y-2">
+      <header className="flex items-center gap-x-4">
+        <BackButton />
+        <div>
+          <h2 className="text-xl font-semibold">{category.name}</h2>
+          <p className="text-sm text-muted-foreground">
+            {category.description}
+          </p>
+        </div>
+      </header>
+      <Card>
+        <CardHeader>
+          <CardTitle>Resumen</CardTitle>
+          <CardDescription>
+            Aquí se muestra el resumen de la categoría
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex justify-between h-12 items-center">
+          <div className="flex-1 mx-2">
+            <h3 className="text-xs font-semibold text-muted-foreground">ID</h3>
+            <p>{category.id}</p>
+          </div>
+          {category.parent && (
+            <>
+              <Separator orientation="vertical" />
+              <div className="flex-1 mx-2">
+                <h3 className="text-xs font-semibold text-muted-foreground">
+                  Categoría padre
+                </h3>
+                <Button variant="link">
+                  <Link
+                    to="/business/$id/categories/$categoryid"
+                    params={{
+                      id: category.businessId,
+                      categoryid: category.parent.id,
+                    }}
+                  >
+                    {category.parent.name}
+                  </Link>
+                </Button>
+              </div>
+            </>
+          )}
+          <Separator orientation="vertical" />
+          <div className="flex-1 mx-2">
+            <h3 className="text-xs font-semibold text-muted-foreground">
+              Última modificación
+            </h3>
+            <p>
+              {formatDistanceToNow(category.updatedAt, {
+                addSuffix: true,
+                locale: es,
+              })}
+            </p>
+          </div>
+          <Separator orientation="vertical" />
+          <div className="flex-1 mx-2">
+            <h3 className="text-xs font-semibold text-muted-foreground">
+              Creado el
+            </h3>
+            <p>
+              {formatDistanceToNow(category.createdAt, {
+                addSuffix: true,
+                locale: es,
+              })}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
