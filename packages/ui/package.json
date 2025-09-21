@@ -6,7 +6,8 @@
     "./auth/*": "./src/auth/*.ts",
     "./business/*": "./src/business/*.ts",
     "./utils/*": "./src/utils/*.ts",
-    "./employees/*": "./src/employees/*.ts"
+    "./employees/*": "./src/employees/*.ts",
+    "./products/*": "./src/products/*.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

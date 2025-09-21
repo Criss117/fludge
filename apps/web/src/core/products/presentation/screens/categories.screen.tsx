@@ -10,6 +10,7 @@ import { useFindManyCategories } from "../../application/hooks/use.find-many-cat
 import { CategorySummaryTable } from "../components/categories-summary-table";
 import { PageHeader } from "@/core/shared/components/page-header";
 import { Button } from "@/core/shared/components/ui/button";
+import { CreateCategoryDialog } from "../components/create-category-dialog";
 
 interface Props {
   businessId: string;
@@ -30,16 +31,7 @@ export function CategoriesScreen({ businessId }: Props) {
               </CardDescription>
             </div>
             <div>
-              <Button className="rounded-full" asChild>
-                <Link
-                  to="/business/$id/categories/create"
-                  params={{
-                    id: businessId,
-                  }}
-                >
-                  Nueva categoría
-                </Link>
-              </Button>
+              <CreateCategoryDialog businessId={businessId} />
             </div>
           </CardHeader>
         </Card>
