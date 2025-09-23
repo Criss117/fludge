@@ -62,6 +62,8 @@ export const API_ENDPOINTS = {
         `/business/${businessId}/categories/${categoryId}` as `/business/${string}/categories/${string}`,
       CREATE: (businessId: string) =>
         `/business/${businessId}/categories` as `/business/${string}/categories`,
+      DELETE_MANY: (businessId: string) =>
+        `/business/${businessId}/categories/delete-many` as `/business/${string}/categories/delete-many`,
     },
   },
 } as const;

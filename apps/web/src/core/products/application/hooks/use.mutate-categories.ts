@@ -1,10 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createCategoryAction } from "../actions/create-category.action";
 import { toast } from "sonner";
+import { createCategoryAction } from "../actions/create-category.action";
 import { findManyCategoriesQueryOptions } from "./use.find-many-categories";
 import { findOneCategoryQueryOptions } from "./use.find-one-category";
+import { deleteManyCategoriesAction } from "../actions/delete-many-categories.action";
 
 type CreateParams = Parameters<typeof createCategoryAction>[number];
+type DeleteManty = Parameters<typeof deleteManyCategoriesAction>[number];
 
 export function useMutateCategories() {
   const queryClient = useQueryClient();
@@ -24,21 +26,23 @@ export function useMutateCategories() {
     onMutate: () => {
       toast.loading("Creando la categoría", {
         id: "create-category",
+        position: "top-center",
       });
     },
-    onSuccess: (_, varaibles) => {
+    onSuccess: (_, variables) => {
       toast.dismiss("create-category");
       toast.success("Categoría creada exitosamente", {
         id: "create-category",
+        position: "top-center",
       });
 
       queryClient.invalidateQueries(
-        findManyCategoriesQueryOptions(varaibles.businessId)
+        findManyCategoriesQueryOptions(variables.businessId)
       );
 
-      if (varaibles.parentId) {
+      if (variables.parentId) {
         queryClient.invalidateQueries(
-          findOneCategoryQueryOptions(varaibles.businessId, varaibles.parentId)
+          findOneCategoryQueryOptions(variables.businessId, variables.parentId)
         );
       }
     },
@@ -50,7 +54,52 @@ export function useMutateCategories() {
     },
   });
 
+  const deleteMany = useMutation({
+    mutationFn: async (data: DeleteManty) => {
+      const res = await deleteManyCategoriesAction(data);
+
+      if (res.error) {
+        throw new Error(res.message, {
+          cause: res.message,
+        });
+      }
+
+      return res.data;
+    },
+    onMutate: () => {
+      toast.loading("Eliminando categorías", {
+        id: "delete-many-categories",
+        position: "top-center",
+      });
+    },
+    onSuccess: (_, variables) => {
+      toast.dismiss("delete-many-categories");
+      toast.success("Categorías eliminadas exitosamente", {
+        id: "delete-many-categories",
+        position: "top-center",
+      });
+
+      queryClient.invalidateQueries(
+        findManyCategoriesQueryOptions(variables.businessId)
+      );
+
+      const categoriesToInvalidateOptions = variables.categoriesIds.map((id) =>
+        findOneCategoryQueryOptions(variables.businessId, id)
+      );
+
+      queryClient.invalidateQueries(...categoriesToInvalidateOptions);
+    },
+    onError: (err) => {
+      toast.dismiss("delete-many-categories");
+      toast.error(err.message || "Error al eliminar categorías", {
+        id: "delete-many-categories",
+        position: "top-center",
+      });
+    },
+  });
+
   return {
     create,
+    deleteMany,
   };
 }

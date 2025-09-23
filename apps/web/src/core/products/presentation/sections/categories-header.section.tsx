@@ -1,7 +1,8 @@
 import { Button } from "@/core/shared/components/ui/button";
-import { CategorySummaryTable } from "../components/categories-summary-table";
-import { CreateCategoryDialog } from "../components/create-category-dialog";
+import { CategorySummaryTable } from "@/core/products/presentation/components/categories-summary-table";
+import { CreateCategoryDialog } from "@/core/products/presentation/components/create-category-dialog";
 import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
+import { useMutateCategories } from "@/core/products/application/hooks/use.mutate-categories";
 
 interface Props {
   totalCategories: number;
@@ -11,10 +12,21 @@ interface Props {
 export function CategoriesHeader({ totalCategories, businessId }: Props) {
   const { table } = CategorySummaryTable.useCategorySummaryTable();
   const { userHasPermissions } = usePermissions();
+  const { deleteMany } = useMutateCategories();
 
   const selectedRows = table.getSelectedRowModel().rows.length;
 
   const userCanDeleteCategories = userHasPermissions("categories:delete");
+
+  const deleteManyCategories = () => {
+    const categoriesIds = table
+      .getSelectedRowModel()
+      .rows.map((row) => row.original.id);
+
+    if (!categoriesIds.length) return;
+
+    deleteMany.mutate({ categoriesIds, businessId });
+  };
 
   return (
     <header className="flex justify-between">
@@ -30,7 +42,12 @@ export function CategoriesHeader({ totalCategories, businessId }: Props) {
       <div className="space-x-2">
         <Button
           variant="destructive"
-          disabled={selectedRows === 0 || !userCanDeleteCategories}
+          disabled={
+            selectedRows === 0 ||
+            !userCanDeleteCategories ||
+            deleteMany.isPending
+          }
+          onClick={deleteManyCategories}
         >
           Eliminar
         </Button>
