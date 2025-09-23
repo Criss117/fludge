@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { BusinessQueriesRepository } from '../repositories/business-queries.repository';
 import { UserCanNotAccessException } from '../exceptions/user-cannot-access.exception';
 import type { BusinessDetail } from '@repo/core/entities/business';
+import { BusinessNotFoundException } from '../exceptions/business-no-exists.exception';
 
 @Injectable()
 export class FindOneBusinessUseCase {
@@ -16,6 +17,10 @@ export class FindOneBusinessUseCase {
     const business = await this.businessQueriesRepository.findOne(id, {
       ensureActive: true,
     });
+
+    if (!business) {
+      throw new BusinessNotFoundException();
+    }
 
     const logedUserIsRootOrEmployee =
       business.rootUserId === logedUserId ||

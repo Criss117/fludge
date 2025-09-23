@@ -47,17 +47,24 @@ export class BusinessQueriesRepository {
       .orderBy(desc(business.createdAt));
   }
 
-  public async findOne(id: string, options?: Options): Promise<BusinessDetail> {
+  public async findOne(
+    id: string,
+    options?: Options,
+  ): Promise<BusinessDetail | null> {
     const optionsFilters: SQL[] = [];
 
     if (options?.ensureActive) {
       optionsFilters.push(eq(business.isActive, true));
     }
 
-    const findBusinessPromise = this.db
+    const [businessRes] = await this.db
       .select()
       .from(business)
       .where(and(eq(business.id, id), ...optionsFilters));
+
+    if (!businessRes) {
+      return null;
+    }
 
     const findGroupsPromise = this.db
       .select({
@@ -68,7 +75,7 @@ export class BusinessQueriesRepository {
         createdAt: groups.createdAt,
       })
       .from(groups)
-      .where(and(eq(groups.businessId, id), ...optionsFilters));
+      .where(and(eq(groups.businessId, id)));
 
     const findEmployeesPromise = this.db
       .select({
@@ -81,11 +88,10 @@ export class BusinessQueriesRepository {
       })
       .from(employees)
       .innerJoin(users, eq(employees.userId, users.id))
-      .where(and(eq(employees.businessId, id), ...optionsFilters))
+      .where(and(eq(employees.businessId, id)))
       .groupBy(users.id);
 
-    const [[businessRes], groupsRes, employeesRes] = await Promise.all([
-      findBusinessPromise,
+    const [groupsRes, employeesRes] = await Promise.all([
       findGroupsPromise,
       findEmployeesPromise,
     ]);
@@ -135,7 +141,7 @@ export class BusinessQueriesRepository {
       })
       .from(employees)
       .innerJoin(business, eq(employees.businessId, business.id))
-      .where(and(eq(employees.userId, userId), ...optionsFilters));
+      .where(and(eq(employees.userId, userId)));
 
     if (!employeeInfo.length) {
       return {

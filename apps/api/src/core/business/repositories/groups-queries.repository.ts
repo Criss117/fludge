@@ -24,7 +24,20 @@ export class GroupsQueriesRepository {
       optionsFilters.push(eq(groups.isActive, true));
     }
 
-    const employessListPromise = this.db
+    const [group] = await this.db
+      .select()
+      .from(groups)
+      .where(
+        and(
+          eq(groups.id, meta.groupId),
+          eq(groups.businessId, meta.businessId),
+          ...optionsFilters,
+        ),
+      );
+
+    if (!group) return null;
+
+    const employessList = await this.db
       .select({
         id: users.id,
         firstName: users.firstName,
@@ -42,27 +55,8 @@ export class GroupsQueriesRepository {
               WHERE JSON_EACH.value = ${meta.groupId}
             )`,
           eq(employees.businessId, meta.businessId),
-          ...optionsFilters,
         ),
       );
-
-    const groupPromise = this.db
-      .select()
-      .from(groups)
-      .where(
-        and(
-          eq(groups.id, meta.groupId),
-          eq(groups.businessId, meta.businessId),
-          ...optionsFilters,
-        ),
-      );
-
-    const [[group], employessList] = await Promise.all([
-      groupPromise,
-      employessListPromise,
-    ]);
-
-    if (!group) return null;
 
     return {
       createdAt: group.createdAt,
