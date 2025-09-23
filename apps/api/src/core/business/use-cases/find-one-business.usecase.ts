@@ -13,7 +13,9 @@ export class FindOneBusinessUseCase {
     id: string,
     logedUserId: string,
   ): Promise<BusinessDetail> {
-    const business = await this.businessQueriesRepository.findOne(id);
+    const business = await this.businessQueriesRepository.findOne(id, {
+      ensureActive: true,
+    });
 
     const logedUserIsRootOrEmployee =
       business.rootUserId === logedUserId ||

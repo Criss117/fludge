@@ -9,10 +9,15 @@ export class FindOneEmployeeUseCase {
   ) {}
 
   public async execute(businessId: string, userId: string) {
-    const user = await this.usersQueriesRepository.findOneEmployee({
-      businessId,
-      userId,
-    });
+    const user = await this.usersQueriesRepository.findOneEmployee(
+      {
+        businessId,
+        userId,
+      },
+      {
+        ensureActive: true,
+      },
+    );
 
     if (!user) {
       throw new UserNotFoundException();

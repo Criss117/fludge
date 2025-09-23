@@ -22,9 +22,14 @@ export class UpdateGroupUseCase {
     }
 
     const existingGroupsInBusiness =
-      await this.groupsQueriesRepository.findManyBy({
-        businessId,
-      });
+      await this.groupsQueriesRepository.findManyBy(
+        {
+          businessId,
+        },
+        {
+          ensureActive: true,
+        },
+      );
 
     const currentGroup = existingGroupsInBusiness.find(
       (group) => group.id === groupId,

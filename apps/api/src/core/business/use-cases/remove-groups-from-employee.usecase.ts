@@ -21,10 +21,15 @@ export class RemoveGroupsFromEmployeeUseCase {
     data: AssignGroupsToEmployeeDto,
   ) {
     const findGroupsPromise = data.groupIds.map((groupId) =>
-      this.groupsQueriesRepository.findOne({
-        businessId,
-        groupId,
-      }),
+      this.groupsQueriesRepository.findOne(
+        {
+          businessId,
+          groupId,
+        },
+        {
+          ensureActive: true,
+        },
+      ),
     );
 
     const groups = await Promise.all(findGroupsPromise);
@@ -33,10 +38,15 @@ export class RemoveGroupsFromEmployeeUseCase {
       throw new GroupNotFoundException('No se encontraron grupos');
     }
 
-    const employeeInfo = await this.employeesQueriesRepository.findOne({
-      businessId,
-      userId: employeeId,
-    });
+    const employeeInfo = await this.employeesQueriesRepository.findOne(
+      {
+        businessId,
+        userId: employeeId,
+      },
+      {
+        ensureActive: true,
+      },
+    );
 
     if (!employeeInfo) {
       throw new EmployeeNotFoundException();

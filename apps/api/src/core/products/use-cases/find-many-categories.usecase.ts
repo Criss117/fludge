@@ -8,8 +8,13 @@ export class FindManyCategoriesUsecase {
   ) {}
 
   public async execute(businessId: string) {
-    return this.categoriesQueriesRepository.findManyBy({
-      businessId,
-    });
+    return this.categoriesQueriesRepository.findManyBy(
+      {
+        businessId,
+      },
+      {
+        ensureActive: true,
+      },
+    );
   }
 }

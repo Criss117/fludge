@@ -9,10 +9,15 @@ export class FindOneCategoryUsecase {
   ) {}
 
   public async execute(businessId: string, categoryId: string) {
-    const category = await this.categoriesQueriesRepository.findOne({
-      businessId,
-      categoryId,
-    });
+    const category = await this.categoriesQueriesRepository.findOne(
+      {
+        businessId,
+        categoryId,
+      },
+      {
+        ensureActive: true,
+      },
+    );
 
     if (!category) {
       throw new CategoryNotFoundException();

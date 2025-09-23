@@ -8,6 +8,8 @@ export class FindUserIsInUseCase {
   ) {}
 
   public async execute(userId: string) {
-    return this.businessQueriesRepository.findUserIsIn(userId);
+    return this.businessQueriesRepository.findUserIsIn(userId, {
+      ensureActive: true,
+    });
   }
 }

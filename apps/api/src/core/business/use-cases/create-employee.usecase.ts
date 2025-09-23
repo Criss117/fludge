@@ -17,9 +17,14 @@ export class CreateEmployeeUseCase {
 
   //TODO: validate if the group exists
   public async execute(businessId: string, data: CreateEmployeeDto) {
-    const existingBusiness = await this.businessQueriesRepository.findManyBy({
-      id: businessId,
-    });
+    const existingBusiness = await this.businessQueriesRepository.findManyBy(
+      {
+        id: businessId,
+      },
+      {
+        ensureActive: true,
+      },
+    );
 
     if (!existingBusiness.length) {
       throw new BusinessNotFoundException();

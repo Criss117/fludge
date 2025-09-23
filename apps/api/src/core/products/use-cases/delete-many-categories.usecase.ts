@@ -13,10 +13,15 @@ export class DeleteManyCategoriesUsecase {
   ) {}
 
   public async execute(businessId: string, data: DeleteManyCategoriesDto) {
-    const categories = await this.categoriesQueriesRepository.findManyBy({
-      ids: data.categoriesIds,
-      businessId,
-    });
+    const categories = await this.categoriesQueriesRepository.findManyBy(
+      {
+        ids: data.categoriesIds,
+        businessId,
+      },
+      {
+        ensureActive: true,
+      },
+    );
 
     if (!categories.length || categories.length !== data.categoriesIds.length) {
       throw new CategoryNotFoundException(
@@ -28,10 +33,15 @@ export class DeleteManyCategoriesUsecase {
       (category) => category.parentId === null,
     );
 
-    const subCategories = await this.categoriesQueriesRepository.findManyBy({
-      parentIds: parentsCategories.flatMap((category) => category.id),
-      businessId,
-    });
+    const subCategories = await this.categoriesQueriesRepository.findManyBy(
+      {
+        parentIds: parentsCategories.flatMap((category) => category.id),
+        businessId,
+      },
+      {
+        ensureActive: true,
+      },
+    );
 
     const categoriesToDelete: DeleteCategoryDto[] = [
       ...parentsCategories.map((c) => ({

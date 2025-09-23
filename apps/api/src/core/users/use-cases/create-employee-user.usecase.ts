@@ -18,9 +18,14 @@ export class CreateEmployeeUserUseCase {
   ) {}
 
   public async execute(data: CreateEmployeeDto, options?: Options) {
-    const existingUsers = await this.usersQueriesRepository.findManyBy({
-      username: data.username,
-    });
+    const existingUsers = await this.usersQueriesRepository.findManyBy(
+      {
+        username: data.username,
+      },
+      {
+        ensureActive: true,
+      },
+    );
 
     if (existingUsers.length > 0) {
       throw new UserAlreadyExistsException();

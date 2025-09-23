@@ -22,10 +22,15 @@ export class AssignEmployeesToGroupUseCase {
     data: AssignEmployeesToGroupDto,
   ) {
     const findEmployeesPromise = data.employeeIds.map((employeeId) =>
-      this.employeesQueriesRepository.findOne({
-        businessId,
-        userId: employeeId,
-      }),
+      this.employeesQueriesRepository.findOne(
+        {
+          businessId,
+          userId: employeeId,
+        },
+        {
+          ensureActive: true,
+        },
+      ),
     );
 
     const employees = await Promise.all(findEmployeesPromise);

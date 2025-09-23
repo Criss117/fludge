@@ -8,9 +8,14 @@ export class FindOneGroupUseCase {
   ) {}
 
   public async execute(businessId: string, groupId: string) {
-    return this.groupsQueriesRepository.findOne({
-      businessId,
-      groupId,
-    });
+    return this.groupsQueriesRepository.findOne(
+      {
+        businessId,
+        groupId,
+      },
+      {
+        ensureActive: true,
+      },
+    );
   }
 }
