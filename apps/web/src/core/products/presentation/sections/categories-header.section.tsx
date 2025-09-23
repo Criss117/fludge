@@ -24,7 +24,7 @@ export function CategoriesHeader({ totalCategories, businessId }: Props) {
           {selectedRows > 0 && `/${selectedRows}`})
         </h2>
         <p className="text-muted-foreground text-sm">
-          Los grupos permiten organizar los permisos de los empleados.
+          Administra las categorías de tus productos
         </p>
       </div>
       <div className="space-x-2">
