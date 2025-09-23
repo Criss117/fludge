@@ -10,6 +10,7 @@ import { CategoriesQueriesRepository } from './repositories/categories-queries.r
 import { BusinessModule } from '@core/business/business.module';
 import { FindManyCategoriesUsecase } from './use-cases/find-many-categories.usecase';
 import { FindOneCategoryUsecase } from './use-cases/find-one-category.usecase';
+import { DeleteManyCategoriesUsecase } from './use-cases/delete-many-categories.usecase';
 
 @Module({
   imports: [DbModule, BusinessModule],
@@ -19,6 +20,7 @@ import { FindOneCategoryUsecase } from './use-cases/find-one-category.usecase';
     CreateCategoryUsecase,
     FindManyCategoriesUsecase,
     FindOneCategoryUsecase,
+    DeleteManyCategoriesUsecase,
 
     CategoriesCommandRepository,
     CategoriesQueriesRepository,

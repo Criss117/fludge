@@ -17,7 +17,7 @@ export class CreateCategoryUsecase {
       {
         businessId,
         name: data.name,
-        parentId: data.parentId || undefined,
+        parentIds: data.parentId ? [data.parentId] : [],
       },
       {
         ensureActive: true,
@@ -41,7 +41,7 @@ export class CreateCategoryUsecase {
     const [parentCategory] = await this.categoriesQueriesRepository.findManyBy(
       {
         businessId,
-        id: data.parentId,
+        ids: [data.parentId],
       },
       {
         ensureActive: true,

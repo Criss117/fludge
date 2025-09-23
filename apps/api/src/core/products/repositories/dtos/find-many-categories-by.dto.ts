@@ -1,6 +1,6 @@
 export interface FindManyCategoriesByDto {
   name?: string;
-  id?: string;
+  ids?: string[];
   businessId?: string;
-  parentId?: string;
+  parentIds?: string[];
 }

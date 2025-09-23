@@ -1,4 +1,4 @@
-import { and, desc, eq, type SQL } from 'drizzle-orm';
+import { and, desc, eq, inArray, type SQL } from 'drizzle-orm';
 import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
 import { Inject, Injectable } from '@nestjs/common';
 import { categories } from '@repo/db';
@@ -24,7 +24,7 @@ export class CategoriesQueriesRepository {
     const filters: SQL[] = [];
     const optionsFilters: SQL[] = [];
 
-    if (!meta.name && !meta.id && !meta.businessId && !meta.parentId) {
+    if (!meta.name && !meta.ids && !meta.businessId && !meta.parentIds) {
       return [];
     }
 
@@ -36,16 +36,16 @@ export class CategoriesQueriesRepository {
       filters.push(eq(categories.name, meta.name));
     }
 
-    if (meta.id) {
-      filters.push(eq(categories.id, meta.id));
+    if (meta.ids) {
+      filters.push(inArray(categories.id, meta.ids));
     }
 
     if (meta.businessId) {
       filters.push(eq(categories.businessId, meta.businessId));
     }
 
-    if (meta.parentId) {
-      filters.push(eq(categories.parentId, meta.parentId));
+    if (meta.parentIds) {
+      filters.push(inArray(categories.parentId, meta.parentIds));
     }
 
     return this.db
