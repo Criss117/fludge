@@ -1,16 +1,7 @@
-import { Link } from "@tanstack/react-router";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/core/shared/components/ui/card";
 import { useFindManyCategories } from "../../application/hooks/use.find-many-categories";
 import { CategorySummaryTable } from "../components/categories-summary-table";
 import { PageHeader } from "@/core/shared/components/page-header";
-import { Button } from "@/core/shared/components/ui/button";
-import { CreateCategoryDialog } from "../components/create-category-dialog";
+import { CategoriesHeader } from "../sections/categories-header.section";
 
 interface Props {
   businessId: string;
@@ -20,34 +11,21 @@ export function CategoriesScreen({ businessId }: Props) {
   const { data } = useFindManyCategories(businessId);
   return (
     <section className="mx-2 space-y-4">
-      <PageHeader title="Categorías" />
-      <section className="mx-4">
-        <Card>
-          <CardHeader className="flex justify-between">
-            <div>
-              <CardTitle>Categorías</CardTitle>
-              <CardDescription>
-                Lista de todas las categorías del negocio
-              </CardDescription>
-            </div>
-            <div>
-              <CreateCategoryDialog businessId={businessId} />
-            </div>
-          </CardHeader>
-        </Card>
-      </section>
-      <section className="mx-4">
-        <Card>
-          <CardContent>
-            <CategorySummaryTable.Root data={data}>
-              <CategorySummaryTable.Content>
-                <CategorySummaryTable.Header />
-                <CategorySummaryTable.Body />
-              </CategorySummaryTable.Content>
-            </CategorySummaryTable.Root>
-          </CardContent>
-        </Card>
-      </section>
+      <CategorySummaryTable.Root data={data}>
+        <PageHeader title="Categorías" />
+        <section className="mx-4">
+          <CategoriesHeader
+            businessId={businessId}
+            totalCategories={data.length}
+          />
+        </section>
+        <section className="mx-4">
+          <CategorySummaryTable.Content>
+            <CategorySummaryTable.Header />
+            <CategorySummaryTable.Body />
+          </CategorySummaryTable.Content>
+        </section>
+      </CategorySummaryTable.Root>
     </section>
   );
 }
