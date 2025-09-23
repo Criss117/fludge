@@ -28,7 +28,9 @@ export class SeedController {
 
     await this.seedService.seed();
 
-    return HTTPResponse.ok(null);
+    return HTTPResponse.ok({
+      message: 'Database seeded successfully',
+    });
   }
 
   @Get('clear')

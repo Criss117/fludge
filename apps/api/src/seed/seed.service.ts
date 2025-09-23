@@ -1,5 +1,5 @@
 import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
   business,
   employees,
@@ -35,7 +35,10 @@ const defaultOptions: Options = {
 
 @Injectable()
 export class SeedService {
-  constructor(@Inject(DBSERVICE) private readonly db: LibSQLDatabase) {}
+  constructor(
+    private readonly logger: Logger,
+    @Inject(DBSERVICE) private readonly db: LibSQLDatabase,
+  ) {}
 
   public async clearDB() {
     await this.db.delete(categories);
@@ -46,6 +49,7 @@ export class SeedService {
   }
 
   public async seed(options = defaultOptions) {
+    this.logger.log('Seeding database...');
     const { groupsPerBusiness, totaRootUsers, totalBusinessesPerRoot } =
       options;
 
@@ -67,6 +71,7 @@ export class SeedService {
 
     const insertedCategories = await this.insertCategories(insertedBusiness);
 
+    this.logger.log('Seeding database done');
     return {
       users: {
         rootUsers: rootUsers,
