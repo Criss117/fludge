@@ -33,15 +33,25 @@ export class DeleteManyCategoriesUsecase {
       (category) => category.parentId === null,
     );
 
-    const subCategories = await this.categoriesQueriesRepository.findManyBy(
-      {
-        parentIds: parentsCategories.flatMap((category) => category.id),
-        businessId,
-      },
-      {
-        ensureActive: true,
-      },
+    const subCategories = categories.filter(
+      (category) => category.parentId !== null,
     );
+
+    if (parentsCategories.length > 0) {
+      const subCats = await this.categoriesQueriesRepository.findManyBy(
+        {
+          parentIds: parentsCategories.flatMap((category) => category.id),
+          businessId,
+        },
+        {
+          ensureActive: true,
+        },
+      );
+
+      subCategories.push(
+        ...subCats.filter((c) => !subCategories.some((sb) => sb.id === c.id)),
+      );
+    }
 
     const categoriesToDelete: DeleteCategoryDto[] = [
       ...parentsCategories.map((c) => ({
