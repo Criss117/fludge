@@ -1,3 +1,7 @@
+import { Link } from "@tanstack/react-router";
+import { formatDistanceToNow } from "date-fns";
+import { es } from "date-fns/locale";
+import type { CategoryDetail } from "@repo/core/entities/category";
 import { BackButton } from "@/core/shared/components/back-button";
 import { Button } from "@/core/shared/components/ui/button";
 import {
@@ -8,13 +12,26 @@ import {
   CardTitle,
 } from "@/core/shared/components/ui/card";
 import { Separator } from "@/core/shared/components/ui/separator";
-import type { CategoryDetail } from "@repo/core/entities/category";
-import { Link } from "@tanstack/react-router";
-import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
+import { UpdateCategoryDialog } from "../components/update-category-dialog";
+import { RemoveCategoriesButton } from "../components/remove-categories-button";
 
 interface Props {
   category: CategoryDetail;
+}
+
+function CategoryActions({ category }: Props) {
+  return (
+    <div className="space-x-2 flex items-center">
+      <UpdateCategoryDialog
+        businessId={category.businessId}
+        category={category}
+      />
+      <RemoveCategoriesButton
+        categoriesIds={[category.id]}
+        businessId={category.businessId}
+      />
+    </div>
+  );
 }
 
 export function CategoryHeaderSection({ category }: Props) {
@@ -30,11 +47,16 @@ export function CategoryHeaderSection({ category }: Props) {
         </div>
       </header>
       <Card>
-        <CardHeader>
-          <CardTitle>Resumen</CardTitle>
-          <CardDescription>
-            Aquí se muestra el resumen de la categoría
-          </CardDescription>
+        <CardHeader className="flex justify-between">
+          <div>
+            <CardTitle>Resumen</CardTitle>
+            <CardDescription>
+              Aquí se muestra el resumen de la categoría
+            </CardDescription>
+          </div>
+          <div>
+            <CategoryActions category={category} />
+          </div>
         </CardHeader>
         <CardContent className="flex justify-between h-12 items-center">
           <div className="flex-1 mx-2">

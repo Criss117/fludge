@@ -1,19 +1,21 @@
 import { createContext, use, useId } from "react";
 import {
   type FormType,
-  useCreateCategoryForm,
-} from "@repo/ui/products/hooks/use.create-category-form";
+  useCategoryForm as useForm,
+} from "@repo/ui/products/hooks/use.category-form";
 import { Form } from "@/core/shared/components/ui/form";
 import { InputForm } from "@/core/shared/components/form/input-form";
 import { TextAreaForm } from "@/core/shared/components/form/text-area-form";
 import { Button } from "@/core/shared/components/ui/button";
 import { useMutateCategories } from "@/core/products/application/hooks/use.mutate-categories";
+import type { CreateCategoryDto } from "@repo/ui/products/dtos/create-category.dto";
 
 interface Context {
   form: FormType;
   formId: string;
   onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   isPending: boolean;
+  defaultValues?: CreateCategoryDto;
 }
 
 interface RootProps {
@@ -21,6 +23,7 @@ interface RootProps {
   businessId: string;
   type?: "category" | "subcategory";
   parentId?: string;
+  defaultValues?: CreateCategoryDto;
   actions?: {
     onSuccess?: () => void;
     onError?: () => void;
@@ -51,12 +54,13 @@ function Root({
   actions,
   type = "category",
   parentId,
+  defaultValues,
 }: RootProps) {
-  if (type === "subcategory" && !parentId) {
+  if (!defaultValues && type === "subcategory" && !parentId) {
     throw new Error("parentId is required");
   }
 
-  const form = useCreateCategoryForm();
+  const form = useForm({ defaultValues });
   const formId = `category-form-${useId()}`;
   const { create } = useMutateCategories();
 
@@ -82,7 +86,13 @@ function Root({
 
   return (
     <CategoryFormContext.Provider
-      value={{ form, formId, onSubmit, isPending: create.isPending }}
+      value={{
+        form,
+        formId,
+        onSubmit,
+        isPending: create.isPending,
+        defaultValues,
+      }}
     >
       {children}
     </CategoryFormContext.Provider>
@@ -143,11 +153,11 @@ function Description() {
 }
 
 function Submit() {
-  const { formId, isPending } = useCategoryForm();
+  const { formId, isPending, defaultValues } = useCategoryForm();
 
   return (
     <Button type="submit" form={formId} disabled={isPending}>
-      Crear Categoría
+      {defaultValues ? "Actualizar Categoría" : "Crear Categoría"}
     </Button>
   );
 }

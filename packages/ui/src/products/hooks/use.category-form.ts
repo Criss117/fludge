@@ -5,10 +5,15 @@ import {
   type CreateCategoryDto,
 } from "../dtos/create-category.dto";
 
-export function useCreateCategoryForm() {
+interface Props {
+  defaultValues?: CreateCategoryDto;
+}
+
+export function useCategoryForm(props?: Props) {
   const form = useForm<CreateCategoryDto>({
     defaultValues: {
-      name: "",
+      name: props?.defaultValues?.name ?? "",
+      description: props?.defaultValues?.description ?? "",
     },
     resolver: zodResolver(createCategoryDto),
   });

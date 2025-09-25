@@ -7,21 +7,8 @@ import {
 } from "@/core/shared/components/ui/card";
 import type { CategorySummary } from "@repo/core/entities/category";
 import { CategorySummaryTable } from "../components/categories-summary-table";
-import { Button } from "@/core/shared/components/ui/button";
 import { CreateCategoryDialog } from "../components/create-category-dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/core/shared/components/ui/alert-dialog";
-import { useMutateCategories } from "../../application/hooks/use.mutate-categories";
-import { useState } from "react";
+import { RemoveCategoriesButton } from "../components/remove-categories-button";
 
 interface Props {
   subcategories: CategorySummary[];
@@ -30,59 +17,19 @@ interface Props {
 }
 
 function DeleteSubCategoriesButton({ businessId }: { businessId: string }) {
-  const [open, setOpen] = useState(false);
-  const { deleteMany } = useMutateCategories();
   const { table } = CategorySummaryTable.useCategorySummaryTable();
 
-  const selectedCategories = table
+  const selectedIds = table
     .getSelectedRowModel()
-    .rows.flatMap((r) => r.original);
-
-  const handleClick = () => {
-    if (selectedCategories.length === 0) return;
-
-    deleteMany.mutate(
-      {
-        businessId,
-        categoriesIds: selectedCategories.map((c) => c.id),
-      },
-      {
-        onSuccess: () => setOpen(false),
-      }
-    );
-  };
+    .rows.flatMap((r) => r.original.id);
 
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
-        <Button
-          variant="destructive"
-          disabled={selectedCategories.length === 0 || deleteMany.isPending}
-        >
-          Eliminar ({selectedCategories.length}) subcategorías
-        </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Eliminar subcategorías</AlertDialogTitle>
-            <AlertDialogDescription>
-              ¿Está seguro de que desea eliminar ({selectedCategories.length})
-              subcategorías?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction
-            disabled={selectedCategories.length === 0 || deleteMany.isPending}
-            onClick={handleClick}
-          >
-            Continuar
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <RemoveCategoriesButton
+      categoriesIds={selectedIds}
+      businessId={businessId}
+      type="subcategory"
+      variant="multiple"
+    />
   );
 }
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { PencilIcon } from "lucide-react";
 import { Button } from "@/core/shared/components/ui/button";
 import {
   Dialog,
@@ -11,29 +12,22 @@ import {
   DialogTrigger,
 } from "@/core/shared/components/ui/dialog";
 import { CategoryForm } from "./category-form";
+import type { CreateCategoryDto } from "@repo/ui/products/dtos/create-category.dto";
 
 interface Props {
   businessId: string;
-  type?: "category" | "subcategory";
-  parentId?: string;
+  category: CreateCategoryDto;
 }
 
-export function CreateCategoryDialog({
-  businessId,
-  type = "category",
-  parentId,
-}: Props) {
-  if (type === "subcategory" && !parentId) {
-    throw new Error("parentId is required");
-  }
-
+export function UpdateCategoryDialog({ businessId, category }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="border-2" variant="secondary">
-          {type === "category" ? "Crear Categoría" : "Crear Subcategoría"}
+        <Button>
+          <PencilIcon />
+          Editar
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -42,16 +36,15 @@ export function CreateCategoryDialog({
           actions={{
             onSuccess: () => setOpen(false),
           }}
-          type={type}
-          parentId={parentId}
+          defaultValues={{
+            name: category.name,
+            description: category.description,
+          }}
         >
           <DialogHeader>
-            <DialogTitle>
-              {type === "category" ? "Crear Categoría" : "Crear Subcategoría"}
-            </DialogTitle>
+            <DialogTitle>Editar Categoría</DialogTitle>
             <DialogDescription>
-              Completa los datos para crear una{" "}
-              {type === "category" ? "categoría" : "subcategoría"}
+              Completa los datos para editar la categoría
             </DialogDescription>
           </DialogHeader>
 
