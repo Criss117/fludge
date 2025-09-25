@@ -11,6 +11,7 @@ import { BusinessModule } from '@core/business/business.module';
 import { FindManyCategoriesUsecase } from './use-cases/find-many-categories.usecase';
 import { FindOneCategoryUsecase } from './use-cases/find-one-category.usecase';
 import { DeleteManyCategoriesUsecase } from './use-cases/delete-many-categories.usecase';
+import { UpdateCategoryUseCase } from './use-cases/update-category.usecase';
 
 @Module({
   imports: [DbModule, BusinessModule],
@@ -21,6 +22,7 @@ import { DeleteManyCategoriesUsecase } from './use-cases/delete-many-categories.
     FindManyCategoriesUsecase,
     FindOneCategoryUsecase,
     DeleteManyCategoriesUsecase,
+    UpdateCategoryUseCase,
 
     CategoriesCommandRepository,
     CategoriesQueriesRepository,

@@ -7,6 +7,7 @@ import {
   HttpException,
   InternalServerErrorException,
   Param,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { CreateCategoryDto } from '../dtos/create-category.dto';
@@ -16,6 +17,8 @@ import { FindManyCategoriesUsecase } from '../use-cases/find-many-categories.use
 import { FindOneCategoryUsecase } from '../use-cases/find-one-category.usecase';
 import { DeleteManyCategoriesDto } from '../dtos/delete-many-categories';
 import { DeleteManyCategoriesUsecase } from '../use-cases/delete-many-categories.usecase';
+import { UpdateCategoryDto } from '../dtos/update-category.dto';
+import { UpdateCategoryUseCase } from '../use-cases/update-category.usecase';
 
 @Controller('business/:id/categories')
 export class CategoriesController {
@@ -24,6 +27,7 @@ export class CategoriesController {
     private readonly findManyCategoriesUsecase: FindManyCategoriesUsecase,
     private readonly findOneCategoryUsecase: FindOneCategoryUsecase,
     private readonly deleteManyCategoriesUsecase: DeleteManyCategoriesUsecase,
+    private readonly updateCategoryUsecase: UpdateCategoryUseCase,
   ) {}
 
   @Post()
@@ -97,6 +101,28 @@ export class CategoriesController {
   ) {
     try {
       await this.deleteManyCategoriesUsecase.execute(businessId, data);
+
+      return HTTPResponse.ok(null);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'Algo salió mal al eliminar categorías',
+      );
+    }
+  }
+
+  @Patch('/:categoryId')
+  @Permissions('categories:update')
+  public async update(
+    @Param('id') businessId: string,
+    @Param('categoryId') categoryId: string,
+    @Body() data: UpdateCategoryDto,
+  ) {
+    try {
+      await this.updateCategoryUsecase.execute(businessId, categoryId, data);
 
       return HTTPResponse.ok(null);
     } catch (error) {
