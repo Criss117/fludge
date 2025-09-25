@@ -131,7 +131,7 @@ export class CategoriesController {
       }
 
       throw new InternalServerErrorException(
-        'Algo salió mal al eliminar categorías',
+        'Algo salió mal al actualizar la categoría',
       );
     }
   }
