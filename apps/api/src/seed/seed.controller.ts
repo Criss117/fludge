@@ -26,11 +26,9 @@ export class SeedController {
       console.error(error);
     }
 
-    await this.seedService.seed();
+    const res = await this.seedService.seed();
 
-    return HTTPResponse.ok({
-      message: 'Database seeded successfully',
-    });
+    return HTTPResponse.ok(res);
   }
 
   @Get('clear')

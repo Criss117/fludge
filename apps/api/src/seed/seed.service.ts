@@ -14,6 +14,9 @@ import {
   SelectUser,
   InsertCategory,
   categories,
+  SelectCategory,
+  InsertProduct,
+  products,
 } from '@repo/db';
 import { fakerES as faker } from '@faker-js/faker';
 import { allPermissions } from '@repo/core/value-objects/permission';
@@ -41,6 +44,7 @@ export class SeedService {
   ) {}
 
   public async clearDB() {
+    await this.db.delete(products);
     await this.db.delete(categories);
     await this.db.delete(employees);
     await this.db.delete(groups);
@@ -71,7 +75,13 @@ export class SeedService {
 
     const insertedCategories = await this.insertCategories(insertedBusiness);
 
+    const insertedProducts = await this.insertProducts(
+      insertedBusiness,
+      insertedCategories,
+    );
+
     this.logger.log('Seeding database done');
+
     return {
       users: {
         rootUsers: rootUsers,
@@ -81,6 +91,7 @@ export class SeedService {
       groups: insertedGroups,
       employees: insertedEmployees,
       categories: insertedCategories,
+      products: insertedProducts,
     };
   }
 
@@ -224,7 +235,7 @@ export class SeedService {
 
   private async insertCategories(insertedBusinesses: SelectBusiness[]) {
     const categoriesToInsert: InsertCategory[] = Array.from({
-      length: insertedBusinesses.length * 20,
+      length: insertedBusinesses.length * 5,
     }).map(() => {
       return {
         businessId: faker.helpers.arrayElement(insertedBusinesses).id,
@@ -258,5 +269,38 @@ export class SeedService {
       .returning();
 
     return [...categoriesInserted, ...subcategoriesInserted];
+  }
+
+  private async insertProducts(
+    insertedBusinesses: SelectBusiness[],
+    insertedCategories: SelectCategory[],
+  ) {
+    const productsToInsert: InsertProduct[] = Array.from({
+      length: insertedBusinesses.length * 20,
+    }).map(() => {
+      const business = faker.helpers.arrayElement(insertedBusinesses);
+      const categories = faker.helpers.arrayElement(
+        insertedCategories.filter((c) => c.businessId === business.id),
+      );
+
+      return {
+        businessId: business.id,
+        categoryId: categories.id,
+        name: faker.commerce.productName(),
+        description: faker.lorem.sentence(),
+        barcode: faker.finance.iban(),
+        purchasePrice: Number.parseInt(faker.commerce.price()),
+        salePrice: Number.parseInt(faker.commerce.price()),
+        wholesalePrice: Number.parseInt(faker.commerce.price()),
+        offerPrice: Number.parseInt(faker.commerce.price()),
+        currentStock: faker.number.int({ min: 0, max: 100 }),
+        minStock: faker.number.int({ min: 0, max: 100 }),
+        maxStock: faker.number.int({ min: 0, max: 100 }),
+        allowsNegativeInventory: faker.datatype.boolean(),
+        weight: faker.number.int({ min: 0, max: 100 }),
+      };
+    });
+
+    return this.db.insert(products).values(productsToInsert).returning();
   }
 }

@@ -24,7 +24,9 @@ export const products = sqliteTable(
     }),
     categoryId: text("category_id").references(() => categories.id),
     brandId: text("brand_id").references(() => brands.id),
-    businessId: text("business_id").references(() => business.id),
+    businessId: text("business_id")
+      .references(() => business.id)
+      .notNull(),
 
     // price and sale
     purchasePrice: integer("purchase_price").notNull(),
