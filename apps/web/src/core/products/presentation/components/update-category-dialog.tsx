@@ -16,7 +16,7 @@ import type { CreateCategoryDto } from "@repo/ui/products/dtos/create-category.d
 
 interface Props {
   businessId: string;
-  category: CreateCategoryDto;
+  category: CreateCategoryDto & { id: string };
 }
 
 export function UpdateCategoryDialog({ businessId, category }: Props) {
@@ -32,6 +32,7 @@ export function UpdateCategoryDialog({ businessId, category }: Props) {
       </DialogTrigger>
       <DialogContent>
         <CategoryForm.Root
+          method="update"
           businessId={businessId}
           actions={{
             onSuccess: () => setOpen(false),
@@ -39,6 +40,7 @@ export function UpdateCategoryDialog({ businessId, category }: Props) {
           defaultValues={{
             name: category.name,
             description: category.description,
+            id: category.id,
           }}
         >
           <DialogHeader>

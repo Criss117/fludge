@@ -24,7 +24,11 @@ function CategoryActions({ category }: Props) {
     <div className="space-x-2 flex items-center">
       <UpdateCategoryDialog
         businessId={category.businessId}
-        category={category}
+        category={{
+          id: category.id,
+          name: category.name,
+          description: category.description,
+        }}
       />
       <RemoveCategoriesButton
         categoriesIds={[category.id]}

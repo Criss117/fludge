@@ -4,9 +4,11 @@ import { createCategoryAction } from "../actions/create-category.action";
 import { findManyCategoriesQueryOptions } from "./use.find-many-categories";
 import { findOneCategoryQueryOptions } from "./use.find-one-category";
 import { deleteManyCategoriesAction } from "../actions/delete-many-categories.action";
+import { updateCategoryAction } from "../actions/update-category.action";
 
 type CreateParams = Parameters<typeof createCategoryAction>[number];
-type DeleteManty = Parameters<typeof deleteManyCategoriesAction>[number];
+type DeleteManyParams = Parameters<typeof deleteManyCategoriesAction>[number];
+type UpdateParams = Parameters<typeof updateCategoryAction>[number];
 
 export function useMutateCategories() {
   const queryClient = useQueryClient();
@@ -54,8 +56,50 @@ export function useMutateCategories() {
     },
   });
 
+  const update = useMutation({
+    mutationFn: async (data: UpdateParams) => {
+      const res = await updateCategoryAction(data);
+
+      if (res.error) {
+        throw new Error(res.message, {
+          cause: res.message,
+        });
+      }
+
+      return res.data;
+    },
+    onMutate: () => {
+      toast.loading("Actualizando la categoría", {
+        id: "update-category",
+        position: "top-center",
+      });
+    },
+    onSuccess: (_, variables) => {
+      toast.dismiss("update-category");
+      toast.success("Categoría actualizada exitosamente", {
+        id: "update-category",
+        position: "top-center",
+      });
+
+      queryClient.invalidateQueries(
+        findManyCategoriesQueryOptions(variables.businessId)
+      );
+
+      queryClient.invalidateQueries(
+        findOneCategoryQueryOptions(variables.businessId, variables.categoryId)
+      );
+    },
+    onError: (err) => {
+      toast.dismiss("update-category");
+      toast.error(err.message || "Error al actualizar la categoría", {
+        id: "update-category",
+        position: "top-center",
+      });
+    },
+  });
+
   const deleteMany = useMutation({
-    mutationFn: async (data: DeleteManty) => {
+    mutationFn: async (data: DeleteManyParams) => {
       const res = await deleteManyCategoriesAction(data);
 
       if (res.error) {
@@ -100,6 +144,7 @@ export function useMutateCategories() {
 
   return {
     create,
+    update,
     deleteMany,
   };
 }

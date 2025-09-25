@@ -15,7 +15,7 @@ interface Context {
   formId: string;
   onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   isPending: boolean;
-  defaultValues?: CreateCategoryDto;
+  method?: "create" | "update";
 }
 
 interface RootProps {
@@ -23,7 +23,8 @@ interface RootProps {
   businessId: string;
   type?: "category" | "subcategory";
   parentId?: string;
-  defaultValues?: CreateCategoryDto;
+  defaultValues?: CreateCategoryDto & { id: string };
+  method?: "create" | "update";
   actions?: {
     onSuccess?: () => void;
     onError?: () => void;
@@ -53,23 +54,54 @@ function Root({
   businessId,
   actions,
   type = "category",
+  method = "create",
   parentId,
   defaultValues,
 }: RootProps) {
-  if (!defaultValues && type === "subcategory" && !parentId) {
+  if (method === "update" && !defaultValues) {
+    throw new Error("defaultValues is required when method is update");
+  }
+
+  if (method === "create" && type === "subcategory" && !parentId) {
     throw new Error("parentId is required");
   }
 
   const form = useForm({ defaultValues });
   const formId = `category-form-${useId()}`;
-  const { create } = useMutateCategories();
+  const { create, update } = useMutateCategories();
 
   const onSubmit = form.handleSubmit((data) => {
-    create.mutate(
+    if (method === "create") {
+      create.mutate(
+        {
+          ...data,
+          businessId,
+          parentId,
+        },
+        {
+          onSuccess: actions?.onSuccess,
+          onError: (err) => {
+            actions?.onError?.();
+
+            form.setError("root", {
+              message: err.message,
+            });
+          },
+        }
+      );
+
+      return;
+    }
+
+    if (method === "update" && !defaultValues) return;
+
+    if (!defaultValues) return;
+
+    update.mutate(
       {
         ...data,
         businessId,
-        parentId,
+        categoryId: defaultValues.id,
       },
       {
         onSuccess: actions?.onSuccess,
@@ -91,7 +123,7 @@ function Root({
         formId,
         onSubmit,
         isPending: create.isPending,
-        defaultValues,
+        method,
       }}
     >
       {children}
@@ -153,11 +185,11 @@ function Description() {
 }
 
 function Submit() {
-  const { formId, isPending, defaultValues } = useCategoryForm();
+  const { formId, isPending, method } = useCategoryForm();
 
   return (
     <Button type="submit" form={formId} disabled={isPending}>
-      {defaultValues ? "Actualizar Categoría" : "Crear Categoría"}
+      {method === "update" ? "Actualizar Categoría" : "Crear Categoría"}
     </Button>
   );
 }
