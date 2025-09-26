@@ -2,6 +2,7 @@ import { v4 } from "uuid";
 import { integer, text } from "drizzle-orm/sqlite-core";
 import { sqliteTable } from "drizzle-orm/sqlite-core";
 import { index } from "drizzle-orm/sqlite-core";
+import { unique } from "drizzle-orm/sqlite-core";
 import { auditMetadata } from "../helpers/audit-metadata";
 import { categories } from "./categories.schema";
 import { brands } from "./brands.schema";
@@ -57,6 +58,7 @@ export const products = sqliteTable(
     index("idx_products_category_id").on(t.categoryId),
     index("idx_products_brand_id").on(t.brandId),
     index("idx_products_is_active").on(t.isActive),
+    unique("uq_products_barcode_business").on(t.barcode, t.businessId),
   ]
 );
 
