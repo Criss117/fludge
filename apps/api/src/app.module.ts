@@ -9,7 +9,6 @@ import { BusinessModule } from './core/business/business.module';
 import { SeedModule } from './seed/seed.module';
 import { ProductsModule } from './core/products/products.module';
 import { ProvidersModule } from './core/providers/providers.module';
-
 @Module({
   imports: [
     DbModule,
