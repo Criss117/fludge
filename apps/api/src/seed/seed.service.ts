@@ -293,9 +293,8 @@ export class SeedService {
         salePrice: Number.parseInt(faker.commerce.price()),
         wholesalePrice: Number.parseInt(faker.commerce.price()),
         offerPrice: Number.parseInt(faker.commerce.price()),
-        currentStock: faker.number.int({ min: 0, max: 100 }),
+        stock: faker.number.int({ min: 0, max: 100 }),
         minStock: faker.number.int({ min: 0, max: 100 }),
-        maxStock: faker.number.int({ min: 0, max: 100 }),
         allowsNegativeInventory: faker.datatype.boolean(),
         weight: faker.number.int({ min: 0, max: 100 }),
       };

@@ -15,9 +15,8 @@ export interface ProductDetail extends AuditMetadata {
   salePrice: number;
   wholesalePrice: number;
   offerPrice: number;
-  currentStock: number;
+  stock: number;
   minStock: number;
-  maxStock: number;
   allowsNegativeInventory: boolean;
   weight: number | null;
   imageUrl: string | null;
@@ -36,9 +35,8 @@ export interface ProductSummary extends AuditMetadata {
   salePrice: number;
   wholesalePrice: number;
   offerPrice: number;
-  currentStock: number;
+  stock: number;
   minStock: number;
-  maxStock: number;
   allowsNegativeInventory: boolean;
   weight: number | null;
   imageUrl: string | null;

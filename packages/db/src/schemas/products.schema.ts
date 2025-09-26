@@ -36,9 +36,8 @@ export const products = sqliteTable(
     offerPrice: integer("offer_price").notNull(),
 
     // stock control
-    currentStock: integer("current_stock").notNull(),
+    stock: integer("current_stock").notNull().default(0),
     minStock: integer("min_stock").notNull(),
-    maxStock: integer("max_stock").notNull(),
     allowsNegativeInventory: integer("allows_negative_inventory", {
       mode: "boolean",
     })

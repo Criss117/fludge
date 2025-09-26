@@ -48,11 +48,6 @@ export class CreateProductDto {
   @Type(() => Number)
   offerPrice: number;
 
-  @IsNumber({}, { message: 'El stock actual debe ser un número válido' })
-  @Min(0, { message: 'El stock actual no puede ser negativo' })
-  @Type(() => Number)
-  currentStock: number;
-
   @IsNumber({}, { message: 'El stock mínimo debe ser un número válido' })
   @Min(0, { message: 'El stock mínimo no puede ser negativo' })
   @Type(() => Number)
@@ -61,7 +56,7 @@ export class CreateProductDto {
   @IsNumber({}, { message: 'El stock máximo debe ser un número válido' })
   @Min(0, { message: 'El stock máximo no puede ser negativo' })
   @Type(() => Number)
-  maxStock: number;
+  stock: number;
 
   @IsOptional()
   @IsString({ message: 'La descripción debe ser un texto válido' })
