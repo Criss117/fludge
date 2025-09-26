@@ -1,6 +1,7 @@
 import { Button } from "@/core/shared/components/ui/button";
 import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
 import { ProductSummaryTable } from "../components/products-summary-table";
+import { Link } from "@tanstack/react-router";
 
 interface Props {
   totalProducts: number;
@@ -27,6 +28,11 @@ export function ProductsHeader({ totalProducts, businessId }: Props) {
         </p>
       </div>
       <div className="space-x-2">
+        <Button asChild>
+          <Link to="/business/$id/products/create" params={{ id: businessId }}>
+            Crear Producto
+          </Link>
+        </Button>
         <Button
           variant="destructive"
           disabled={selectedRows === 0 || !userCanDeleteProducts}
