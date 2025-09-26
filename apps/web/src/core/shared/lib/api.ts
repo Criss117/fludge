@@ -67,6 +67,10 @@ export const API_ENDPOINTS = {
       UPDATE: (businessId: string, categoryId: string) =>
         `/business/${businessId}/categories/${categoryId}` as `/business/${string}/categories/${string}`,
     },
+    PRODUCTS: {
+      FIND_MANY: (businessId: string) =>
+        `/business/${businessId}/products` as `/business/${string}/products`,
+    },
   },
 } as const;
 

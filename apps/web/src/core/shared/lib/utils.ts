@@ -14,3 +14,10 @@ export function avatarFallback(...inputs: string[]) {
 
   return initials.toUpperCase();
 }
+
+export function formatCurrency(value: number | string) {
+  return new Intl.NumberFormat("es-ES", {
+    style: "currency",
+    currency: "COP",
+  }).format(typeof value === "string" ? Number.parseInt(value) : value);
+}
