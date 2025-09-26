@@ -12,6 +12,7 @@ import { FindManyCategoriesUsecase } from './use-cases/find-many-categories.usec
 import { FindOneCategoryUsecase } from './use-cases/find-one-category.usecase';
 import { DeleteManyCategoriesUsecase } from './use-cases/delete-many-categories.usecase';
 import { UpdateCategoryUseCase } from './use-cases/update-category.usecase';
+import { FindManyProductsUseCase } from './use-cases/find-many-products.usecase';
 
 @Module({
   imports: [DbModule, BusinessModule],
@@ -23,6 +24,8 @@ import { UpdateCategoryUseCase } from './use-cases/update-category.usecase';
     FindOneCategoryUsecase,
     DeleteManyCategoriesUsecase,
     UpdateCategoryUseCase,
+
+    FindManyProductsUseCase,
 
     CategoriesCommandRepository,
     CategoriesQueriesRepository,
