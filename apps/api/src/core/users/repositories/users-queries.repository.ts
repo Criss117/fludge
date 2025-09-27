@@ -119,7 +119,7 @@ export class UsersQueriesRepository {
         createdAt: groups.createdAt,
       })
       .from(groups)
-      .where(and(inArray(groups.id, user.groupIds), ...optionsFilters));
+      .where(inArray(groups.id, user.groupIds));
 
     return {
       ...user,
