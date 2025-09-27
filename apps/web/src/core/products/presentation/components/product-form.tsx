@@ -9,11 +9,14 @@ import { InputForm } from "@/core/shared/components/form/input-form";
 import { SelectForm } from "@/core/shared/components/form/select-form";
 import { Button } from "@/core/shared/components/ui/button";
 import { TextAreaForm } from "@/core/shared/components/form/text-area-form";
+import { useMutateProducts } from "../../application/hooks/use.mutate-products";
+import { useRouter } from "@tanstack/react-router";
 
 interface Context {
   form: FormType;
   method?: "create" | "update";
   formId: string;
+  businessId: string;
 }
 
 interface RootProps {
@@ -37,7 +40,12 @@ function useProductForm() {
   return context;
 }
 
-function Root({ children, defaultValues, method = "create" }: RootProps) {
+function Root({
+  children,
+  defaultValues,
+  method = "create",
+  businessId,
+}: RootProps) {
   const form = useForm({ defaultValues });
   const formId = `product-form-${useId()}`;
 
@@ -47,6 +55,7 @@ function Root({ children, defaultValues, method = "create" }: RootProps) {
         form,
         method,
         formId,
+        businessId,
       }}
     >
       {children}
@@ -55,10 +64,33 @@ function Root({ children, defaultValues, method = "create" }: RootProps) {
 }
 
 function Content({ children }: { children: React.ReactNode }) {
-  const { form, formId } = useProductForm();
+  const router = useRouter();
+  const { create } = useMutateProducts();
+  const { form, formId, businessId } = useProductForm();
 
   const onSubmit = form.handleSubmit((data) => {
-    console.log(data);
+    create.mutate(
+      {
+        ...data,
+        businessId,
+      },
+      {
+        onSuccess: (_, variables) => {
+          form.reset();
+          router.navigate({
+            to: "/business/$id/products",
+            params: {
+              id: variables.businessId,
+            },
+          });
+        },
+        onError: (err) => {
+          form.setError("root", {
+            message: err.message,
+          });
+        },
+      }
+    );
   });
 
   return (
@@ -232,7 +264,7 @@ function Submit() {
   const { formId, method } = useProductForm();
 
   return (
-    <Button type="submit" className="w-full" form={formId} disabled={!formId}>
+    <Button type="submit" className="" form={formId} disabled={!formId}>
       {method === "create" ? "Crear" : "Actualizar"}
     </Button>
   );

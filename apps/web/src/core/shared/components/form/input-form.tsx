@@ -37,12 +37,25 @@ export function InputForm<T extends FieldValues>({
             {props.required && <span className="text-red-500">*</span>}
           </FormLabel>
           <FormControl>
-            <Input
-              {...field}
-              placeholder={placeholder}
-              {...props}
-              className="flex-1"
-            />
+            {props.type === "number" ? (
+              <Input
+                placeholder={placeholder}
+                className="flex-1"
+                {...field}
+                {...props}
+                onChange={(e) =>
+                  field.onChange(Number.parseInt(e.target.value))
+                }
+                value={field.value?.toString() ?? ""}
+              />
+            ) : (
+              <Input
+                placeholder={placeholder}
+                {...field}
+                {...props}
+                className="flex-1"
+              />
+            )}
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />

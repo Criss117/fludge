@@ -139,7 +139,7 @@ export function PageHeaderCreateProduct({
     <BreadcrumbTemplate
       businessId={businessId}
       isPage={isPage}
-      label="Crear Producto"
+      label="Nuevo Producto"
       to="/business/$id/products/create"
       params={{ id: businessId }}
     />

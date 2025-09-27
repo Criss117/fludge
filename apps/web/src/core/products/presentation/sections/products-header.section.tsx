@@ -30,7 +30,7 @@ export function ProductsHeader({ totalProducts, businessId }: Props) {
       <div className="space-x-2">
         <Button asChild>
           <Link to="/business/$id/products/create" params={{ id: businessId }}>
-            Crear Producto
+            Nuevo Producto
           </Link>
         </Button>
         <Button

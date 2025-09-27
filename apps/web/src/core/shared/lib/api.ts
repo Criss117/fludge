@@ -70,6 +70,8 @@ export const API_ENDPOINTS = {
     PRODUCTS: {
       FIND_MANY: (businessId: string) =>
         `/business/${businessId}/products` as `/business/${string}/products`,
+      CREATE: (businessId: string) =>
+        `/business/${businessId}/products` as `/business/${string}/products`,
     },
   },
 } as const;

@@ -20,7 +20,7 @@ export function CreateProductScreen({ businessId }: Props) {
         <PageHeaderCreateProduct isPage />
       </PageHeader>
       <header className="mx-4">
-        <h2 className="text-2xl font-semibold">Crear Producto</h2>
+        <h2 className="text-2xl font-semibold">Nuevo Producto</h2>
         <p className="text-muted-foreground text-sm">
           Completa los datos del producto para agregarlo a tu negocio.
         </p>
