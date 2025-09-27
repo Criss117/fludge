@@ -33,7 +33,8 @@ export class ProductsQueriesRepository {
     meta: FindManyProductsByDto,
     options?: Options,
   ): Promise<ProductSummary[]> {
-    const filters: SQL[] = [];
+    const orFilters: SQL[] = [];
+    const andFilters: SQL[] = [];
     const optionsFilters: SQL[] = [];
 
     if (options?.ensureActive) {
@@ -41,32 +42,32 @@ export class ProductsQueriesRepository {
     }
 
     if (meta.name) {
-      filters.push(eq(products.name, meta.name));
+      orFilters.push(eq(products.name, meta.name));
     }
 
     if (meta.categoryId) {
-      filters.push(eq(products.categoryId, meta.categoryId));
+      orFilters.push(eq(products.categoryId, meta.categoryId));
     }
 
     if (meta.brandId) {
-      filters.push(eq(products.brandId, meta.brandId));
+      orFilters.push(eq(products.brandId, meta.brandId));
     }
 
     if (meta.barcode) {
-      filters.push(eq(products.barcode, meta.barcode));
+      orFilters.push(eq(products.barcode, meta.barcode));
     }
 
     if (meta.id) {
-      filters.push(eq(products.id, meta.id));
+      orFilters.push(eq(products.id, meta.id));
     }
 
     if (meta.businessId) {
-      filters.push(eq(products.businessId, meta.businessId));
+      andFilters.push(eq(products.businessId, meta.businessId));
     }
 
     return this.db
       .select()
       .from(products)
-      .where(and(or(...filters), ...optionsFilters));
+      .where(and(or(...orFilters), ...andFilters, ...optionsFilters));
   }
 }
