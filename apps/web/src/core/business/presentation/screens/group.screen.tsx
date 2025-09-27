@@ -1,7 +1,12 @@
 import { useFindOneGroup } from "@/core/business/application/hooks/use.find-one-group";
-import { PageHeader } from "@/core/shared/components/page-header";
 import { GroupHeaderSection } from "../sections/group-header.section";
 import { GroupDataTablesSection } from "../sections/group-data-tables.section";
+import {
+  PageHeader,
+  PageHeaderGroup,
+  PageHeaderGroups,
+  PageHeaderHome,
+} from "@/core/shared/components/page-header-bread-crumb";
 
 interface Props {
   groupId: string;
@@ -13,7 +18,16 @@ export function GroupScreen({ businessId, groupId }: Props) {
 
   return (
     <section className="mx-2 space-y-5">
-      <PageHeader title={`Grupo - ${data.name}`} />
+      <PageHeader>
+        <PageHeaderHome businessId={businessId} />
+        <PageHeaderGroups businessId={businessId} />
+        <PageHeaderGroup
+          businessId={businessId}
+          groupId={groupId}
+          groupName={data.name}
+          isPage
+        />
+      </PageHeader>
       <div className="space-y-8">
         <GroupHeaderSection group={data} businessId={businessId} />
         <GroupDataTablesSection group={data} businessId={businessId} />

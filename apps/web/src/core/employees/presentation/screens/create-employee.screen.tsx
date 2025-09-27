@@ -1,5 +1,4 @@
 import { useFindOneBusiness } from "@/core/business/application/hooks/use.find-one-business";
-import { PageHeader } from "@/core/shared/components/page-header";
 import { CreateEmployeeForm } from "../components/create-employee-form";
 import {
   Card,
@@ -9,6 +8,12 @@ import {
   CardTitle,
 } from "@/core/shared/components/ui/card";
 import type { GroupSummary } from "@repo/core/entities/group";
+import {
+  PageHeader,
+  PageHeaderCreateEmployee,
+  PageHeaderEmployees,
+  PageHeaderHome,
+} from "@/core/shared/components/page-header-bread-crumb";
 
 interface Props {
   businessId: string;
@@ -58,7 +63,11 @@ export function CreateEmployeeScreen({ businessId }: Props) {
 
   return (
     <section className="mx-2 space-y-4">
-      <PageHeader title="Nuevo Empleado" />
+      <PageHeader>
+        <PageHeaderHome businessId={businessId} />
+        <PageHeaderEmployees businessId={businessId} />
+        <PageHeaderCreateEmployee isPage />
+      </PageHeader>
       <header className="mx-4">
         <h2 className="text-2xl font-semibold">Crear un Empleado</h2>
         <p className="text-muted-foreground text-sm">

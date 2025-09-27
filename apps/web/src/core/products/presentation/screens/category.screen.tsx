@@ -1,7 +1,12 @@
 import { useFindOneCategory } from "@/core/products/application/hooks/use.find-one-category";
-import { PageHeader } from "@/core/shared/components/page-header";
 import { CategoryHeaderSection } from "../sections/category-header.section";
 import { SubcategoriesSection } from "../sections/subcategories.section";
+import {
+  PageHeader,
+  PageHeaderCategories,
+  PageHeaderCategory,
+  PageHeaderHome,
+} from "@/core/shared/components/page-header-bread-crumb";
 
 interface Props {
   businessId: string;
@@ -13,7 +18,32 @@ export function CategoryScreen({ businessId, categoryId }: Props) {
 
   return (
     <section className="mx-2 space-y-6">
-      <PageHeader title={category.name} />
+      <PageHeader>
+        <PageHeaderHome businessId={businessId} />
+        <PageHeaderCategories businessId={businessId} />
+        {category.parent === null ? (
+          <PageHeaderCategory
+            businessId={businessId}
+            categoryId={categoryId}
+            categoryName={category.name}
+            isPage
+          />
+        ) : (
+          <>
+            <PageHeaderCategory
+              businessId={businessId}
+              categoryId={category.parent.id}
+              categoryName={category.parent.name}
+            />
+            <PageHeaderCategory
+              businessId={businessId}
+              categoryId={category.id}
+              categoryName={category.name}
+              isPage
+            />
+          </>
+        )}
+      </PageHeader>
       <section className="mx-4">
         <CategoryHeaderSection category={category} />
       </section>

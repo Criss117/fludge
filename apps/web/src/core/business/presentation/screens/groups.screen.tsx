@@ -1,8 +1,12 @@
-import { PageHeader } from "@/core/shared/components/page-header";
 import { GroupsHeaderSection } from "@/core/business/presentation/sections/groups-header.section";
 import { useFindOneBusiness } from "@/core/business/application/hooks/use.find-one-business";
 import { GroupsTable } from "@/core/business/presentation/components/groups-table";
 import { UserHasNoPermissionAlert } from "@/core/shared/components/unauthorized-alerts";
+import {
+  PageHeader,
+  PageHeaderGroups,
+  PageHeaderHome,
+} from "@/core/shared/components/page-header-bread-crumb";
 
 interface Props {
   businessId: string;
@@ -11,7 +15,6 @@ interface Props {
 export function WithOutPermissionsGroupsScreen() {
   return (
     <section className="mx-2 space-y-4">
-      <PageHeader title="Grupos" />
       <UserHasNoPermissionAlert />
     </section>
   );
@@ -23,7 +26,10 @@ export function GroupsScreen({ businessId }: Props) {
   return (
     <section className="mx-2 space-y-4">
       <GroupsTable.Root data={data?.groups} businessId={businessId}>
-        <PageHeader title="Grupos" />
+        <PageHeader>
+          <PageHeaderHome businessId={businessId} />
+          <PageHeaderGroups isPage />
+        </PageHeader>
         <div className="mx-4">
           <GroupsHeaderSection
             totalGroups={data?.groups.length || 0}

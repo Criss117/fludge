@@ -1,6 +1,10 @@
+import {
+  PageHeader,
+  PageHeaderCategories,
+  PageHeaderHome,
+} from "@/core/shared/components/page-header-bread-crumb";
 import { useFindManyCategories } from "../../application/hooks/use.find-many-categories";
 import { CategorySummaryTable } from "../components/categories-summary-table";
-import { PageHeader } from "@/core/shared/components/page-header";
 import { CategoriesHeader } from "../sections/categories-header.section";
 
 interface Props {
@@ -12,7 +16,10 @@ export function CategoriesScreen({ businessId }: Props) {
   return (
     <section className="mx-2 space-y-4">
       <CategorySummaryTable.Root data={data}>
-        <PageHeader title="Categorías" />
+        <PageHeader>
+          <PageHeaderHome businessId={businessId} />
+          <PageHeaderCategories isPage />
+        </PageHeader>
         <section className="mx-4">
           <CategoriesHeader
             businessId={businessId}

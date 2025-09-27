@@ -1,4 +1,3 @@
-import { PageHeader } from "@/core/shared/components/page-header";
 import { UserHasNoPermissionAlert } from "@/core/shared/components/unauthorized-alerts";
 import { CreateGroupForm } from "../components/create-group-form";
 import {
@@ -9,6 +8,12 @@ import {
   CardTitle,
 } from "@/core/shared/components/ui/card";
 import { useFindAllPermissions } from "../../application/hooks/use.find-all-permissions";
+import {
+  PageHeader,
+  PageHeaderGroups,
+  PageHeaderHome,
+} from "@/core/shared/components/page-header-bread-crumb";
+import { PageHeaderCreateGroup } from "../../../shared/components/page-header-bread-crumb";
 
 interface Props {
   businessId: string;
@@ -17,7 +22,6 @@ interface Props {
 export function WithOutPermissionsCreateGroupScreen() {
   return (
     <section className="mx-2 space-y-4">
-      <PageHeader title="Nuevo Grupo" />
       <UserHasNoPermissionAlert />
     </section>
   );
@@ -72,7 +76,11 @@ function Form() {
 export function CreateGroupScreen({ businessId }: Props) {
   return (
     <section className="mx-2 space-y-5 pb-5">
-      <PageHeader title="Crear Grupo" />
+      <PageHeader>
+        <PageHeaderHome businessId={businessId} />
+        <PageHeaderGroups businessId={businessId} />
+        <PageHeaderCreateGroup isPage />
+      </PageHeader>
       <header className="mx-4">
         <h2 className="text-2xl font-semibold">Crear Grupo</h2>
         <p className="text-muted-foreground text-sm">
