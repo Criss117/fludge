@@ -9,6 +9,7 @@ import { Table } from "@/core/shared/components/ui/table";
 import { CommonTableHeader } from "@/core/shared/components/table/common-table-header";
 import { CommonTableBody } from "@/core/shared/components/table/common-table-body";
 import type { ProductSummary } from "@repo/core/entities/product";
+import { Button } from "@/core/shared/components/ui/button";
 
 interface Context {
   table: RTable<ProductSummary>;
@@ -40,6 +41,7 @@ function Root({ children, data }: RootProps) {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getCoreRowModel(),
   });
 
   return (
@@ -71,10 +73,36 @@ function Body() {
   );
 }
 
+function PaginationControllers() {
+  const { table } = useProductSummaryTable();
+
+  return (
+    <div className="flex items-center justify-end space-x-2 py-4">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => table.previousPage()}
+        disabled={!table.getCanPreviousPage()}
+      >
+        Anterior
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => table.nextPage()}
+        disabled={!table.getCanNextPage()}
+      >
+        Siguiente
+      </Button>
+    </div>
+  );
+}
+
 export const ProductSummaryTable = {
   useProductSummaryTable,
   Root,
   Content,
   Header,
   Body,
+  PaginationControllers,
 };

@@ -14,22 +14,31 @@ interface Props {
 export function ProductsScreen({ businessId }: Props) {
   const { data } = useFindManyProducts({
     businessId,
+    limit: 2,
+    page: 0,
   });
+
+  const items = data.pages.flatMap((page) => page.items);
+
   return (
     <section className="mx-2 space-y-4">
-      <ProductSummaryTable.Root data={data}>
+      <ProductSummaryTable.Root data={items}>
         <PageHeader>
           <PageHeaderHome businessId={businessId} />
           <PageHeaderProducts isPage />
         </PageHeader>
         <section className="mx-4">
-          <ProductsHeader businessId={businessId} totalProducts={data.length} />
+          <ProductsHeader
+            businessId={businessId}
+            totalProducts={items.length}
+          />
         </section>
         <section className="mx-4">
           <ProductSummaryTable.Content>
             <ProductSummaryTable.Header />
             <ProductSummaryTable.Body />
           </ProductSummaryTable.Content>
+          <ProductSummaryTable.PaginationControllers />
         </section>
       </ProductSummaryTable.Root>
     </section>

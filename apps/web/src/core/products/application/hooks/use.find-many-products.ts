@@ -1,25 +1,62 @@
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  infiniteQueryOptions,
+  useSuspenseInfiniteQuery,
+} from "@tanstack/react-query";
 import { findManyProductsAction } from "../actions/find-many-products.action";
 
 interface Props {
   businessId: string;
+  limit?: number;
+  page?: number;
 }
 
-export function findManyProductsQueryOptions({ businessId }: Props) {
-  return queryOptions({
-    queryKey: ["business", businessId, "products"],
-    queryFn: async () => {
-      const res = await findManyProductsAction({ businessId });
+export function findManyProductsQueryOptions({
+  businessId,
+  limit,
+  page,
+}: Props) {
+  return infiniteQueryOptions({
+    queryKey: ["products", businessId, "products"],
+    queryFn: async ({ pageParam }) => {
+      const res = await findManyProductsAction({
+        businessId,
+        limit: pageParam.limit,
+        page: pageParam.page,
+      });
 
       if (res.error || !res.data) {
-        throw new Error(res.error);
+        throw new Error(res.message, {
+          cause: res.message,
+        });
       }
 
       return res.data;
     },
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.hasMore) return null;
+
+      return {
+        page: lastPage.page + 1,
+        limit: lastPage.limit,
+      };
+    },
+    getPreviousPageParam: (lastPage) => {
+      if (lastPage.page === 0) return null;
+
+      return {
+        page: lastPage.page - 1,
+        limit: lastPage.limit,
+      };
+    },
+    initialPageParam: {
+      limit,
+      page,
+    },
   });
 }
 
-export function useFindManyProducts({ businessId }: Props) {
-  return useSuspenseQuery(findManyProductsQueryOptions({ businessId }));
+export function useFindManyProducts({ businessId, limit, page }: Props) {
+  return useSuspenseInfiniteQuery(
+    findManyProductsQueryOptions({ businessId, limit, page })
+  );
 }
