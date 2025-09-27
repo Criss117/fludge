@@ -1,4 +1,4 @@
-import { and, eq, type SQL, or } from 'drizzle-orm';
+import { and, eq, type SQL, or, desc, count } from 'drizzle-orm';
 import { Inject, Injectable } from '@nestjs/common';
 import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
 import { ProductSummary } from '@repo/core/entities/product';
@@ -7,6 +7,8 @@ import { FindManyProductsByDto } from './dtos/find-many-products-by.dto';
 
 type Options = {
   ensureActive?: boolean;
+  limit?: number;
+  offset?: number;
 };
 
 @Injectable()
@@ -26,7 +28,10 @@ export class ProductsQueriesRepository {
     return this.db
       .select()
       .from(products)
-      .where(and(eq(products.businessId, businessId), ...optionsFilters));
+      .where(and(eq(products.businessId, businessId), ...optionsFilters))
+      .limit(options?.limit ?? 10)
+      .offset(options?.offset ?? 0)
+      .orderBy(desc(products.createdAt));
   }
 
   public async findManyBy(
@@ -69,5 +74,22 @@ export class ProductsQueriesRepository {
       .select()
       .from(products)
       .where(and(or(...orFilters), ...andFilters, ...optionsFilters));
+  }
+
+  public async countProducts(businessId: string, options?: Options) {
+    const optionsFilters: SQL[] = [];
+
+    if (options?.ensureActive) {
+      optionsFilters.push(eq(products.isActive, true));
+    }
+
+    const [{ total }] = await this.db
+      .select({
+        total: count(products.id),
+      })
+      .from(products)
+      .where(and(eq(products.businessId, businessId), ...optionsFilters));
+
+    return total;
   }
 }
