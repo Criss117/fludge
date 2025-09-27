@@ -1,4 +1,9 @@
-import { PageHeader } from "@/core/shared/components/page-header";
+import {
+  PageHeader,
+  PageHeaderCreateProduct,
+  PageHeaderHome,
+  PageHeaderProducts,
+} from "@/core/shared/components/page-header-bread-crumb";
 import { ProductForm } from "../components/product-form";
 import { Card, CardContent } from "@/core/shared/components/ui/card";
 
@@ -9,7 +14,11 @@ interface Props {
 export function CreateProductScreen({ businessId }: Props) {
   return (
     <section className="mx-2 space-y-5 pb-5">
-      <PageHeader title="Nuevo Producto" />
+      <PageHeader>
+        <PageHeaderHome businessId={businessId} />
+        <PageHeaderProducts businessId={businessId} />
+        <PageHeaderCreateProduct isPage />
+      </PageHeader>
       <header className="mx-4">
         <h2 className="text-2xl font-semibold">Crear Producto</h2>
         <p className="text-muted-foreground text-sm">

@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, type LinkOptions } from "@tanstack/react-router";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -51,29 +51,51 @@ export function PageHeader({ children }: PageHeaderProps) {
   );
 }
 
+function BreadcrumbTemplate({
+  businessId,
+  isPage,
+  to,
+  params,
+  label,
+}: {
+  isPage?: boolean;
+  businessId?: string;
+  label: string;
+  to: LinkOptions["to"];
+  params?: LinkOptions["params"];
+}) {
+  return (
+    <>
+      <BreadcrumbItem>
+        {!isPage && businessId && (
+          <BreadcrumbLink asChild>
+            <Link to={to} params={params} className="text-xl font-semibold">
+              {label}
+            </Link>
+          </BreadcrumbLink>
+        )}
+        {isPage && (
+          <BreadcrumbPage className="text-xl font-semibold">
+            {label}
+          </BreadcrumbPage>
+        )}
+      </BreadcrumbItem>
+      {!isPage && <BreadcrumbSeparator />}
+    </>
+  );
+}
+
 export function PageHeaderHome({ businessId, isPage = false }: CommonProps) {
   return (
-    <BreadcrumbItem>
-      {!isPage && businessId && (
-        <BreadcrumbLink asChild>
-          <Link
-            to="/business/$id"
-            params={{ id: businessId }}
-            className="text-xl font-semibold"
-          >
-            Inicio
-          </Link>
-        </BreadcrumbLink>
-      )}
-      {isPage && (
-        <BreadcrumbItem>
-          <BreadcrumbPage className="text-xl font-semibold">
-            Inicio
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      )}
-      {!isPage && <BreadcrumbSeparator />}
-    </BreadcrumbItem>
+    <BreadcrumbTemplate
+      businessId={businessId}
+      isPage={isPage}
+      label="Inicio"
+      to="/business/$id"
+      params={{
+        id: businessId,
+      }}
+    />
   );
 }
 
@@ -82,27 +104,13 @@ export function PageHeaderProducts({
   isPage = false,
 }: CommonProps) {
   return (
-    <BreadcrumbItem>
-      {!isPage && businessId && (
-        <BreadcrumbLink asChild>
-          <Link
-            to="/business/$id/products"
-            params={{ id: businessId }}
-            className="text-xl font-semibold"
-          >
-            Productos
-          </Link>
-        </BreadcrumbLink>
-      )}
-      {isPage && (
-        <BreadcrumbItem>
-          <BreadcrumbPage className="text-xl font-semibold">
-            Productos
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      )}
-      {!isPage && <BreadcrumbSeparator />}
-    </BreadcrumbItem>
+    <BreadcrumbTemplate
+      businessId={businessId}
+      isPage={isPage}
+      label="Productos"
+      to="/business/$id/products"
+      params={{ id: businessId }}
+    />
   );
 }
 
@@ -113,27 +121,28 @@ export function PageHeaderProduct({
   productName,
 }: Product) {
   return (
-    <BreadcrumbItem>
-      {!isPage && businessId && (
-        <BreadcrumbLink asChild>
-          <Link
-            to="/business/$id/products/$productid"
-            params={{ id: businessId, productid: productId }}
-            className="text-xl font-semibold"
-          >
-            {productName}
-          </Link>
-        </BreadcrumbLink>
-      )}
-      {isPage && (
-        <BreadcrumbItem>
-          <BreadcrumbPage className="text-xl font-semibold">
-            {productName}
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      )}
-      {!isPage && <BreadcrumbSeparator />}
-    </BreadcrumbItem>
+    <BreadcrumbTemplate
+      businessId={businessId}
+      isPage={isPage}
+      label={productName}
+      to="/business/$id/products/$productid"
+      params={{ id: businessId, productid: productId }}
+    />
+  );
+}
+
+export function PageHeaderCreateProduct({
+  businessId,
+  isPage = false,
+}: CommonProps) {
+  return (
+    <BreadcrumbTemplate
+      businessId={businessId}
+      isPage={isPage}
+      label="Crear Producto"
+      to="/business/$id/products/create"
+      params={{ id: businessId }}
+    />
   );
 }
 
@@ -142,27 +151,13 @@ export function PageHeaderCategories({
   isPage = false,
 }: CommonProps) {
   return (
-    <BreadcrumbItem>
-      {!isPage && businessId && (
-        <BreadcrumbLink asChild>
-          <Link
-            to="/business/$id/categories"
-            params={{ id: businessId }}
-            className="text-xl font-semibold"
-          >
-            Categorias
-          </Link>
-        </BreadcrumbLink>
-      )}
-      {isPage && (
-        <BreadcrumbItem>
-          <BreadcrumbPage className="text-xl font-semibold">
-            Categorias
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      )}
-      {!isPage && <BreadcrumbSeparator />}
-    </BreadcrumbItem>
+    <BreadcrumbTemplate
+      businessId={businessId}
+      isPage={isPage}
+      label="Categorias"
+      to="/business/$id/categories"
+      params={{ id: businessId }}
+    />
   );
 }
 
@@ -173,53 +168,25 @@ export function PageHeaderCategory({
   categoryName,
 }: Category) {
   return (
-    <BreadcrumbItem>
-      {!isPage && businessId && (
-        <BreadcrumbLink asChild>
-          <Link
-            to="/business/$id/categories/$categoryid"
-            params={{ id: businessId, categoryid: categoryId }}
-            className="text-xl font-semibold"
-          >
-            {categoryName}
-          </Link>
-        </BreadcrumbLink>
-      )}
-      {isPage && (
-        <BreadcrumbItem>
-          <BreadcrumbPage className="text-xl font-semibold">
-            {categoryName}
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      )}
-      {!isPage && <BreadcrumbSeparator />}
-    </BreadcrumbItem>
+    <BreadcrumbTemplate
+      businessId={businessId}
+      isPage={isPage}
+      label={categoryName}
+      to="/business/$id/categories/$categoryid"
+      params={{ id: businessId, categoryid: categoryId }}
+    />
   );
 }
 
 export function PageHeaderGroups({ businessId, isPage = false }: CommonProps) {
   return (
-    <BreadcrumbItem>
-      {!isPage && businessId && (
-        <BreadcrumbLink asChild>
-          <Link
-            to="/business/$id/groups"
-            params={{ id: businessId }}
-            className="text-xl font-semibold"
-          >
-            Grupos
-          </Link>
-        </BreadcrumbLink>
-      )}
-      {isPage && (
-        <BreadcrumbItem>
-          <BreadcrumbPage className="text-xl font-semibold">
-            Grupos
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      )}
-      {!isPage && <BreadcrumbSeparator />}
-    </BreadcrumbItem>
+    <BreadcrumbTemplate
+      businessId={businessId}
+      isPage={isPage}
+      label="Grupos"
+      to="/business/$id/groups"
+      params={{ id: businessId }}
+    />
   );
 }
 
@@ -230,27 +197,13 @@ export function PageHeaderGroup({
   groupName,
 }: Group) {
   return (
-    <BreadcrumbItem>
-      {!isPage && businessId && (
-        <BreadcrumbLink asChild>
-          <Link
-            to="/business/$id/groups/$groupid"
-            params={{ id: businessId, groupid: groupId }}
-            className="text-xl font-semibold"
-          >
-            {groupName}
-          </Link>
-        </BreadcrumbLink>
-      )}
-      {isPage && (
-        <BreadcrumbItem>
-          <BreadcrumbPage className="text-xl font-semibold">
-            {groupName}
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      )}
-      {!isPage && <BreadcrumbSeparator />}
-    </BreadcrumbItem>
+    <BreadcrumbTemplate
+      businessId={businessId}
+      isPage={isPage}
+      label={groupName}
+      to="/business/$id/groups/$groupid"
+      params={{ id: businessId, groupid: groupId }}
+    />
   );
 }
 
@@ -259,27 +212,13 @@ export function PageHeaderCreateGroup({
   isPage = false,
 }: CommonProps) {
   return (
-    <BreadcrumbItem>
-      {!isPage && businessId && (
-        <BreadcrumbLink asChild>
-          <Link
-            to="/business/$id/groups/create"
-            params={{ id: businessId }}
-            className="text-xl font-semibold"
-          >
-            Crear Grupo
-          </Link>
-        </BreadcrumbLink>
-      )}
-      {isPage && (
-        <BreadcrumbItem>
-          <BreadcrumbPage className="text-xl font-semibold">
-            Crear Grupo
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      )}
-      {!isPage && <BreadcrumbSeparator />}
-    </BreadcrumbItem>
+    <BreadcrumbTemplate
+      businessId={businessId}
+      isPage={isPage}
+      label="Crear Grupo"
+      to="/business/$id/groups/create"
+      params={{ id: businessId }}
+    />
   );
 }
 
@@ -288,27 +227,13 @@ export function PageHeaderEmployees({
   isPage = false,
 }: CommonProps) {
   return (
-    <BreadcrumbItem>
-      {!isPage && businessId && (
-        <BreadcrumbLink asChild>
-          <Link
-            to="/business/$id/employees"
-            params={{ id: businessId }}
-            className="text-xl font-semibold"
-          >
-            Empleados
-          </Link>
-        </BreadcrumbLink>
-      )}
-      {isPage && (
-        <BreadcrumbItem>
-          <BreadcrumbPage className="text-xl font-semibold">
-            Empleados
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      )}
-      {!isPage && <BreadcrumbSeparator />}
-    </BreadcrumbItem>
+    <BreadcrumbTemplate
+      businessId={businessId}
+      isPage={isPage}
+      label="Empleados"
+      to="/business/$id/employees"
+      params={{ id: businessId }}
+    />
   );
 }
 
@@ -319,27 +244,13 @@ export function PageHeaderEmployee({
   employeeName,
 }: Employee) {
   return (
-    <BreadcrumbItem>
-      {!isPage && businessId && (
-        <BreadcrumbLink asChild>
-          <Link
-            to="/business/$id/employees/$employeeid"
-            params={{ id: businessId, employeeid: employeeId }}
-            className="text-xl font-semibold"
-          >
-            {employeeName}
-          </Link>
-        </BreadcrumbLink>
-      )}
-      {isPage && (
-        <BreadcrumbItem>
-          <BreadcrumbPage className="text-xl font-semibold">
-            {employeeName}
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      )}
-      {!isPage && <BreadcrumbSeparator />}
-    </BreadcrumbItem>
+    <BreadcrumbTemplate
+      businessId={businessId}
+      isPage={isPage}
+      label={employeeName}
+      to="/business/$id/employees/$employeeid"
+      params={{ id: businessId, employeeid: employeeId }}
+    />
   );
 }
 
@@ -348,26 +259,14 @@ export function PageHeaderCreateEmployee({
   isPage = false,
 }: CommonProps) {
   return (
-    <BreadcrumbItem>
-      {!isPage && businessId && (
-        <BreadcrumbLink asChild>
-          <Link
-            to="/business/$id/employees/create"
-            params={{ id: businessId }}
-            className="text-xl font-semibold"
-          >
-            Crear Empleado
-          </Link>
-        </BreadcrumbLink>
-      )}
-      {isPage && (
-        <BreadcrumbItem>
-          <BreadcrumbPage className="text-xl font-semibold">
-            Crear Empleado
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      )}
-      {!isPage && <BreadcrumbSeparator />}
-    </BreadcrumbItem>
+    <BreadcrumbTemplate
+      businessId={businessId}
+      isPage={isPage}
+      to="/business/$id/employees/create"
+      params={{
+        id: businessId,
+      }}
+      label="Crear Empleado"
+    />
   );
 }
