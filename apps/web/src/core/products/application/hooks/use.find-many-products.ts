@@ -18,6 +18,7 @@ export function findManyProductsQueryOptions({
   return infiniteQueryOptions({
     queryKey: ["products", businessId, "products"],
     queryFn: async ({ pageParam }) => {
+      // await sleep(2000);
       const res = await findManyProductsAction({
         businessId,
         limit: pageParam.limit,

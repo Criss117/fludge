@@ -34,7 +34,7 @@ export const columns = [
   columnsHelper.accessor("barcode", {
     header: "Código de barras",
   }),
-  columnsHelper.accessor("currentStock", {
+  columnsHelper.accessor("stock", {
     header: "Stock actual",
   }),
   columnsHelper.accessor("purchasePrice", {

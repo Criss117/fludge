@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ProductSummaryTable } from "../components/products-summary-table";
 import { useFindManyProducts } from "@/core/products/application/hooks/use.find-many-products";
 import { ProductsHeader } from "../sections/products-header.section";
@@ -11,36 +12,88 @@ interface Props {
   businessId: string;
 }
 
-export function ProductsScreen({ businessId }: Props) {
-  const { data } = useFindManyProducts({
-    businessId,
-    limit: 2,
+//TODO: use query params to get the pagination
+function Table({ businessId }: Props) {
+  const [pagination, setPagination] = useState({
+    limit: 20,
     page: 0,
   });
 
-  const items = data.pages.flatMap((page) => page.items);
+  const {
+    data,
+    hasNextPage,
+    isFetching,
+    hasPreviousPage,
+    fetchNextPage,
+    fetchPreviousPage,
+  } = useFindManyProducts({
+    businessId,
+    limit: pagination.limit,
+    page: pagination.page,
+  });
 
+  const page = data.pages[pagination.page];
+  return (
+    <ProductSummaryTable.Root
+      data={page.items}
+      pagination={{
+        pageIndex: pagination.page,
+        pageSize: pagination.limit,
+      }}
+      setPagination={(pag) =>
+        setPagination({
+          limit: pag.pageSize,
+          page: pag.pageIndex,
+        })
+      }
+      isPending={isFetching}
+    >
+      <section className="mx-4">
+        <ProductsHeader
+          businessId={businessId}
+          totalProducts={page.items.length}
+        />
+      </section>
+      <section className="mx-4">
+        <ProductSummaryTable.Content>
+          <ProductSummaryTable.Header />
+          <ProductSummaryTable.Body />
+        </ProductSummaryTable.Content>
+        <ProductSummaryTable.PaginationControllers
+          totalPages={page.totalPages}
+          hasNextPage={hasNextPage || pagination.page < data.pages.length - 1}
+          hasPreviousPage={hasPreviousPage || pagination.page > 0}
+          fetchNextPage={() =>
+            fetchNextPage().then(() =>
+              setPagination({
+                page: pagination.page + 1,
+                limit: pagination.limit,
+              })
+            )
+          }
+          fetchPreviousPage={() =>
+            fetchPreviousPage().then(() =>
+              setPagination({
+                page: pagination.page - 1,
+                limit: pagination.limit,
+              })
+            )
+          }
+        />
+      </section>
+    </ProductSummaryTable.Root>
+  );
+}
+
+export function ProductsScreen({ businessId }: Props) {
   return (
     <section className="mx-2 space-y-4">
-      <ProductSummaryTable.Root data={items}>
-        <PageHeader>
-          <PageHeaderHome businessId={businessId} />
-          <PageHeaderProducts isPage />
-        </PageHeader>
-        <section className="mx-4">
-          <ProductsHeader
-            businessId={businessId}
-            totalProducts={items.length}
-          />
-        </section>
-        <section className="mx-4">
-          <ProductSummaryTable.Content>
-            <ProductSummaryTable.Header />
-            <ProductSummaryTable.Body />
-          </ProductSummaryTable.Content>
-          <ProductSummaryTable.PaginationControllers />
-        </section>
-      </ProductSummaryTable.Root>
+      <PageHeader>
+        <PageHeaderHome businessId={businessId} />
+        <PageHeaderProducts isPage />
+      </PageHeader>
+
+      <Table businessId={businessId} />
     </section>
   );
 }
