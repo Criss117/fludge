@@ -14,11 +14,13 @@ import { HTTPResponse } from 'src/shared/http/response';
 import { CreateProductDto } from '../dtos/create-product.dto';
 import { CreateProductUsecase } from '../use-cases/create-product.usecase';
 import { PaginationParamsDto } from 'src/shared/dtos/paginations-params.dto';
+import { FindOneProductUseCase } from '../use-cases/find-one-product.usecase';
 
 @Controller('business/:id/products')
 export class ProductsController {
   constructor(
     private readonly findManyProductsUseCase: FindManyProductsUseCase,
+    private readonly findOneProductUseCase: FindOneProductUseCase,
     private readonly createProductUseCase: CreateProductUsecase,
   ) {}
 
@@ -63,6 +65,30 @@ export class ProductsController {
 
       throw new InternalServerErrorException(
         'Algo salió mal al crear el producto',
+      );
+    }
+  }
+
+  @Get(':productId')
+  @Permissions('products:read')
+  public async findOne(
+    @Param('id') businessId: string,
+    @Param('productId') productId: string,
+  ) {
+    try {
+      const res = await this.findOneProductUseCase.execute(
+        businessId,
+        productId,
+      );
+
+      return HTTPResponse.ok(res);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'Algo salió mal al buscar el producto',
       );
     }
   }

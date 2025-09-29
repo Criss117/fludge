@@ -1,9 +1,13 @@
 import { and, eq, type SQL, or, desc, count } from 'drizzle-orm';
 import { Inject, Injectable } from '@nestjs/common';
 import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
-import { ProductSummary } from '@repo/core/entities/product';
-import { products } from '@repo/db';
-import { FindManyProductsByDto } from './dtos/find-many-products-by.dto';
+import { categories, products } from '@repo/db';
+import type { FindManyProductsByDto } from './dtos/find-many-products-by.dto';
+import type { FindOneProductByDto } from './dtos/find-one-product-by.dto';
+import type {
+  ProductDetail,
+  ProductSummary,
+} from '@repo/core/entities/product';
 
 type Options = {
   ensureActive?: boolean;
@@ -74,6 +78,67 @@ export class ProductsQueriesRepository {
       .select()
       .from(products)
       .where(and(or(...orFilters), ...andFilters, ...optionsFilters));
+  }
+
+  public async findOneBy(
+    meta: FindOneProductByDto,
+    options?: Options,
+  ): Promise<ProductDetail | null> {
+    const optionsFilters: SQL[] = [];
+    const filters: SQL[] = [];
+
+    if (options?.ensureActive) {
+      optionsFilters.push(eq(products.isActive, true));
+    }
+
+    if (meta.productId) {
+      filters.push(eq(products.id, meta.productId));
+    }
+
+    if (meta.businessId) {
+      filters.push(eq(products.businessId, meta.businessId));
+    }
+
+    if (meta.barcode) {
+      filters.push(eq(products.barcode, meta.barcode));
+    }
+
+    const [product] = await this.db
+      .select()
+      .from(products)
+      .where(and(...filters, ...optionsFilters));
+
+    if (!product) {
+      return null;
+    }
+
+    const productToShow: ProductDetail = {
+      ...product,
+      category: null,
+      brand: null,
+      providers: [],
+    };
+
+    if (product.categoryId) {
+      const categoryOptionsFilters: SQL[] = [];
+
+      if (options?.ensureActive) {
+        categoryOptionsFilters.push(eq(categories.isActive, true));
+      }
+
+      const [category] = await this.db
+        .select()
+        .from(categories)
+        .where(
+          and(eq(categories.id, product.categoryId), ...categoryOptionsFilters),
+        );
+
+      if (category) {
+        productToShow.category = category;
+      }
+    }
+
+    return productToShow;
   }
 
   public async countProducts(businessId: string, options?: Options) {
