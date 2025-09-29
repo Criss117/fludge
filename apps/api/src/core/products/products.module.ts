@@ -15,6 +15,7 @@ import { UpdateCategoryUseCase } from './use-cases/update-category.usecase';
 import { FindManyProductsUseCase } from './use-cases/find-many-products.usecase';
 import { ProductsCommnadsRepository } from './repositories/products-commands.repository';
 import { FindOneProductUseCase } from './use-cases/find-one-product.usecase';
+import { UpdateProductUseCase } from './use-cases/update-product.usecase';
 
 @Module({
   imports: [DbModule, BusinessModule],
@@ -29,6 +30,7 @@ import { FindOneProductUseCase } from './use-cases/find-one-product.usecase';
 
     FindManyProductsUseCase,
     FindOneProductUseCase,
+    UpdateProductUseCase,
 
     CategoriesCommandRepository,
     CategoriesQueriesRepository,

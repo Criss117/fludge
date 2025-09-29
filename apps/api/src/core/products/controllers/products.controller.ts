@@ -6,6 +6,7 @@ import {
   HttpException,
   InternalServerErrorException,
   Param,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -15,6 +16,8 @@ import { CreateProductDto } from '../dtos/create-product.dto';
 import { CreateProductUsecase } from '../use-cases/create-product.usecase';
 import { PaginationParamsDto } from 'src/shared/dtos/paginations-params.dto';
 import { FindOneProductUseCase } from '../use-cases/find-one-product.usecase';
+import { UpdateProductUseCase } from '../use-cases/update-product.usecase';
+import { UpdateProductDto } from '../dtos/update-product.dto';
 
 @Controller('business/:id/products')
 export class ProductsController {
@@ -22,6 +25,7 @@ export class ProductsController {
     private readonly findManyProductsUseCase: FindManyProductsUseCase,
     private readonly findOneProductUseCase: FindOneProductUseCase,
     private readonly createProductUseCase: CreateProductUsecase,
+    private readonly updateProductUseCase: UpdateProductUseCase,
   ) {}
 
   @Get()
@@ -89,6 +93,32 @@ export class ProductsController {
 
       throw new InternalServerErrorException(
         'Algo salió mal al buscar el producto',
+      );
+    }
+  }
+
+  @Patch(':productId')
+  @Permissions('products:update')
+  public async update(
+    @Param('id') businessId: string,
+    @Param('productId') productId: string,
+    @Body() data: UpdateProductDto,
+  ) {
+    try {
+      const res = await this.updateProductUseCase.execute(
+        businessId,
+        productId,
+        data,
+      );
+
+      return HTTPResponse.ok(res);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'Algo salió mal al actualizar el producto',
       );
     }
   }
