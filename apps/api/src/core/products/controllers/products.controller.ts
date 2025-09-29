@@ -2,6 +2,7 @@ import { Permissions } from '@core/auth/decorators/permissions.decorator';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   InternalServerErrorException,
@@ -18,6 +19,7 @@ import { PaginationParamsDto } from 'src/shared/dtos/paginations-params.dto';
 import { FindOneProductUseCase } from '../use-cases/find-one-product.usecase';
 import { UpdateProductUseCase } from '../use-cases/update-product.usecase';
 import { UpdateProductDto } from '../dtos/update-product.dto';
+import { DeleteProductUseCase } from '../use-cases/delete-product.usecase';
 
 @Controller('business/:id/products')
 export class ProductsController {
@@ -26,6 +28,7 @@ export class ProductsController {
     private readonly findOneProductUseCase: FindOneProductUseCase,
     private readonly createProductUseCase: CreateProductUsecase,
     private readonly updateProductUseCase: UpdateProductUseCase,
+    private readonly deleteProductUseCase: DeleteProductUseCase,
   ) {}
 
   @Get()
@@ -119,6 +122,27 @@ export class ProductsController {
 
       throw new InternalServerErrorException(
         'Algo salió mal al actualizar el producto',
+      );
+    }
+  }
+
+  @Delete(':productId')
+  @Permissions('products:delete')
+  public async delete(
+    @Param('id') businessId: string,
+    @Param('productId') productId: string,
+  ) {
+    try {
+      await this.deleteProductUseCase.execute(businessId, productId);
+
+      return HTTPResponse.ok(null);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'Algo salió mal al eliminar el producto',
       );
     }
   }
