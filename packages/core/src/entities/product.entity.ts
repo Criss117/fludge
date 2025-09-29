@@ -8,9 +8,7 @@ export interface ProductDetail extends AuditMetadata {
   name: string;
   barcode: string;
   description: string | null;
-  category: CategorySummary | null;
-  brandId: BrandSummary | null;
-  businessId: string | null;
+  businessId: string;
   purchasePrice: number;
   salePrice: number;
   wholesalePrice: number;
@@ -20,6 +18,8 @@ export interface ProductDetail extends AuditMetadata {
   allowsNegativeInventory: boolean;
   weight: number | null;
   imageUrl: string | null;
+  category: CategorySummary | null;
+  brand: BrandSummary | null;
   providers: ProvidersSummary[];
 }
 
@@ -30,7 +30,7 @@ export interface ProductSummary extends AuditMetadata {
   description: string | null;
   categoryId: string | null;
   brandId: string | null;
-  businessId: string | null;
+  businessId: string;
   purchasePrice: number;
   salePrice: number;
   wholesalePrice: number;

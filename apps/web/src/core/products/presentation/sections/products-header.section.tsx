@@ -1,5 +1,4 @@
 import { Button } from "@/core/shared/components/ui/button";
-import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
 import { ProductSummaryTable } from "../components/products-summary-table";
 import { Link } from "@tanstack/react-router";
 
@@ -10,17 +9,17 @@ interface Props {
 
 export function ProductsHeader({ totalProducts, businessId }: Props) {
   const { table } = ProductSummaryTable.useProductSummaryTable();
-  const { userHasPermissions } = usePermissions();
+  // const { userHasPermissions } = usePermissions();
 
   const selectedRows = table.getSelectedRowModel().rows.length;
 
-  const userCanDeleteProducts = userHasPermissions("products:delete");
+  // const userCanDeleteProducts = userHasPermissions("products:delete");
 
   return (
     <header className="flex justify-between">
       <div>
         <h2 className="text-2xl font-semibold">
-          Listado de Categorias ({totalProducts}
+          Listado de Productos ({totalProducts}
           {selectedRows > 0 && `/${selectedRows}`})
         </h2>
         <p className="text-muted-foreground text-sm">
@@ -33,12 +32,12 @@ export function ProductsHeader({ totalProducts, businessId }: Props) {
             Nuevo Producto
           </Link>
         </Button>
-        <Button
+        {/* <Button
           variant="destructive"
           disabled={selectedRows === 0 || !userCanDeleteProducts}
         >
           Eliminar
-        </Button>
+        </Button> */}
       </div>
     </header>
   );

@@ -40,12 +40,6 @@ function Table({ businessId }: Props) {
         pageIndex: pagination.page,
         pageSize: pagination.limit,
       }}
-      setPagination={(pag) =>
-        setPagination({
-          limit: pag.pageSize,
-          page: pag.pageIndex,
-        })
-      }
       isPending={isFetching}
     >
       <section className="mx-4">

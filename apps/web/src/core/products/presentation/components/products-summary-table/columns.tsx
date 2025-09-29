@@ -1,35 +1,49 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { Checkbox } from "@/core/shared/components/ui/checkbox";
-import type { ProductSummary } from "@repo/core/entities/product";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
+import type { ProductSummary } from "@repo/core/entities/product";
 import { formatCurrency } from "@/core/shared/lib/utils";
+import { Link } from "@tanstack/react-router";
+import { Button } from "@/core/shared/components/ui/button";
 
 const columnsHelper = createColumnHelper<ProductSummary>();
 
 export const columns = [
-  columnsHelper.display({
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-  }),
+  // columnsHelper.display({
+  //   id: "select",
+  //   header: ({ table }) => (
+  //     <Checkbox
+  //       checked={
+  //         table.getIsAllPageRowsSelected() ||
+  //         (table.getIsSomePageRowsSelected() && "indeterminate")
+  //       }
+  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //       aria-label="Select all"
+  //     />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <Checkbox
+  //       checked={row.getIsSelected()}
+  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //       aria-label="Select row"
+  //     />
+  //   ),
+  // }),
   columnsHelper.accessor("name", {
     header: "Nombre",
+    cell: ({ row }) => (
+      <Button asChild variant="link">
+        <Link
+          to="/business/$id/products/$productid"
+          params={{
+            id: row.original.businessId,
+            productid: row.original.id,
+          }}
+        >
+          {row.original.name}
+        </Link>
+      </Button>
+    ),
   }),
   columnsHelper.accessor("barcode", {
     header: "Código de barras",

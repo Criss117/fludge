@@ -1,4 +1,5 @@
 import { createContext, use } from "react";
+import { Loader2Icon } from "lucide-react";
 import {
   getCoreRowModel,
   getPaginationRowModel,
@@ -11,7 +12,6 @@ import { CommonTableHeader } from "@/core/shared/components/table/common-table-h
 import { CommonTableBody } from "@/core/shared/components/table/common-table-body";
 import type { ProductSummary } from "@repo/core/entities/product";
 import { Button } from "@/core/shared/components/ui/button";
-import { Loader2Icon } from "lucide-react";
 
 type Pagination = {
   pageIndex: number;
@@ -27,7 +27,6 @@ interface RootProps {
   data: ProductSummary[];
   children: React.ReactNode;
   pagination: Pagination;
-  setPagination: (pagination: Pagination) => void;
   isPending: boolean;
 }
 
@@ -54,13 +53,7 @@ function useProductSummaryTable() {
   return context;
 }
 
-function Root({
-  children,
-  data,
-  pagination,
-  setPagination,
-  isPending,
-}: RootProps) {
+function Root({ children, data, pagination, isPending }: RootProps) {
   const table = useReactTable({
     data,
     columns,
@@ -68,15 +61,6 @@ function Root({
     manualPagination: true,
     state: {
       pagination,
-    },
-    onPaginationChange: (pag) => {
-      if (typeof pag === "function") {
-        const pagState = pag(pagination);
-
-        setPagination(pagState);
-      } else {
-        setPagination(pag);
-      }
     },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
