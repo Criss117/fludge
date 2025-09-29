@@ -1,3 +1,4 @@
+import { UpdateProductScreen } from "@/core/products/presentation/screens/update-product.screen";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
@@ -7,5 +8,7 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-  return <div>Hello "/(private)/business/$id/products/$productid/update"!</div>;
+  const { id, productid } = Route.useParams();
+
+  return <UpdateProductScreen businessId={id} productId={productid} />;
 }

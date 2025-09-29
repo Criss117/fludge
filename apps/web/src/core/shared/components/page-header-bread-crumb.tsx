@@ -146,6 +146,21 @@ export function PageHeaderCreateProduct({
   );
 }
 
+export function PageHeaderUpdateProduct({
+  businessId,
+  isPage = false,
+}: CommonProps) {
+  return (
+    <BreadcrumbTemplate
+      businessId={businessId}
+      isPage={isPage}
+      label="Editar Producto"
+      to="/business/$id/products/create"
+      params={{ id: businessId }}
+    />
+  );
+}
+
 export function PageHeaderCategories({
   businessId,
   isPage = false,

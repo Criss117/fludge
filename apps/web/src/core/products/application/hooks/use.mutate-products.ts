@@ -2,8 +2,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createProductAction } from "../actions/create-product.action";
 import { findManyProductsQueryOptions } from "./use.find-many-products";
+import { updateProductAction } from "../actions/update-product.action";
+import { findOneProductQueryOptions } from "./use.find-one-product";
 
 type CreateParams = Parameters<typeof createProductAction>[number];
+type UpdateParams = Parameters<typeof updateProductAction>[number];
 
 export function useMutateProducts() {
   const queryClient = useQueryClient();
@@ -44,7 +47,50 @@ export function useMutateProducts() {
     },
   });
 
+  const update = useMutation({
+    mutationFn: async (data: UpdateParams) => {
+      const res = await updateProductAction(data);
+
+      if (res.error) {
+        throw new Error(res.message, {
+          cause: res.message,
+        });
+      }
+    },
+    onMutate: () => {
+      toast.loading("Actualizando producto...", {
+        id: "update-product",
+        position: "top-center",
+      });
+    },
+    onSuccess: (_, variables) => {
+      toast.dismiss("update-product");
+      toast.success("Producto actualizado correctamente", {
+        position: "top-center",
+      });
+
+      queryClient.invalidateQueries(
+        findManyProductsQueryOptions({
+          businessId: variables.businessId,
+        })
+      );
+
+      queryClient.invalidateQueries(
+        findOneProductQueryOptions({
+          businessId: variables.businessId,
+          productId: variables.productId,
+        })
+      );
+    },
+    onError: (error) => {
+      toast.dismiss("update-product");
+      toast.error(error.message, {
+        position: "top-center",
+      });
+    },
+  });
   return {
     create,
+    update,
   };
 }

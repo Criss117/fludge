@@ -1,4 +1,5 @@
 import { createContext, use, useId } from "react";
+import { useRouter } from "@tanstack/react-router";
 import {
   useProductForm as useForm,
   type FormType,
@@ -6,17 +7,19 @@ import {
 import type { ProductFormDto } from "@repo/ui/products/dtos/product-form.dto";
 import { Form } from "@/core/shared/components/ui/form";
 import { InputForm } from "@/core/shared/components/form/input-form";
-import { SelectForm } from "@/core/shared/components/form/select-form";
+import { SwitchForm } from "@/core/shared/components/form/switch-form";
 import { Button } from "@/core/shared/components/ui/button";
 import { TextAreaForm } from "@/core/shared/components/form/text-area-form";
-import { useMutateProducts } from "../../application/hooks/use.mutate-products";
-import { useRouter } from "@tanstack/react-router";
+import { useMutateProducts } from "@/core/products/application/hooks/use.mutate-products";
+import type { CategorySummary } from "@repo/core/entities/category";
+import { SelectInputForm } from "@/core/shared/components/form/select-input-form";
 
 interface Context {
   form: FormType;
   method?: "create" | "update";
   formId: string;
   businessId: string;
+  productId?: string;
 }
 
 interface RootProps {
@@ -24,6 +27,11 @@ interface RootProps {
   defaultValues?: ProductFormDto;
   method?: "create" | "update";
   businessId: string;
+  productId?: string;
+}
+
+interface SelectCategoryProps {
+  categories: CategorySummary[];
 }
 
 const ProductFormContext = createContext<Context | null>(null);
@@ -45,7 +53,12 @@ function Root({
   defaultValues,
   method = "create",
   businessId,
+  productId,
 }: RootProps) {
+  if (method === "update" && !productId) {
+    throw new Error("ProductId is required when updating a product");
+  }
+
   const form = useForm({ defaultValues });
   const formId = `product-form-${useId()}`;
 
@@ -56,6 +69,7 @@ function Root({
         method,
         formId,
         businessId,
+        productId,
       }}
     >
       {children}
@@ -65,32 +79,61 @@ function Root({
 
 function Content({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { create } = useMutateProducts();
-  const { form, formId, businessId } = useProductForm();
+  const { create, update } = useMutateProducts();
+  const { form, formId, businessId, method, productId } = useProductForm();
 
   const onSubmit = form.handleSubmit((data) => {
-    create.mutate(
-      {
-        ...data,
-        businessId,
-      },
-      {
-        onSuccess: (_, variables) => {
-          form.reset();
-          router.navigate({
-            to: "/business/$id/products",
-            params: {
-              id: variables.businessId,
-            },
-          });
+    if (method === "create") {
+      create.mutate(
+        {
+          ...data,
+          businessId,
         },
-        onError: (err) => {
-          form.setError("root", {
-            message: err.message,
-          });
+        {
+          onSuccess: (_, variables) => {
+            form.reset();
+            router.navigate({
+              to: "/business/$id/products",
+              params: {
+                id: variables.businessId,
+              },
+            });
+          },
+          onError: (err) => {
+            form.setError("root", {
+              message: err.message,
+            });
+          },
+        }
+      );
+    }
+
+    if (method === "update" && productId) {
+      update.mutate(
+        {
+          ...data,
+          businessId,
+          productId,
         },
-      }
-    );
+        {
+          onSuccess: (_, variables) => {
+            form.reset();
+            router.navigate({
+              to: "/business/$id/products/$productid",
+              params: {
+                id: variables.businessId,
+                productid: variables.productId,
+              },
+            });
+          },
+          onError: (err) => {
+            form.setError("root", {
+              message: err.message,
+            });
+          },
+        }
+      );
+    }
   });
 
   return (
@@ -237,7 +280,7 @@ function AllowsNegativeInventory() {
   const { form } = useProductForm();
 
   return (
-    <SelectForm
+    <SwitchForm
       label="Permitir inventario negativo"
       name="allowsNegativeInventory"
       control={form.control}
@@ -264,9 +307,25 @@ function Submit() {
   const { formId, method } = useProductForm();
 
   return (
-    <Button type="submit" className="" form={formId} disabled={!formId}>
+    <Button type="submit" form={formId} disabled={!formId}>
       {method === "create" ? "Crear" : "Actualizar"}
     </Button>
+  );
+}
+
+function SelectCategory({ categories }: SelectCategoryProps) {
+  const { form } = useProductForm();
+
+  return (
+    <SelectInputForm
+      label="Categoría"
+      name="categoryId"
+      control={form.control}
+      items={categories.map((category) => ({
+        value: category.id,
+        label: category.name,
+      }))}
+    />
   );
 }
 
@@ -286,4 +345,5 @@ export const ProductForm = {
   AllowsNegativeInventory,
   Weight,
   Submit,
+  SelectCategory,
 };

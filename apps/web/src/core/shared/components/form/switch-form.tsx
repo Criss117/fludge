@@ -15,7 +15,7 @@ interface Props<T extends FieldValues> {
   description?: string;
 }
 
-export function SelectForm<T extends FieldValues>({
+export function SwitchForm<T extends FieldValues>({
   control,
   name,
   label,

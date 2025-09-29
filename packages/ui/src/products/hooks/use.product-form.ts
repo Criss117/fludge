@@ -9,10 +9,20 @@ interface Props {
 export function useProductForm(props?: Props) {
   const form = useForm<ProductFormDto>({
     defaultValues: {
-      name: props?.defaultValues?.name ?? "",
-      description: props?.defaultValues?.description ?? "",
-      allowsNegativeInventory: false,
-      barcode: "",
+      name: props?.defaultValues?.name,
+      description: props?.defaultValues?.description,
+      allowsNegativeInventory: props?.defaultValues?.allowsNegativeInventory,
+      barcode: props?.defaultValues?.barcode,
+      categoryId: props?.defaultValues?.categoryId,
+      minStock: props?.defaultValues?.minStock,
+      purchasePrice: props?.defaultValues?.purchasePrice,
+      salePrice: props?.defaultValues?.salePrice,
+      stock: props?.defaultValues?.stock,
+      weight: props?.defaultValues?.weight,
+      wholesalePrice: props?.defaultValues?.wholesalePrice,
+      offerPrice: props?.defaultValues?.offerPrice,
+      brandId: props?.defaultValues?.brandId,
+      imageUrl: props?.defaultValues?.imageUrl,
     },
     resolver: zodResolver(productFormDto),
   });
