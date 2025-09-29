@@ -3,7 +3,7 @@ import { findOneGroupAction } from "../actions/find-one-group.action";
 
 export function findOneGroupQueryOptions(businessId: string, groupId: string) {
   return queryOptions({
-    queryKey: ["business", businessId, "group", groupId],
+    queryKey: ["business", businessId, "groups", groupId],
     queryFn: () => findOneGroupAction(businessId, groupId),
   });
 }

@@ -3,7 +3,7 @@ import { findOneProductQueryOptions } from "@/core/products/application/hooks/us
 import { ProductScreen } from "@/core/products/presentation/screens/product.screen";
 
 export const Route = createFileRoute(
-  "/(private)/business/$id/products/$productid"
+  "/(private)/business/$id/products/$productid/"
 )({
   component: RouteComponent,
   loader: async ({ context, params }) => {
