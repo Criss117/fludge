@@ -13,3 +13,4 @@
 
 - [ ] [Issue #1] Valor por defecto de allowNegativeInventory en el formulario de producto
 - [ ] [Issue #2] El dialog de selección de permisos no se reinicia al cerrar
+- [ ] [Issue #3] Al agregar permisos al grupo, estos se pueden duplicar

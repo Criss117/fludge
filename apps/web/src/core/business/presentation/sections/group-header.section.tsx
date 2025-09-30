@@ -11,6 +11,7 @@ import type { GroupDetail } from "@repo/core/entities/group";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { UpdateGroupDialog } from "../components/update-group-dialog";
+import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
 
 interface Props {
   group: GroupDetail;
@@ -18,6 +19,11 @@ interface Props {
 }
 
 export function GroupHeaderSection({ group, businessId }: Props) {
+  const { userHasPermissions } = usePermissions();
+
+  const canUpdateGroup = userHasPermissions("groups:update");
+  const canDeleteGroup = userHasPermissions("groups:delete");
+
   return (
     <header className="mx-2 space-y-5">
       <div className="flex justify-between">
@@ -27,7 +33,7 @@ export function GroupHeaderSection({ group, businessId }: Props) {
             <p className="text-sm text-muted-foreground">{group.description}</p>
           )}
         </div>
-        <Button variant="destructive">Eliminar</Button>
+        {canDeleteGroup && <Button variant="destructive">Eliminar</Button>}
       </div>
 
       <div>
@@ -39,9 +45,9 @@ export function GroupHeaderSection({ group, businessId }: Props) {
                 Aquí podrás ver el resumen de tu grupo
               </CardDescription>
             </div>
-            <div>
+            {canUpdateGroup && (
               <UpdateGroupDialog group={group} businessId={businessId} />
-            </div>
+            )}
           </CardHeader>
           <CardContent className="flex justify-between h-12 items-center">
             <div className="flex-1 mx-2">

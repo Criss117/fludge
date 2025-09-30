@@ -1,20 +1,35 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import {
   GroupsScreen,
-  WithOutPermissionsGroupsScreen,
+  WithOutPermissions,
 } from "@/core/business/presentation/screens/groups.screen";
-import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
+import { checkUserPermissions } from "@/core/shared/lib/user-permission";
 
 export const Route = createFileRoute("/(private)/business/$id/groups/")({
   component: RouteComponent,
+  beforeLoad: ({ context }) => {
+    const user = context.user;
+
+    if (!user) {
+      throw redirect({
+        to: "/auth/sign-in",
+      });
+    }
+
+    const canReadGroup = checkUserPermissions(user, ["groups:read"]);
+
+    return {
+      canReadGroup,
+    };
+  },
 });
 
 function RouteComponent() {
   const { id } = Route.useParams();
-  const { userHasPermissions } = usePermissions();
+  const { canReadGroup } = Route.useRouteContext();
 
-  if (!userHasPermissions("groups:read")) {
-    return <WithOutPermissionsGroupsScreen />;
+  if (!canReadGroup) {
+    return <WithOutPermissions businessId={id} />;
   }
 
   return <GroupsScreen businessId={id} />;

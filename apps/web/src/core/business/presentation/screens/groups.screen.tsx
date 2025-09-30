@@ -12,9 +12,13 @@ interface Props {
   businessId: string;
 }
 
-export function WithOutPermissionsGroupsScreen() {
+export function WithOutPermissions({ businessId }: Props) {
   return (
     <section className="mx-2 space-y-4">
+      <PageHeader>
+        <PageHeaderHome businessId={businessId} />
+        <PageHeaderGroups isPage />
+      </PageHeader>
       <UserHasNoPermissionAlert />
     </section>
   );

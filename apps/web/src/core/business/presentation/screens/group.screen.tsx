@@ -7,6 +7,7 @@ import {
   PageHeaderGroups,
   PageHeaderHome,
 } from "@/core/shared/components/page-header-bread-crumb";
+import { UserHasNoPermissionAlert } from "@/core/shared/components/unauthorized-alerts";
 
 interface Props {
   groupId: string;
@@ -32,6 +33,18 @@ export function GroupScreen({ businessId, groupId }: Props) {
         <GroupHeaderSection group={data} businessId={businessId} />
         <GroupDataTablesSection group={data} businessId={businessId} />
       </div>
+    </section>
+  );
+}
+
+export function WithOutPermissions({ businessId }: Props) {
+  return (
+    <section className="mx-2 space-y-5">
+      <PageHeader>
+        <PageHeaderHome businessId={businessId} />
+        <PageHeaderGroups businessId={businessId} isPage />
+      </PageHeader>
+      <UserHasNoPermissionAlert />
     </section>
   );
 }

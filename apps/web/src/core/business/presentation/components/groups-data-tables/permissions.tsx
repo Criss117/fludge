@@ -26,6 +26,7 @@ import { useFindAllPermissions } from "@/core/business/application/hooks/use.fin
 import { ScrollArea } from "@/core/shared/components/ui/scroll-area";
 import { Checkbox } from "@/core/shared/components/ui/checkbox";
 import { useMutateGroups } from "@/core/business/application/hooks/use.mutate-groups";
+import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
 
 interface Props {
   group: GroupDetail;
@@ -128,8 +129,12 @@ function PermissionsList({ businessId, group }: Props) {
 }
 
 function PermissionsTableHeader({ group, businessId }: Props) {
+  const { userHasPermissions } = usePermissions();
   const { update } = useMutateGroups();
   const { table } = PermissionsDataTable.usePermissionsTable();
+
+  const canUpdateGroups = userHasPermissions("groups:update");
+  const canDeleteGroups = userHasPermissions("groups:delete");
 
   const selectedRows = table
     .getSelectedRowModel()
@@ -159,27 +164,31 @@ function PermissionsTableHeader({ group, businessId }: Props) {
       </div>
 
       <div className="space-x-2">
-        <Button
-          variant="destructive"
-          disabled={selectedRows.length === 0}
-          className="rounded-full"
-          onClick={handleDelete}
-        >
-          Eliminar ({selectedRows.length}) permisos
-        </Button>
-        <Suspense
-          fallback={
-            <Button
-              variant="outline"
-              className="rounded-full border-2"
-              disabled
-            >
-              Agregar Permisos
-            </Button>
-          }
-        >
-          <PermissionsList group={group} businessId={businessId} />
-        </Suspense>
+        {canDeleteGroups && (
+          <Button
+            variant="destructive"
+            disabled={selectedRows.length === 0}
+            className="rounded-full"
+            onClick={handleDelete}
+          >
+            Eliminar ({selectedRows.length}) permisos
+          </Button>
+        )}
+        {canUpdateGroups && (
+          <Suspense
+            fallback={
+              <Button
+                variant="outline"
+                className="rounded-full border-2"
+                disabled
+              >
+                Agregar Permisos
+              </Button>
+            }
+          >
+            <PermissionsList group={group} businessId={businessId} />
+          </Suspense>
+        )}
       </div>
     </CardHeader>
   );

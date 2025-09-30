@@ -28,23 +28,24 @@ export function GroupsHeaderSection({ totalGroups, businessId }: Props) {
         </p>
       </div>
       <div className="space-x-2">
-        <Button
-          variant="destructive"
-          disabled={selectedRows === 0 || !userCanDeleteGroups}
-        >
-          Eliminar
-        </Button>
-        <Button disabled={!userCanCreateGroups} asChild={userCanCreateGroups}>
-          <Link
-            to="/business/$id/groups/create"
-            params={{
-              id: businessId,
-            }}
-            disabled={!userCanCreateGroups}
-          >
-            Crear Grupo
-          </Link>
-        </Button>
+        {userCanDeleteGroups && (
+          <Button variant="destructive" disabled={selectedRows === 0}>
+            Eliminar
+          </Button>
+        )}
+        {userCanCreateGroups && (
+          <Button asChild={userCanCreateGroups}>
+            <Link
+              to="/business/$id/groups/create"
+              params={{
+                id: businessId,
+              }}
+              disabled={!userCanCreateGroups}
+            >
+              Crear Grupo
+            </Link>
+          </Button>
+        )}
       </div>
     </header>
   );
