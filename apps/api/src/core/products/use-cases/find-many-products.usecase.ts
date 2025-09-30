@@ -22,6 +22,7 @@ export class FindManyProductsUseCase {
       {
         limit: limit + 1,
         offset: page * limit,
+        ensureActive: true,
       },
     );
 

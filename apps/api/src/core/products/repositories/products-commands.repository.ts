@@ -56,7 +56,7 @@ export class ProductsCommnadsRepository {
           eq(products.id, meta.productId),
           eq(products.businessId, meta.businessId),
           isNull(products.deletedAt),
-          eq(products.isActive, false),
+          eq(products.isActive, true),
         ),
       );
   }
