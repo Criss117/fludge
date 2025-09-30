@@ -2,11 +2,11 @@
 
 ## Tareas
 
+- [ ] Mejorar el diseño de la página de selección de negocios
 - [x] Validar los permisos para cada ruta
 - [x] Validar los permisos para cada acción
 - [x] Mejorar la consistencia de la interfaz
 - [ ] Mejorar el feedback del sign up
-- [ ] Mejorar el diseño de la página de selección de negocios
 - [ ] Agregar mas información en la peticion del negocio
 
 ## Issues
