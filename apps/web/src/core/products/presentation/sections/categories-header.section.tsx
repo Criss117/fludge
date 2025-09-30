@@ -3,6 +3,7 @@ import { CategorySummaryTable } from "@/core/products/presentation/components/ca
 import { CreateCategoryDialog } from "@/core/products/presentation/components/create-category-dialog";
 import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
 import { useMutateCategories } from "@/core/products/application/hooks/use.mutate-categories";
+import { Trash2Icon } from "lucide-react";
 
 interface Props {
   totalCategories: number;
@@ -47,6 +48,7 @@ export function CategoriesHeader({ totalCategories, businessId }: Props) {
             disabled={selectedRows === 0 || deleteMany.isPending}
             onClick={deleteManyCategories}
           >
+            <Trash2Icon />
             Eliminar
           </Button>
         )}

@@ -2,6 +2,7 @@ import { usePermissions } from "@/core/auth/application/providers/permissions.pr
 import { Button } from "@/core/shared/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { EmployeesSummaryTable } from "../components/employees-summary-table/index";
+import { PlusCircleIcon, Trash2Icon } from "lucide-react";
 
 interface Props {
   totalEmployees: number;
@@ -26,7 +27,9 @@ export function EmployeesHeaderSection({ totalEmployees, businessId }: Props) {
       </div>
       <div className="space-x-2">
         {userCanDeleteEmployees && (
-          <Button variant="destructive">Eliminar</Button>
+          <Button variant="destructive" disabled>
+            <Trash2Icon /> Eliminar
+          </Button>
         )}
         {userCanCreateEmployees && (
           <Button asChild>
@@ -36,6 +39,7 @@ export function EmployeesHeaderSection({ totalEmployees, businessId }: Props) {
                 id: businessId,
               }}
             >
+              <PlusCircleIcon />
               Crear Empleado
             </Link>
           </Button>

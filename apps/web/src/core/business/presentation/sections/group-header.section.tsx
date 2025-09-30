@@ -12,6 +12,7 @@ import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { UpdateGroupDialog } from "../components/update-group-dialog";
 import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
+import { Trash2Icon } from "lucide-react";
 
 interface Props {
   group: GroupDetail;
@@ -33,7 +34,6 @@ export function GroupHeaderSection({ group, businessId }: Props) {
             <p className="text-sm text-muted-foreground">{group.description}</p>
           )}
         </div>
-        {canDeleteGroup && <Button variant="destructive">Eliminar</Button>}
       </div>
 
       <div>
@@ -45,9 +45,17 @@ export function GroupHeaderSection({ group, businessId }: Props) {
                 Aquí podrás ver el resumen de tu grupo
               </CardDescription>
             </div>
-            {canUpdateGroup && (
-              <UpdateGroupDialog group={group} businessId={businessId} />
-            )}
+            <div className="flex items-center gap-x-2">
+              {canDeleteGroup && (
+                <Button variant="destructive">
+                  <Trash2Icon />
+                  Eliminar
+                </Button>
+              )}
+              {canUpdateGroup && (
+                <UpdateGroupDialog group={group} businessId={businessId} />
+              )}
+            </div>
           </CardHeader>
           <CardContent className="flex justify-between h-12 items-center">
             <div className="flex-1 mx-2">

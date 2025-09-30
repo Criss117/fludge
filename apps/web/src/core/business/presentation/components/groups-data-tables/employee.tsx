@@ -35,6 +35,7 @@ import {
   AlertDialogTrigger,
 } from "@/core/shared/components/ui/alert-dialog";
 import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
+import { PlusCircleIcon, Trash2Icon } from "lucide-react";
 
 interface Props {
   group: GroupDetail;
@@ -77,6 +78,7 @@ function EmployeeListDialog({ businessId, group }: Props) {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" className="rounded-full border-2">
+          <PlusCircleIcon />
           Agregar Usuario
         </Button>
       </DialogTrigger>
@@ -157,6 +159,7 @@ function RemoveEmployees({ businessId, groupId }: RemoveEmployeesProps) {
           className="rounded-full"
           disabled={!selectedEmployees.length}
         >
+          <Trash2Icon />
           Eliminar{" "}
           {selectedEmployees.length > 0 && `(${selectedEmployees.length})`}{" "}
           empleados

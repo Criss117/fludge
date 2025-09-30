@@ -2,6 +2,7 @@ import { Button } from "@/core/shared/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { GroupsTable } from "../components/groups-table";
 import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
+import { PlusCircleIcon, Trash2Icon } from "lucide-react";
 
 interface Props {
   businessId: string;
@@ -30,6 +31,7 @@ export function GroupsHeaderSection({ totalGroups, businessId }: Props) {
       <div className="space-x-2">
         {userCanDeleteGroups && (
           <Button variant="destructive" disabled={selectedRows === 0}>
+            <Trash2Icon />
             Eliminar
           </Button>
         )}
@@ -42,6 +44,7 @@ export function GroupsHeaderSection({ totalGroups, businessId }: Props) {
               }}
               disabled={!userCanCreateGroups}
             >
+              <PlusCircleIcon />
               Crear Grupo
             </Link>
           </Button>

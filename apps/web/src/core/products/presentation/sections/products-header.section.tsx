@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/core/shared/components/ui/button";
 import { ProductSummaryTable } from "../components/products-summary-table";
 import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
+import { PlusCircleIcon } from "lucide-react";
 
 interface Props {
   totalProducts: number;
@@ -34,6 +35,7 @@ export function ProductsHeader({ totalProducts, businessId }: Props) {
               to="/business/$id/products/create"
               params={{ id: businessId }}
             >
+              <PlusCircleIcon />
               Nuevo Producto
             </Link>
           </Button>

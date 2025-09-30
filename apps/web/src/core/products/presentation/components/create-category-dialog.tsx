@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/core/shared/components/ui/dialog";
 import { CategoryForm } from "./category-form";
+import { PlusCircleIcon } from "lucide-react";
 
 interface Props {
   businessId: string;
@@ -32,7 +33,8 @@ export function CreateCategoryDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="border-2" variant="secondary">
+        <Button>
+          <PlusCircleIcon />
           {type === "category" ? "Crear Categoría" : "Crear Subcategoría"}
         </Button>
       </DialogTrigger>

@@ -27,6 +27,7 @@ import { ScrollArea } from "@/core/shared/components/ui/scroll-area";
 import { Checkbox } from "@/core/shared/components/ui/checkbox";
 import { useMutateGroups } from "@/core/business/application/hooks/use.mutate-groups";
 import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
+import { PlusCircleIcon, Trash2Icon } from "lucide-react";
 
 interface Props {
   group: GroupDetail;
@@ -79,6 +80,7 @@ function PermissionsList({ businessId, group }: Props) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="rounded-full border-2">
+          <PlusCircleIcon />
           Agregar Permisos
         </Button>
       </DialogTrigger>
@@ -172,6 +174,7 @@ function PermissionsTableHeader({ group, businessId }: Props) {
             className="rounded-full"
             onClick={handleDelete}
           >
+            <Trash2Icon />
             Eliminar ({selectedRows.length}) permisos
           </Button>
         )}
@@ -183,6 +186,7 @@ function PermissionsTableHeader({ group, businessId }: Props) {
                 className="rounded-full border-2"
                 disabled
               >
+                <PlusCircleIcon />
                 Agregar Permisos
               </Button>
             }

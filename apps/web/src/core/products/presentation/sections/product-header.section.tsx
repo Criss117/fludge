@@ -46,9 +46,9 @@ function DeleteProduct({ product }: Props) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" className="space-x-2">
+        <Button variant="destructive">
           <Trash2Icon />
-          <span>Eliminar</span>
+          Eliminar
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
