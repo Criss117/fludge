@@ -9,6 +9,7 @@ import { ProductForm } from "../components/product-form";
 import { Card, CardContent } from "@/core/shared/components/ui/card";
 import { useFindManyCategories } from "../../application/hooks/use.find-many-categories";
 import { useFindOneProduct } from "../../application/hooks/use.find-one-product";
+import { UserHasNoPermissionAlert } from "@/core/shared/components/unauthorized-alerts";
 
 interface Props {
   businessId: string;
@@ -77,6 +78,19 @@ export function UpdateProductScreen({ businessId, productId }: Props) {
           </ProductForm.Content>
         </ProductForm.Root>
       </div>
+    </section>
+  );
+}
+
+export function WithOutPermissions({ businessId }: Props) {
+  return (
+    <section className="mx-2 space-y-4">
+      <PageHeader>
+        <PageHeaderHome businessId={businessId} />
+        <PageHeaderProducts isPage />
+      </PageHeader>
+
+      <UserHasNoPermissionAlert />
     </section>
   );
 }

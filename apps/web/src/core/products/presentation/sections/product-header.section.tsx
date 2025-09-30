@@ -14,6 +14,7 @@ import {
   AlertDialogTrigger,
 } from "@/core/shared/components/ui/alert-dialog";
 import { useMutateProducts } from "../../application/hooks/use.mutate-products";
+import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
 
 interface Props {
   product: ProductDetail;
@@ -73,6 +74,11 @@ function DeleteProduct({ product }: Props) {
 }
 
 export function ProductHeaderSection({ product }: Props) {
+  const { userHasPermissions } = usePermissions();
+
+  const userCanUpdateProducts = userHasPermissions("products:update");
+  const userCanDeleteProducts = userHasPermissions("products:delete");
+
   return (
     <header className="flex items-center justify-between">
       <div>
@@ -80,19 +86,21 @@ export function ProductHeaderSection({ product }: Props) {
         <p className="text-muted-foreground">Detalles del producto</p>
       </div>
       <div className="space-x-2 items-center flex">
-        <Button className="space-x-2" asChild>
-          <Link
-            to="/business/$id/products/$productid/update"
-            params={{
-              id: product.businessId,
-              productid: product.id,
-            }}
-          >
-            <PencilIcon />
-            <span>Editar</span>
-          </Link>
-        </Button>
-        <DeleteProduct product={product} />
+        {userCanUpdateProducts && (
+          <Button className="space-x-2" asChild>
+            <Link
+              to="/business/$id/products/$productid/update"
+              params={{
+                id: product.businessId,
+                productid: product.id,
+              }}
+            >
+              <PencilIcon />
+              <span>Editar</span>
+            </Link>
+          </Button>
+        )}
+        {userCanDeleteProducts && <DeleteProduct product={product} />}
       </div>
     </header>
   );

@@ -7,9 +7,24 @@ import {
 import { ProductForm } from "../components/product-form";
 import { Card, CardContent } from "@/core/shared/components/ui/card";
 import { useFindManyCategories } from "../../application/hooks/use.find-many-categories";
+import { UserHasNoPermissionAlert } from "@/core/shared/components/unauthorized-alerts";
 
 interface Props {
   businessId: string;
+}
+
+export function WithOutPermissions({ businessId }: Props) {
+  return (
+    <section className="mx-2 space-y-4">
+      <PageHeader>
+        <PageHeaderHome businessId={businessId} />
+        <PageHeaderProducts businessId={businessId} />
+        <PageHeaderCreateProduct isPage />
+      </PageHeader>
+
+      <UserHasNoPermissionAlert />
+    </section>
+  );
 }
 
 export function CreateProductScreen({ businessId }: Props) {

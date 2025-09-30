@@ -7,6 +7,7 @@ import {
   PageHeaderHome,
   PageHeaderProducts,
 } from "@/core/shared/components/page-header-bread-crumb";
+import { UserHasNoPermissionAlert } from "@/core/shared/components/unauthorized-alerts";
 
 interface Props {
   businessId: string;
@@ -33,6 +34,7 @@ function Table({ businessId }: Props) {
   });
 
   const page = data.pages[pagination.page];
+
   return (
     <ProductSummaryTable.Root
       data={page.items}
@@ -88,6 +90,19 @@ export function ProductsScreen({ businessId }: Props) {
       </PageHeader>
 
       <Table businessId={businessId} />
+    </section>
+  );
+}
+
+export function WithOutPermissions({ businessId }: Props) {
+  return (
+    <section className="mx-2 space-y-4">
+      <PageHeader>
+        <PageHeaderHome businessId={businessId} />
+        <PageHeaderProducts isPage />
+      </PageHeader>
+
+      <UserHasNoPermissionAlert />
     </section>
   );
 }

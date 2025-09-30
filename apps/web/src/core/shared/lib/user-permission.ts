@@ -3,13 +3,13 @@ import type { Permission } from "@repo/core/value-objects/permission";
 
 export function checkUserPermissions(
   user: LogedUser,
-  permission: Permission[]
+  requiredPermissions: Permission[]
 ) {
   if (user.isRoot) return true;
 
-  const userPermissions = user.isEmployeeIn[0].permissions;
+  const userPermissions = new Set(user.isEmployeeIn[0].permissions);
 
-  return userPermissions.some((userPermission) =>
-    permission.includes(userPermission)
+  return requiredPermissions.every((permission) =>
+    userPermissions.has(permission)
   );
 }

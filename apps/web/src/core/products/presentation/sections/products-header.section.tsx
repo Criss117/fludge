@@ -1,6 +1,7 @@
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/core/shared/components/ui/button";
 import { ProductSummaryTable } from "../components/products-summary-table";
-import { Link } from "@tanstack/react-router";
+import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
 
 interface Props {
   totalProducts: number;
@@ -9,11 +10,11 @@ interface Props {
 
 export function ProductsHeader({ totalProducts, businessId }: Props) {
   const { table } = ProductSummaryTable.useProductSummaryTable();
-  // const { userHasPermissions } = usePermissions();
+  const { userHasPermissions } = usePermissions();
 
   const selectedRows = table.getSelectedRowModel().rows.length;
 
-  // const userCanDeleteProducts = userHasPermissions("products:delete");
+  const userCanCreateProducts = userHasPermissions("products:create");
 
   return (
     <header className="flex justify-between">
@@ -27,17 +28,16 @@ export function ProductsHeader({ totalProducts, businessId }: Props) {
         </p>
       </div>
       <div className="space-x-2">
-        <Button asChild>
-          <Link to="/business/$id/products/create" params={{ id: businessId }}>
-            Nuevo Producto
-          </Link>
-        </Button>
-        {/* <Button
-          variant="destructive"
-          disabled={selectedRows === 0 || !userCanDeleteProducts}
-        >
-          Eliminar
-        </Button> */}
+        {userCanCreateProducts && (
+          <Button asChild>
+            <Link
+              to="/business/$id/products/create"
+              params={{ id: businessId }}
+            >
+              Nuevo Producto
+            </Link>
+          </Button>
+        )}
       </div>
     </header>
   );

@@ -13,6 +13,7 @@ import {
   ProductInventory,
   ProductMetadata,
 } from "../components/product-detail";
+import { UserHasNoPermissionAlert } from "@/core/shared/components/unauthorized-alerts";
 
 interface Props {
   businessId: string;
@@ -54,6 +55,19 @@ export function ProductScreen({ businessId, productId }: Props) {
           <ProductMetadata product={product} />
         </div>
       </div>
+    </section>
+  );
+}
+
+export function WithOutPermissions({ businessId }: Props) {
+  return (
+    <section className="mx-2 space-y-4">
+      <PageHeader>
+        <PageHeaderHome businessId={businessId} />
+        <PageHeaderProducts isPage />
+      </PageHeader>
+
+      <UserHasNoPermissionAlert />
     </section>
   );
 }
