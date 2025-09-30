@@ -17,6 +17,7 @@ export function CategoriesHeader({ totalCategories, businessId }: Props) {
   const selectedRows = table.getSelectedRowModel().rows.length;
 
   const userCanDeleteCategories = userHasPermissions("categories:delete");
+  const userCanCreateCategories = userHasPermissions("categories:create");
 
   const deleteManyCategories = () => {
     const categoriesIds = table
@@ -40,18 +41,18 @@ export function CategoriesHeader({ totalCategories, businessId }: Props) {
         </p>
       </div>
       <div className="space-x-2">
-        <Button
-          variant="destructive"
-          disabled={
-            selectedRows === 0 ||
-            !userCanDeleteCategories ||
-            deleteMany.isPending
-          }
-          onClick={deleteManyCategories}
-        >
-          Eliminar
-        </Button>
-        <CreateCategoryDialog businessId={businessId} />
+        {userCanDeleteCategories && (
+          <Button
+            variant="destructive"
+            disabled={selectedRows === 0 || deleteMany.isPending}
+            onClick={deleteManyCategories}
+          >
+            Eliminar
+          </Button>
+        )}
+        {userCanCreateCategories && (
+          <CreateCategoryDialog businessId={businessId} />
+        )}
       </div>
     </header>
   );

@@ -7,6 +7,7 @@ import {
   PageHeaderCategory,
   PageHeaderHome,
 } from "@/core/shared/components/page-header-bread-crumb";
+import { UserHasNoPermissionAlert } from "@/core/shared/components/unauthorized-alerts";
 
 interface Props {
   businessId: string;
@@ -56,6 +57,18 @@ export function CategoryScreen({ businessId, categoryId }: Props) {
           />
         </div>
       )}
+    </section>
+  );
+}
+
+export function WithOutPermissions({ businessId }: Props) {
+  return (
+    <section className="mx-2 space-y-6">
+      <PageHeader>
+        <PageHeaderHome businessId={businessId} />
+        <PageHeaderCategories businessId={businessId} isPage />
+      </PageHeader>
+      <UserHasNoPermissionAlert />
     </section>
   );
 }

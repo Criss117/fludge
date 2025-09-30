@@ -23,11 +23,11 @@ export function CreateCategoryDialog({
   type = "category",
   parentId,
 }: Props) {
+  const [open, setOpen] = useState(false);
+
   if (type === "subcategory" && !parentId) {
     throw new Error("parentId is required");
   }
-
-  const [open, setOpen] = useState(false);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

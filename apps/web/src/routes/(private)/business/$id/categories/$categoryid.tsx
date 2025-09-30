@@ -1,12 +1,33 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { findOneCategoryQueryOptions } from "@/core/products/application/hooks/use.find-one-category";
-import { CategoryScreen } from "@/core/products/presentation/screens/category.screen";
+import {
+  CategoryScreen,
+  WithOutPermissions,
+} from "@/core/products/presentation/screens/category.screen";
+import { checkUserPermissions } from "@/core/shared/lib/user-permission";
 
 export const Route = createFileRoute(
   "/(private)/business/$id/categories/$categoryid"
 )({
   component: RouteComponent,
-  beforeLoad: async ({ context, params }) => {
+  beforeLoad: ({ context }) => {
+    const user = context.user;
+
+    if (!user) {
+      throw redirect({
+        to: "/auth/sign-in",
+      });
+    }
+
+    const canReadCategory = checkUserPermissions(user, ["categories:read"]);
+
+    return {
+      canReadCategory,
+    };
+  },
+  loader: async ({ context, params }) => {
+    if (!context.canReadCategory) return;
+
     const res = await context.queryClient?.ensureQueryData(
       findOneCategoryQueryOptions(params.id, params.categoryid)
     );
@@ -23,6 +44,10 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { id, categoryid } = Route.useParams();
+  const { canReadCategory } = Route.useRouteContext();
+
+  if (!canReadCategory)
+    return <WithOutPermissions businessId={id} categoryId={categoryid} />;
 
   return <CategoryScreen businessId={id} categoryId={categoryid} />;
 }

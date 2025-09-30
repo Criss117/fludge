@@ -9,6 +9,7 @@ import type { CategorySummary } from "@repo/core/entities/category";
 import { CategorySummaryTable } from "../components/categories-summary-table";
 import { CreateCategoryDialog } from "../components/create-category-dialog";
 import { RemoveCategoriesButton } from "../components/remove-categories-button";
+import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
 
 interface Props {
   subcategories: CategorySummary[];
@@ -38,6 +39,11 @@ export function SubcategoriesSection({
   businessId,
   parentId,
 }: Props) {
+  const { userHasPermissions } = usePermissions();
+
+  const canDeleteSubcategories = userHasPermissions("categories:delete");
+  const canCreateSubcategories = userHasPermissions("categories:create");
+
   return (
     <Card>
       <CategorySummaryTable.Root data={subcategories}>
@@ -49,12 +55,16 @@ export function SubcategoriesSection({
             </CardDescription>
           </div>
           <div className="space-x-2">
-            <DeleteSubCategoriesButton businessId={businessId} />
-            <CreateCategoryDialog
-              businessId={businessId}
-              type="subcategory"
-              parentId={parentId}
-            />
+            {canDeleteSubcategories && (
+              <DeleteSubCategoriesButton businessId={businessId} />
+            )}
+            {canCreateSubcategories && (
+              <CreateCategoryDialog
+                businessId={businessId}
+                type="subcategory"
+                parentId={parentId}
+              />
+            )}
           </div>
         </CardHeader>
         <CardContent>

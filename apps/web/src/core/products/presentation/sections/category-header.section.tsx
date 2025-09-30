@@ -14,26 +14,40 @@ import {
 import { Separator } from "@/core/shared/components/ui/separator";
 import { UpdateCategoryDialog } from "../components/update-category-dialog";
 import { RemoveCategoriesButton } from "../components/remove-categories-button";
+import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
 
 interface Props {
   category: CategoryDetail;
 }
 
 function CategoryActions({ category }: Props) {
+  const { userHasPermissions } = usePermissions();
+
+  const canDeleteCategory = userHasPermissions("categories:delete");
+  const canUpdateCategory = userHasPermissions("categories:update");
+
+  if (!canDeleteCategory && !canUpdateCategory) {
+    return null;
+  }
+
   return (
     <div className="space-x-2 flex items-center">
-      <UpdateCategoryDialog
-        businessId={category.businessId}
-        category={{
-          id: category.id,
-          name: category.name,
-          description: category.description,
-        }}
-      />
-      <RemoveCategoriesButton
-        categoriesIds={[category.id]}
-        businessId={category.businessId}
-      />
+      {canUpdateCategory && (
+        <UpdateCategoryDialog
+          businessId={category.businessId}
+          category={{
+            id: category.id,
+            name: category.name,
+            description: category.description,
+          }}
+        />
+      )}
+      {canUpdateCategory && (
+        <RemoveCategoriesButton
+          categoriesIds={[category.id]}
+          businessId={category.businessId}
+        />
+      )}
     </div>
   );
 }

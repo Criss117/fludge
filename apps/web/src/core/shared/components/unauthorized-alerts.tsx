@@ -3,7 +3,6 @@ import { Alert, AlertTitle } from "./ui/alert";
 
 interface Props {
   title?: string;
-  description?: string;
 }
 
 export function UserHasNoPermissionAlert({ title }: Props) {

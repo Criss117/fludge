@@ -49,7 +49,7 @@ export function PermissionsProvider({
       return true;
     }
 
-    return checkUserPermissions(user.isEmployeeIn[0].permissions, permissions);
+    return checkUserPermissions(user, permissions);
   };
 
   return (
