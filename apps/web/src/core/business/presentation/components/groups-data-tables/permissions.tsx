@@ -69,6 +69,7 @@ function PermissionsList({ businessId, group }: Props) {
       {
         onSuccess: () => {
           setOpen(false);
+          setSelectedPermissions([]);
         },
       }
     );
@@ -93,7 +94,7 @@ function PermissionsList({ businessId, group }: Props) {
           <ul className="space-y-2">
             {permissionsToShow.map((permission) => (
               <li
-                className="border p-4 flex justify-between items-center"
+                className="border p-4 flex justify-between items-center cursor-pointer hover:bg-muted-foreground/5 transition-colors"
                 onClick={() => selectPermission(permission)}
                 key={permission}
               >
