@@ -11,7 +11,8 @@ export function useProductForm(props?: Props) {
     defaultValues: {
       name: props?.defaultValues?.name,
       description: props?.defaultValues?.description,
-      allowsNegativeInventory: props?.defaultValues?.allowsNegativeInventory,
+      allowsNegativeInventory:
+        props?.defaultValues?.allowsNegativeInventory ?? false,
       barcode: props?.defaultValues?.barcode,
       categoryId: props?.defaultValues?.categoryId,
       minStock: props?.defaultValues?.minStock,

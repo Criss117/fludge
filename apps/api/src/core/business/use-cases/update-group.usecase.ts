@@ -66,7 +66,9 @@ export class UpdateGroupUseCase {
       businessId,
       name: data.name ?? currentGroup.name,
       description: data.description ?? currentGroup.description,
-      permissions: data.permissions ?? currentGroup.permissions,
+      permissions: Array.from(
+        new Set(data.permissions ?? currentGroup.permissions),
+      ),
       updatedAt: new Date(),
     });
   }

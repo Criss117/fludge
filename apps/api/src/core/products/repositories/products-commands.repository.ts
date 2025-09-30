@@ -1,9 +1,15 @@
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, inArray, isNull } from 'drizzle-orm';
 import { Inject, Injectable } from '@nestjs/common';
-import { DBSERVICE, type LibSQLDatabase } from '@core/db/db.module';
+import { DBSERVICE, type TX, type LibSQLDatabase } from '@core/db/db.module';
 import { products, type InsertProduct } from '@repo/db';
 import { ProductSummary } from '@repo/core/entities/product';
 import { DeleteProductDto } from './dtos/delete-product.dto';
+import { UnlinkCategoriesFromProductsDto } from './dtos/unlink-categories-from-products.dto';
+
+type Options = {
+  ensureActive?: boolean;
+  tx?: TX;
+};
 
 @Injectable()
 export class ProductsCommnadsRepository {
@@ -57,6 +63,27 @@ export class ProductsCommnadsRepository {
           eq(products.businessId, meta.businessId),
           isNull(products.deletedAt),
           eq(products.isActive, true),
+        ),
+      );
+  }
+
+  public async unlinkCategories(
+    meta: UnlinkCategoriesFromProductsDto,
+    options?: Options,
+  ) {
+    const db = options?.tx ?? this.db;
+
+    await db
+      .update(products)
+      .set({
+        categoryId: null,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(products.isActive, true),
+          eq(products.businessId, meta.businessId),
+          inArray(products.categoryId, meta.categoriesIds),
         ),
       );
   }
