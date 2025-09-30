@@ -7,12 +7,21 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   loader: async ({ context, params }) => {
-    const product = await context.queryClient?.ensureQueryData(
-      findOneProductQueryOptions({
-        businessId: params.id,
-        productId: params.productid,
-      })
-    );
+    const product = await context.queryClient
+      ?.ensureQueryData(
+        findOneProductQueryOptions({
+          businessId: params.id,
+          productId: params.productid,
+        })
+      )
+      .catch(() => {
+        throw redirect({
+          to: "/business/$id/products",
+          params: {
+            id: params.id,
+          },
+        });
+      });
 
     if (!product) {
       throw redirect({

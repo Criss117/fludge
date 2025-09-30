@@ -4,9 +4,11 @@ import { createProductAction } from "../actions/create-product.action";
 import { findManyProductsQueryOptions } from "./use.find-many-products";
 import { updateProductAction } from "../actions/update-product.action";
 import { findOneProductQueryOptions } from "./use.find-one-product";
+import { deleteProductAction } from "../actions/delete-product.action";
 
 type CreateParams = Parameters<typeof createProductAction>[number];
 type UpdateParams = Parameters<typeof updateProductAction>[number];
+type DeleteParams = Parameters<typeof deleteProductAction>[number];
 
 export function useMutateProducts() {
   const queryClient = useQueryClient();
@@ -89,8 +91,53 @@ export function useMutateProducts() {
       });
     },
   });
+
+  const deleteProduct = useMutation({
+    mutationFn: async (meta: DeleteParams) => {
+      const res = await deleteProductAction(meta);
+
+      if (res.error) {
+        throw new Error(res.message, {
+          cause: res.message,
+        });
+      }
+    },
+    onMutate: () => {
+      toast.loading("Eliminando producto...", {
+        id: "delete-product",
+        position: "top-center",
+      });
+    },
+    onSuccess: (_, variables) => {
+      toast.dismiss("delete-product");
+      toast.success("Producto eliminado correctamente", {
+        position: "top-center",
+      });
+
+      queryClient.invalidateQueries(
+        findManyProductsQueryOptions({
+          businessId: variables.businessId,
+        })
+      );
+
+      queryClient.removeQueries(
+        findOneProductQueryOptions({
+          businessId: variables.businessId,
+          productId: variables.productId,
+        })
+      );
+    },
+    onError: (error) => {
+      toast.dismiss("delete-product");
+      toast.error(error.message, {
+        position: "top-center",
+      });
+    },
+  });
+
   return {
     create,
     update,
+    deleteProduct,
   };
 }
