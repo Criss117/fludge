@@ -7,10 +7,23 @@ import {
   PageHeaderEmployees,
   PageHeaderHome,
 } from "@/core/shared/components/page-header-bread-crumb";
+import { UserHasNoPermissionAlert } from "@/core/shared/components/unauthorized-alerts";
 
 interface Props {
   businessId: string;
   employeeId: string;
+}
+
+export function WithOutPermissions({ businessId }: Props) {
+  return (
+    <section className="mx-2 space-y-4">
+      <PageHeader>
+        <PageHeaderHome businessId={businessId} />
+        <PageHeaderEmployees businessId={businessId} isPage />
+      </PageHeader>
+      <UserHasNoPermissionAlert />
+    </section>
+  );
 }
 
 export function EmployeeScreen({ businessId, employeeId }: Props) {

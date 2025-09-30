@@ -33,6 +33,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/core/shared/components/ui/alert-dialog";
+import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
 
 interface Props {
   businessId: string;
@@ -186,6 +187,10 @@ function RemoveGroups({ businessId, employeeId }: RemoveGroupsProps) {
 }
 
 export function EmployeeGroupsTable({ groups, businessId, employeeId }: Props) {
+  const { userHasPermissions } = usePermissions();
+
+  const userCanUpdateEmployee = userHasPermissions("users:update");
+
   return (
     <Card>
       <GroupsTable.Root data={groups} businessId={businessId}>
@@ -197,12 +202,16 @@ export function EmployeeGroupsTable({ groups, businessId, employeeId }: Props) {
             </CardDescription>
           </div>
           <div className="space-x-2">
-            <RemoveGroups businessId={businessId} employeeId={employeeId} />
-            <GroupsListDialog
-              businessId={businessId}
-              groups={groups}
-              employeeId={employeeId}
-            />
+            {userCanUpdateEmployee && (
+              <>
+                <RemoveGroups businessId={businessId} employeeId={employeeId} />
+                <GroupsListDialog
+                  businessId={businessId}
+                  groups={groups}
+                  employeeId={employeeId}
+                />
+              </>
+            )}
           </div>
         </CardHeader>
         <CardContent>

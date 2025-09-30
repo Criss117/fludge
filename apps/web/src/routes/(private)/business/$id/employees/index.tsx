@@ -1,24 +1,33 @@
-import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
-import { EmployeesScreen } from "@/core/employees/presentation/screens/employees.screen";
-import { PageHeader } from "@/core/shared/components/page-header";
-import { UserHasNoPermissionAlert } from "@/core/shared/components/unauthorized-alerts";
+import {
+  EmployeesScreen,
+  WithOutPermissions,
+} from "@/core/employees/presentation/screens/employees.screen";
+import { checkUserPermissions } from "@/core/shared/lib/user-permission";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(private)/business/$id/employees/")({
   component: RouteComponent,
+  beforeLoad: ({ context }) => {
+    const user = context.user;
+
+    if (!user) {
+      throw new Error("No se pudo obtener el usuario");
+    }
+
+    const canReadEmployees = checkUserPermissions(user, ["users:read"]);
+
+    return {
+      canReadEmployees,
+    };
+  },
 });
 
 function RouteComponent() {
   const { id } = Route.useParams();
-  const { userHasPermissions } = usePermissions();
+  const { canReadEmployees } = Route.useRouteContext();
 
-  if (!userHasPermissions("users:read")) {
-    return (
-      <section className="mx-2 space-y-4">
-        <PageHeader title="Empleados" />
-        <UserHasNoPermissionAlert />
-      </section>
-    );
+  if (!canReadEmployees) {
+    return <WithOutPermissions businessId={id} />;
   }
 
   return <EmployeesScreen businessId={id} />;

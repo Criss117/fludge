@@ -1,3 +1,4 @@
+import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
 import { Button } from "@/core/shared/components/ui/button";
 import {
   Card,
@@ -16,6 +17,10 @@ interface Props {
 }
 
 export function EmployeeSectionHeader({ employee }: Props) {
+  const { userHasPermissions } = usePermissions();
+
+  const userCanDeleteEmployee = userHasPermissions("users:delete");
+
   return (
     <header className="mx-2 space-y-5">
       <div className="flex justify-between">
@@ -25,7 +30,9 @@ export function EmployeeSectionHeader({ employee }: Props) {
           </h2>
           <p className="text-sm text-muted-foreground">{employee.id}</p>
         </div>
-        <Button variant="destructive">Eliminar</Button>
+        {userCanDeleteEmployee && (
+          <Button variant="destructive">Eliminar</Button>
+        )}
       </div>
 
       <div>

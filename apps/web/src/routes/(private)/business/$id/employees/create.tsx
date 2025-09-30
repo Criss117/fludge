@@ -1,26 +1,35 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
-import { CreateEmployeeScreen } from "@/core/employees/presentation/screens/create-employee.screen";
-import { PageHeader } from "@/core/shared/components/page-header";
-import { UserHasNoPermissionAlert } from "@/core/shared/components/unauthorized-alerts";
+import {
+  CreateEmployeeScreen,
+  WithOutPermissions,
+} from "@/core/employees/presentation/screens/create-employee.screen";
+import { checkUserPermissions } from "@/core/shared/lib/user-permission";
 
 export const Route = createFileRoute(
   "/(private)/business/$id/employees/create"
 )({
   component: RouteComponent,
+  beforeLoad: ({ context }) => {
+    const user = context.user;
+
+    if (!user) {
+      throw new Error("No se pudo obtener el usuario");
+    }
+
+    const canCreateEmployee = checkUserPermissions(user, ["users:create"]);
+
+    return {
+      canCreateEmployee,
+    };
+  },
 });
 
 function RouteComponent() {
   const { id } = Route.useParams();
-  const { userHasPermissions } = usePermissions();
+  const { canCreateEmployee } = Route.useRouteContext();
 
-  if (!userHasPermissions("users:create")) {
-    return (
-      <section className="mx-2 space-y-4">
-        <PageHeader title="Nuevo empleado" />
-        <UserHasNoPermissionAlert />
-      </section>
-    );
+  if (!canCreateEmployee) {
+    return <WithOutPermissions businessId={id} />;
   }
 
   return <CreateEmployeeScreen businessId={id} />;

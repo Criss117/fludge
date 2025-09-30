@@ -1,6 +1,7 @@
 import { usePermissions } from "@/core/auth/application/providers/permissions.provider";
 import { Button } from "@/core/shared/components/ui/button";
 import { Link } from "@tanstack/react-router";
+import { EmployeesSummaryTable } from "../components/employees-summary-table/index";
 
 interface Props {
   totalEmployees: number;
@@ -9,6 +10,9 @@ interface Props {
 
 export function EmployeesHeaderSection({ totalEmployees, businessId }: Props) {
   const { userHasPermissions } = usePermissions();
+  const { table } = EmployeesSummaryTable.useEmployeesTable();
+
+  const selectedRows = table.getSelectedRowModel().rows.length;
 
   const userCanDeleteEmployees = userHasPermissions("users:delete");
   const userCanCreateEmployees = userHasPermissions("users:create");
@@ -16,28 +20,26 @@ export function EmployeesHeaderSection({ totalEmployees, businessId }: Props) {
     <header className="flex justify-between">
       <div>
         <h2 className="text-2xl font-semibold">
-          Listado de Emplados ({totalEmployees})
-          {/* {selectedRows > 0 && `/${selectedRows}`}) */}
+          Listado de Emplados ({totalEmployees}
+          {selectedRows > 0 && `/${selectedRows}`})
         </h2>
       </div>
       <div className="space-x-2">
-        <Button variant="destructive" disabled={!userCanDeleteEmployees}>
-          Eliminar
-        </Button>
-        <Button
-          disabled={!userCanCreateEmployees}
-          asChild={userCanCreateEmployees}
-        >
-          <Link
-            to="/business/$id/employees/create"
-            params={{
-              id: businessId,
-            }}
-            disabled={!userCanCreateEmployees}
-          >
-            Crear Empleado
-          </Link>
-        </Button>
+        {userCanDeleteEmployees && (
+          <Button variant="destructive">Eliminar</Button>
+        )}
+        {userCanCreateEmployees && (
+          <Button asChild>
+            <Link
+              to="/business/$id/employees/create"
+              params={{
+                id: businessId,
+              }}
+            >
+              Crear Empleado
+            </Link>
+          </Button>
+        )}
       </div>
     </header>
   );

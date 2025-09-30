@@ -1,29 +1,44 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { findOneEmployeeQueryOptions } from "@/core/employees/application/hooks/use.find-one-employee";
-import { EmployeeScreen } from "@/core/employees/presentation/screens/employee.screen";
+import {
+  EmployeeScreen,
+  WithOutPermissions,
+} from "@/core/employees/presentation/screens/employee.screen";
+import { checkUserPermissions } from "@/core/shared/lib/user-permission";
 
 export const Route = createFileRoute(
   "/(private)/business/$id/employees/$employeeid"
 )({
   component: RouteComponent,
-  beforeLoad: async ({ context, params }) => {
-    const { id, employeeid } = params;
+  beforeLoad: async ({ context }) => {
+    const user = context.user;
 
-    if (!context.queryClient) {
-      return;
+    if (!user) {
+      throw redirect({
+        to: "/auth/sign-in",
+      });
     }
 
-    const res = await context.queryClient.ensureQueryData(
+    const canReadEmployees = checkUserPermissions(user, ["users:read"]);
+
+    return {
+      canReadEmployees,
+    };
+  },
+  loader: async ({ context, params }) => {
+    if (!context.canReadEmployees) return;
+
+    const res = await context.queryClient?.ensureQueryData(
       findOneEmployeeQueryOptions({
-        businessId: id,
-        employeeId: employeeid,
+        businessId: params.id,
+        employeeId: params.employeeid,
       })
     );
 
-    if (res.error) {
+    if (!res || !res.data) {
       throw redirect({
-        to: "/business/$id",
-        params: { id },
+        to: "/business/$id/employees",
+        params: { id: params.id },
       });
     }
   },
@@ -31,6 +46,11 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { id, employeeid } = Route.useParams();
+  const { canReadEmployees } = Route.useRouteContext();
+
+  if (!canReadEmployees) {
+    return <WithOutPermissions businessId={id} employeeId={employeeid} />;
+  }
 
   return <EmployeeScreen businessId={id} employeeId={employeeid} />;
 }
