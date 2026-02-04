@@ -1,0 +1,25 @@
+{
+  "name": "@fludge/auth",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@better-auth/expo": "catalog:",
+    "@fludge/db": "workspace:*",
+    "@fludge/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@fludge/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
