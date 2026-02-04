@@ -10,6 +10,8 @@ import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import express from "express";
+import { LoggingHandlerPlugin } from "@orpc/experimental-pino";
+import { logger } from "./logger";
 
 const app = express();
 
@@ -25,10 +27,18 @@ app.use(
 app.all("/api/auth{/*path}", toNodeHandler(auth));
 
 const rpcHandler = new RPCHandler(appRouter, {
-  interceptors: [
-    onError((error) => {
-      console.error(error);
+  plugins: [
+    new LoggingHandlerPlugin({
+      logger, // Custom logger instance
+      generateId: () => crypto.randomUUID(), // Custom ID generator
+      logRequestResponse: true, // Log request start/end (disabled by default)
+      logRequestAbort: true, // Log when requests are aborted (disabled by default)
     }),
+  ],
+  interceptors: [
+    // onError((error) => {
+    //   console.error(error);
+    // }),
   ],
 });
 const apiHandler = new OpenAPIHandler(appRouter, {
