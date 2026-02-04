@@ -22,11 +22,12 @@ import {
 import { useRegisterOrganizationForm } from "../components/register-organization-form";
 import { Button } from "@/modules/shared/components/ui/button";
 import { orpc } from "@/integrations/orpc";
+import { FieldGroup } from "@/modules/shared/components/ui/field";
 
 const defaultValues: CreateOrganizationSchema = {
-  name: "Tienda Andres",
-  legalName: "tiand Andres s.a",
-  address: "una direccion",
+  name: "",
+  legalName: "",
+  address: "",
 };
 
 export function RegisterOrganizationScreen() {
@@ -36,6 +37,7 @@ export function RegisterOrganizationScreen() {
   const form = useRegisterOrganizationForm({
     validators: {
       onSubmit: createOrganizationSchema,
+      onBlur: createOrganizationSchema,
     },
     defaultValues,
     onSubmit: async ({ value }) => {
@@ -88,22 +90,28 @@ export function RegisterOrganizationScreen() {
               name="name"
               children={(field) => <field.OrganizationSlug />}
             />
-            <form.AppField
-              name="address"
-              children={(field) => <field.OrganizationAddress />}
-            />
-            <form.AppField
-              name="legalName"
-              children={(field) => <field.OrganizationLegalName />}
-            />
-            <form.AppField
-              name="contactEmail"
-              children={(field) => <field.OrganizationContactEmail />}
-            />
-            <form.AppField
-              name="contactPhone"
-              children={(field) => <field.OrganizationContactPhone />}
-            />
+            <FieldGroup className="flex flex-row">
+              <form.AppField
+                name="address"
+                children={(field) => <field.OrganizationAddress />}
+              />
+              <form.AppField
+                name="legalName"
+                children={(field) => <field.OrganizationLegalName />}
+              />
+            </FieldGroup>
+
+            <FieldGroup className="flex flex-row items-end">
+              <form.AppField
+                name="contactEmail"
+                children={(field) => <field.OrganizationContactEmail />}
+              />
+              <form.AppField
+                name="contactPhone"
+                children={(field) => <field.OrganizationContactPhone />}
+              />
+            </FieldGroup>
+
             <Button type="submit" className="w-full">
               Registrar
             </Button>

@@ -31,13 +31,19 @@ function OrganizationSlug() {
   return (
     <Field>
       <FieldLabel htmlFor={id}>URL de la tienda</FieldLabel>
-      <Input
-        id={id}
-        name={field.name}
-        value={slugify(field.state.value)}
-        placeholder="EJ: Mi Tienda Retail"
-        disabled
-      />
+      <div className="flex">
+        <div className="bg-muted-foreground/20 rounded-l-md items-center flex justify-center px-1">
+          <p className="text-muted-foreground">fludge.com/dashboard/</p>
+        </div>
+        <Input
+          id={id}
+          name={field.name}
+          value={slugify(field.state.value)}
+          placeholder="EJ: Mi Tienda Retail"
+          disabled
+          className="flex-1 rounded-l-none"
+        />
+      </div>
     </Field>
   );
 }
