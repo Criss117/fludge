@@ -35,6 +35,12 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
         href: "/favicon.ico",
       },
     ],
+    scripts: [
+      {
+        crossOrigin: "anonymous",
+        src: "//unpkg.com/react-scan/dist/auto.global.js",
+      },
+    ],
   }),
 });
 
@@ -42,7 +48,7 @@ function RootComponent() {
   return (
     <>
       <HeadContent />
-      <div className="h-svh">
+      <div className="min-h-dvh">
         <Outlet />
       </div>
       <Toaster richColors />

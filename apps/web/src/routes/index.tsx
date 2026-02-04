@@ -1,5 +1,4 @@
-import { orpc } from "@/integrations/orpc";
-import { useQuery } from "@tanstack/react-query";
+import { SignInScreen } from "@/modules/auth/presentation/screens/sign-in.screen";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
@@ -7,20 +6,5 @@ export const Route = createFileRoute("/")({
 });
 
 function HomeComponent() {
-  const { data, error } = useQuery(
-    orpc.organizations.sayHi.queryOptions({
-      input: {
-        name: "Cristian",
-      },
-    }),
-  );
-
-  return (
-    <div>
-      {data}
-      <pre>
-        <code>{JSON.stringify(error, null, 2)}</code>
-      </pre>
-    </div>
-  );
+  return <SignInScreen />;
 }
