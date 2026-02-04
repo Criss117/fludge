@@ -7,7 +7,20 @@ export const Route = createFileRoute("/")({
 });
 
 function HomeComponent() {
-  const { data } = useQuery(orpc.healthCheck.queryOptions());
+  const { data, error } = useQuery(
+    orpc.organizations.sayHi.queryOptions({
+      input: {
+        name: "Cristian",
+      },
+    }),
+  );
 
-  return <div>{data}</div>;
+  return (
+    <div>
+      {data}
+      <pre>
+        <code>{JSON.stringify(error, null, 2)}</code>
+      </pre>
+    </div>
+  );
 }

@@ -14,6 +14,7 @@ import { LoggingHandlerPlugin } from "@orpc/experimental-pino";
 import { logger } from "./logger";
 
 const app = express();
+const isDevelopment = env.NODE_ENV === "development";
 
 app.use(
   cors({
@@ -41,18 +42,20 @@ const rpcHandler = new RPCHandler(appRouter, {
     // }),
   ],
 });
-const apiHandler = new OpenAPIHandler(appRouter, {
-  plugins: [
-    new OpenAPIReferencePlugin({
-      schemaConverters: [new ZodToJsonSchemaConverter()],
-    }),
-  ],
-  interceptors: [
-    onError((error) => {
-      console.error(error);
-    }),
-  ],
-});
+const apiHandler = isDevelopment
+  ? new OpenAPIHandler(appRouter, {
+      plugins: [
+        new OpenAPIReferencePlugin({
+          schemaConverters: [new ZodToJsonSchemaConverter()],
+        }),
+      ],
+      interceptors: [
+        onError((error) => {
+          console.error(error);
+        }),
+      ],
+    })
+  : null;
 
 app.use(async (req, res, next) => {
   const rpcResult = await rpcHandler.handle(req, res, {
@@ -60,6 +63,8 @@ app.use(async (req, res, next) => {
     context: await createContext({ req }),
   });
   if (rpcResult.matched) return;
+
+  if (!apiHandler) return next();
 
   const apiResult = await apiHandler.handle(req, res, {
     prefix: "/api-reference",
@@ -77,5 +82,5 @@ app.get("/", (_req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log("Server is running on http://localhost:3000");
+  logger.info("Server is running on http://localhost:3000");
 });

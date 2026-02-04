@@ -20,6 +20,8 @@
       "@orpc/tanstack-query": "^1.12.2",
       "@orpc/client": "^1.12.2",
       "@tanstack/react-query": "^5.90.12",
+      "@tanstack/react-form": "1.28.0",
+      "@tanstack/react-table": "8.21.3",
       "@better-auth/expo": "^1.4.18",
       "uuid": "13.0.0"
     }

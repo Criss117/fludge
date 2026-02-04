@@ -5,6 +5,11 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
-    "composite": true
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@fludge/api": ["src"],
+      "@fludge/api/*": ["src/*"]
+    }
   }
 }

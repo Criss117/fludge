@@ -18,16 +18,3 @@ const requireAuth = o.middleware(async ({ context, next }) => {
 });
 
 export const protectedProcedure = publicProcedure.use(requireAuth);
-
-export function withPermissionsProcedure(message: string) {
-  return publicProcedure.use(
-    o.middleware(async ({ context, next }) => {
-      return next({
-        context: {
-          ...context,
-          message,
-        },
-      });
-    }),
-  );
-}
