@@ -35,12 +35,24 @@ export const auth = betterAuth({
       httpOnly: true,
     },
   },
+  user: {
+    additionalFields: {
+      isRoot: {
+        type: "boolean",
+        fieldName: "is_root",
+        required: true,
+      },
+    },
+  },
   plugins: [
     expo(),
     organization({
       teams: {
         enabled: true,
         allowRemovingAllTeams: true,
+        defaultTeam: {
+          enabled: false,
+        },
       },
       schema: {
         organization: {

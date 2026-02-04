@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter } from "@tanstack/react-router";
 import { AlertCircleIcon, User } from "lucide-react";
 import { LinkButton } from "@/modules/shared/components/link-button";
 import { Logo } from "@/modules/shared/components/logo";
@@ -13,15 +14,16 @@ import {
 } from "@/modules/shared/components/ui/card";
 import { Separator } from "@/modules/shared/components/ui/separator";
 import { useAuthForm } from "../components/auth-form";
-import { loginSchema, registerSchema } from "@fludge/auth/schemas";
 import { authClient } from "@/integrations/auth";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
 } from "@/modules/shared/components/ui/alert";
+import { signInSchema } from "@fludge/utils/validators/auth.schemas";
 
 export function LoginScreen() {
+  const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const form = useAuthForm({
     defaultValues: {
@@ -36,7 +38,9 @@ export function LoginScreen() {
         },
         {
           onSuccess: ({ data }) => {
-            console.log(data);
+            router.navigate({
+              to: "/dashboard/register-organization",
+            });
           },
           onError: ({ error }) => {
             setErrorMessage(error.message);
@@ -45,7 +49,7 @@ export function LoginScreen() {
       );
     },
     validators: {
-      onSubmit: loginSchema,
+      onSubmit: signInSchema,
     },
   });
 

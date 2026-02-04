@@ -24,6 +24,7 @@ export const user = sqliteTable("user", {
     .notNull(),
   username: text("username").unique(),
   displayUsername: text("display_username"),
+  is_root: integer("is_root", { mode: "boolean" }).notNull(),
 });
 
 export const session = sqliteTable(

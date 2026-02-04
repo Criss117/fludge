@@ -1,4 +1,3 @@
-import { createContext } from "@fludge/api/context";
 import { appRouter } from "@fludge/api/routers/index";
 import { auth } from "@fludge/auth";
 import { env } from "@fludge/env/server";
@@ -60,7 +59,7 @@ const apiHandler = isDevelopment
 app.use(async (req, res, next) => {
   const rpcResult = await rpcHandler.handle(req, res, {
     prefix: "/rpc",
-    context: await createContext({ req }),
+    context: { req },
   });
   if (rpcResult.matched) return;
 
@@ -68,7 +67,7 @@ app.use(async (req, res, next) => {
 
   const apiResult = await apiHandler.handle(req, res, {
     prefix: "/api-reference",
-    context: await createContext({ req }),
+    context: { req },
   });
   if (apiResult.matched) return;
 

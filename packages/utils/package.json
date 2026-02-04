@@ -1,5 +1,7 @@
 {
-  "name": "@fludge/auth",
+  "name": "@fludge/utils",
+  "version": "0.0.0",
+  "private": true,
   "type": "module",
   "exports": {
     ".": {
@@ -9,18 +11,14 @@
       "default": "./src/*.ts"
     }
   },
-  "scripts": {},
   "dependencies": {
-    "@better-auth/expo": "catalog:",
-    "@fludge/db": "workspace:*",
-    "@fludge/env": "workspace:*",
-    "better-auth": "catalog:",
+    "@t3-oss/env-core": "^0.13.1",
     "dotenv": "catalog:",
-    "zod": "catalog:",
-    "uuid": "catalog:"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@fludge/config": "workspace:*",
+    "@types/node": "^22.13.14",
     "typescript": "catalog:"
   }
 }

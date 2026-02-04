@@ -15,7 +15,7 @@ export type ResourcesEs = (typeof resourcesEs)[number];
 export type Permission = `${Actions}:${Resources}`;
 export type PermissionEs = `${ActionsEs}:${ResourcesEs}`;
 
-const allPermissions = actions
+export const allPermissions = actions
   .map((action) => {
     return resources.map((resource) => `${action}:${resource}`);
   })
@@ -27,7 +27,7 @@ export const allPermissionsEs = actionsEs
   })
   .flatMap((a) => a) as PermissionEs[];
 
-export const permissionsSchema = z.array(z.enum(allPermissions));
+export const permissionsSchema = z.array(z.enum(allPermissions)).min(1);
 export type PermissionsSchema = z.infer<typeof permissionsSchema>;
 
 export function hasAllPermissions(

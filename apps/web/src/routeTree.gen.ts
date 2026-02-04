@@ -10,14 +10,35 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardSelectOrganizationRouteImport } from './routes/dashboard/select-organization'
+import { Route as DashboardRegisterOrganizationRouteImport } from './routes/dashboard/register-organization'
+import { Route as DashboardLayoutRouteImport } from './routes/dashboard/_layout'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthEmployeeRouteImport } from './routes/auth/employee'
+import { Route as DashboardLayoutIndexRouteImport } from './routes/dashboard/_layout/index'
 import { Route as AuthForgotPasswordIndexRouteImport } from './routes/auth/forgot-password/index'
 import { Route as AuthForgotPasswordRecoveryRouteImport } from './routes/auth/forgot-password/recovery'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardSelectOrganizationRoute =
+  DashboardSelectOrganizationRouteImport.update({
+    id: '/dashboard/select-organization',
+    path: '/dashboard/select-organization',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DashboardRegisterOrganizationRoute =
+  DashboardRegisterOrganizationRouteImport.update({
+    id: '/dashboard/register-organization',
+    path: '/dashboard/register-organization',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DashboardLayoutRoute = DashboardLayoutRouteImport.update({
+  id: '/dashboard/_layout',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
@@ -29,6 +50,11 @@ const AuthEmployeeRoute = AuthEmployeeRouteImport.update({
   id: '/auth/employee',
   path: '/auth/employee',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardLayoutIndexRoute = DashboardLayoutIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardLayoutRoute,
 } as any)
 const AuthForgotPasswordIndexRoute = AuthForgotPasswordIndexRouteImport.update({
   id: '/auth/forgot-password/',
@@ -46,23 +72,34 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth/employee': typeof AuthEmployeeRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/dashboard': typeof DashboardLayoutRouteWithChildren
+  '/dashboard/register-organization': typeof DashboardRegisterOrganizationRoute
+  '/dashboard/select-organization': typeof DashboardSelectOrganizationRoute
   '/auth/forgot-password/recovery': typeof AuthForgotPasswordRecoveryRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
+  '/dashboard/': typeof DashboardLayoutIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth/employee': typeof AuthEmployeeRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/dashboard/register-organization': typeof DashboardRegisterOrganizationRoute
+  '/dashboard/select-organization': typeof DashboardSelectOrganizationRoute
   '/auth/forgot-password/recovery': typeof AuthForgotPasswordRecoveryRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
+  '/dashboard': typeof DashboardLayoutIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth/employee': typeof AuthEmployeeRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/dashboard/_layout': typeof DashboardLayoutRouteWithChildren
+  '/dashboard/register-organization': typeof DashboardRegisterOrganizationRoute
+  '/dashboard/select-organization': typeof DashboardSelectOrganizationRoute
   '/auth/forgot-password/recovery': typeof AuthForgotPasswordRecoveryRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
+  '/dashboard/_layout/': typeof DashboardLayoutIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -70,28 +107,42 @@ export interface FileRouteTypes {
     | '/'
     | '/auth/employee'
     | '/auth/register'
+    | '/dashboard'
+    | '/dashboard/register-organization'
+    | '/dashboard/select-organization'
     | '/auth/forgot-password/recovery'
     | '/auth/forgot-password/'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth/employee'
     | '/auth/register'
+    | '/dashboard/register-organization'
+    | '/dashboard/select-organization'
     | '/auth/forgot-password/recovery'
     | '/auth/forgot-password'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/auth/employee'
     | '/auth/register'
+    | '/dashboard/_layout'
+    | '/dashboard/register-organization'
+    | '/dashboard/select-organization'
     | '/auth/forgot-password/recovery'
     | '/auth/forgot-password/'
+    | '/dashboard/_layout/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthEmployeeRoute: typeof AuthEmployeeRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
+  DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren
+  DashboardRegisterOrganizationRoute: typeof DashboardRegisterOrganizationRoute
+  DashboardSelectOrganizationRoute: typeof DashboardSelectOrganizationRoute
   AuthForgotPasswordRecoveryRoute: typeof AuthForgotPasswordRecoveryRoute
   AuthForgotPasswordIndexRoute: typeof AuthForgotPasswordIndexRoute
 }
@@ -103,6 +154,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/select-organization': {
+      id: '/dashboard/select-organization'
+      path: '/dashboard/select-organization'
+      fullPath: '/dashboard/select-organization'
+      preLoaderRoute: typeof DashboardSelectOrganizationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/register-organization': {
+      id: '/dashboard/register-organization'
+      path: '/dashboard/register-organization'
+      fullPath: '/dashboard/register-organization'
+      preLoaderRoute: typeof DashboardRegisterOrganizationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/_layout': {
+      id: '/dashboard/_layout'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/register': {
@@ -118,6 +190,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/employee'
       preLoaderRoute: typeof AuthEmployeeRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/_layout/': {
+      id: '/dashboard/_layout/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardLayoutIndexRouteImport
+      parentRoute: typeof DashboardLayoutRoute
     }
     '/auth/forgot-password/': {
       id: '/auth/forgot-password/'
@@ -136,10 +215,25 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface DashboardLayoutRouteChildren {
+  DashboardLayoutIndexRoute: typeof DashboardLayoutIndexRoute
+}
+
+const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
+  DashboardLayoutIndexRoute: DashboardLayoutIndexRoute,
+}
+
+const DashboardLayoutRouteWithChildren = DashboardLayoutRoute._addFileChildren(
+  DashboardLayoutRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthEmployeeRoute: AuthEmployeeRoute,
   AuthRegisterRoute: AuthRegisterRoute,
+  DashboardLayoutRoute: DashboardLayoutRouteWithChildren,
+  DashboardRegisterOrganizationRoute: DashboardRegisterOrganizationRoute,
+  DashboardSelectOrganizationRoute: DashboardSelectOrganizationRoute,
   AuthForgotPasswordRecoveryRoute: AuthForgotPasswordRecoveryRoute,
   AuthForgotPasswordIndexRoute: AuthForgotPasswordIndexRoute,
 }

@@ -11,9 +11,12 @@ export async function createContext(opts: CreateContextOptions) {
   const session = await auth.api.getSession({
     headers: fromNodeHeaders(opts.req.headers),
   });
+
   return {
     session,
   };
 }
 
-export type Context = Awaited<ReturnType<typeof createContext>>;
+export type Context = {
+  req: Request;
+};

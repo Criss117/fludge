@@ -103,6 +103,7 @@
         "@fludge/api": "workspace:*",
         "@fludge/auth": "workspace:*",
         "@fludge/env": "workspace:*",
+        "@fludge/utils": "workspace:*",
         "@hookform/resolvers": "^5.1.1",
         "@libsql/client": "catalog:",
         "@orpc/client": "catalog:",
@@ -154,6 +155,7 @@
         "@fludge/auth": "workspace:*",
         "@fludge/db": "workspace:*",
         "@fludge/env": "workspace:*",
+        "@fludge/utils": "workspace:*",
         "@orpc/client": "catalog:",
         "@orpc/openapi": "catalog:",
         "@orpc/server": "catalog:",
@@ -176,6 +178,7 @@
         "@fludge/env": "workspace:*",
         "better-auth": "catalog:",
         "dotenv": "catalog:",
+        "uuid": "catalog:",
         "zod": "catalog:",
       },
       "devDependencies": {
@@ -206,6 +209,20 @@
     },
     "packages/env": {
       "name": "@fludge/env",
+      "version": "0.0.0",
+      "dependencies": {
+        "@t3-oss/env-core": "^0.13.1",
+        "dotenv": "catalog:",
+        "zod": "catalog:",
+      },
+      "devDependencies": {
+        "@fludge/config": "workspace:*",
+        "@types/node": "^22.13.14",
+        "typescript": "catalog:",
+      },
+    },
+    "packages/utils": {
+      "name": "@fludge/utils",
       "version": "0.0.0",
       "dependencies": {
         "@t3-oss/env-core": "^0.13.1",
@@ -650,6 +667,8 @@
     "@fludge/db": ["@fludge/db@workspace:packages/db"],
 
     "@fludge/env": ["@fludge/env@workspace:packages/env"],
+
+    "@fludge/utils": ["@fludge/utils@workspace:packages/utils"],
 
     "@gorhom/bottom-sheet": ["@gorhom/bottom-sheet@5.2.8", "", { "dependencies": { "@gorhom/portal": "1.0.14", "invariant": "^2.2.4" }, "peerDependencies": { "@types/react": "*", "@types/react-native": "*", "react": "*", "react-native": "*", "react-native-gesture-handler": ">=2.16.1", "react-native-reanimated": ">=3.16.0 || >=4.0.0-" }, "optionalPeers": ["@types/react", "@types/react-native"] }, "sha512-+N27SMpbBxXZQ/IA2nlEV6RGxL/qSFHKfdFKcygvW+HqPG5jVNb1OqehLQsGfBP+Up42i0gW5ppI+DhpB7UCzA=="],
 

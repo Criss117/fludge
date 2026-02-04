@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useRouter } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+import { orpc } from "@/integrations/orpc";
 import { AlertCircleIcon, User } from "lucide-react";
 import { LinkButton } from "@/modules/shared/components/link-button";
 import { Logo } from "@/modules/shared/components/logo";
@@ -13,19 +16,19 @@ import {
 } from "@/modules/shared/components/ui/card";
 import { Separator } from "@/modules/shared/components/ui/separator";
 import { useAuthForm } from "../components/auth-form";
-import { registerSchema } from "@fludge/auth/schemas";
-import { authClient } from "@/integrations/auth";
+import { signUpFormSchema } from "@fludge/utils/validators/auth.schemas";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
 } from "@/modules/shared/components/ui/alert";
 import { FieldGroup } from "@/modules/shared/components/ui/field";
-import { useRouter } from "@tanstack/react-router";
 
 export function RegisterScreen() {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const signUp = useMutation(orpc.auth.signUp.root.mutationOptions());
+
   const form = useAuthForm({
     defaultValues: {
       email: "",
@@ -34,7 +37,7 @@ export function RegisterScreen() {
       repeatPassword: "",
     },
     onSubmit: ({ value }) => {
-      authClient.signUp.email(
+      signUp.mutate(
         {
           email: value.email,
           password: value.password,
@@ -44,14 +47,14 @@ export function RegisterScreen() {
           onSuccess: () => {
             router.navigate({ to: "/" });
           },
-          onError: ({ error }) => {
+          onError: (error) => {
             setErrorMessage(error.message);
           },
         },
       );
     },
     validators: {
-      onSubmit: registerSchema,
+      onSubmit: signUpFormSchema,
     },
   });
 
