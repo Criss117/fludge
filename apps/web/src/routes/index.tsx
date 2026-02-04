@@ -1,4 +1,4 @@
-import { SignInScreen } from "@/modules/auth/presentation/screens/sign-in.screen";
+import { LoginScreen } from "@/modules/auth/presentation/screens/login.screen";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
@@ -6,5 +6,5 @@ export const Route = createFileRoute("/")({
 });
 
 function HomeComponent() {
-  return <SignInScreen />;
+  return <LoginScreen />;
 }
