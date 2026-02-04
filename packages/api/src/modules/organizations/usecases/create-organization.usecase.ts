@@ -45,7 +45,10 @@ export class CreateOrganizationUseCase {
     );
 
     if (createdOrgErr || !createdOrg)
-      throw new ORPCError("INTERNAL_SERVER_ERROR");
+      throw new ORPCError("INTERNAL_SERVER_ERROR", {
+        message: "Error al crear la organizacion",
+        cause: createdOrgErr,
+      });
 
     const { data: createdTeam, error: createdTeamErr } = await tryCatch(
       auth.api.createTeam({
@@ -57,8 +60,12 @@ export class CreateOrganizationUseCase {
       }),
     );
 
-    if (createdTeamErr || !createdTeam)
-      throw new ORPCError("INTERNAL_SERVER_ERROR");
+    if (createdTeamErr)
+      throw new ORPCError("INTERNAL_SERVER_ERROR", {
+        message:
+          "La organizacion se ha creado correctamente pero no se pudo crear el equipo de administradores",
+        cause: createdTeamErr,
+      });
 
     return {
       ...createdOrg,

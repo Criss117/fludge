@@ -1,8 +1,8 @@
 import { baseProcedure } from "@fludge/api";
 import { requireAuthMiddleware } from "@fludge/api/middlewares/requiere-auth.middleware";
-import { auth } from "@fludge/auth";
 import { createOrganizationSchema } from "./schemas/create-organization.schema";
 import { createOrganizationUseCase } from "./usecases/create-organization.usecase";
+import { findAllOrganizationsUseCase } from "./usecases/find-all-organizations.usecase";
 
 export const organizationsProcedures = {
   create: baseProcedure
@@ -18,15 +18,7 @@ export const organizationsProcedures = {
 
   findAll: baseProcedure
     .use(requireAuthMiddleware())
-    .handler(async ({ context }) => {
-      const orgs = await auth.api.listOrganizations({
-        headers: context.req.headers,
-      });
-
-      const teams = await auth.api.listOrganizationTeams({
-        headers: context.req.headers,
-      });
-
-      return { orgs, teams };
-    }),
+    .handler(async ({ context }) =>
+      findAllOrganizationsUseCase(context.req.headers).execute(),
+    ),
 };

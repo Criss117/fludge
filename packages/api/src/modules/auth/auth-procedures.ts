@@ -4,8 +4,14 @@ import { auth } from "@fludge/auth";
 import { signUpSchema } from "@fludge/utils/validators/auth.schemas";
 
 export const authProcedures = {
-  getSession: baseProcedure.use(authMiddleware).handler(({ context }) => {
-    return context.session;
+  getSession: baseProcedure.use(authMiddleware).handler(async ({ context }) => {
+    if (!context.session) return null;
+
+    const orgs = await auth.api.listOrganizations({
+      headers: context.req.headers,
+    });
+
+    return { ...context.session, orgs };
   }),
   signUp: {
     root: baseProcedure.input(signUpSchema).handler(({ input }) => {
