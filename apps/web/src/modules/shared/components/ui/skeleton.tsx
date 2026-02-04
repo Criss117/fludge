@@ -1,6 +1,9 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/modules/shared/lib/utils";
 
-function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function Skeleton({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       data-slot="skeleton"

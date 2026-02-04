@@ -1,6 +1,5 @@
 import type { QueryClient } from "@tanstack/react-query";
 
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   HeadContent,
   Outlet,
@@ -8,8 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/modules/shared/components/ui/sonner";
 
 import "../index.css";
 import type { orpc } from "@/integrations/orpc";
@@ -44,8 +42,7 @@ function RootComponent() {
   return (
     <>
       <HeadContent />
-
-      <div className="grid grid-rows-[auto_1fr] h-svh">
+      <div className="h-svh">
         <Outlet />
       </div>
       <Toaster richColors />
