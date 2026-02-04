@@ -1,5 +1,6 @@
 import type { IncomingHttpHeaders } from "node:http";
-import { and, eq } from "drizzle-orm";
+import { fromNodeHeaders } from "better-auth/node";
+import { eq, or } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
 import { db } from "@fludge/db";
 import { auth } from "@fludge/auth";
@@ -12,8 +13,11 @@ import { organization } from "@fludge/db/schema/auth";
 
 export class CreateOrganizationUseCase {
   private static instance: CreateOrganizationUseCase;
+  private headers: Headers;
 
-  private constructor(private readonly headers: IncomingHttpHeaders) {}
+  private constructor(nodeHeaders: IncomingHttpHeaders) {
+    this.headers = fromNodeHeaders(nodeHeaders);
+  }
 
   static getInstance(headers: IncomingHttpHeaders): CreateOrganizationUseCase {
     if (!CreateOrganizationUseCase.instance) {
@@ -29,17 +33,21 @@ export class CreateOrganizationUseCase {
 
     const { data, error } = await tryCatch(
       db
-        .select()
+        .select({
+          id: organization.id,
+        })
         .from(organization)
         .where(
-          and(
+          or(
             eq(organization.slug, orgSlug),
-            eq(organization.legalName, values.legalName),
+            eq(organization.legal_name, values.legalName),
           ),
-        ),
+        )
+        .limit(1),
     );
 
-    if (!data?.status || error) throw new OrganizationAlreadyExistsException();
+    if (error || data.length > 0)
+      throw new OrganizationAlreadyExistsException();
 
     const { data: createdOrg, error: createdOrgErr } = await tryCatch(
       auth.api.createOrganization({
