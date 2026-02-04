@@ -23,7 +23,8 @@
       "@tanstack/react-form": "1.28.0",
       "@tanstack/react-table": "8.21.3",
       "@better-auth/expo": "^1.4.18",
-      "uuid": "13.0.0"
+      "uuid": "13.0.0",
+      "drizzle-orm": "^0.45.1"
     }
   },
   "type": "module",

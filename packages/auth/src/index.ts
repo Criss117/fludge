@@ -71,10 +71,12 @@ export const auth = betterAuth({
             contactPhone: {
               type: "string",
               fieldName: "contact_phone",
+              required: false,
             },
             contactEmail: {
               type: "string",
               fieldName: "contact_email",
+              required: false,
             },
           },
         },

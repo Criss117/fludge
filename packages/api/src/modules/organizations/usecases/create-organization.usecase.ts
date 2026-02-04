@@ -1,11 +1,14 @@
 import type { IncomingHttpHeaders } from "node:http";
+import { and, eq } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
+import { db } from "@fludge/db";
 import { auth } from "@fludge/auth";
 import { OrganizationAlreadyExistsException } from "../exceptions/organization-already-exists.exception";
 import { slugify } from "@fludge/utils/slugify";
 import { tryCatch } from "@fludge/utils/try-catch";
 import { allPermissions } from "@fludge/auth/permissions";
-import type { CreateOrganizationSchema } from "../schemas/create-organization.schema";
+import type { CreateOrganizationSchema } from "@fludge/utils/validators/organization.schema";
+import { organization } from "@fludge/db/schema/auth";
 
 export class CreateOrganizationUseCase {
   private static instance: CreateOrganizationUseCase;
@@ -25,11 +28,15 @@ export class CreateOrganizationUseCase {
     const orgSlug = slugify(values.name);
 
     const { data, error } = await tryCatch(
-      auth.api.checkOrganizationSlug({
-        body: {
-          slug: orgSlug,
-        },
-      }),
+      db
+        .select()
+        .from(organization)
+        .where(
+          and(
+            eq(organization.slug, orgSlug),
+            eq(organization.legalName, values.legalName),
+          ),
+        ),
     );
 
     if (!data?.status || error) throw new OrganizationAlreadyExistsException();
@@ -39,7 +46,12 @@ export class CreateOrganizationUseCase {
         headers: this.headers,
         body: {
           slug: orgSlug,
-          ...values,
+          address: values.address,
+          legalName: values.legalName,
+          name: values.name,
+          logo: values.logo,
+          contactEmail: values.contactEmail,
+          contactPhone: values.contactPhone,
         },
       }),
     );
