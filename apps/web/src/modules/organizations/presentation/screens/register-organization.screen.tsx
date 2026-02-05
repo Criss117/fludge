@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AlertCircleIcon } from "lucide-react";
+import { AlertCircleIcon, Plus } from "lucide-react";
 import {
   createOrganizationSchema,
   type CreateOrganizationSchema,
@@ -23,6 +23,7 @@ import { Button } from "@/modules/shared/components/ui/button";
 import { FieldGroup } from "@/modules/shared/components/ui/field";
 import { useMutateOrganizations } from "@/modules/organizations/application/hooks/use-mutate-organizations";
 import type { AppRouterClient } from "@fludge/api/routers/index";
+import { LinkButton } from "@/modules/shared/components/link-button";
 
 type Organizations = NonNullable<
   Awaited<ReturnType<AppRouterClient["auth"]["getSession"]>>
@@ -125,7 +126,18 @@ export function RegisterOrganizationScreen({ orgs }: Props) {
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex flex-col gap-y-5"></CardFooter>
+        {orgs.length > 0 && (
+          <CardFooter className="flex flex-col gap-y-5">
+            <LinkButton
+              variant="outline"
+              className="gap-2 w-full"
+              to="/select-organization"
+            >
+              <Plus className="size-4" />
+              Seleccionar una organización
+            </LinkButton>
+          </CardFooter>
+        )}
       </Card>
     </main>
   );

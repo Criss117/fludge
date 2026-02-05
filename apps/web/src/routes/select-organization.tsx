@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { SelectOrganizationsScreen } from "@/modules/organizations/presentation/screens/select-organization.screen";
 
-export const Route = createFileRoute("/dashboard/select-organization")({
+export const Route = createFileRoute("/select-organization")({
   component: RouteComponent,
   beforeLoad: async ({ context }) => {
     const session = await context.queryClient.ensureQueryData(
@@ -20,8 +20,7 @@ export const Route = createFileRoute("/dashboard/select-organization")({
   loader: ({ context }) => {
     const orgs = context.orgs;
 
-    if (!orgs?.length)
-      throw redirect({ to: "/dashboard/register-organization" });
+    if (!orgs?.length) throw redirect({ to: "/register-organization" });
 
     return {
       orgs,

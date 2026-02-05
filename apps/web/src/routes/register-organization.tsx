@@ -1,7 +1,7 @@
 import { RegisterOrganizationScreen } from "@/modules/organizations/presentation/screens/register-organization.screen";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/dashboard/register-organization")({
+export const Route = createFileRoute("/register-organization")({
   component: RouteComponent,
   beforeLoad: async ({ context }) => {
     const session = await context.queryClient.ensureQueryData(

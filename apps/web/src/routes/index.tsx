@@ -13,7 +13,7 @@ export const Route = createFileRoute("/")({
 
     if (!authData.orgs.length)
       throw redirect({
-        to: "/dashboard/register-organization",
+        to: "/register-organization",
       });
 
     const hasActiveOrg = authData.orgs.find(
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
       });
 
     throw redirect({
-      to: "/dashboard/select-organization",
+      to: "/select-organization",
     });
   },
 });

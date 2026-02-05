@@ -39,7 +39,7 @@ export function LoginScreen() {
         {
           onSuccess: ({ data }) => {
             router.navigate({
-              to: "/dashboard/register-organization",
+              to: "/register-organization",
             });
           },
           onError: ({ error }) => {

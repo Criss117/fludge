@@ -85,7 +85,7 @@ export function SelectOrganizationsScreen({ orgs }: Props) {
           <LinkButton
             variant="outline"
             className="gap-2"
-            to="/dashboard/register-organization"
+            to="/register-organization"
           >
             <Plus className="size-4" />
             Crear nueva organización

@@ -20,12 +20,11 @@ export const Route = createFileRoute("/dashboard/$orgslug")({
   loader: async ({ context, params }) => {
     const orgs = context.orgs;
 
-    if (!orgs?.length)
-      throw redirect({ to: "/dashboard/register-organization" });
+    if (!orgs?.length) throw redirect({ to: "/register-organization" });
 
     const selectedOrg = orgs.find((org) => org.slug === params.orgslug);
 
-    if (!selectedOrg) throw redirect({ to: "/dashboard/select-organization" });
+    if (!selectedOrg) throw redirect({ to: "/select-organization" });
 
     const isSameActiveOrg =
       selectedOrg.id === context.session.activeOrganizationId;
