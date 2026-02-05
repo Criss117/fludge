@@ -1,3 +1,4 @@
+import { authClient } from "@/integrations/auth";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/dashboard/$orgslug")({
@@ -17,26 +18,31 @@ export const Route = createFileRoute("/dashboard/$orgslug")({
     };
   },
   loader: async ({ context, params }) => {
-    const orgs = await context.queryClient.ensureQueryData(
-      context.orpc.organizations.findAll.queryOptions(),
-    );
+    const orgs = context.orgs;
 
     if (!orgs?.length)
       throw redirect({ to: "/dashboard/register-organization" });
 
-    if (!context.session.activeOrganizationId)
-      throw redirect({
-        to: "/dashboard/select-organization",
-      });
+    const selectedOrg = orgs.find((org) => org.slug === params.orgslug);
 
-    const isInActiveOrg =
-      context.session.activeOrganizationId === params.orgslug;
+    if (!selectedOrg) throw redirect({ to: "/dashboard/select-organization" });
 
-    if (!isInActiveOrg)
-      throw redirect({
-        to: "/dashboard/$orgslug",
-        params: { orgslug: context.session.activeOrganizationId },
+    const isSameActiveOrg =
+      selectedOrg.id === context.session.activeOrganizationId;
+
+    if (!isSameActiveOrg) {
+      await authClient.organization.setActive({
+        organizationId: selectedOrg.id,
+        organizationSlug: selectedOrg.slug,
+        fetchOptions: {
+          onSuccess: () => {
+            context.queryClient.invalidateQueries(
+              context.orpc.auth.getSession.queryOptions(),
+            );
+          },
+        },
       });
+    }
   },
   pendingComponent: () => <div>Loading...</div>,
 });

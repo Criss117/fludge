@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { AlertCircleIcon } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
 import {
   createOrganizationSchema,
   type CreateOrganizationSchema,
@@ -21,8 +20,17 @@ import {
 } from "@/modules/shared/components/ui/card";
 import { useRegisterOrganizationForm } from "../components/register-organization-form";
 import { Button } from "@/modules/shared/components/ui/button";
-import { orpc } from "@/integrations/orpc";
 import { FieldGroup } from "@/modules/shared/components/ui/field";
+import { useMutateOrganizations } from "@/modules/organizations/application/hooks/use-mutate-organizations";
+import type { AppRouterClient } from "@fludge/api/routers/index";
+
+type Organizations = NonNullable<
+  Awaited<ReturnType<AppRouterClient["auth"]["getSession"]>>
+>["orgs"];
+
+interface Props {
+  orgs: Organizations;
+}
 
 const defaultValues: CreateOrganizationSchema = {
   name: "",
@@ -30,9 +38,9 @@ const defaultValues: CreateOrganizationSchema = {
   address: "",
 };
 
-export function RegisterOrganizationScreen() {
+export function RegisterOrganizationScreen({ orgs }: Props) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const register = useMutation(orpc.organizations.create.mutationOptions());
+  const { create } = useMutateOrganizations();
 
   const form = useRegisterOrganizationForm({
     validators: {
@@ -41,7 +49,7 @@ export function RegisterOrganizationScreen() {
     },
     defaultValues,
     onSubmit: async ({ value }) => {
-      register.mutate(value, {
+      create.mutate(value, {
         onError: (error) => {
           setErrorMessage(error.message);
         },

@@ -11,7 +11,11 @@ export const authProcedures = {
       headers: context.req.headers,
     });
 
-    return { ...context.session, orgs };
+    return {
+      session: context.session.session,
+      user: context.session.user,
+      orgs,
+    };
   }),
   signUp: {
     root: baseProcedure.input(signUpSchema).handler(({ input }) => {
