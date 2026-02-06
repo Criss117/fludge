@@ -1,3 +1,5 @@
+import type { ComponentProps } from "react";
+import { Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   Briefcase,
@@ -10,6 +12,7 @@ import {
   Settings,
   UserCog,
   Users,
+  type LucideProps,
 } from "lucide-react";
 import {
   Sidebar,
@@ -36,7 +39,15 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { orpc } from "@/integrations/orpc";
 
-const navMain = [
+type NAVITEM = {
+  title: string;
+  url: ComponentProps<typeof Link>["to"];
+  icon: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >;
+};
+
+const navMain: NAVITEM[] = [
   {
     title: "Inicio",
     url: "#",
@@ -91,7 +102,7 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-export function AppSidebar() {
+export function AppSidebar({ orgSlug }: { orgSlug: string }) {
   const { data: sessionData } = useSuspenseQuery(
     orpc.auth.getSession.queryOptions(),
   );
@@ -108,10 +119,10 @@ export function AppSidebar() {
             <SidebarMenuButton
               className="[&_svg]:size-8"
               render={
-                <a href="#">
+                <Link to="/dashboard/$orgslug" params={{ orgslug: orgSlug }}>
                   <Logo />
                   <span className="text-base font-semibold">Fludge</span>
-                </a>
+                </Link>
               }
             />
           </SidebarMenuItem>

@@ -17,6 +17,7 @@ import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthEmployeeRouteImport } from './routes/auth/employee'
 import { Route as DashboardOrgslugIndexRouteImport } from './routes/dashboard/$orgslug/index'
 import { Route as AuthForgotPasswordIndexRouteImport } from './routes/auth/forgot-password/index'
+import { Route as DashboardOrgslugProductsRouteImport } from './routes/dashboard/$orgslug/products'
 import { Route as AuthForgotPasswordRecoveryRouteImport } from './routes/auth/forgot-password/recovery'
 
 const SelectOrganizationRoute = SelectOrganizationRouteImport.update({
@@ -59,6 +60,12 @@ const AuthForgotPasswordIndexRoute = AuthForgotPasswordIndexRouteImport.update({
   path: '/auth/forgot-password/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardOrgslugProductsRoute =
+  DashboardOrgslugProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
+    getParentRoute: () => DashboardOrgslugRoute,
+  } as any)
 const AuthForgotPasswordRecoveryRoute =
   AuthForgotPasswordRecoveryRouteImport.update({
     id: '/auth/forgot-password/recovery',
@@ -74,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/auth/register': typeof AuthRegisterRoute
   '/dashboard/$orgslug': typeof DashboardOrgslugRouteWithChildren
   '/auth/forgot-password/recovery': typeof AuthForgotPasswordRecoveryRoute
+  '/dashboard/$orgslug/products': typeof DashboardOrgslugProductsRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
   '/dashboard/$orgslug/': typeof DashboardOrgslugIndexRoute
 }
@@ -84,6 +92,7 @@ export interface FileRoutesByTo {
   '/auth/employee': typeof AuthEmployeeRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/forgot-password/recovery': typeof AuthForgotPasswordRecoveryRoute
+  '/dashboard/$orgslug/products': typeof DashboardOrgslugProductsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/dashboard/$orgslug': typeof DashboardOrgslugIndexRoute
 }
@@ -96,6 +105,7 @@ export interface FileRoutesById {
   '/auth/register': typeof AuthRegisterRoute
   '/dashboard/$orgslug': typeof DashboardOrgslugRouteWithChildren
   '/auth/forgot-password/recovery': typeof AuthForgotPasswordRecoveryRoute
+  '/dashboard/$orgslug/products': typeof DashboardOrgslugProductsRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
   '/dashboard/$orgslug/': typeof DashboardOrgslugIndexRoute
 }
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/dashboard/$orgslug'
     | '/auth/forgot-password/recovery'
+    | '/dashboard/$orgslug/products'
     | '/auth/forgot-password/'
     | '/dashboard/$orgslug/'
   fileRoutesByTo: FileRoutesByTo
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/auth/employee'
     | '/auth/register'
     | '/auth/forgot-password/recovery'
+    | '/dashboard/$orgslug/products'
     | '/auth/forgot-password'
     | '/dashboard/$orgslug'
   id:
@@ -130,6 +142,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/dashboard/$orgslug'
     | '/auth/forgot-password/recovery'
+    | '/dashboard/$orgslug/products'
     | '/auth/forgot-password/'
     | '/dashboard/$orgslug/'
   fileRoutesById: FileRoutesById
@@ -203,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/$orgslug/products': {
+      id: '/dashboard/$orgslug/products'
+      path: '/products'
+      fullPath: '/dashboard/$orgslug/products'
+      preLoaderRoute: typeof DashboardOrgslugProductsRouteImport
+      parentRoute: typeof DashboardOrgslugRoute
+    }
     '/auth/forgot-password/recovery': {
       id: '/auth/forgot-password/recovery'
       path: '/auth/forgot-password/recovery'
@@ -214,10 +234,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface DashboardOrgslugRouteChildren {
+  DashboardOrgslugProductsRoute: typeof DashboardOrgslugProductsRoute
   DashboardOrgslugIndexRoute: typeof DashboardOrgslugIndexRoute
 }
 
 const DashboardOrgslugRouteChildren: DashboardOrgslugRouteChildren = {
+  DashboardOrgslugProductsRoute: DashboardOrgslugProductsRoute,
   DashboardOrgslugIndexRoute: DashboardOrgslugIndexRoute,
 }
 
