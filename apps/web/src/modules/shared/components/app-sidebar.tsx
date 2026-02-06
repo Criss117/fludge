@@ -1,5 +1,5 @@
-import type { ComponentProps } from "react";
 import { Link } from "@tanstack/react-router";
+import type { LinkProps } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   Briefcase,
@@ -41,39 +41,39 @@ import { orpc } from "@/integrations/orpc";
 
 type NAVITEM = {
   title: string;
-  url: ComponentProps<typeof Link>["to"];
+  url: LinkProps["to"];
   icon: React.ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
 };
 
-const navMain: NAVITEM[] = [
+const navMain = [
   {
     title: "Inicio",
-    url: "#",
+    url: "/dashboard/$orgslug",
     icon: LayoutDashboard,
   },
   {
     title: "Productos",
-    url: "#",
+    url: "/dashboard/$orgslug/products",
     icon: Package,
   },
   {
     title: "Clientes",
-    url: "#",
+    url: "/dashboard/$orgslug",
     icon: Users,
   },
   {
     title: "Equipos",
-    url: "#",
+    url: "/dashboard/$orgslug",
     icon: Briefcase,
   },
   {
     title: "Empleados",
-    url: "#",
+    url: "/dashboard/$orgslug",
     icon: UserCog,
   },
-];
+] as const;
 
 const navSystem = [
   {
@@ -118,13 +118,17 @@ export function AppSidebar({ orgSlug }: { orgSlug: string }) {
           <SidebarMenuItem className="flex items-center">
             <SidebarMenuButton
               className="[&_svg]:size-8"
-              render={
-                <Link to="/dashboard/$orgslug" params={{ orgslug: orgSlug }}>
-                  <Logo />
-                  <span className="text-base font-semibold">Fludge</span>
-                </Link>
-              }
-            />
+              render={(props) => (
+                <Link
+                  to="/dashboard/$orgslug"
+                  params={{ orgslug: orgSlug }}
+                  {...props}
+                />
+              )}
+            >
+              <Logo />
+              <span className="text-base font-semibold">Fludge</span>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -142,10 +146,19 @@ export function AppSidebar({ orgSlug }: { orgSlug: string }) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
+
             <SidebarMenu>
               {navMain.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton tooltip={item.title}>
+                  <SidebarMenuButton
+                    render={(props) => (
+                      <Link
+                        to={item.url}
+                        params={{ orgslug: orgSlug }}
+                        {...props}
+                      />
+                    )}
+                  >
                     <item.icon />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
