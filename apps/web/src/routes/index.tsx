@@ -11,12 +11,12 @@ export const Route = createFileRoute("/")({
 
     if (!authData) return;
 
-    if (!authData.orgs.length)
+    if (!authData.organizations.length)
       throw redirect({
         to: "/register-organization",
       });
 
-    const hasActiveOrg = authData.orgs.find(
+    const hasActiveOrg = authData.organizations.find(
       (org) => org.id === authData.session.activeOrganizationId,
     );
 

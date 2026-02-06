@@ -10,13 +10,13 @@ import { LinkButton } from "@/modules/shared/components/link-button";
 
 type Organizations = NonNullable<
   Awaited<ReturnType<AppRouterClient["auth"]["getSession"]>>
->["orgs"];
+>["organizations"];
 
 interface Props {
-  orgs: Organizations;
+  organizations: Organizations;
 }
 
-export function SelectOrganizationsScreen({ orgs }: Props) {
+export function SelectOrganizationsScreen({ organizations }: Props) {
   return (
     <div className="min-h-dvh bg-muted/30 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-4xl">
@@ -30,7 +30,7 @@ export function SelectOrganizationsScreen({ orgs }: Props) {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          {orgs.map((org) => (
+          {organizations.map((org) => (
             <Link
               key={org.id}
               to="/dashboard/$orgslug"

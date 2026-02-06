@@ -24,7 +24,7 @@ export const Route = createFileRoute("/dashboard/$orgslug")({
     };
   },
   loader: async ({ context, params }) => {
-    const orgs = context.orgs;
+    const orgs = context.organizations;
 
     if (!orgs?.length) throw redirect({ to: "/register-organization" });
 

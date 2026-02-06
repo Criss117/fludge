@@ -19,13 +19,13 @@ export const Route = createFileRoute("/register-organization")({
   },
   loader: ({ context }) => {
     return {
-      orgs: context.orgs,
+      organizations: context.organizations,
     };
   },
 });
 
 function RouteComponent() {
-  const { orgs } = Route.useLoaderData();
+  const { organizations } = Route.useLoaderData();
 
-  return <RegisterOrganizationScreen orgs={orgs} />;
+  return <RegisterOrganizationScreen organizations={organizations} />;
 }

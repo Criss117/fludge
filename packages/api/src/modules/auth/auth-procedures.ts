@@ -14,7 +14,7 @@ export const authProcedures = {
     return {
       session: context.session.session,
       user: context.session.user,
-      orgs,
+      organizations: orgs,
     };
   }),
   signUp: {

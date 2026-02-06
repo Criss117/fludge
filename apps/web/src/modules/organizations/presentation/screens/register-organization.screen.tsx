@@ -27,10 +27,10 @@ import { LinkButton } from "@/modules/shared/components/link-button";
 
 type Organizations = NonNullable<
   Awaited<ReturnType<AppRouterClient["auth"]["getSession"]>>
->["orgs"];
+>["organizations"];
 
 interface Props {
-  orgs: Organizations;
+  organizations: Organizations;
 }
 
 const defaultValues: CreateOrganizationSchema = {
@@ -39,7 +39,7 @@ const defaultValues: CreateOrganizationSchema = {
   address: "",
 };
 
-export function RegisterOrganizationScreen({ orgs }: Props) {
+export function RegisterOrganizationScreen({ organizations }: Props) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { create } = useMutateOrganizations();
 
@@ -126,7 +126,7 @@ export function RegisterOrganizationScreen({ orgs }: Props) {
             </Button>
           </form>
         </CardContent>
-        {orgs.length > 0 && (
+        {organizations.length > 0 && (
           <CardFooter className="flex flex-col gap-y-5">
             <LinkButton
               variant="outline"

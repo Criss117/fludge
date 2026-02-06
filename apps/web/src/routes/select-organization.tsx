@@ -18,18 +18,19 @@ export const Route = createFileRoute("/select-organization")({
     };
   },
   loader: ({ context }) => {
-    const orgs = context.orgs;
+    const organizations = context.organizations;
 
-    if (!orgs?.length) throw redirect({ to: "/register-organization" });
+    if (!organizations?.length)
+      throw redirect({ to: "/register-organization" });
 
     return {
-      orgs,
+      organizations,
     };
   },
 });
 
 function RouteComponent() {
-  const { orgs } = Route.useLoaderData();
+  const { organizations } = Route.useLoaderData();
 
-  return <SelectOrganizationsScreen orgs={orgs} />;
+  return <SelectOrganizationsScreen organizations={organizations} />;
 }

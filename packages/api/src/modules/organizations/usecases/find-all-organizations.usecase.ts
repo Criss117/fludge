@@ -21,15 +21,15 @@ export class FindAllOrganizationUseCase {
   }
 
   async execute() {
-    const { data: orgs, error: orgsError } = await tryCatch(
+    const { data: organizations, error: organizationsError } = await tryCatch(
       auth.api.listOrganizations({
         headers: this.headers,
       }),
     );
 
-    if (orgsError || orgs.length === 0) return null;
+    if (organizationsError || organizations.length === 0) return null;
 
-    return orgs;
+    return organizations;
   }
 }
 
