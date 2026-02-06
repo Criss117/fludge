@@ -12,6 +12,7 @@ function RouteComponent() {
     <>
       <DashBoardHeader.Content orgSlug={orgslug} currentPath="Products">
         <DashBoardHeader.Home />
+        <DashBoardHeader.Products />
       </DashBoardHeader.Content>
     </>
   );

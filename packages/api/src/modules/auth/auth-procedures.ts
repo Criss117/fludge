@@ -1,3 +1,4 @@
+import { fromNodeHeaders } from "better-auth/node";
 import { baseProcedure } from "@fludge/api";
 import { authMiddleware } from "@fludge/api/middlewares/auth.middleware";
 import { auth } from "@fludge/auth";
@@ -8,7 +9,7 @@ export const authProcedures = {
     if (!context.session) return null;
 
     const orgs = await auth.api.listOrganizations({
-      headers: context.req.headers,
+      headers: fromNodeHeaders(context.req.headers),
     });
 
     return {
