@@ -1,4 +1,10 @@
 import { authClient } from "@/integrations/auth";
+import { AppSidebar } from "@/modules/shared/components/app-sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/modules/shared/components/ui/sidebar";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/dashboard/$orgslug")({
@@ -47,5 +53,15 @@ export const Route = createFileRoute("/dashboard/$orgslug")({
 });
 
 function RouteComponent() {
-  return <Outlet />;
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <main>
+          <SidebarTrigger />
+          <Outlet />
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
+  );
 }

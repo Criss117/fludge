@@ -1,11 +1,18 @@
-export function Logo({ size = 200 }) {
+import { cn } from "../lib/utils";
+
+interface LogoProps {
+  size?: number;
+  className?: string;
+}
+
+export function Logo({ size = 200, className }: LogoProps) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 200 200"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className={cn(className)}
     >
       <rect width="200" height="200" rx="40" fill="var(--background)" />
       <path
