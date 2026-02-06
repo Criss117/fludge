@@ -1,18 +1,15 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
-  BookDashed,
-  CirclePlus,
-  CreditCardIcon,
+  Briefcase,
   HelpCircle,
-  HomeIcon,
+  LayoutDashboard,
   LogOut,
-  Mail,
-  MoreVerticalIcon,
-  NotebookIcon,
+  Package,
+  Plus,
   Search,
   Settings,
-  ShowerHead,
-  ShowerHeadIcon,
-  UserCircle,
+  UserCog,
+  Users,
 } from "lucide-react";
 import {
   Sidebar,
@@ -24,9 +21,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
 } from "./ui/sidebar";
 import { Logo } from "./logo";
-import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,69 +34,71 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { orpc } from "@/integrations/orpc";
-import { useIsMobile } from "../hooks/use-mobile";
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+const navMain = [
+  {
+    title: "Dashboard",
+    url: "#",
+    icon: LayoutDashboard,
   },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "#",
-      icon: HomeIcon,
-    },
-    {
-      title: "Productos",
-      url: "#",
-      icon: BookDashed,
-    },
-    {
-      title: "Clientes",
-      url: "#",
-      icon: BookDashed,
-    },
-    {
-      title: "Equipos",
-      url: "#",
-      icon: BookDashed,
-    },
-    {
-      title: "Empleados",
-      url: "#",
-      icon: BookDashed,
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: HelpCircle,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: Search,
-    },
-  ],
-};
+  {
+    title: "Productos",
+    url: "#",
+    icon: Package,
+  },
+  {
+    title: "Clientes",
+    url: "#",
+    icon: Users,
+  },
+  {
+    title: "Equipos",
+    url: "#",
+    icon: Briefcase,
+  },
+  {
+    title: "Empleados",
+    url: "#",
+    icon: UserCog,
+  },
+];
+
+const navSystem = [
+  {
+    title: "Buscar",
+    url: "#",
+    icon: Search,
+  },
+  {
+    title: "Configuración",
+    url: "#",
+    icon: Settings,
+  },
+  {
+    title: "Ayuda",
+    url: "#",
+    icon: HelpCircle,
+  },
+];
+
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
 
 export function AppSidebar() {
-  const isMobile = useIsMobile();
-  const { data: sData } = useSuspenseQuery(orpc.auth.getSession.queryOptions());
+  const { data: sessionData } = useSuspenseQuery(
+    orpc.auth.getSession.queryOptions(),
+  );
 
-  if (!sData) return null;
+  if (!sessionData?.user) return null;
 
-  const user = sData.user;
+  const user = sessionData.user;
 
   return (
     <Sidebar variant="inset" collapsible="icon">
@@ -114,7 +113,7 @@ export function AppSidebar() {
                   <span className="text-base font-semibold">Fludge</span>
                 </a>
               }
-            ></SidebarMenuButton>
+            />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -122,21 +121,21 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent className="flex flex-col gap-2">
             <SidebarMenu>
-              <SidebarMenuItem className="flex items-center gap-2">
+              <SidebarMenuItem>
                 <SidebarMenuButton
                   tooltip="Quick Create"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 min-w-8 transition-colors"
                 >
-                  <CirclePlus />
+                  <Plus />
                   <span>Quick Create</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
             <SidebarMenu>
-              {data.navMain.map((item) => (
+              {navMain.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton tooltip={item.title}>
-                    {item.icon && <item.icon />}
+                    <item.icon />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -145,26 +144,74 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        <SidebarSeparator className="my-2" />
+
         <SidebarGroup className="mt-auto">
           <SidebarGroupContent>
             <SidebarMenu>
-              {data.navSecondary.map((item) => (
+              {navSystem.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    render={
-                      <a href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </a>
-                    }
-                  ></SidebarMenuButton>
+                  <SidebarMenuButton tooltip={item.title}>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <SidebarMenuButton className="cursor-pointer">
+                    <Avatar className="size-8">
+                      {user.image && (
+                        <AvatarImage src={user.image} alt={user.name} />
+                      )}
+                      <AvatarFallback className="text-xs">
+                        {user.name ? getInitials(user.name) : "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="truncate text-sm font-medium">
+                      {user.name || "User"}
+                    </span>
+                  </SidebarMenuButton>
+                }
+              />
+              <DropdownMenuContent side="left" align="end" className="w-56">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col space-y-1">
+                      <span className="truncate font-medium">{user.name}</span>
+                      <span className="truncate text-xs text-muted-foreground">
+                        {user.email}
+                      </span>
+                    </div>
+                  </DropdownMenuLabel>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <UserCog className="mr-2 size-4" />
+                  <span>Perfil</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Settings className="mr-2 size-4" />
+                  <span>Configuración</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-destructive focus:text-destructive">
+                  <LogOut className="mr-2 size-4" />
+                  <span>Cerrar sesión</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }
