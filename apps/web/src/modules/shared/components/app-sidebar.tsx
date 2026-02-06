@@ -38,7 +38,7 @@ import { orpc } from "@/integrations/orpc";
 
 const navMain = [
   {
-    title: "Dashboard",
+    title: "Inicio",
     url: "#",
     icon: LayoutDashboard,
   },
