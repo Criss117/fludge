@@ -9,7 +9,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/dashboard/$orgslug")({
   component: RouteComponent,
   beforeLoad: async ({ context }) => {
-    const session = await context.queryClient.ensureQueryData(
+    const session = await context.queryClient.fetchQuery(
       context.orpc.auth.getSession.queryOptions(),
     );
 

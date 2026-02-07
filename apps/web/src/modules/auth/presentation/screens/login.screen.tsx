@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { AlertCircleIcon, User } from "lucide-react";
 import { LinkButton } from "@/modules/shared/components/link-button";
@@ -21,32 +21,40 @@ import {
   AlertTitle,
 } from "@/modules/shared/components/ui/alert";
 import { signInSchema } from "@fludge/utils/validators/auth.schemas";
+import { useQueryClient } from "@tanstack/react-query";
+import { orpc } from "@/integrations/orpc";
 
 export function LoginScreen() {
-  const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const form = useAuthForm({
     defaultValues: {
       email: "",
       password: "",
     },
     onSubmit: ({ value }) => {
-      authClient.signIn.email(
-        {
-          email: value.email,
-          password: value.password,
-        },
-        {
-          onSuccess: ({ data }) => {
-            router.navigate({
-              to: "/register-organization",
-            });
-          },
+      setIsPending(true);
+      authClient.signIn.email({
+        email: value.email,
+        password: value.password,
+        fetchOptions: {
           onError: ({ error }) => {
+            setIsPending(false);
             setErrorMessage(error.message);
           },
+          onSuccess: async () => {
+            await queryClient.refetchQueries(
+              orpc.auth.getSession.queryOptions(),
+            );
+            form.reset();
+            router.navigate({
+              to: "/select-organization",
+            });
+          },
         },
-      );
+      });
     },
     validators: {
       onSubmit: signInSchema,
