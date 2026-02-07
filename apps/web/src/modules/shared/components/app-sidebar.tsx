@@ -60,7 +60,7 @@ const navMain = [
   },
   {
     title: "Clientes",
-    url: "/dashboard/$orgslug",
+    url: "/dashboard/$orgslug/clients",
     icon: Users,
   },
   {

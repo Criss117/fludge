@@ -1,5 +1,5 @@
 import { createContext, use } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, type LinkProps } from "@tanstack/react-router";
 import { Separator } from "./ui/separator";
 import { cn } from "@/modules/shared/lib/utils";
 import {
@@ -12,7 +12,7 @@ import {
 } from "./ui/breadcrumb";
 import { SidebarTrigger } from "./ui/sidebar";
 
-type CurrentPath = "Home" | "Products";
+type CurrentPath = "Home" | "Products" | "Clients";
 
 interface Context {
   orgSlug: string;
@@ -22,7 +22,10 @@ interface Context {
 interface BaseBreadCrumbProps {
   label: string;
   isCurrent: boolean;
-  href?: string;
+  href: {
+    to: LinkProps["to"];
+    params: LinkProps["params"];
+  };
 }
 
 interface ContentProps {
@@ -49,7 +52,7 @@ function BaseBreadCrumb({ label, isCurrent, href }: BaseBreadCrumbProps) {
   if (isCurrent) {
     return (
       <BreadcrumbItem className="hidden sm:inline-flex">
-        <BreadcrumbPage className="font-medium text-foreground">
+        <BreadcrumbPage className="font-medium text-foreground text-xl">
           {label}
         </BreadcrumbPage>
       </BreadcrumbItem>
@@ -60,8 +63,8 @@ function BaseBreadCrumb({ label, isCurrent, href }: BaseBreadCrumbProps) {
     <>
       <BreadcrumbItem className="hidden sm:inline-flex">
         <BreadcrumbLink
-          href={href}
-          className="hover:text-foreground hover:underline underline-offset-4 transition-colors"
+          className="hover:text-foreground hover:underline underline-offset-4 transition-colors text-xl"
+          render={<Link to={href.to} params={href.params} />}
         >
           {label}
         </BreadcrumbLink>
@@ -84,8 +87,8 @@ function Content({
         className,
       )}
     >
-      <SidebarTrigger className="shrink-0" />
-      <Separator orientation="vertical" className="h-4" />
+      <SidebarTrigger className="shrink-0 [&_svg]:size-44" />
+      <Separator orientation="vertical" className="h-3/4 my-auto" />
       <DashBoardHeaderContext.Provider value={{ orgSlug, currentPath }}>
         <Breadcrumb className="min-w-0 flex-1">
           <BreadcrumbList className="flex-nowrap overflow-hidden">
@@ -106,17 +109,52 @@ function Home({ label = "Inicio" }) {
     <BaseBreadCrumb
       label={label}
       isCurrent={isHome}
-      href={`/dashboard/${orgSlug}`}
+      href={{
+        to: "/dashboard/$orgslug",
+        params: { orgslug: orgSlug },
+      }}
     />
   );
 }
 
 function Products({ label = "Productos" }) {
-  const { currentPath } = useDashBoardHeader();
+  const { currentPath, orgSlug } = useDashBoardHeader();
 
   const isCurrent = currentPath === "Products";
 
-  return <BaseBreadCrumb label={label} isCurrent={isCurrent} />;
+  return (
+    <BaseBreadCrumb
+      label={label}
+      isCurrent={isCurrent}
+      href={{
+        to: "/dashboard/$orgslug/products",
+        params: { orgslug: orgSlug },
+      }}
+    />
+  );
 }
 
-export const DashBoardHeader = { Content, Home, useDashBoardHeader, Products };
+function Clients({ label = "Clientes" }) {
+  const { currentPath, orgSlug } = useDashBoardHeader();
+
+  const isCurrent = currentPath === "Clients";
+
+  return (
+    <BaseBreadCrumb
+      label={label}
+      isCurrent={isCurrent}
+      href={{
+        to: "/dashboard/$orgslug/clients",
+        params: { orgslug: orgSlug },
+      }}
+    />
+  );
+}
+
+export const DashBoardHeader = {
+  Content,
+  Home,
+  useDashBoardHeader,
+  Products,
+  Clients,
+};

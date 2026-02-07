@@ -18,6 +18,7 @@ import { Route as AuthEmployeeRouteImport } from './routes/auth/employee'
 import { Route as DashboardOrgslugIndexRouteImport } from './routes/dashboard/$orgslug/index'
 import { Route as AuthForgotPasswordIndexRouteImport } from './routes/auth/forgot-password/index'
 import { Route as DashboardOrgslugProductsRouteImport } from './routes/dashboard/$orgslug/products'
+import { Route as DashboardOrgslugClientsRouteImport } from './routes/dashboard/$orgslug/clients'
 import { Route as AuthForgotPasswordRecoveryRouteImport } from './routes/auth/forgot-password/recovery'
 
 const SelectOrganizationRoute = SelectOrganizationRouteImport.update({
@@ -66,6 +67,11 @@ const DashboardOrgslugProductsRoute =
     path: '/products',
     getParentRoute: () => DashboardOrgslugRoute,
   } as any)
+const DashboardOrgslugClientsRoute = DashboardOrgslugClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
+  getParentRoute: () => DashboardOrgslugRoute,
+} as any)
 const AuthForgotPasswordRecoveryRoute =
   AuthForgotPasswordRecoveryRouteImport.update({
     id: '/auth/forgot-password/recovery',
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/auth/register': typeof AuthRegisterRoute
   '/dashboard/$orgslug': typeof DashboardOrgslugRouteWithChildren
   '/auth/forgot-password/recovery': typeof AuthForgotPasswordRecoveryRoute
+  '/dashboard/$orgslug/clients': typeof DashboardOrgslugClientsRoute
   '/dashboard/$orgslug/products': typeof DashboardOrgslugProductsRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
   '/dashboard/$orgslug/': typeof DashboardOrgslugIndexRoute
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/auth/employee': typeof AuthEmployeeRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/forgot-password/recovery': typeof AuthForgotPasswordRecoveryRoute
+  '/dashboard/$orgslug/clients': typeof DashboardOrgslugClientsRoute
   '/dashboard/$orgslug/products': typeof DashboardOrgslugProductsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/dashboard/$orgslug': typeof DashboardOrgslugIndexRoute
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/auth/register': typeof AuthRegisterRoute
   '/dashboard/$orgslug': typeof DashboardOrgslugRouteWithChildren
   '/auth/forgot-password/recovery': typeof AuthForgotPasswordRecoveryRoute
+  '/dashboard/$orgslug/clients': typeof DashboardOrgslugClientsRoute
   '/dashboard/$orgslug/products': typeof DashboardOrgslugProductsRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
   '/dashboard/$orgslug/': typeof DashboardOrgslugIndexRoute
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/dashboard/$orgslug'
     | '/auth/forgot-password/recovery'
+    | '/dashboard/$orgslug/clients'
     | '/dashboard/$orgslug/products'
     | '/auth/forgot-password/'
     | '/dashboard/$orgslug/'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/auth/employee'
     | '/auth/register'
     | '/auth/forgot-password/recovery'
+    | '/dashboard/$orgslug/clients'
     | '/dashboard/$orgslug/products'
     | '/auth/forgot-password'
     | '/dashboard/$orgslug'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/dashboard/$orgslug'
     | '/auth/forgot-password/recovery'
+    | '/dashboard/$orgslug/clients'
     | '/dashboard/$orgslug/products'
     | '/auth/forgot-password/'
     | '/dashboard/$orgslug/'
@@ -223,6 +235,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardOrgslugProductsRouteImport
       parentRoute: typeof DashboardOrgslugRoute
     }
+    '/dashboard/$orgslug/clients': {
+      id: '/dashboard/$orgslug/clients'
+      path: '/clients'
+      fullPath: '/dashboard/$orgslug/clients'
+      preLoaderRoute: typeof DashboardOrgslugClientsRouteImport
+      parentRoute: typeof DashboardOrgslugRoute
+    }
     '/auth/forgot-password/recovery': {
       id: '/auth/forgot-password/recovery'
       path: '/auth/forgot-password/recovery'
@@ -234,11 +253,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface DashboardOrgslugRouteChildren {
+  DashboardOrgslugClientsRoute: typeof DashboardOrgslugClientsRoute
   DashboardOrgslugProductsRoute: typeof DashboardOrgslugProductsRoute
   DashboardOrgslugIndexRoute: typeof DashboardOrgslugIndexRoute
 }
 
 const DashboardOrgslugRouteChildren: DashboardOrgslugRouteChildren = {
+  DashboardOrgslugClientsRoute: DashboardOrgslugClientsRoute,
   DashboardOrgslugProductsRoute: DashboardOrgslugProductsRoute,
   DashboardOrgslugIndexRoute: DashboardOrgslugIndexRoute,
 }
