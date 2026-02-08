@@ -51,7 +51,6 @@ function RootComponent() {
       <div className="min-h-dvh">
         <Outlet />
       </div>
-      <Toaster richColors />
       <TanStackRouterDevtools position="bottom-left" />
     </>
   );

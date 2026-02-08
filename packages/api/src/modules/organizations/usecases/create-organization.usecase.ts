@@ -6,7 +6,7 @@ import { auth } from "@fludge/auth";
 import { OrganizationAlreadyExistsException } from "../exceptions/organization-already-exists.exception";
 import { slugify } from "@fludge/utils/slugify";
 import { tryCatch } from "@fludge/utils/try-catch";
-import { allPermissions } from "@fludge/auth/permissions";
+import { allPermissions } from "@fludge/utils/validators/permission.schemas";
 import type { CreateOrganizationSchema } from "@fludge/utils/validators/organization.schema";
 import { organization } from "@fludge/db/schema/auth";
 import { WithAuthHeader } from "@fludge/api/modules/shared/usecases/with-auth-headers";

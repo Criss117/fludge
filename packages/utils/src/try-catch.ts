@@ -14,8 +14,13 @@ type Result<T, E = Error> = Success<T> | Failure<E>;
 // Main wrapper function
 export async function tryCatch<T, E = Error>(
   promise: Promise<T>,
+  options?: { sleep?: number },
 ): Promise<Result<T, E>> {
   try {
+    if (options?.sleep && options.sleep > 0) {
+      await new Promise((resolve) => setTimeout(resolve, options.sleep));
+    }
+
     const data = await promise;
     return { data, error: null };
   } catch (error) {

@@ -1,11 +1,11 @@
+import { organization, username } from "better-auth/plugins";
+import { betterAuth } from "better-auth";
 import { expo } from "@better-auth/expo";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@fludge/db";
 import * as schema from "@fludge/db/schema/auth";
 import { env } from "@fludge/env/server";
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { organization, username } from "better-auth/plugins";
-import { permissionsSchema } from "./permissions";
+import { permissionsSchema } from "@fludge/utils/validators/permission.schemas";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {

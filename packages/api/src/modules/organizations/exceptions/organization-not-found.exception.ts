@@ -1,11 +1,11 @@
 import { ORPCError } from "@orpc/client";
 
 export class OrganizationNotFoundException extends ORPCError<
-  "CONFLICT",
+  "NOT_FOUND",
   undefined
 > {
   constructor(message = "Organization not found") {
-    super("CONFLICT", {
+    super("NOT_FOUND", {
       message,
     });
   }

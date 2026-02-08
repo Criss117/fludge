@@ -27,6 +27,7 @@ export const allPermissionsEs = actionsEs
   })
   .flatMap((a) => a) as PermissionEs[];
 
+export const permissionSchema = z.enum(allPermissions);
 export const permissionsSchema = z.array(z.enum(allPermissions)).min(1);
 export type PermissionsSchema = z.infer<typeof permissionsSchema>;
 

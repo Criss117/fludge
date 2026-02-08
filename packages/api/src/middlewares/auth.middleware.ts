@@ -11,7 +11,12 @@ export const authMiddleware = baseRouter.middleware(
     return await next({
       context: {
         ...context,
-        session,
+        session: session
+          ? {
+              ...session.session,
+              user: session.user,
+            }
+          : null,
       },
     });
   },
