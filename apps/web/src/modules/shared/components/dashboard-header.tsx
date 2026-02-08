@@ -12,7 +12,7 @@ import {
 } from "./ui/breadcrumb";
 import { SidebarTrigger } from "./ui/sidebar";
 
-type CurrentPath = "Home" | "Products" | "Clients";
+type CurrentPath = "Home" | "Products" | "Clients" | "Teams";
 
 interface Context {
   orgSlug: string;
@@ -151,10 +151,28 @@ function Clients({ label = "Clientes" }) {
   );
 }
 
+function Teams({ label = "Equipos" }) {
+  const { currentPath, orgSlug } = useDashBoardHeader();
+
+  const isCurrent = currentPath === "Teams";
+
+  return (
+    <BaseBreadCrumb
+      label={label}
+      isCurrent={isCurrent}
+      href={{
+        to: "/dashboard/$orgslug/teams",
+        params: { orgslug: orgSlug },
+      }}
+    />
+  );
+}
+
 export const DashBoardHeader = {
+  useDashBoardHeader,
   Content,
   Home,
-  useDashBoardHeader,
   Products,
   Clients,
+  Teams,
 };

@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation, useMatch, useRouter } from "@tanstack/react-router";
 import {
   Plus,
   LayoutDashboard,
@@ -16,6 +16,7 @@ import {
   useSidebar,
 } from "../ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { cn } from "../../lib/utils";
 
 const navMain = [
   {
@@ -35,12 +36,12 @@ const navMain = [
   },
   {
     title: "Equipos",
-    url: "/dashboard/$orgslug",
+    url: "/dashboard/$orgslug/teams",
     icon: Briefcase,
   },
   {
     title: "Empleados",
-    url: "/dashboard/$orgslug",
+    url: "/dashboard/$orgslug/employees",
     icon: UserCog,
   },
 ] as const;
@@ -49,8 +50,58 @@ interface Props {
   orgSlug: string;
 }
 
-export function NavMain({ orgSlug }: Props) {
+function NavItem({
+  orgSlug,
+  item,
+}: Props & { item: (typeof navMain)[number] }) {
   const { open } = useSidebar();
+  const isMatch = useLocation({
+    select: (data) =>
+      data.pathname.replace(/\/dashboard\/[^/]+/, "") ===
+      item.url.replace("/dashboard/$orgslug", ""),
+  });
+
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        className={
+          isMatch
+            ? "bg-primary text-black hover:bg-primary hover:text-black"
+            : ""
+        }
+        render={(props) => {
+          if (open) {
+            return (
+              <Link to={item.url} params={{ orgslug: orgSlug }} {...props}>
+                <item.icon />
+                <span>{item.title}</span>
+              </Link>
+            );
+          }
+
+          return (
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Link to={item.url} params={{ orgslug: orgSlug }} {...props}>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </Link>
+                }
+              />
+              <TooltipContent side="right">
+                <p>{item.title}</p>
+              </TooltipContent>
+            </Tooltip>
+          );
+        }}
+      ></SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
+export function NavMain({ orgSlug }: Props) {
+  const router = useRouter();
 
   return (
     <SidebarGroup>
@@ -69,44 +120,7 @@ export function NavMain({ orgSlug }: Props) {
 
         <SidebarMenu>
           {navMain.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton
-                render={(props) => {
-                  if (open) {
-                    return (
-                      <Link
-                        to={item.url}
-                        params={{ orgslug: orgSlug }}
-                        {...props}
-                      >
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    );
-                  }
-
-                  return (
-                    <Tooltip>
-                      <TooltipTrigger
-                        render={
-                          <Link
-                            to={item.url}
-                            params={{ orgslug: orgSlug }}
-                            {...props}
-                          >
-                            <item.icon />
-                            <span>{item.title}</span>
-                          </Link>
-                        }
-                      />
-                      <TooltipContent side="right">
-                        <p>{item.title}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  );
-                }}
-              ></SidebarMenuButton>
-            </SidebarMenuItem>
+            <NavItem key={item.title} orgSlug={orgSlug} item={item} />
           ))}
         </SidebarMenu>
       </SidebarGroupContent>
