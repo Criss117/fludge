@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import {
   Plus,
   LayoutDashboard,
@@ -12,8 +13,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "../ui/sidebar";
-import { Link } from "@tanstack/react-router";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 const navMain = [
   {
@@ -48,6 +50,8 @@ interface Props {
 }
 
 export function NavMain({ orgSlug }: Props) {
+  const { open } = useSidebar();
+
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
@@ -67,18 +71,41 @@ export function NavMain({ orgSlug }: Props) {
           {navMain.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
-                tooltip={item.title}
-                render={(props) => (
-                  <Link
-                    to={item.url}
-                    params={{ orgslug: orgSlug }}
-                    {...props}
-                  />
-                )}
-              >
-                <item.icon />
-                <span>{item.title}</span>
-              </SidebarMenuButton>
+                render={(props) => {
+                  if (open) {
+                    return (
+                      <Link
+                        to={item.url}
+                        params={{ orgslug: orgSlug }}
+                        {...props}
+                      >
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    );
+                  }
+
+                  return (
+                    <Tooltip>
+                      <TooltipTrigger
+                        render={
+                          <Link
+                            to={item.url}
+                            params={{ orgslug: orgSlug }}
+                            {...props}
+                          >
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </Link>
+                        }
+                      />
+                      <TooltipContent side="right">
+                        <p>{item.title}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                }}
+              ></SidebarMenuButton>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
