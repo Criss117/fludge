@@ -1,7 +1,7 @@
 import { DashBoardHeader } from "@/modules/shared/components/dashboard-header";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/dashboard/$orgslug/employees")({
+export const Route = createFileRoute("/dashboard/$orgslug/teams/$teamid")({
   component: RouteComponent,
 });
 
@@ -10,9 +10,10 @@ function RouteComponent() {
 
   return (
     <>
-      <DashBoardHeader.Content orgSlug={orgslug} currentPath="Employees">
+      <DashBoardHeader.Content orgSlug={orgslug} currentPath="Team">
         <DashBoardHeader.Home />
-        <DashBoardHeader.Employees />
+        <DashBoardHeader.Teams />
+        <DashBoardHeader.Team label="Administradores" />
       </DashBoardHeader.Content>
     </>
   );

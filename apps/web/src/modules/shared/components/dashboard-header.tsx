@@ -12,7 +12,13 @@ import {
 } from "./ui/breadcrumb";
 import { SidebarTrigger } from "./ui/sidebar";
 
-type CurrentPath = "Home" | "Products" | "Clients" | "Teams";
+type CurrentPath =
+  | "Home"
+  | "Products"
+  | "Clients"
+  | "Teams"
+  | "Employees"
+  | "Team";
 
 interface Context {
   orgSlug: string;
@@ -168,6 +174,40 @@ function Teams({ label = "Equipos" }) {
   );
 }
 
+function Team({ label = "Equipo" }) {
+  const { currentPath, orgSlug } = useDashBoardHeader();
+
+  const isCurrent = currentPath === "Team";
+
+  return (
+    <BaseBreadCrumb
+      label={label}
+      isCurrent={isCurrent}
+      href={{
+        to: "/dashboard/$orgslug/teams",
+        params: { orgslug: orgSlug },
+      }}
+    />
+  );
+}
+
+function Employees({ label = "Empleados" }) {
+  const { currentPath, orgSlug } = useDashBoardHeader();
+
+  const isCurrent = currentPath === "Employees";
+
+  return (
+    <BaseBreadCrumb
+      label={label}
+      isCurrent={isCurrent}
+      href={{
+        to: "/dashboard/$orgslug/employees",
+        params: { orgslug: orgSlug },
+      }}
+    />
+  );
+}
+
 export const DashBoardHeader = {
   useDashBoardHeader,
   Content,
@@ -175,4 +215,6 @@ export const DashBoardHeader = {
   Products,
   Clients,
   Teams,
+  Employees,
+  Team,
 };

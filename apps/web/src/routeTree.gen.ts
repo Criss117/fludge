@@ -17,11 +17,13 @@ import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthEmployeeRouteImport } from './routes/auth/employee'
 import { Route as DashboardOrgslugIndexRouteImport } from './routes/dashboard/$orgslug/index'
 import { Route as AuthForgotPasswordIndexRouteImport } from './routes/auth/forgot-password/index'
-import { Route as DashboardOrgslugTeamsRouteImport } from './routes/dashboard/$orgslug/teams'
 import { Route as DashboardOrgslugProductsRouteImport } from './routes/dashboard/$orgslug/products'
 import { Route as DashboardOrgslugEmployeesRouteImport } from './routes/dashboard/$orgslug/employees'
 import { Route as DashboardOrgslugClientsRouteImport } from './routes/dashboard/$orgslug/clients'
 import { Route as AuthForgotPasswordRecoveryRouteImport } from './routes/auth/forgot-password/recovery'
+import { Route as DashboardOrgslugTeamsIndexRouteImport } from './routes/dashboard/$orgslug/teams/index'
+import { Route as DashboardOrgslugTeamsCreateRouteImport } from './routes/dashboard/$orgslug/teams/create'
+import { Route as DashboardOrgslugTeamsTeamidRouteImport } from './routes/dashboard/$orgslug/teams/$teamid'
 
 const SelectOrganizationRoute = SelectOrganizationRouteImport.update({
   id: '/select-organization',
@@ -63,11 +65,6 @@ const AuthForgotPasswordIndexRoute = AuthForgotPasswordIndexRouteImport.update({
   path: '/auth/forgot-password/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardOrgslugTeamsRoute = DashboardOrgslugTeamsRouteImport.update({
-  id: '/teams',
-  path: '/teams',
-  getParentRoute: () => DashboardOrgslugRoute,
-} as any)
 const DashboardOrgslugProductsRoute =
   DashboardOrgslugProductsRouteImport.update({
     id: '/products',
@@ -91,6 +88,24 @@ const AuthForgotPasswordRecoveryRoute =
     path: '/auth/forgot-password/recovery',
     getParentRoute: () => rootRouteImport,
   } as any)
+const DashboardOrgslugTeamsIndexRoute =
+  DashboardOrgslugTeamsIndexRouteImport.update({
+    id: '/teams/',
+    path: '/teams/',
+    getParentRoute: () => DashboardOrgslugRoute,
+  } as any)
+const DashboardOrgslugTeamsCreateRoute =
+  DashboardOrgslugTeamsCreateRouteImport.update({
+    id: '/teams/create',
+    path: '/teams/create',
+    getParentRoute: () => DashboardOrgslugRoute,
+  } as any)
+const DashboardOrgslugTeamsTeamidRoute =
+  DashboardOrgslugTeamsTeamidRouteImport.update({
+    id: '/teams/$teamid',
+    path: '/teams/$teamid',
+    getParentRoute: () => DashboardOrgslugRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -103,9 +118,11 @@ export interface FileRoutesByFullPath {
   '/dashboard/$orgslug/clients': typeof DashboardOrgslugClientsRoute
   '/dashboard/$orgslug/employees': typeof DashboardOrgslugEmployeesRoute
   '/dashboard/$orgslug/products': typeof DashboardOrgslugProductsRoute
-  '/dashboard/$orgslug/teams': typeof DashboardOrgslugTeamsRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
   '/dashboard/$orgslug/': typeof DashboardOrgslugIndexRoute
+  '/dashboard/$orgslug/teams/$teamid': typeof DashboardOrgslugTeamsTeamidRoute
+  '/dashboard/$orgslug/teams/create': typeof DashboardOrgslugTeamsCreateRoute
+  '/dashboard/$orgslug/teams/': typeof DashboardOrgslugTeamsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -117,9 +134,11 @@ export interface FileRoutesByTo {
   '/dashboard/$orgslug/clients': typeof DashboardOrgslugClientsRoute
   '/dashboard/$orgslug/employees': typeof DashboardOrgslugEmployeesRoute
   '/dashboard/$orgslug/products': typeof DashboardOrgslugProductsRoute
-  '/dashboard/$orgslug/teams': typeof DashboardOrgslugTeamsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/dashboard/$orgslug': typeof DashboardOrgslugIndexRoute
+  '/dashboard/$orgslug/teams/$teamid': typeof DashboardOrgslugTeamsTeamidRoute
+  '/dashboard/$orgslug/teams/create': typeof DashboardOrgslugTeamsCreateRoute
+  '/dashboard/$orgslug/teams': typeof DashboardOrgslugTeamsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -133,9 +152,11 @@ export interface FileRoutesById {
   '/dashboard/$orgslug/clients': typeof DashboardOrgslugClientsRoute
   '/dashboard/$orgslug/employees': typeof DashboardOrgslugEmployeesRoute
   '/dashboard/$orgslug/products': typeof DashboardOrgslugProductsRoute
-  '/dashboard/$orgslug/teams': typeof DashboardOrgslugTeamsRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
   '/dashboard/$orgslug/': typeof DashboardOrgslugIndexRoute
+  '/dashboard/$orgslug/teams/$teamid': typeof DashboardOrgslugTeamsTeamidRoute
+  '/dashboard/$orgslug/teams/create': typeof DashboardOrgslugTeamsCreateRoute
+  '/dashboard/$orgslug/teams/': typeof DashboardOrgslugTeamsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -150,9 +171,11 @@ export interface FileRouteTypes {
     | '/dashboard/$orgslug/clients'
     | '/dashboard/$orgslug/employees'
     | '/dashboard/$orgslug/products'
-    | '/dashboard/$orgslug/teams'
     | '/auth/forgot-password/'
     | '/dashboard/$orgslug/'
+    | '/dashboard/$orgslug/teams/$teamid'
+    | '/dashboard/$orgslug/teams/create'
+    | '/dashboard/$orgslug/teams/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -164,9 +187,11 @@ export interface FileRouteTypes {
     | '/dashboard/$orgslug/clients'
     | '/dashboard/$orgslug/employees'
     | '/dashboard/$orgslug/products'
-    | '/dashboard/$orgslug/teams'
     | '/auth/forgot-password'
     | '/dashboard/$orgslug'
+    | '/dashboard/$orgslug/teams/$teamid'
+    | '/dashboard/$orgslug/teams/create'
+    | '/dashboard/$orgslug/teams'
   id:
     | '__root__'
     | '/'
@@ -179,9 +204,11 @@ export interface FileRouteTypes {
     | '/dashboard/$orgslug/clients'
     | '/dashboard/$orgslug/employees'
     | '/dashboard/$orgslug/products'
-    | '/dashboard/$orgslug/teams'
     | '/auth/forgot-password/'
     | '/dashboard/$orgslug/'
+    | '/dashboard/$orgslug/teams/$teamid'
+    | '/dashboard/$orgslug/teams/create'
+    | '/dashboard/$orgslug/teams/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -253,13 +280,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard/$orgslug/teams': {
-      id: '/dashboard/$orgslug/teams'
-      path: '/teams'
-      fullPath: '/dashboard/$orgslug/teams'
-      preLoaderRoute: typeof DashboardOrgslugTeamsRouteImport
-      parentRoute: typeof DashboardOrgslugRoute
-    }
     '/dashboard/$orgslug/products': {
       id: '/dashboard/$orgslug/products'
       path: '/products'
@@ -288,6 +308,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRecoveryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/$orgslug/teams/': {
+      id: '/dashboard/$orgslug/teams/'
+      path: '/teams'
+      fullPath: '/dashboard/$orgslug/teams/'
+      preLoaderRoute: typeof DashboardOrgslugTeamsIndexRouteImport
+      parentRoute: typeof DashboardOrgslugRoute
+    }
+    '/dashboard/$orgslug/teams/create': {
+      id: '/dashboard/$orgslug/teams/create'
+      path: '/teams/create'
+      fullPath: '/dashboard/$orgslug/teams/create'
+      preLoaderRoute: typeof DashboardOrgslugTeamsCreateRouteImport
+      parentRoute: typeof DashboardOrgslugRoute
+    }
+    '/dashboard/$orgslug/teams/$teamid': {
+      id: '/dashboard/$orgslug/teams/$teamid'
+      path: '/teams/$teamid'
+      fullPath: '/dashboard/$orgslug/teams/$teamid'
+      preLoaderRoute: typeof DashboardOrgslugTeamsTeamidRouteImport
+      parentRoute: typeof DashboardOrgslugRoute
+    }
   }
 }
 
@@ -295,16 +336,20 @@ interface DashboardOrgslugRouteChildren {
   DashboardOrgslugClientsRoute: typeof DashboardOrgslugClientsRoute
   DashboardOrgslugEmployeesRoute: typeof DashboardOrgslugEmployeesRoute
   DashboardOrgslugProductsRoute: typeof DashboardOrgslugProductsRoute
-  DashboardOrgslugTeamsRoute: typeof DashboardOrgslugTeamsRoute
   DashboardOrgslugIndexRoute: typeof DashboardOrgslugIndexRoute
+  DashboardOrgslugTeamsTeamidRoute: typeof DashboardOrgslugTeamsTeamidRoute
+  DashboardOrgslugTeamsCreateRoute: typeof DashboardOrgslugTeamsCreateRoute
+  DashboardOrgslugTeamsIndexRoute: typeof DashboardOrgslugTeamsIndexRoute
 }
 
 const DashboardOrgslugRouteChildren: DashboardOrgslugRouteChildren = {
   DashboardOrgslugClientsRoute: DashboardOrgslugClientsRoute,
   DashboardOrgslugEmployeesRoute: DashboardOrgslugEmployeesRoute,
   DashboardOrgslugProductsRoute: DashboardOrgslugProductsRoute,
-  DashboardOrgslugTeamsRoute: DashboardOrgslugTeamsRoute,
   DashboardOrgslugIndexRoute: DashboardOrgslugIndexRoute,
+  DashboardOrgslugTeamsTeamidRoute: DashboardOrgslugTeamsTeamidRoute,
+  DashboardOrgslugTeamsCreateRoute: DashboardOrgslugTeamsCreateRoute,
+  DashboardOrgslugTeamsIndexRoute: DashboardOrgslugTeamsIndexRoute,
 }
 
 const DashboardOrgslugRouteWithChildren =
