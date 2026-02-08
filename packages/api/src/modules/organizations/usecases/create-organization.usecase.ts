@@ -1,5 +1,4 @@
 import type { IncomingHttpHeaders } from "node:http";
-import { fromNodeHeaders } from "better-auth/node";
 import { eq, or } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
 import { db } from "@fludge/db";
@@ -10,13 +9,13 @@ import { tryCatch } from "@fludge/utils/try-catch";
 import { allPermissions } from "@fludge/auth/permissions";
 import type { CreateOrganizationSchema } from "@fludge/utils/validators/organization.schema";
 import { organization } from "@fludge/db/schema/auth";
+import { WithAuthHeader } from "@fludge/api/modules/shared/usecases/with-auth-headers";
 
-export class CreateOrganizationUseCase {
+export class CreateOrganizationUseCase extends WithAuthHeader {
   private static instance: CreateOrganizationUseCase;
-  private headers: Headers;
 
   private constructor(nodeHeaders: IncomingHttpHeaders) {
-    this.headers = fromNodeHeaders(nodeHeaders);
+    super(nodeHeaders);
   }
 
   static getInstance(headers: IncomingHttpHeaders): CreateOrganizationUseCase {

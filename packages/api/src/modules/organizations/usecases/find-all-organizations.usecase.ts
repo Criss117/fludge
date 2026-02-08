@@ -1,14 +1,13 @@
 import type { IncomingHttpHeaders } from "node:http";
 import { auth } from "@fludge/auth";
 import { tryCatch } from "@fludge/utils/try-catch";
-import { fromNodeHeaders } from "better-auth/node";
+import { WithAuthHeader } from "@fludge/api/modules/shared/usecases/with-auth-headers";
 
-export class FindAllOrganizationUseCase {
+export class FindAllOrganizationUseCase extends WithAuthHeader {
   private static instance: FindAllOrganizationUseCase;
-  private headers: Headers;
 
   private constructor(nodeHeaders: IncomingHttpHeaders) {
-    this.headers = fromNodeHeaders(nodeHeaders);
+    super(nodeHeaders);
   }
 
   static getInstance(headers: IncomingHttpHeaders): FindAllOrganizationUseCase {

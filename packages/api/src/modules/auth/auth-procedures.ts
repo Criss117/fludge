@@ -5,29 +5,33 @@ import { auth } from "@fludge/auth";
 import { signUpSchema } from "@fludge/utils/validators/auth.schemas";
 
 export const authProcedures = {
-  getSession: baseProcedure.use(authMiddleware).handler(async ({ context }) => {
-    if (!context.session) return null;
+  getSession: baseProcedure()
+    .use(authMiddleware)
+    .handler(async ({ context }) => {
+      if (!context.session) return null;
 
-    const orgs = await auth.api.listOrganizations({
-      headers: fromNodeHeaders(context.req.headers),
-    });
-
-    return {
-      session: context.session.session,
-      user: context.session.user,
-      organizations: orgs,
-    };
-  }),
-  signUp: {
-    root: baseProcedure.input(signUpSchema).handler(({ input }) => {
-      return auth.api.signUpEmail({
-        body: {
-          email: input.email,
-          name: input.name,
-          password: input.password,
-          isRoot: true,
-        },
+      const orgs = await auth.api.listOrganizations({
+        headers: fromNodeHeaders(context.req.headers),
       });
+
+      return {
+        session: context.session.session,
+        user: context.session.user,
+        organizations: orgs,
+      };
     }),
+  signUp: {
+    root: baseProcedure()
+      .input(signUpSchema)
+      .handler(({ input }) => {
+        return auth.api.signUpEmail({
+          body: {
+            email: input.email,
+            name: input.name,
+            password: input.password,
+            isRoot: true,
+          },
+        });
+      }),
   },
 };

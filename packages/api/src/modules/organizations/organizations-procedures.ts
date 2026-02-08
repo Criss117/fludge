@@ -5,7 +5,9 @@ import { findAllOrganizationsUseCase } from "./usecases/find-all-organizations.u
 import { createOrganizationSchema } from "@fludge/utils/validators/organization.schema";
 
 export const organizationsProcedures = {
-  create: baseProcedure
+  create: baseProcedure({
+    method: "POST",
+  })
     .use(
       requireAuthMiddleware({
         onlyRootUser: true,
@@ -16,7 +18,7 @@ export const organizationsProcedures = {
       createOrganizationUseCase(context.req.headers).execute(input),
     ),
 
-  findAll: baseProcedure
+  findAll: baseProcedure({ method: "GET" })
     .use(requireAuthMiddleware())
     .handler(async ({ context }) =>
       findAllOrganizationsUseCase(context.req.headers).execute(),
