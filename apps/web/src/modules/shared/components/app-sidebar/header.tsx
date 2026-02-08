@@ -26,7 +26,6 @@ interface Props {
 
 export function AppSideBarHeader({ orgSlug }: Props) {
   const { data } = useSuspenseQuery(orpc.auth.getSession.queryOptions());
-  const navigate = useNavigate();
 
   if (!data) return null;
 
@@ -81,12 +80,13 @@ export function AppSideBarHeader({ orgSlug }: Props) {
                       <DropdownMenuItem
                         key={org.id}
                         className="cursor-pointer flex items-center justify-between"
-                        onClick={() =>
-                          navigate({
-                            to: "/dashboard/$orgslug",
-                            params: { orgslug: org.slug },
-                          })
-                        }
+                        render={(props) => (
+                          <Link
+                            to="/dashboard/$orgslug"
+                            params={{ orgslug: org.slug }}
+                            {...props}
+                          />
+                        )}
                       >
                         <div className="flex items-center gap-2">
                           <Building2 className="size-4 text-muted-foreground" />

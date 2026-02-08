@@ -46,6 +46,8 @@ export const Route = createFileRoute("/dashboard/$orgslug")({
           },
         },
       });
+
+      context.session.activeOrganizationId = selectedOrg.id;
     }
   },
   pendingComponent: () => <div>Loading...</div>,
