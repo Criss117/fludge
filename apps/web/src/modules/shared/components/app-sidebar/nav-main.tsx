@@ -1,4 +1,5 @@
-import { Link, useLocation, useMatch, useRouter } from "@tanstack/react-router";
+import { memo } from "react";
+import { Link, useLocation } from "@tanstack/react-router";
 import {
   Plus,
   LayoutDashboard,
@@ -17,6 +18,8 @@ import {
 } from "../ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { cn } from "../../lib/utils";
+
+const DASHBOARD_PATH_REGEX = /\/dashboard\/[^/]+/;
 
 const navMain = [
   {
@@ -50,25 +53,25 @@ interface Props {
   orgSlug: string;
 }
 
-function NavItem({
+const NavItem = memo(function NavItem({
   orgSlug,
   item,
 }: Props & { item: (typeof navMain)[number] }) {
   const { open } = useSidebar();
   const isMatch = useLocation({
     select: (data) =>
-      data.pathname.replace(/\/dashboard\/[^/]+/, "") ===
+      data.pathname.replace(DASHBOARD_PATH_REGEX, "") ===
       item.url.replace("/dashboard/$orgslug", ""),
   });
 
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
-        className={
+        className={cn(
           isMatch
             ? "bg-primary text-black hover:bg-primary hover:text-black"
-            : ""
-        }
+            : "",
+        )}
         render={(props) => {
           if (open) {
             return (
@@ -95,14 +98,12 @@ function NavItem({
             </Tooltip>
           );
         }}
-      ></SidebarMenuButton>
+      />
     </SidebarMenuItem>
   );
-}
+});
 
 export function NavMain({ orgSlug }: Props) {
-  const router = useRouter();
-
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
