@@ -24,6 +24,7 @@ import { FieldGroup } from "@/modules/shared/components/ui/field";
 import { useMutateOrganizations } from "@/modules/organizations/application/hooks/use-mutate-organizations";
 import type { AppRouterClient } from "@fludge/api/routers/index";
 import { LinkButton } from "@/modules/shared/components/link-button";
+import { useRouter } from "@tanstack/react-router";
 
 type Organizations = NonNullable<
   Awaited<ReturnType<AppRouterClient["auth"]["getSession"]>>
@@ -42,6 +43,7 @@ const defaultValues: CreateOrganizationSchema = {
 export function RegisterOrganizationScreen({ organizations }: Props) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { create } = useMutateOrganizations();
+  const router = useRouter();
 
   const form = useRegisterOrganizationForm({
     validators: {
@@ -54,8 +56,11 @@ export function RegisterOrganizationScreen({ organizations }: Props) {
         onError: (error) => {
           setErrorMessage(error.message);
         },
-        onSuccess: () => {
-          setErrorMessage("Todo ok");
+        onSuccess: ({ slug }) => {
+          router.navigate({
+            to: "/dashboard/$orgslug",
+            params: { orgslug: slug },
+          });
         },
       });
     },

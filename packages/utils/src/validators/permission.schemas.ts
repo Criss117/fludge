@@ -1,19 +1,11 @@
 import { z } from "zod";
 
 export const actions = ["create", "read", "update", "delete"] as const;
-export const actionsEs = ["crear", "leer", "actualizar", "borrar"] as const;
-
 export const resources = ["team", "product", "ticket", "customer"] as const;
-export const resourcesEs = ["equipo", "producto", "ticket", "cliente"] as const;
 
-export type Actions = (typeof actions)[number];
-export type ActionsEs = (typeof actionsEs)[number];
-
-export type Resources = (typeof resources)[number];
-export type ResourcesEs = (typeof resourcesEs)[number];
-
-export type Permission = `${Actions}:${Resources}`;
-export type PermissionEs = `${ActionsEs}:${ResourcesEs}`;
+export type Action = (typeof actions)[number];
+export type Resource = (typeof resources)[number];
+export type Permission = `${Action}:${Resource}`;
 
 export const allPermissions = actions
   .map((action) => {
@@ -21,14 +13,12 @@ export const allPermissions = actions
   })
   .flatMap((a) => a) as Permission[];
 
-export const allPermissionsEs = actionsEs
-  .map((action) => {
-    return resourcesEs.map((resource) => `${action}:${resource}`);
-  })
-  .flatMap((a) => a) as PermissionEs[];
-
-export const permissionSchema = z.enum(allPermissions);
-export const permissionsSchema = z.array(z.enum(allPermissions)).min(1);
+export const permissionSchema = z.enum(allPermissions, {
+  error: "Permisos inválidos",
+});
+export const permissionsSchema = z
+  .array(z.enum(allPermissions))
+  .min(1, "Debe seleccionar al menos un permiso.");
 export type PermissionsSchema = z.infer<typeof permissionsSchema>;
 
 export function hasAllPermissions(
@@ -48,3 +38,40 @@ export function hasSomePermissions(
     userPermissions.includes(permission),
   );
 }
+
+export const actionsEs = new Map<Action, string>([
+  ["create", "Crear"],
+  ["read", "Leer"],
+  ["update", "Actualizar"],
+  ["delete", "Eliminar"],
+]);
+
+export const resourcesEs = new Map<Resource, string>([
+  ["team", "Equipo"],
+  ["product", "Producto"],
+  ["ticket", "Ticket"],
+  ["customer", "Cliente"],
+]);
+
+export const groupedPermissions = allPermissions.reduce(
+  (acc, permission) => {
+    const [action, resource] = permission.split(":") as [Action, Resource];
+    if (!acc[resource]) {
+      acc[resource] = {
+        es: resourcesEs.get(resource) || resource,
+        en: resource,
+        values: [],
+      };
+    }
+
+    acc[resource].values.push({
+      es: actionsEs.get(action) || action,
+      en: permission,
+    });
+    return acc;
+  },
+  {} as Record<
+    Resource,
+    { es: string; en: Resource; values: { es: string; en: Permission }[] }
+  >,
+);

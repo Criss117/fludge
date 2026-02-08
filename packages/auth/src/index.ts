@@ -59,7 +59,8 @@ export const auth = betterAuth({
           additionalFields: {
             legalName: {
               type: "string",
-              fieldName: "legal_name",
+              fieldName: "legalName",
+              index: true,
               required: true,
               unique: true,
             },
@@ -70,12 +71,12 @@ export const auth = betterAuth({
             },
             contactPhone: {
               type: "string",
-              fieldName: "contact_phone",
+              fieldName: "contactPhone",
               required: false,
             },
             contactEmail: {
               type: "string",
-              fieldName: "contact_email",
+              fieldName: "contactEmail",
               required: false,
             },
           },
@@ -90,6 +91,11 @@ export const auth = betterAuth({
                 input: permissionsSchema,
                 output: permissionsSchema,
               },
+            },
+            description: {
+              type: "string",
+              fieldName: "description",
+              required: false,
             },
           },
         },

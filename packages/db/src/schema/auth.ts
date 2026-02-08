@@ -107,12 +107,15 @@ export const organization = sqliteTable(
     logo: text("logo"),
     createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
     metadata: text("metadata"),
-    legal_name: text("legal_name").notNull().unique(),
+    legalName: text("legal_name").notNull().unique(),
     address: text("address").notNull(),
-    contact_phone: text("contact_phone"),
-    contact_email: text("contact_email"),
+    contactPhone: text("contact_phone"),
+    contactEmail: text("contact_email"),
   },
-  (table) => [uniqueIndex("organization_slug_uidx").on(table.slug)],
+  (table) => [
+    uniqueIndex("organization_slug_uidx").on(table.slug),
+    uniqueIndex("organization_legalName_uidx").on(table.legalName),
+  ],
 );
 
 export const team = sqliteTable(
@@ -128,6 +131,7 @@ export const team = sqliteTable(
       () => /* @__PURE__ */ new Date(),
     ),
     permissions: text("permissions", { mode: "json" }).notNull(),
+    description: text("description"),
   },
   (table) => [index("team_organizationId_idx").on(table.organizationId)],
 );

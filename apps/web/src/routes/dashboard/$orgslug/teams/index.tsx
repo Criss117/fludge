@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DashBoardHeader } from "@/modules/shared/components/dashboard-header";
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { Button } from "@/modules/shared/components/ui/button";
 import { teamsCollection } from "@/modules/teams/application/collections/teams.collection";
 import { cn } from "@/modules/shared/lib/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { orpc } from "@/integrations/orpc";
+import { CreateTeamDialog } from "@/modules/teams/presentation/components/create-team-dialog";
 
 export const Route = createFileRoute("/dashboard/$orgslug/teams/")({
   component: RouteComponent,
@@ -42,21 +42,9 @@ function RouteComponent() {
           </div>
         ))}
       </div>
-      <Button
-        onClick={() => {
-          teamsCollection.insert({
-            id: Math.random().toString(36).substring(2, 9),
-            name: Math.random().toString(36).substring(2, 9),
-            permissions: ["create:customer"],
-            createdAt: new Date(),
-            organizationId: orgslug,
-            updatedAt: new Date(),
-            isPending: true,
-          });
-        }}
-      >
-        add new team
-      </Button>
+      <CreateTeamDialog
+        activeOrganizationId={data?.session.activeOrganizationId!}
+      />
     </>
   );
 }

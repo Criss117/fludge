@@ -20,17 +20,8 @@ export const teamsCollection = createCollection(
     onInsert: async ({ transaction, collection }) => {
       const newItem = transaction.mutations[0].modified;
 
-      const { data: insertedTeam, error } = await tryCatch(
-        orpc.teams.create.call(newItem),
-        { sleep: 2000 },
-      );
+      const insertedTeam = await orpc.teams.create.call(newItem);
 
-      if (error) {
-        toast.error(error.message);
-        throw new Error(error.message);
-      }
-
-      toast.success("Equipo Creado Correctamente");
       collection.utils.writeInsert(insertedTeam);
 
       return { refetch: false };

@@ -39,7 +39,7 @@ export class CreateOrganizationUseCase extends WithAuthHeader {
         .where(
           or(
             eq(organization.slug, orgSlug),
-            eq(organization.legal_name, values.legalName),
+            eq(organization.legalName, values.legalName),
           ),
         )
         .limit(1),
