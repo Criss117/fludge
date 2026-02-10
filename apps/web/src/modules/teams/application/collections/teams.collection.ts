@@ -44,6 +44,19 @@ export function teamsCollection(orgId: string) {
 
           return { refetch: false };
         },
+        onDelete: async ({ transaction, collection }) => {
+          const teamIds = transaction.mutations.flatMap(
+            (mutation) => mutation.modified.id,
+          );
+
+          await orpc.teams.remove.call({
+            ids: teamIds,
+          });
+
+          collection.utils.writeDelete(teamIds);
+
+          return { refetch: false };
+        },
       }),
     );
 

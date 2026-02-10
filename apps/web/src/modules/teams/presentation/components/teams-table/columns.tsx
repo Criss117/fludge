@@ -5,6 +5,7 @@ import { Button } from "@/modules/shared/components/ui/button";
 import { Checkbox } from "@/modules/shared/components/ui/checkbox";
 import type { Team } from "@/modules/teams/application/collections/teams.collection";
 import { translatePermission } from "@fludge/utils/validators/permission.schemas";
+import { TeamsTableActions } from "./actions";
 
 const columnHelper = createColumnHelper<Team>();
 
@@ -123,10 +124,8 @@ export function defaultColumns(orgSlug: string) {
     }),
     columnHelper.display({
       id: "actions",
-      cell: () => (
-        <Button variant="ghost" size="icon">
-          <MoreVerticalIcon />
-        </Button>
+      cell: ({ row }) => (
+        <TeamsTableActions team={row.original} orgSlug={orgSlug} />
       ),
     }),
   ];

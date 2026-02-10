@@ -1,4 +1,4 @@
-import { createContext, use } from "react";
+import { createContext, use, useMemo } from "react";
 import type { Team } from "@/modules/teams/application/collections/teams.collection";
 import {
   flexRender,
@@ -42,6 +42,7 @@ interface RootProps {
 
 interface Context {
   table: TSTable<Team>;
+  columnsLength: number;
 }
 
 const TeamsTableContext = createContext<Context | null>(null);
@@ -61,9 +62,10 @@ function useTeamsTable() {
 }
 
 function Root({ children, orgSlug, teams }: RootProps) {
+  const columns = useMemo(() => defaultColumns(orgSlug), [orgSlug]);
   const table = useReactTable({
-    data: teams,
-    columns: defaultColumns(orgSlug),
+    data: teams || [],
+    columns,
     getRowId: (row) => row.id,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -72,14 +74,16 @@ function Root({ children, orgSlug, teams }: RootProps) {
   });
 
   return (
-    <TeamsTableContext.Provider value={{ table }}>
+    <TeamsTableContext.Provider
+      value={{ table, columnsLength: columns.length }}
+    >
       {children}
     </TeamsTableContext.Provider>
   );
 }
 
 function Content() {
-  const { table } = useTeamsTable();
+  const { table, columnsLength } = useTeamsTable();
 
   return (
     <div className="overflow-hidden rounded-md border">
@@ -122,11 +126,8 @@ function Content() {
             ))
           ) : (
             <TableRow>
-              <TableCell
-                colSpan={defaultColumns.length}
-                className="h-24 text-center"
-              >
-                No results.
+              <TableCell colSpan={columnsLength} className="h-24 text-center">
+                No hay equipos creados.
               </TableCell>
             </TableRow>
           )}

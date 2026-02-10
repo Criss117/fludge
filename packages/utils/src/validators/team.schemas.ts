@@ -15,4 +15,9 @@ export const createTeamSchema = z.object({
     .optional(),
 });
 
+export const removeManyTeamsSchema = z.object({
+  ids: z.array(z.string()).min(1, "Debe seleccionar al menos un equipo"),
+});
+
+export type RemoveManyTeamsSchema = z.infer<typeof removeManyTeamsSchema>;
 export type CreateTeamSchema = z.infer<typeof createTeamSchema>;

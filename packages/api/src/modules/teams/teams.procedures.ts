@@ -2,8 +2,12 @@ import { baseProcedure } from "@fludge/api";
 import { requireAuthMiddleware } from "@fludge/api/middlewares/requiere-auth.middleware";
 import { findManyTeamsUseCase } from "./usecases/find-many-teams.usecase";
 import { createTeamUseCase } from "./usecases/create-team.usecase";
-import { createTeamSchema } from "@fludge/utils/validators/team.schemas";
+import {
+  createTeamSchema,
+  removeManyTeamsSchema,
+} from "@fludge/utils/validators/team.schemas";
 import { AnyOrganizationActiveUseCase } from "../organizations/exceptions/any-organization-active.usecase";
+import { deleteTeamsUseCase } from "./usecases/delete-teams.usecase";
 
 export const teamsProcedures = {
   findMany: baseProcedure({
@@ -29,4 +33,13 @@ export const teamsProcedures = {
         activeOrganizationId,
       );
     }),
+
+  remove: baseProcedure({
+    method: "DELETE",
+  })
+    .use(requireAuthMiddleware())
+    .input(removeManyTeamsSchema)
+    .handler(({ input, context }) =>
+      deleteTeamsUseCase(context.req.headers).execute(input),
+    ),
 };

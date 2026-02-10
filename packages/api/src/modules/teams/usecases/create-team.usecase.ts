@@ -8,6 +8,7 @@ import { team } from "@fludge/db/schema/auth";
 import { TeamAlreadyExistsException } from "../exceptions/team-already-exists.exception";
 import { ORPCError } from "@orpc/client";
 import { permissionsSchema } from "@fludge/utils/validators/permission.schemas";
+import { tryCatch } from "@fludge/utils/try-catch";
 
 export class CreateTeamUseCase extends WithAuthHeader {
   public static instance: CreateTeamUseCase;
@@ -34,13 +35,17 @@ export class CreateTeamUseCase extends WithAuthHeader {
 
     if (existingTeam.length > 0) throw new TeamAlreadyExistsException();
 
-    const createdTeam = await auth.api.createTeam({
-      body: {
-        name: values.name,
-        permissions: values.permissions,
-      },
-      headers: this.headers,
-    });
+    const { data: createdTeam, error } = await tryCatch(
+      auth.api.createTeam({
+        body: {
+          name: values.name,
+          permissions: values.permissions,
+        },
+        headers: this.headers,
+      }),
+    );
+
+    if (error) throw new ORPCError("INTERNAL_SERVER_ERROR", error);
 
     const validPermissions = permissionsSchema.safeParse(values.permissions);
 

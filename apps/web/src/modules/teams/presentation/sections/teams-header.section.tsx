@@ -13,13 +13,13 @@ import { count, useLiveSuspenseQuery } from "@tanstack/react-db";
 export function TeamsHeaderSection() {
   const { data: session } = useVerifiedSession();
   const teamsCollection = useTeamsCollection();
-  const {
-    data: [{ total }],
-  } = useLiveSuspenseQuery((q) =>
+  const { data } = useLiveSuspenseQuery((q) =>
     q.from({ teams: teamsCollection }).select(({ teams }) => ({
       total: count(teams.id),
     })),
   );
+
+  const total = data.at(0)?.total || 0;
 
   return (
     <header>
