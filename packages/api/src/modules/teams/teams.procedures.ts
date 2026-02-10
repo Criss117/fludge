@@ -5,9 +5,11 @@ import { createTeamUseCase } from "./usecases/create-team.usecase";
 import {
   createTeamSchema,
   removeManyTeamsSchema,
+  updateTeamSchema,
 } from "@fludge/utils/validators/team.schemas";
 import { AnyOrganizationActiveUseCase } from "../organizations/exceptions/any-organization-active.usecase";
 import { deleteTeamsUseCase } from "./usecases/delete-teams.usecase";
+import { updateTeamUseCase } from "./usecases/update-team.usecase";
 
 export const teamsProcedures = {
   findMany: baseProcedure({
@@ -41,5 +43,13 @@ export const teamsProcedures = {
     .input(removeManyTeamsSchema)
     .handler(({ input, context }) =>
       deleteTeamsUseCase(context.req.headers).execute(input),
+    ),
+  update: baseProcedure({
+    method: "PUT",
+  })
+    .use(requireAuthMiddleware())
+    .input(updateTeamSchema)
+    .handler(({ input, context }) =>
+      updateTeamUseCase(context.req.headers).execute(input),
     ),
 };
