@@ -1,5 +1,8 @@
 import { baseProcedure } from "@fludge/api";
-import { requireAuthMiddleware } from "@fludge/api/middlewares/requiere-auth.middleware";
+import {
+  requireAuthMiddleware,
+  withOrganizationMiddleware,
+} from "@fludge/api/middlewares/requiere-auth.middleware";
 import { findManyTeamsUseCase } from "./usecases/find-many-teams.usecase";
 import { createTeamUseCase } from "./usecases/create-team.usecase";
 import {
@@ -7,7 +10,6 @@ import {
   removeManyTeamsSchema,
   updateTeamSchema,
 } from "@fludge/utils/validators/team.schemas";
-import { AnyOrganizationActiveUseCase } from "../organizations/exceptions/any-organization-active.usecase";
 import { deleteTeamsUseCase } from "./usecases/delete-teams.usecase";
 import { updateTeamUseCase } from "./usecases/update-team.usecase";
 
@@ -23,33 +25,26 @@ export const teamsProcedures = {
   create: baseProcedure({
     method: "POST",
   })
-    .use(requireAuthMiddleware())
+    .use(withOrganizationMiddleware())
     .input(createTeamSchema)
-    .handler(({ input, context }) => {
-      const activeOrganizationId = context.session.activeOrganizationId;
-
-      if (!activeOrganizationId) throw new AnyOrganizationActiveUseCase();
-
-      return createTeamUseCase(context.req.headers).execute(
-        input,
-        activeOrganizationId,
-      );
-    }),
+    .handler(({ input, context }) =>
+      createTeamUseCase().execute(context.organization.id, input),
+    ),
 
   remove: baseProcedure({
     method: "DELETE",
   })
-    .use(requireAuthMiddleware())
+    .use(withOrganizationMiddleware())
     .input(removeManyTeamsSchema)
     .handler(({ input, context }) =>
-      deleteTeamsUseCase(context.req.headers).execute(input),
+      deleteTeamsUseCase().execute(context.organization.id, input),
     ),
   update: baseProcedure({
     method: "PUT",
   })
-    .use(requireAuthMiddleware())
+    .use(withOrganizationMiddleware())
     .input(updateTeamSchema)
     .handler(({ input, context }) =>
-      updateTeamUseCase(context.req.headers).execute(input),
+      updateTeamUseCase().execute(context.organization.id, input),
     ),
 };

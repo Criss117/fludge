@@ -1,6 +1,6 @@
 import { ORPCError } from "@orpc/client";
 
-export class AnyOrganizationActiveUseCase extends ORPCError<
+export class AnyOrganizationException extends ORPCError<
   "BAD_REQUEST",
   undefined
 > {

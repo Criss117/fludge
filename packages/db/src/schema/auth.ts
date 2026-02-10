@@ -1,3 +1,4 @@
+import type { Permission } from "@fludge/utils/validators/permission.schemas";
 import { relations, sql } from "drizzle-orm";
 import {
   sqliteTable,
@@ -130,7 +131,9 @@ export const team = sqliteTable(
     updatedAt: integer("updated_at", { mode: "timestamp_ms" }).$onUpdate(
       () => /* @__PURE__ */ new Date(),
     ),
-    permissions: text("permissions", { mode: "json" }).notNull(),
+    permissions: text("permissions", { mode: "json" })
+      .$type<Permission[]>()
+      .notNull(),
     description: text("description"),
   },
   (table) => [index("team_organizationId_idx").on(table.organizationId)],

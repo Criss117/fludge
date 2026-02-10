@@ -1,54 +1,91 @@
-import type { IncomingHttpHeaders } from "node:http";
-import { WithAuthHeader } from "@fludge/api/modules/shared/usecases/with-auth-headers";
-import type { UpdateTeamSchema } from "@fludge/utils/validators/team.schemas";
-import { auth } from "@fludge/auth";
+import { db } from "@fludge/db";
+import { team } from "@fludge/db/schema/auth";
 import { tryCatch } from "@fludge/utils/try-catch";
-import { ORPCError } from "@orpc/client";
-import { permissionsSchema } from "@fludge/utils/validators/permission.schemas";
+import type { UpdateTeamSchema } from "@fludge/utils/validators/team.schemas";
+import { and, eq, sql } from "drizzle-orm";
+import { InternalServerErrorException } from "../../shared/exceptions/internal-server-error.exception";
+import { TeamNotFoundException } from "../exceptions/team-not-found.exception";
+import { TeamAlreadyExistsException } from "../exceptions/team-already-exists.exception";
 
-export class UpdateTeamUseCase extends WithAuthHeader {
+export class UpdateTeamUseCase {
   public static instance: UpdateTeamUseCase;
 
-  private constructor(nodeHeaders: IncomingHttpHeaders) {
-    super(nodeHeaders);
-  }
+  private constructor() {}
 
-  public static getInstance(nodeHeaders: IncomingHttpHeaders) {
+  public static getInstance() {
     if (!UpdateTeamUseCase.instance) {
-      UpdateTeamUseCase.instance = new UpdateTeamUseCase(nodeHeaders);
+      UpdateTeamUseCase.instance = new UpdateTeamUseCase();
     }
     return UpdateTeamUseCase.instance;
   }
 
-  public async execute(values: UpdateTeamSchema) {
-    const { data, error } = await tryCatch(
-      auth.api.updateTeam({
-        headers: this.headers,
-        body: {
-          data: {
-            description: values.description,
-            permissions: values.permissions,
-            name: values.name,
-          },
-          teamId: values.id,
-        },
-      }),
+  public async execute(organizationId: string, values: UpdateTeamSchema) {
+    const { data: existingTeams, error } = await tryCatch(
+      db
+        .select()
+        .from(team)
+        .where(
+          and(eq(team.id, values.id), eq(team.organizationId, organizationId)),
+        )
+        .limit(1),
     );
 
-    if (error || !data)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: error?.message || "Failed to update team",
-      });
+    if (error)
+      throw new InternalServerErrorException(
+        "Hubo un error al obtener los datos del equipo",
+      );
 
-    const validatedPermissions = permissionsSchema.safeParse(data.permissions);
+    const existingTeam = existingTeams.at(0);
 
-    if (!validatedPermissions.success)
-      throw new ORPCError("BAD_REQUEST", validatedPermissions.error);
+    if (!existingTeam) throw new TeamNotFoundException();
 
-    return { ...data, permissions: validatedPermissions.data };
+    if (values.name && existingTeam.name !== values.name) {
+      const { data: existingTeamsSameName, error: errorExistingTeamsSameName } =
+        await tryCatch(
+          db
+            .select({ id: team.id })
+            .from(team)
+            .where(
+              and(
+                sql`lower(${team.name}) = lower(${values.name})`,
+                eq(team.organizationId, organizationId),
+              ),
+            )
+            .limit(1),
+        );
+
+      if (errorExistingTeamsSameName)
+        throw new InternalServerErrorException(
+          "Hubo un error al obtener los datos del equipo",
+        );
+
+      if (existingTeamsSameName.length > 0)
+        throw new TeamAlreadyExistsException("El nombre del equipo ya existe");
+    }
+
+    const { data: updatedTeam, error: errorUpadatedTeam } = await tryCatch(
+      db
+        .update(team)
+        .set({
+          name: values.name || existingTeam.name,
+          description: values.description || existingTeam.description,
+          permissions: values.permissions || existingTeam.permissions,
+        })
+        .where(
+          and(eq(team.id, values.id), eq(team.organizationId, organizationId)),
+        )
+        .returning(),
+    );
+
+    if (errorUpadatedTeam)
+      throw new InternalServerErrorException(
+        "Hubo un error al actualizar los datos del equipo",
+      );
+
+    return updatedTeam;
   }
 }
 
-export function updateTeamUseCase(nodeHeaders: IncomingHttpHeaders) {
-  return UpdateTeamUseCase.getInstance(nodeHeaders);
+export function updateTeamUseCase() {
+  return UpdateTeamUseCase.getInstance();
 }

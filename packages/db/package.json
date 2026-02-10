@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@fludge/env": "workspace:*",
+    "@fludge/utils": "workspace:*",
     "@libsql/client": "catalog:",
     "dotenv": "catalog:",
     "drizzle-orm": "catalog:",
