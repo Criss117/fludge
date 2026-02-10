@@ -10,7 +10,6 @@ export const createTeamSchema = z.object({
   employeesId: z.array(z.string()).optional(),
   description: z
     .string()
-    .min(2, "La descripción del equipo debe tener al menos 2 caracteres")
     .max(50, "La descripción del equipo es demasiado larga")
     .optional(),
 });

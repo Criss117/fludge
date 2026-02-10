@@ -3,7 +3,7 @@ import { team } from "@fludge/db/schema/auth";
 import { tryCatch } from "@fludge/utils/try-catch";
 import type { UpdateTeamSchema } from "@fludge/utils/validators/team.schemas";
 import { and, eq, sql } from "drizzle-orm";
-import { InternalServerErrorException } from "../../shared/exceptions/internal-server-error.exception";
+import { InternalServerErrorException } from "@fludge/api/modules/shared/exceptions/internal-server-error.exception";
 import { TeamNotFoundException } from "../exceptions/team-not-found.exception";
 import { TeamAlreadyExistsException } from "../exceptions/team-already-exists.exception";
 
@@ -32,7 +32,7 @@ export class UpdateTeamUseCase {
 
     if (error)
       throw new InternalServerErrorException(
-        "Hubo un error al obtener los datos del equipo",
+        "Hubo un error al obtener los datos del equipo.",
       );
 
     const existingTeam = existingTeams.at(0);
@@ -56,20 +56,22 @@ export class UpdateTeamUseCase {
 
       if (errorExistingTeamsSameName)
         throw new InternalServerErrorException(
-          "Hubo un error al obtener los datos del equipo",
+          "Hubo un error al obtener los datos del equipo.",
         );
 
       if (existingTeamsSameName.length > 0)
-        throw new TeamAlreadyExistsException("El nombre del equipo ya existe");
+        throw new TeamAlreadyExistsException(
+          "El nombre del equipo ya esta en uso.",
+        );
     }
 
     const { data: updatedTeam, error: errorUpadatedTeam } = await tryCatch(
       db
         .update(team)
         .set({
-          name: values.name || existingTeam.name,
-          description: values.description || existingTeam.description,
-          permissions: values.permissions || existingTeam.permissions,
+          name: values.name ?? existingTeam.name,
+          description: values.description ?? existingTeam.description,
+          permissions: values.permissions ?? existingTeam.permissions,
         })
         .where(
           and(eq(team.id, values.id), eq(team.organizationId, organizationId)),

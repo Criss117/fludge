@@ -87,7 +87,16 @@ export function CreateTeamDialog({ activeOrganizationId }: Props) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        if (!v) {
+          setRootError(null);
+          form.reset();
+        }
+        setOpen(v);
+      }}
+    >
       <DialogTrigger render={(props) => <Button {...props} />}>
         <PlusIcon />
         <span>Crear Equipo</span>

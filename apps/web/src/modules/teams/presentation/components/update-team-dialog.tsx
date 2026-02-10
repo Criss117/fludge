@@ -132,6 +132,7 @@ function FormDialog() {
       onOpenChange={(v) => {
         if (!v) {
           form.reset();
+          setRootError(null);
           clearState();
         }
       }}
