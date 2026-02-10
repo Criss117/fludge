@@ -11,6 +11,7 @@ import {
 } from "@/modules/shared/components/ui/dropdown-menu";
 import type { Team } from "@/modules/teams/application/collections/teams.collection";
 import { RemoveTeam } from "./remove";
+import { UpdateTeamDialog } from "../update-team-dialog";
 
 interface Props {
   orgSlug: string;
@@ -18,6 +19,8 @@ interface Props {
 }
 
 export function TeamsTableActions({ orgSlug, team }: Props) {
+  const { selectTeam } = UpdateTeamDialog.useUpdateTeam();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -44,7 +47,7 @@ export function TeamsTableActions({ orgSlug, team }: Props) {
             <Users className="h-4 w-4" />
             Ver mas
           </DropdownMenuItem>
-          <DropdownMenuItem className="gap-2">
+          <DropdownMenuItem className="gap-2" onClick={() => selectTeam(team)}>
             <PencilIcon className="h-4 w-4" />
             Editar equipo
           </DropdownMenuItem>

@@ -15,9 +15,14 @@ export const createTeamSchema = z.object({
     .optional(),
 });
 
+export const updateTeamSchema = createTeamSchema.partial().extend({
+  id: z.string("El id del equipo es requerido"),
+});
+
 export const removeManyTeamsSchema = z.object({
   ids: z.array(z.string()).min(1, "Debe seleccionar al menos un equipo"),
 });
 
 export type RemoveManyTeamsSchema = z.infer<typeof removeManyTeamsSchema>;
 export type CreateTeamSchema = z.infer<typeof createTeamSchema>;
+export type UpdateTeamSchema = z.infer<typeof updateTeamSchema>;

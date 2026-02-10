@@ -27,7 +27,7 @@ const collectionsCache = new Map<string, TeamCollection>();
 
 export function teamsCollection(orgId: string) {
   if (!collectionsCache.has(orgId)) {
-    const collection = createCollection(
+    const newTeamsCollection = createCollection(
       queryCollectionOptions<Team>({
         queryKey: ["organization", orgId, "teams"],
         queryFn: () => {
@@ -40,7 +40,16 @@ export function teamsCollection(orgId: string) {
 
           const insertedTeam = await orpc.teams.create.call(newItem);
 
-          collection.utils.writeInsert(insertedTeam);
+          newTeamsCollection.utils.writeInsert(insertedTeam);
+
+          return { refetch: false };
+        },
+        onUpdate: async ({ transaction, collection }) => {
+          const updatedItem = transaction.mutations[0].modified;
+
+          const updatedTeam = await orpc.teams.update.call(updatedItem);
+
+          collection.utils.writeUpdate(updatedTeam);
 
           return { refetch: false };
         },
@@ -60,7 +69,7 @@ export function teamsCollection(orgId: string) {
       }),
     );
 
-    collectionsCache.set(orgId, collection);
+    collectionsCache.set(orgId, newTeamsCollection);
   }
 
   return collectionsCache.get(orgId)!;
