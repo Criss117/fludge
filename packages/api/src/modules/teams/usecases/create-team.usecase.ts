@@ -1,12 +1,12 @@
 import type { IncomingHttpHeaders } from "node:http";
 import { and, eq } from "drizzle-orm";
+import { ORPCError } from "@orpc/client";
 import { WithAuthHeader } from "@fludge/api/modules/shared/usecases/with-auth-headers";
 import { auth } from "@fludge/auth";
 import type { CreateTeamSchema } from "@fludge/utils/validators/team.schemas";
 import { db } from "@fludge/db";
 import { team } from "@fludge/db/schema/auth";
 import { TeamAlreadyExistsException } from "../exceptions/team-already-exists.exception";
-import { ORPCError } from "@orpc/client";
 import { permissionsSchema } from "@fludge/utils/validators/permission.schemas";
 import { tryCatch } from "@fludge/utils/try-catch";
 
@@ -40,6 +40,7 @@ export class CreateTeamUseCase extends WithAuthHeader {
         body: {
           name: values.name,
           permissions: values.permissions,
+          description: values.description,
         },
         headers: this.headers,
       }),

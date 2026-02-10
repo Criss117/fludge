@@ -9,6 +9,11 @@ interface Props {
   id?: string;
 }
 
+interface SearchInputSkeletonProps {
+  placeholder?: string;
+  id?: string;
+}
+
 export function SearchInput({
   value,
   onChange,
@@ -31,6 +36,36 @@ export function SearchInput({
         size="icon-sm"
         variant="ghost"
         className="absolute right-0 top-1/2 -translate-y-1/2"
+      >
+        <X />
+      </Button>
+    </div>
+  );
+}
+
+export function SearchInputSkeleton({
+  placeholder,
+  id,
+}: SearchInputSkeletonProps) {
+  return (
+    <div className="relative">
+      <Search
+        className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground"
+        size={18}
+      />
+      <Input
+        id={id}
+        className="pl-8"
+        type="text"
+        placeholder={placeholder}
+        value=""
+        disabled
+      />
+      <Button
+        onClick={() => {}}
+        size="icon-sm"
+        variant="ghost"
+        className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground"
       >
         <X />
       </Button>

@@ -29,10 +29,10 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/modules/shared/components/ui/select";
+import { TableSizes } from "@/modules/shared/lib/constants";
 
 interface RootProps {
   teams: Team[];
@@ -46,12 +46,6 @@ interface Context {
 }
 
 const TeamsTableContext = createContext<Context | null>(null);
-const TableSizes = [
-  { value: 10, label: "10" },
-  { value: 20, label: "20" },
-  { value: 30, label: "30" },
-  { value: 50, label: "50" },
-];
 
 function useTeamsTable() {
   const context = use(TeamsTableContext);
@@ -118,7 +112,7 @@ function Content() {
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="text-center">
+                  <TableCell key={cell.id} className="text-center h-24">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

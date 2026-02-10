@@ -2,8 +2,11 @@ import { ilike, useLiveSuspenseQuery } from "@tanstack/react-db";
 import { useTeamsCollection } from "@/modules/shared/hooks/use-teams-collection";
 import { useTeamsFilters } from "@/modules/teams/application/store/teams-filters.store";
 import { TeamsTable } from "../components/teams-table";
-import { Input } from "@/modules/shared/components/ui/input";
-import { SearchInput } from "@/modules/shared/components/search-input";
+import {
+  SearchInput,
+  SearchInputSkeleton,
+} from "@/modules/shared/components/search-input";
+import { TeamsTableSkeleton } from "../components/teams-table/skeleton";
 
 export function TeamsListSection({ orgSlug }: { orgSlug: string }) {
   const { filters, filtersDispatch } = useTeamsFilters();
@@ -51,5 +54,35 @@ export function TeamsListSection({ orgSlug }: { orgSlug: string }) {
         <TeamsTable.LastPageButton />
       </footer>
     </TeamsTable.Root>
+  );
+}
+
+export function TeamsListSectionSkeleton() {
+  return (
+    <>
+      <header className="flex justify-between items-center">
+        <div className="w-1/3">
+          <SearchInputSkeleton placeholder="Buscar Equipos" />
+        </div>
+
+        <div className="gap-x-2 flex items-center">
+          <TeamsTableSkeleton.FirstPageButton />
+          <TeamsTableSkeleton.PrevButton />
+          <TeamsTableSkeleton.PageSizeSelect />
+          <TeamsTableSkeleton.NextButton />
+          <TeamsTableSkeleton.LastPageButton />
+        </div>
+      </header>
+
+      <TeamsTableSkeleton.Content />
+
+      <footer className="flex gap-x-2 items-center justify-end">
+        <TeamsTableSkeleton.FirstPageButton />
+        <TeamsTableSkeleton.PrevButton />
+        <TeamsTableSkeleton.PageSizeSelect />
+        <TeamsTableSkeleton.NextButton />
+        <TeamsTableSkeleton.LastPageButton />
+      </footer>
+    </>
   );
 }
