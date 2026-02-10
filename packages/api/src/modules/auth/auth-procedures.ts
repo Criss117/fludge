@@ -15,8 +15,7 @@ export const authProcedures = {
       });
 
       return {
-        session: context.session,
-        user: context.session.user,
+        ...context.session,
         organizations: orgs,
       };
     }),

@@ -53,6 +53,23 @@ export const resourcesEs = new Map<Resource, string>([
   ["customer", "Cliente"],
 ]);
 
+export function translatePermission(permission: Permission) {
+  const [action, resource] = permission.split(":") as [Action, Resource];
+  const actionEs = actionsEs.get(action) || action;
+  const resourceEs = resourcesEs.get(resource) || resource;
+
+  const translation = `${actionEs} ${resourceEs}`;
+
+  return {
+    es: translation,
+    en: permission,
+    action,
+    resource,
+    actionEs,
+    resourceEs,
+  };
+}
+
 export const groupedPermissions = allPermissions.reduce(
   (acc, permission) => {
     const [action, resource] = permission.split(":") as [Action, Resource];

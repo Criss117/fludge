@@ -1,29 +1,33 @@
 import { authClient } from "@/integrations/auth";
 import { AppSidebar } from "@/modules/shared/components/app-sidebar";
+import { LoadingScreen } from "@/modules/shared/components/loading-screen";
 import {
   SidebarInset,
   SidebarProvider,
 } from "@/modules/shared/components/ui/sidebar";
+import { tryCatch } from "@fludge/utils/try-catch";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/dashboard/$orgslug")({
   component: RouteComponent,
   beforeLoad: async ({ context }) => {
-    const session = await context.queryClient.fetchQuery(
-      context.orpc.auth.getSession.queryOptions(),
+    const { data: session, error } = await tryCatch(
+      context.queryClient.fetchQuery(
+        context.orpc.auth.getSession.queryOptions(),
+      ),
     );
 
-    if (!session)
+    if (!session || error)
       throw redirect({
         to: "/",
       });
 
     return {
-      ...session,
+      session,
     };
   },
   loader: async ({ context, params }) => {
-    const orgs = context.organizations;
+    const orgs = context.session.organizations;
 
     if (!orgs?.length) throw redirect({ to: "/register-organization" });
 
@@ -31,11 +35,10 @@ export const Route = createFileRoute("/dashboard/$orgslug")({
 
     if (!selectedOrg) throw redirect({ to: "/select-organization" });
 
-    const isSameActiveOrg =
-      selectedOrg.id === context.session.activeOrganizationId;
+    if (selectedOrg.id === context.session.activeOrganizationId) return;
 
-    if (!isSameActiveOrg) {
-      await authClient.organization.setActive({
+    const { error } = await tryCatch(
+      authClient.organization.setActive({
         organizationId: selectedOrg.id,
         organizationSlug: selectedOrg.slug,
         fetchOptions: {
@@ -45,12 +48,14 @@ export const Route = createFileRoute("/dashboard/$orgslug")({
             );
           },
         },
-      });
+      }),
+    );
 
-      context.session.activeOrganizationId = selectedOrg.id;
-    }
+    if (error) throw redirect({ to: "/" });
+
+    context.session.activeOrganizationId = selectedOrg.id;
   },
-  pendingComponent: () => <div>Loading...</div>,
+  pendingComponent: () => <LoadingScreen messages="Verificando Credenciales" />,
 });
 
 function RouteComponent() {

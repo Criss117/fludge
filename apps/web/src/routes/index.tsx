@@ -5,19 +5,19 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/")({
   component: HomeComponent,
   beforeLoad: async ({ context }) => {
-    const authData = await context.queryClient.fetchQuery(
+    const session = await context.queryClient.fetchQuery(
       context.orpc.auth.getSession.queryOptions(),
     );
 
-    if (!authData) return;
+    if (!session) return;
 
-    if (!authData.organizations.length)
+    if (!session.organizations.length)
       throw redirect({
         to: "/register-organization",
       });
 
-    const hasActiveOrg = authData.organizations.find(
-      (org) => org.id === authData.session.activeOrganizationId,
+    const hasActiveOrg = session.organizations.find(
+      (org) => org.id === session.activeOrganizationId,
     );
 
     if (hasActiveOrg)

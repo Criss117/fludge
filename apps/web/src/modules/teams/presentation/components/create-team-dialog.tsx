@@ -1,4 +1,6 @@
-import { PlusCircle, Shield } from "lucide-react";
+import { toast } from "sonner";
+import { useState, useTransition } from "react";
+import { PlusIcon, Shield } from "lucide-react";
 import { Button } from "@/modules/shared/components/ui/button";
 import {
   Dialog,
@@ -22,10 +24,8 @@ import {
   FieldSet,
 } from "@/modules/shared/components/ui/field";
 import { ScrollArea } from "@/modules/shared/components/ui/scroll-area";
-import { teamsCollection } from "../../application/collections/teams.collection";
 import { tryCatch } from "@fludge/utils/try-catch";
-import { toast } from "sonner";
-import { useState } from "react";
+import { useTeamsCollection } from "@/modules/shared/hooks/use-teams-collection";
 
 const defaultValues: CreateTeamSchema = {
   name: "",
@@ -38,14 +38,16 @@ interface Props {
 
 export function CreateTeamDialog({ activeOrganizationId }: Props) {
   const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [rootError, setRootError] = useState<string | null>(null);
+  const teamsCollection = useTeamsCollection();
 
   const form = useTeamForm({
     validators: {
       onSubmit: createTeamSchema,
     },
     defaultValues,
-    onSubmit: async ({ value, formApi }) => {
+    onSubmit: ({ value, formApi }) => {
       const tx = teamsCollection.insert({
         name: value.name,
         permissions: value.permissions,
@@ -55,17 +57,27 @@ export function CreateTeamDialog({ activeOrganizationId }: Props) {
         id: Math.random().toString(36).substring(2, 9),
         isPending: true,
       });
+      startTransition(async () => {
+        const loadingToastId = toast.loading("Creando equipo...", {
+          position: "top-center",
+        });
+        const { error } = await tryCatch(tx.isPersisted.promise);
 
-      const { error } = await tryCatch(tx.isPersisted.promise);
+        toast.dismiss(loadingToastId);
+        if (error) {
+          toast.error(error.message, {
+            position: "top-center",
+          });
+          setRootError(error.message);
+          return;
+        }
 
-      if (error) {
-        toast.error(error.message);
-        setRootError(error.message);
-        return;
-      }
-
-      formApi.reset();
-      setOpen(false);
+        toast.success("Equipo creado exitosamente", {
+          position: "top-center",
+        });
+        formApi.reset();
+        setOpen(false);
+      });
     },
   });
 
@@ -77,7 +89,7 @@ export function CreateTeamDialog({ activeOrganizationId }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={(props) => <Button {...props} />}>
-        <PlusCircle />
+        <PlusIcon />
         <span>Crear Equipo</span>
       </DialogTrigger>
       <DialogContent className="min-w-2/3">
@@ -130,7 +142,9 @@ export function CreateTeamDialog({ activeOrganizationId }: Props) {
             >
               Cancelar
             </DialogClose>
-            <Button type="submit">Guardar Equipo</Button>
+            <Button type="submit" disabled={isPending}>
+              Guardar Equipo
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
