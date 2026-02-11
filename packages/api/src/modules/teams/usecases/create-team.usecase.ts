@@ -5,7 +5,6 @@ import { team } from "@fludge/db/schema/auth";
 import { TeamAlreadyExistsException } from "../exceptions/team-already-exists.exception";
 import { tryCatch } from "@fludge/utils/try-catch";
 import { InternalServerErrorException } from "@fludge/api/modules/shared/exceptions/internal-server-error.exception";
-import { auth } from "@fludge/auth";
 
 export class CreateTeamUseCase {
   public static instance: CreateTeamUseCase;
@@ -41,14 +40,16 @@ export class CreateTeamUseCase {
     if (existingTeams.length > 0) throw new TeamAlreadyExistsException();
 
     const { data: createdTeam, error: createTeamError } = await tryCatch(
-      auth.api.createTeam({
-        body: {
+      db
+        .insert(team)
+        .values({
           name: values.name,
           permissions: values.permissions,
           description: values.description,
           organizationId,
-        },
-      }),
+          createdAt: new Date(),
+        })
+        .returning(),
     );
 
     if (createTeamError)

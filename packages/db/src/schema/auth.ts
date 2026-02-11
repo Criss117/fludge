@@ -6,10 +6,12 @@ import {
   integer,
   index,
   uniqueIndex,
+  blob,
 } from "drizzle-orm/sqlite-core";
+import { uuid } from "../utils";
 
 export const user = sqliteTable("user", {
-  id: text("id").primaryKey(),
+  id: uuid().primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: integer("email_verified", { mode: "boolean" })
@@ -31,7 +33,7 @@ export const user = sqliteTable("user", {
 export const session = sqliteTable(
   "session",
   {
-    id: text("id").primaryKey(),
+    id: uuid().primaryKey(),
     expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
     token: text("token").notNull().unique(),
     createdAt: integer("created_at", { mode: "timestamp_ms" })
@@ -54,7 +56,7 @@ export const session = sqliteTable(
 export const account = sqliteTable(
   "account",
   {
-    id: text("id").primaryKey(),
+    id: uuid().primaryKey(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
     userId: text("user_id")
@@ -84,7 +86,7 @@ export const account = sqliteTable(
 export const verification = sqliteTable(
   "verification",
   {
-    id: text("id").primaryKey(),
+    id: uuid().primaryKey(),
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
     expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
@@ -102,7 +104,7 @@ export const verification = sqliteTable(
 export const organization = sqliteTable(
   "organization",
   {
-    id: text("id").primaryKey(),
+    id: uuid().primaryKey(),
     name: text("name").notNull(),
     slug: text("slug").notNull().unique(),
     logo: text("logo"),
@@ -122,7 +124,7 @@ export const organization = sqliteTable(
 export const team = sqliteTable(
   "team",
   {
-    id: text("id").primaryKey(),
+    id: uuid().primaryKey(),
     name: text("name").notNull(),
     organizationId: text("organization_id")
       .notNull()
@@ -131,7 +133,7 @@ export const team = sqliteTable(
     updatedAt: integer("updated_at", { mode: "timestamp_ms" }).$onUpdate(
       () => /* @__PURE__ */ new Date(),
     ),
-    permissions: text("permissions", { mode: "json" })
+    permissions: blob("permissions", { mode: "json" })
       .$type<Permission[]>()
       .notNull(),
     description: text("description"),
@@ -142,7 +144,7 @@ export const team = sqliteTable(
 export const teamMember = sqliteTable(
   "team_member",
   {
-    id: text("id").primaryKey(),
+    id: uuid().primaryKey(),
     teamId: text("team_id")
       .notNull()
       .references(() => team.id, { onDelete: "cascade" }),
@@ -160,7 +162,7 @@ export const teamMember = sqliteTable(
 export const member = sqliteTable(
   "member",
   {
-    id: text("id").primaryKey(),
+    id: uuid().primaryKey(),
     organizationId: text("organization_id")
       .notNull()
       .references(() => organization.id, { onDelete: "cascade" }),
@@ -179,7 +181,7 @@ export const member = sqliteTable(
 export const invitation = sqliteTable(
   "invitation",
   {
-    id: text("id").primaryKey(),
+    id: uuid().primaryKey(),
     organizationId: text("organization_id")
       .notNull()
       .references(() => organization.id, { onDelete: "cascade" }),

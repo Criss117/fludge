@@ -17,9 +17,9 @@ export const teamsProcedures = {
   findMany: baseProcedure({
     method: "GET",
   })
-    .use(requireAuthMiddleware())
+    .use(withOrganizationMiddleware())
     .handler(({ context }) =>
-      findManyTeamsUseCase(context.req.headers).execute(),
+      findManyTeamsUseCase().execute(context.organization.id),
     ),
 
   create: baseProcedure({

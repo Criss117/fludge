@@ -8,7 +8,7 @@ import { slugify } from "@fludge/utils/slugify";
 import { tryCatch } from "@fludge/utils/try-catch";
 import { allPermissions } from "@fludge/utils/validators/permission.schemas";
 import type { CreateOrganizationSchema } from "@fludge/utils/validators/organization.schema";
-import { organization } from "@fludge/db/schema/auth";
+import { organization, team } from "@fludge/db/schema/auth";
 import { WithAuthHeader } from "@fludge/api/modules/shared/usecases/with-auth-headers";
 
 export class CreateOrganizationUseCase extends WithAuthHeader {
@@ -70,13 +70,17 @@ export class CreateOrganizationUseCase extends WithAuthHeader {
       });
 
     const { data: createdTeam, error: createdTeamErr } = await tryCatch(
-      auth.api.createTeam({
-        body: {
+      db
+        .insert(team)
+        .values({
           name: "Administradores",
           organizationId: createdOrg.id,
           permissions: allPermissions,
-        },
-      }),
+          createdAt: new Date(),
+          description:
+            "Acceso total al sistema. Gestiona todos los recursos y configuraciones del POS.",
+        })
+        .returning(),
     );
 
     if (createdTeamErr)

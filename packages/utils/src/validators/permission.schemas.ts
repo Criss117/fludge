@@ -53,6 +53,13 @@ export const resourcesEs = new Map<Resource, string>([
   ["customer", "Cliente"],
 ]);
 
+export const resourcesEsDesc = new Map<Resource, string>([
+  ["team", "Gestionar equipos y sus miembros"],
+  ["product", "Gestionar catalogo de productos"],
+  ["ticket", "Gestionar informacion de clientes"],
+  ["customer", "Gestionar tickets de venta y soporte"],
+]);
+
 export function translatePermission(permission: Permission) {
   const [action, resource] = permission.split(":") as [Action, Resource];
   const actionEs = actionsEs.get(action) || action;
@@ -77,6 +84,7 @@ export const groupedPermissions = allPermissions.reduce(
       acc[resource] = {
         es: resourcesEs.get(resource) || resource,
         en: resource,
+        desc: resourcesEsDesc.get(resource) || resource,
         values: [],
       };
     }
@@ -89,6 +97,11 @@ export const groupedPermissions = allPermissions.reduce(
   },
   {} as Record<
     Resource,
-    { es: string; en: Resource; values: { es: string; en: Permission }[] }
+    {
+      es: string;
+      en: Resource;
+      desc: string;
+      values: { es: string; en: Permission }[];
+    }
   >,
 );

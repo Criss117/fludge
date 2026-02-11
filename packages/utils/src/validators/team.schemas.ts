@@ -10,8 +10,8 @@ export const createTeamSchema = z.object({
   employeesId: z.array(z.string()).optional(),
   description: z
     .string()
-    .max(50, "La descripción del equipo es demasiado larga")
-    .optional(),
+    .max(100, "La descripción del equipo es demasiado larga")
+    .nullish(),
 });
 
 export const updateTeamSchema = createTeamSchema.partial().extend({
