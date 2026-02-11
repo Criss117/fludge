@@ -10,7 +10,9 @@ import {
 } from "@tanstack/query-db-collection";
 import { queryClient } from "@/integrations/tanstack-query";
 
-export type Team = Awaited<ReturnType<typeof orpc.teams.create.call>> & {
+export type Team = Awaited<
+  ReturnType<typeof orpc.teams.findMany.call>
+>[number] & {
   isPending?: boolean;
 };
 
@@ -25,7 +27,7 @@ type TeamCollection = Collection<
 
 const collectionsCache = new Map<string, TeamCollection>();
 
-export function teamsCollection(orgId: string) {
+export function teamsCollectionBuilder(orgId: string) {
   if (!collectionsCache.has(orgId)) {
     const newTeamsCollection = createCollection(
       queryCollectionOptions<Team>({
@@ -38,9 +40,13 @@ export function teamsCollection(orgId: string) {
         onInsert: async ({ transaction, collection }) => {
           const newItem = transaction.mutations[0].modified;
 
-          const insertedTeam = await orpc.teams.create.call(newItem);
+          const insertedTeam = await orpc.teams.create.call({
+            name: newItem.name,
+            permissions: newItem.permissions,
+            description: newItem.description,
+          });
 
-          newTeamsCollection.utils.writeInsert(insertedTeam);
+          collection.utils.writeInsert(insertedTeam);
 
           return { refetch: false };
         },

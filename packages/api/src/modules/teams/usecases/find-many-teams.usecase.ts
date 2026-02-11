@@ -21,8 +21,6 @@ export class FindManyTeamsUseCase {
       db.select().from(team).where(eq(team.organizationId, organizationId)),
     );
 
-    console.log(teams);
-
     if (error)
       throw new InternalServerErrorException(
         "Hubo un error al buscar los equipos",

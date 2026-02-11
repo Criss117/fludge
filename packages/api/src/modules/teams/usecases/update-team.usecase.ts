@@ -71,7 +71,9 @@ export class UpdateTeamUseCase {
         .set({
           name: values.name ?? existingTeam.name,
           description: values.description ?? existingTeam.description,
-          permissions: values.permissions ?? existingTeam.permissions,
+          permissions: Array.from(
+            new Set(values.permissions ?? existingTeam.permissions),
+          ),
         })
         .where(
           and(eq(team.id, values.id), eq(team.organizationId, organizationId)),

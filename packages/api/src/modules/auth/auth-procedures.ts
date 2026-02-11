@@ -5,7 +5,10 @@ import { auth } from "@fludge/auth";
 import { signUpSchema } from "@fludge/utils/validators/auth.schemas";
 
 export const authProcedures = {
-  getSession: baseProcedure()
+  getSession: baseProcedure({
+    method: "GET",
+    description: "Get the current session",
+  })
     .use(authMiddleware)
     .handler(async ({ context }) => {
       if (!context.session) return null;

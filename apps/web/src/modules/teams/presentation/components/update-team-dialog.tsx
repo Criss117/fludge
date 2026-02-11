@@ -74,9 +74,6 @@ function Root({ children }: { children: React.ReactNode }) {
 }
 
 function FormDialog() {
-  const {
-    data: { activeOrganizationId },
-  } = useVerifiedSession();
   const { selectedTeam, clearState } = useUpdateTeam();
   const [isPending, startTransition] = useTransition();
   const [rootError, setRootError] = useState<string | null>(null);
@@ -94,7 +91,7 @@ function FormDialog() {
         draft.id = selectedTeam.id;
         draft.name = value.name;
         draft.permissions = value.permissions;
-        draft.description = value.description;
+        draft.description = value.description || null;
         draft.isPending = true;
       });
       startTransition(async () => {
