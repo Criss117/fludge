@@ -1,30 +1,37 @@
-import type { IncomingHttpHeaders } from "node:http";
-import { WithAuthHeader } from "@fludge/api/modules/shared/usecases/with-auth-headers";
-import { auth } from "@fludge/auth";
+import { eq } from "drizzle-orm";
+import { db } from "@fludge/db";
+import { team } from "@fludge/db/schema/auth";
+import { tryCatch } from "@fludge/utils/try-catch";
+import { InternalServerErrorException } from "../../shared/exceptions/internal-server-error.exception";
 
-export class FindManyTeamsUseCase extends WithAuthHeader {
+export class FindManyTeamsUseCase {
   public static instance: FindManyTeamsUseCase;
 
-  private constructor(nodeHeaders: IncomingHttpHeaders) {
-    super(nodeHeaders);
-  }
+  private constructor() {}
 
-  public static getInstance(nodeHeaders: IncomingHttpHeaders) {
+  public static getInstance() {
     if (!FindManyTeamsUseCase.instance) {
-      FindManyTeamsUseCase.instance = new FindManyTeamsUseCase(nodeHeaders);
+      FindManyTeamsUseCase.instance = new FindManyTeamsUseCase();
     }
     return FindManyTeamsUseCase.instance;
   }
 
-  public async execute() {
-    const teams = await auth.api.listOrganizationTeams({
-      headers: this.headers,
-    });
+  public async execute(organizationId: string) {
+    const { data: teams, error } = await tryCatch(
+      db.select().from(team).where(eq(team.organizationId, organizationId)),
+    );
+
+    console.log(teams);
+
+    if (error)
+      throw new InternalServerErrorException(
+        "Hubo un error al buscar los equipos",
+      );
 
     return teams;
   }
 }
 
-export function findManyTeamsUseCase(nodeHeaders: IncomingHttpHeaders) {
-  return FindManyTeamsUseCase.getInstance(nodeHeaders);
+export function findManyTeamsUseCase() {
+  return FindManyTeamsUseCase.getInstance();
 }
