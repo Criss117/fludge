@@ -3,6 +3,8 @@ import { authMiddleware } from "./auth.middleware";
 import { auth } from "@fludge/auth";
 import { fromNodeHeaders } from "better-auth/node";
 import { AnyOrganizationException } from "../modules/organizations/exceptions/any-organization-active.exception";
+import { tryCatch } from "@fludge/utils/try-catch";
+import { InternalServerErrorException } from "../modules/shared/exceptions/internal-server-error.exception";
 
 type Options = {
   onlyRootUser?: boolean;
@@ -31,9 +33,13 @@ export function withOrganizationMiddleware(options?: Options) {
 
     if (!activeOrganizationId) throw new AnyOrganizationException();
 
-    const selectedOrganization = await auth.api.getFullOrganization({
-      headers: fromNodeHeaders(context.req.headers),
-    });
+    const { data: selectedOrganization, error } = await tryCatch(
+      auth.api.getFullOrganization({
+        headers: fromNodeHeaders(context.req.headers),
+      }),
+    );
+
+    if (error) throw new InternalServerErrorException(error.message);
 
     if (!selectedOrganization) throw new AnyOrganizationException();
 
