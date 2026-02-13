@@ -1,8 +1,5 @@
 import { baseProcedure } from "@fludge/api";
-import {
-  requireAuthMiddleware,
-  withOrganizationMiddleware,
-} from "@fludge/api/middlewares/requiere-auth.middleware";
+import { withOrganizationMiddleware } from "@fludge/api/middlewares/requiere-auth.middleware";
 import { findManyTeamsUseCase } from "./usecases/find-many-teams.usecase";
 import { createTeamUseCase } from "./usecases/create-team.usecase";
 import {
