@@ -1,5 +1,8 @@
-import { TeamHeaderSection } from "../sections/team-header.section";
-import type { Team } from "../../application/collections/teams.collection";
+import {
+  TeamHeaderSection,
+  TeamHeaderSkeleton,
+} from "../sections/team-header.section";
+import type { Team } from "@/modules/teams/application/collections/teams.collection";
 import {
   Tabs,
   TabsContent,
@@ -27,6 +30,28 @@ export function TeamScreen({ team }: Props) {
         </TabsContent>
         <TabsContent value="permissions">
           <PermissionsSection permissions={team.permissions} teamId={team.id} />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
+export function TeamScreenSkeleton() {
+  return (
+    <div className="px-5 mt-4 space-y-8">
+      <TeamHeaderSkeleton />
+      <Tabs defaultValue="employees" className="space-y-3">
+        <TabsList variant="line" className="w-1/2">
+          <TabsTrigger value="employees" disabled>
+            Empleados
+          </TabsTrigger>
+          <TabsTrigger value="permissions" disabled>
+            Permisos
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="employees">
+          Make changes to your account here.
         </TabsContent>
       </Tabs>
     </div>

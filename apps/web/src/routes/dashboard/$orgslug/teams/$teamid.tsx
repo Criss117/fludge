@@ -1,7 +1,10 @@
 import { DashBoardHeader } from "@/modules/shared/components/dashboard-header";
 import { useTeamsCollection } from "@/modules/shared/hooks/use-teams-collection";
 import { teamsCollectionBuilder } from "@/modules/teams/application/collections/teams.collection";
-import { TeamScreen } from "@/modules/teams/presentation/screens/team.screen";
+import {
+  TeamScreen,
+  TeamScreenSkeleton,
+} from "@/modules/teams/presentation/screens/team.screen";
 import { eq, useLiveSuspenseQuery } from "@tanstack/react-db";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
@@ -36,6 +39,7 @@ export const Route = createFileRoute("/dashboard/$orgslug/teams/$teamid")({
         <DashBoardHeader.Teams />
         <DashBoardHeader.Team label="..." />
       </DashBoardHeader.Content>
+      <TeamScreenSkeleton />
     </>
   ),
 });

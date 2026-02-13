@@ -11,6 +11,7 @@ import { UpdateTeamDialog } from "../components/update-team-dialog";
 import { Button } from "@/modules/shared/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { Separator } from "@/modules/shared/components/ui/separator";
+import { Skeleton } from "@/modules/shared/components/ui/skeleton";
 
 interface Props {
   team: Team;
@@ -74,6 +75,55 @@ export function TeamHeaderSection({ team }: Props) {
                 year: "numeric",
               })}
             </p>
+          </div>
+        </CardFooter>
+      </Card>
+    </header>
+  );
+}
+
+export function TeamHeaderSkeleton() {
+  return (
+    <header>
+      <Card>
+        <div className="flex flex-row justify-between">
+          <CardHeader className="flex-1">
+            <CardTitle className="text-xl font-bold">
+              <Skeleton className="h-6 w-1/3" />
+            </CardTitle>
+            <CardDescription className="line-clamp-2">
+              <Skeleton />
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <UpdateTeamDialog.Root>
+              <Button variant="outline" size="sm" disabled>
+                <PlusIcon />
+                Modificar
+              </Button>
+              <UpdateTeamDialog.FormDialog />
+            </UpdateTeamDialog.Root>
+          </CardContent>
+        </div>
+        <CardFooter className="flex flex-row items-center">
+          <div className="flex-1">
+            <p className="text-sm text-muted-foreground">Empleados Asignados</p>
+            <Skeleton className="h-5 w-full" />
+          </div>
+
+          <Separator orientation="vertical" className="mx-4" />
+          <div className="flex-1">
+            <p className="text-sm text-muted-foreground">Creado el</p>
+
+            <Skeleton className="h-5 w-full" />
+          </div>
+
+          <Separator orientation="vertical" className="mx-4" />
+          <div className="flex-1">
+            <p className="text-sm text-muted-foreground">
+              Última actualización
+            </p>
+            <Skeleton className="h-5 w-full" />
           </div>
         </CardFooter>
       </Card>
