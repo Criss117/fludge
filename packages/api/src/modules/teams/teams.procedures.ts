@@ -16,6 +16,7 @@ import { updateTeamUseCase } from "./usecases/update-team.usecase";
 export const teamsProcedures = {
   findMany: baseProcedure({
     method: "GET",
+    tags: ["Teams"],
   })
     .use(withOrganizationMiddleware())
     .handler(({ context }) =>
@@ -24,6 +25,7 @@ export const teamsProcedures = {
 
   create: baseProcedure({
     method: "POST",
+    tags: ["Teams"],
   })
     .use(withOrganizationMiddleware())
     .input(createTeamSchema)
@@ -33,6 +35,7 @@ export const teamsProcedures = {
 
   remove: baseProcedure({
     method: "DELETE",
+    tags: ["Teams"],
   })
     .use(withOrganizationMiddleware())
     .input(removeManyTeamsSchema)
@@ -41,6 +44,7 @@ export const teamsProcedures = {
     ),
   update: baseProcedure({
     method: "PUT",
+    tags: ["Teams"],
   })
     .use(withOrganizationMiddleware())
     .input(updateTeamSchema)

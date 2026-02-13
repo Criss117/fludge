@@ -8,6 +8,7 @@ export const authProcedures = {
   getSession: baseProcedure({
     method: "GET",
     description: "Get the current session",
+    tags: ["Auth"],
   })
     .use(authMiddleware)
     .handler(async ({ context }) => {
@@ -23,7 +24,9 @@ export const authProcedures = {
       };
     }),
   signUp: {
-    root: baseProcedure()
+    root: baseProcedure({
+      tags: ["Auth"],
+    })
       .input(signUpSchema)
       .handler(({ input }) => {
         return auth.api.signUpEmail({
