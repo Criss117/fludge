@@ -10,42 +10,35 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/dashboard/$orgslug")({
   component: RouteComponent,
-  beforeLoad: async ({ context }) => {
-    const { data: session, error } = await tryCatch(
-      context.queryClient.fetchQuery(
-        context.orpc.auth.getSession.queryOptions(),
-      ),
-    );
+  beforeLoad: async ({ context, params }) => {
+    const session = context.auth.session;
 
-    if (!session || error)
+    if (!session)
       throw redirect({
         to: "/",
       });
 
-    return {
-      session,
-    };
-  },
-  loader: async ({ context, params }) => {
-    const orgs = context.session.organizations;
+    if (!session.organizations?.length)
+      throw redirect({ to: "/register-organization" });
 
-    if (!orgs?.length) throw redirect({ to: "/register-organization" });
+    const selectedOrganization = session.organizations.find(
+      (org) => org.slug === params.orgslug,
+    );
 
-    const selectedOrg = orgs.find((org) => org.slug === params.orgslug);
+    if (!selectedOrganization) throw redirect({ to: "/select-organization" });
 
-    if (!selectedOrg) throw redirect({ to: "/select-organization" });
-
-    if (selectedOrg.id === context.session.activeOrganizationId) return;
+    if (selectedOrganization.id === session.activeOrganizationId)
+      return {
+        selectedOrganization,
+      };
 
     const { error } = await tryCatch(
       authClient.organization.setActive({
-        organizationId: selectedOrg.id,
-        organizationSlug: selectedOrg.slug,
+        organizationId: selectedOrganization.id,
+        organizationSlug: selectedOrganization.slug,
         fetchOptions: {
           onSuccess: () => {
-            context.queryClient.invalidateQueries(
-              context.orpc.auth.getSession.queryOptions(),
-            );
+            context.auth.refetchSession();
           },
         },
       }),
@@ -53,7 +46,9 @@ export const Route = createFileRoute("/dashboard/$orgslug")({
 
     if (error) throw redirect({ to: "/" });
 
-    context.session.activeOrganizationId = selectedOrg.id;
+    return {
+      selectedOrganization,
+    };
   },
   pendingComponent: () => <LoadingScreen messages="Verificando Credenciales" />,
 });

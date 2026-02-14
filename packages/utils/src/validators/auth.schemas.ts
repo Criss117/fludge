@@ -23,7 +23,7 @@ export const signUpFormSchema = signUpSchema
     path: ["repeatPassword"],
   });
 
-export const signInSchema = z.object({
+export const signInEmailSchema = z.object({
   email: z.email("El correo electrónico no es válido"),
   password: z.string("La contraseña es obligatoria"),
 });
@@ -35,5 +35,5 @@ export const resetPasswordSchema = z.object({
 });
 
 export type SignUpFormSchema = z.infer<typeof signUpFormSchema>;
-export type SignInSchema = z.infer<typeof signInSchema>;
+export type SignInEmailSchema = z.infer<typeof signInEmailSchema>;
 export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;

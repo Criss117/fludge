@@ -1,8 +1,8 @@
-import { useVerifiedSession } from "@/modules/auth/application/hooks/use-session";
+import { useVerifiedSession } from "@/integrations/auth/context";
 import { employeesCollectionBuilder } from "../collections/employees.collection";
 
 export function useEmployeesCollection() {
-  const { data: session } = useVerifiedSession();
+  const session = useVerifiedSession();
 
   return employeesCollectionBuilder(session.activeOrganizationId);
 }

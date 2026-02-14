@@ -6,15 +6,15 @@ import {
   CardTitle,
 } from "@/modules/shared/components/ui/card";
 import { CreateTeamDialog } from "../components/create-team-dialog";
-import { useVerifiedSession } from "@/modules/auth/application/hooks/use-session";
 import { useTeamsCollection } from "@/modules/shared/hooks/use-teams-collection";
 import { count, useLiveSuspenseQuery } from "@tanstack/react-db";
 import { PlusIcon } from "lucide-react";
 import { Button } from "@/modules/shared/components/ui/button";
 import { Skeleton } from "@/modules/shared/components/ui/skeleton";
+import { useVerifiedSession } from "@/integrations/auth/context";
 
 export function TeamsHeaderSection() {
-  const { data: session } = useVerifiedSession();
+  const session = useVerifiedSession();
   const teamsCollection = useTeamsCollection();
   const { data } = useLiveSuspenseQuery((q) =>
     q.from({ teams: teamsCollection }).select(({ teams }) => ({

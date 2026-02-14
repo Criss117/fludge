@@ -4,9 +4,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/register-organization")({
   component: RouteComponent,
   beforeLoad: async ({ context }) => {
-    const session = await context.queryClient.ensureQueryData(
-      context.orpc.auth.getSession.queryOptions(),
-    );
+    const session = context.auth.session;
 
     if (!session)
       throw redirect({

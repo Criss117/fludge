@@ -7,14 +7,14 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-import { Toaster } from "@/modules/shared/components/ui/sonner";
-
 import "../index.css";
 import type { orpc } from "@/integrations/orpc";
+import type { useAuth } from "@/integrations/auth/context";
 
 export interface RouterAppContext {
   orpc: typeof orpc;
   queryClient: QueryClient;
+  auth: ReturnType<typeof useAuth>;
 }
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({

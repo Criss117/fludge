@@ -11,14 +11,9 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/dashboard/$orgslug/teams/$teamid")({
   component: RouteComponent,
   loader: async ({ context, params }) => {
-    const activeOrganizationId = context.session.activeOrganizationId;
-
-    if (!activeOrganizationId)
-      throw redirect({
-        to: "/select-organization",
-      });
-
-    const teamsCollection = teamsCollectionBuilder(activeOrganizationId);
+    const teamsCollection = teamsCollectionBuilder(
+      context.selectedOrganization.id,
+    );
 
     await teamsCollection.preload();
 

@@ -4,9 +4,7 @@ import { SelectOrganizationsScreen } from "@/modules/organizations/presentation/
 export const Route = createFileRoute("/select-organization")({
   component: RouteComponent,
   beforeLoad: async ({ context }) => {
-    const session = await context.queryClient.ensureQueryData(
-      context.orpc.auth.getSession.queryOptions(),
-    );
+    const session = context.auth.session;
 
     if (!session)
       throw redirect({

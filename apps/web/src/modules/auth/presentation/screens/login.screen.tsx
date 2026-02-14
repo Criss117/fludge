@@ -1,4 +1,4 @@
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { AlertCircleIcon, User } from "lucide-react";
 import { LinkButton } from "@/modules/shared/components/link-button";
@@ -14,50 +14,40 @@ import {
 } from "@/modules/shared/components/ui/card";
 import { Separator } from "@/modules/shared/components/ui/separator";
 import { useAuthForm } from "../components/auth-form";
-import { authClient } from "@/integrations/auth";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
 } from "@/modules/shared/components/ui/alert";
-import { signInSchema } from "@fludge/utils/validators/auth.schemas";
-import { useQueryClient } from "@tanstack/react-query";
-import { orpc } from "@/integrations/orpc";
+import { useAuth } from "@/integrations/auth/context";
+import { signInEmailSchema } from "@fludge/utils/validators/auth.schemas";
 
 export function LoginScreen() {
-  const [isPending, setIsPending] = useState(false);
+  const { signInEmail } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
-  const queryClient = useQueryClient();
+
   const form = useAuthForm({
     defaultValues: {
       email: "",
       password: "",
     },
     onSubmit: ({ value }) => {
-      setIsPending(true);
-      authClient.signIn.email({
-        email: value.email,
-        password: value.password,
-        fetchOptions: {
-          onError: ({ error }) => {
-            setIsPending(false);
-            setErrorMessage(error.message);
-          },
-          onSuccess: async () => {
-            await queryClient.refetchQueries(
-              orpc.auth.getSession.queryOptions(),
-            );
-            form.reset();
-            router.navigate({
-              to: "/select-organization",
-            });
-          },
+      signInEmail.mutate(value, {
+        onSuccess: (data) => {
+          if (!data) return;
+
+          router.navigate({
+            to: "/select-organization",
+          });
+        },
+        onError: (error) => {
+          setErrorMessage(error.message);
         },
       });
     },
     validators: {
-      onSubmit: signInSchema,
+      onSubmit: signInEmailSchema,
     },
   });
 

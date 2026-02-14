@@ -10,7 +10,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/modules/shared/components/ui/dialog";
 import { Separator } from "@/modules/shared/components/ui/separator";
 import { useTeamForm } from "./team-form";
@@ -27,7 +26,6 @@ import { ScrollArea } from "@/modules/shared/components/ui/scroll-area";
 import { tryCatch } from "@fludge/utils/try-catch";
 import { useTeamsCollection } from "@/modules/shared/hooks/use-teams-collection";
 import type { Team } from "@/modules/teams/application/collections/teams.collection";
-import { useVerifiedSession } from "@/modules/auth/application/hooks/use-session";
 
 interface Context {
   selectedTeam: Team | null;

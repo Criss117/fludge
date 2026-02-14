@@ -17,18 +17,18 @@ import {
 import { Logo } from "../logo";
 import { Check, ChevronDown, Building2, PlusCircleIcon } from "lucide-react";
 import { cn } from "@/modules/shared/lib/utils";
-import { useVerifiedSession } from "@/modules/auth/application/hooks/use-session";
+import { useVerifiedSession } from "@/integrations/auth/context";
 
 interface Props {
   orgSlug: string;
 }
 
 export function AppSideBarHeader({ orgSlug }: Props) {
-  const { data } = useVerifiedSession();
+  const session = useVerifiedSession();
 
-  const organizations = data.organizations;
+  const organizations = session.organizations;
   const activeOrganization = organizations.find(
-    (org) => org.id === data.activeOrganizationId,
+    (org) => org.id === session.activeOrganizationId,
   );
 
   return (

@@ -12,6 +12,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { UserCog, Settings, LogOut } from "lucide-react";
+import { useVerifiedSession } from "@/integrations/auth/context";
 
 function getInitials(name: string): string {
   return name
@@ -23,13 +24,9 @@ function getInitials(name: string): string {
 }
 
 export function NavUser() {
-  const { data: sessionData } = useSuspenseQuery(
-    orpc.auth.getSession.queryOptions(),
-  );
+  const session = useVerifiedSession();
 
-  if (!sessionData?.user) return null;
-
-  const user = sessionData.user;
+  if (!session) return null;
 
   return (
     <SidebarMenu>
@@ -39,15 +36,18 @@ export function NavUser() {
             render={
               <SidebarMenuButton className="cursor-pointer">
                 <Avatar className="size-8">
-                  {user.image && (
-                    <AvatarImage src={user.image} alt={user.name} />
+                  {session.user.image && (
+                    <AvatarImage
+                      src={session.user.image}
+                      alt={session.user.name}
+                    />
                   )}
                   <AvatarFallback className="text-xs">
-                    {user.name ? getInitials(user.name) : "U"}
+                    {session.user.name ? getInitials(session.user.name) : "U"}
                   </AvatarFallback>
                 </Avatar>
                 <span className="truncate text-sm font-medium">
-                  {user.name || "User"}
+                  {session.user.name || "User"}
                 </span>
               </SidebarMenuButton>
             }
@@ -56,9 +56,11 @@ export function NavUser() {
             <DropdownMenuGroup>
               <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
-                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate font-medium">
+                    {session.user.name}
+                  </span>
                   <span className="truncate text-xs text-muted-foreground">
-                    {user.email}
+                    {session.user.email}
                   </span>
                 </div>
               </DropdownMenuLabel>

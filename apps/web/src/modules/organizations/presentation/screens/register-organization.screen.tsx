@@ -57,10 +57,10 @@ export function RegisterOrganizationScreen({ organizations }: Props) {
           setErrorMessage(error.message);
         },
         onSuccess: ({ slug }) => {
-          router.navigate({
-            to: "/dashboard/$orgslug",
-            params: { orgslug: slug },
-          });
+          // router.navigate({
+          //   to: "/dashboard/$orgslug",
+          //   params: { orgslug: slug },
+          // });
         },
       });
     },

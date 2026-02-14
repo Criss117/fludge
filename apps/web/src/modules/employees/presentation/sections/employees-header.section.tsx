@@ -1,4 +1,3 @@
-import { useVerifiedSession } from "@/modules/auth/application/hooks/use-session";
 import { useEmployeesCollection } from "../../application/hooks/use-employees-collection";
 import { count, useLiveSuspenseQuery } from "@tanstack/react-db";
 import {
@@ -10,7 +9,6 @@ import {
 } from "@/modules/shared/components/ui/card";
 
 export function EmployeesHeaderSection() {
-  const { data: session } = useVerifiedSession();
   const employeesCollection = useEmployeesCollection();
   const { data } = useLiveSuspenseQuery((q) =>
     q.from({ teams: employeesCollection }).select(({ teams }) => ({

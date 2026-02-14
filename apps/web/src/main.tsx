@@ -5,15 +5,29 @@ import { routeTree } from "./routeTree.gen";
 import { Integrations } from "./integrations";
 import { orpc } from "./integrations/orpc";
 import { queryClient } from "./integrations/tanstack-query";
+import { useAuth } from "./integrations/auth/context";
 
 const router = createRouter({
   routeTree,
   defaultPreload: "intent",
-  context: { orpc, queryClient },
+  context: { orpc, queryClient, auth: undefined! },
   Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
-    return <Integrations>{children}</Integrations>;
+    return <>{children}</>;
   },
 });
+
+function Main() {
+  const auth = useAuth();
+
+  return (
+    <RouterProvider
+      router={router}
+      context={{
+        auth,
+      }}
+    />
+  );
+}
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -29,5 +43,9 @@ if (!rootElement) {
 
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
-  root.render(<RouterProvider router={router} />);
+  root.render(
+    <Integrations>
+      <Main />
+    </Integrations>,
+  );
 }
