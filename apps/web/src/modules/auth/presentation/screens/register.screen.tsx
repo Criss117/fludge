@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useRouter } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
-import { orpc } from "@/integrations/orpc";
 import { AlertCircleIcon, User } from "lucide-react";
 import { LinkButton } from "@/modules/shared/components/link-button";
 import { Logo } from "@/modules/shared/components/logo";
@@ -16,18 +14,19 @@ import {
 } from "@/modules/shared/components/ui/card";
 import { Separator } from "@/modules/shared/components/ui/separator";
 import { useAuthForm } from "../components/auth-form";
-import { signUpFormSchema } from "@fludge/utils/validators/auth.schemas";
+import { signUpEmailFormSchema } from "@fludge/utils/validators/auth.schemas";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
 } from "@/modules/shared/components/ui/alert";
 import { FieldGroup } from "@/modules/shared/components/ui/field";
+import { useAuth } from "@/integrations/auth/context";
 
 export function RegisterScreen() {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const signUp = useMutation(orpc.auth.signUp.root.mutationOptions());
+  const { signUpEmail } = useAuth();
 
   const form = useAuthForm({
     defaultValues: {
@@ -37,7 +36,7 @@ export function RegisterScreen() {
       repeatPassword: "",
     },
     onSubmit: ({ value }) => {
-      signUp.mutate(
+      signUpEmail.mutate(
         {
           email: value.email,
           password: value.password,
@@ -54,7 +53,7 @@ export function RegisterScreen() {
       );
     },
     validators: {
-      onSubmit: signUpFormSchema,
+      onSubmit: signUpEmailFormSchema,
     },
   });
 
@@ -114,7 +113,11 @@ export function RegisterScreen() {
               />
             </FieldGroup>
 
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={signUpEmail.isPending}
+            >
               Registrase
             </Button>
           </form>
@@ -126,14 +129,24 @@ export function RegisterScreen() {
             <Separator className="flex-1" />
           </div>
 
-          <LinkButton className="w-full" variant="outline" to="/auth/employee">
+          <LinkButton
+            className="w-full"
+            variant="outline"
+            to="/auth/employee"
+            disabled={signUpEmail.isPending}
+          >
             <User size={20} />
             Iniciar como empleado
           </LinkButton>
 
           <div>
             Ya tienes una cuenta?{" "}
-            <LinkButton variant="link" className="px-0" to="/">
+            <LinkButton
+              variant="link"
+              className="px-0"
+              to="/"
+              disabled={signUpEmail.isPending}
+            >
               Inicia sesion
             </LinkButton>
           </div>

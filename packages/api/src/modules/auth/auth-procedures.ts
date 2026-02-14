@@ -2,7 +2,7 @@ import { fromNodeHeaders } from "better-auth/node";
 import { baseProcedure } from "@fludge/api";
 import { authMiddleware } from "@fludge/api/middlewares/auth.middleware";
 import { auth } from "@fludge/auth";
-import { signUpSchema } from "@fludge/utils/validators/auth.schemas";
+import { signUpEmailSchema } from "@fludge/utils/validators/auth.schemas";
 
 export const authProcedures = {
   getSession: baseProcedure({
@@ -27,7 +27,7 @@ export const authProcedures = {
     root: baseProcedure({
       tags: ["Auth"],
     })
-      .input(signUpSchema)
+      .input(signUpEmailSchema)
       .handler(({ input }) => {
         return auth.api.signUpEmail({
           body: {

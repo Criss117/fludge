@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const signUpSchema = z.object({
+export const signUpEmailSchema = z.object({
   email: z
     .email("El correo electrónico no es válido")
     .min(1, "El correo electrónico es obligatorio"),
@@ -12,7 +12,7 @@ export const signUpSchema = z.object({
     .min(5, "El nombre debe tener al menos 5 caracteres"),
 });
 
-export const signUpFormSchema = signUpSchema
+export const signUpEmailFormSchema = signUpEmailSchema
   .extend({
     repeatPassword: z
       .string("Repite la contraseña")
@@ -34,6 +34,7 @@ export const resetPasswordSchema = z.object({
     .min(1, "El correo electrónico es obligatorio"),
 });
 
-export type SignUpFormSchema = z.infer<typeof signUpFormSchema>;
+export type SignUpEmailSchema = z.infer<typeof signUpEmailSchema>;
+export type SignUpEmailFormSchema = z.infer<typeof signUpEmailFormSchema>;
 export type SignInEmailSchema = z.infer<typeof signInEmailSchema>;
 export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;

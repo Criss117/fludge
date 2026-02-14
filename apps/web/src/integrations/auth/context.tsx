@@ -7,11 +7,17 @@ import {
 } from "@tanstack/react-query";
 import { createContext, use } from "react";
 import { orpc } from "../orpc";
-import type { SignInEmailSchema } from "@fludge/utils/validators/auth.schemas";
+import type {
+  SignInEmailSchema,
+  SignUpEmailSchema,
+} from "@fludge/utils/validators/auth.schemas";
 import { tryCatch } from "@fludge/utils/try-catch";
 import { authClient } from ".";
 
 export type Session = Awaited<ReturnType<typeof orpc.auth.getSession.call>>;
+export type SignUpEmailRes = Awaited<
+  ReturnType<typeof orpc.auth.signUp.root.call>
+>;
 
 interface Context {
   session: Session;
@@ -19,6 +25,7 @@ interface Context {
     options?: RefetchOptions | undefined,
   ) => Promise<QueryObserverResult<Session>>;
   signInEmail: UseMutationResult<Session, Error, SignInEmailSchema>;
+  signUpEmail: UseMutationResult<SignUpEmailRes, Error, SignUpEmailSchema>;
 }
 
 interface AuthProviderProps {
@@ -74,12 +81,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     },
   });
 
+  const signUpEmail = useMutation(orpc.auth.signUp.root.mutationOptions());
+
   return (
     <AuthContext.Provider
       value={{
         session: sessionQuery.data,
         refetchSession: sessionQuery.refetch,
         signInEmail,
+        signUpEmail,
       }}
     >
       {children}
