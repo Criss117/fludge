@@ -1,3 +1,12 @@
+@font-face {
+  font-family: "Geist";
+  src:
+    url("/fonts/geist.woff2") format("woff2"),
+    url("/fonts/geist.woff") format("woff"),
+    url("/fonts/geist.ttf") format("truetype");
+  font-display: swap;
+}
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -174,17 +183,6 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 }
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply font-sans bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
-  }
-}
 
 @layer base {
   * {
@@ -192,5 +190,8 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  html {
+    font-family: "Geist", sans-serif;
   }
 }
