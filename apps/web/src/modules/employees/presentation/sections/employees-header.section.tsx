@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/modules/shared/components/ui/card";
+import { CreateEmployee } from "../components/create-employee";
 
 export function EmployeesHeaderSection() {
   const employeesCollection = useEmployeesCollection();
@@ -30,7 +31,9 @@ export function EmployeesHeaderSection() {
             {total} empleados en tu organización.
           </CardDescription>
         </CardHeader>
-        <CardContent></CardContent>
+        <CardContent>
+          <CreateEmployee />
+        </CardContent>
       </Card>
     </header>
   );

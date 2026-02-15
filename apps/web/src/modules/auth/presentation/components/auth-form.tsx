@@ -31,6 +31,7 @@ const { useAppForm } = createFormHook({
     EmailField,
     PasswordField,
     NameField,
+    UsernameField,
   },
   formComponents: {},
   fieldContext,
@@ -39,12 +40,13 @@ const { useAppForm } = createFormHook({
 
 export function NameField() {
   const field = useFieldContext<string>();
+  const id = field.name + "-name";
 
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
     <Field className="gap-2" data-invalid={isInvalid}>
-      <FieldLabel htmlFor={field.name + "-name"}>Nombre completo</FieldLabel>
+      <FieldLabel htmlFor={id}>Nombre completo</FieldLabel>
       <div className="flex relative">
         <ScrollText
           className="absolute left-3 top-1/2 -translate-y-1/2"
@@ -52,9 +54,41 @@ export function NameField() {
         />
         <Input
           className="pl-10"
-          id={field.name + "-name"}
+          id={id}
           type="text"
           placeholder="Ej: John Doe"
+          name={field.name}
+          value={field.state.value}
+          onBlur={field.handleBlur}
+          onChange={(e) => field.handleChange(e.target.value)}
+          aria-invalid={isInvalid}
+          required
+        />
+      </div>
+      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+    </Field>
+  );
+}
+
+export function UsernameField() {
+  const field = useFieldContext<string>();
+  const id = field.name + "-username";
+
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+  return (
+    <Field className="gap-2" data-invalid={isInvalid}>
+      <FieldLabel htmlFor={id}>Nombre de usuario</FieldLabel>
+      <div className="flex relative">
+        <ScrollText
+          className="absolute left-3 top-1/2 -translate-y-1/2"
+          size={20}
+        />
+        <Input
+          className="pl-10"
+          id={id}
+          type="text"
+          placeholder="Ej: jhondoe"
           name={field.name}
           value={field.state.value}
           onBlur={field.handleBlur}

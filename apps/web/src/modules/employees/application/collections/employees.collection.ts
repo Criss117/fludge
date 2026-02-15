@@ -27,6 +27,26 @@ type EmployeeCollection = Collection<
 
 const collectionsCache = new Map<string, EmployeeCollection>();
 
+export function defaultEmployee(name: string, email: string): Employee {
+  const id = Math.random().toString(36).substring(2, 15);
+  const userId = Math.random().toString(36).substring(2, 15);
+
+  return {
+    id,
+    createdAt: new Date(),
+    organizationId: "",
+    role: "member",
+    isPending: true,
+    userId,
+    user: {
+      email,
+      id: userId,
+      name,
+      image: undefined,
+    },
+  };
+}
+
 export function employeesCollectionBuilder(orgId: string) {
   if (!collectionsCache.has(orgId)) {
     const collection = createCollection(
@@ -37,6 +57,10 @@ export function employeesCollectionBuilder(orgId: string) {
           return orpc.employees.findAll.call();
         },
         getKey: (item) => item.id,
+        meta: {
+          newUserName: "",
+          newUserPassword: "",
+        },
       }),
     );
 
