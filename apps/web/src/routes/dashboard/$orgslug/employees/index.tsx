@@ -15,7 +15,7 @@ function RouteComponent() {
         <DashBoardHeader.Home />
         <DashBoardHeader.Employees />
       </DashBoardHeader.Content>
-      <EmployeesScreen />
+      <EmployeesScreen orgSlug={orgslug} />
     </>
   );
 }

@@ -1,11 +1,15 @@
 import { EmployeesHeaderSection } from "../sections/employees-header.section";
 import { EmployeesListSection } from "../sections/employees-list.section";
 
-export function EmployeesScreen() {
+interface Props {
+  orgSlug: string;
+}
+
+export function EmployeesScreen({ orgSlug }: Props) {
   return (
     <div className="px-5 mt-4 space-y-5">
       <EmployeesHeaderSection />
-      <EmployeesListSection />
+      <EmployeesListSection orgSlug={orgSlug} />
     </div>
   );
 }

@@ -1,12 +1,13 @@
 import { ilike, useLiveSuspenseQuery } from "@tanstack/react-db";
 import { useTeamsCollection } from "@/modules/shared/hooks/use-teams-collection";
 import { useTeamsFilters } from "@/modules/teams/application/store/teams-filters.store";
-import { TeamsTable } from "../components/teams-table";
 import {
   SearchInput,
   SearchInputSkeleton,
 } from "@/modules/shared/components/search-input";
 import { TeamsTableSkeleton } from "../components/teams-table/skeleton";
+import { useDataTable } from "@/modules/shared/components/data-table";
+import { teamsTableColumns } from "../components/teams-table/columns";
 
 export function TeamsListSection({ orgSlug }: { orgSlug: string }) {
   const { filters, filtersDispatch } = useTeamsFilters();
@@ -22,8 +23,14 @@ export function TeamsListSection({ orgSlug }: { orgSlug: string }) {
     [filters.query],
   );
 
+  const table = useDataTable({
+    columns: teamsTableColumns(orgSlug),
+    data: teams || [],
+    getRowId: (row) => row.id,
+  });
+
   return (
-    <TeamsTable.Root teams={teams} orgSlug={orgSlug}>
+    <section className="space-y-4">
       <header className="flex justify-between items-center">
         <div className="w-1/3">
           <SearchInput
@@ -36,24 +43,24 @@ export function TeamsListSection({ orgSlug }: { orgSlug: string }) {
         </div>
 
         <div className="gap-x-2 flex items-center">
-          <TeamsTable.FirstPageButton />
-          <TeamsTable.PrevButton />
-          <TeamsTable.PageSizeSelect />
-          <TeamsTable.NextButton />
-          <TeamsTable.LastPageButton />
+          <table.FirstPageButton />
+          <table.PrevButton />
+          <table.PageSizeSelect />
+          <table.NextButton />
+          <table.LastPageButton />
         </div>
       </header>
 
-      <TeamsTable.Content />
+      <table.Content emptyMessage="No hay Equipos Creados" />
 
       <footer className="flex gap-x-2 items-center justify-end">
-        <TeamsTable.FirstPageButton />
-        <TeamsTable.PrevButton />
-        <TeamsTable.PageSizeSelect />
-        <TeamsTable.NextButton />
-        <TeamsTable.LastPageButton />
+        <table.FirstPageButton />
+        <table.PrevButton />
+        <table.PageSizeSelect />
+        <table.NextButton />
+        <table.LastPageButton />
       </footer>
-    </TeamsTable.Root>
+    </section>
   );
 }
 

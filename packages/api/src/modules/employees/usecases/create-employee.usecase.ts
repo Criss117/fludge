@@ -46,7 +46,7 @@ export class CreateEmployeeUseCase {
       auth.api.signUpEmail({
         body: {
           email: values.email, // required
-          name: values.email, // required
+          name: values.name, // required
           password: values.password, // required
           username: values.username, // required
           displayUsername: values.username,

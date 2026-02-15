@@ -9,7 +9,7 @@ import { TeamsTableActions } from "./actions";
 
 const columnHelper = createColumnHelper<Team>();
 
-export function defaultColumns(orgSlug: string) {
+export function teamsTableColumns(orgSlug: string) {
   return [
     columnHelper.display({
       id: "selectors",
