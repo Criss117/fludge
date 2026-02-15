@@ -12,6 +12,12 @@ export const signUpEmailSchema = z.object({
     .min(5, "El nombre debe tener al menos 5 caracteres"),
 });
 
+export const signUpUsernameSchema = signUpEmailSchema.extend({
+  username: z
+    .string("El nombre de usuario es obligatorio")
+    .min(5, "El nombre de usuario debe tener al menos 5 caracteres"),
+});
+
 export const signUpEmailFormSchema = signUpEmailSchema
   .extend({
     repeatPassword: z
@@ -34,6 +40,7 @@ export const resetPasswordSchema = z.object({
     .min(1, "El correo electrónico es obligatorio"),
 });
 
+export type SignUpUsernameSchema = z.infer<typeof signUpUsernameSchema>;
 export type SignUpEmailSchema = z.infer<typeof signUpEmailSchema>;
 export type SignUpEmailFormSchema = z.infer<typeof signUpEmailFormSchema>;
 export type SignInEmailSchema = z.infer<typeof signInEmailSchema>;
