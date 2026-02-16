@@ -1,8 +1,9 @@
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns, sql } from "drizzle-orm";
 import { db } from "@fludge/db";
-import { team } from "@fludge/db/schema/auth";
+import { team, teamMember, user } from "@fludge/db/schema/auth";
 import { tryCatch } from "@fludge/utils/try-catch";
 import { InternalServerErrorException } from "../../shared/exceptions/internal-server-error.exception";
+import { parseUsersOnTeamSchema } from "@fludge/utils/validators/team.schemas";
 
 export class FindManyTeamsUseCase {
   public static instance: FindManyTeamsUseCase;
@@ -18,7 +19,23 @@ export class FindManyTeamsUseCase {
 
   public async execute(organizationId: string) {
     const { data: teams, error } = await tryCatch(
-      db.select().from(team).where(eq(team.organizationId, organizationId)),
+      db
+        .select({
+          ...getTableColumns(team),
+          users: sql<string>`
+            JSON_GROUP_ARRAY(
+              JSON_OBJECT(
+                'id', ${user.id},
+                'name', ${user.name}
+              )
+            )
+          `,
+        })
+        .from(team)
+        .leftJoin(teamMember, eq(teamMember.teamId, team.id))
+        .leftJoin(user, eq(user.id, teamMember.userId))
+        .where(eq(team.organizationId, organizationId))
+        .groupBy(team.id),
     );
 
     if (error)
@@ -26,7 +43,16 @@ export class FindManyTeamsUseCase {
         "Hubo un error al buscar los equipos",
       );
 
-    return teams;
+    return teams.map((team) => {
+      const obj = JSON.parse(team.users);
+
+      const parsedUsers = parseUsersOnTeamSchema.safeParse(obj);
+
+      return {
+        ...team,
+        users: parsedUsers.success ? parsedUsers.data : [],
+      };
+    });
   }
 }
 

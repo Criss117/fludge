@@ -11,7 +11,7 @@ export const employeesProcedures = {
   })
     .use(withOrganizationMiddleware())
     .handler(({ context }) =>
-      findManyEmployeesUseCase(context.req.headers).execute(),
+      findManyEmployeesUseCase().execute(context.organization.id),
     ),
 
   create: baseProcedure({
