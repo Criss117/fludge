@@ -48,7 +48,7 @@ export function TeamHeaderSection({ team }: Props) {
         <CardFooter className="flex flex-row items-center">
           <div className="flex-1">
             <p className="text-sm text-muted-foreground">Empleados Asignados</p>
-            <p>{0}</p>
+            <p>{team.employees.length}</p>
           </div>
 
           <Separator orientation="vertical" className="mx-4" />

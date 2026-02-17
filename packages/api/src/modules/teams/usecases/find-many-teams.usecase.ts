@@ -3,7 +3,7 @@ import { db } from "@fludge/db";
 import { team, teamMember, user } from "@fludge/db/schema/auth";
 import { tryCatch } from "@fludge/utils/try-catch";
 import { InternalServerErrorException } from "../../shared/exceptions/internal-server-error.exception";
-import { parseUsersOnTeamSchema } from "@fludge/utils/validators/team.schemas";
+import { parseEmployeesOnTeamSchema } from "@fludge/utils/validators/team.schemas";
 
 export class FindManyTeamsUseCase {
   public static instance: FindManyTeamsUseCase;
@@ -22,7 +22,7 @@ export class FindManyTeamsUseCase {
       db
         .select({
           ...getTableColumns(team),
-          users: sql<string>`
+          employees: sql<string>`
             JSON_GROUP_ARRAY(
               JSON_OBJECT(
                 'id', ${user.id},
@@ -44,13 +44,13 @@ export class FindManyTeamsUseCase {
       );
 
     return teams.map((team) => {
-      const obj = JSON.parse(team.users);
+      const obj = JSON.parse(team.employees);
 
-      const parsedUsers = parseUsersOnTeamSchema.safeParse(obj);
+      const parsedEmployees = parseEmployeesOnTeamSchema.safeParse(obj);
 
       return {
         ...team,
-        users: parsedUsers.success ? parsedUsers.data : [],
+        employees: parsedEmployees.success ? parsedEmployees.data : [],
       };
     });
   }

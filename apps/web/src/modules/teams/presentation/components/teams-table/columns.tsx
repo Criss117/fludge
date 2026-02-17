@@ -84,8 +84,8 @@ export function teamsTableColumns(orgSlug: string) {
     columnHelper.display({
       id: "employees",
       header: "Número de Empleados",
-      cell: () => {
-        return <p>{20}</p>;
+      cell: ({ row }) => {
+        return <p>{row.original.employees.length}</p>;
       },
     }),
     columnHelper.accessor((t) => t.permissions, {

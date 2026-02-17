@@ -10,12 +10,14 @@ import {
   TabsTrigger,
 } from "@/modules/shared/components/ui/tabs";
 import { PermissionsSection } from "../sections/permissions.section";
+import { EmployeesSection } from "../sections/employees.section";
 
 interface Props {
   team: Team;
+  orgSlug: string;
 }
 
-export function TeamScreen({ team }: Props) {
+export function TeamScreen({ team, orgSlug }: Props) {
   return (
     <div className="px-5 mt-4 space-y-8">
       <TeamHeaderSection team={team} />
@@ -26,7 +28,7 @@ export function TeamScreen({ team }: Props) {
         </TabsList>
 
         <TabsContent value="employees">
-          Make changes to your account here.
+          <EmployeesSection teamId={team.id} orgSlug={orgSlug} />
         </TabsContent>
         <TabsContent value="permissions">
           <PermissionsSection permissions={team.permissions} teamId={team.id} />

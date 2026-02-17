@@ -3,12 +3,14 @@ import { withOrganizationMiddleware } from "@fludge/api/middlewares/requiere-aut
 import { findManyTeamsUseCase } from "./usecases/find-many-teams.usecase";
 import { createTeamUseCase } from "./usecases/create-team.usecase";
 import {
+  assignEmployeesToTeamSchema,
   createTeamSchema,
   removeManyTeamsSchema,
   updateTeamSchema,
 } from "@fludge/utils/validators/team.schemas";
 import { deleteTeamsUseCase } from "./usecases/delete-teams.usecase";
 import { updateTeamUseCase } from "./usecases/update-team.usecase";
+import { assingEmployeesToTeamUseCase } from "./usecases/assign-employess-to-tema.usecase";
 
 export const teamsProcedures = {
   findMany: baseProcedure({
@@ -39,6 +41,7 @@ export const teamsProcedures = {
     .handler(({ input, context }) =>
       deleteTeamsUseCase().execute(context.organization.id, input),
     ),
+
   update: baseProcedure({
     method: "PUT",
     tags: ["Teams"],
@@ -47,5 +50,15 @@ export const teamsProcedures = {
     .input(updateTeamSchema)
     .handler(({ input, context }) =>
       updateTeamUseCase().execute(context.organization.id, input),
+    ),
+
+  assingEmployees: baseProcedure({
+    method: "POST",
+    tags: ["Teams"],
+  })
+    .use(withOrganizationMiddleware())
+    .input(assignEmployeesToTeamSchema)
+    .handler(({ input, context }) =>
+      assingEmployeesToTeamUseCase(context.req.headers).execute(input),
     ),
 };
