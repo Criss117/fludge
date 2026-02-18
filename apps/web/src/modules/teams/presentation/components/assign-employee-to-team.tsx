@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { useState } from "react";
 import { UserPlusIcon } from "lucide-react";
 import { useLiveSuspenseQuery } from "@tanstack/react-db";
@@ -16,9 +17,9 @@ import {
 import { Avatar, AvatarFallback } from "@/modules/shared/components/ui/avatar";
 import { toAvatarFallback } from "@fludge/utils/helpers";
 import { SearchInput } from "@/modules/shared/components/search-input";
-import { useMutateTeams } from "../../application/hooks/use-mutate-teams";
+import { useMutateTeams } from "@/modules/teams/application/hooks/use-mutate-teams";
 import { useEmployeesQueries } from "@/modules/employees/application/hooks/use-employees-queries";
-import { toast } from "sonner";
+import type { Employee } from "@/modules/employees/application/collections/employees.collection";
 
 interface Props {
   teamId: string;
@@ -26,7 +27,7 @@ interface Props {
 
 export function AssignEmployeeToTeam({ teamId }: Props) {
   const [open, setOpen] = useState(false);
-  const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const { assignEmployees } = useMutateTeams();
   const { findManyEmployees } = useEmployeesQueries();
@@ -43,15 +44,15 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
           email: searchQuery,
         },
       }),
-    [searchQuery, selectedEmployees],
+    [searchQuery, selectedUserIds],
   );
 
-  const selectEmployee = (employeeId: string) => {
-    setSelectedEmployees((prev) => {
-      if (prev.includes(employeeId)) {
-        return prev.filter((id) => id !== employeeId);
+  const selectEmployee = (employee: Employee) => {
+    setSelectedUserIds((prev) => {
+      if (prev.includes(employee.user.id)) {
+        return prev.filter((id) => id !== employee.user.id);
       }
-      return [...prev, employeeId];
+      return [...prev, employee.user.id];
     });
   };
 
@@ -62,18 +63,18 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
     assignEmployees.mutate(
       {
         teamId,
-        employeeIds: selectedEmployees,
+        userIds: selectedUserIds,
       },
       {
         onSuccess: () => {
           toast.success("Empleados asignados exitosamente", {
             position: "top-center",
           });
-          setSelectedEmployees([]);
+          setSelectedUserIds([]);
           setSearchQuery("");
           setOpen(false);
         },
-        onError: (error) => {
+        onError: () => {
           toast.error("Error asignando empleados", {
             position: "top-center",
           });
@@ -90,7 +91,7 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
       open={open}
       onOpenChange={(v) => {
         if (!v) {
-          setSelectedEmployees([]);
+          setSelectedUserIds([]);
           setSearchQuery("");
         }
         setOpen(v);
@@ -123,7 +124,7 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
             key={employee.id}
             variant="outline"
             className="py-8 px-4 flex justify-between"
-            onClick={() => selectEmployee(employee.user.id)}
+            onClick={() => selectEmployee(employee)}
           >
             <div className="flex items-center gap-x-2">
               <Avatar>
@@ -140,8 +141,8 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
             </div>
             <div className="flex items-center gap-x-2">
               <Checkbox
-                checked={selectedEmployees.includes(employee.user.id)}
-                onClick={() => selectEmployee(employee.user.id)}
+                checked={selectedUserIds.includes(employee.user.id)}
+                onClick={() => selectEmployee(employee)}
               />
             </div>
           </Button>
@@ -153,12 +154,10 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
             Cancelar
           </DialogClose>
           <Button
-            disabled={
-              selectedEmployees.length === 0 || assignEmployees.isPending
-            }
+            disabled={selectedUserIds.length === 0 || assignEmployees.isPending}
             onClick={handleAssignEmployees}
           >
-            Asignar ({selectedEmployees.length}) Empleados
+            Asignar ({selectedUserIds.length}) Empleados
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -33,7 +33,7 @@ export function RemoveEmployeesFromTeam({ teamId, selectedEmployees }: Props) {
     removeEmployees.mutate(
       {
         teamId: teamId,
-        employeeIds: selectedEmployees.map((employee) => employee.user.id),
+        userIds: selectedEmployees.map((employee) => employee.user.id),
       },
       {
         onSuccess: () => {

@@ -23,9 +23,7 @@ export const removeManyTeamsSchema = z.object({
 
 export const assignEmployeesToTeamSchema = z.object({
   teamId: z.string("El id del equipo es requerido"),
-  employeeIds: z
-    .array(z.string())
-    .min(1, "Debe seleccionar al menos un empleado"),
+  userIds: z.array(z.string()).min(1, "Debe seleccionar al menos un empleado"),
 });
 
 export const parseEmployeeOnTeamSchema = z.object({

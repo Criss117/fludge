@@ -16,7 +16,7 @@ export function useMutateTeams() {
 
         const employees = Array.from(employeesCollection.entries())
           .filter(([_, employee]) =>
-            variables.employeeIds.includes(employee.user.id),
+            variables.userIds.includes(employee.user.id),
           )
           .flatMap(([_, employee]) => employee);
 
@@ -24,7 +24,7 @@ export function useMutateTeams() {
           ...team,
           employees: [
             ...team.employees.filter(
-              (employee) => !variables.employeeIds.includes(employee.id),
+              (employee) => !variables.userIds.includes(employee.id),
             ),
           ],
         });
@@ -50,7 +50,7 @@ export function useMutateTeams() {
 
         const employees = Array.from(employeesCollection.entries())
           .filter(([_, employee]) =>
-            variables.employeeIds.includes(employee.user.id),
+            variables.userIds.includes(employee.user.id),
           )
           .flatMap(([_, employee]) => employee);
 
