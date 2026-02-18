@@ -17,6 +17,7 @@ import {
 import { Avatar, AvatarFallback } from "@/modules/shared/components/ui/avatar";
 import { toAvatarFallback } from "@fludge/utils/helpers";
 import { SearchInput } from "@/modules/shared/components/search-input";
+import { useMutateTeams } from "../../application/hooks/use-mutate-teams";
 
 interface Props {
   teamId: string;
@@ -25,6 +26,7 @@ interface Props {
 export function AssignEmployeeToTeam({ teamId }: Props) {
   const employeesCollection = useEmployeesCollection();
 
+  const { assignEmployees } = useMutateTeams();
   const [open, setOpen] = useState(false);
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -39,6 +41,10 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
             like(employees.user.name, `%${searchQuery}%`),
             inArray(employees.id, selectedEmployees),
           ),
+        )
+        .fn.where(
+          ({ employees }) =>
+            !employees.teams.flatMap((t) => t.id).includes(teamId),
         ),
     [searchQuery, selectedEmployees],
   );
@@ -49,6 +55,13 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
         return prev.filter((id) => id !== employeeId);
       }
       return [...prev, employeeId];
+    });
+  };
+
+  const handleAssignEmployees = async () => {
+    assignEmployees.mutate({
+      teamId,
+      employeeIds: selectedEmployees,
     });
   };
 
@@ -81,9 +94,10 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
         />
         {employees.map((employee) => (
           <Button
+            key={employee.id}
             variant="outline"
             className="py-8 px-4 flex justify-between"
-            onClick={() => selectEmployee(employee.id)}
+            onClick={() => selectEmployee(employee.user.id)}
           >
             <div className="flex items-center gap-x-2">
               <Avatar>
@@ -100,8 +114,8 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
             </div>
             <div className="flex items-center gap-x-2">
               <Checkbox
-                checked={selectedEmployees.includes(employee.id)}
-                onClick={() => selectEmployee(employee.id)}
+                checked={selectedEmployees.includes(employee.user.id)}
+                onClick={() => selectEmployee(employee.user.id)}
               />
             </div>
           </Button>
@@ -112,7 +126,10 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
           >
             Cancelar
           </DialogClose>
-          <Button disabled={selectedEmployees.length === 0}>
+          <Button
+            disabled={selectedEmployees.length === 0}
+            onClick={handleAssignEmployees}
+          >
             Asignar ({selectedEmployees.length}) Empleados
           </Button>
         </DialogFooter>

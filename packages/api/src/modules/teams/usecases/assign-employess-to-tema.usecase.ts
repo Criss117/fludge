@@ -22,12 +22,12 @@ export class AssignEmployeesToTeamUseCase extends WithAuthHeader {
   }
 
   public async execute(values: AssignEmployeesToTeamSchema) {
-    const { teamId, userIds } = values;
+    const { teamId, employeeIds } = values;
 
-    const assingPromise = userIds.map((userId) =>
+    const assingPromise = employeeIds.map((employeeId) =>
       auth.api.addTeamMember({
         headers: this.headers,
-        body: { userId, teamId },
+        body: { userId: employeeId, teamId },
       }),
     );
 

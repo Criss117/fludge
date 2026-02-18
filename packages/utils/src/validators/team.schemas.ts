@@ -7,7 +7,6 @@ export const createTeamSchema = z.object({
     .min(2, "El nombre del equipo debe tener al menos 2 caracteres")
     .max(20, "El nombre del equipo es demasiado largo"),
   permissions: permissionsSchema,
-  employeesId: z.array(z.string()).optional(),
   description: z
     .string()
     .max(100, "La descripción del equipo es demasiado larga")
@@ -24,7 +23,9 @@ export const removeManyTeamsSchema = z.object({
 
 export const assignEmployeesToTeamSchema = z.object({
   teamId: z.string("El id del equipo es requerido"),
-  userIds: z.array(z.string()).min(1, "Debe seleccionar al menos un empleado"),
+  employeeIds: z
+    .array(z.string())
+    .min(1, "Debe seleccionar al menos un empleado"),
 });
 
 export const parseEmployeeOnTeamSchema = z.object({
