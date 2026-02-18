@@ -51,18 +51,16 @@ export function teamsCollectionBuilder(orgId: string) {
           return { refetch: false };
         },
         onUpdate: async ({ transaction, collection }) => {
-          console.log(transaction.mutations);
+          const updatedItem = transaction.mutations[0].modified;
 
-          // const updatedItem = transaction.mutations[0].modified;
+          const updatedTeam = await orpc.teams.update.call({
+            id: updatedItem.id,
+            name: updatedItem.name,
+            permissions: updatedItem.permissions,
+            description: updatedItem.description,
+          });
 
-          // const updatedTeam = await orpc.teams.update.call({
-          //   id: updatedItem.id,
-          //   name: updatedItem.name,
-          //   permissions: updatedItem.permissions,
-          //   description: updatedItem.description,
-          // });
-
-          // collection.utils.writeUpdate(updatedTeam);
+          collection.utils.writeUpdate(updatedTeam);
 
           return { refetch: false };
         },

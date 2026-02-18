@@ -7,6 +7,7 @@ interface Props {
   onChange: (value: string) => void;
   placeholder?: string;
   id?: string;
+  disabled?: boolean;
 }
 
 interface SearchInputSkeletonProps {
@@ -19,6 +20,7 @@ export function SearchInput({
   onChange,
   placeholder,
   id = "search-input",
+  disabled,
 }: Props) {
   return (
     <div className="relative">
@@ -30,6 +32,7 @@ export function SearchInput({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
       />
       <Button
         onClick={() => onChange("")}

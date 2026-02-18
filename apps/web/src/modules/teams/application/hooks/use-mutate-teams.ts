@@ -7,6 +7,40 @@ export function useMutateTeams() {
   const employeesCollection = useEmployeesCollection();
   const teamsCollection = useTeamsCollection();
 
+  const removeEmployees = useMutation(
+    orpc.teams.removeEmployees.mutationOptions({
+      onSuccess: (_, variables) => {
+        const team = teamsCollection.get(variables.teamId);
+
+        if (!team) return;
+
+        const employees = Array.from(employeesCollection.entries())
+          .filter(([_, employee]) =>
+            variables.employeeIds.includes(employee.user.id),
+          )
+          .flatMap(([_, employee]) => employee);
+
+        teamsCollection.utils.writeUpdate({
+          ...team,
+          employees: [
+            ...team.employees.filter(
+              (employee) => !variables.employeeIds.includes(employee.id),
+            ),
+          ],
+        });
+
+        employeesCollection.utils.writeUpdate(
+          employees.map((employee) => ({
+            ...employee,
+            teams: [
+              ...employee.teams.filter((team) => team.id !== variables.teamId),
+            ],
+          })),
+        );
+      },
+    }),
+  );
+
   const assignEmployees = useMutation(
     orpc.teams.assingEmployees.mutationOptions({
       onSuccess: (_, variables) => {
@@ -47,5 +81,5 @@ export function useMutateTeams() {
     }),
   );
 
-  return { assignEmployees };
+  return { assignEmployees, removeEmployees };
 }

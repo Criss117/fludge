@@ -12,6 +12,7 @@ import {
 import { Separator } from "@/modules/shared/components/ui/separator";
 import { AssignEmployeeToTeam } from "../components/assign-employee-to-team";
 import { useEmployeesQueries } from "@/modules/employees/application/hooks/use-employees-queries";
+import { RemoveEmployeesFromTeam } from "../components/remove-employees-from-team";
 
 interface Props {
   orgSlug: string;
@@ -37,6 +38,10 @@ export function EmployeesSection({ teamId, orgSlug }: Props) {
     getRowId: (row) => row.id,
   });
 
+  const selectedEmployees = table
+    .getSelectedRowModel()
+    .rows.map((r) => r.original);
+
   return (
     <Card className="gap-4">
       <CardHeader className="flex justify-between">
@@ -49,7 +54,13 @@ export function EmployeesSection({ teamId, orgSlug }: Props) {
             <CardDescription>{data?.length || 0} empleados</CardDescription>
           </div>
         </div>
-        <AssignEmployeeToTeam teamId={teamId} />
+        <div className="flex items-center gap-x-2">
+          <RemoveEmployeesFromTeam
+            selectedEmployees={selectedEmployees}
+            teamId={teamId}
+          />
+          <AssignEmployeeToTeam teamId={teamId} />
+        </div>
       </CardHeader>
       <Separator />
       <CardContent>

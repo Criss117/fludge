@@ -18,6 +18,7 @@ import { toAvatarFallback } from "@fludge/utils/helpers";
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { useMutateTeams } from "../../application/hooks/use-mutate-teams";
 import { useEmployeesQueries } from "@/modules/employees/application/hooks/use-employees-queries";
+import { toast } from "sonner";
 
 interface Props {
   teamId: string;
@@ -53,10 +54,33 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
   };
 
   const handleAssignEmployees = async () => {
-    assignEmployees.mutate({
-      teamId,
-      employeeIds: selectedEmployees,
+    const loadingToastId = toast.loading("Asignando empleados al equipo", {
+      position: "top-center",
     });
+    assignEmployees.mutate(
+      {
+        teamId,
+        employeeIds: selectedEmployees,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Empleados asignados exitosamente", {
+            position: "top-center",
+          });
+          setSelectedEmployees([]);
+          setSearchQuery("");
+          setOpen(false);
+        },
+        onError: (error) => {
+          toast.error("Error asignando empleados", {
+            position: "top-center",
+          });
+        },
+        onSettled: () => {
+          toast.dismiss(loadingToastId);
+        },
+      },
+    );
   };
 
   return (
@@ -85,7 +109,13 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
           placeholder="Buscar Empleados"
           value={searchQuery}
           onChange={setSearchQuery}
+          disabled={assignEmployees.isPending || employees.length === 0}
         />
+        {employees.length === 0 && (
+          <p className="text-sm text-muted-foreground text-center">
+            No se encontraron empleados o ya están asignados a este equipo.
+          </p>
+        )}
         {employees.map((employee) => (
           <Button
             key={employee.id}
@@ -121,7 +151,9 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
             Cancelar
           </DialogClose>
           <Button
-            disabled={selectedEmployees.length === 0}
+            disabled={
+              selectedEmployees.length === 0 || assignEmployees.isPending
+            }
             onClick={handleAssignEmployees}
           >
             Asignar ({selectedEmployees.length}) Empleados

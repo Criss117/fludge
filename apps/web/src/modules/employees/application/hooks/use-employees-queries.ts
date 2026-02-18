@@ -29,12 +29,14 @@ export function useEmployeesQueries() {
       const name = filters.filterBy.name;
 
       if (name) {
-        query.where(({ employees }) => or(eq(employees.user.name, name), true));
+        query = query.where(({ employees }) =>
+          or(eq(employees.user.name, name), true),
+        );
       }
 
       if (teamId) {
-        query.fn.where(({ employees }) =>
-          employees.teams.flatMap((t) => t.id).includes(teamId),
+        query = query.fn.where(({ employees }) =>
+          employees.teams.some((t) => t.id === teamId),
         );
       }
     }
