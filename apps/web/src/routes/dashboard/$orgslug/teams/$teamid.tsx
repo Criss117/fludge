@@ -1,12 +1,12 @@
-import { eq, useLiveSuspenseQuery } from "@tanstack/react-db";
+import { useLiveSuspenseQuery } from "@tanstack/react-db";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { DashBoardHeader } from "@/modules/shared/components/dashboard-header";
-import { useTeamsCollection } from "@/modules/shared/hooks/use-teams-collection";
 import { teamsCollectionBuilder } from "@/modules/teams/application/collections/teams.collection";
 import {
   TeamScreen,
   TeamScreenSkeleton,
 } from "@/modules/teams/presentation/screens/team.screen";
+import { useTeamsQueries } from "@/modules/teams/application/hooks/use-teams-queries";
 
 export const Route = createFileRoute("/dashboard/$orgslug/teams/$teamid")({
   component: RouteComponent,
@@ -41,14 +41,13 @@ export const Route = createFileRoute("/dashboard/$orgslug/teams/$teamid")({
 
 function RouteComponent() {
   const { orgslug, teamid } = Route.useParams();
-  const teamsCollection = useTeamsCollection();
+  const { findOneTeam } = useTeamsQueries();
 
   const { data } = useLiveSuspenseQuery(
-    (q) =>
-      q
-        .from({ teams: teamsCollection })
-        .where(({ teams }) => eq(teams.id, teamid))
-        .findOne(),
+    () =>
+      findOneTeam({
+        filterBy: { id: teamid },
+      }),
     [teamid],
   );
 

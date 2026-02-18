@@ -1,25 +1,19 @@
-import { ilike, useLiveSuspenseQuery } from "@tanstack/react-db";
-import { useTeamsCollection } from "@/modules/shared/hooks/use-teams-collection";
+import { useLiveSuspenseQuery } from "@tanstack/react-db";
 import { useTeamsFilters } from "@/modules/teams/application/store/teams-filters.store";
 import {
   SearchInput,
   SearchInputSkeleton,
 } from "@/modules/shared/components/search-input";
-import { TeamsTableSkeleton } from "../components/teams-table/skeleton";
+import { TeamsTableSkeleton } from "@/modules/teams/presentation/components/teams-table/skeleton";
 import { useDataTable } from "@/modules/shared/components/data-table";
-import { teamsTableColumns } from "../components/teams-table/columns";
+import { teamsTableColumns } from "@/modules/teams/presentation/components/teams-table/columns";
+import { useTeamsQueries } from "@/modules/teams/application/hooks/use-teams-queries";
 
 export function TeamsListSection({ orgSlug }: { orgSlug: string }) {
   const { filters, filtersDispatch } = useTeamsFilters();
-  const teamsCollection = useTeamsCollection();
+  const { findAllTeams } = useTeamsQueries();
   const { data: teams } = useLiveSuspenseQuery(
-    (q) => {
-      if (filters.query.length === 0) return q.from({ teams: teamsCollection });
-
-      return q
-        .from({ teams: teamsCollection })
-        .where(({ teams }) => ilike(teams.name, `%${filters.query}%`));
-    },
+    () => findAllTeams(filters),
     [filters.query],
   );
 

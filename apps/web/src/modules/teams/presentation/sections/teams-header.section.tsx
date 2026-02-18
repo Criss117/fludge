@@ -1,3 +1,5 @@
+import { useLiveSuspenseQuery } from "@tanstack/react-db";
+import { PlusIcon } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -6,23 +8,17 @@ import {
   CardTitle,
 } from "@/modules/shared/components/ui/card";
 import { CreateTeamDialog } from "../components/create-team-dialog";
-import { useTeamsCollection } from "@/modules/shared/hooks/use-teams-collection";
-import { count, useLiveSuspenseQuery } from "@tanstack/react-db";
-import { PlusIcon } from "lucide-react";
 import { Button } from "@/modules/shared/components/ui/button";
 import { Skeleton } from "@/modules/shared/components/ui/skeleton";
 import { useVerifiedSession } from "@/integrations/auth/context";
+import { useTeamsQueries } from "@/modules/teams/application/hooks/use-teams-queries";
 
 export function TeamsHeaderSection() {
   const session = useVerifiedSession();
-  const teamsCollection = useTeamsCollection();
-  const { data } = useLiveSuspenseQuery((q) =>
-    q.from({ teams: teamsCollection }).select(({ teams }) => ({
-      total: count(teams.id),
-    })),
-  );
+  const { totalEmployees } = useTeamsQueries();
+  const { data } = useLiveSuspenseQuery(() => totalEmployees());
 
-  const total = data.at(0)?.total || 0;
+  const total = data?.total || 0;
 
   return (
     <header>

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { UserPlusIcon } from "lucide-react";
-import { inArray, like, or, useLiveSuspenseQuery } from "@tanstack/react-db";
-import { useEmployeesCollection } from "@/modules/employees/application/hooks/use-employees-collection";
+import { useLiveSuspenseQuery } from "@tanstack/react-db";
 import { Button } from "@/modules/shared/components/ui/button";
 import { Checkbox } from "@/modules/shared/components/ui/checkbox";
 import {
@@ -18,34 +17,29 @@ import { Avatar, AvatarFallback } from "@/modules/shared/components/ui/avatar";
 import { toAvatarFallback } from "@fludge/utils/helpers";
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { useMutateTeams } from "../../application/hooks/use-mutate-teams";
+import { useEmployeesQueries } from "@/modules/employees/application/hooks/use-employees-queries";
 
 interface Props {
   teamId: string;
 }
 
 export function AssignEmployeeToTeam({ teamId }: Props) {
-  const employeesCollection = useEmployeesCollection();
-
-  const { assignEmployees } = useMutateTeams();
   const [open, setOpen] = useState(false);
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const { assignEmployees } = useMutateTeams();
+  const { findManyEmployeesOnTeam } = useEmployeesQueries();
 
   //TODO: filter employees not in team
   const { data: employees } = useLiveSuspenseQuery(
-    (q) =>
-      q
-        .from({ employees: employeesCollection })
-        .where(({ employees }) =>
-          or(
-            like(employees.user.name, `%${searchQuery}%`),
-            inArray(employees.id, selectedEmployees),
-          ),
-        )
-        .fn.where(
-          ({ employees }) =>
-            !employees.teams.flatMap((t) => t.id).includes(teamId),
-        ),
+    () =>
+      findManyEmployeesOnTeam({
+        filterBy: {
+          teamId,
+          name: searchQuery,
+          selectedEmployeeIds: selectedEmployees,
+        },
+      }),
     [searchQuery, selectedEmployees],
   );
 

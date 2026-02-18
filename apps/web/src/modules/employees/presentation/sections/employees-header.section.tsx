@@ -1,5 +1,4 @@
-import { useEmployeesCollection } from "../../application/hooks/use-employees-collection";
-import { count, useLiveSuspenseQuery } from "@tanstack/react-db";
+import { useLiveSuspenseQuery } from "@tanstack/react-db";
 import {
   Card,
   CardContent,
@@ -7,17 +6,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/modules/shared/components/ui/card";
-import { CreateEmployee } from "../components/create-employee";
+import { CreateEmployee } from "@/modules/employees/presentation/components/create-employee";
+import { useEmployeesQueries } from "@/modules/employees/application/hooks/use-employees-queries";
 
 export function EmployeesHeaderSection() {
-  const employeesCollection = useEmployeesCollection();
-  const { data } = useLiveSuspenseQuery((q) =>
-    q.from({ teams: employeesCollection }).select(({ teams }) => ({
-      total: count(teams.id),
-    })),
-  );
+  const { totalEmployees } = useEmployeesQueries();
+  const { data } = useLiveSuspenseQuery(() => totalEmployees());
 
-  const total = data.at(0)?.total || 0;
+  const total = data?.total || 0;
 
   return (
     <header>

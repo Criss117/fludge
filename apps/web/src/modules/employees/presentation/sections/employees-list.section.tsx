@@ -1,6 +1,6 @@
 import { useLiveSuspenseQuery } from "@tanstack/react-db";
-import { useEmployeesCollection } from "@/modules/employees/application/hooks/use-employees-collection";
 import { useDataTable } from "@/modules/shared/components/data-table";
+import { useEmployeesQueries } from "@/modules/employees/application/hooks/use-employees-queries";
 import { employeesTableColumns } from "../components/employees-table/columns";
 
 interface Props {
@@ -8,13 +8,9 @@ interface Props {
 }
 
 export function EmployeesListSection({ orgSlug }: Props) {
-  const employeesCollection = useEmployeesCollection();
+  const { findManyEmployees } = useEmployeesQueries();
 
-  const { data } = useLiveSuspenseQuery((q) =>
-    q.from({
-      employees: employeesCollection,
-    }),
-  );
+  const { data } = useLiveSuspenseQuery(() => findManyEmployees());
 
   const table = useDataTable({
     columns: employeesTableColumns(orgSlug),
