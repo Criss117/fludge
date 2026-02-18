@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { EmployeesHeaderSection } from "../sections/employees-header.section";
 import { EmployeesListSection } from "../sections/employees-list.section";
+import { FiltersProvider } from "@/modules/shared/store/teams-filters.store";
 
 interface Props {
   orgSlug: string;
@@ -8,8 +10,15 @@ interface Props {
 export function EmployeesScreen({ orgSlug }: Props) {
   return (
     <div className="px-5 mt-4 space-y-5">
-      <EmployeesHeaderSection />
-      <EmployeesListSection orgSlug={orgSlug} />
+      <Suspense>
+        <EmployeesHeaderSection />
+      </Suspense>
+
+      <Suspense fallback={<div>cargando...</div>}>
+        <FiltersProvider>
+          <EmployeesListSection orgSlug={orgSlug} />
+        </FiltersProvider>
+      </Suspense>
     </div>
   );
 }

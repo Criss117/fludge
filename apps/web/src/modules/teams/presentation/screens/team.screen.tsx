@@ -10,7 +10,8 @@ import {
   TabsTrigger,
 } from "@/modules/shared/components/ui/tabs";
 import { PermissionsSection } from "../sections/permissions.section";
-import { EmployeesSection } from "../sections/employees.section";
+import { TeamEmployeesSection } from "../sections/team-employees.section";
+import { FiltersProvider } from "@/modules/shared/store/teams-filters.store";
 
 interface Props {
   team: Team;
@@ -28,7 +29,9 @@ export function TeamScreen({ team, orgSlug }: Props) {
         </TabsList>
 
         <TabsContent value="employees">
-          <EmployeesSection teamId={team.id} orgSlug={orgSlug} />
+          <FiltersProvider>
+            <TeamEmployeesSection teamId={team.id} orgSlug={orgSlug} />
+          </FiltersProvider>
         </TabsContent>
         <TabsContent value="permissions">
           <PermissionsSection permissions={team.permissions} teamId={team.id} />

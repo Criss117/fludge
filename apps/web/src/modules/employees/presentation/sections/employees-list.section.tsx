@@ -2,6 +2,8 @@ import { useLiveSuspenseQuery } from "@tanstack/react-db";
 import { useDataTable } from "@/modules/shared/components/data-table";
 import { useEmployeesQueries } from "@/modules/employees/application/hooks/use-employees-queries";
 import { employeesTableColumns } from "../components/employees-table/columns";
+import { useFilters } from "@/modules/shared/store/teams-filters.store";
+import { SearchInput } from "@/modules/shared/components/search-input";
 
 interface Props {
   orgSlug: string;
@@ -9,8 +11,18 @@ interface Props {
 
 export function EmployeesListSection({ orgSlug }: Props) {
   const { findManyEmployees } = useEmployeesQueries();
+  const { filters, filtersDispatch } = useFilters();
 
-  const { data } = useLiveSuspenseQuery(() => findManyEmployees());
+  const { data } = useLiveSuspenseQuery(
+    () =>
+      findManyEmployees({
+        filterBy: {
+          name: filters.query,
+          email: filters.query,
+        },
+      }),
+    [filters.query],
+  );
 
   const table = useDataTable({
     columns: employeesTableColumns(orgSlug),
@@ -22,13 +34,13 @@ export function EmployeesListSection({ orgSlug }: Props) {
     <section className="space-y-4">
       <header className="flex justify-between items-center">
         <div className="w-1/3">
-          {/*<SearchInput
-            placeholder="Buscar Equipos"
+          <SearchInput
+            placeholder="Buscar empleados por nombre o correo"
             value={filters.query}
             onChange={(value) =>
               filtersDispatch({ action: "set:query", payload: value })
             }
-          />*/}
+          />
         </div>
 
         <div className="gap-x-2 flex items-center">

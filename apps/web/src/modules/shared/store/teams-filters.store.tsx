@@ -14,7 +14,7 @@ interface Context {
   filtersDispatch: React.ActionDispatch<[action: Actions]>;
 }
 
-interface TeamsFiltersProviderProps {
+interface FiltersProviderProps {
   children: React.ReactNode;
 }
 
@@ -29,7 +29,7 @@ function reducer(state: Filters, action: Actions): Filters {
 
 const TeamsFiltersContext = createContext<Context | null>(null);
 
-export function TeamsFiltersProvider({ children }: TeamsFiltersProviderProps) {
+export function FiltersProvider({ children }: FiltersProviderProps) {
   const [filters, filtersDispatch] = useReducer(reducer, {
     query: "",
   });
@@ -46,13 +46,11 @@ export function TeamsFiltersProvider({ children }: TeamsFiltersProviderProps) {
   );
 }
 
-export function useTeamsFilters() {
+export function useFilters() {
   const context = use(TeamsFiltersContext);
 
   if (!context)
-    throw new Error(
-      "useTeamsFilters must be used within a TeamsFiltersProvider",
-    );
+    throw new Error("useFilters must be used within a FiltersProvider");
 
   return context;
 }

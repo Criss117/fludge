@@ -1,18 +1,23 @@
-import { count, eq, inArray, like, or, Query } from "@tanstack/db";
+import { count, ilike, inArray, like, or, Query } from "@tanstack/db";
 import { useEmployeesCollection } from "./use-employees-collection";
 
 type FindManyEmployeesOptions = {
   filterBy?: {
-    teamId?: string;
+    team?: {
+      id?: string;
+      type: "inside" | "outside";
+    };
     name?: string;
+    email?: string;
+    teamName?: string;
   };
 };
 
 type FindManyEmployeesOnTeamOptions = {
   filterBy: {
     teamId: string;
-    name: string;
-    selectedEmployeeIds: string[];
+    name?: string;
+    selectedEmployeeIds?: string[];
   };
 };
 
@@ -24,41 +29,46 @@ export function useEmployeesQueries() {
       employees: employeesCollection,
     });
 
-    if (filters?.filterBy) {
-      const teamId = filters.filterBy.teamId;
-      const name = filters.filterBy.name;
+    if (!filters?.filterBy) return query;
 
-      if (name) {
-        query = query.where(({ employees }) =>
-          or(eq(employees.user.name, name), true),
-        );
-      }
+    const team = filters.filterBy.team;
+    const name = filters.filterBy.name;
+    const email = filters.filterBy.email;
 
-      if (teamId) {
-        query = query.fn.where(({ employees }) =>
-          employees.teams.some((t) => t.id === teamId),
-        );
-      }
+    if (email || name) {
+      query = query.where(({ employees }) => {
+        const opts = [];
+
+        if (name) opts.push(ilike(employees.user.name, `%${name}%`));
+        if (email) opts.push(ilike(employees.user.email, `%${email}%`));
+
+        if (opts.length === 2) return or(opts[0], opts[1]);
+
+        return opts[0];
+      });
     }
 
+    if (team) {
+      query = query.fn.where(({ employees }) => {
+        const onTeam = employees.teams.some((t) => t.id === team.id);
+
+        return team.type === "inside" ? onTeam : !onTeam;
+      });
+    }
     return query;
   };
 
   const findManyEmployeesOnTeam = (options: FindManyEmployeesOnTeamOptions) => {
-    return new Query()
+    let query = new Query()
       .from({ employees: employeesCollection })
       .where(({ employees }) =>
         or(
           like(employees.user.name, `%${options.filterBy.name}%`),
           inArray(employees.id, options.filterBy.selectedEmployeeIds),
         ),
-      )
-      .fn.where(
-        ({ employees }) =>
-          !employees.teams
-            .flatMap((t) => t.id)
-            .includes(options.filterBy.teamId),
       );
+
+    return query;
   };
 
   const totalEmployees = () => {

@@ -4,8 +4,6 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
-  type ColumnDef,
-  type Row,
   type TableOptions,
   type Table as TSTable,
 } from "@tanstack/react-table";

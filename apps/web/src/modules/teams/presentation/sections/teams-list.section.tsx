@@ -1,5 +1,4 @@
 import { useLiveSuspenseQuery } from "@tanstack/react-db";
-import { useTeamsFilters } from "@/modules/teams/application/store/teams-filters.store";
 import {
   SearchInput,
   SearchInputSkeleton,
@@ -8,9 +7,10 @@ import { TeamsTableSkeleton } from "@/modules/teams/presentation/components/team
 import { useDataTable } from "@/modules/shared/components/data-table";
 import { teamsTableColumns } from "@/modules/teams/presentation/components/teams-table/columns";
 import { useTeamsQueries } from "@/modules/teams/application/hooks/use-teams-queries";
+import { useFilters } from "@/modules/shared/store/teams-filters.store";
 
 export function TeamsListSection({ orgSlug }: { orgSlug: string }) {
-  const { filters, filtersDispatch } = useTeamsFilters();
+  const { filters, filtersDispatch } = useFilters();
   const { findAllTeams } = useTeamsQueries();
   const { data: teams } = useLiveSuspenseQuery(
     () => findAllTeams(filters),
@@ -28,7 +28,7 @@ export function TeamsListSection({ orgSlug }: { orgSlug: string }) {
       <header className="flex justify-between items-center">
         <div className="w-1/3">
           <SearchInput
-            placeholder="Buscar Equipos"
+            placeholder="Buscar equipos por nombre"
             value={filters.query}
             onChange={(value) =>
               filtersDispatch({ action: "set:query", payload: value })

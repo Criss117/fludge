@@ -29,16 +29,18 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const { assignEmployees } = useMutateTeams();
-  const { findManyEmployeesOnTeam } = useEmployeesQueries();
+  const { findManyEmployees } = useEmployeesQueries();
 
-  //TODO: filter employees not in team
   const { data: employees } = useLiveSuspenseQuery(
     () =>
-      findManyEmployeesOnTeam({
+      findManyEmployees({
         filterBy: {
-          teamId,
+          team: {
+            id: teamId,
+            type: "outside",
+          },
           name: searchQuery,
-          selectedEmployeeIds: selectedEmployees,
+          email: searchQuery,
         },
       }),
     [searchQuery, selectedEmployees],
@@ -109,7 +111,7 @@ export function AssignEmployeeToTeam({ teamId }: Props) {
           placeholder="Buscar Empleados"
           value={searchQuery}
           onChange={setSearchQuery}
-          disabled={assignEmployees.isPending || employees.length === 0}
+          disabled={assignEmployees.isPending}
         />
         {employees.length === 0 && (
           <p className="text-sm text-muted-foreground text-center">

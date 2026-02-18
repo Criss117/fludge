@@ -7,8 +7,8 @@ import {
   TeamsListSection,
   TeamsListSectionSkeleton,
 } from "../sections/teams-list.section";
-import { TeamsFiltersProvider } from "@/modules/teams/application/store/teams-filters.store";
 import { UpdateTeamDialog } from "../components/update-team-dialog";
+import { FiltersProvider } from "@/modules/shared/store/teams-filters.store";
 
 interface Props {
   orgSlug: string;
@@ -20,14 +20,14 @@ export function TeamsScreen({ orgSlug }: Props) {
       <Suspense fallback={<TeamsHeaderSectionSkeleton />}>
         <TeamsHeaderSection />
       </Suspense>
-      <TeamsFiltersProvider>
-        <UpdateTeamDialog.Root>
-          <Suspense fallback={<TeamsListSectionSkeleton />}>
+      <UpdateTeamDialog.Root>
+        <Suspense fallback={<TeamsListSectionSkeleton />}>
+          <FiltersProvider>
             <TeamsListSection orgSlug={orgSlug} />
-          </Suspense>
-          <UpdateTeamDialog.FormDialog />
-        </UpdateTeamDialog.Root>
-      </TeamsFiltersProvider>
+          </FiltersProvider>
+        </Suspense>
+        <UpdateTeamDialog.FormDialog />
+      </UpdateTeamDialog.Root>
     </div>
   );
 }
