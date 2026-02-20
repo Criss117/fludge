@@ -1,5 +1,9 @@
-import { employeesCollectionBuilder } from "@/modules/employees/application/collections/employees.collection";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { employeesCollectionBuilder } from "@/modules/employees/application/collections/employees.collection";
+import { EmployeeScreen } from "@/modules/employees/presentation/screens/employee.screen";
+import { DashBoardHeader } from "@/modules/shared/components/dashboard-header";
+import { useEmployeesQueries } from "@/modules/employees/application/hooks/use-employees-queries";
+import { useLiveSuspenseQuery } from "@tanstack/react-db";
 
 export const Route = createFileRoute(
   "/dashboard/$orgslug/employees/$employeeid",
@@ -28,13 +32,22 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { orgslug, employeeid } = Route.useParams();
-  const { employee } = Route.useLoaderData();
+  const { findOneEmployee } = useEmployeesQueries();
+  const { data: employee } = useLiveSuspenseQuery(
+    () => findOneEmployee(employeeid),
+    [employeeid],
+  );
+
+  if (!employee) return null;
 
   return (
-    <div>
-      <pre>
-        <code>{JSON.stringify(employee, null, 2)}</code>
-      </pre>
-    </div>
+    <>
+      <DashBoardHeader.Content orgSlug={orgslug} currentPath="Employee">
+        <DashBoardHeader.Home />
+        <DashBoardHeader.Employees />
+        <DashBoardHeader.Employee label={employee.user.name} />
+      </DashBoardHeader.Content>
+      <EmployeeScreen employee={employee} />
+    </>
   );
 }

@@ -17,8 +17,9 @@ type CurrentPath =
   | "Products"
   | "Clients"
   | "Teams"
+  | "Team"
   | "Employees"
-  | "Team";
+  | "Employee";
 
 interface Context {
   orgSlug: string;
@@ -208,6 +209,23 @@ function Employees({ label = "Empleados" }) {
   );
 }
 
+function Employee({ label = "Empleado" }) {
+  const { currentPath, orgSlug } = useDashBoardHeader();
+
+  const isCurrent = currentPath === "Employee";
+
+  return (
+    <BaseBreadCrumb
+      label={label}
+      isCurrent={isCurrent}
+      href={{
+        to: "/dashboard/$orgslug/employees",
+        params: { orgslug: orgSlug },
+      }}
+    />
+  );
+}
+
 export const DashBoardHeader = {
   useDashBoardHeader,
   Content,
@@ -215,6 +233,7 @@ export const DashBoardHeader = {
   Products,
   Clients,
   Teams,
-  Employees,
   Team,
+  Employees,
+  Employee,
 };

@@ -1,4 +1,4 @@
-import { count, ilike, inArray, like, or, Query } from "@tanstack/db";
+import { count, eq, ilike, inArray, or, Query } from "@tanstack/db";
 import { useEmployeesCollection } from "./use-employees-collection";
 
 type FindManyEmployeesOptions = {
@@ -15,6 +15,15 @@ type FindManyEmployeesOptions = {
 
 export function useEmployeesQueries() {
   const employeesCollection = useEmployeesCollection();
+
+  const findOneEmployee = (employeeId: string) => {
+    return new Query()
+      .from({
+        employees: employeesCollection,
+      })
+      .where(({ employees }) => eq(employees.id, employeeId))
+      .findOne();
+  };
 
   const findManyEmployees = (filters?: FindManyEmployeesOptions) => {
     let query = new Query().from({
@@ -62,5 +71,6 @@ export function useEmployeesQueries() {
     employeesCollection,
     findManyEmployees,
     totalEmployees,
+    findOneEmployee,
   };
 }

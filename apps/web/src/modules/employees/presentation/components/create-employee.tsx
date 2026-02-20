@@ -24,9 +24,9 @@ export function CreateEmployee() {
 
   const form = useAuthForm({
     defaultValues: {
-      email: "email@example.com",
-      name: "unnombre",
-      username: "username",
+      email: "",
+      name: "",
+      username: "",
       password: Math.random().toString(36).substring(2, 15),
     },
     validators: {
