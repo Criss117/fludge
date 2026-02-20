@@ -9,15 +9,7 @@ type FindManyEmployeesOptions = {
     };
     name?: string;
     email?: string;
-    teamName?: string;
-  };
-};
-
-type FindManyEmployeesOnTeamOptions = {
-  filterBy: {
-    teamId: string;
-    name?: string;
-    selectedEmployeeIds?: string[];
+    teamMemberIds?: string[];
   };
 };
 
@@ -31,42 +23,28 @@ export function useEmployeesQueries() {
 
     if (!filters?.filterBy) return query;
 
-    const team = filters.filterBy.team;
     const name = filters.filterBy.name;
     const email = filters.filterBy.email;
+    const teamMemberIds = filters.filterBy.teamMemberIds;
+
+    if (teamMemberIds) {
+      query = query.where(({ employees }) => {
+        return inArray(employees.user.id, teamMemberIds);
+      });
+    }
 
     if (email || name) {
       query = query.where(({ employees }) => {
-        const opts = [];
+        const orFilters = [];
 
-        if (name) opts.push(ilike(employees.user.name, `%${name}%`));
-        if (email) opts.push(ilike(employees.user.email, `%${email}%`));
+        if (name) orFilters.push(ilike(employees.user.name, `%${name}%`));
+        if (email) orFilters.push(ilike(employees.user.email, `%${email}%`));
 
-        if (opts.length === 2) return or(opts[0], opts[1]);
+        if (orFilters.length === 2) return or(orFilters[0], orFilters[1]);
 
-        return opts[0];
+        return orFilters[0];
       });
     }
-
-    if (team) {
-      query = query.fn.where(({ employees }) => {
-        const onTeam = employees.teams.some((t) => t.id === team.id);
-
-        return team.type === "inside" ? onTeam : !onTeam;
-      });
-    }
-    return query;
-  };
-
-  const findManyEmployeesOnTeam = (options: FindManyEmployeesOnTeamOptions) => {
-    let query = new Query()
-      .from({ employees: employeesCollection })
-      .where(({ employees }) =>
-        or(
-          like(employees.user.name, `%${options.filterBy.name}%`),
-          inArray(employees.id, options.filterBy.selectedEmployeeIds),
-        ),
-      );
 
     return query;
   };
@@ -84,6 +62,5 @@ export function useEmployeesQueries() {
     employeesCollection,
     findManyEmployees,
     totalEmployees,
-    findManyEmployeesOnTeam,
   };
 }

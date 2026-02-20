@@ -1,6 +1,6 @@
 import { count, eq, ilike, Query } from "@tanstack/db";
 import { useTeamsCollection } from "@/modules/shared/hooks/use-teams-collection";
-import type { Filters } from "../store/teams-filters.store";
+import type { Filters } from "@/modules/shared/store/teams-filters.store";
 
 type FindOneTeamOptions = {
   filterBy: {

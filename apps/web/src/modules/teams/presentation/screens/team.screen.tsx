@@ -19,6 +19,8 @@ interface Props {
 }
 
 export function TeamScreen({ team, orgSlug }: Props) {
+  const teamMemberIds = team.employees.map((t) => t.id);
+
   return (
     <div className="px-5 mt-4 space-y-8">
       <TeamHeaderSection team={team} />
@@ -30,7 +32,11 @@ export function TeamScreen({ team, orgSlug }: Props) {
 
         <TabsContent value="employees">
           <FiltersProvider>
-            <TeamEmployeesSection teamId={team.id} orgSlug={orgSlug} />
+            <TeamEmployeesSection
+              teamId={team.id}
+              orgSlug={orgSlug}
+              teamMemberIds={teamMemberIds}
+            />
           </FiltersProvider>
         </TabsContent>
         <TabsContent value="permissions">
