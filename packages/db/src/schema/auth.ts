@@ -10,25 +10,36 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { uuid } from "../utils";
 
-export const user = sqliteTable("user", {
-  id: uuid().primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  emailVerified: integer("email_verified", { mode: "boolean" })
-    .default(false)
-    .notNull(),
-  image: text("image"),
-  createdAt: integer("created_at", { mode: "timestamp_ms" })
-    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-    .notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
-    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-    .$onUpdate(() => /* @__PURE__ */ new Date())
-    .notNull(),
-  username: text("username").unique(),
-  displayUsername: text("display_username"),
-  is_root: integer("is_root", { mode: "boolean" }).notNull(),
-});
+export const user = sqliteTable(
+  "user",
+  {
+    id: uuid().primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull().unique(),
+    emailVerified: integer("email_verified", { mode: "boolean" })
+      .default(false)
+      .notNull(),
+    image: text("image"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+      .notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+    username: text("username").unique(),
+    displayUsername: text("display_username"),
+    is_root: integer("is_root", { mode: "boolean" }).notNull(),
+    phone: text("phone"),
+    cc: text("cc").notNull(),
+    address: text("address").notNull(),
+  },
+  (t) => [
+    index("user_email_idx").on(t.email),
+    index("user_username_idx").on(t.username),
+    index("user_cc_idx").on(t.cc),
+  ],
+);
 
 export const session = sqliteTable(
   "session",
@@ -50,7 +61,10 @@ export const session = sqliteTable(
     activeOrganizationId: text("active_organization_id"),
     activeTeamId: text("active_team_id"),
   },
-  (table) => [index("session_userId_idx").on(table.userId)],
+  (table) => [
+    index("session_userId_idx").on(table.userId),
+    index("session_token_idx").on(table.token),
+  ],
 );
 
 export const account = sqliteTable(

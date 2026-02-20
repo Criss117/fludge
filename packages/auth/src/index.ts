@@ -42,6 +42,21 @@ export const auth = betterAuth({
         fieldName: "is_root",
         required: true,
       },
+      phone: {
+        type: "string",
+        fieldName: "phone",
+        required: false,
+      },
+      cc: {
+        type: "string",
+        fieldName: "cc",
+        required: true,
+      },
+      address: {
+        type: "string",
+        fieldName: "address",
+        required: true,
+      },
     },
   },
   plugins: [
