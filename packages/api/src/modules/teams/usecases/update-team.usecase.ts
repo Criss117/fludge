@@ -6,6 +6,7 @@ import { and, eq, sql } from "drizzle-orm";
 import { InternalServerErrorException } from "@fludge/api/modules/shared/exceptions/internal-server-error.exception";
 import { TeamNotFoundException } from "../exceptions/team-not-found.exception";
 import { TeamAlreadyExistsException } from "../exceptions/team-already-exists.exception";
+import { u } from "node_modules/@orpc/server/dist/shared/server.C8_sRzQB.mjs";
 
 export class UpdateTeamUseCase {
   public static instance: UpdateTeamUseCase;
@@ -65,12 +66,12 @@ export class UpdateTeamUseCase {
         );
     }
 
-    const { data: updatedTeam, error: errorUpadatedTeam } = await tryCatch(
+    const { data: updatedTeams, error: errorUpadatedTeam } = await tryCatch(
       db
         .update(team)
         .set({
           name: values.name ?? existingTeam.name,
-          description: values.description ?? existingTeam.description,
+          description: values.description,
           permissions: Array.from(
             new Set(values.permissions ?? existingTeam.permissions),
           ),
@@ -82,6 +83,12 @@ export class UpdateTeamUseCase {
     );
 
     if (errorUpadatedTeam)
+      throw new InternalServerErrorException(
+        "Hubo un error al actualizar los datos del equipo",
+      );
+    const updatedTeam = updatedTeams.at(0);
+
+    if (!updatedTeam)
       throw new InternalServerErrorException(
         "Hubo un error al actualizar los datos del equipo",
       );

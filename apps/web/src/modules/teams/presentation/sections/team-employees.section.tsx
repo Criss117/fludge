@@ -97,7 +97,7 @@ export function TeamEmployeesSection({
           </div>
         </div>
 
-        <table.Content emptyMessage="No hay Equipos Creados" />
+        <table.Content emptyMessage="No hay Empleados asignados" />
         <div className="flex gap-x-2 items-center justify-end">
           <table.FirstPageButton />
           <table.NextButton />

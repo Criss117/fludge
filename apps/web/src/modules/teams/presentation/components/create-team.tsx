@@ -30,13 +30,14 @@ import { useTeamsCollection } from "@/modules/shared/hooks/use-teams-collection"
 const defaultValues: CreateTeamSchema = {
   name: "",
   permissions: [],
+  description: "",
 };
 
 interface Props {
   activeOrganizationId: string;
 }
 
-export function CreateTeamDialog({ activeOrganizationId }: Props) {
+export function CreateTeam({ activeOrganizationId }: Props) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [rootError, setRootError] = useState<string | null>(null);
@@ -44,18 +45,20 @@ export function CreateTeamDialog({ activeOrganizationId }: Props) {
 
   const form = useTeamForm({
     validators: {
-      onSubmit: createTeamSchema,
+      onChange: createTeamSchema,
     },
     defaultValues,
     onSubmit: ({ value, formApi }) => {
       const tx = teamsCollection.insert({
+        id: Math.random().toString(36).substring(2, 9),
         name: value.name,
         permissions: value.permissions,
         description: value.description,
         organizationId: activeOrganizationId,
+        employees: [],
         createdAt: new Date(),
-        id: Math.random().toString(36).substring(2, 9),
         isPending: true,
+        updatedAt: null,
       });
       startTransition(async () => {
         const loadingToastId = toast.loading("Creando equipo...", {

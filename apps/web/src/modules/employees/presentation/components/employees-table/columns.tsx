@@ -64,6 +64,10 @@ export function employeesTableColumns(orgSlug: string) {
       header: "Correo electrónico",
       cell: (info) => info.getValue(),
     }),
+    columnHelper.accessor((t) => t.user.phone, {
+      header: "Telefono",
+      cell: (info) => info.getValue(),
+    }),
     columnHelper.accessor((t) => t.createdAt, {
       header: "Ingresado el",
       cell: (info) =>
@@ -78,6 +82,9 @@ export function employeesTableColumns(orgSlug: string) {
       header: "Equipos",
       cell: (info) => (
         <div className="flex flex-col items-center gap-y-1">
+          {info.getValue().length === 0 && (
+            <p className="text-muted-foreground text-sm">Sin Equipos</p>
+          )}
           {info.getValue().map((team) => (
             <Link
               key={team.id}

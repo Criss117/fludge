@@ -50,6 +50,9 @@ export class CreateEmployeeUseCase {
           password: values.password, // required
           username: values.username, // required
           displayUsername: values.username,
+          address: values.address,
+          cc: values.cc,
+          phone: values.phone,
           isRoot: false,
         },
       }),
@@ -83,6 +86,9 @@ export class CreateEmployeeUseCase {
         name: createdEmployee.user.name,
         email: createdEmployee.user.email,
         image: createdEmployee.user.image,
+        address: createdEmployee.user.address,
+        cc: createdEmployee.user.cc,
+        phone: createdEmployee.user.phone,
       },
     };
   }

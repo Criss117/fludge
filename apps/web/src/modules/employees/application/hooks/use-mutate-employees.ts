@@ -19,8 +19,12 @@ export function useMutateEmployees() {
             id: data.user.id,
             name: data.user.name,
             email: data.user.email,
-            image: data.user.image || undefined,
+            image: data.user.image || null,
+            address: data.user.address,
+            cc: data.user.cc,
+            phone: data.user.phone || null,
           },
+          teams: [],
         });
       },
     }),

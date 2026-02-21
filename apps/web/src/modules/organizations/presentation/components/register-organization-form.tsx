@@ -55,11 +55,14 @@ function OrganizationName() {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
   return (
     <Field data-invalid={isInvalid}>
-      <FieldLabel htmlFor={id}>Nombre de la Organización</FieldLabel>
+      <FieldLabel htmlFor={id}>
+        Nombre de la Organización
+        <span className="text-destructive">*</span>
+      </FieldLabel>
       <Input
         id={id}
         name={field.name}
-        value={field.state.value}
+        value={field.state.value || ""}
         onBlur={field.handleBlur}
         onChange={(e) => field.handleChange(e.target.value)}
         aria-invalid={isInvalid}
@@ -77,11 +80,14 @@ function OrganizationLegalName() {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
   return (
     <Field data-invalid={isInvalid}>
-      <FieldLabel htmlFor={id}>Nombre legal de la Organización</FieldLabel>
+      <FieldLabel htmlFor={id}>
+        Nombre legal de la Organización
+        <span className="text-destructive">*</span>
+      </FieldLabel>
       <Input
         id={id}
         name={field.name}
-        value={field.state.value}
+        value={field.state.value || ""}
         onBlur={field.handleBlur}
         onChange={(e) => field.handleChange(e.target.value)}
         aria-invalid={isInvalid}
@@ -99,11 +105,14 @@ function OrganizationAddress() {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
   return (
     <Field data-invalid={isInvalid}>
-      <FieldLabel htmlFor={id}>Dirección de la Organización</FieldLabel>
+      <FieldLabel htmlFor={id}>
+        Dirección de la Organización
+        <span className="text-destructive">*</span>
+      </FieldLabel>
       <Input
         id={id}
         name={field.name}
-        value={field.state.value}
+        value={field.state.value || ""}
         onBlur={field.handleBlur}
         onChange={(e) => field.handleChange(e.target.value)}
         aria-invalid={isInvalid}
@@ -123,11 +132,12 @@ function OrganizationContactEmail() {
     <Field data-invalid={isInvalid}>
       <FieldLabel htmlFor={id}>
         Correo Electrónico de la Organización
+        <span className="text-destructive">*</span>
       </FieldLabel>
       <Input
         id={id}
         name={field.name}
-        value={field.state.value}
+        value={field.state.value || ""}
         onBlur={field.handleBlur}
         onChange={(e) => field.handleChange(e.target.value)}
         aria-invalid={isInvalid}
@@ -145,11 +155,14 @@ function OrganizationContactPhone() {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
   return (
     <Field data-invalid={isInvalid}>
-      <FieldLabel htmlFor={id}>Teléfono de la Organización</FieldLabel>
+      <FieldLabel htmlFor={id}>
+        Teléfono de la Organización
+        <span className="text-destructive">*</span>
+      </FieldLabel>
       <Input
         id={id}
         name={field.name}
-        value={field.state.value}
+        value={field.state.value || ""}
         onBlur={field.handleBlur}
         onChange={(e) => field.handleChange(e.target.value)}
         aria-invalid={isInvalid}

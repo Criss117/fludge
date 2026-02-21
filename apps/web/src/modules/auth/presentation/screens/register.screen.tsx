@@ -14,7 +14,10 @@ import {
 } from "@/modules/shared/components/ui/card";
 import { Separator } from "@/modules/shared/components/ui/separator";
 import { useAuthForm } from "../components/auth-form";
-import { signUpEmailFormSchema } from "@fludge/utils/validators/auth.schemas";
+import {
+  signUpEmailFormSchema,
+  type SignUpEmailFormSchema,
+} from "@fludge/utils/validators/auth.schemas";
 import {
   Alert,
   AlertDescription,
@@ -23,17 +26,26 @@ import {
 import { FieldGroup } from "@/modules/shared/components/ui/field";
 import { useAuth } from "@/integrations/auth/context";
 
+const defaultValues: SignUpEmailFormSchema = {
+  address: "",
+  cc: "",
+  email: "",
+  name: "",
+  phone: "",
+  password: "",
+  repeatPassword: "",
+};
+
 export function RegisterScreen() {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { signUpEmail } = useAuth();
 
   const form = useAuthForm({
-    defaultValues: {
-      email: "",
-      password: "",
-      name: "",
-      repeatPassword: "",
+    defaultValues,
+    validators: {
+      onSubmit: signUpEmailFormSchema,
+      onChange: signUpEmailFormSchema,
     },
     onSubmit: ({ value }) => {
       signUpEmail.mutate(
@@ -41,6 +53,9 @@ export function RegisterScreen() {
           email: value.email,
           password: value.password,
           name: value.name,
+          cc: value.cc,
+          phone: value.phone,
+          address: value.address,
         },
         {
           onSuccess: () => {
@@ -51,9 +66,6 @@ export function RegisterScreen() {
           },
         },
       );
-    },
-    validators: {
-      onSubmit: signUpEmailFormSchema,
     },
   });
 
@@ -95,8 +107,24 @@ export function RegisterScreen() {
               name="email"
               children={(field) => <field.EmailField />}
             />
+            <form.AppField
+              name="address"
+              children={(field) => <field.AddressField />}
+            />
 
-            <FieldGroup className="flex justify-between flex-row items-center">
+            <FieldGroup className="flex justify-between flex-row items-start">
+              <form.AppField
+                name="cc"
+                children={(field) => <field.CCField />}
+              />
+
+              <form.AppField
+                name="phone"
+                children={(field) => <field.PhoneField />}
+              />
+            </FieldGroup>
+
+            <FieldGroup className="flex justify-between flex-row items-start">
               <form.AppField
                 name="password"
                 children={(field) => <field.PasswordField hideForgotPassword />}

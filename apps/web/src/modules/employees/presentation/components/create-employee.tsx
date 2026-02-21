@@ -14,8 +14,21 @@ import {
 import { Button } from "@/modules/shared/components/ui/button";
 import { useAuthForm } from "@/modules/auth/presentation/components/auth-form";
 import { FieldGroup } from "@/modules/shared/components/ui/field";
-import { signUpUsernameSchema } from "@fludge/utils/validators/auth.schemas";
+import {
+  signUpUsernameSchema,
+  type SignUpUsernameSchema,
+} from "@fludge/utils/validators/auth.schemas";
 import { useMutateEmployees } from "@/modules/employees/application/hooks/use-mutate-employees";
+
+const defaultValues: SignUpUsernameSchema = {
+  address: "",
+  email: "",
+  name: "",
+  username: "",
+  password: Math.random().toString(36).substring(2, 15),
+  cc: "",
+  phone: "",
+};
 
 export function CreateEmployee() {
   const [open, setOpen] = useState(false);
@@ -23,14 +36,9 @@ export function CreateEmployee() {
   const { create } = useMutateEmployees();
 
   const form = useAuthForm({
-    defaultValues: {
-      email: "",
-      name: "",
-      username: "",
-      password: Math.random().toString(36).substring(2, 15),
-    },
+    defaultValues,
     validators: {
-      onSubmit: signUpUsernameSchema,
+      onChange: signUpUsernameSchema,
     },
     onSubmit: ({ value, formApi }) => {
       setRootError(null);
@@ -58,12 +66,22 @@ export function CreateEmployee() {
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        if (!v) {
+          setRootError("");
+          form.reset();
+        }
+
+        setOpen(v);
+      }}
+    >
       <DialogTrigger render={(props) => <Button {...props} />}>
         <UserPlus />
         <span>Registrar Nuevo Empleado</span>
       </DialogTrigger>
-      <DialogContent className="min-w-2/5">
+      <DialogContent className="min-w-3/5">
         <DialogHeader>
           <DialogTitle>Nuevo Empleado</DialogTitle>
           <DialogDescription>
@@ -72,32 +90,42 @@ export function CreateEmployee() {
         </DialogHeader>
         {rootError && <div className="text-red-500">{rootError}</div>}
         <form
+          noValidate
           className="space-y-4"
           onSubmit={(event) => {
             event.preventDefault();
             form.handleSubmit();
           }}
         >
-          <FieldGroup className="flex-row gap-4">
-            <form.AppField
-              name="name"
-              children={(field) => <field.NameField />}
-            />
+          <form.AppField
+            name="name"
+            children={(field) => <field.NameField />}
+          />
+          <FieldGroup className="flex-row gap-4 items-start">
             <form.AppField
               name="username"
               children={(field) => <field.UsernameField />}
             />
-          </FieldGroup>
-          <FieldGroup className="gap-4">
             <form.AppField
               name="email"
               children={(field) => <field.EmailField />}
             />
+          </FieldGroup>
+          <form.AppField
+            name="address"
+            children={(field) => <field.AddressField />}
+          />
+          <FieldGroup className="flex-row gap-4 items-start">
+            <form.AppField name="cc" children={(field) => <field.CCField />} />
             <form.AppField
-              name="password"
-              children={(field) => <field.PasswordField hideForgotPassword />}
+              name="phone"
+              children={(field) => <field.PhoneField />}
             />
           </FieldGroup>
+          <form.AppField
+            name="password"
+            children={(field) => <field.PasswordField hideForgotPassword />}
+          />
 
           <DialogFooter>
             <DialogClose

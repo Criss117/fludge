@@ -2,8 +2,11 @@ import { useState } from "react";
 import {
   EyeClosed,
   EyeIcon,
+  IdCard,
   LockIcon,
   MailIcon,
+  Map,
+  Phone,
   ScrollText,
 } from "lucide-react";
 import { LinkButton } from "@/modules/shared/components/link-button";
@@ -32,13 +35,16 @@ const { useAppForm } = createFormHook({
     PasswordField,
     NameField,
     UsernameField,
+    PhoneField,
+    CCField,
+    AddressField,
   },
   formComponents: {},
   fieldContext,
   formContext,
 });
 
-export function NameField() {
+function NameField() {
   const field = useFieldContext<string>();
   const id = field.name + "-name";
 
@@ -46,7 +52,10 @@ export function NameField() {
 
   return (
     <Field className="gap-2" data-invalid={isInvalid}>
-      <FieldLabel htmlFor={id}>Nombre completo</FieldLabel>
+      <FieldLabel htmlFor={id}>
+        Nombre completo
+        <span className="text-destructive">*</span>
+      </FieldLabel>
       <div className="flex relative">
         <ScrollText
           className="absolute left-3 top-1/2 -translate-y-1/2"
@@ -70,7 +79,7 @@ export function NameField() {
   );
 }
 
-export function UsernameField() {
+function UsernameField() {
   const field = useFieldContext<string>();
   const id = field.name + "-username";
 
@@ -78,7 +87,10 @@ export function UsernameField() {
 
   return (
     <Field className="gap-2" data-invalid={isInvalid}>
-      <FieldLabel htmlFor={id}>Nombre de usuario</FieldLabel>
+      <FieldLabel htmlFor={id}>
+        Nombre de usuario
+        <span className="text-destructive">*</span>
+      </FieldLabel>
       <div className="flex relative">
         <ScrollText
           className="absolute left-3 top-1/2 -translate-y-1/2"
@@ -102,14 +114,17 @@ export function UsernameField() {
   );
 }
 
-export function EmailField() {
+function EmailField() {
   const field = useFieldContext<string>();
 
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
     <Field className="gap-2" data-invalid={isInvalid}>
-      <FieldLabel htmlFor={field.name + "-email"}>Email</FieldLabel>
+      <FieldLabel htmlFor={field.name + "-email"}>
+        Email
+        <span className="text-destructive">*</span>
+      </FieldLabel>
       <div className="flex relative">
         <MailIcon
           className="absolute left-3 top-1/2 -translate-y-1/2"
@@ -134,7 +149,7 @@ export function EmailField() {
   );
 }
 
-export function PasswordField({
+function PasswordField({
   hideForgotPassword = false,
   label = "Contraseña",
   placeholder = "********",
@@ -151,7 +166,10 @@ export function PasswordField({
       data-invalid={isInvalid}
     >
       <div className="flex justify-between">
-        <FieldLabel htmlFor={field.name + "-password"}>{label}</FieldLabel>
+        <FieldLabel htmlFor={field.name + "-password"}>
+          {label}
+          <span className="text-destructive">*</span>
+        </FieldLabel>
         {!hideForgotPassword && (
           <LinkButton variant="link" to="/auth/forgot-password">
             Olvidaste tu contraseña?
@@ -189,6 +207,106 @@ export function PasswordField({
       {isInvalid && (
         <FieldError errors={field.state.meta.errors} className="pt-2" />
       )}
+    </Field>
+  );
+}
+
+function PhoneField() {
+  const field = useFieldContext<string>();
+  const id = field.name + "-phone";
+
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+  return (
+    <Field className="gap-2" data-invalid={isInvalid}>
+      <FieldLabel htmlFor={id}>Numero telefonico</FieldLabel>
+      <div className="flex relative">
+        <Phone className="absolute left-3 top-1/2 -translate-y-1/2" size={20} />
+        <Input
+          className="pl-10"
+          id={id}
+          type="number"
+          placeholder="Ej: 3238439347"
+          name={field.name}
+          value={
+            field.state.value.toString() === "0"
+              ? ""
+              : field.state.value.toString()
+          }
+          onBlur={field.handleBlur}
+          onChange={(e) => field.handleChange(e.target.value)}
+          aria-invalid={isInvalid}
+          required
+        />
+      </div>
+      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+    </Field>
+  );
+}
+
+function CCField() {
+  const field = useFieldContext<string>();
+  const id = field.name + "-cc";
+
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+  return (
+    <Field className="gap-2" data-invalid={isInvalid}>
+      <FieldLabel htmlFor={id}>
+        Numero de identificacion
+        <span className="text-destructive">*</span>
+      </FieldLabel>
+      <div className="flex relative">
+        <IdCard
+          className="absolute left-3 top-1/2 -translate-y-1/2"
+          size={20}
+        />
+        <Input
+          className="pl-10"
+          id={id}
+          type="text"
+          placeholder="Ej: 13234341443"
+          name={field.name}
+          value={field.state.value}
+          onBlur={field.handleBlur}
+          onChange={(e) => field.handleChange(e.target.value)}
+          aria-invalid={isInvalid}
+          required
+        />
+      </div>
+      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+    </Field>
+  );
+}
+
+function AddressField() {
+  const field = useFieldContext<string>();
+  const id = field.name + "-cc";
+
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+  return (
+    <Field className="gap-2" data-invalid={isInvalid}>
+      <FieldLabel htmlFor={id}>
+        Direccion
+        <span className="text-destructive">*</span>
+      </FieldLabel>
+      <div className="flex relative">
+        <Map className="absolute left-3 top-1/2 -translate-y-1/2" size={20} />
+        <Input
+          className="pl-10"
+          id={id}
+          type="text"
+          placeholder="Ej: Calle Principal 123"
+          name={field.name}
+          value={field.state.value}
+          onBlur={field.handleBlur}
+          onChange={(e) => field.handleChange(e.target.value)}
+          aria-invalid={isInvalid}
+          required
+        />
+      </div>
+      {isInvalid && <FieldError errors={field.state.meta.errors} />}
     </Field>
   );
 }

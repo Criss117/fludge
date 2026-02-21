@@ -39,7 +39,7 @@ export class CreateTeamUseCase {
 
     if (existingTeams.length > 0) throw new TeamAlreadyExistsException();
 
-    const { data: createdTeam, error: createTeamError } = await tryCatch(
+    const { data: createdTeams, error: createTeamError } = await tryCatch(
       db
         .insert(team)
         .values({
@@ -53,6 +53,13 @@ export class CreateTeamUseCase {
     );
 
     if (createTeamError)
+      throw new InternalServerErrorException(
+        "Ocurrio un error al crear el equipo",
+      );
+
+    const createdTeam = createdTeams.at(0);
+
+    if (!createdTeam)
       throw new InternalServerErrorException(
         "Ocurrio un error al crear el equipo",
       );

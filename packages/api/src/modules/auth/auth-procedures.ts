@@ -34,6 +34,9 @@ export const authProcedures = {
             email: input.email,
             name: input.name,
             password: input.password,
+            cc: input.cc,
+            phone: input.phone?.toString(),
+            address: input.address,
             isRoot: true,
           },
         });

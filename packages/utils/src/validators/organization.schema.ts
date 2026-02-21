@@ -1,9 +1,10 @@
 import { z } from "zod";
+import { emailValidator, phoneValidator } from "./utils";
 
 export const createOrganizationSchema = z.object({
   name: z
     .string("El nombre es obligatorio")
-    .min(2, "El nombre debe tener al menos 2 caracteres")
+    .min(5, "El nombre debe tener al menos 5 caracteres")
     .max(100, "El nombre no puede exceder 100 caracteres"),
   legalName: z
     .string("El nombre legal es obligatorio")
@@ -13,17 +14,8 @@ export const createOrganizationSchema = z.object({
     .string("La dirección es obligatoria")
     .min(5, "La dirección debe tener al menos 5 caracteres")
     .max(500, "La dirección no puede exceder 500 caracteres"),
-  contactEmail: z
-    .email("El correo electrónico no es válido")
-    .min(2, "El correo electrónico debe tener al menos 2 caracteres")
-    .max(100, "El correo electrónico no puede exceder 100 caracteres")
-    .optional(),
-  contactPhone: z
-    .string("El teléfono no es válido")
-    .min(10, "El teléfono debe tener al menos 10 caracteres")
-    .max(20, "El teléfono no puede exceder 20 caracteres")
-    .optional(),
-  logo: z.string().url("El logo debe ser una URL válida").optional(),
+  contactEmail: emailValidator,
+  contactPhone: phoneValidator,
 });
 
 export type CreateOrganizationSchema = z.infer<typeof createOrganizationSchema>;

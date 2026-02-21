@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/modules/shared/components/ui/card";
-import { CreateTeamDialog } from "../components/create-team-dialog";
+import { CreateTeam } from "../components/create-team";
 import { Button } from "@/modules/shared/components/ui/button";
 import { Skeleton } from "@/modules/shared/components/ui/skeleton";
 import { useVerifiedSession } from "@/integrations/auth/context";
@@ -31,9 +31,7 @@ export function TeamsHeaderSection() {
           <CardDescription>{total} equipos en tu organización.</CardDescription>
         </CardHeader>
         <CardContent>
-          <CreateTeamDialog
-            activeOrganizationId={session.activeOrganizationId}
-          />
+          <CreateTeam activeOrganizationId={session.activeOrganizationId} />
         </CardContent>
       </Card>
     </header>

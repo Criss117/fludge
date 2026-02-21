@@ -10,7 +10,7 @@ export const createTeamSchema = z.object({
   description: z
     .string()
     .max(100, "La descripción del equipo es demasiado larga")
-    .nullish(),
+    .nullable(),
 });
 
 export const updateTeamSchema = createTeamSchema.partial().extend({

@@ -27,6 +27,9 @@ export class FindManyEmployeesUseCase {
             email: user.email,
             name: user.name,
             image: user.image,
+            phone: user.phone,
+            cc: user.cc,
+            address: user.address,
           },
           teams: sql<string>`
             JSON_GROUP_ARRAY(

@@ -1,15 +1,21 @@
 import { z } from "zod";
+import { emailValidator, phoneValidator } from "./utils";
 
 export const signUpEmailSchema = z.object({
-  email: z
-    .email("El correo electrónico no es válido")
-    .min(1, "El correo electrónico es obligatorio"),
+  email: emailValidator,
   password: z
     .string("La contraseña es obligatoria")
     .min(6, "La contraseña debe tener al menos 6 caracteres"),
   name: z
     .string("El nombre es obligatorio")
     .min(5, "El nombre debe tener al menos 5 caracteres"),
+  phone: phoneValidator,
+  cc: z
+    .string("El numero de identificación es obligatorio")
+    .min(5, "El numero de identificación debe tener al menos 5 caracteres"),
+  address: z
+    .string("La dirección es obligatoria")
+    .min(5, "La dirección debe tener al menos 5 caracteres"),
 });
 
 export const signUpUsernameSchema = signUpEmailSchema.extend({
@@ -30,14 +36,12 @@ export const signUpEmailFormSchema = signUpEmailSchema
   });
 
 export const signInEmailSchema = z.object({
-  email: z.email("El correo electrónico no es válido"),
+  email: emailValidator,
   password: z.string("La contraseña es obligatoria"),
 });
 
 export const resetPasswordSchema = z.object({
-  email: z
-    .email("El correo electrónico no es válido")
-    .min(1, "El correo electrónico es obligatorio"),
+  email: emailValidator,
 });
 
 export type SignUpUsernameSchema = z.infer<typeof signUpUsernameSchema>;

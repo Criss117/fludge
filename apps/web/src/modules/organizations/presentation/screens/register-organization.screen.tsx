@@ -38,6 +38,8 @@ const defaultValues: CreateOrganizationSchema = {
   name: "",
   legalName: "",
   address: "",
+  contactPhone: "",
+  contactEmail: "",
 };
 
 export function RegisterOrganizationScreen({ organizations }: Props) {
@@ -47,8 +49,7 @@ export function RegisterOrganizationScreen({ organizations }: Props) {
 
   const form = useRegisterOrganizationForm({
     validators: {
-      onSubmit: createOrganizationSchema,
-      onBlur: createOrganizationSchema,
+      onChange: createOrganizationSchema,
     },
     defaultValues,
     onSubmit: async ({ value }) => {
@@ -67,7 +68,7 @@ export function RegisterOrganizationScreen({ organizations }: Props) {
   });
 
   return (
-    <main className="mx-auto w-full max-w-xl min-h-dvh flex items-center justify-center">
+    <main className="mx-auto w-full max-w-2xl min-h-dvh flex items-center justify-center">
       <Card className="w-full">
         <CardHeader className="flex items-center flex-col">
           <div className="flex items-center gap-x-2">
@@ -104,7 +105,7 @@ export function RegisterOrganizationScreen({ organizations }: Props) {
               name="name"
               children={(field) => <field.OrganizationSlug />}
             />
-            <FieldGroup className="flex flex-row">
+            <FieldGroup className="flex md:flex-row items-start">
               <form.AppField
                 name="address"
                 children={(field) => <field.OrganizationAddress />}
@@ -115,7 +116,7 @@ export function RegisterOrganizationScreen({ organizations }: Props) {
               />
             </FieldGroup>
 
-            <FieldGroup className="flex flex-row items-end">
+            <FieldGroup className="flex md:flex-row items-start">
               <form.AppField
                 name="contactEmail"
                 children={(field) => <field.OrganizationContactEmail />}
