@@ -18,7 +18,7 @@ interface Props {
 export function EmployeeHeaderSection({ employee }: Props) {
   return (
     <Card className="flex justify-between flex-row">
-      <CardHeader className="flex gap-x-2">
+      <CardHeader className="flex gap-x-2 flex-1">
         <Avatar size="lg">
           <AvatarFallback>
             {toAvatarFallback(employee.user.name)}

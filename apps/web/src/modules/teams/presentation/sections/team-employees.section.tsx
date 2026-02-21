@@ -88,9 +88,9 @@ export function TeamEmployeesSection({ teamId, orgSlug }: Props) {
 
           <div className="flex gap-x-2 items-center">
             <table.FirstPageButton />
-            <table.NextButton />
-            <table.PageSizeSelect />
             <table.PrevButton />
+            <table.PageSizeSelect />
+            <table.NextButton />
             <table.LastPageButton />
           </div>
         </div>
@@ -98,9 +98,9 @@ export function TeamEmployeesSection({ teamId, orgSlug }: Props) {
         <table.Content emptyMessage="No hay Empleados asignados" />
         <div className="flex gap-x-2 items-center justify-end">
           <table.FirstPageButton />
-          <table.NextButton />
-          <table.PageSizeSelect />
           <table.PrevButton />
+          <table.PageSizeSelect />
+          <table.NextButton />
           <table.LastPageButton />
         </div>
       </CardContent>

@@ -47,7 +47,7 @@ function RouteComponent() {
         <DashBoardHeader.Employees />
         <DashBoardHeader.Employee label={employee.user.name} />
       </DashBoardHeader.Content>
-      <EmployeeScreen employee={employee} />
+      <EmployeeScreen employee={employee} orgSlug={orgslug} />
     </>
   );
 }
