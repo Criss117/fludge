@@ -19,14 +19,9 @@ import { useFilters } from "@/modules/shared/store/teams-filters.store";
 interface Props {
   orgSlug: string;
   teamId: string;
-  teamMemberIds: string[];
 }
 
-export function TeamEmployeesSection({
-  teamId,
-  orgSlug,
-  teamMemberIds,
-}: Props) {
+export function TeamEmployeesSection({ teamId, orgSlug }: Props) {
   const { findManyEmployees } = useEmployeesQueries();
   const { filters, filtersDispatch } = useFilters();
 
@@ -36,10 +31,13 @@ export function TeamEmployeesSection({
         filterBy: {
           email: filters.query,
           name: filters.query,
-          teamMemberIds,
+          team: {
+            id: teamId,
+            type: "inside",
+          },
         },
       }),
-    [teamId, filters.query],
+    [filters.query],
   );
 
   const table = useDataTable({

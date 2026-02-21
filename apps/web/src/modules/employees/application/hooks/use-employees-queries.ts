@@ -4,7 +4,7 @@ import { useEmployeesCollection } from "./use-employees-collection";
 type FindManyEmployeesOptions = {
   filterBy?: {
     team?: {
-      id?: string;
+      id: string;
       type: "inside" | "outside";
     };
     name?: string;
@@ -32,6 +32,7 @@ export function useEmployeesQueries() {
 
     if (!filters?.filterBy) return query;
 
+    const team = filters.filterBy.team;
     const name = filters.filterBy.name;
     const email = filters.filterBy.email;
     const teamMemberIds = filters.filterBy.teamMemberIds;
@@ -52,6 +53,14 @@ export function useEmployeesQueries() {
         if (orFilters.length === 2) return or(orFilters[0], orFilters[1]);
 
         return orFilters[0];
+      });
+    }
+
+    if (team) {
+      query = query.fn.where(({ employees }) => {
+        const onTeam = employees.teams.some((t) => t.id === team.id);
+
+        return team.type === "inside" ? onTeam : !onTeam;
       });
     }
 

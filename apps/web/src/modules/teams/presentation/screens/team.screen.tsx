@@ -32,11 +32,7 @@ export function TeamScreen({ team, orgSlug }: Props) {
 
         <TabsContent value="employees">
           <FiltersProvider>
-            <TeamEmployeesSection
-              teamId={team.id}
-              orgSlug={orgSlug}
-              teamMemberIds={teamMemberIds}
-            />
+            <TeamEmployeesSection teamId={team.id} orgSlug={orgSlug} />
           </FiltersProvider>
         </TabsContent>
         <TabsContent value="permissions">

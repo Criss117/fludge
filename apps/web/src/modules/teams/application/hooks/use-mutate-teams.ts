@@ -18,7 +18,7 @@ export function useMutateTeams() {
           .filter(([_, employee]) =>
             variables.userIds.includes(employee.user.id),
           )
-          .flatMap(([_, employee]) => employee);
+          .map(([_, employee]) => employee);
 
         teamsCollection.utils.writeUpdate({
           ...team,
@@ -52,13 +52,13 @@ export function useMutateTeams() {
           .filter(([_, employee]) =>
             variables.userIds.includes(employee.user.id),
           )
-          .flatMap(([_, employee]) => employee);
+          .map(([_, employee]) => employee);
 
         teamsCollection.utils.writeUpdate({
           ...team,
           employees: [
             ...team.employees,
-            ...employees.flatMap((e) => ({
+            ...employees.map((e) => ({
               id: e.id,
               name: e.user.name,
             })),
