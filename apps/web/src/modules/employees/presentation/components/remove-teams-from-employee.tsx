@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { UserMinus } from "lucide-react";
 import { toast } from "sonner";
-import type { Employee } from "@/modules/employees/application/collections/employees.collection";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,40 +9,40 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogMedia,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/modules/shared/components/ui/alert-dialog";
 import { Button } from "@/modules/shared/components/ui/button";
-import { useMutateTeams } from "@/modules/teams/application/hooks/use-mutate-teams";
+import type { Team } from "@/modules/teams/application/collections/teams.collection";
+import { useMutateEmployees } from "@/modules/employees/application/hooks/use-mutate-employees";
 
 interface Props {
-  teamId: string;
-  selectedEmployees: Employee[];
+  userId: string;
+  selectedTeams: Team[];
 }
 
-export function RemoveEmployeesFromTeam({ teamId, selectedEmployees }: Props) {
+export function RemoveTeamsFromEmployee({ userId, selectedTeams }: Props) {
   const [open, setOpen] = useState(false);
-  const { removeEmployees } = useMutateTeams();
+  const { removeTeams } = useMutateEmployees();
 
   const handleRemoveEmployees = () => {
-    const toasLoadingId = toast.loading("Eliminando empleados del equipo", {
+    const toasLoadingId = toast.loading("ELiminar equipos del empleado", {
       position: "top-center",
     });
-    removeEmployees.mutate(
+    removeTeams.mutate(
       {
-        teamId: teamId,
-        userIds: selectedEmployees.map((employee) => employee.user.id),
+        userId,
+        teamIds: selectedTeams.map((t) => t.id),
       },
       {
         onSuccess: () => {
-          toast.success("Empleados eliminados exitosamente", {
+          toast.success("Equipos eliminados exitosamente", {
             position: "top-center",
           });
           setOpen(false);
         },
         onError: () => {
-          toast.error("Error al eliminar empleados", {
+          toast.error("Error al eliminar equipos", {
             position: "top-center",
           });
         },
@@ -61,30 +60,27 @@ export function RemoveEmployeesFromTeam({ teamId, selectedEmployees }: Props) {
           <Button
             {...props}
             variant="outline"
-            disabled={selectedEmployees.length === 0}
+            disabled={selectedTeams.length === 0}
           />
         )}
       >
         <UserMinus />
-        <span>Eliminar ({selectedEmployees.length}) empleados</span>
+        <span>Eliminar ({selectedTeams.length}) equipos</span>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Eliminar ({selectedEmployees.length}) empleados de este equipo
+            Eliminar ({selectedTeams.length}) equipos
           </AlertDialogTitle>
           <AlertDialogDescription>
-            ¿Estás seguro de que deseas eliminar estos empleados del equipo?
+            ¿Estás seguro de que deseas eliminar estos equipos?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <ul className="px-5">
-          {selectedEmployees.map((employee) => (
-            <li key={employee.id} className="list-disc">
+          {selectedTeams.map((t) => (
+            <li key={t.id} className="list-disc">
               <div className="flex items-center gap-x-1">
-                <p>{employee.user.name}</p>
-                <p className="text-muted-foreground text-sm">
-                  ({employee.user.email})
-                </p>
+                <p>{t.name}</p>
               </div>
             </li>
           ))}

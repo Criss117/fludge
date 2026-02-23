@@ -22,19 +22,17 @@ export function useMutateTeams() {
 
         teamsCollection.utils.writeUpdate({
           ...team,
-          employees: [
-            ...team.employees.filter(
-              (employee) => !variables.userIds.includes(employee.id),
-            ),
-          ],
+          employees: team.employees.filter(
+            (employee) => !variables.userIds.includes(employee.id),
+          ),
         });
 
         employeesCollection.utils.writeUpdate(
           employees.map((employee) => ({
             ...employee,
-            teams: [
-              ...employee.teams.filter((team) => team.id !== variables.teamId),
-            ],
+            teams: employee.teams.filter(
+              (team) => team.id !== variables.teamId,
+            ),
           })),
         );
       },
@@ -59,7 +57,7 @@ export function useMutateTeams() {
           employees: [
             ...team.employees,
             ...employees.map((e) => ({
-              id: e.id,
+              id: e.user.id,
               name: e.user.name,
             })),
           ],

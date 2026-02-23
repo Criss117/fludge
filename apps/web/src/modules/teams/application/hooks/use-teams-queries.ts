@@ -9,10 +9,12 @@ type FindOneTeamOptions = {
 };
 
 type FindManyTeamsOptions = {
-  name?: string;
-  employee?: {
-    userId: string;
-    type: "inside" | "outside";
+  filterBy?: {
+    name?: string;
+    employee?: {
+      userId: string;
+      type: "inside" | "outside";
+    };
   };
 };
 
@@ -50,10 +52,10 @@ export function useTeamsQueries() {
   const findManyTeams = (filters?: FindManyTeamsOptions) => {
     let query = new Query().from({ teams: teamsCollection });
 
-    if (!filters) return query;
+    if (!filters?.filterBy) return query;
 
-    const employee = filters.employee;
-    const name = filters.name;
+    const employee = filters.filterBy.employee;
+    const name = filters.filterBy.name;
 
     if (name) {
       query = query.where(({ teams }) => ilike(teams.name, `%${name}%`));

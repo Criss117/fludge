@@ -13,6 +13,8 @@ import {
 import { useTeamsQueries } from "@/modules/teams/application/hooks/use-teams-queries";
 import { teamsTableColumnsSummary } from "@/modules/teams/presentation/components/teams-table/columns";
 import { useFilters } from "@/modules/shared/store/teams-filters.store";
+import { RemoveTeamsFromEmployee } from "../components/remove-teams-from-employee";
+import { AssignTeamsToEmployee } from "../components/assign-teams-to-employee";
 
 interface Props {
   employee: Employee;
@@ -26,11 +28,13 @@ export function EmployeeTeamsSection({ employee, orgSlug }: Props) {
   const { data: teams } = useLiveSuspenseQuery(
     () =>
       findManyTeams({
-        employee: {
-          userId: employee.user.id,
-          type: "inside",
+        filterBy: {
+          employee: {
+            userId: employee.user.id,
+            type: "inside",
+          },
+          name: filters.query,
         },
-        name: filters.query,
       }),
     [employee.user.id, filters.query],
   );
@@ -41,9 +45,11 @@ export function EmployeeTeamsSection({ employee, orgSlug }: Props) {
     getRowId: (row) => row.id,
   });
 
+  const selectedTeams = table.getSelectedRowModel().rows.map((r) => r.original);
+
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex justify-between">
         <div className="flex items-center gap-x-2">
           <div className="p-2 rounded-md bg-primary/20">
             <Briefcase size={28} />
@@ -55,7 +61,13 @@ export function EmployeeTeamsSection({ employee, orgSlug }: Props) {
             </CardDescription>
           </div>
         </div>
-        <div className="space-x-2"></div>
+        <div className="space-x-2">
+          <RemoveTeamsFromEmployee
+            userId={employee.user.id}
+            selectedTeams={selectedTeams}
+          />
+          <AssignTeamsToEmployee userId={employee.user.id} />
+        </div>
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="flex justify-between items-center">

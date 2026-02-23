@@ -15,13 +15,14 @@ import { useEmployeesQueries } from "@/modules/employees/application/hooks/use-e
 import { RemoveEmployeesFromTeam } from "../components/remove-employees-from-team";
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { useFilters } from "@/modules/shared/store/teams-filters.store";
+import type { Team } from "@/modules/teams/application/collections/teams.collection";
 
 interface Props {
   orgSlug: string;
-  teamId: string;
+  team: Team;
 }
 
-export function TeamEmployeesSection({ teamId, orgSlug }: Props) {
+export function TeamEmployeesSection({ team, orgSlug }: Props) {
   const { findManyEmployees } = useEmployeesQueries();
   const { filters, filtersDispatch } = useFilters();
 
@@ -32,12 +33,12 @@ export function TeamEmployeesSection({ teamId, orgSlug }: Props) {
           email: filters.query,
           name: filters.query,
           team: {
-            id: teamId,
+            id: team.id,
             type: "inside",
           },
         },
       }),
-    [filters.query],
+    [filters.query, team.id],
   );
 
   const table = useDataTable({
@@ -65,9 +66,9 @@ export function TeamEmployeesSection({ teamId, orgSlug }: Props) {
         <div className="space-x-2">
           <RemoveEmployeesFromTeam
             selectedEmployees={selectedEmployees}
-            teamId={teamId}
+            teamId={team.id}
           />
-          <AssignEmployeeToTeam teamId={teamId} />
+          <AssignEmployeeToTeam teamId={team.id} />
         </div>
       </CardHeader>
       <Separator />
