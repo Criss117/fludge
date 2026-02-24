@@ -1,25 +1,13 @@
 import { db } from "@fludge/db";
+import { and, eq, sql } from "drizzle-orm";
 import { team } from "@fludge/db/schema/auth";
 import { tryCatch } from "@fludge/utils/try-catch";
 import type { UpdateTeamSchema } from "@fludge/utils/validators/team.schemas";
-import { and, eq, sql } from "drizzle-orm";
 import { InternalServerErrorException } from "@fludge/api/modules/shared/exceptions/internal-server-error.exception";
 import { TeamNotFoundException } from "../exceptions/team-not-found.exception";
 import { TeamAlreadyExistsException } from "../exceptions/team-already-exists.exception";
-import { u } from "node_modules/@orpc/server/dist/shared/server.C8_sRzQB.mjs";
 
 export class UpdateTeamUseCase {
-  public static instance: UpdateTeamUseCase;
-
-  private constructor() {}
-
-  public static getInstance() {
-    if (!UpdateTeamUseCase.instance) {
-      UpdateTeamUseCase.instance = new UpdateTeamUseCase();
-    }
-    return UpdateTeamUseCase.instance;
-  }
-
   public async execute(organizationId: string, values: UpdateTeamSchema) {
     const { data: existingTeams, error } = await tryCatch(
       db
@@ -97,6 +85,4 @@ export class UpdateTeamUseCase {
   }
 }
 
-export function updateTeamUseCase() {
-  return UpdateTeamUseCase.getInstance();
-}
+export const updateTeamUseCase = new UpdateTeamUseCase();

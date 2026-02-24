@@ -8,17 +8,6 @@ import { UserAlreadyExistsException } from "@fludge/api/modules/auth/exceptions/
 import type { SignUpUsernameSchema } from "@fludge/utils/validators/auth.schemas";
 
 export class CreateEmployeeUseCase {
-  public static instance: CreateEmployeeUseCase;
-
-  private constructor() {}
-
-  public static getInstance() {
-    if (!CreateEmployeeUseCase.instance) {
-      CreateEmployeeUseCase.instance = new CreateEmployeeUseCase();
-    }
-    return CreateEmployeeUseCase.instance;
-  }
-
   public async execute(organizationId: string, values: SignUpUsernameSchema) {
     const { data: isUsernameAvailable, error: isUsernameAvailableError } =
       await tryCatch(
@@ -94,6 +83,4 @@ export class CreateEmployeeUseCase {
   }
 }
 
-export function createEmployeeUseCase() {
-  return CreateEmployeeUseCase.getInstance();
-}
+export const createEmployeeUseCase = new CreateEmployeeUseCase();

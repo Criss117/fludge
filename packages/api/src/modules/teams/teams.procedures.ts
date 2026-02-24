@@ -20,7 +20,7 @@ export const teamsProcedures = {
   })
     .use(withOrganizationMiddleware())
     .handler(({ context }) =>
-      findManyTeamsUseCase().execute(context.organization.id),
+      findManyTeamsUseCase.execute(context.organization.id),
     ),
 
   create: baseProcedure({
@@ -30,7 +30,7 @@ export const teamsProcedures = {
     .use(withOrganizationMiddleware())
     .input(createTeamSchema)
     .handler(({ input, context }) =>
-      createTeamUseCase().execute(context.organization.id, input),
+      createTeamUseCase.execute(context.organization.id, input),
     ),
 
   remove: baseProcedure({
@@ -40,7 +40,7 @@ export const teamsProcedures = {
     .use(withOrganizationMiddleware())
     .input(removeManyTeamsSchema)
     .handler(({ input, context }) =>
-      deleteTeamsUseCase().execute(context.organization.id, input),
+      deleteTeamsUseCase.execute(context.organization.id, input),
     ),
 
   update: baseProcedure({
@@ -50,7 +50,7 @@ export const teamsProcedures = {
     .use(withOrganizationMiddleware())
     .input(updateTeamSchema)
     .handler(({ input, context }) =>
-      updateTeamUseCase().execute(context.organization.id, input),
+      updateTeamUseCase.execute(context.organization.id, input),
     ),
 
   assingEmployees: baseProcedure({

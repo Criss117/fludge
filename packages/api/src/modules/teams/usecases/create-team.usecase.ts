@@ -7,17 +7,6 @@ import { tryCatch } from "@fludge/utils/try-catch";
 import { InternalServerErrorException } from "@fludge/api/modules/shared/exceptions/internal-server-error.exception";
 
 export class CreateTeamUseCase {
-  public static instance: CreateTeamUseCase;
-
-  private constructor() {}
-
-  public static getInstance() {
-    if (!CreateTeamUseCase.instance) {
-      CreateTeamUseCase.instance = new CreateTeamUseCase();
-    }
-    return CreateTeamUseCase.instance;
-  }
-
   public async execute(organizationId: string, values: CreateTeamSchema) {
     const { data: existingTeams, error: existingTeamError } = await tryCatch(
       db
@@ -68,6 +57,4 @@ export class CreateTeamUseCase {
   }
 }
 
-export function createTeamUseCase() {
-  return CreateTeamUseCase.getInstance();
-}
+export const createTeamUseCase = new CreateTeamUseCase();

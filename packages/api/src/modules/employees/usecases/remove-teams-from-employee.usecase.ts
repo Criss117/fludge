@@ -6,18 +6,8 @@ import { tryCatch } from "@fludge/utils/try-catch";
 import { InternalServerErrorException } from "@fludge/api/modules/shared/exceptions/internal-server-error.exception";
 
 export class RemoveTeamsFromEmployeeUseCase extends WithAuthHeader {
-  public static instance: RemoveTeamsFromEmployeeUseCase;
-
-  private constructor(nodeHeaders: IncomingHttpHeaders) {
+  constructor(nodeHeaders: IncomingHttpHeaders) {
     super(nodeHeaders);
-  }
-
-  public static getInstance(nodeHeaders: IncomingHttpHeaders) {
-    if (!RemoveTeamsFromEmployeeUseCase.instance) {
-      RemoveTeamsFromEmployeeUseCase.instance =
-        new RemoveTeamsFromEmployeeUseCase(nodeHeaders);
-    }
-    return RemoveTeamsFromEmployeeUseCase.instance;
   }
 
   public async execute(values: AssignTeamsToEmployeeSchema) {
@@ -39,5 +29,5 @@ export class RemoveTeamsFromEmployeeUseCase extends WithAuthHeader {
 export function removeTeamsFromEmployeeUseCase(
   nodeHeaders: IncomingHttpHeaders,
 ) {
-  return RemoveTeamsFromEmployeeUseCase.getInstance(nodeHeaders);
+  return new RemoveTeamsFromEmployeeUseCase(nodeHeaders);
 }

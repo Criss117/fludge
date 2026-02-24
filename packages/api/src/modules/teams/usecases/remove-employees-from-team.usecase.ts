@@ -6,18 +6,8 @@ import { InternalServerErrorException } from "@fludge/api/modules/shared/excepti
 import type { AssignEmployeesToTeamSchema } from "@fludge/utils/validators/team.schemas";
 
 export class RemoveEmployeesFromTeamUseCase extends WithAuthHeader {
-  public static instance: RemoveEmployeesFromTeamUseCase;
-
-  private constructor(nodeHeaders: IncomingHttpHeaders) {
+  constructor(nodeHeaders: IncomingHttpHeaders) {
     super(nodeHeaders);
-  }
-
-  public static getInstance(nodeHeaders: IncomingHttpHeaders) {
-    if (!RemoveEmployeesFromTeamUseCase.instance) {
-      RemoveEmployeesFromTeamUseCase.instance =
-        new RemoveEmployeesFromTeamUseCase(nodeHeaders);
-    }
-    return RemoveEmployeesFromTeamUseCase.instance;
   }
 
   public async execute(values: AssignEmployeesToTeamSchema) {
@@ -39,5 +29,5 @@ export class RemoveEmployeesFromTeamUseCase extends WithAuthHeader {
 export function removeEmployeesFromTeamUseCase(
   nodeHeaders: IncomingHttpHeaders,
 ) {
-  return RemoveEmployeesFromTeamUseCase.getInstance(nodeHeaders);
+  return new RemoveEmployeesFromTeamUseCase(nodeHeaders);
 }

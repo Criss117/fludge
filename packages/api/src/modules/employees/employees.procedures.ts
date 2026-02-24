@@ -14,7 +14,7 @@ export const employeesProcedures = {
   })
     .use(withOrganizationMiddleware())
     .handler(({ context }) =>
-      findManyEmployeesUseCase().execute(context.organization.id),
+      findManyEmployeesUseCase.execute(context.organization.id),
     ),
 
   create: baseProcedure({
@@ -23,7 +23,7 @@ export const employeesProcedures = {
     .use(withOrganizationMiddleware())
     .input(signUpUsernameSchema)
     .handler(({ context, input }) =>
-      createEmployeeUseCase().execute(context.organization.id, input),
+      createEmployeeUseCase.execute(context.organization.id, input),
     ),
 
   assignTeams: baseProcedure({

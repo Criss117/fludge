@@ -7,20 +7,9 @@ import { and, eq, or } from "drizzle-orm";
 import { ProductAlreadyExistsException } from "../exceptions/product-already-exists.exception";
 
 export class CreateProductUseCase {
-  public static instance: CreateProductUseCase;
-
-  private constructor() {}
-
-  public static getInstance() {
-    if (!CreateProductUseCase.instance) {
-      CreateProductUseCase.instance = new CreateProductUseCase();
-    }
-    return CreateProductUseCase.instance;
-  }
-
   public async execute(organizationId: string, values: CreateProductSchema) {
     //1: check sku and name
-    const { data: exisitingProducts, error: exisitingProductsError } =
+    const { data: existingProducts, error: exisitingProductsError } =
       await tryCatch(
         db
           .select()
@@ -37,7 +26,7 @@ export class CreateProductUseCase {
     if (exisitingProductsError)
       throw new InternalServerErrorException("Error al crear un producto");
 
-    if (exisitingProducts.length)
+    if (existingProducts.length)
       throw new ProductAlreadyExistsException(
         "El nombre o SKU del producto ya esta registrado",
       );
@@ -63,6 +52,4 @@ export class CreateProductUseCase {
   }
 }
 
-export function createProductUseCase() {
-  return CreateProductUseCase.getInstance();
-}
+export const createProductUseCase = new CreateProductUseCase();

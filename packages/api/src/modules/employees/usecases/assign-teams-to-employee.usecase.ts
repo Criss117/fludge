@@ -6,19 +6,8 @@ import { tryCatch } from "@fludge/utils/try-catch";
 import { InternalServerErrorException } from "@fludge/api/modules/shared/exceptions/internal-server-error.exception";
 
 export class AssignTeamsToEmployeeUseCase extends WithAuthHeader {
-  public static instance: AssignTeamsToEmployeeUseCase;
-
-  private constructor(nodeHeaders: IncomingHttpHeaders) {
+  constructor(nodeHeaders: IncomingHttpHeaders) {
     super(nodeHeaders);
-  }
-
-  public static getInstance(nodeHeaders: IncomingHttpHeaders) {
-    if (!AssignTeamsToEmployeeUseCase.instance) {
-      AssignTeamsToEmployeeUseCase.instance = new AssignTeamsToEmployeeUseCase(
-        nodeHeaders,
-      );
-    }
-    return AssignTeamsToEmployeeUseCase.instance;
   }
 
   public async execute(values: AssignTeamsToEmployeeSchema) {
@@ -38,5 +27,5 @@ export class AssignTeamsToEmployeeUseCase extends WithAuthHeader {
 }
 
 export function assignTeamsToEmployeeUseCase(nodeHeaders: IncomingHttpHeaders) {
-  return AssignTeamsToEmployeeUseCase.getInstance(nodeHeaders);
+  return new AssignTeamsToEmployeeUseCase(nodeHeaders);
 }

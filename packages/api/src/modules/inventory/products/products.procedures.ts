@@ -11,6 +11,6 @@ export const productsProcedures = {
     .use(withOrganizationMiddleware())
     .input(createProductSchema)
     .handler(({ input, context }) =>
-      createProductUseCase().execute(context.organization.id, input),
+      createProductUseCase.execute(context.organization.id, input),
     ),
 };

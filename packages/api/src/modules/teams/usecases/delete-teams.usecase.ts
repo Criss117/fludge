@@ -4,17 +4,6 @@ import type { RemoveManyTeamsSchema } from "@fludge/utils/validators/team.schema
 import { InternalServerErrorException } from "../../shared/exceptions/internal-server-error.exception";
 
 export class DeleteTeamsUseCase {
-  public static instance: DeleteTeamsUseCase;
-
-  private constructor() {}
-
-  public static getInstance() {
-    if (!DeleteTeamsUseCase.instance) {
-      DeleteTeamsUseCase.instance = new DeleteTeamsUseCase();
-    }
-    return DeleteTeamsUseCase.instance;
-  }
-
   public async execute(organizationId: string, values: RemoveManyTeamsSchema) {
     const removeTeamsPromise = Promise.all(
       values.ids.map((teamId) =>
@@ -33,6 +22,4 @@ export class DeleteTeamsUseCase {
   }
 }
 
-export function deleteTeamsUseCase() {
-  return DeleteTeamsUseCase.getInstance();
-}
+export const deleteTeamsUseCase = new DeleteTeamsUseCase();

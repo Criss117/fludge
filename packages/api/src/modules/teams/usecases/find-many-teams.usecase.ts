@@ -6,17 +6,6 @@ import { InternalServerErrorException } from "../../shared/exceptions/internal-s
 import { parseEmployeesOnTeamSchema } from "@fludge/utils/validators/team.schemas";
 
 export class FindManyTeamsUseCase {
-  public static instance: FindManyTeamsUseCase;
-
-  private constructor() {}
-
-  public static getInstance() {
-    if (!FindManyTeamsUseCase.instance) {
-      FindManyTeamsUseCase.instance = new FindManyTeamsUseCase();
-    }
-    return FindManyTeamsUseCase.instance;
-  }
-
   public async execute(organizationId: string) {
     const { data: teams, error } = await tryCatch(
       db
@@ -56,6 +45,4 @@ export class FindManyTeamsUseCase {
   }
 }
 
-export function findManyTeamsUseCase() {
-  return FindManyTeamsUseCase.getInstance();
-}
+export const findManyTeamsUseCase = new FindManyTeamsUseCase();

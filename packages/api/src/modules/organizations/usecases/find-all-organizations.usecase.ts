@@ -4,19 +4,8 @@ import { tryCatch } from "@fludge/utils/try-catch";
 import { WithAuthHeader } from "@fludge/api/modules/shared/usecases/with-auth-headers";
 
 export class FindAllOrganizationUseCase extends WithAuthHeader {
-  private static instance: FindAllOrganizationUseCase;
-
-  private constructor(nodeHeaders: IncomingHttpHeaders) {
+  constructor(nodeHeaders: IncomingHttpHeaders) {
     super(nodeHeaders);
-  }
-
-  static getInstance(headers: IncomingHttpHeaders): FindAllOrganizationUseCase {
-    if (!FindAllOrganizationUseCase.instance) {
-      FindAllOrganizationUseCase.instance = new FindAllOrganizationUseCase(
-        headers,
-      );
-    }
-    return FindAllOrganizationUseCase.instance;
   }
 
   async execute() {
@@ -32,8 +21,6 @@ export class FindAllOrganizationUseCase extends WithAuthHeader {
   }
 }
 
-export function findAllOrganizationsUseCase(
-  headers: IncomingHttpHeaders,
-): FindAllOrganizationUseCase {
-  return FindAllOrganizationUseCase.getInstance(headers);
+export function findAllOrganizationsUseCase(headers: IncomingHttpHeaders) {
+  return new FindAllOrganizationUseCase(headers);
 }

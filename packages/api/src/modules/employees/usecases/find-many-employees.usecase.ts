@@ -6,17 +6,6 @@ import { member, team, teamMember, user } from "@fludge/db/schema/auth";
 import { parseTeamsOnEmployee } from "@fludge/utils/validators/employees.schemas";
 
 export class FindManyEmployeesUseCase {
-  public static instance: FindManyEmployeesUseCase;
-
-  private constructor() {}
-
-  public static getInstance() {
-    if (!FindManyEmployeesUseCase.instance) {
-      FindManyEmployeesUseCase.instance = new FindManyEmployeesUseCase();
-    }
-    return FindManyEmployeesUseCase.instance;
-  }
-
   public async execute(organizationId: string) {
     const { data: employees, error } = await tryCatch(
       db
@@ -68,6 +57,4 @@ export class FindManyEmployeesUseCase {
   }
 }
 
-export function findManyEmployeesUseCase() {
-  return FindManyEmployeesUseCase.getInstance();
-}
+export const findManyEmployeesUseCase = new FindManyEmployeesUseCase();

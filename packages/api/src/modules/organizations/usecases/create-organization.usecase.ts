@@ -12,19 +12,8 @@ import { organization, team } from "@fludge/db/schema/auth";
 import { WithAuthHeader } from "@fludge/api/modules/shared/usecases/with-auth-headers";
 
 export class CreateOrganizationUseCase extends WithAuthHeader {
-  private static instance: CreateOrganizationUseCase;
-
-  private constructor(nodeHeaders: IncomingHttpHeaders) {
+  constructor(nodeHeaders: IncomingHttpHeaders) {
     super(nodeHeaders);
-  }
-
-  static getInstance(headers: IncomingHttpHeaders): CreateOrganizationUseCase {
-    if (!CreateOrganizationUseCase.instance) {
-      CreateOrganizationUseCase.instance = new CreateOrganizationUseCase(
-        headers,
-      );
-    }
-    return CreateOrganizationUseCase.instance;
   }
 
   async execute(values: CreateOrganizationSchema) {
@@ -56,7 +45,6 @@ export class CreateOrganizationUseCase extends WithAuthHeader {
           address: values.address,
           legalName: values.legalName,
           name: values.name,
-          logo: values.logo,
           contactEmail: values.contactEmail,
           contactPhone: values.contactPhone,
         },
@@ -97,8 +85,6 @@ export class CreateOrganizationUseCase extends WithAuthHeader {
   }
 }
 
-export function createOrganizationUseCase(
-  headers: IncomingHttpHeaders,
-): CreateOrganizationUseCase {
-  return CreateOrganizationUseCase.getInstance(headers);
+export function createOrganizationUseCase(headers: IncomingHttpHeaders) {
+  return new CreateOrganizationUseCase(headers);
 }
