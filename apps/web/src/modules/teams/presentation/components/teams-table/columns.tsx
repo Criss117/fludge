@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { MoreVerticalIcon } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/modules/shared/components/ui/button";
 import { Checkbox } from "@/modules/shared/components/ui/checkbox";
@@ -28,6 +28,7 @@ export function teamsTableColumns(orgSlug: string) {
       cell: ({ row }) => {
         return (
           <Checkbox
+            disabled={row.original.isPending}
             checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
             aria-label="Select row"
@@ -49,6 +50,7 @@ export function teamsTableColumns(orgSlug: string) {
           <div className="flex items-start">
             <Button
               variant="link"
+              disabled={row.original.isPending}
               nativeButton={false}
               render={(props) => (
                 <Link
@@ -124,9 +126,12 @@ export function teamsTableColumns(orgSlug: string) {
     }),
     columnHelper.display({
       id: "actions",
-      cell: ({ row }) => (
-        <TeamsTableActions team={row.original} orgSlug={orgSlug} />
-      ),
+      cell: ({ row }) => {
+        if (row.original.isPending)
+          return <Loader2Icon className="animate-spin size-4" />;
+
+        return <TeamsTableActions team={row.original} orgSlug={orgSlug} />;
+      },
     }),
   ];
 }
