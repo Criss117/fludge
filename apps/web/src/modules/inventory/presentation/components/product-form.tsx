@@ -20,7 +20,7 @@ const { useAppForm } = createFormHook({
     CostPriceField,
     WholesalePriceField,
     SalePriceField,
-    ReorderLevelField,
+    MinStockField,
     StockField,
   },
   formComponents: {},
@@ -240,7 +240,7 @@ function StockField() {
   );
 }
 
-function ReorderLevelField() {
+function MinStockField() {
   const field = useFieldContext<string>();
   const id = field.name + "-product-reorder-level";
 

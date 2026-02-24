@@ -35,12 +35,12 @@ export const createProductSchema = z
       .number<number>("El stock del producto es requerido")
       .positive("El stock del producto debe ser mayor a 0"),
 
-    reorderLevel: z.coerce
+    minStock: z.coerce
       .number<number>("El nivel de reorden del producto es requerido")
       .min(0, "El nivel de reorden del producto debe ser mayor o igual a 0"),
   })
-  .refine((data) => data.reorderLevel <= data.stock, {
-    path: ["reorderLevel"],
+  .refine((data) => data.minStock <= data.stock, {
+    path: ["minStock"],
     error: "El stock minimo no puede ser mayor al stock actual",
   })
   .refine((data) => data.wholesalePrice < data.salePrice, {

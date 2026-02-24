@@ -49,7 +49,7 @@ export const product = sqliteTable(
 
     // Gestión de Inventario
     stock: integer("stock").notNull().default(0),
-    reorderLevel: integer("reorder_level").default(5).notNull(), // Alerta de stock bajo
+    minStock: integer("min_stock").default(5).notNull(), // Alerta de stock bajo
 
     categoryId: text("category_id").references(() => category.id),
     organizationId: text("organization_id")
@@ -72,7 +72,7 @@ export const product = sqliteTable(
     check("wholesale_price_gte_zero", sql`${table.wholesalePrice} >= 0`),
     check("sale_price_gte_zero", sql`${table.salePrice} >= 0`),
     check("cost_price_gte_zero", sql`${table.costPrice} >= 0`),
-    check("reorder_level_gte_zero", sql`${table.reorderLevel} >= 0`),
+    check("reorder_level_gte_zero", sql`${table.minStock} >= 0`),
     check(
       "sale_price_covers_cost",
       sql`${table.salePrice} >= ${table.costPrice}`,

@@ -18,12 +18,13 @@ import {
   FieldLegend,
   FieldSet,
 } from "@/modules/shared/components/ui/field";
+import { useMutateProducts } from "@/modules/inventory/application/hooks/use-mutate-products";
 
 const defaultValues = {
   name: "",
   sku: "",
   description: "",
-  reorderLevel: 0,
+  minStock: 0,
   stock: 0,
   costPrice: 0,
   wholesalePrice: 0,
@@ -32,6 +33,7 @@ const defaultValues = {
 
 export function RegisterProduct() {
   const [open, setOpen] = useState(false);
+  const { create } = useMutateProducts();
   const formId = `register-product-form-${useId()}`;
   const form = useProductForm({
     defaultValues,
@@ -39,7 +41,11 @@ export function RegisterProduct() {
       onChange: createProductSchema,
     },
     onSubmit: ({ value }) => {
-      console.log(value);
+      create.mutate(value, {
+        onSuccess: () => {
+          setOpen(false);
+        },
+      });
     },
   });
 
@@ -128,8 +134,8 @@ export function RegisterProduct() {
                   children={(field) => <field.StockField />}
                 />
                 <form.AppField
-                  name="reorderLevel"
-                  children={(field) => <field.ReorderLevelField />}
+                  name="minStock"
+                  children={(field) => <field.MinStockField />}
                 />
               </FieldGroup>
             </FieldSet>
