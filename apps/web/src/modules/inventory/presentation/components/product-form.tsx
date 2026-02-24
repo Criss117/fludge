@@ -1,10 +1,12 @@
 import {
   Field,
+  FieldDescription,
   FieldError,
   FieldLabel,
 } from "@/modules/shared/components/ui/field";
 import { Input } from "@/modules/shared/components/ui/input";
 import { Textarea } from "@/modules/shared/components/ui/textarea";
+import { inputNumberHelper } from "@/modules/shared/lib/utils";
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 
 export const { fieldContext, formContext, useFieldContext } =
@@ -123,9 +125,14 @@ function WholesalePriceField() {
         type="number"
         placeholder="Ej: 200"
         name={field.name}
-        value={field.state.value}
+        value={inputNumberHelper.value(
+          field.state.value,
+          field.state.meta.isTouched,
+        )}
         onBlur={field.handleBlur}
-        onChange={(e) => field.handleChange(e.target.value)}
+        onChange={(e) =>
+          field.handleChange(inputNumberHelper.onChange(e.target.value))
+        }
         aria-invalid={isInvalid}
         required
       />
@@ -151,9 +158,14 @@ function SalePriceField() {
         type="number"
         placeholder="Ej: 200"
         name={field.name}
-        value={field.state.value}
+        value={inputNumberHelper.value(
+          field.state.value,
+          field.state.meta.isTouched,
+        )}
         onBlur={field.handleBlur}
-        onChange={(e) => field.handleChange(e.target.value)}
+        onChange={(e) =>
+          field.handleChange(inputNumberHelper.onChange(e.target.value))
+        }
         aria-invalid={isInvalid}
         required
       />
@@ -179,9 +191,14 @@ function CostPriceField() {
         type="number"
         placeholder="Ej: 200"
         name={field.name}
-        value={field.state.value}
+        value={inputNumberHelper.value(
+          field.state.value,
+          field.state.meta.isTouched,
+        )}
         onBlur={field.handleBlur}
-        onChange={(e) => field.handleChange(e.target.value)}
+        onChange={(e) =>
+          field.handleChange(inputNumberHelper.onChange(e.target.value))
+        }
         aria-invalid={isInvalid}
         required
       />
@@ -207,9 +224,14 @@ function StockField() {
         type="number"
         placeholder="Ej: 10"
         name={field.name}
-        value={field.state.value}
+        value={inputNumberHelper.value(
+          field.state.value,
+          field.state.meta.isTouched,
+        )}
         onBlur={field.handleBlur}
-        onChange={(e) => field.handleChange(e.target.value)}
+        onChange={(e) =>
+          field.handleChange(inputNumberHelper.onChange(e.target.value))
+        }
         aria-invalid={isInvalid}
         required
       />
@@ -226,21 +248,27 @@ function ReorderLevelField() {
 
   return (
     <Field className="gap-2" data-invalid={isInvalid}>
-      <FieldLabel htmlFor={id}>
-        Stock Minimo
-        <span className="text-destructive">*</span>
-      </FieldLabel>
+      <FieldLabel htmlFor={id}>Stock Minimo</FieldLabel>
       <Input
         id={id}
         type="number"
         placeholder="Ej: 10"
         name={field.name}
-        value={field.state.value}
+        value={inputNumberHelper.value(
+          field.state.value,
+          field.state.meta.isTouched,
+        )}
         onBlur={field.handleBlur}
-        onChange={(e) => field.handleChange(e.target.value)}
+        onChange={(e) =>
+          field.handleChange(inputNumberHelper.onChange(e.target.value))
+        }
         aria-invalid={isInvalid}
         required
       />
+      <FieldDescription>
+        No llenar o colocar 0 para no tener stock minimo y permitir stock
+        negativo
+      </FieldDescription>
       {isInvalid && <FieldError errors={field.state.meta.errors} />}
     </Field>
   );

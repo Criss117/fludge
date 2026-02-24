@@ -38,7 +38,7 @@ export const product = sqliteTable(
   "product",
   {
     id: uuid().primaryKey(),
-    sku: text("sku").notNull(), // Código de barras o identificador único
+    sku: text("sku", { length: 100 }).notNull(), // Código de barras o identificador único
     name: text("name", { length: 50 }).notNull(),
     description: text("description", { length: 100 }),
 

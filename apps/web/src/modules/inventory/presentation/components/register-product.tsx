@@ -1,3 +1,5 @@
+import { useId, useState } from "react";
+import { BadgeCheck, Banknote, ClipboardCheck, PlusIcon } from "lucide-react";
 import {
   Sheet,
   SheetClose,
@@ -9,28 +11,23 @@ import {
   SheetTrigger,
 } from "@/modules/shared/components/ui/sheet";
 import { useProductForm } from "./product-form";
-import {
-  createProductSchema,
-  type CreateProductSchema,
-} from "@fludge/utils/validators/products.schemas";
+import { createProductSchema } from "@fludge/utils/validators/products.schemas";
 import { Button } from "@/modules/shared/components/ui/button";
-import { PlusIcon } from "lucide-react";
 import {
   FieldGroup,
-  FieldLabel,
+  FieldLegend,
   FieldSet,
 } from "@/modules/shared/components/ui/field";
-import { useId, useState } from "react";
 
-const defaultValues: CreateProductSchema = {
+const defaultValues = {
   name: "",
+  sku: "",
   description: "",
   reorderLevel: 0,
+  stock: 0,
   costPrice: 0,
   wholesalePrice: 0,
   salePrice: 0,
-  stock: 0,
-  sku: "",
 };
 
 export function RegisterProduct() {
@@ -66,7 +63,7 @@ export function RegisterProduct() {
           </SheetDescription>
         </SheetHeader>
 
-        <div className="no-scrollbar overflow-y-auto px-4">
+        <div className="no-scrollbar overflow-y-auto px-4 pb-20">
           <form
             id={formId}
             noValidate
@@ -74,9 +71,13 @@ export function RegisterProduct() {
               e.preventDefault();
               form.handleSubmit();
             }}
+            className="space-y-6"
           >
-            <FieldSet>
-              <FieldLabel>Datos Basicos</FieldLabel>
+            <FieldSet className="gap-y-2">
+              <FieldLegend className="flex items-center gap-x-1.5">
+                <BadgeCheck />
+                Datos Basicos
+              </FieldLegend>
               <FieldGroup>
                 <form.AppField
                   name="name"
@@ -86,11 +87,19 @@ export function RegisterProduct() {
                   name="sku"
                   children={(field) => <field.SkuField />}
                 />
+                <form.AppField
+                  name="description"
+                  children={(field) => <field.DescriptionField />}
+                />
               </FieldGroup>
             </FieldSet>
-            <FieldSet>
-              <FieldLabel>Precios y Costos</FieldLabel>
-              <FieldGroup>
+
+            <FieldSet className="gap-y-2">
+              <FieldLegend className="flex items-center gap-x-1.5">
+                <Banknote />
+                Precios y Costos
+              </FieldLegend>
+              <FieldGroup className="grid grid-cols-2">
                 <form.AppField
                   name="costPrice"
                   children={(field) => <field.CostPriceField />}
@@ -99,15 +108,21 @@ export function RegisterProduct() {
                   name="wholesalePrice"
                   children={(field) => <field.WholesalePriceField />}
                 />
-                <form.AppField
-                  name="salePrice"
-                  children={(field) => <field.SalePriceField />}
-                />
+                <div className="col-span-2">
+                  <form.AppField
+                    name="salePrice"
+                    children={(field) => <field.SalePriceField />}
+                  />
+                </div>
               </FieldGroup>
             </FieldSet>
-            <FieldSet>
-              <FieldLabel>Existencias</FieldLabel>
-              <FieldGroup>
+
+            <FieldSet className="gap-y-2">
+              <FieldLegend className="flex items-center gap-x-1.5">
+                <ClipboardCheck />
+                Existencias
+              </FieldLegend>
+              <FieldGroup className="grid grid-cols-2">
                 <form.AppField
                   name="stock"
                   children={(field) => <field.StockField />}
@@ -123,9 +138,9 @@ export function RegisterProduct() {
 
         <SheetFooter>
           <Button type="submit" form={formId}>
-            Save changes
+            Registrar Producto
           </Button>
-          <SheetClose render={<Button variant="outline">Cancel</Button>} />
+          <SheetClose render={<Button variant="outline">Cancelar</Button>} />
         </SheetFooter>
       </SheetContent>
     </Sheet>
