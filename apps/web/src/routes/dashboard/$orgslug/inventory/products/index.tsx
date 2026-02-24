@@ -1,3 +1,4 @@
+import { ProductsScreen } from "@/modules/inventory/presentation/screens/products.screen";
 import { DashBoardHeader } from "@/modules/shared/components/dashboard-header";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -17,6 +18,7 @@ function RouteComponent() {
         <DashBoardHeader.Inventory />
         <DashBoardHeader.Products />
       </DashBoardHeader.Content>
+      <ProductsScreen />
     </>
   );
 }
