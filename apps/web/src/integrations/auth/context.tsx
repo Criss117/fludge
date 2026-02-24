@@ -1,5 +1,6 @@
 import {
   useMutation,
+  useQueryClient,
   useSuspenseQuery,
   type QueryObserverResult,
   type RefetchOptions,
@@ -24,6 +25,7 @@ interface Context {
   refetchSession: (
     options?: RefetchOptions | undefined,
   ) => Promise<QueryObserverResult<Session>>;
+  signOut: UseMutationResult<void, Error, void, unknown>;
   signInEmail: UseMutationResult<Session, Error, SignInEmailSchema>;
   signUpEmail: UseMutationResult<SignUpEmailRes, Error, SignUpEmailSchema>;
 }
@@ -45,8 +47,7 @@ export function useAuth() {
 export function useVerifiedSession() {
   const { session } = useAuth();
 
-  if (!session)
-    throw new Error("useVerifiedSession must be used within an AuthProvider");
+  if (!session) throw new Error("Session is missing");
 
   const activeOrgId = session.activeOrganizationId;
 
@@ -83,6 +84,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signUpEmail = useMutation(orpc.auth.signUp.root.mutationOptions());
 
+  const signOut = useMutation({
+    mutationKey: ["sign-out"],
+    mutationFn: async () => {
+      await authClient.signOut();
+    },
+  });
+
   return (
     <AuthContext.Provider
       value={{
@@ -90,6 +98,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         refetchSession: sessionQuery.refetch,
         signInEmail,
         signUpEmail,
+        signOut,
       }}
     >
       {children}

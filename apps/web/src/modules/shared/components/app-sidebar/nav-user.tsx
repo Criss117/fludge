@@ -12,7 +12,8 @@ import {
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { UserCog, Settings, LogOut } from "lucide-react";
-import { useVerifiedSession } from "@/integrations/auth/context";
+import { useAuth, useVerifiedSession } from "@/integrations/auth/context";
+import { useRouter } from "@tanstack/react-router";
 
 function getInitials(name: string): string {
   return name
@@ -24,9 +25,17 @@ function getInitials(name: string): string {
 }
 
 export function NavUser() {
+  const router = useRouter();
   const session = useVerifiedSession();
+  const { signOut } = useAuth();
 
   if (!session) return null;
+
+  const handleSignOut = () => {
+    signOut.mutateAsync().then(() => {
+      router.navigate({ to: "/" });
+    });
+  };
 
   return (
     <SidebarMenu>
@@ -75,7 +84,10 @@ export function NavUser() {
               <span>Configuración</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive focus:text-destructive">
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={handleSignOut}
+            >
               <LogOut className="mr-2 size-4" />
               <span>Cerrar sesión</span>
             </DropdownMenuItem>
