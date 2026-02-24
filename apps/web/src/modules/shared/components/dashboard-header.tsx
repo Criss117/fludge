@@ -14,12 +14,16 @@ import { SidebarTrigger } from "./ui/sidebar";
 
 type CurrentPath =
   | "Home"
-  | "Products"
   | "Clients"
   | "Teams"
   | "Team"
   | "Employees"
-  | "Employee";
+  | "Employee"
+  | "Inventory"
+  | "Products"
+  | "Product"
+  | "Suppliers"
+  | "Categories";
 
 interface Context {
   orgSlug: string;
@@ -124,23 +128,6 @@ function Home({ label = "Inicio" }) {
   );
 }
 
-function Products({ label = "Productos" }) {
-  const { currentPath, orgSlug } = useDashBoardHeader();
-
-  const isCurrent = currentPath === "Products";
-
-  return (
-    <BaseBreadCrumb
-      label={label}
-      isCurrent={isCurrent}
-      href={{
-        to: "/dashboard/$orgslug/products",
-        params: { orgslug: orgSlug },
-      }}
-    />
-  );
-}
-
 function Clients({ label = "Clientes" }) {
   const { currentPath, orgSlug } = useDashBoardHeader();
 
@@ -226,6 +213,74 @@ function Employee({ label = "Empleado" }) {
   );
 }
 
+function Inventory({ label = "Inventario" }) {
+  const { currentPath, orgSlug } = useDashBoardHeader();
+
+  const isCurrent = currentPath === "Inventory";
+
+  return (
+    <BaseBreadCrumb
+      label={label}
+      isCurrent={isCurrent}
+      href={{
+        to: "/dashboard/$orgslug/inventory",
+        params: { orgslug: orgSlug },
+      }}
+    />
+  );
+}
+
+function Products({ label = "Productos" }) {
+  const { currentPath, orgSlug } = useDashBoardHeader();
+
+  const isCurrent = currentPath === "Products";
+
+  return (
+    <BaseBreadCrumb
+      label={label}
+      isCurrent={isCurrent}
+      href={{
+        to: "/dashboard/$orgslug/inventory/products",
+        params: { orgslug: orgSlug },
+      }}
+    />
+  );
+}
+
+function Categories({ label = "Categorias" }) {
+  const { currentPath, orgSlug } = useDashBoardHeader();
+
+  const isCurrent = currentPath === "Categories";
+
+  return (
+    <BaseBreadCrumb
+      label={label}
+      isCurrent={isCurrent}
+      href={{
+        to: "/dashboard/$orgslug/inventory/categories",
+        params: { orgslug: orgSlug },
+      }}
+    />
+  );
+}
+
+function Suppliers({ label = "Proveedores" }) {
+  const { currentPath, orgSlug } = useDashBoardHeader();
+
+  const isCurrent = currentPath === "Suppliers";
+
+  return (
+    <BaseBreadCrumb
+      label={label}
+      isCurrent={isCurrent}
+      href={{
+        to: "/dashboard/$orgslug/inventory/suppliers",
+        params: { orgslug: orgSlug },
+      }}
+    />
+  );
+}
+
 export const DashBoardHeader = {
   useDashBoardHeader,
   Content,
@@ -236,4 +291,7 @@ export const DashBoardHeader = {
   Team,
   Employees,
   Employee,
+  Inventory,
+  Categories,
+  Suppliers,
 };

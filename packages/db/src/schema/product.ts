@@ -143,3 +143,13 @@ export const stockMovement = sqliteTable(
     check("metadata_valid_json", sql`json_valid(${t.metadata})`),
   ],
 );
+
+export type InsertProduct = typeof product.$inferInsert;
+export type InsertStockMovement = typeof stockMovement.$inferInsert;
+export type InsertCategory = typeof category.$inferInsert;
+export type InsertSupplier = typeof supplier.$inferInsert;
+
+export type SelectProduct = typeof product.$inferSelect;
+export type SelectStockMovement = typeof stockMovement.$inferSelect;
+export type SelectCategory = typeof category.$inferSelect;
+export type SelectSupplier = typeof supplier.$inferSelect;

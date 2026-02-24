@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, type LinkProps } from "@tanstack/react-router";
 import {
   Plus,
   LayoutDashboard,
@@ -7,30 +7,71 @@ import {
   Package,
   UserCog,
   Users,
+  type LucideIcon,
+  ChevronDown,
+  ChevronRight,
+  CirclePile,
+  ChartBarStacked,
+  Container,
 } from "lucide-react";
 import {
   SidebarGroup,
+  SidebarGroupAction,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   useSidebar,
 } from "../ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { cn } from "../../lib/utils";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../ui/collapsible";
 
 const DASHBOARD_PATH_REGEX = /\/dashboard\/[^/]+/;
 
-const navMain = [
+type NavMenuItem = {
+  title: string;
+  url: NonNullable<LinkProps["to"]>;
+  icon: LucideIcon;
+  elements?: NavMenuItem[];
+};
+
+const navMainItems: NavMenuItem[] = [
   {
     title: "Inicio",
     url: "/dashboard/$orgslug",
     icon: LayoutDashboard,
   },
   {
-    title: "Productos",
-    url: "/dashboard/$orgslug/products",
-    icon: Package,
+    title: "Inventario",
+    url: "/dashboard/$orgslug/inventory",
+    icon: CirclePile,
+    elements: [
+      {
+        title: "Productos",
+        url: "/dashboard/$orgslug/inventory/products",
+        icon: Package,
+      },
+
+      {
+        title: "Categorías",
+        url: "/dashboard/$orgslug/inventory/categories",
+        icon: ChartBarStacked,
+      },
+      {
+        title: "Proveedores",
+        url: "/dashboard/$orgslug/inventory/suppliers",
+        icon: Container,
+      },
+    ],
   },
   {
     title: "Clientes",
@@ -47,16 +88,19 @@ const navMain = [
     url: "/dashboard/$orgslug/employees",
     icon: UserCog,
   },
-] as const;
+];
 
 interface Props {
   orgSlug: string;
 }
 
-const NavItem = memo(function NavItem({
-  orgSlug,
+function SidebarMenuLink({
   item,
-}: Props & { item: (typeof navMain)[number] }) {
+  orgSlug,
+}: {
+  item: NavMenuItem;
+  orgSlug: string;
+}) {
   const { open } = useSidebar();
   const isMatch = useLocation({
     select: (data) =>
@@ -65,40 +109,79 @@ const NavItem = memo(function NavItem({
   });
 
   return (
-    <SidebarMenuItem>
-      <SidebarMenuButton
-        className={cn(
-          isMatch
-            ? "bg-primary text-black hover:bg-primary hover:text-black"
-            : "",
-        )}
-        render={(props) => {
-          if (open) {
-            return (
-              <Link to={item.url} params={{ orgslug: orgSlug }} {...props}>
-                <item.icon />
-                <span>{item.title}</span>
-              </Link>
-            );
-          }
-
+    <SidebarMenuButton
+      className={cn(
+        isMatch
+          ? "bg-primary text-black hover:bg-primary hover:text-black"
+          : "",
+      )}
+      render={(props) => {
+        if (open) {
           return (
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Link to={item.url} params={{ orgslug: orgSlug }} {...props}>
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </Link>
-                }
-              />
-              <TooltipContent side="right">
-                <p>{item.title}</p>
-              </TooltipContent>
-            </Tooltip>
+            <Link to={item.url} params={{ orgslug: orgSlug }} {...props}>
+              <item.icon />
+              <span>{item.title}</span>
+            </Link>
           );
-        }}
-      />
+        }
+
+        return (
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Link to={item.url} params={{ orgslug: orgSlug }} {...props}>
+                  <item.icon />
+                  <span>{item.title}</span>
+                </Link>
+              }
+            />
+            <TooltipContent side="right">
+              <p>{item.title}</p>
+            </TooltipContent>
+          </Tooltip>
+        );
+      }}
+    />
+  );
+}
+
+const GroupItem = memo(function GroupItem({
+  orgSlug,
+  item,
+}: Props & {
+  item: NavMenuItem;
+}) {
+  const isMatch = (url: string) =>
+    useLocation({
+      select: (data) =>
+        data.pathname.replace(DASHBOARD_PATH_REGEX, "") ===
+        url.replace("/dashboard/$orgslug", ""),
+    });
+
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuLink item={item} orgSlug={orgSlug} />
+
+      <SidebarMenuSub>
+        {item.elements?.map((subItem) => (
+          <SidebarMenuSubItem key={subItem.title}>
+            <SidebarMenuSubButton
+              className={cn(
+                "dark:[&>svg]:text-white [&>svg]:text-black",
+                isMatch(subItem.url)
+                  ? "bg-primary text-black hover:bg-primary hover:text-black [&>svg]:text-black"
+                  : "",
+              )}
+              render={(props) => (
+                <Link to={subItem.url} params={{ orgslug: orgSlug }} {...props}>
+                  <subItem.icon />
+                  <span>{subItem.title}</span>
+                </Link>
+              )}
+            />
+          </SidebarMenuSubItem>
+        ))}
+      </SidebarMenuSub>
     </SidebarMenuItem>
   );
 });
@@ -106,7 +189,7 @@ const NavItem = memo(function NavItem({
 export function NavMain({ orgSlug }: Props) {
   return (
     <SidebarGroup>
-      <SidebarGroupContent className="flex flex-col gap-2">
+      <SidebarGroupContent className="flex flex-col gap-6">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -120,9 +203,18 @@ export function NavMain({ orgSlug }: Props) {
         </SidebarMenu>
 
         <SidebarMenu>
-          {navMain.map((item) => (
-            <NavItem key={item.title} orgSlug={orgSlug} item={item} />
-          ))}
+          {navMainItems.map((item) => {
+            if (item.elements)
+              return (
+                <GroupItem key={item.title} orgSlug={orgSlug} item={item} />
+              );
+
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuLink item={item} orgSlug={orgSlug} />
+              </SidebarMenuItem>
+            );
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
