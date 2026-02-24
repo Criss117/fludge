@@ -1,4 +1,6 @@
 import { TrashIcon } from "lucide-react";
+import { toast } from "sonner";
+import { tryCatch } from "@fludge/utils/try-catch";
 import type { Team } from "@/modules/teams/application/collections/teams.collection";
 import {
   AlertDialog,
@@ -13,8 +15,7 @@ import {
 } from "@/modules/shared/components/ui/alert-dialog";
 import { DropdownMenuItem } from "@/modules/shared/components/ui/dropdown-menu";
 import { useTeamsCollection } from "@/modules/shared/hooks/use-teams-collection";
-import { tryCatch } from "@fludge/utils/try-catch";
-import { toast } from "sonner";
+import { useEmployeesCollection } from "@/modules/employees/application/hooks/use-employees-collection";
 
 interface Props {
   team: Team;
@@ -22,6 +23,7 @@ interface Props {
 
 export function RemoveTeam({ team }: Props) {
   const teamsCollection = useTeamsCollection();
+  const employeesCollection = useEmployeesCollection();
 
   const handleRemoveTeam = async () => {
     const tx = teamsCollection.delete(team.id);
@@ -38,6 +40,17 @@ export function RemoveTeam({ team }: Props) {
       });
       return;
     }
+
+    const employeesToUpdate = Array.from(employeesCollection.entries())
+      .filter(([, employee]) => employee.teams.some((t) => t.id === team.id))
+      .map(([, employee]) => employee);
+
+    employeesCollection.utils.writeUpdate(
+      employeesToUpdate.map((employee) => ({
+        ...employee,
+        teams: employee.teams.filter((t) => t.id !== team.id),
+      })),
+    );
 
     toast.success("Equipo eliminado exitosamente", {
       position: "top-center",

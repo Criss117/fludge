@@ -46,7 +46,10 @@ export function teamsCollectionBuilder(orgId: string) {
             description: newItem.description,
           });
 
-          collection.utils.writeInsert(insertedTeam);
+          collection.utils.writeInsert({
+            ...insertedTeam,
+            employees: [],
+          });
 
           return { refetch: false };
         },
