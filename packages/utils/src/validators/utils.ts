@@ -16,3 +16,10 @@ export const phoneValidator = z
       error: "El teléfono debe contener solo números",
     },
   );
+
+export const paginatedValidator = z.object({
+  limit: z.number().min(1).max(50).default(5),
+  offset: z.number().min(0).default(0),
+});
+
+export type PaginatedValidator = z.infer<typeof paginatedValidator>;
