@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DashBoardHeader } from "@/modules/shared/components/dashboard-header";
-import { TeamsScreen } from "@/modules/teams/presentation/screens/teams.screen";
+import { useFindAllTeams } from "@/modules/new-teams/application/hooks/use-teams-queries";
+import { TeamsScreen } from "@/modules/new-teams/presentation/screens/teams.screen";
 
 export const Route = createFileRoute("/dashboard/$orgslug/teams/")({
   component: RouteComponent,
@@ -8,6 +9,7 @@ export const Route = createFileRoute("/dashboard/$orgslug/teams/")({
 
 function RouteComponent() {
   const { orgslug } = Route.useParams();
+  const teams = useFindAllTeams();
 
   return (
     <>
@@ -15,7 +17,7 @@ function RouteComponent() {
         <DashBoardHeader.Home />
         <DashBoardHeader.Teams />
       </DashBoardHeader.Content>
-      <TeamsScreen orgSlug={orgslug} />
+      <TeamsScreen teams={teams} />
     </>
   );
 }

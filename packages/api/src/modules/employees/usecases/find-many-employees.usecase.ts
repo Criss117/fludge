@@ -1,8 +1,8 @@
-import { and, eq, getTableColumns, sql } from "drizzle-orm";
+import { and, eq, getTableColumns } from "drizzle-orm";
 import { tryCatch } from "@fludge/utils/try-catch";
 import { InternalServerErrorException } from "@fludge/api/modules/shared/exceptions/internal-server-error.exception";
 import { db } from "@fludge/db";
-import { member, team, teamMember, user } from "@fludge/db/schema/auth";
+import { member, user } from "@fludge/db/schema/auth";
 import { parseTeamsOnEmployee } from "@fludge/utils/validators/employees.schemas";
 
 export class FindManyEmployeesUseCase {
@@ -20,19 +20,9 @@ export class FindManyEmployeesUseCase {
             cc: user.cc,
             address: user.address,
           },
-          teams: sql<string>`
-            JSON_GROUP_ARRAY(
-              JSON_OBJECT(
-                'name', ${team.name},
-                'id', ${team.id}
-              )
-            )
-          `,
         })
         .from(member)
         .innerJoin(user, eq(user.id, member.userId))
-        .leftJoin(teamMember, eq(teamMember.userId, user.id))
-        .leftJoin(team, eq(team.id, teamMember.teamId))
         .where(
           and(
             eq(member.organizationId, organizationId),
@@ -44,16 +34,7 @@ export class FindManyEmployeesUseCase {
 
     if (error) throw new InternalServerErrorException(error.message);
 
-    return employees.map((employee) => {
-      const objTeams = JSON.parse(employee.teams);
-
-      const parsedTeams = parseTeamsOnEmployee.safeParse(objTeams);
-
-      return {
-        ...employee,
-        teams: parsedTeams.success ? parsedTeams.data : [],
-      };
-    });
+    return employees;
   }
 }
 

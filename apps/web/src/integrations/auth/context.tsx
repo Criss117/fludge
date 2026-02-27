@@ -50,12 +50,15 @@ export function useVerifiedSession() {
   if (!session) throw new Error("Session is missing");
 
   const activeOrgId = session.activeOrganizationId;
+  const activeOrganization = session.organizations?.find(
+    (org) => org.id === activeOrgId,
+  );
 
-  if (!activeOrgId) throw new Error("Active organization ID is missing");
+  if (!activeOrganization) throw new Error("Active organization ID is missing");
 
   return {
     ...session,
-    activeOrganizationId: activeOrgId,
+    activeOrganization,
   };
 }
 

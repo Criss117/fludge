@@ -1,9 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { employeesCollectionBuilder } from "@/modules/employees/application/collections/employees.collection";
-import { EmployeeScreen } from "@/modules/employees/presentation/screens/employee.screen";
 import { DashBoardHeader } from "@/modules/shared/components/dashboard-header";
-import { useEmployeesQueries } from "@/modules/employees/application/hooks/use-employees-queries";
-import { useLiveSuspenseQuery } from "@tanstack/react-db";
+import { EmployeeScreen } from "@/modules/new-employees/presentation/screens/employee.screen";
+import { useFindOneEmployee } from "@/modules/new-employees/application/hooks/use-employees-queries";
+import { employeesCollectionBuilder } from "@/modules/new-employees/application/collections/employees.collection";
 
 export const Route = createFileRoute(
   "/dashboard/$orgslug/employees/$employeeid",
@@ -32,13 +31,8 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { orgslug, employeeid } = Route.useParams();
-  const { findOneEmployee } = useEmployeesQueries();
-  const { data: employee } = useLiveSuspenseQuery(
-    () => findOneEmployee(employeeid),
-    [employeeid],
-  );
 
-  if (!employee) return null;
+  const employee = useFindOneEmployee(employeeid);
 
   return (
     <>

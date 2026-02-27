@@ -211,7 +211,7 @@ export function useDataTable<T>({
       LastPageButton: () => <LastPageButton table={table} />,
       PageSizeSelect: () => <PageSizeSelect table={table} />,
     }),
-    [table, columns.length],
+    [columns.length],
   );
 
   return { ...table, ...components };

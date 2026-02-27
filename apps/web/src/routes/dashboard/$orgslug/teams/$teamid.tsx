@@ -1,12 +1,11 @@
-import { useLiveSuspenseQuery } from "@tanstack/react-db";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { DashBoardHeader } from "@/modules/shared/components/dashboard-header";
-import { teamsCollectionBuilder } from "@/modules/teams/application/collections/teams.collection";
+import { useFindTeamById } from "@/modules/new-teams/application/hooks/use-teams-queries";
 import {
   TeamScreen,
   TeamScreenSkeleton,
-} from "@/modules/teams/presentation/screens/team.screen";
-import { useTeamsQueries } from "@/modules/teams/application/hooks/use-teams-queries";
+} from "@/modules/new-teams/presentation/screens/team.screen";
+import { teamsCollectionBuilder } from "@/modules/new-teams/application/collections/teams.collections";
 
 export const Route = createFileRoute("/dashboard/$orgslug/teams/$teamid")({
   component: RouteComponent,
@@ -41,26 +40,16 @@ export const Route = createFileRoute("/dashboard/$orgslug/teams/$teamid")({
 
 function RouteComponent() {
   const { orgslug, teamid } = Route.useParams();
-  const { findOneTeam } = useTeamsQueries();
-
-  const { data } = useLiveSuspenseQuery(
-    () =>
-      findOneTeam({
-        filterBy: { id: teamid },
-      }),
-    [teamid],
-  );
-
-  if (!data) return null;
+  const team = useFindTeamById(teamid);
 
   return (
     <>
       <DashBoardHeader.Content orgSlug={orgslug} currentPath="Team">
         <DashBoardHeader.Home />
         <DashBoardHeader.Teams />
-        <DashBoardHeader.Team label={data.name} />
+        <DashBoardHeader.Team label={team.name} />
       </DashBoardHeader.Content>
-      <TeamScreen team={data} orgSlug={orgslug} />
+      <TeamScreen team={team} />
     </>
   );
 }

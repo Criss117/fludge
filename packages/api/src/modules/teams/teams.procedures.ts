@@ -1,26 +1,26 @@
 import { baseProcedure } from "@fludge/api";
 import { withOrganizationMiddleware } from "@fludge/api/middlewares/requiere-auth.middleware";
-import { findManyTeamsUseCase } from "./usecases/find-many-teams.usecase";
+import { findAllTeamsUseCase } from "./usecases/find-all-teams.usecase";
 import { createTeamUseCase } from "./usecases/create-team.usecase";
 import { deleteTeamsUseCase } from "./usecases/delete-teams.usecase";
 import { updateTeamUseCase } from "./usecases/update-team.usecase";
-import { assingEmployeesToTeamUseCase } from "./usecases/assign-employess-to-team.usecase";
 import {
-  assignEmployeesToTeamSchema,
   createTeamSchema,
+  createTeamsMembersSchema,
   removeManyTeamsSchema,
   updateTeamSchema,
 } from "@fludge/utils/validators/team.schemas";
-import { removeEmployeesFromTeamUseCase } from "./usecases/remove-employees-from-team.usecase";
+import { createTeamsMembersUseCase } from "./usecases/create-teams-members.usecase";
+import { deleteTeamsMembersUseCase } from "./usecases/delete-teams-members.usecase";
 
 export const teamsProcedures = {
-  findMany: baseProcedure({
+  findAll: baseProcedure({
     method: "GET",
     tags: ["Teams"],
   })
     .use(withOrganizationMiddleware())
     .handler(({ context }) =>
-      findManyTeamsUseCase.execute(context.organization.id),
+      findAllTeamsUseCase.execute(context.organization.id),
     ),
 
   create: baseProcedure({
@@ -53,23 +53,25 @@ export const teamsProcedures = {
       updateTeamUseCase.execute(context.organization.id, input),
     ),
 
-  assingEmployees: baseProcedure({
-    method: "POST",
-    tags: ["Teams"],
-  })
-    .use(withOrganizationMiddleware())
-    .input(assignEmployeesToTeamSchema)
-    .handler(({ input, context }) =>
-      assingEmployeesToTeamUseCase(context.req.headers).execute(input),
-    ),
+  teamMembers: {
+    create: baseProcedure({
+      method: "POST",
+      tags: ["Teams"],
+    })
+      .use(withOrganizationMiddleware())
+      .input(createTeamsMembersSchema)
+      .handler(({ input, context }) =>
+        createTeamsMembersUseCase.execute(context.organization.id, input),
+      ),
 
-  removeEmployees: baseProcedure({
-    method: "POST",
-    tags: ["Teams"],
-  })
-    .use(withOrganizationMiddleware())
-    .input(assignEmployeesToTeamSchema)
-    .handler(({ input, context }) =>
-      removeEmployeesFromTeamUseCase(context.req.headers).execute(input),
-    ),
+    delete: baseProcedure({
+      method: "POST",
+      tags: ["Teams"],
+    })
+      .use(withOrganizationMiddleware())
+      .input(createTeamsMembersSchema)
+      .handler(({ input, context }) =>
+        deleteTeamsMembersUseCase.execute(context.organization.id, input),
+      ),
+  },
 };
