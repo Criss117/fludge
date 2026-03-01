@@ -1,7 +1,8 @@
 import { createContext, use } from "react";
 import { Link, type LinkProps } from "@tanstack/react-router";
+
 import { Separator } from "./ui/separator";
-import { cn } from "@/modules/shared/lib/utils";
+import { cn } from "@shared/lib/utils";
 import {
   Breadcrumb,
   BreadcrumbItem,

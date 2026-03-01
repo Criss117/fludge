@@ -1,5 +1,5 @@
+import { SelectOrganizationsScreen } from "@organizations/presentation/screens/select-organization.screen";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { SelectOrganizationsScreen } from "@/modules/organizations/presentation/screens/select-organization.screen";
 
 export const Route = createFileRoute("/select-organization")({
   component: RouteComponent,

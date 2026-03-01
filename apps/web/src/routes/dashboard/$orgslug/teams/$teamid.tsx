@@ -1,11 +1,13 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { DashBoardHeader } from "@/modules/shared/components/dashboard-header";
-import { useFindTeamById } from "@/modules/new-teams/application/hooks/use-teams-queries";
+
+import { DashBoardHeader } from "@shared/components/dashboard-header";
+
+import { useFindTeamById } from "@teams/application/hooks/use-teams-queries";
 import {
   TeamScreen,
   TeamScreenSkeleton,
-} from "@/modules/new-teams/presentation/screens/team.screen";
-import { teamsCollectionBuilder } from "@/modules/new-teams/application/collections/teams.collections";
+} from "@teams/presentation/screens/team.screen";
+import { teamsCollectionBuilder } from "@teams/application/collections/teams.collections";
 
 export const Route = createFileRoute("/dashboard/$orgslug/teams/$teamid")({
   component: RouteComponent,

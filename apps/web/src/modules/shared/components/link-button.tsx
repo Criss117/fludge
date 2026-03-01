@@ -1,9 +1,10 @@
-import { cn } from "../lib/utils";
-import { buttonVariants } from "@/modules/shared/components/ui/button";
-import { Link } from "@tanstack/react-router";
-import type { Button } from "./ui/button";
 import type { ComponentProps } from "react";
 import type { LinkProps } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+
+import { cn } from "@shared/lib/utils";
+import { buttonVariants } from "@shared/components/ui/button";
+import type { Button } from "@shared/components/ui/button";
 
 interface Props extends LinkProps {
   variant?: ComponentProps<typeof Button>["variant"];

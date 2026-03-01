@@ -1,4 +1,3 @@
-import { orpc } from "@/integrations/orpc";
 import {
   createCollection,
   type Collection,
@@ -8,6 +7,8 @@ import {
   queryCollectionOptions,
   type QueryCollectionUtils,
 } from "@tanstack/query-db-collection";
+
+import { orpc } from "@/integrations/orpc";
 import { queryClient } from "@/integrations/tanstack-query";
 
 export type Product = Awaited<

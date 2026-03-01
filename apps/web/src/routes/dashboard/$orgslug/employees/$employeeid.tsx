@@ -1,8 +1,10 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { DashBoardHeader } from "@/modules/shared/components/dashboard-header";
-import { EmployeeScreen } from "@/modules/new-employees/presentation/screens/employee.screen";
-import { useFindOneEmployee } from "@/modules/new-employees/application/hooks/use-employees-queries";
-import { employeesCollectionBuilder } from "@/modules/new-employees/application/collections/employees.collection";
+
+import { DashBoardHeader } from "@shared/components/dashboard-header";
+
+import { EmployeeScreen } from "@employees/presentation/screens/employee.screen";
+import { useFindOneEmployee } from "@employees/application/hooks/use-employees-queries";
+import { employeesCollectionBuilder } from "@employees/application/collections/employees.collection";
 
 export const Route = createFileRoute(
   "/dashboard/$orgslug/employees/$employeeid",

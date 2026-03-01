@@ -1,4 +1,3 @@
-import { authClient } from "@/integrations/auth";
 import { LoginScreen } from "@/modules/auth/presentation/screens/login.screen";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 

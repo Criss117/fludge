@@ -1,12 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { Building2, MapPin, Phone, Mail, Plus } from "lucide-react";
+import type { AppRouterClient } from "@fludge/api/routers/index";
+
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/modules/shared/components/ui/avatar";
-import type { AppRouterClient } from "@fludge/api/routers/index";
-import { LinkButton } from "@/modules/shared/components/link-button";
+} from "@shared/components/ui/avatar";
+import { LinkButton } from "@shared/components/link-button";
 
 type Organizations = NonNullable<
   Awaited<ReturnType<AppRouterClient["auth"]["getSession"]>>

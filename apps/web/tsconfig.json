@@ -12,7 +12,14 @@
     "rootDirs": ["."],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+      "@/*": ["./src/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@employees/*": ["./src/modules/employees/*"],
+      "@teams/*": ["./src/modules/teams/*"],
+      "@auth/*": ["./src/modules/auth/*"],
+      "@inventory/*": ["./src/modules/inventory/*"],
+      "@shared/*": ["./src/modules/shared/*"],
+      "@organizations/*": ["./src/modules/organizations/*"],
+    },
+  },
 }

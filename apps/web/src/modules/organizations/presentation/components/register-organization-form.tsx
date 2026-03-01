@@ -1,11 +1,8 @@
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 import { slugify } from "@fludge/utils/slugify";
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from "@/modules/shared/components/ui/field";
-import { Input } from "@/modules/shared/components/ui/input";
+
+import { Field, FieldError, FieldLabel } from "@shared/components/ui/field";
+import { Input } from "@shared/components/ui/input";
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
   createFormHookContexts();

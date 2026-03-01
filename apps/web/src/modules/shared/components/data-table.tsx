@@ -8,21 +8,21 @@ import {
   type Table as TSTable,
 } from "@tanstack/react-table";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/modules/shared/components/ui/table";
-import { Button } from "@/modules/shared/components/ui/button";
-import {
   CheckIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronsLeftIcon,
   ChevronsRightIcon,
 } from "lucide-react";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@shared/components/ui/table";
 import {
   Select,
   SelectContent,
@@ -30,8 +30,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/modules/shared/components/ui/select";
-import { TableSizes } from "@/modules/shared/lib/constants";
+} from "@shared/components/ui/select";
+import { TableSizes } from "@shared/lib/constants";
+import { Button } from "@shared/components/ui/button";
 
 interface WithTableProps<T> {
   table: TSTable<T>;

@@ -1,12 +1,11 @@
-import { authClient } from "@/integrations/auth";
-import { AppSidebar } from "@/modules/shared/components/app-sidebar";
-import { LoadingScreen } from "@/modules/shared/components/loading-screen";
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/modules/shared/components/ui/sidebar";
-import { tryCatch } from "@fludge/utils/try-catch";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { tryCatch } from "@fludge/utils/try-catch";
+
+import { authClient } from "@/integrations/auth";
+
+import { AppSidebar } from "@shared/components/app-sidebar";
+import { LoadingScreen } from "@shared/components/loading-screen";
+import { SidebarInset, SidebarProvider } from "@shared/components/ui/sidebar";
 
 export const Route = createFileRoute("/dashboard/$orgslug")({
   component: RouteComponent,

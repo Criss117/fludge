@@ -1,5 +1,7 @@
 import { useId, useState } from "react";
 import { BadgeCheck, Banknote, ClipboardCheck, PlusIcon } from "lucide-react";
+import { createProductSchema } from "@fludge/utils/validators/products.schemas";
+
 import {
   Sheet,
   SheetClose,
@@ -9,16 +11,12 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/modules/shared/components/ui/sheet";
+} from "@shared/components/ui/sheet";
+import { Button } from "@shared/components/ui/button";
+import { FieldGroup, FieldLegend, FieldSet } from "@shared/components/ui/field";
+
 import { useProductForm } from "./product-form";
-import { createProductSchema } from "@fludge/utils/validators/products.schemas";
-import { Button } from "@/modules/shared/components/ui/button";
-import {
-  FieldGroup,
-  FieldLegend,
-  FieldSet,
-} from "@/modules/shared/components/ui/field";
-import { useMutateProducts } from "@/modules/inventory/application/hooks/use-mutate-products";
+import { useMutateProducts } from "@inventory/application/hooks/use-mutate-products";
 
 const defaultValues = {
   name: "",

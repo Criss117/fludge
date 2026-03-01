@@ -25,6 +25,13 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@modules": path.resolve(__dirname, "./src/modules"),
+      "@employees": path.resolve(__dirname, "./src/modules/employees"),
+      "@teams": path.resolve(__dirname, "./src/modules/teams"),
+      "@auth": path.resolve(__dirname, "./src/modules/auth"),
+      "@inventory": path.resolve(__dirname, "./src/modules/inventory"),
+      "@shared": path.resolve(__dirname, "./src/modules/shared"),
+      "@organizations": path.resolve(__dirname, "./src/modules/organizations"),
     },
   },
   server: {

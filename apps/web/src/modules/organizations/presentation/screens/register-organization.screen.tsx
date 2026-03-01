@@ -1,15 +1,17 @@
 import { useState } from "react";
+import { useRouter } from "@tanstack/react-router";
 import { AlertCircleIcon, Plus } from "lucide-react";
 import {
   createOrganizationSchema,
   type CreateOrganizationSchema,
 } from "@fludge/utils/validators/organization.schema";
-import { Logo } from "@/modules/shared/components/logo";
+import type { AppRouterClient } from "@fludge/api/routers/index";
+
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@/modules/shared/components/ui/alert";
+} from "@shared/components/ui/alert";
 import {
   Card,
   CardContent,
@@ -17,14 +19,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/modules/shared/components/ui/card";
-import { useRegisterOrganizationForm } from "../components/register-organization-form";
-import { Button } from "@/modules/shared/components/ui/button";
-import { FieldGroup } from "@/modules/shared/components/ui/field";
-import { useMutateOrganizations } from "@/modules/organizations/application/hooks/use-mutate-organizations";
-import type { AppRouterClient } from "@fludge/api/routers/index";
-import { LinkButton } from "@/modules/shared/components/link-button";
-import { useRouter } from "@tanstack/react-router";
+} from "@shared/components/ui/card";
+import { Logo } from "@shared/components/logo";
+import { Button } from "@shared/components/ui/button";
+import { FieldGroup } from "@shared/components/ui/field";
+import { LinkButton } from "@shared/components/link-button";
+
+import { useRegisterOrganizationForm } from "@organizations/presentation/components/register-organization-form";
+import { useMutateOrganizations } from "@organizations/application/hooks/use-mutate-organizations";
 
 type Organizations = NonNullable<
   Awaited<ReturnType<AppRouterClient["auth"]["getSession"]>>

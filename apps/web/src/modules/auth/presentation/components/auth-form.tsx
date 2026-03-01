@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 import {
   EyeClosed,
   EyeIcon,
@@ -9,16 +10,11 @@ import {
   Phone,
   ScrollText,
 } from "lucide-react";
-import { LinkButton } from "@/modules/shared/components/link-button";
-import { Button } from "@/modules/shared/components/ui/button";
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from "@/modules/shared/components/ui/field";
-import { Input } from "@/modules/shared/components/ui/input";
-import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
-import { cn } from "@/modules/shared/lib/utils";
+import { LinkButton } from "@shared/components/link-button";
+import { Button } from "@shared/components/ui/button";
+import { Field, FieldError, FieldLabel } from "@shared/components/ui/field";
+import { Input } from "@shared/components/ui/input";
+import { cn } from "@shared/lib/utils";
 
 interface PasswordProps {
   hideForgotPassword?: boolean;

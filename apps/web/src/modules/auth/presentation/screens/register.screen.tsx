@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { AlertCircleIcon, User } from "lucide-react";
-import { LinkButton } from "@/modules/shared/components/link-button";
-import { Logo } from "@/modules/shared/components/logo";
-import { Button } from "@/modules/shared/components/ui/button";
+import {
+  signUpEmailFormSchema,
+  type SignUpEmailFormSchema,
+} from "@fludge/utils/validators/auth.schemas";
+
+import { LinkButton } from "@shared/components/link-button";
+import { Logo } from "@shared/components/logo";
+import { Button } from "@shared/components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,20 +16,16 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/modules/shared/components/ui/card";
-import { Separator } from "@/modules/shared/components/ui/separator";
-import { useAuthForm } from "../components/auth-form";
-import {
-  signUpEmailFormSchema,
-  type SignUpEmailFormSchema,
-} from "@fludge/utils/validators/auth.schemas";
+} from "@shared/components/ui/card";
+import { Separator } from "@shared/components/ui/separator";
+import { FieldGroup } from "@shared/components/ui/field";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@/modules/shared/components/ui/alert";
-import { FieldGroup } from "@/modules/shared/components/ui/field";
+} from "@shared/components/ui/alert";
 import { useAuth } from "@/integrations/auth/context";
+import { useAuthForm } from "@auth/presentation/components/auth-form";
 
 const defaultValues: SignUpEmailFormSchema = {
   address: "",

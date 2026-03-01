@@ -2,7 +2,7 @@ import { useVerifiedSession } from "@/integrations/auth/context";
 import { productCollectionBuilder } from "../collections/products.collection";
 
 export function useProductsCollection() {
-  const { activeOrganizationId } = useVerifiedSession();
+  const session = useVerifiedSession();
 
-  return productCollectionBuilder(activeOrganizationId);
+  return productCollectionBuilder(session.activeOrganization.id);
 }

@@ -1,13 +1,14 @@
+import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
+
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldLabel,
-} from "@/modules/shared/components/ui/field";
-import { Input } from "@/modules/shared/components/ui/input";
-import { Textarea } from "@/modules/shared/components/ui/textarea";
-import { inputNumberHelper } from "@/modules/shared/lib/utils";
-import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
+} from "@shared/components/ui/field";
+import { Input } from "@shared/components/ui/input";
+import { Textarea } from "@shared/components/ui/textarea";
+import { inputNumberHelper } from "@shared/lib/utils";
 
 export const { fieldContext, formContext, useFieldContext } =
   createFormHookContexts();

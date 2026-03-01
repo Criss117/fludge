@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { DashBoardHeader } from "@/modules/shared/components/dashboard-header";
-import { EmployeesScreen } from "@/modules/new-employees/presentation/screens/employees.screen";
+
+import { DashBoardHeader } from "@shared/components/dashboard-header";
+
+import { EmployeesScreen } from "@employees/presentation/screens/employees.screen";
 
 export const Route = createFileRoute("/dashboard/$orgslug/employees/")({
   component: RouteComponent,
