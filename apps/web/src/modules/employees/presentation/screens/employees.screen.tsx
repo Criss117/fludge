@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { FiltersProvider } from "@shared/store/teams-filters.store";
+import { FiltersProvider } from "@/modules/shared/store/filters.store";
 
 import { EmployeesHeaderSection } from "@employees/presentation/sections/employees-header.section";
 import { EmployeesListSection } from "@employees/presentation/sections/employees-list.section";

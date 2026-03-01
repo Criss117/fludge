@@ -5,7 +5,7 @@ import {
   SearchInputSkeleton,
 } from "@shared/components/search-input";
 import { useDataTable } from "@shared/components/data-table";
-import { useFilters } from "@shared/store/teams-filters.store";
+import { useFilters } from "@/modules/shared/store/filters.store";
 
 import { TeamsTableSkeleton } from "@teams/presentation/components/teams-table/skeleton";
 import { teamsTableColumns } from "@teams/presentation/components/teams-table/columns";

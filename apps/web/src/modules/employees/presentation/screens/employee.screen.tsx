@@ -11,7 +11,7 @@ import { EmployeePersonalInfoSection } from "@employees/presentation/sections/em
 import { EmployeeTeamsSection } from "@employees/presentation/sections/employee-teams.section";
 import type { Employee } from "@employees/application/collections/employees.collection";
 
-import { FiltersProvider } from "@shared/store/teams-filters.store";
+import { FiltersProvider } from "@/modules/shared/store/filters.store";
 
 interface Props {
   employee: Employee;

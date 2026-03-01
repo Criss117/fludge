@@ -32,17 +32,9 @@ export function productCollectionBuilder(orgId: string) {
   if (!collectionsCache.has(orgId)) {
     const newProductCollection = createCollection(
       queryCollectionOptions<Product>({
-        // syncMode: "on-demand",
         queryKey: ["organization", orgId, "products"],
-        queryFn: (ctx) => {
-          // const { limit, offset, where, orderBy } = ctx.meta?.loadSubsetOptions;
-
-          // console.log({ limit, offset, where, orderBy });
-
-          return orpc.inventory.products.findMany.call({
-            limit: 10,
-            offset: 0,
-          });
+        queryFn: () => {
+          return orpc.inventory.products.findMany.call();
         },
         getKey: (p) => p.id,
         queryClient,

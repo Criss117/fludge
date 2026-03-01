@@ -25,6 +25,7 @@
     "drizzle-orm": "catalog:"
   },
   "devDependencies": {
+    "@faker-js/faker": "10.3.0",
     "@fludge/config": "workspace:*",
     "@types/express": "catalog:",
     "typescript": "catalog:"

@@ -4,7 +4,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@shared/components/ui/tabs";
-import { FiltersProvider } from "@shared/store/teams-filters.store";
+import { FiltersProvider } from "@/modules/shared/store/filters.store";
 
 import {
   TeamHeaderSection,

@@ -3,7 +3,6 @@ import { withOrganizationMiddleware } from "@fludge/api/middlewares/requiere-aut
 import { createProductSchema } from "@fludge/utils/validators/products.schemas";
 import { createProductUseCase } from "./usecases/create-product.usecase";
 import { findManyProductsUseCase } from "./usecases/find-many-products.usecase";
-import { paginatedValidator } from "@fludge/utils/validators/utils";
 
 export const productsProcedures = {
   create: baseProcedure({
@@ -21,8 +20,7 @@ export const productsProcedures = {
     tags: ["Inventory", "Products"],
   })
     .use(withOrganizationMiddleware())
-    .input(paginatedValidator)
-    .handler(({ context, input }) =>
-      findManyProductsUseCase.execute(context.organization.id, input),
+    .handler(({ context }) =>
+      findManyProductsUseCase.execute(context.organization.id),
     ),
 };

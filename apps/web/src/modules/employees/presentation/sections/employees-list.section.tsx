@@ -1,5 +1,5 @@
 import { useDataTable } from "@shared/components/data-table";
-import { useFilters } from "@shared/store/teams-filters.store";
+import { useFilters } from "@/modules/shared/store/filters.store";
 import { SearchInput } from "@shared/components/search-input";
 
 import { employeesTableColumns } from "@employees/presentation/components/employees-table/columns";

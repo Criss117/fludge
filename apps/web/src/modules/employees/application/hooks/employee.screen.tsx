@@ -5,7 +5,7 @@ import {
   TabsTrigger,
 } from "@shared/components/ui/tabs";
 import { Card, CardHeader, CardTitle } from "@shared/components/ui/card";
-import { FiltersProvider } from "@shared/store/teams-filters.store";
+import { FiltersProvider } from "@/modules/shared/store/filters.store";
 
 import type { Employee } from "@employees/application/collections/employees.collection";
 import { EmployeeHeaderSection } from "@employees/presentation/sections/employee-header.section";

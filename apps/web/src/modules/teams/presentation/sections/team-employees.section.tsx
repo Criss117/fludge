@@ -12,7 +12,7 @@ import type { TeamWithMembers } from "@teams/application/hooks/use-teams-queries
 import { useDataTable } from "@shared/components/data-table";
 import { SearchInput } from "@shared/components/search-input";
 import { Separator } from "@shared/components/ui/separator";
-import { useFilters } from "@shared/store/teams-filters.store";
+import { useFilters } from "@/modules/shared/store/filters.store";
 
 import { useFindAllEmployeesByTeam } from "@employees/application/hooks/use-employees-queries";
 import { employeesTableColumns } from "@employees/presentation/components/employees-table/columns";

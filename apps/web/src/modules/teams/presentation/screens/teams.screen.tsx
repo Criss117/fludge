@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { FiltersProvider } from "@shared/store/teams-filters.store";
+import { FiltersProvider } from "@/modules/shared/store/filters.store";
 
 import {
   TeamsHeaderSection,

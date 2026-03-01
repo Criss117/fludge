@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@shared/components/ui/card";
-import { useFilters } from "@shared/store/teams-filters.store";
+import { useFilters } from "@/modules/shared/store/filters.store";
 
 import { RemoveTeamsFromEmployee } from "@employees/presentation/components/remove-teams-from-employee";
 import { AssignTeamsToEmployee } from "@employees/presentation/components/assign-teams-to-employee";

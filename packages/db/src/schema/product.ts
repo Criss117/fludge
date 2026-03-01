@@ -43,13 +43,13 @@ export const product = sqliteTable(
     description: text("description", { length: 100 }),
 
     // Precios almacenados en centavos (ej: 1000 = $10.00)
-    wholesalePrice: integer("wholesale_price").notNull().default(0),
-    salePrice: integer("sale_price").notNull().default(0),
-    costPrice: integer("cost_price").notNull().default(0),
+    wholesalePrice: integer("wholesale_price").notNull(),
+    salePrice: integer("sale_price").notNull(),
+    costPrice: integer("cost_price").notNull(),
 
     // Gestión de Inventario
-    stock: integer("stock").notNull().default(0),
-    minStock: integer("min_stock").default(5).notNull(), // Alerta de stock bajo
+    stock: integer("stock").notNull(),
+    minStock: integer("min_stock").notNull(), // Alerta de stock bajo
 
     categoryId: text("category_id").references(() => category.id),
     organizationId: text("organization_id")
