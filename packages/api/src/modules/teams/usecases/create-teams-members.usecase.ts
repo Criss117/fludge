@@ -1,10 +1,11 @@
 import { db } from "@fludge/db";
-import { team, teamMember, user } from "@fludge/db/schema/auth";
 import { tryCatch } from "@fludge/utils/try-catch";
 import type { CreateTeamsMembersSchema } from "@fludge/utils/validators/team.schemas";
 import { and, eq, inArray } from "drizzle-orm";
 import { InternalServerErrorException } from "../../shared/exceptions/internal-server-error.exception";
 import { TeamNotFoundException } from "../exceptions/team-not-found.exception";
+import { team, teamMember } from "@fludge/db/schema/organization";
+import { user } from "@fludge/db/schema/auth";
 
 export class CreateTeamsMembersUseCase {
   public async execute(
@@ -53,7 +54,16 @@ export class CreateTeamsMembersUseCase {
       throw new TeamNotFoundException("No se encontraron equipos o usuarios");
 
     const { data: insertReturn, error: insertError } = await tryCatch(
-      db.insert(teamMember).values(values).returning(),
+      db
+        .insert(teamMember)
+        .values(
+          values.map((v) => ({
+            userId: v.userId,
+            teamId: v.teamId,
+            organizationId,
+          })),
+        )
+        .returning(),
     );
 
     if (insertError)

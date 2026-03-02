@@ -1,22 +1,15 @@
-import type { IncomingHttpHeaders } from "node:http";
 import { eq, or } from "drizzle-orm";
-import { ORPCError } from "@orpc/client";
 import { db } from "@fludge/db";
-import { auth } from "@fludge/auth";
 import { OrganizationAlreadyExistsException } from "../exceptions/organization-already-exists.exception";
 import { slugify } from "@fludge/utils/slugify";
 import { tryCatch } from "@fludge/utils/try-catch";
 import { allPermissions } from "@fludge/utils/validators/permission.schemas";
 import type { CreateOrganizationSchema } from "@fludge/utils/validators/organization.schema";
-import { organization, team } from "@fludge/db/schema/auth";
-import { WithAuthHeader } from "@fludge/api/modules/shared/usecases/with-auth-headers";
+import { organization, team } from "@fludge/db/schema/organization";
+import { InternalServerErrorException } from "../../shared/exceptions/internal-server-error.exception";
 
-export class CreateOrganizationUseCase extends WithAuthHeader {
-  constructor(nodeHeaders: IncomingHttpHeaders) {
-    super(nodeHeaders);
-  }
-
-  async execute(values: CreateOrganizationSchema) {
+export class CreateOrganizationUseCase {
+  async execute(rootUserId: string, values: CreateOrganizationSchema) {
     const orgSlug = slugify(values.name);
 
     const { data, error } = await tryCatch(
@@ -37,27 +30,30 @@ export class CreateOrganizationUseCase extends WithAuthHeader {
     if (error || data.length > 0)
       throw new OrganizationAlreadyExistsException();
 
-    const { data: createdOrg, error: createdOrgErr } = await tryCatch(
-      auth.api.createOrganization({
-        headers: this.headers,
-        body: {
+    const { data: createdOrgs, error: createdOrgErr } = await tryCatch(
+      db
+        .insert(organization)
+        .values({
+          ...values,
+          rootUserId,
           slug: orgSlug,
-          address: values.address,
-          legalName: values.legalName,
-          name: values.name,
-          contactEmail: values.contactEmail,
-          contactPhone: values.contactPhone,
-        },
-      }),
+        })
+        .returning(),
     );
 
-    if (createdOrgErr || !createdOrg)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al crear la organizacion",
-        cause: createdOrgErr,
-      });
+    if (createdOrgErr)
+      throw new InternalServerErrorException(
+        "Algo salió mal al crear la organización",
+      );
 
-    const { data: createdTeam, error: createdTeamErr } = await tryCatch(
+    const createdOrg = createdOrgs.at(0);
+
+    if (!createdOrg)
+      throw new InternalServerErrorException(
+        "Algo salió mal al crear la organización",
+      );
+
+    const { data: createdTeams, error: createdTeamErr } = await tryCatch(
       db
         .insert(team)
         .values({
@@ -72,19 +68,15 @@ export class CreateOrganizationUseCase extends WithAuthHeader {
     );
 
     if (createdTeamErr)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message:
-          "La organizacion se ha creado correctamente pero no se pudo crear el equipo de administradores",
-        cause: createdTeamErr,
-      });
+      throw new InternalServerErrorException(
+        "Algo salió mal al crear el equipo de administradores",
+      );
 
     return {
       ...createdOrg,
-      teams: [createdTeam],
+      teams: createdTeams,
     };
   }
 }
 
-export function createOrganizationUseCase(headers: IncomingHttpHeaders) {
-  return new CreateOrganizationUseCase(headers);
-}
+export const createOrganizationUseCase = new CreateOrganizationUseCase();

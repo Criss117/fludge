@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   check,
   index,
@@ -7,8 +8,7 @@ import {
   unique,
 } from "drizzle-orm/sqlite-core";
 import { auditMetadata, StockMovement, uuid } from "../utils";
-import { organization } from "./auth";
-import { sql } from "drizzle-orm";
+import { organization } from "./organization";
 
 export const category = sqliteTable(
   "category",

@@ -1,10 +1,11 @@
 import { db } from "@fludge/db";
-import { team, teamMember, user } from "@fludge/db/schema/auth";
+import { user } from "@fludge/db/schema/auth";
 import { tryCatch } from "@fludge/utils/try-catch";
 import type { CreateTeamsMembersSchema } from "@fludge/utils/validators/team.schemas";
 import { and, eq, inArray } from "drizzle-orm";
 import { InternalServerErrorException } from "../../shared/exceptions/internal-server-error.exception";
 import { TeamNotFoundException } from "../exceptions/team-not-found.exception";
+import { team, teamMember } from "@fludge/db/schema/organization";
 
 export class DeleteTeamsMembersUseCase {
   public async execute(

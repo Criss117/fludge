@@ -6,6 +6,7 @@ import { tryCatch } from "@fludge/utils/try-catch";
 import { InternalServerErrorException } from "@fludge/api/modules/shared/exceptions/internal-server-error.exception";
 import { UserAlreadyExistsException } from "@fludge/api/modules/auth/exceptions/user-already-exists.exception";
 import type { SignUpUsernameSchema } from "@fludge/utils/validators/auth.schemas";
+import { member } from "@fludge/db/schema/organization";
 
 export class CreateEmployeeUseCase {
   public async execute(organizationId: string, values: SignUpUsernameSchema) {
@@ -49,18 +50,20 @@ export class CreateEmployeeUseCase {
 
     if (error) throw new InternalServerErrorException(error.message);
 
-    const { data: createdMember, error: addMemberError } = await tryCatch(
-      auth.api.addMember({
-        body: {
-          userId: createdEmployee.user.id,
-          role: "member",
+    const { data: createdMembers, error: addMemberError } = await tryCatch(
+      db
+        .insert(member)
+        .values({
           organizationId,
-        },
-      }),
+          userId: createdEmployee.user.id,
+        })
+        .returning(),
     );
 
     if (addMemberError)
       throw new InternalServerErrorException(addMemberError.message);
+
+    const createdMember = createdMembers.at(0);
 
     if (!createdMember)
       throw new InternalServerErrorException(
@@ -69,7 +72,6 @@ export class CreateEmployeeUseCase {
 
     return {
       ...createdMember,
-      role: createdMember.role as "member",
       user: {
         id: createdEmployee.user.id,
         name: createdEmployee.user.name,

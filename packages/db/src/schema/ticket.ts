@@ -1,3 +1,4 @@
+import { type SQL, sql } from "drizzle-orm";
 import {
   check,
   index,
@@ -7,9 +8,9 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { auditMetadata, PaymentMethod, TicketStatus, uuid } from "../utils";
 import { customer } from "./customer";
-import { organization, user } from "./auth";
+import { user } from "./auth";
 import { product } from "./product";
-import { type SQL, sql } from "drizzle-orm";
+import { organization } from "./organization";
 
 export const ticket = sqliteTable(
   "ticket",

@@ -1,5 +1,4 @@
 import { baseProcedure } from "@fludge/api";
-import { withOrganizationMiddleware } from "@fludge/api/middlewares/requiere-auth.middleware";
 import { findAllTeamsUseCase } from "./usecases/find-all-teams.usecase";
 import { createTeamUseCase } from "./usecases/create-team.usecase";
 import { deleteTeamsUseCase } from "./usecases/delete-teams.usecase";
@@ -12,13 +11,18 @@ import {
 } from "@fludge/utils/validators/team.schemas";
 import { createTeamsMembersUseCase } from "./usecases/create-teams-members.usecase";
 import { deleteTeamsMembersUseCase } from "./usecases/delete-teams-members.usecase";
+import { withPermissionsMiddleware } from "@fludge/api/middlewares/with-permissions.middleware";
 
 export const teamsProcedures = {
   findAll: baseProcedure({
     method: "GET",
     tags: ["Teams"],
   })
-    .use(withOrganizationMiddleware())
+    .use(
+      withPermissionsMiddleware({
+        permissions: ["read:team"],
+      }),
+    )
     .handler(({ context }) =>
       findAllTeamsUseCase.execute(context.organization.id),
     ),
@@ -27,7 +31,11 @@ export const teamsProcedures = {
     method: "POST",
     tags: ["Teams"],
   })
-    .use(withOrganizationMiddleware())
+    .use(
+      withPermissionsMiddleware({
+        permissions: ["read:team", "create:team"],
+      }),
+    )
     .input(createTeamSchema)
     .handler(({ input, context }) =>
       createTeamUseCase.execute(context.organization.id, input),
@@ -37,7 +45,11 @@ export const teamsProcedures = {
     method: "DELETE",
     tags: ["Teams"],
   })
-    .use(withOrganizationMiddleware())
+    .use(
+      withPermissionsMiddleware({
+        permissions: ["read:team", "delete:team"],
+      }),
+    )
     .input(removeManyTeamsSchema)
     .handler(({ input, context }) =>
       deleteTeamsUseCase.execute(context.organization.id, input),
@@ -47,7 +59,11 @@ export const teamsProcedures = {
     method: "PUT",
     tags: ["Teams"],
   })
-    .use(withOrganizationMiddleware())
+    .use(
+      withPermissionsMiddleware({
+        permissions: ["read:team", "update:team"],
+      }),
+    )
     .input(updateTeamSchema)
     .handler(({ input, context }) =>
       updateTeamUseCase.execute(context.organization.id, input),
@@ -58,7 +74,11 @@ export const teamsProcedures = {
       method: "POST",
       tags: ["Teams"],
     })
-      .use(withOrganizationMiddleware())
+      .use(
+        withPermissionsMiddleware({
+          permissions: ["read:team", "update:team"],
+        }),
+      )
       .input(createTeamsMembersSchema)
       .handler(({ input, context }) =>
         createTeamsMembersUseCase.execute(context.organization.id, input),
@@ -68,7 +88,11 @@ export const teamsProcedures = {
       method: "POST",
       tags: ["Teams"],
     })
-      .use(withOrganizationMiddleware())
+      .use(
+        withPermissionsMiddleware({
+          permissions: ["read:team", "update:team"],
+        }),
+      )
       .input(createTeamsMembersSchema)
       .handler(({ input, context }) =>
         deleteTeamsMembersUseCase.execute(context.organization.id, input),

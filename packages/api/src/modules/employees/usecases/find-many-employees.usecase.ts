@@ -2,8 +2,8 @@ import { and, eq, getTableColumns } from "drizzle-orm";
 import { tryCatch } from "@fludge/utils/try-catch";
 import { InternalServerErrorException } from "@fludge/api/modules/shared/exceptions/internal-server-error.exception";
 import { db } from "@fludge/db";
-import { member, user } from "@fludge/db/schema/auth";
-import { parseTeamsOnEmployee } from "@fludge/utils/validators/employees.schemas";
+import { user } from "@fludge/db/schema/auth";
+import { member } from "@fludge/db/schema/organization";
 
 export class FindManyEmployeesUseCase {
   public async execute(organizationId: string) {
@@ -23,13 +23,7 @@ export class FindManyEmployeesUseCase {
         })
         .from(member)
         .innerJoin(user, eq(user.id, member.userId))
-        .where(
-          and(
-            eq(member.organizationId, organizationId),
-            eq(member.role, "member"),
-          ),
-        )
-        .groupBy(member.id),
+        .where(and(eq(member.organizationId, organizationId))),
     );
 
     if (error) throw new InternalServerErrorException(error.message);

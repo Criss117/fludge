@@ -1,11 +1,10 @@
-import { organization, username } from "better-auth/plugins";
+import { username } from "better-auth/plugins";
 import { betterAuth } from "better-auth";
 import { expo } from "@better-auth/expo";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@fludge/db";
 import * as schema from "@fludge/db/schema/auth";
 import { env } from "@fludge/env/server";
-import { permissionsSchema } from "@fludge/utils/validators/permission.schemas";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -59,63 +58,13 @@ export const auth = betterAuth({
       },
     },
   },
-  plugins: [
-    expo(),
-    organization({
-      teams: {
-        enabled: true,
-        allowRemovingAllTeams: true,
-        defaultTeam: {
-          enabled: false,
-        },
+  session: {
+    additionalFields: {
+      activeOrganizationId: {
+        type: "string",
+        required: false,
       },
-      schema: {
-        organization: {
-          additionalFields: {
-            legalName: {
-              type: "string",
-              fieldName: "legalName",
-              index: true,
-              required: true,
-              unique: true,
-            },
-            address: {
-              type: "string",
-              fieldName: "address",
-              required: true,
-            },
-            contactPhone: {
-              type: "string",
-              fieldName: "contactPhone",
-              required: false,
-            },
-            contactEmail: {
-              type: "string",
-              fieldName: "contactEmail",
-              required: false,
-            },
-          },
-        },
-        team: {
-          additionalFields: {
-            permissions: {
-              type: "json",
-              fieldName: "permissions",
-              required: true,
-              validator: {
-                input: permissionsSchema,
-                output: permissionsSchema,
-              },
-            },
-            description: {
-              type: "string",
-              fieldName: "description",
-              required: false,
-            },
-          },
-        },
-      },
-    }),
-    username(),
-  ],
+    },
+  },
+  plugins: [expo(), username()],
 });

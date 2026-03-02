@@ -1,8 +1,8 @@
 import { desc, eq, inArray } from "drizzle-orm";
 import { db } from "@fludge/db";
-import { team, teamMember } from "@fludge/db/schema/auth";
 import { tryCatch } from "@fludge/utils/try-catch";
 import { InternalServerErrorException } from "../../shared/exceptions/internal-server-error.exception";
+import { team, teamMember } from "@fludge/db/schema/organization";
 
 export class FindAllTeamsUseCase {
   public async execute(organizationId: string) {

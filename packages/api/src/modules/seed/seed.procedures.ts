@@ -1,21 +1,14 @@
 import { baseProcedure } from "@fludge/api";
 import { db } from "@fludge/db";
-import {
-  account,
-  member,
-  organization,
-  team,
-  user,
-} from "@fludge/db/schema/auth";
+import { account, user } from "@fludge/db/schema/auth";
 import { faker } from "@faker-js/faker/locale/es";
 import { slugify } from "@fludge/utils/slugify";
 import { allPermissions } from "@fludge/utils/validators/permission.schemas";
 import { product } from "@fludge/db/schema/product";
+import { member, organization, team } from "@fludge/db/schema/organization";
 
 type User = typeof user.$inferSelect;
 type Organization = typeof organization.$inferSelect;
-type Team = typeof team.$inferSelect;
-type Product = typeof product.$inferSelect;
 
 async function seedRootUsers(quantity = 5) {
   const rootUsers = Array.from({
@@ -26,11 +19,13 @@ async function seedRootUsers(quantity = 5) {
     email: `root${index}@fludge.dev`,
     is_root: true,
     name: faker.person.fullName(),
+    id: faker.string.uuid(),
   }));
 
   const createdUsers = await db.insert(user).values(rootUsers).returning();
 
   const accounts = createdUsers.map((user) => ({
+    id: faker.string.uuid(),
     userId: user.id,
     accountId: user.id,
     providerId: "credential",
@@ -62,6 +57,7 @@ async function seedOrganizations(rootUsers: User[], quantityPerUser = 2) {
             createdAt: new Date(),
             contactEmail: faker.internet.email(),
             contactPhone: faker.phone.number(),
+            rootUserId: user.id,
           },
         };
       }),

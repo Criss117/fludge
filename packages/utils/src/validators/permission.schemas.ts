@@ -1,7 +1,13 @@
 import { z } from "zod";
 
 export const actions = ["create", "read", "update", "delete"] as const;
-export const resources = ["team", "product", "ticket", "customer"] as const;
+export const resources = [
+  "team",
+  "product",
+  "ticket",
+  "customer",
+  "employee",
+] as const;
 
 export type Action = (typeof actions)[number];
 export type Resource = (typeof resources)[number];

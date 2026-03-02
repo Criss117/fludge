@@ -1,11 +1,11 @@
 import { db } from "@fludge/db";
 import { and, eq, sql } from "drizzle-orm";
-import { team } from "@fludge/db/schema/auth";
 import { tryCatch } from "@fludge/utils/try-catch";
 import type { UpdateTeamSchema } from "@fludge/utils/validators/team.schemas";
 import { InternalServerErrorException } from "@fludge/api/modules/shared/exceptions/internal-server-error.exception";
 import { TeamNotFoundException } from "../exceptions/team-not-found.exception";
 import { TeamAlreadyExistsException } from "../exceptions/team-already-exists.exception";
+import { team } from "@fludge/db/schema/organization";
 
 export class UpdateTeamUseCase {
   public async execute(organizationId: string, values: UpdateTeamSchema) {
