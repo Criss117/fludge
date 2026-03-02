@@ -116,7 +116,7 @@ async function seedProducts(
   const products = organizations
     .map((org) =>
       Array.from({ length: quantityPerOrganization }).map(() => {
-        const costPrice = Math.random() * 100;
+        const costPrice = Math.random() * 10000;
         const salePrice = costPrice * (1 + Math.random() * 0.5);
         const wholesalePrice = costPrice * (1 - Math.random() * 0.2);
         const stock = Math.floor(Math.random() * 100);
@@ -126,9 +126,9 @@ async function seedProducts(
           name: faker.commerce.product(),
           organizationId: org.id,
           sku: faker.commerce.isbn(),
-          wholesalePrice,
-          salePrice,
-          costPrice,
+          wholesalePrice: Math.floor(wholesalePrice),
+          salePrice: Math.floor(salePrice),
+          costPrice: Math.floor(costPrice),
           stock,
           minStock,
         };
