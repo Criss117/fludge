@@ -1,5 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import type { CreateProductSchema } from "@fludge/utils/validators/products.schemas";
+import type {
+  CreateProductSchema,
+  UpdateProductSchema,
+} from "@fludge/utils/validators/products.schemas";
 import { useProductsCollection } from "./use-products-collection";
 
 export function useMutateProducts() {
@@ -25,5 +28,24 @@ export function useMutateProducts() {
     },
   });
 
-  return { create };
+  const update = useMutation({
+    mutationKey: ["products", "update"],
+    mutationFn: async (values: UpdateProductSchema) => {
+      const tx = productCollection.update(values.id, (draft) => {
+        draft.sku = values.sku || draft.sku;
+        draft.name = values.name || draft.name;
+        draft.description = values.description || draft.description;
+        draft.wholesalePrice = values.wholesalePrice || draft.wholesalePrice;
+        draft.salePrice = values.salePrice || draft.salePrice;
+        draft.costPrice = values.costPrice || draft.costPrice;
+        draft.stock = values.stock || draft.stock;
+        draft.minStock = values.minStock || draft.minStock;
+        draft.updatedAt = new Date();
+      });
+
+      await tx.isPersisted.promise;
+    },
+  });
+
+  return { create, update };
 }

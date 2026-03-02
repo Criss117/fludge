@@ -37,10 +37,8 @@ export function employeesCollectionBuilder(orgId: string) {
         queryFn: () => {
           return orpc.employees.findAll.call();
         },
-        getKey: (item) => item.id,
+        getKey: (item) => item.userId,
         onUpdate: async ({ transaction }) => {
-          console.log(transaction);
-
           return {
             refetch: false,
           };

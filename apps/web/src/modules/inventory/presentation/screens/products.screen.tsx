@@ -5,6 +5,10 @@ import { ProductsHeaderSection } from "@inventory/presentation/sections/products
 import { ProductsTableSection } from "@inventory/presentation/sections/products-table.section";
 import { ProductsFiltersSection } from "@inventory/presentation/sections/products-filters.section";
 import { useCountAllProducts } from "@inventory/application/hooks/use-products-queries";
+import {
+  UpdateProductForm,
+  UpdateProductRoot,
+} from "../components/update-product";
 
 export function ProductsScreen() {
   const totalProducts = useCountAllProducts();
@@ -18,7 +22,10 @@ export function ProductsScreen() {
             <ProductsFiltersSection totalProducts={totalProducts} />
           </Suspense>
           <Suspense>
-            <ProductsTableSection />
+            <UpdateProductRoot>
+              <ProductsTableSection />
+              <UpdateProductForm />
+            </UpdateProductRoot>
           </Suspense>
           <Suspense>
             <ProductsFiltersSection totalProducts={totalProducts} />

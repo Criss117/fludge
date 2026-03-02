@@ -41,7 +41,6 @@ export function RemoveTeam({ team }: Props) {
         });
       },
       onSettled: () => {
-        console.log(loadingToastId);
         toast.dismiss(loadingToastId);
       },
     });

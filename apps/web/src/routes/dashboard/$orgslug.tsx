@@ -11,8 +11,6 @@ export const Route = createFileRoute("/dashboard/$orgslug")({
   beforeLoad: async ({ context, params }) => {
     const session = context.auth.session;
 
-    console.log({ session });
-
     if (!session)
       throw redirect({
         to: "/",

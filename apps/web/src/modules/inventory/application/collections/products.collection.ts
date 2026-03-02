@@ -57,6 +57,27 @@ export function productCollectionBuilder(orgId: string) {
 
           return { refetch: false };
         },
+
+        onUpdate: async ({ transaction, collection }) => {
+          const values = transaction.mutations[0].changes;
+          const productId = transaction.mutations[0].original.id;
+
+          const updatedProduct = await orpc.inventory.products.update.call({
+            id: productId,
+            costPrice: values.costPrice,
+            name: values.name,
+            description: values.description ?? undefined,
+            minStock: values.minStock,
+            salePrice: values.salePrice,
+            sku: values.sku,
+            stock: values.stock,
+            wholesalePrice: values.wholesalePrice,
+          });
+
+          collection.utils.writeUpdate(updatedProduct);
+
+          return { refetch: false };
+        },
       }),
     );
 

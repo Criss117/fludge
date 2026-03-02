@@ -6,6 +6,7 @@ import { cn, formatCurrency } from "@shared/lib/utils";
 
 import type { Product } from "@inventory/application/collections/products.collection";
 import { WithChevronButton } from "./column-headers";
+import { ProductsTableActions } from "./actions";
 
 const columnHelper = createColumnHelper<Product>();
 
@@ -91,11 +92,7 @@ export function productsTableColumns(orgSlug: string) {
     }),
     columnHelper.display({
       id: "actions",
-      cell: () => (
-        <Button variant="ghost" size="icon">
-          <MoreVertical />
-        </Button>
-      ),
+      cell: ({ row }) => <ProductsTableActions product={row.original} />,
     }),
   ];
 }
