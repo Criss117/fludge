@@ -35,10 +35,12 @@ export function LoginScreen() {
       email: "",
       password: "",
     },
-    onSubmit: ({ value }) => {
+    onSubmit: ({ value, formApi }) => {
       signInEmail.mutate(value, {
         onSuccess: (data) => {
           if (!data) return;
+
+          router.options.context.auth.session = data;
 
           router.navigate({
             to: "/select-organization",

@@ -14,6 +14,7 @@ const router = createRouter({
   Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   },
+  defaultPreloadDelay: 1000,
 });
 
 function Main() {

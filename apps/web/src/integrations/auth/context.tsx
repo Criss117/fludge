@@ -28,6 +28,14 @@ interface Context {
   signOut: UseMutationResult<void, Error, void, unknown>;
   signInEmail: UseMutationResult<Session, Error, SignInEmailSchema>;
   signUpEmail: UseMutationResult<SignUpEmailRes, Error, SignUpEmailSchema>;
+  setActiveOrganization: UseMutationResult<
+    void,
+    Error,
+    {
+      organizationId: string;
+    },
+    unknown
+  >;
 }
 
 interface AuthProviderProps {
@@ -94,11 +102,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     },
   });
 
+  const setActiveOrganization = useMutation(
+    orpc.auth.setActiveOrganization.mutationOptions({
+      onSuccess: () => {
+        sessionQuery.refetch();
+      },
+    }),
+  );
+
   return (
     <AuthContext.Provider
       value={{
         session: sessionQuery.data,
         refetchSession: sessionQuery.refetch,
+        setActiveOrganization,
         signInEmail,
         signUpEmail,
         signOut,

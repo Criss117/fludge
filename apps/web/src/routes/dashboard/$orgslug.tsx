@@ -1,16 +1,17 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { tryCatch } from "@fludge/utils/try-catch";
 
-import { authClient } from "@/integrations/auth";
-
 import { AppSidebar } from "@shared/components/app-sidebar";
 import { LoadingScreen } from "@shared/components/loading-screen";
 import { SidebarInset, SidebarProvider } from "@shared/components/ui/sidebar";
+import { orpc } from "@/integrations/orpc";
 
 export const Route = createFileRoute("/dashboard/$orgslug")({
   component: RouteComponent,
   beforeLoad: async ({ context, params }) => {
     const session = context.auth.session;
+
+    console.log({ session });
 
     if (!session)
       throw redirect({
@@ -32,18 +33,14 @@ export const Route = createFileRoute("/dashboard/$orgslug")({
       };
 
     const { error } = await tryCatch(
-      authClient.organization.setActive({
+      orpc.auth.setActiveOrganization.call({
         organizationId: selectedOrganization.id,
-        organizationSlug: selectedOrganization.slug,
-        fetchOptions: {
-          onSuccess: () => {
-            context.auth.refetchSession();
-          },
-        },
       }),
     );
 
     if (error) throw redirect({ to: "/" });
+
+    await context.auth.refetchSession();
 
     return {
       selectedOrganization,
