@@ -38,6 +38,25 @@ export function productCollectionBuilder(orgId: string) {
         },
         getKey: (p) => p.id,
         queryClient,
+
+        onInsert: async ({ transaction, collection }) => {
+          const values = transaction.mutations[0].modified;
+
+          const cretedProduct = await orpc.inventory.products.create.call({
+            costPrice: values.costPrice,
+            name: values.name,
+            description: values.description || "",
+            minStock: values.minStock,
+            salePrice: values.salePrice,
+            sku: values.sku,
+            stock: values.stock,
+            wholesalePrice: values.wholesalePrice,
+          });
+
+          collection.utils.writeInsert(cretedProduct);
+
+          return { refetch: false };
+        },
       }),
     );
 

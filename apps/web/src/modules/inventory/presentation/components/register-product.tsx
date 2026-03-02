@@ -17,6 +17,7 @@ import { FieldGroup, FieldLegend, FieldSet } from "@shared/components/ui/field";
 
 import { useProductForm } from "./product-form";
 import { useMutateProducts } from "@inventory/application/hooks/use-mutate-products";
+import { toast } from "sonner";
 
 const defaultValues = {
   name: "",
@@ -33,15 +34,31 @@ export function RegisterProduct() {
   const [open, setOpen] = useState(false);
   const { create } = useMutateProducts();
   const formId = `register-product-form-${useId()}`;
+
   const form = useProductForm({
     defaultValues,
     validators: {
       onChange: createProductSchema,
     },
     onSubmit: ({ value }) => {
+      const loadingToastId = toast.loading("Registrando producto...", {
+        position: "top-center",
+      });
+
       create.mutate(value, {
         onSuccess: () => {
+          toast.success("Producto registrado exitosamente.", {
+            position: "top-center",
+          });
           setOpen(false);
+        },
+        onError: () => {
+          toast.error("Error al registrar el producto.", {
+            position: "top-center",
+          });
+        },
+        onSettled: () => {
+          toast.dismiss(loadingToastId);
         },
       });
     },

@@ -15,6 +15,9 @@ interface Filters {
   sku?: string;
   orderBy?: {
     stock?: "asc" | "desc" | null;
+    costPrice?: "asc" | "desc" | null;
+    salePrice?: "asc" | "desc" | null;
+    wholesalePrice?: "asc" | "desc" | null;
   };
 }
 
@@ -39,28 +42,66 @@ export function useFindManyProducts(filters: Filters) {
   const offset = (filters.page || 0) * limit;
   const name = filters.name || "";
   const sku = filters.sku || "";
+
   const orderByStock = filters.orderBy?.stock || null;
+  const orderByCostPrice = filters.orderBy?.costPrice || null;
+  const orderBySalePrice = filters.orderBy?.salePrice || null;
+  const orderByWholesalePrice = filters.orderBy?.wholesalePrice || null;
+
+  const anyOrderBy =
+    !!orderByStock ||
+    !!orderByCostPrice ||
+    !!orderBySalePrice ||
+    !!orderByWholesalePrice;
 
   const { data } = useLiveSuspenseQuery(() => {
-    let query = new Query()
-      .from({ product: productsCollection })
-      .orderBy(({ product }) => product.createdAt, "desc")
-      .orderBy(({ product }) => product.stock, "desc")
-      .where(({ product }) =>
-        or(ilike(product.name, `%${name}%`), ilike(product.sku, `%${sku}%`)),
-      )
-      .limit(limit)
-      .offset(offset);
+    let query = new Query().from({ product: productsCollection });
 
-    return query;
+    if (orderByCostPrice) {
+      query = query.orderBy(
+        ({ product }) => product.costPrice,
+        orderByCostPrice,
+      );
+    }
+
+    if (orderByStock) {
+      query = query.orderBy(({ product }) => product.stock, orderByStock);
+    }
+
+    if (orderBySalePrice) {
+      query = query.orderBy(
+        ({ product }) => product.salePrice,
+        orderBySalePrice,
+      );
+    }
+
+    if (orderByWholesalePrice) {
+      query = query.orderBy(
+        ({ product }) => product.wholesalePrice,
+        orderByWholesalePrice,
+      );
+    }
+
+    if (!anyOrderBy)
+      query = query.orderBy(({ product }) => product.createdAt, "desc");
 
     return query
+
       .where(({ product }) =>
         or(ilike(product.name, `%${name}%`), ilike(product.sku, `%${sku}%`)),
       )
       .limit(limit)
       .offset(offset);
-  }, [limit, offset, name, sku, orderByStock]);
+  }, [
+    limit,
+    offset,
+    name,
+    sku,
+    orderByStock,
+    orderByCostPrice,
+    orderBySalePrice,
+    orderByWholesalePrice,
+  ]);
 
   return data;
 }

@@ -36,7 +36,11 @@ export class CreateProductUseCase {
       await tryCatch(
         db
           .insert(product)
-          .values({ ...values, organizationId })
+          .values({
+            ...values,
+            description: values.description || null,
+            organizationId,
+          })
           .returning(),
       );
 

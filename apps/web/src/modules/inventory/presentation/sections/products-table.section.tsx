@@ -14,6 +14,9 @@ export function ProductsTableSection() {
     sku: filters.query,
     orderBy: {
       stock: filters.orderBy.get("stock"),
+      costPrice: filters.orderBy.get("costPrice"),
+      salePrice: filters.orderBy.get("salePrice"),
+      wholesalePrice: filters.orderBy.get("wholesalePrice"),
     },
   });
 
@@ -22,7 +25,6 @@ export function ProductsTableSection() {
       products={products}
       orgSlug={session.activeOrganization.slug}
     >
-      <p>Total Products: {products.length}</p>
       <ProductsTable.Content />
     </ProductsTable.Root>
   );

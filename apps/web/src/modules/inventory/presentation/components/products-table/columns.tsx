@@ -5,7 +5,7 @@ import { Button } from "@shared/components/ui/button";
 import { cn, formatCurrency } from "@shared/lib/utils";
 
 import type { Product } from "@inventory/application/collections/products.collection";
-import { StockColumnHeader } from "./column-headers";
+import { WithChevronButton } from "./column-headers";
 
 const columnHelper = createColumnHelper<Product>();
 
@@ -22,10 +22,13 @@ export function productsTableColumns(orgSlug: string) {
     columnHelper.accessor((p) => p.description, {
       id: "description",
       header: "Descripción",
+      cell: ({ getValue }) => {
+        return <span>{getValue() || "-"}</span>;
+      },
     }),
     columnHelper.accessor((p) => p.stock, {
       id: "stock",
-      header: () => <StockColumnHeader />,
+      header: () => <WithChevronButton label="Stock" valueKey="stock" />,
       cell: ({ row }) => {
         const stock = row.original.stock;
         const minStock = row.original.minStock;
@@ -58,21 +61,30 @@ export function productsTableColumns(orgSlug: string) {
     }),
     columnHelper.accessor((p) => p.costPrice, {
       id: "costPrice",
-      header: "Precio de Costo",
+      header: () => (
+        <WithChevronButton label="Precio de Costo" valueKey="costPrice" />
+      ),
       cell: ({ getValue }) => {
         return <span>{formatCurrency(getValue())}</span>;
       },
     }),
     columnHelper.accessor((p) => p.salePrice, {
       id: "salePrice",
-      header: "Precio de Venta",
+      header: () => (
+        <WithChevronButton label="Precio de Venta" valueKey="salePrice" />
+      ),
       cell: ({ getValue }) => {
         return <span>{formatCurrency(getValue())}</span>;
       },
     }),
     columnHelper.accessor((p) => p.wholesalePrice, {
       id: "wholesalePrice",
-      header: "Precio al por mayor",
+      header: () => (
+        <WithChevronButton
+          label="Precio al por mayor"
+          valueKey="wholesalePrice"
+        />
+      ),
       cell: ({ getValue }) => {
         return <span>{formatCurrency(getValue())}</span>;
       },
