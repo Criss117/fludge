@@ -70,5 +70,15 @@ export const updateProductSchema = productsBaseSchema.partial().extend({
   id: z.uuid(),
 });
 
+export const deleteProductSchema = z.object({
+  id: z.uuid(),
+});
+
+export const deleteProductsSchema = z
+  .array(deleteProductSchema)
+  .min(1, "Debe seleccionar al menos un producto para eliminar");
+
+export type DeleteProductSchema = z.infer<typeof deleteProductSchema>;
+export type DeleteProductsSchema = z.infer<typeof deleteProductsSchema>;
 export type CreateProductSchema = z.infer<typeof createProductSchema>;
 export type UpdateProductSchema = z.infer<typeof updateProductSchema>;
