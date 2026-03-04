@@ -7,18 +7,15 @@ import {
   Package,
   UserCog,
   Users,
-  type LucideIcon,
-  ChevronDown,
-  ChevronRight,
   CirclePile,
   ChartBarStacked,
   Container,
+  type LucideIcon,
 } from "lucide-react";
+
 import {
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -26,14 +23,13 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   useSidebar,
-} from "../ui/sidebar";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { cn } from "../../lib/utils";
+} from "@shared/components//ui/sidebar";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "../ui/collapsible";
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@shared/components/ui/tooltip";
+import { cn } from "@shared/lib/utils";
 
 const DASHBOARD_PATH_REGEX = /\/dashboard\/[^/]+/;
 
@@ -169,7 +165,7 @@ const GroupItem = memo(function GroupItem({
               className={cn(
                 "dark:[&>svg]:text-white [&>svg]:text-black",
                 isMatch(subItem.url)
-                  ? "bg-primary text-black hover:bg-primary hover:text-black [&>svg]:text-black"
+                  ? "bg-primary text-black hover:bg-primary hover:text-black dark:[&>svg]:text-black"
                   : "",
               )}
               render={(props) => (

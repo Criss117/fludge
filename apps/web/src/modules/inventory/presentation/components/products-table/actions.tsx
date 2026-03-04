@@ -1,3 +1,5 @@
+import { MoreVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,11 +8,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@shared/components/ui/dropdown-menu";
+import { Button } from "@shared/components/ui/button";
 
+import { useUpdateProduct } from "@inventory/presentation/components/update-product";
+import { useMutateProducts } from "@inventory/application/hooks/use-mutate-products";
 import type { Product } from "@inventory/application/collections/products.collection";
-import { MoreVerticalIcon, PencilIcon } from "lucide-react";
-import { Button } from "@/modules/shared/components/ui/button";
-import { useUpdateProduct } from "../update-product";
 
 interface Props {
   product: Product;
@@ -18,6 +20,7 @@ interface Props {
 
 export function ProductsTableActions({ product }: Props) {
   const { selectProduct } = useUpdateProduct();
+  const { remove } = useMutateProducts();
 
   return (
     <DropdownMenu>
@@ -36,7 +39,17 @@ export function ProductsTableActions({ product }: Props) {
             <PencilIcon className="h-4 w-4" />
             Editar equipo
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            variant="destructive"
+            className="gap-2"
+            onClick={() => remove.mutate([product.id])}
+          >
+            <TrashIcon className="h-4 w-4" />
+            Eliminar equipo
+          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

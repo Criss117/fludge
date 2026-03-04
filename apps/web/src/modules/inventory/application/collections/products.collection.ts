@@ -14,7 +14,12 @@ import { queryClient } from "@/integrations/tanstack-query";
 export type Product = Awaited<
   ReturnType<typeof orpc.inventory.products.findMany.call>
 >[number] & {
-  isPending?: boolean;
+  metadata?: {
+    isPending?: boolean;
+    actions?: {
+      onUpdate?: "update" | "only-disable";
+    };
+  };
 };
 
 type ProductCollection = Collection<
@@ -38,6 +43,9 @@ export function productCollectionBuilder(orgId: string) {
         },
         getKey: (p) => p.id,
         queryClient,
+        meta: {
+          reason: "user update",
+        },
 
         onInsert: async ({ transaction, collection }) => {
           const values = transaction.mutations[0].modified;
@@ -59,23 +67,35 @@ export function productCollectionBuilder(orgId: string) {
         },
 
         onUpdate: async ({ transaction, collection }) => {
-          const values = transaction.mutations[0].changes;
-          const productId = transaction.mutations[0].original.id;
+          const mutations = transaction.mutations;
+
+          const toUpdate = mutations[0].changes;
+          const productId = mutations[0].original.id;
 
           const updatedProduct = await orpc.inventory.products.update.call({
             id: productId,
-            costPrice: values.costPrice,
-            name: values.name,
-            description: values.description ?? undefined,
-            minStock: values.minStock,
-            salePrice: values.salePrice,
-            sku: values.sku,
-            stock: values.stock,
-            wholesalePrice: values.wholesalePrice,
+            costPrice: toUpdate.costPrice,
+            name: toUpdate.name,
+            description: toUpdate.description ?? undefined,
+            minStock: toUpdate.minStock,
+            salePrice: toUpdate.salePrice,
+            sku: toUpdate.sku,
+            stock: toUpdate.stock,
+            wholesalePrice: toUpdate.wholesalePrice,
           });
 
           collection.utils.writeUpdate(updatedProduct);
+          return { refetch: false };
+        },
 
+        onDelete: async ({ transaction, collection }) => {
+          const mutations = transaction.mutations;
+
+          const productIds = mutations.map((m) => ({ id: m.original.id }));
+
+          await orpc.inventory.products.delete.call(productIds);
+
+          collection.utils.writeDelete(productIds.map((m) => m.id));
           return { refetch: false };
         },
       }),
