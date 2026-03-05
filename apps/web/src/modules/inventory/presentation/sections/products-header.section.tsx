@@ -7,6 +7,7 @@ import {
 } from "@shared/components/ui/card";
 
 import { RegisterProduct } from "@inventory/presentation/components/register-product";
+import { CategoriesList } from "../components/categories-list";
 
 interface Props {
   totalProducts: number;
@@ -24,8 +25,9 @@ export function ProductsHeaderSection({ totalProducts }: Props) {
           ({totalProducts}) productos registrados
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col gap-y-2">
         <RegisterProduct />
+        <CategoriesList />
       </CardContent>
     </Card>
   );

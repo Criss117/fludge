@@ -56,12 +56,6 @@ const navMainItems: NavMenuItem[] = [
         url: "/dashboard/$orgslug/inventory/products",
         icon: Package,
       },
-
-      {
-        title: "Categorías",
-        url: "/dashboard/$orgslug/inventory/categories",
-        icon: ChartBarStacked,
-      },
       {
         title: "Proveedores",
         url: "/dashboard/$orgslug/inventory/suppliers",
