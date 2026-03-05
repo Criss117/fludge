@@ -7,6 +7,8 @@ export const resources = [
   "ticket",
   "customer",
   "employee",
+  "category",
+  "supplier",
 ] as const;
 
 export type Action = (typeof actions)[number];
