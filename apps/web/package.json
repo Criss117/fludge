@@ -15,6 +15,7 @@
     "@fludge/api": "workspace:*",
     "@fludge/env": "workspace:*",
     "@fludge/ui": "workspace:*",
+    "@fludge/auth": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
     "@orpc/client": "catalog:",
     "@orpc/server": "catalog:",

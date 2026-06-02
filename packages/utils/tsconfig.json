@@ -4,10 +4,8 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "dist",
     "composite": true,
-    "paths": {
-      "@fludge/api/*": ["./src/*"]
-    }
+    "outDir": "./dist",
+    "declarationDir": "./dist"
   }
 }

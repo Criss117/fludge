@@ -96,6 +96,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@fludge/api": "workspace:*",
+        "@fludge/auth": "workspace:*",
         "@fludge/env": "workspace:*",
         "@fludge/ui": "workspace:*",
         "@hookform/resolvers": "^5.2.2",
@@ -138,6 +139,7 @@
         "@fludge/auth": "workspace:*",
         "@fludge/db": "workspace:*",
         "@fludge/env": "workspace:*",
+        "@fludge/utils": "workspace:*",
         "@orpc/client": "catalog:",
         "@orpc/openapi": "catalog:",
         "@orpc/server": "catalog:",
@@ -222,6 +224,15 @@
         "@types/react-dom": "catalog:",
         "tailwindcss": "^4.1.18",
         "typescript": "catalog:",
+      },
+    },
+    "packages/utils": {
+      "name": "@fludge/utils",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@fludge/config": "workspace:*",
+        "@types/bun": "catalog:",
+        "typescript": "^6",
       },
     },
   },
@@ -661,6 +672,8 @@
     "@fludge/env": ["@fludge/env@workspace:packages/env"],
 
     "@fludge/ui": ["@fludge/ui@workspace:packages/ui"],
+
+    "@fludge/utils": ["@fludge/utils@workspace:packages/utils"],
 
     "@gorhom/bottom-sheet": ["@gorhom/bottom-sheet@5.2.14", "", { "dependencies": { "@gorhom/portal": "1.0.14", "invariant": "^2.2.4" }, "peerDependencies": { "@types/react": "*", "@types/react-native": "*", "react": "*", "react-native": "*", "react-native-gesture-handler": ">=2.16.1", "react-native-reanimated": ">=3.16.0 || >=4.0.0-" }, "optionalPeers": ["@types/react", "@types/react-native"] }, "sha512-uLQFlDjp9z+jrOFcMSEldPqL5JdaXL3vXOh+juhwoNvXgTsEorJLjHTugXu+YccAG/0KJnShzKCrb71MHBsvJg=="],
 

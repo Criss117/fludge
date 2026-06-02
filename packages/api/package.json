@@ -12,6 +12,7 @@
   "scripts": {},
   "dependencies": {
     "@fludge/auth": "workspace:*",
+    "@fludge/utils": "workspace:*",
     "@fludge/db": "workspace:*",
     "@fludge/env": "workspace:*",
     "@orpc/client": "catalog:",

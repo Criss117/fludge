@@ -60,10 +60,10 @@ new Elysia()
     },
   )
   .all(
-    "/api-reference*",
+    "/api-rpc*",
     async (context) => {
       const { response } = await apiHandler.handle(context.request, {
-        prefix: "/api-reference",
+        prefix: "/api-rpc",
         context: await createContext({ context }),
       });
       return response ?? new Response("Not Found", { status: 404 });

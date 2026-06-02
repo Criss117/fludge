@@ -1,0 +1,17 @@
+{
+  "name": "@fludge/utils",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "default": "./src/*.ts"
+    }
+  },
+  "devDependencies": {
+    "@fludge/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "^6"
+  }
+}

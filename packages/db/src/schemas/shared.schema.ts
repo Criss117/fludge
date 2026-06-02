@@ -40,3 +40,10 @@ export const permissionsEnum = pgEnum("permissions", [
 ]);
 
 export const statusEnum = pgEnum("status", ["active", "inactive"]);
+
+export const actionEnum = pgEnum("action", [
+  "create",
+  "update",
+  "delete",
+  "restore",
+]);

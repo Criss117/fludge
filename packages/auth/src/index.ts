@@ -4,6 +4,7 @@ import * as schema from "@fludge/db/schemas/auth.schema";
 import { env } from "@fludge/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { openAPI } from "better-auth/plugins";
 
 export function createAuth() {
   const db = createDb();
@@ -46,7 +47,7 @@ export function createAuth() {
         },
       },
     },
-    plugins: [expo()],
+    plugins: [expo(), openAPI()],
   });
 }
 
