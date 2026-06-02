@@ -1,3 +1,4 @@
+import { authClient } from "@/integrations/auth";
 import { Button } from "@fludge/ui/components/button";
 import {
   DropdownMenu,
@@ -10,8 +11,6 @@ import {
 } from "@fludge/ui/components/dropdown-menu";
 import { Skeleton } from "@fludge/ui/components/skeleton";
 import { Link, useNavigate } from "@tanstack/react-router";
-
-import { authClient } from "@/lib/auth-client";
 
 export default function UserMenu() {
   const navigate = useNavigate();

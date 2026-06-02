@@ -1,6 +1,6 @@
 import { expo } from "@better-auth/expo";
 import { createDb } from "@fludge/db";
-import * as schema from "@fludge/db/schema/auth";
+import * as schema from "@fludge/db/schemas/auth.schema";
 import { env } from "@fludge/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -14,7 +14,12 @@ export function createAuth() {
 
       schema: schema,
     }),
-    trustedOrigins: [env.CORS_ORIGIN, "fludge://", "exp://", "http://localhost:8081"],
+    trustedOrigins: [
+      env.CORS_ORIGIN,
+      "fludge://",
+      "exp://",
+      "http://localhost:8081",
+    ],
     emailAndPassword: {
       enabled: true,
     },
@@ -25,6 +30,20 @@ export function createAuth() {
         sameSite: "none",
         secure: true,
         httpOnly: true,
+      },
+    },
+    user: {
+      additionalFields: {
+        isRoot: {
+          type: "boolean",
+          required: true,
+          fieldName: "is_root",
+        },
+        phone: {
+          type: "string",
+          required: true,
+          fieldName: "phone",
+        },
       },
     },
     plugins: [expo()],

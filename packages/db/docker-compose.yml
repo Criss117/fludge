@@ -2,7 +2,7 @@ name: fludge
 
 services:
   postgres:
-    image: postgres
+    image: postgres:17-alpine
     container_name: fludge-postgres
     environment:
       POSTGRES_DB: fludge

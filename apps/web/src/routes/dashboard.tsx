@@ -1,8 +1,7 @@
+import { authClient } from "@/integrations/auth";
+import { orpc } from "@/integrations/orpc";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-
-import { authClient } from "@/lib/auth-client";
-import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/dashboard")({
   component: RouteComponent,

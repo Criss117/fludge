@@ -44,6 +44,12 @@
     },
     "db:down": {
       "cache": false
+    },
+    "auth:generate": {
+      "cache": false
+    },
+    "show:env": {
+      "cache": false
     }
   }
 }

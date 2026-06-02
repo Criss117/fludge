@@ -40,7 +40,8 @@
     "db:start": "turbo -F @fludge/db db:start",
     "db:watch": "turbo -F @fludge/db db:watch",
     "db:stop": "turbo -F @fludge/db db:stop",
-    "db:down": "turbo -F @fludge/db db:down"
+    "db:down": "turbo -F @fludge/db db:down",
+    "auth:generate": "turbo -F server auth:generate"
   },
   "dependencies": {
     "@fludge/env": "workspace:*",

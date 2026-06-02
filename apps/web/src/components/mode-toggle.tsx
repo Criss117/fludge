@@ -6,8 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@fludge/ui/components/dropdown-menu";
 import { Moon, Sun } from "lucide-react";
-
-import { useTheme } from "@/components/theme-provider";
+import { useTheme } from "next-themes";
 
 export function ModeToggle() {
   const { setTheme } = useTheme();
@@ -20,9 +19,15 @@ export function ModeToggle() {
         <span className="sr-only">Toggle theme</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("light")}>
+          Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
+          Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")}>
+          System
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

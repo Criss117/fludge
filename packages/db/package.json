@@ -11,7 +11,7 @@
   },
   "scripts": {
     "db:push": "drizzle-kit push",
-    "db:generate": "drizzle-kit generate",
+    "db:generate": "rm -rf ./src/migrations && drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
     "db:migrate": "drizzle-kit migrate",
     "db:start": "docker compose up -d",
