@@ -43,12 +43,16 @@ export const organizationRouter = {
       ),
   },
   queries: {
-    findActive: withOrganization()
+    findByOwner: rootOnlyProcedure
       .route({
         method: "GET",
-        path: "/organizations/active",
+        path: "/organizations/find-by-owner",
         tags: ["organizations"],
       })
-      .handler(({ context }) => context.session.activeOrganization),
+      .handler(({ context }) =>
+        organizationsContainer.queries.findByOwner.execute({
+          userId: context.session.user.id,
+        }),
+      ),
   },
 } as const;

@@ -1,14 +1,15 @@
+import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
+
 import { createContext } from "@fludge/api/context";
 import { appRouter } from "@fludge/api/routers/index";
-import { auth } from "@fludge/auth";
+import { auth, PUBLIC_ENDPOINTS } from "@fludge/auth";
 import { env } from "@fludge/env/server";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
-import { Elysia } from "elysia";
 
 const rpcHandler = new RPCHandler(appRouter, {
   interceptors: [
@@ -42,6 +43,15 @@ new Elysia()
   .all("/api/auth/*", async (context) => {
     const { request, status } = context;
     if (["POST", "GET"].includes(request.method)) {
+      const url = new URL(request.url);
+      const authSubPath = url.pathname.replace("/api/auth", "");
+
+      console.log({ authSubPath });
+
+      if (!PUBLIC_ENDPOINTS.includes(authSubPath)) {
+        return new Response("Not Found", { status: 404 });
+      }
+
       return auth.handler(request);
     }
     return status(405);

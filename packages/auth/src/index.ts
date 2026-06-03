@@ -7,6 +7,15 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { openAPI } from "better-auth/plugins";
 import { organization } from "better-auth/plugins";
 
+export const PUBLIC_ENDPOINTS = [
+  "/sign-out",
+  "/sign-in/email",
+  "/get-session",
+  "/reference",
+
+  "/organization/get-full-organization",
+];
+
 export function createAuth() {
   const db = createDb();
 

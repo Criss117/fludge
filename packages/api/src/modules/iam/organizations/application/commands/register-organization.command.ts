@@ -80,9 +80,11 @@ export class RegisterOrganizationCommand {
       }),
     );
 
+    console.log({ error });
+
     if (error || !data)
       throw new ORPCError(
-        "CONFLICT",
+        "INTERNAL_SERVER_ERROR",
         error ?? {
           message: "Error creando organización",
         },
