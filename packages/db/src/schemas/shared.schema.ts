@@ -1,43 +1,7 @@
 import { pgEnum } from "drizzle-orm/pg-core";
+import { ALL_PERMISSIONS } from "@fludge/utils/permissions/index";
 
-export const permissionsEnum = pgEnum("permissions", [
-  "sale:create",
-  "sale:cancel",
-  "sale:refund",
-  "sale:view",
-
-  "product:create",
-  "product:edit",
-  "product:view",
-  "product:movement:create",
-
-  "customer:create",
-  "customer:edit",
-  "customer:view",
-
-  "credit:view",
-  "credit:payment:create",
-  "credit:adjustment:create",
-
-  "employee:create",
-  "employee:edit",
-  "employee:view",
-
-  "group:create",
-  "group:edit",
-  "group:view",
-  "group:assign",
-
-  "register:open",
-  "register:close",
-  "register:adjustment",
-
-  "report:view",
-  "report:export",
-
-  "settings:view",
-  "settings:edit",
-]);
+export const permissionEnum = pgEnum("permission", ALL_PERMISSIONS);
 
 export const statusEnum = pgEnum("status", ["active", "inactive"]);
 

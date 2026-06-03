@@ -47,6 +47,7 @@ export const organizationRouter = {
       .route({
         method: "GET",
         path: "/organizations/active",
+        tags: ["organizations"],
       })
       .handler(({ context }) => context.session.activeOrganization),
   },

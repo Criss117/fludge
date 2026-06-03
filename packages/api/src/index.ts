@@ -2,6 +2,17 @@ import { ORPCError, os } from "@orpc/server";
 
 import type { Context } from "./context";
 import { auth } from "@fludge/auth";
+import type { Permission } from "@fludge/utils/permissions/data";
+import { groupsContainer } from "./modules/iam/groups/container";
+import { checkPermissions } from "@fludge/utils/permissions/index";
+
+type RequireOrganizationOptions =
+  | {
+      onlyOwner: true;
+    }
+  | {
+      requirePermission: Permission | Permission[];
+    };
 
 export const o = os.$context<Context>();
 
@@ -20,11 +31,7 @@ const requireAuth = o.middleware(({ context, next }) => {
   });
 });
 
-type RequireOrganizationOptions = {
-  onlyOwner?: boolean;
-};
-
-function requireOrganization(options?: RequireOrganizationOptions) {
+function requireOrganization(options: RequireOrganizationOptions) {
   return requireAuth.concat(async ({ context, next }) => {
     const activeOrganizationId = context.session.activeOrganizationId;
 
@@ -47,9 +54,57 @@ function requireOrganization(options?: RequireOrganizationOptions) {
         member.userId === context.session.user.id && member.role === "owner",
     );
 
-    if (options?.onlyOwner && !userIsOwner)
+    if ("onlyOwner" in options) {
+      if (!userIsOwner)
+        throw new ORPCError("FORBIDDEN", {
+          message: "No tienes permisos requeridos para esta acción.",
+        });
+
+      return next({
+        context: {
+          ...context,
+          session: {
+            ...context.session,
+            activeOrganization: organization,
+          },
+        },
+      });
+    }
+
+    if (userIsOwner)
+      return next({
+        context: {
+          ...context,
+          session: {
+            ...context.session,
+            activeOrganization: organization,
+          },
+        },
+      });
+
+    const memberInfo = organization.members.find(
+      (m) => m.user.id === context.session.user.id,
+    );
+
+    if (!memberInfo)
       throw new ORPCError("FORBIDDEN", {
-        message: "No tienes permisos para acceder a esta organización.",
+        message: "No tienes permisos requeridos para esta acción.",
+      });
+
+    const memberGroups = await groupsContainer.queries.findAllByMember.execute(
+      memberInfo.id,
+    );
+
+    const userPermissions = memberGroups.flatMap((g) => g.permissions);
+
+    const hasPemissions = checkPermissions(
+      userPermissions,
+      options.requirePermission,
+    );
+
+    if (!hasPemissions)
+      throw new ORPCError("FORBIDDEN", {
+        message: "No tienes permisos requeridos para esta acción.",
       });
 
     return next({
@@ -79,6 +134,6 @@ const rootOnly = requireAuth.concat(({ context, next }) => {
 
 export const protectedProcedure = publicProcedure.use(requireAuth);
 export const rootOnlyProcedure = publicProcedure.use(rootOnly);
-export function withOrganization(options?: RequireOrganizationOptions) {
+export function withOrganization(options: RequireOrganizationOptions) {
   return publicProcedure.use(requireOrganization(options));
 }

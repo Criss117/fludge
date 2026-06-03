@@ -5,11 +5,9 @@ import type { OrganizationRegisteredEvent } from "@fludge/api/modules/shared/dom
 import type { PGGroupsCommandsRepository } from "@fludge/api/modules/iam/groups/infrastructure/repositories/pg-groups-commands.repository";
 import { ORPCError } from "@orpc/client";
 import { slugify } from "@fludge/utils/slugify";
+import { ALL_PERMISSIONS } from "@fludge/utils/permissions/index";
 
 export const createGroupCommand = z.object({
-  organizationId: z.uuid({
-    error: "El identificador de organización es requerido",
-  }),
   name: z
     .string({
       error: "El nombre es requerido",
@@ -20,9 +18,14 @@ export const createGroupCommand = z.object({
     .max(50, {
       error: "El nombre es muy largo",
     }),
+  permissions: z.enum(ALL_PERMISSIONS).array().min(1, {
+    error: "Debes asignar al menos un permiso",
+  }),
 });
 
-type CMD = z.infer<typeof createGroupCommand>;
+type CMD = z.infer<typeof createGroupCommand> & {
+  organizationId: string;
+};
 
 export class CreateGroupCommand {
   constructor(
@@ -37,7 +40,7 @@ export class CreateGroupCommand {
       name: cmd.name,
       slug: slugify(cmd.name),
       organizationId: cmd.organizationId,
-      permissions: [],
+      permissions: cmd.permissions,
     });
 
     if (error || !data)
@@ -58,6 +61,7 @@ export class CreateGroupCommand {
         this.execute({
           organizationId: event.organizationId,
           name: "Administradores",
+          permissions: ALL_PERMISSIONS,
         });
       },
       {

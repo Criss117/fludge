@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { auditMetadata } from "./audit-metadata";
 import { member, organization, user } from "./auth.schema";
-import { actionEnum, permissionsEnum } from "./shared.schema";
+import { actionEnum, permissionEnum } from "./shared.schema";
 
 export const organizationHistory = pgTable("organization_history", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -41,7 +41,7 @@ export const group = pgTable(
     name: text("name").notNull(),
     slug: text("slug").notNull(),
     description: text("description"),
-    permissions: permissionsEnum("permissions").array().notNull(),
+    permissions: permissionEnum("permissions").array().notNull(),
 
     ...auditMetadata,
   },
