@@ -1,9 +1,10 @@
 import { z } from "zod";
-import type { PGOrganizationCommandsRepository } from "@fludge/api/modules/iam/organizations/infrastructure/repositories/pg-organization-commands.repository";
 import { slugify } from "@fludge/utils/slugify";
 import { EventBus } from "@fludge/api/modules/shared/domain/event-bus";
 import { ORPCError } from "@orpc/client";
 import { OrganizationRegisteredEvent } from "@fludge/api/modules/shared/domain/events";
+import { auth } from "@fludge/auth";
+import { tryCatch } from "@fludge/utils/trycatch";
 
 export const registerOrganizationCommand = z.object({
   name: z
@@ -61,25 +62,27 @@ export const registerOrganizationCommand = z.object({
 type CMD = z.infer<typeof registerOrganizationCommand>;
 
 export class RegisterOrganizationCommand {
-  constructor(
-    private readonly eventBus: EventBus,
-    private readonly organizationCommandsRepository: PGOrganizationCommandsRepository,
-  ) {}
+  constructor(private readonly eventBus: EventBus) {}
 
-  public async execute(loggedUserId: string, cmd: CMD) {
-    const [data, error] = await this.organizationCommandsRepository.save({
-      address: cmd.address,
-      legalName: cmd.legalName,
-      name: cmd.name,
-      phone: cmd.phone,
-      taxId: cmd.taxId,
-      ownerId: loggedUserId,
-      slug: slugify(cmd.name),
-    });
+  public async execute(cmd: CMD, headers: Headers) {
+    const [data, error] = await tryCatch(
+      auth.api.createOrganization({
+        body: {
+          legalName: cmd.legalName,
+          name: cmd.name,
+          phone: cmd.phone,
+          taxId: cmd.taxId,
+          address: cmd.address,
+          slug: slugify(cmd.name),
+          keepCurrentActiveOrganization: true,
+        },
+        headers,
+      }),
+    );
 
     if (error || !data)
       throw new ORPCError(
-        "INTERNAL_SERVER_ERROR",
+        "CONFLICT",
         error ?? {
           message: "Error creando organización",
         },

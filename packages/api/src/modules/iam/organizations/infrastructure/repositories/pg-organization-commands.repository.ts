@@ -1,42 +1,43 @@
 import type { DbConnection } from "@fludge/db";
+import { TransactionRepository } from "@fludge/api/modules/shared/repositories/transaction-repository";
 import {
-  organization,
-  type OrganizationInsert,
+  organizationHistory,
+  type OrganizationHistoryInsert,
 } from "@fludge/db/schemas/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
+import { organization } from "@fludge/db/schemas/auth.schema";
+import { eq } from "drizzle-orm";
 
-export class PGOrganizationCommandsRepository {
-  constructor(private readonly db: DbConnection) {}
+export class PGOrganizationCommandsRepository extends TransactionRepository {
+  constructor(private readonly db: DbConnection) {
+    super(db);
+  }
 
-  public async save(values: OrganizationInsert) {
+  public async findOne(organizationId: string) {
     const [data, error] = await tryCatch(
       this.db
-        .insert(organization)
-        .values(values)
-        .onConflictDoUpdate({
-          target: organization.id,
-          set: {
-            name: values.name,
-            phone: values.phone,
-            legalName: values.legalName,
-            taxId: values.taxId,
-            address: values.address,
-            status: values.status,
-          },
-        })
-        .returning({
-          id: organization.id,
-          slug: organization.slug,
-        })
+        .select()
+        .from(organization)
+        .where(eq(organization.id, organizationId))
         .execute(),
     );
 
     if (error) return err(error);
 
-    const created = data.at(0);
+    const org = data.at(0);
 
-    if (!created) return err(new Error("Error creando organización"));
+    if (!org) return err(new Error("No se encontró la organización"));
 
-    return ok(created);
+    return ok(org);
+  }
+
+  public async saveHistory(values: OrganizationHistoryInsert) {
+    const [, error] = await tryCatch(
+      this.db.insert(organizationHistory).values(values).execute(),
+    );
+
+    if (error) return err(error);
+
+    return ok(null);
   }
 }

@@ -5,6 +5,7 @@ import { env } from "@fludge/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { openAPI } from "better-auth/plugins";
+import { organization } from "better-auth/plugins";
 
 export function createAuth() {
   const db = createDb();
@@ -38,16 +39,63 @@ export function createAuth() {
         isRoot: {
           type: "boolean",
           required: true,
-          fieldName: "is_root",
+          returned: true,
         },
         phone: {
           type: "string",
           required: true,
           fieldName: "phone",
+          returned: true,
         },
       },
     },
-    plugins: [expo(), openAPI()],
+    plugins: [
+      expo(),
+      openAPI(),
+      organization({
+        allowUserToCreateOrganization: async (user) => {
+          return user.isRoot;
+        },
+
+        schema: {
+          organization: {
+            additionalFields: {
+              legalName: {
+                type: "string",
+                required: true,
+                returned: true,
+              },
+              taxId: {
+                type: "string",
+                required: true,
+                returned: true,
+              },
+              address: {
+                type: "string",
+                required: true,
+                fieldName: "address",
+                returned: true,
+              },
+              phone: {
+                type: "string",
+                required: true,
+                fieldName: "phone",
+                returned: true,
+              },
+            },
+          },
+          member: {
+            additionalFields: {
+              assignedBy: {
+                type: "string",
+                required: false,
+                returned: true,
+              },
+            },
+          },
+        },
+      }),
+    ],
   });
 }
 
