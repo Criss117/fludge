@@ -1,5 +1,4 @@
 import type { DbConnection } from "@fludge/db";
-import { TransactionRepository } from "@fludge/api/modules/shared/repositories/transaction-repository";
 import {
   organizationHistory,
   type OrganizationHistoryInsert,
@@ -7,8 +6,9 @@ import {
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { organization } from "@fludge/db/schemas/auth.schema";
 import { eq } from "drizzle-orm";
+import { TransactionalRepository } from "@fludge/api/modules/shared/repositories/transactional-repository";
 
-export class PGOrganizationCommandsRepository extends TransactionRepository {
+export class PGOrganizationCommandsRepository extends TransactionalRepository {
   constructor(private readonly db: DbConnection) {
     super(db);
   }

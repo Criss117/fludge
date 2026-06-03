@@ -80,8 +80,6 @@ export class RegisterOrganizationCommand {
       }),
     );
 
-    console.log({ error });
-
     if (error || !data)
       throw new ORPCError(
         "INTERNAL_SERVER_ERROR",
@@ -90,7 +88,11 @@ export class RegisterOrganizationCommand {
         },
       );
 
-    await this.eventBus.dispatch(new OrganizationRegisteredEvent(data.id));
+    const memeberInfo = data.members.at(0);
+
+    await this.eventBus.dispatch(
+      new OrganizationRegisteredEvent(data.id, memeberInfo?.id ?? null),
+    );
 
     return data;
   }

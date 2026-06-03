@@ -25,6 +25,10 @@ export const organizationHistory = pgTable("organization_history", {
   before: jsonb("before").notNull().$type<typeof organization.$inferSelect>(),
   after: jsonb("after").notNull().$type<typeof organization.$inferSelect>(),
 
+  by: text("by").references(() => member.id, {
+    onDelete: "set null",
+  }),
+
   createdAt: auditMetadata.createdAt,
   updatedAt: auditMetadata.updatedAt,
 });
@@ -42,6 +46,10 @@ export const group = pgTable(
     slug: text("slug").notNull(),
     description: text("description"),
     permissions: permissionEnum("permissions").array().notNull(),
+
+    createdBy: text("created_by").references(() => member.id, {
+      onDelete: "set null",
+    }),
 
     ...auditMetadata,
   },
@@ -69,6 +77,10 @@ export const groupHistory = pgTable(
 
     before: jsonb("before").notNull().$type<typeof group.$inferSelect>(),
     after: jsonb("after").notNull().$type<typeof group.$inferSelect>(),
+
+    by: text("by").references(() => member.id, {
+      onDelete: "set null",
+    }),
 
     createdAt: auditMetadata.createdAt,
     updatedAt: auditMetadata.updatedAt,

@@ -21,10 +21,12 @@ export const createGroupCommand = z.object({
   permissions: z.enum(ALL_PERMISSIONS).array().min(1, {
     error: "Debes asignar al menos un permiso",
   }),
+  description: z.string().optional(),
 });
 
 type CMD = z.infer<typeof createGroupCommand> & {
   organizationId: string;
+  memberId: string | null;
 };
 
 export class CreateGroupCommand {
@@ -41,6 +43,8 @@ export class CreateGroupCommand {
       slug: slugify(cmd.name),
       organizationId: cmd.organizationId,
       permissions: cmd.permissions,
+      description: cmd.description,
+      createdBy: cmd.memberId,
     });
 
     if (error || !data)
@@ -62,6 +66,7 @@ export class CreateGroupCommand {
           organizationId: event.organizationId,
           name: "Administradores",
           permissions: ALL_PERMISSIONS,
+          memberId: event.memberId,
         });
       },
       {

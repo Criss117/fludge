@@ -5,19 +5,25 @@ import { CreateGroupCommand } from "@fludge/api/modules/iam/groups/application/c
 
 import { PGGroupsCommandsRepository } from "./infrastructure/repositories/pg-groups-commands.repository";
 import { FindAllGroupsByMemberQuery } from "./application/queries/find-all-groups-by-member.query";
+import { UpdateGroupCommand } from "./application/commands/update-group.command";
 
+// Repositories
 const groupsCommandsRepository = new PGGroupsCommandsRepository(dbConnection);
 
+// Commands
 const createGroupCommand = new CreateGroupCommand(
   eventBus,
   groupsCommandsRepository,
 );
+const updateGroupCommand = new UpdateGroupCommand(groupsCommandsRepository);
 
+// Queries
 const findAllGroupsByMemberQuery = new FindAllGroupsByMemberQuery(dbConnection);
 
 export const groupsContainer = {
   commands: {
-    createGroup: createGroupCommand,
+    create: createGroupCommand,
+    update: updateGroupCommand,
   },
   queries: {
     findAllByMember: findAllGroupsByMemberQuery,

@@ -1,6 +1,10 @@
 import type { DbConnection, TXConnection } from "@fludge/db";
 
-export class TransactionRepository {
+export type TransactionalOptions = {
+  tx?: TXConnection;
+};
+
+export class TransactionalRepository {
   constructor(private readonly connection: DbConnection) {}
 
   public async transaction<T>(fn: (tx: TXConnection) => Promise<T>) {

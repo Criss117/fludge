@@ -49,13 +49,17 @@ function requireOrganization(options: RequireOrganizationOptions) {
         message: "No tienes una organización activa.",
       });
 
-    const userIsOwner = organization.members.some(
-      (member) =>
-        member.userId === context.session.user.id && member.role === "owner",
+    const memberInfo = organization.members.find(
+      (member) => member.userId === context.session.user.id,
     );
 
+    if (!memberInfo)
+      throw new ORPCError("FORBIDDEN", {
+        message: "No tienes permisos requeridos para esta acción.",
+      });
+
     if ("onlyOwner" in options) {
-      if (!userIsOwner)
+      if (memberInfo.role !== "owner")
         throw new ORPCError("FORBIDDEN", {
           message: "No tienes permisos requeridos para esta acción.",
         });
@@ -65,30 +69,23 @@ function requireOrganization(options: RequireOrganizationOptions) {
           ...context,
           session: {
             ...context.session,
+            member: memberInfo,
             activeOrganization: organization,
           },
         },
       });
     }
 
-    if (userIsOwner)
+    if (memberInfo.role === "owner")
       return next({
         context: {
           ...context,
           session: {
             ...context.session,
+            member: memberInfo,
             activeOrganization: organization,
           },
         },
-      });
-
-    const memberInfo = organization.members.find(
-      (m) => m.user.id === context.session.user.id,
-    );
-
-    if (!memberInfo)
-      throw new ORPCError("FORBIDDEN", {
-        message: "No tienes permisos requeridos para esta acción.",
       });
 
     const memberGroups = await groupsContainer.queries.findAllByMember.execute(
@@ -112,6 +109,7 @@ function requireOrganization(options: RequireOrganizationOptions) {
         ...context,
         session: {
           ...context.session,
+          member: memberInfo,
           activeOrganization: organization,
         },
       },
