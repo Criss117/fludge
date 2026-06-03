@@ -6,6 +6,9 @@ import { CreateGroupCommand } from "@fludge/api/modules/iam/groups/application/c
 import { PGGroupsCommandsRepository } from "./infrastructure/repositories/pg-groups-commands.repository";
 import { FindAllGroupsByMemberQuery } from "./application/queries/find-all-groups-by-member.query";
 import { UpdateGroupCommand } from "./application/commands/update-group.command";
+import { DeleteGroupsCommand } from "./application/commands/delete-groups.command";
+import { ActivateGroupsCommand } from "./application/commands/activate-groups.command";
+import { DeactivateGroupsCommand } from "./application/commands/deactivate-groups.command";
 
 // Repositories
 const groupsCommandsRepository = new PGGroupsCommandsRepository(dbConnection);
@@ -16,6 +19,13 @@ const createGroupCommand = new CreateGroupCommand(
   groupsCommandsRepository,
 );
 const updateGroupCommand = new UpdateGroupCommand(groupsCommandsRepository);
+const deleteGroupCommand = new DeleteGroupsCommand(groupsCommandsRepository);
+const activateGroupCommand = new ActivateGroupsCommand(
+  groupsCommandsRepository,
+);
+const deactivateGroupCommand = new DeactivateGroupsCommand(
+  groupsCommandsRepository,
+);
 
 // Queries
 const findAllGroupsByMemberQuery = new FindAllGroupsByMemberQuery(dbConnection);
@@ -24,6 +34,9 @@ export const groupsContainer = {
   commands: {
     create: createGroupCommand,
     update: updateGroupCommand,
+    delete: deleteGroupCommand,
+    activate: activateGroupCommand,
+    deactivate: deactivateGroupCommand,
   },
   queries: {
     findAllByMember: findAllGroupsByMemberQuery,

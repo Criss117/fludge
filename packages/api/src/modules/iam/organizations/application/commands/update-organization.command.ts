@@ -60,7 +60,7 @@ export class UpdateOrganizationCommand {
       await this.organizationCommandsRepository.saveHistory({
         organizationId: cmd.organizationId,
         action: "update",
-        description: `{user.name} actualizó la organización ${cmd.name}`,
+        description: `{user.name} actualizó la organización con id ${cmd.organizationId}`,
         before: organization,
         after: data as OrganizationHistoryInsert["after"],
         by: cmd.memberId,

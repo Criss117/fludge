@@ -6,8 +6,7 @@ export const permissionEnum = pgEnum("permission", ALL_PERMISSIONS);
 export const statusEnum = pgEnum("status", ["active", "inactive"]);
 
 export const actionEnum = pgEnum("action", [
-  "create",
   "update",
-  "delete",
-  "restore",
+  "activate",
+  "deactivate",
 ]);

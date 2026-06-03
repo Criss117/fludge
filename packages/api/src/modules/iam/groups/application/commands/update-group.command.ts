@@ -78,7 +78,7 @@ export class UpdateGroupCommand {
           {
             groupId: cmd.groupId,
             action: "update",
-            description: "Grupo actualizado",
+            description: `{user.name} actualizo el grupo con id ${cmd.groupId}`,
             before: exists,
             after: data,
             by: cmd.memberId,
