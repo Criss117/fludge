@@ -8,6 +8,7 @@ import type { DbConnection } from "@fludge/db";
 import {
   group,
   groupHistory,
+  groupMember,
   type GroupHistoryInsert,
   type GroupInsert,
 } from "@fludge/db/schemas/iam.schema";
@@ -16,6 +17,35 @@ import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 export class PGGroupsCommandsRepository extends TransactionalRepository {
   constructor(private readonly db: DbConnection) {
     super(db);
+  }
+
+  public async save(values: GroupInsert, options?: TransactionalOptions) {
+    const db = options?.tx ?? this.db;
+
+    const [data, error] = await tryCatch(
+      db
+        .insert(group)
+        .values(values)
+        .onConflictDoUpdate({
+          target: group.id,
+          set: {
+            name: values.name,
+            slug: values.slug,
+            permissions: values.permissions,
+            description: values.description,
+          },
+        })
+        .returning()
+        .execute(),
+    );
+
+    if (error) return err(error);
+
+    const created = data.at(0);
+
+    if (!created) return err(new Error("Error creando grupo"));
+
+    return ok(created);
   }
 
   public async exisits(organizationId: string, groupId: string | string[]) {
@@ -92,35 +122,6 @@ export class PGGroupsCommandsRepository extends TransactionalRepository {
     if (!g) return ok(true);
 
     return ok(false);
-  }
-
-  public async save(values: GroupInsert, options?: TransactionalOptions) {
-    const db = options?.tx ?? this.db;
-
-    const [data, error] = await tryCatch(
-      db
-        .insert(group)
-        .values(values)
-        .onConflictDoUpdate({
-          target: group.id,
-          set: {
-            name: values.name,
-            slug: values.slug,
-            permissions: values.permissions,
-            description: values.description,
-          },
-        })
-        .returning()
-        .execute(),
-    );
-
-    if (error) return err(error);
-
-    const created = data.at(0);
-
-    if (!created) return err(new Error("Error creando grupo"));
-
-    return ok(created);
   }
 
   public async saveHistory(
@@ -241,6 +242,67 @@ export class PGGroupsCommandsRepository extends TransactionalRepository {
           and(
             eq(group.organizationId, organizationId),
             inArray(group.id, groupIds),
+          ),
+        )
+        .execute(),
+    );
+
+    if (error) return err(error);
+
+    return ok(null);
+  }
+
+  public async assignMembers(
+    groupId: string,
+    memberIds: string | string[],
+    assignedBy: string | null,
+    options?: TransactionalOptions,
+  ) {
+    if (!Array.isArray(memberIds)) memberIds = [memberIds];
+
+    if (memberIds.length === 0)
+      return err(new Error("No se especificó ningún id de miembro"));
+
+    const db = options?.tx ?? this.db;
+
+    const [, error] = await tryCatch(
+      db
+        .insert(groupMember)
+        .values(
+          memberIds.map((memberId) => ({
+            groupId,
+            memberId,
+            assignedBy,
+          })),
+        )
+        .onConflictDoNothing()
+        .execute(),
+    );
+
+    if (error) return err(error);
+
+    return ok(null);
+  }
+
+  public async unassignMembers(
+    groupId: string,
+    memberIds: string | string[],
+    options?: TransactionalOptions,
+  ) {
+    if (!Array.isArray(memberIds)) memberIds = [memberIds];
+
+    if (memberIds.length === 0)
+      return err(new Error("No se especificó ningún id de miembro"));
+
+    const db = options?.tx ?? this.db;
+
+    const [, error] = await tryCatch(
+      db
+        .delete(groupMember)
+        .where(
+          and(
+            eq(groupMember.groupId, groupId),
+            inArray(groupMember.memberId, memberIds),
           ),
         )
         .execute(),

@@ -12,7 +12,7 @@ export const updateOrganizationCommand = registerOrganizationCommand;
 
 type CMD = z.infer<typeof updateOrganizationCommand> & {
   organizationId: string;
-  memberId: string;
+  changedByMemberId: string;
 };
 
 export class UpdateOrganizationCommand {
@@ -63,7 +63,7 @@ export class UpdateOrganizationCommand {
         description: `{user.name} actualizó la organización con id ${cmd.organizationId}`,
         before: organization,
         after: data as OrganizationHistoryInsert["after"],
-        by: cmd.memberId,
+        by: cmd.changedByMemberId,
       });
 
     console.error(errorSaveHistory);

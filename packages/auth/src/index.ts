@@ -82,13 +82,11 @@ export function createAuth() {
               address: {
                 type: "string",
                 required: true,
-                fieldName: "address",
                 returned: true,
               },
               phone: {
                 type: "string",
                 required: true,
-                fieldName: "phone",
                 returned: true,
               },
             },

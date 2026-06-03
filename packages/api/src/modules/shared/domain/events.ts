@@ -3,12 +3,12 @@ import type { DomainEvent } from "./event-bus";
 export class OrganizationRegisteredEvent implements DomainEvent {
   readonly eventName = "organization:registered";
   readonly occurredAt = new Date();
-  readonly memberId: string | null = null;
+  readonly changedByMemberId: string | null = null;
 
   constructor(
     public readonly organizationId: string,
-    memberId: string | null,
+    changedByMemberId: string | null,
   ) {
-    this.memberId = memberId;
+    this.changedByMemberId = changedByMemberId;
   }
 }

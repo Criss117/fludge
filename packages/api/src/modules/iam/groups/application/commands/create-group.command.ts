@@ -5,7 +5,10 @@ import type { OrganizationRegisteredEvent } from "@fludge/api/modules/shared/dom
 import type { PGGroupsCommandsRepository } from "@fludge/api/modules/iam/groups/infrastructure/repositories/pg-groups-commands.repository";
 import { ORPCError } from "@orpc/client";
 import { slugify } from "@fludge/utils/slugify";
-import { ALL_PERMISSIONS } from "@fludge/utils/permissions/index";
+import {
+  ALL_PERMISSIONS,
+  preparePermissions,
+} from "@fludge/utils/permissions/index";
 
 export const createGroupCommand = z.object({
   name: z
@@ -26,7 +29,7 @@ export const createGroupCommand = z.object({
 
 type CMD = z.infer<typeof createGroupCommand> & {
   organizationId: string;
-  memberId: string | null;
+  changedByMemberId: string | null;
 };
 
 export class CreateGroupCommand {
@@ -42,9 +45,9 @@ export class CreateGroupCommand {
       name: cmd.name,
       slug: slugify(cmd.name),
       organizationId: cmd.organizationId,
-      permissions: cmd.permissions,
+      permissions: preparePermissions(cmd.permissions),
       description: cmd.description,
-      createdBy: cmd.memberId,
+      createdBy: cmd.changedByMemberId,
     });
 
     if (error || !data)
@@ -66,7 +69,7 @@ export class CreateGroupCommand {
           organizationId: event.organizationId,
           name: "Administradores",
           permissions: ALL_PERMISSIONS,
-          memberId: event.memberId,
+          changedByMemberId: event.changedByMemberId,
         });
       },
       {

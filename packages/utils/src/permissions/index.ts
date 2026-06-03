@@ -1,10 +1,28 @@
-import { PERMISSIONS, type Permission } from "./data";
+import { PERMISSIONS, type Permission, type Resource } from "./data";
 
 function hasPermission(
   userPermissions: Permission[],
   required: Permission,
 ): boolean {
   return userPermissions.includes(required);
+}
+
+export function preparePermissions(original: Permission[]): Permission[] {
+  const resources = original.reduce((acc, p) => {
+    const [resource] = p.split(":") as [Resource, string];
+
+    if (!acc.includes(resource)) acc.push(resource);
+
+    return acc;
+  }, [] as Resource[]);
+
+  const complete = [...original];
+
+  resources.forEach((r) => {
+    complete.push(`${r}:view`);
+  });
+
+  return Array.from(new Set(complete));
 }
 
 export function hasAllPermissions(

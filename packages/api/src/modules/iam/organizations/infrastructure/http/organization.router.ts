@@ -33,7 +33,7 @@ export const organizationRouter = {
           {
             ...input,
             organizationId: context.session.activeOrganization.id,
-            memberId: context.session.member.id,
+            changedByMemberId: context.session.member.id,
           },
           context.headers,
         ),

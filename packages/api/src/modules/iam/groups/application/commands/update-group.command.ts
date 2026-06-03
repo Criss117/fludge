@@ -1,9 +1,10 @@
 import { z } from "zod";
-
-import type { PGGroupsCommandsRepository } from "@fludge/api/modules/iam/groups/infrastructure/repositories/pg-groups-commands.repository";
 import { ORPCError } from "@orpc/client";
+
 import { slugify } from "@fludge/utils/slugify";
-import { createGroupCommand } from "./create-group.command";
+import { preparePermissions } from "@fludge/utils/permissions/index";
+import type { PGGroupsCommandsRepository } from "@fludge/api/modules/iam/groups/infrastructure/repositories/pg-groups-commands.repository";
+import { createGroupCommand } from "@fludge/api/modules/iam/groups/application/commands/create-group.command";
 
 export const updateGroupCommand = createGroupCommand.extend({
   groupId: z.uuid({
@@ -13,7 +14,7 @@ export const updateGroupCommand = createGroupCommand.extend({
 
 type CMD = z.infer<typeof updateGroupCommand> & {
   organizationId: string;
-  memberId: string;
+  changedByMemberId: string;
 };
 
 export class UpdateGroupCommand {
@@ -22,19 +23,20 @@ export class UpdateGroupCommand {
   ) {}
 
   public async execute(cmd: CMD) {
-    const [exists, errorExists] = await this.groupsCommandsRepository.findOne(
-      cmd.organizationId,
-      cmd.groupId,
-    );
+    const [existingGroup, errorExists] =
+      await this.groupsCommandsRepository.findOne(
+        cmd.organizationId,
+        cmd.groupId,
+      );
 
     if (errorExists) throw new ORPCError("INTERNAL_SERVER_ERROR", errorExists);
 
-    if (!exists)
+    if (!existingGroup)
       throw new ORPCError("NOT_FOUND", {
         message: "Grupo no encontrado",
       });
 
-    if (exists.name !== cmd.name) {
+    if (existingGroup.name !== cmd.name) {
       const [slugAvailable, errorSlugAvailable] =
         await this.groupsCommandsRepository.slugAvailable(
           slugify(cmd.name),
@@ -51,13 +53,13 @@ export class UpdateGroupCommand {
     }
 
     return this.groupsCommandsRepository.transaction(async (tx) => {
-      const [data, error] = await this.groupsCommandsRepository.save(
+      const [updatedGroup, error] = await this.groupsCommandsRepository.save(
         {
           id: cmd.groupId,
           name: cmd.name,
           slug: slugify(cmd.name),
           organizationId: cmd.organizationId,
-          permissions: cmd.permissions,
+          permissions: preparePermissions(cmd.permissions),
           description: cmd.description,
         },
         {
@@ -65,7 +67,7 @@ export class UpdateGroupCommand {
         },
       );
 
-      if (error || !data)
+      if (error || !updatedGroup)
         throw new ORPCError(
           "INTERNAL_SERVER_ERROR",
           error ?? {
@@ -79,9 +81,9 @@ export class UpdateGroupCommand {
             groupId: cmd.groupId,
             action: "update",
             description: `{user.name} actualizo el grupo con id ${cmd.groupId}`,
-            before: exists,
-            after: data,
-            by: cmd.memberId,
+            before: existingGroup,
+            after: updatedGroup,
+            by: cmd.changedByMemberId,
           },
           {
             tx,
@@ -96,7 +98,7 @@ export class UpdateGroupCommand {
           },
         );
 
-      return data;
+      return updatedGroup;
     });
   }
 }

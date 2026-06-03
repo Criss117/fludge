@@ -5,22 +5,24 @@ import { PGOrganizationCommandsRepository } from "./infrastructure/repositories/
 import { RegisterOrganizationCommand } from "./application/commands/register-organization.command";
 import { UpdateOrganizationCommand } from "./application/commands/update-organization.command";
 import { FindOrganizationsByOwnerQuery } from "./application/queries/find-orgnizations-by-owner.query";
+import { OrganizationHasMembersQuery } from "./application/queries/organization-has-members.query";
 
 const organizationsCommandsRepository = new PGOrganizationCommandsRepository(
   dbConnection,
 );
 
 // Commands
-export const registerOrganizationCommand = new RegisterOrganizationCommand(
-  eventBus,
-);
+const registerOrganizationCommand = new RegisterOrganizationCommand(eventBus);
 
-export const updateOrganizationCommand = new UpdateOrganizationCommand(
+const updateOrganizationCommand = new UpdateOrganizationCommand(
   organizationsCommandsRepository,
 );
 
 // Queries
-export const findOrganizationsByOwnerQuery = new FindOrganizationsByOwnerQuery(
+const findOrganizationsByOwnerQuery = new FindOrganizationsByOwnerQuery(
+  dbConnection,
+);
+const organizationHasMembersQuery = new OrganizationHasMembersQuery(
   dbConnection,
 );
 
@@ -31,6 +33,7 @@ export const organizationsContainer = {
   },
   queries: {
     findByOwner: findOrganizationsByOwnerQuery,
+    organizationHasMembers: organizationHasMembersQuery,
   },
   repositories: {
     commands: {
