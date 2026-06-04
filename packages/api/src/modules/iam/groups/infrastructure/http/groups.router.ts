@@ -7,7 +7,7 @@ import { deleteGroupsCommand } from "@fludge/api/modules/iam/groups/application/
 import { activateGroupsCommand } from "@fludge/api/modules/iam/groups/application/commands/activate-groups.command";
 import { deactivateGroupsCommand } from "@fludge/api/modules/iam/groups/application/commands/deactivate-groups.command";
 import { assignMembersToGroupCommand } from "@fludge/api/modules/iam/groups/application/commands/assign-members-to-group.command";
-import { unassignMembersToGroupCommand } from "@fludge/api/modules/iam/groups/application/commands/unassign-members-to-group.command";
+import { unassignMembersOfGroupCommand } from "@fludge/api/modules/iam/groups/application/commands/unassign-members-of-group.command";
 
 export const groupsRouter = {
   commands: {
@@ -99,8 +99,8 @@ export const groupsRouter = {
       requirePermission: "groups:assign-member",
     })
       .route({
-        method: "PATCH",
-        path: "/groups/assign-members",
+        method: "POST",
+        path: "/groups/members",
         tags: ["groups"],
       })
       .input(assignMembersToGroupCommand)
@@ -116,11 +116,11 @@ export const groupsRouter = {
       requirePermission: "groups:assign-member",
     })
       .route({
-        method: "PATCH",
-        path: "/groups/unassign-members",
+        method: "DELETE",
+        path: "/groups/members",
         tags: ["groups"],
       })
-      .input(unassignMembersToGroupCommand)
+      .input(unassignMembersOfGroupCommand)
       .handler(({ input, context }) =>
         groupsContainer.commands.unassignMembers.execute({
           ...input,
@@ -135,7 +135,7 @@ export const groupsRouter = {
     })
       .route({
         method: "GET",
-        path: "/groups/find-all-by-member",
+        path: "/groups/by-member",
         tags: ["groups"],
       })
       .handler(({ context }) =>

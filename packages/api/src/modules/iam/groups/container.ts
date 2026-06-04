@@ -12,7 +12,7 @@ import { DeleteGroupsCommand } from "./application/commands/delete-groups.comman
 import { ActivateGroupsCommand } from "./application/commands/activate-groups.command";
 import { DeactivateGroupsCommand } from "./application/commands/deactivate-groups.command";
 import { AssignMembersToGroupCommand } from "./application/commands/assign-members-to-group.command";
-import { UnAssignMembersToGroupCommand } from "./application/commands/unassign-members-to-group.command";
+import { UnAssignMembersOfGroupCommand } from "./application/commands/unassign-members-of-group.command";
 import { FindAllGroupsQuery } from "./application/queries/find-all-groups.query";
 
 // Repositories
@@ -35,8 +35,7 @@ const assignMembersToGroupCommand = new AssignMembersToGroupCommand(
   organizationsContainer.queries.organizationHasMembers,
   groupsCommandsRepository,
 );
-const unassignMembersToGroupCommand = new UnAssignMembersToGroupCommand(
-  organizationsContainer.queries.organizationHasMembers,
+const unassignMembersOfGroupCommand = new UnAssignMembersOfGroupCommand(
   groupsCommandsRepository,
 );
 
@@ -52,7 +51,7 @@ export const groupsContainer = {
     activate: activateGroupCommand,
     deactivate: deactivateGroupCommand,
     assignMembers: assignMembersToGroupCommand,
-    unassignMembers: unassignMembersToGroupCommand,
+    unassignMembers: unassignMembersOfGroupCommand,
   },
   queries: {
     findAllByMember: findAllGroupsByMemberQuery,
