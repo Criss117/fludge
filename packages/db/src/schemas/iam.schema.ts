@@ -8,7 +8,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { auditMetadata } from "./audit-metadata";
-import { member, organization, user } from "./auth.schema";
+import { member, organization } from "./auth.schema";
 import { actionEnum, permissionEnum } from "./shared.schema";
 
 export const organizationHistory = pgTable("organization_history", {
@@ -102,7 +102,7 @@ export const groupMember = pgTable(
         onDelete: "cascade",
       }),
 
-    assignedBy: text("assigned_by").references(() => user.id, {
+    assignedBy: text("assigned_by").references(() => member.id, {
       onDelete: "set null",
     }),
 

@@ -14,6 +14,7 @@ export const PUBLIC_ENDPOINTS = [
   "/reference",
 
   "/organization/get-full-organization",
+  "/organization/set-active",
 ];
 
 export function createAuth() {

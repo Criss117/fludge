@@ -24,6 +24,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@faker-js/faker": "10.4.0",
     "@fludge/config": "workspace:*",
     "elysia": "catalog:",
     "typescript": "catalog:"

@@ -16,7 +16,7 @@ export const groupsRouter = {
     })
       .route({
         method: "POST",
-        path: "/groups/create",
+        path: "/groups",
         tags: ["groups"],
       })
       .input(createGroupCommand)
@@ -33,7 +33,7 @@ export const groupsRouter = {
     })
       .route({
         method: "PATCH",
-        path: "/groups/update",
+        path: "/groups",
         tags: ["groups"],
       })
       .input(updateGroupCommand)
@@ -50,7 +50,7 @@ export const groupsRouter = {
     })
       .route({
         method: "DELETE",
-        path: "/groups/delete",
+        path: "/groups",
         tags: ["groups"],
       })
       .input(deleteGroupsCommand)
@@ -96,7 +96,7 @@ export const groupsRouter = {
       ),
 
     assignMembers: withOrganization({
-      requirePermission: "groups:assign-employee",
+      requirePermission: "groups:assign-member",
     })
       .route({
         method: "PATCH",
@@ -113,7 +113,7 @@ export const groupsRouter = {
       ),
 
     unassignMembers: withOrganization({
-      requirePermission: "groups:assign-employee",
+      requirePermission: "groups:assign-member",
     })
       .route({
         method: "PATCH",
@@ -141,6 +141,20 @@ export const groupsRouter = {
       .handler(({ context }) =>
         groupsContainer.queries.findAllByMember.execute({
           memberId: context.session.member.id,
+        }),
+      ),
+
+    findAll: withOrganization({
+      requirePermission: "groups:view",
+    })
+      .route({
+        method: "GET",
+        path: "/groups",
+        tags: ["groups"],
+      })
+      .handler(({ context }) =>
+        groupsContainer.queries.findAll.execute({
+          organizationId: context.session.activeOrganization.id,
         }),
       ),
   },

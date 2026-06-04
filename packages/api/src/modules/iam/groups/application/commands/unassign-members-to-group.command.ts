@@ -33,7 +33,7 @@ export class UnAssignMembersToGroupCommand {
 
     const { exists } = await this.organizationHasMembersQuery.execute({
       organizationId: cmd.organizationId,
-      memberIds: cmd.employeeIds,
+      memberIds: cmd.memberIds,
       options: {
         filterBy: "member",
       },
@@ -46,7 +46,7 @@ export class UnAssignMembersToGroupCommand {
 
     const [, errorAssign] = await this.groupsCommandsRepository.unassignMembers(
       cmd.groupId,
-      cmd.employeeIds,
+      cmd.memberIds,
     );
 
     if (errorAssign) throw new ORPCError("INTERNAL_SERVER_ERROR", errorAssign);

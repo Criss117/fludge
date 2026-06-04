@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const assignGroupsToEmployeeCommand = z.object({
+export const assignGroupsToMemberCommand = z.object({
   memberId: z.string({
     error: "Id de miembro no válido.",
   }),
@@ -15,10 +15,10 @@ export const assignGroupsToEmployeeCommand = z.object({
     }),
 });
 
-type CMD = z.infer<typeof assignGroupsToEmployeeCommand> & {
+type CMD = z.infer<typeof assignGroupsToMemberCommand> & {
   organizationId: string;
 };
 
-export class AssignGroupsToEmployeeCommand {
+export class AssignGroupsToMemberCommand {
   constructor() {}
 }

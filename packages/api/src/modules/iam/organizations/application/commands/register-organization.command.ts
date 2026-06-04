@@ -74,7 +74,6 @@ export class RegisterOrganizationCommand {
           taxId: cmd.taxId,
           address: cmd.address,
           slug: slugify(cmd.name),
-          keepCurrentActiveOrganization: true,
         },
         headers,
       }),

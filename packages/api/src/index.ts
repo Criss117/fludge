@@ -88,9 +88,12 @@ function requireOrganization(options: RequireOrganizationOptions) {
         },
       });
 
-    const memberGroups = await groupsContainer.queries.findAllByMember.execute(
-      memberInfo.id,
-    );
+    const memberGroups = await groupsContainer.queries.findAllByMember.execute({
+      memberId: memberInfo.id,
+      options: {
+        excludeDeleted: true,
+      },
+    });
 
     const userPermissions = memberGroups.flatMap((g) => g.permissions);
 

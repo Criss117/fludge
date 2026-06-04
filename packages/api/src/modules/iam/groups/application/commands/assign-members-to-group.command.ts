@@ -8,7 +8,7 @@ export const assignMembersToGroupCommand = z.object({
   groupId: z.string({
     error: "Id de grupo no válido.",
   }),
-  employeeIds: z
+  memberIds: z
     .array(
       z.string({
         error: "Id de miembro no válido.",
@@ -45,7 +45,7 @@ export class AssignMembersToGroupCommand {
 
     const { exists } = await this.organizationHasMembersQuery.execute({
       organizationId: cmd.organizationId,
-      memberIds: cmd.employeeIds,
+      memberIds: cmd.memberIds,
       options: {
         filterBy: "member",
       },
@@ -58,7 +58,7 @@ export class AssignMembersToGroupCommand {
 
     const [, errorAssign] = await this.groupsCommandsRepository.assignMembers(
       cmd.groupId,
-      cmd.employeeIds,
+      cmd.memberIds,
       cmd.changedByMemberId,
     );
 

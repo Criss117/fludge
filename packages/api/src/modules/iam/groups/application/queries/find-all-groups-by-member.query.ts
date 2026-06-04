@@ -1,5 +1,5 @@
 import { ORPCError } from "@orpc/client";
-import { eq, getTableColumns } from "drizzle-orm";
+import { and, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
 
 import type { DbConnection } from "@fludge/db";
 import { group, groupMember } from "@fludge/db/schemas/iam.schema";
@@ -7,12 +7,19 @@ import { tryCatch } from "@fludge/utils/trycatch";
 
 type Query = {
   memberId: string;
+  options?: {
+    excludeDeleted?: boolean;
+  };
 };
 
 export class FindAllGroupsByMemberQuery {
   constructor(public readonly db: DbConnection) {}
 
   public async execute(query: Query) {
+    const where: SQL[] = [eq(groupMember.memberId, query.memberId)];
+
+    if (query.options?.excludeDeleted) where.push(isNull(group.deletedAt));
+
     const [groups, error] = await tryCatch(
       this.db
         .select({
@@ -20,7 +27,7 @@ export class FindAllGroupsByMemberQuery {
         })
         .from(groupMember)
         .innerJoin(group, eq(groupMember.groupId, group.id))
-        .where(eq(groupMember.memberId, query.memberId)),
+        .where(and(...where)),
     );
 
     if (error) throw new ORPCError("INTERNAL_SERVER_ERROR", error);

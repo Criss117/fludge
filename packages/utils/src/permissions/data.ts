@@ -1,4 +1,4 @@
-export const ALL_RESOURCES = ["groups", "employees"] as const;
+export const ALL_RESOURCES = ["groups", "members"] as const;
 export type RESOURCES = (typeof ALL_RESOURCES)[number];
 
 export const PERMISSIONS = {
@@ -6,10 +6,10 @@ export const PERMISSIONS = {
     view: "view",
     create: "create",
     delete: "delete",
-    assignEmployee: "assign-employee",
+    assignMember: "assign-member",
     update: "update",
   },
-  employees: {
+  members: {
     view: "view",
     create: "create",
     assignGroup: "assign-group",
@@ -40,12 +40,12 @@ export const PERMISSION_DESCRIPTIONS = {
     view: "Permite ver grupos",
     create: "Permite crear grupos",
     delete: "Permite eliminar grupos",
-    assignEmployee: "Permite asignar empleados a grupos",
+    assignMember: "Permite asignar miembros a grupos",
     update: "Permite actualizar grupos",
   },
-  employees: {
-    view: "Permite ver empleados",
-    create: "Permite crear empleados",
-    assignGroup: "Permite asignar grupos a empleados",
+  members: {
+    view: "Permite ver los miembros",
+    create: "Permite crear miembros",
+    assignGroup: "Permite asignar grupos a miembros",
   },
 } as const satisfies PermissionDescriptions;

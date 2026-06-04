@@ -1,11 +1,12 @@
 import { z } from "zod";
+import { ORPCError } from "@orpc/client";
+
 import { auth } from "@fludge/auth";
 import { signUpEmailCommand } from "@fludge/api/modules/iam/auth/application/commands/sign-up.command";
 import type { EmailsAlreadyExistsQuery } from "@fludge/api/modules/iam/auth/application/queries/emails-already-exists.query";
-import { ORPCError } from "@orpc/client";
 import { tryCatch } from "@fludge/utils/trycatch";
 
-export const signUpEmployeeCommand = signUpEmailCommand.extend({
+export const signUpMemberCommand = signUpEmailCommand.extend({
   groupIds: z
     .array(
       z.uuid({
@@ -17,12 +18,12 @@ export const signUpEmployeeCommand = signUpEmailCommand.extend({
     }),
 });
 
-type CMD = z.infer<typeof signUpEmployeeCommand> & {
+type CMD = z.infer<typeof signUpMemberCommand> & {
   organizationId: string;
   memberId: string;
 };
 
-export class SignUpEmployeeCommand {
+export class SignUpMemberCommand {
   constructor(
     private readonly emailsAlreadyExistsQuery: EmailsAlreadyExistsQuery,
   ) {}
