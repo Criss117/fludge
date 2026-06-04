@@ -6,21 +6,23 @@ import { signUpEmailCommand } from "@fludge/api/modules/iam/auth/application/com
 import type { EmailsAlreadyExistsQuery } from "@fludge/api/modules/iam/auth/application/queries/emails-already-exists.query";
 import { tryCatch } from "@fludge/utils/trycatch";
 
-export const signUpMemberCommand = signUpEmailCommand.extend({
-  groupIds: z
-    .array(
-      z.uuid({
-        error: "Id de grupo no válido.",
-      }),
-    )
-    .min(1, {
-      error: "Debe especificar al menos un id de grupo.",
-    }),
-});
+export const signUpMemberCommand = signUpEmailCommand;
+
+// .extend({
+//   groupIds: z
+//     .array(
+//       z.uuid({
+//         error: "Id de grupo no válido.",
+//       }),
+//     )
+//     .min(1, {
+//       error: "Debe especificar al menos un id de grupo.",
+//     }),
+// });
 
 type CMD = z.infer<typeof signUpMemberCommand> & {
   organizationId: string;
-  memberId: string;
+  assignedByMemberId: string;
 };
 
 export class SignUpMemberCommand {
@@ -53,14 +55,14 @@ export class SignUpMemberCommand {
 
     if (error) throw new ORPCError("INTERNAL_SERVER_ERROR", error);
 
-    const [, errorAddMember] = await tryCatch(
+    const [memberData, errorAddMember] = await tryCatch(
       auth.api.addMember({
         headers,
         body: {
           organizationId: cmd.organizationId,
           userId: newUser.user.id,
           role: "member",
-          assignedBy: cmd.memberId,
+          assignedBy: cmd.assignedByMemberId,
         },
       }),
     );
@@ -68,6 +70,6 @@ export class SignUpMemberCommand {
     if (errorAddMember)
       throw new ORPCError("INTERNAL_SERVER_ERROR", errorAddMember);
 
-    return newUser.user;
+    return { ...newUser.user, memberId: memberData.id };
   }
 }

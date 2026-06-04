@@ -46,8 +46,6 @@ new Elysia()
       const url = new URL(request.url);
       const authSubPath = url.pathname.replace("/api/auth", "");
 
-      console.log({ authSubPath });
-
       if (!PUBLIC_ENDPOINTS.includes(authSubPath)) {
         return new Response("Not Found", { status: 404 });
       }

@@ -18,11 +18,25 @@ export const memberRouter = {
           {
             ...input,
             organizationId: context.session.activeOrganization.id,
-            memberId: context.session.member.id,
+            assignedByMemberId: context.session.member.id,
           },
           context.headers,
         ),
       ),
   },
-  queries: {},
+  queries: {
+    findAll: withOrganization({
+      requirePermission: "members:view",
+    })
+      .route({
+        method: "GET",
+        path: "/members",
+        tags: ["members"],
+      })
+      .handler(({ context }) =>
+        membersContainer.queries.findAll.execute({
+          organizationId: context.session.activeOrganization.id,
+        }),
+      ),
+  },
 } as const;

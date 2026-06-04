@@ -1,4 +1,8 @@
-import { rootOnlyProcedure, withOrganization } from "@fludge/api/index";
+import {
+  protectedProcedure,
+  rootOnlyProcedure,
+  withOrganization,
+} from "@fludge/api/index";
 import { organizationsContainer } from "@fludge/api/modules/iam/organizations/container";
 import { registerOrganizationCommand } from "@fludge/api/modules/iam/organizations/application/commands/register-organization.command";
 import { updateOrganizationCommand } from "@fludge/api/modules/iam/organizations/application/commands/update-organization.command";
@@ -8,7 +12,7 @@ export const organizationRouter = {
     register: rootOnlyProcedure
       .route({
         method: "POST",
-        path: "/organizations/register",
+        path: "/organizations",
         tags: ["organizations"],
       })
       .input(registerOrganizationCommand)
@@ -24,7 +28,7 @@ export const organizationRouter = {
     })
       .route({
         method: "PATCH",
-        path: "/organizations/update",
+        path: "/organizations",
         tags: ["organizations"],
       })
       .input(updateOrganizationCommand)
@@ -40,14 +44,14 @@ export const organizationRouter = {
       ),
   },
   queries: {
-    findByOwner: rootOnlyProcedure
+    findAll: protectedProcedure
       .route({
         method: "GET",
-        path: "/organizations/find-by-owner",
+        path: "/organizations",
         tags: ["organizations"],
       })
       .handler(({ context }) =>
-        organizationsContainer.queries.findByOwner.execute({
+        organizationsContainer.queries.findAll.execute({
           userId: context.session.user.id,
         }),
       ),

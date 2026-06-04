@@ -30,6 +30,17 @@ export class FindAllGroupsByMemberQuery {
         .where(and(...where)),
     );
 
+    console.dir(
+      this.db
+        .select({
+          ...getTableColumns(group),
+        })
+        .from(groupMember)
+        .innerJoin(group, eq(groupMember.groupId, group.id))
+        .where(and(...where))
+        .toSQL(),
+    );
+
     if (error) throw new ORPCError("INTERNAL_SERVER_ERROR", error);
 
     return groups;

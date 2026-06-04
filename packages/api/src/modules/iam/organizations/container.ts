@@ -4,7 +4,7 @@ import { eventBus } from "@fludge/api/modules/shared/domain/event-bus";
 import { PGOrganizationCommandsRepository } from "./infrastructure/repositories/pg-organization-commands.repository";
 import { RegisterOrganizationCommand } from "./application/commands/register-organization.command";
 import { UpdateOrganizationCommand } from "./application/commands/update-organization.command";
-import { FindOrganizationsByOwnerQuery } from "./application/queries/find-orgnizations-by-owner.query";
+import { FindOrganizationsByMemberQuery } from "./application/queries/find-orgnizations-by-member.query";
 import { OrganizationHasMembersQuery } from "./application/queries/organization-has-members.query";
 
 const organizationsCommandsRepository = new PGOrganizationCommandsRepository(
@@ -19,7 +19,7 @@ const updateOrganizationCommand = new UpdateOrganizationCommand(
 );
 
 // Queries
-const findOrganizationsByOwnerQuery = new FindOrganizationsByOwnerQuery(
+const findOrganizationsByMemberQuery = new FindOrganizationsByMemberQuery(
   dbConnection,
 );
 const organizationHasMembersQuery = new OrganizationHasMembersQuery(
@@ -32,7 +32,7 @@ export const organizationsContainer = {
     update: updateOrganizationCommand,
   },
   queries: {
-    findByOwner: findOrganizationsByOwnerQuery,
+    findAll: findOrganizationsByMemberQuery,
     organizationHasMembers: organizationHasMembersQuery,
   },
   repositories: {
