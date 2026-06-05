@@ -4,7 +4,6 @@ import ReactDOM from "react-dom/client";
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
 import { queryClient } from "./integrations/query";
-import { orpc } from "./integrations/orpc";
 import { IntegrationsProvider } from "./integrations";
 
 const router = createRouter({
@@ -12,7 +11,7 @@ const router = createRouter({
   defaultPreload: "intent",
   scrollRestoration: true,
   defaultPendingComponent: () => <Loader />,
-  context: { orpc, queryClient },
+  context: { queryClient },
   Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
     return <IntegrationsProvider>{children}</IntegrationsProvider>;
   },

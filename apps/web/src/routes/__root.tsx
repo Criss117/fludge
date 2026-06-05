@@ -11,11 +11,7 @@ import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 
-import { orpc } from "@/integrations/orpc";
-import { ModeToggle } from "@/components/mode-toggle";
-
 export interface RouterAppContext {
-  orpc: typeof orpc;
   queryClient: QueryClient;
 }
 
@@ -44,7 +40,6 @@ function RootComponent() {
   return (
     <>
       <HeadContent />
-      <ModeToggle />
       <div>
         <Outlet />
       </div>

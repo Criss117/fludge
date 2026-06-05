@@ -1,0 +1,24 @@
+{
+  "name": "@fludge/client",
+  "type": "module",
+  "exports": {
+    "./providers/*": "./src/providers/*.tsx",
+    "./modules/*": "./src/modules/*.ts"
+  },
+  "scripts": {},
+  "dependencies": {
+    "@fludge/api": "workspace:*",
+    "react": "catalog:",
+    "better-auth": "catalog:",
+    "@orpc/client": "catalog:",
+    "@orpc/server": "catalog:",
+    "@orpc/tanstack-query": "catalog:",
+    "@tanstack/react-form": "catalog:",
+    "@tanstack/react-query": "catalog:"
+  },
+  "devDependencies": {
+    "@fludge/config": "workspace:*",
+    "typescript": "catalog:",
+    "@types/react": "catalog:"
+  }
+}

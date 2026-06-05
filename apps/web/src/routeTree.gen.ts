@@ -9,50 +9,217 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthLayoutRouteImport } from './routes/auth/_layout'
+import { Route as dashboardLayoutRouteImport } from './routes/(dashboard)/_layout'
+import { Route as dashboardLayoutIndexRouteImport } from './routes/(dashboard)/_layout/index'
+import { Route as AuthLayoutSingInRouteImport } from './routes/auth/_layout/sing-in'
+import { Route as dashboardLayoutSettingsRouteImport } from './routes/(dashboard)/_layout/settings'
+import { Route as dashboardLayoutSalesRouteImport } from './routes/(dashboard)/_layout/sales'
+import { Route as dashboardLayoutInventoryRouteImport } from './routes/(dashboard)/_layout/inventory'
+import { Route as dashboardLayoutClientsRouteImport } from './routes/(dashboard)/_layout/clients'
 
-const IndexRoute = IndexRouteImport.update({
+const AuthLayoutRoute = AuthLayoutRouteImport.update({
+  id: '/auth/_layout',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const dashboardLayoutRoute = dashboardLayoutRouteImport.update({
+  id: '/(dashboard)/_layout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const dashboardLayoutIndexRoute = dashboardLayoutIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => dashboardLayoutRoute,
+} as any)
+const AuthLayoutSingInRoute = AuthLayoutSingInRouteImport.update({
+  id: '/sing-in',
+  path: '/sing-in',
+  getParentRoute: () => AuthLayoutRoute,
+} as any)
+const dashboardLayoutSettingsRoute = dashboardLayoutSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => dashboardLayoutRoute,
+} as any)
+const dashboardLayoutSalesRoute = dashboardLayoutSalesRouteImport.update({
+  id: '/sales',
+  path: '/sales',
+  getParentRoute: () => dashboardLayoutRoute,
+} as any)
+const dashboardLayoutInventoryRoute =
+  dashboardLayoutInventoryRouteImport.update({
+    id: '/inventory',
+    path: '/inventory',
+    getParentRoute: () => dashboardLayoutRoute,
+  } as any)
+const dashboardLayoutClientsRoute = dashboardLayoutClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
+  getParentRoute: () => dashboardLayoutRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/auth': typeof AuthLayoutRouteWithChildren
+  '/clients': typeof dashboardLayoutClientsRoute
+  '/inventory': typeof dashboardLayoutInventoryRoute
+  '/sales': typeof dashboardLayoutSalesRoute
+  '/settings': typeof dashboardLayoutSettingsRoute
+  '/auth/sing-in': typeof AuthLayoutSingInRoute
+  '/': typeof dashboardLayoutIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/auth': typeof AuthLayoutRouteWithChildren
+  '/clients': typeof dashboardLayoutClientsRoute
+  '/inventory': typeof dashboardLayoutInventoryRoute
+  '/sales': typeof dashboardLayoutSalesRoute
+  '/settings': typeof dashboardLayoutSettingsRoute
+  '/auth/sing-in': typeof AuthLayoutSingInRoute
+  '/': typeof dashboardLayoutIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/(dashboard)/_layout': typeof dashboardLayoutRouteWithChildren
+  '/auth/_layout': typeof AuthLayoutRouteWithChildren
+  '/(dashboard)/_layout/clients': typeof dashboardLayoutClientsRoute
+  '/(dashboard)/_layout/inventory': typeof dashboardLayoutInventoryRoute
+  '/(dashboard)/_layout/sales': typeof dashboardLayoutSalesRoute
+  '/(dashboard)/_layout/settings': typeof dashboardLayoutSettingsRoute
+  '/auth/_layout/sing-in': typeof AuthLayoutSingInRoute
+  '/(dashboard)/_layout/': typeof dashboardLayoutIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/auth'
+    | '/clients'
+    | '/inventory'
+    | '/sales'
+    | '/settings'
+    | '/auth/sing-in'
+    | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/auth'
+    | '/clients'
+    | '/inventory'
+    | '/sales'
+    | '/settings'
+    | '/auth/sing-in'
+    | '/'
+  id:
+    | '__root__'
+    | '/(dashboard)/_layout'
+    | '/auth/_layout'
+    | '/(dashboard)/_layout/clients'
+    | '/(dashboard)/_layout/inventory'
+    | '/(dashboard)/_layout/sales'
+    | '/(dashboard)/_layout/settings'
+    | '/auth/_layout/sing-in'
+    | '/(dashboard)/_layout/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  dashboardLayoutRoute: typeof dashboardLayoutRouteWithChildren
+  AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/auth/_layout': {
+      id: '/auth/_layout'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(dashboard)/_layout': {
+      id: '/(dashboard)/_layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof dashboardLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(dashboard)/_layout/': {
+      id: '/(dashboard)/_layout/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof dashboardLayoutIndexRouteImport
+      parentRoute: typeof dashboardLayoutRoute
+    }
+    '/auth/_layout/sing-in': {
+      id: '/auth/_layout/sing-in'
+      path: '/sing-in'
+      fullPath: '/auth/sing-in'
+      preLoaderRoute: typeof AuthLayoutSingInRouteImport
+      parentRoute: typeof AuthLayoutRoute
+    }
+    '/(dashboard)/_layout/settings': {
+      id: '/(dashboard)/_layout/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof dashboardLayoutSettingsRouteImport
+      parentRoute: typeof dashboardLayoutRoute
+    }
+    '/(dashboard)/_layout/sales': {
+      id: '/(dashboard)/_layout/sales'
+      path: '/sales'
+      fullPath: '/sales'
+      preLoaderRoute: typeof dashboardLayoutSalesRouteImport
+      parentRoute: typeof dashboardLayoutRoute
+    }
+    '/(dashboard)/_layout/inventory': {
+      id: '/(dashboard)/_layout/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof dashboardLayoutInventoryRouteImport
+      parentRoute: typeof dashboardLayoutRoute
+    }
+    '/(dashboard)/_layout/clients': {
+      id: '/(dashboard)/_layout/clients'
+      path: '/clients'
+      fullPath: '/clients'
+      preLoaderRoute: typeof dashboardLayoutClientsRouteImport
+      parentRoute: typeof dashboardLayoutRoute
     }
   }
 }
 
+interface dashboardLayoutRouteChildren {
+  dashboardLayoutClientsRoute: typeof dashboardLayoutClientsRoute
+  dashboardLayoutInventoryRoute: typeof dashboardLayoutInventoryRoute
+  dashboardLayoutSalesRoute: typeof dashboardLayoutSalesRoute
+  dashboardLayoutSettingsRoute: typeof dashboardLayoutSettingsRoute
+  dashboardLayoutIndexRoute: typeof dashboardLayoutIndexRoute
+}
+
+const dashboardLayoutRouteChildren: dashboardLayoutRouteChildren = {
+  dashboardLayoutClientsRoute: dashboardLayoutClientsRoute,
+  dashboardLayoutInventoryRoute: dashboardLayoutInventoryRoute,
+  dashboardLayoutSalesRoute: dashboardLayoutSalesRoute,
+  dashboardLayoutSettingsRoute: dashboardLayoutSettingsRoute,
+  dashboardLayoutIndexRoute: dashboardLayoutIndexRoute,
+}
+
+const dashboardLayoutRouteWithChildren = dashboardLayoutRoute._addFileChildren(
+  dashboardLayoutRouteChildren,
+)
+
+interface AuthLayoutRouteChildren {
+  AuthLayoutSingInRoute: typeof AuthLayoutSingInRoute
+}
+
+const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
+  AuthLayoutSingInRoute: AuthLayoutSingInRoute,
+}
+
+const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
+  AuthLayoutRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  dashboardLayoutRoute: dashboardLayoutRouteWithChildren,
+  AuthLayoutRoute: AuthLayoutRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

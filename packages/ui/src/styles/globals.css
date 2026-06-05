@@ -192,4 +192,8 @@
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
   }
+  ::selection {
+    background-color: var(--foreground); /* El color del fondo */
+    color: var(--background); /* El color del texto */
+  }
 }
