@@ -8,14 +8,7 @@ export function IntegrationsProvider({
 }) {
   return (
     <QueryProvider>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        disableTransitionOnChange
-        storageKey="vite-ui-theme"
-      >
-        {children}
-      </ThemeProvider>
+      <ThemeProvider>{children}</ThemeProvider>
     </QueryProvider>
   );
 }

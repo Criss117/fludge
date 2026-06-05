@@ -13,9 +13,11 @@
   },
   "dependencies": {
     "@fludge/api": "workspace:*",
+    "@fludge/auth": "workspace:*",
     "@fludge/env": "workspace:*",
     "@fludge/ui": "workspace:*",
-    "@fludge/auth": "workspace:*",
+    "@fontsource-variable/geist": "5.2.9",
+    "@fontsource-variable/geist-mono": "5.2.8",
     "@hookform/resolvers": "^5.2.2",
     "@orpc/client": "catalog:",
     "@orpc/server": "catalog:",
@@ -36,6 +38,8 @@
   },
   "devDependencies": {
     "@fludge/config": "workspace:*",
+    "@tanstack/devtools-vite": "^0.7.0",
+    "@tanstack/react-devtools": "^0.10.5",
     "@tanstack/react-query-devtools": "^5.91.1",
     "@tanstack/react-router-devtools": "^1.166.13",
     "@tanstack/router-plugin": "^1.167.22",
