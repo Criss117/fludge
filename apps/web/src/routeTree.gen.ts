@@ -9,18 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthLayoutRouteImport } from './routes/auth/_layout'
+import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
+import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
 import { Route as dashboardLayoutRouteImport } from './routes/(dashboard)/_layout'
 import { Route as dashboardLayoutIndexRouteImport } from './routes/(dashboard)/_layout/index'
-import { Route as AuthLayoutSingInRouteImport } from './routes/auth/_layout/sing-in'
 import { Route as dashboardLayoutSettingsRouteImport } from './routes/(dashboard)/_layout/settings'
 import { Route as dashboardLayoutSalesRouteImport } from './routes/(dashboard)/_layout/sales'
 import { Route as dashboardLayoutInventoryRouteImport } from './routes/(dashboard)/_layout/inventory'
 import { Route as dashboardLayoutClientsRouteImport } from './routes/(dashboard)/_layout/clients'
 
-const AuthLayoutRoute = AuthLayoutRouteImport.update({
-  id: '/auth/_layout',
-  path: '/auth',
+const AuthSignUpRoute = AuthSignUpRouteImport.update({
+  id: '/auth/sign-up',
+  path: '/auth/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSignInRoute = AuthSignInRouteImport.update({
+  id: '/auth/sign-in',
+  path: '/auth/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
 const dashboardLayoutRoute = dashboardLayoutRouteImport.update({
@@ -31,11 +36,6 @@ const dashboardLayoutIndexRoute = dashboardLayoutIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => dashboardLayoutRoute,
-} as any)
-const AuthLayoutSingInRoute = AuthLayoutSingInRouteImport.update({
-  id: '/sing-in',
-  path: '/sing-in',
-  getParentRoute: () => AuthLayoutRoute,
 } as any)
 const dashboardLayoutSettingsRoute = dashboardLayoutSettingsRouteImport.update({
   id: '/settings',
@@ -60,77 +60,85 @@ const dashboardLayoutClientsRoute = dashboardLayoutClientsRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/auth': typeof AuthLayoutRouteWithChildren
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
   '/clients': typeof dashboardLayoutClientsRoute
   '/inventory': typeof dashboardLayoutInventoryRoute
   '/sales': typeof dashboardLayoutSalesRoute
   '/settings': typeof dashboardLayoutSettingsRoute
-  '/auth/sing-in': typeof AuthLayoutSingInRoute
   '/': typeof dashboardLayoutIndexRoute
 }
 export interface FileRoutesByTo {
-  '/auth': typeof AuthLayoutRouteWithChildren
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
   '/clients': typeof dashboardLayoutClientsRoute
   '/inventory': typeof dashboardLayoutInventoryRoute
   '/sales': typeof dashboardLayoutSalesRoute
   '/settings': typeof dashboardLayoutSettingsRoute
-  '/auth/sing-in': typeof AuthLayoutSingInRoute
   '/': typeof dashboardLayoutIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(dashboard)/_layout': typeof dashboardLayoutRouteWithChildren
-  '/auth/_layout': typeof AuthLayoutRouteWithChildren
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
   '/(dashboard)/_layout/clients': typeof dashboardLayoutClientsRoute
   '/(dashboard)/_layout/inventory': typeof dashboardLayoutInventoryRoute
   '/(dashboard)/_layout/sales': typeof dashboardLayoutSalesRoute
   '/(dashboard)/_layout/settings': typeof dashboardLayoutSettingsRoute
-  '/auth/_layout/sing-in': typeof AuthLayoutSingInRoute
   '/(dashboard)/_layout/': typeof dashboardLayoutIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/auth'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
     | '/clients'
     | '/inventory'
     | '/sales'
     | '/settings'
-    | '/auth/sing-in'
     | '/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/auth'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
     | '/clients'
     | '/inventory'
     | '/sales'
     | '/settings'
-    | '/auth/sing-in'
     | '/'
   id:
     | '__root__'
     | '/(dashboard)/_layout'
-    | '/auth/_layout'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
     | '/(dashboard)/_layout/clients'
     | '/(dashboard)/_layout/inventory'
     | '/(dashboard)/_layout/sales'
     | '/(dashboard)/_layout/settings'
-    | '/auth/_layout/sing-in'
     | '/(dashboard)/_layout/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   dashboardLayoutRoute: typeof dashboardLayoutRouteWithChildren
-  AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
+  AuthSignInRoute: typeof AuthSignInRoute
+  AuthSignUpRoute: typeof AuthSignUpRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/auth/_layout': {
-      id: '/auth/_layout'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthLayoutRouteImport
+    '/auth/sign-up': {
+      id: '/auth/sign-up'
+      path: '/auth/sign-up'
+      fullPath: '/auth/sign-up'
+      preLoaderRoute: typeof AuthSignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/sign-in': {
+      id: '/auth/sign-in'
+      path: '/auth/sign-in'
+      fullPath: '/auth/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(dashboard)/_layout': {
@@ -146,13 +154,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof dashboardLayoutIndexRouteImport
       parentRoute: typeof dashboardLayoutRoute
-    }
-    '/auth/_layout/sing-in': {
-      id: '/auth/_layout/sing-in'
-      path: '/sing-in'
-      fullPath: '/auth/sing-in'
-      preLoaderRoute: typeof AuthLayoutSingInRouteImport
-      parentRoute: typeof AuthLayoutRoute
     }
     '/(dashboard)/_layout/settings': {
       id: '/(dashboard)/_layout/settings'
@@ -205,21 +206,10 @@ const dashboardLayoutRouteWithChildren = dashboardLayoutRoute._addFileChildren(
   dashboardLayoutRouteChildren,
 )
 
-interface AuthLayoutRouteChildren {
-  AuthLayoutSingInRoute: typeof AuthLayoutSingInRoute
-}
-
-const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
-  AuthLayoutSingInRoute: AuthLayoutSingInRoute,
-}
-
-const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
-  AuthLayoutRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   dashboardLayoutRoute: dashboardLayoutRouteWithChildren,
-  AuthLayoutRoute: AuthLayoutRouteWithChildren,
+  AuthSignInRoute: AuthSignInRoute,
+  AuthSignUpRoute: AuthSignUpRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -3,18 +3,22 @@
   "type": "module",
   "exports": {
     "./providers/*": "./src/providers/*.tsx",
-    "./modules/*": "./src/modules/*.ts"
+    "./presentation/*": "./src/presentation/*.tsx",
+    "./application/*": "./src/application/*.ts"
   },
   "scripts": {},
   "dependencies": {
     "@fludge/api": "workspace:*",
+    "@fludge/auth": "workspace:*",
+    "@fludge/ui": "workspace:*",
     "react": "catalog:",
     "better-auth": "catalog:",
     "@orpc/client": "catalog:",
     "@orpc/server": "catalog:",
     "@orpc/tanstack-query": "catalog:",
     "@tanstack/react-form": "catalog:",
-    "@tanstack/react-query": "catalog:"
+    "@tanstack/react-query": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@fludge/config": "workspace:*",

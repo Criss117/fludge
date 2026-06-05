@@ -17,6 +17,7 @@
     "@expo/vector-icons": "15.1.1",
     "@fludge/api": "workspace:*",
     "@fludge/env": "workspace:*",
+    "@fludge/auth": "workspace:*",
     "@gorhom/bottom-sheet": "5.2.14",
     "@orpc/client": "catalog:",
     "@orpc/tanstack-query": "catalog:",
