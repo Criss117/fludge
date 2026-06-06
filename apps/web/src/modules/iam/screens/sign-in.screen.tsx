@@ -13,7 +13,7 @@ import {
   EmailField,
   PasswordField,
 } from "@fludge/client/presentation/iam/auth-form/web";
-import { useSignInForm } from "@fludge/client/application/iam/auth-form";
+import { useSignInForm } from "@fludge/client/application/iam/forms/auth.form";
 import { useAuth } from "@/integrations/auth/provider";
 
 export function SignInScreen() {

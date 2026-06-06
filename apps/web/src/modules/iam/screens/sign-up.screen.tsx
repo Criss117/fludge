@@ -15,7 +15,7 @@ import {
   NameField,
   PhoneField,
 } from "@fludge/client/presentation/iam/auth-form/web";
-import { useSignUpForm } from "@fludge/client/application/iam/auth-form";
+import { useSignUpForm } from "@fludge/client/application/iam/forms/auth.form";
 import { useAuth } from "@/integrations/auth/provider";
 
 export function SignUpScreen() {

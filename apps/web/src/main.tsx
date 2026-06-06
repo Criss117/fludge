@@ -12,7 +12,7 @@ const router = createRouter({
   defaultPreload: "intent",
   scrollRestoration: true,
   defaultPendingComponent: () => <LoaderPage />,
-  context: { queryClient, orpc: undefined! },
+  context: { queryClient, orpc: undefined!, session: null },
 });
 
 declare module "@tanstack/react-router" {

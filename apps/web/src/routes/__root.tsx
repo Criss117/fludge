@@ -11,24 +11,16 @@ import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { useORPC } from "@fludge/client/providers/orpc.provider";
-import { AuthProvider } from "@/integrations/auth/provider";
+import { AuthProvider, Session } from "@/integrations/auth/provider";
 
 export interface RouterAppContext {
   queryClient: QueryClient;
   orpc: ReturnType<typeof useORPC>["orpc"];
+  session: Session | null;
 }
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
   component: RootComponent,
-  beforeLoad: async ({ context }) => {
-    const session = await context.queryClient.ensureQueryData(
-      context.orpc.auth.queries.getSession.queryOptions(),
-    );
-
-    return {
-      session,
-    };
-  },
   head: () => ({
     meta: [
       {

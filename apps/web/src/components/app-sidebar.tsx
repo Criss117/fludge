@@ -1,5 +1,14 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Archive, Home, Settings, UserRound, Wallet } from "lucide-react";
+import {
+  Archive,
+  BookUser,
+  Boxes,
+  ChartBar,
+  Home,
+  Settings,
+  UserRound,
+  Wallet,
+} from "lucide-react";
 import { Separator } from "@fludge/ui/components/separator";
 import {
   Sidebar,
@@ -16,8 +25,10 @@ const NavItems = [
   { name: "Dashboard", href: "/", Icon: Home },
   { name: "Inventario", href: "/inventory", Icon: Archive },
   { name: "Ventas", href: "/sales", Icon: Wallet },
+  { name: "Analiticas", href: "/analytics", Icon: ChartBar },
   { name: "Clientes", href: "/clients", Icon: UserRound },
-  { name: "Configuración", href: "/settings", Icon: Settings },
+  { name: "Grupos", href: "/groups", Icon: Boxes },
+  { name: "Miembros", href: "/members", Icon: BookUser },
 ] as const;
 
 export function AppSidebar() {

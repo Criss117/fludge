@@ -11,13 +11,15 @@
     "@fludge/api": "workspace:*",
     "@fludge/auth": "workspace:*",
     "@fludge/ui": "workspace:*",
-    "react": "catalog:",
-    "better-auth": "catalog:",
     "@orpc/client": "catalog:",
     "@orpc/server": "catalog:",
     "@orpc/tanstack-query": "catalog:",
+    "@tanstack/query-db-collection": "catalog:",
+    "@tanstack/react-db": "catalog:",
     "@tanstack/react-form": "catalog:",
     "@tanstack/react-query": "catalog:",
+    "better-auth": "catalog:",
+    "react": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

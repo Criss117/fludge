@@ -1,4 +1,4 @@
-import type { FieldInput } from "@fludge/client/application/iam/auth-form";
+import type { FieldInput } from "@fludge/client/application/iam/forms/auth.form";
 import { Field, FieldError, FieldLabel } from "@fludge/ui/components/field";
 import { Input } from "@fludge/ui/components/input";
 

@@ -5,12 +5,36 @@ import { AppSidebar } from "@/components/app-sidebar";
 
 export const Route = createFileRoute("/(dashboard)/_layout")({
   component: RouteComponent,
-  beforeLoad: ({ context }) => {
-    if (context.session) return;
+  beforeLoad: async ({ context }) => {
+    const session = await context.queryClient.ensureQueryData(
+      context.orpc.auth.queries.getSession.queryOptions(),
+    );
 
-    throw redirect({
-      to: "/auth/sign-in",
-    });
+    if (!session) {
+      throw redirect({
+        to: "/auth/sign-in",
+      });
+    }
+
+    console.log({ session });
+
+    if (!session.activeOrganizationId) {
+      throw redirect({
+        to: "/organization/select",
+      });
+    }
+
+    const activeOrganization = await context.queryClient.ensureQueryData(
+      context.orpc.organizations.queries.findActive.queryOptions(),
+    );
+
+    console.log({ activeOrganization });
+
+    if (!activeOrganization) {
+      throw redirect({
+        to: "/organization/select",
+      });
+    }
   },
 });
 

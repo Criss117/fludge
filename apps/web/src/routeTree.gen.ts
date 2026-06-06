@@ -9,23 +9,29 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
-import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
+import { Route as OrganizationLayoutRouteImport } from './routes/organization/_layout'
+import { Route as AuthLayoutRouteImport } from './routes/auth/_layout'
 import { Route as dashboardLayoutRouteImport } from './routes/(dashboard)/_layout'
 import { Route as dashboardLayoutIndexRouteImport } from './routes/(dashboard)/_layout/index'
-import { Route as dashboardLayoutSettingsRouteImport } from './routes/(dashboard)/_layout/settings'
+import { Route as OrganizationLayoutSelectRouteImport } from './routes/organization/_layout/select'
+import { Route as OrganizationLayoutRegisterRouteImport } from './routes/organization/_layout/register'
+import { Route as AuthLayoutSignUpRouteImport } from './routes/auth/_layout/sign-up'
+import { Route as AuthLayoutSignInRouteImport } from './routes/auth/_layout/sign-in'
 import { Route as dashboardLayoutSalesRouteImport } from './routes/(dashboard)/_layout/sales'
 import { Route as dashboardLayoutInventoryRouteImport } from './routes/(dashboard)/_layout/inventory'
-import { Route as dashboardLayoutClientsRouteImport } from './routes/(dashboard)/_layout/clients'
+import { Route as dashboardLayoutAnalyticsRouteImport } from './routes/(dashboard)/_layout/analytics'
+import { Route as dashboardLayoutMembersIndexRouteImport } from './routes/(dashboard)/_layout/members/index'
+import { Route as dashboardLayoutGroupsIndexRouteImport } from './routes/(dashboard)/_layout/groups/index'
+import { Route as dashboardLayoutClientsIndexRouteImport } from './routes/(dashboard)/_layout/clients/index'
 
-const AuthSignUpRoute = AuthSignUpRouteImport.update({
-  id: '/auth/sign-up',
-  path: '/auth/sign-up',
+const OrganizationLayoutRoute = OrganizationLayoutRouteImport.update({
+  id: '/organization/_layout',
+  path: '/organization',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthSignInRoute = AuthSignInRouteImport.update({
-  id: '/auth/sign-in',
-  path: '/auth/sign-in',
+const AuthLayoutRoute = AuthLayoutRouteImport.update({
+  id: '/auth/_layout',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const dashboardLayoutRoute = dashboardLayoutRouteImport.update({
@@ -37,10 +43,27 @@ const dashboardLayoutIndexRoute = dashboardLayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => dashboardLayoutRoute,
 } as any)
-const dashboardLayoutSettingsRoute = dashboardLayoutSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => dashboardLayoutRoute,
+const OrganizationLayoutSelectRoute =
+  OrganizationLayoutSelectRouteImport.update({
+    id: '/select',
+    path: '/select',
+    getParentRoute: () => OrganizationLayoutRoute,
+  } as any)
+const OrganizationLayoutRegisterRoute =
+  OrganizationLayoutRegisterRouteImport.update({
+    id: '/register',
+    path: '/register',
+    getParentRoute: () => OrganizationLayoutRoute,
+  } as any)
+const AuthLayoutSignUpRoute = AuthLayoutSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => AuthLayoutRoute,
+} as any)
+const AuthLayoutSignInRoute = AuthLayoutSignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => AuthLayoutRoute,
 } as any)
 const dashboardLayoutSalesRoute = dashboardLayoutSalesRouteImport.update({
   id: '/sales',
@@ -53,92 +76,147 @@ const dashboardLayoutInventoryRoute =
     path: '/inventory',
     getParentRoute: () => dashboardLayoutRoute,
   } as any)
-const dashboardLayoutClientsRoute = dashboardLayoutClientsRouteImport.update({
-  id: '/clients',
-  path: '/clients',
-  getParentRoute: () => dashboardLayoutRoute,
-} as any)
+const dashboardLayoutAnalyticsRoute =
+  dashboardLayoutAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => dashboardLayoutRoute,
+  } as any)
+const dashboardLayoutMembersIndexRoute =
+  dashboardLayoutMembersIndexRouteImport.update({
+    id: '/members/',
+    path: '/members/',
+    getParentRoute: () => dashboardLayoutRoute,
+  } as any)
+const dashboardLayoutGroupsIndexRoute =
+  dashboardLayoutGroupsIndexRouteImport.update({
+    id: '/groups/',
+    path: '/groups/',
+    getParentRoute: () => dashboardLayoutRoute,
+  } as any)
+const dashboardLayoutClientsIndexRoute =
+  dashboardLayoutClientsIndexRouteImport.update({
+    id: '/clients/',
+    path: '/clients/',
+    getParentRoute: () => dashboardLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/auth/sign-in': typeof AuthSignInRoute
-  '/auth/sign-up': typeof AuthSignUpRoute
-  '/clients': typeof dashboardLayoutClientsRoute
+  '/auth': typeof AuthLayoutRouteWithChildren
+  '/organization': typeof OrganizationLayoutRouteWithChildren
+  '/analytics': typeof dashboardLayoutAnalyticsRoute
   '/inventory': typeof dashboardLayoutInventoryRoute
   '/sales': typeof dashboardLayoutSalesRoute
-  '/settings': typeof dashboardLayoutSettingsRoute
+  '/auth/sign-in': typeof AuthLayoutSignInRoute
+  '/auth/sign-up': typeof AuthLayoutSignUpRoute
+  '/organization/register': typeof OrganizationLayoutRegisterRoute
+  '/organization/select': typeof OrganizationLayoutSelectRoute
   '/': typeof dashboardLayoutIndexRoute
+  '/clients/': typeof dashboardLayoutClientsIndexRoute
+  '/groups/': typeof dashboardLayoutGroupsIndexRoute
+  '/members/': typeof dashboardLayoutMembersIndexRoute
 }
 export interface FileRoutesByTo {
-  '/auth/sign-in': typeof AuthSignInRoute
-  '/auth/sign-up': typeof AuthSignUpRoute
-  '/clients': typeof dashboardLayoutClientsRoute
+  '/auth': typeof AuthLayoutRouteWithChildren
+  '/organization': typeof OrganizationLayoutRouteWithChildren
+  '/analytics': typeof dashboardLayoutAnalyticsRoute
   '/inventory': typeof dashboardLayoutInventoryRoute
   '/sales': typeof dashboardLayoutSalesRoute
-  '/settings': typeof dashboardLayoutSettingsRoute
+  '/auth/sign-in': typeof AuthLayoutSignInRoute
+  '/auth/sign-up': typeof AuthLayoutSignUpRoute
+  '/organization/register': typeof OrganizationLayoutRegisterRoute
+  '/organization/select': typeof OrganizationLayoutSelectRoute
   '/': typeof dashboardLayoutIndexRoute
+  '/clients': typeof dashboardLayoutClientsIndexRoute
+  '/groups': typeof dashboardLayoutGroupsIndexRoute
+  '/members': typeof dashboardLayoutMembersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(dashboard)/_layout': typeof dashboardLayoutRouteWithChildren
-  '/auth/sign-in': typeof AuthSignInRoute
-  '/auth/sign-up': typeof AuthSignUpRoute
-  '/(dashboard)/_layout/clients': typeof dashboardLayoutClientsRoute
+  '/auth/_layout': typeof AuthLayoutRouteWithChildren
+  '/organization/_layout': typeof OrganizationLayoutRouteWithChildren
+  '/(dashboard)/_layout/analytics': typeof dashboardLayoutAnalyticsRoute
   '/(dashboard)/_layout/inventory': typeof dashboardLayoutInventoryRoute
   '/(dashboard)/_layout/sales': typeof dashboardLayoutSalesRoute
-  '/(dashboard)/_layout/settings': typeof dashboardLayoutSettingsRoute
+  '/auth/_layout/sign-in': typeof AuthLayoutSignInRoute
+  '/auth/_layout/sign-up': typeof AuthLayoutSignUpRoute
+  '/organization/_layout/register': typeof OrganizationLayoutRegisterRoute
+  '/organization/_layout/select': typeof OrganizationLayoutSelectRoute
   '/(dashboard)/_layout/': typeof dashboardLayoutIndexRoute
+  '/(dashboard)/_layout/clients/': typeof dashboardLayoutClientsIndexRoute
+  '/(dashboard)/_layout/groups/': typeof dashboardLayoutGroupsIndexRoute
+  '/(dashboard)/_layout/members/': typeof dashboardLayoutMembersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/auth/sign-in'
-    | '/auth/sign-up'
-    | '/clients'
+    | '/auth'
+    | '/organization'
+    | '/analytics'
     | '/inventory'
     | '/sales'
-    | '/settings'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
+    | '/organization/register'
+    | '/organization/select'
     | '/'
+    | '/clients/'
+    | '/groups/'
+    | '/members/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/auth/sign-in'
-    | '/auth/sign-up'
-    | '/clients'
+    | '/auth'
+    | '/organization'
+    | '/analytics'
     | '/inventory'
     | '/sales'
-    | '/settings'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
+    | '/organization/register'
+    | '/organization/select'
     | '/'
+    | '/clients'
+    | '/groups'
+    | '/members'
   id:
     | '__root__'
     | '/(dashboard)/_layout'
-    | '/auth/sign-in'
-    | '/auth/sign-up'
-    | '/(dashboard)/_layout/clients'
+    | '/auth/_layout'
+    | '/organization/_layout'
+    | '/(dashboard)/_layout/analytics'
     | '/(dashboard)/_layout/inventory'
     | '/(dashboard)/_layout/sales'
-    | '/(dashboard)/_layout/settings'
+    | '/auth/_layout/sign-in'
+    | '/auth/_layout/sign-up'
+    | '/organization/_layout/register'
+    | '/organization/_layout/select'
     | '/(dashboard)/_layout/'
+    | '/(dashboard)/_layout/clients/'
+    | '/(dashboard)/_layout/groups/'
+    | '/(dashboard)/_layout/members/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   dashboardLayoutRoute: typeof dashboardLayoutRouteWithChildren
-  AuthSignInRoute: typeof AuthSignInRoute
-  AuthSignUpRoute: typeof AuthSignUpRoute
+  AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
+  OrganizationLayoutRoute: typeof OrganizationLayoutRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/auth/sign-up': {
-      id: '/auth/sign-up'
-      path: '/auth/sign-up'
-      fullPath: '/auth/sign-up'
-      preLoaderRoute: typeof AuthSignUpRouteImport
+    '/organization/_layout': {
+      id: '/organization/_layout'
+      path: '/organization'
+      fullPath: '/organization'
+      preLoaderRoute: typeof OrganizationLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/sign-in': {
-      id: '/auth/sign-in'
-      path: '/auth/sign-in'
-      fullPath: '/auth/sign-in'
-      preLoaderRoute: typeof AuthSignInRouteImport
+    '/auth/_layout': {
+      id: '/auth/_layout'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(dashboard)/_layout': {
@@ -155,12 +233,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardLayoutIndexRouteImport
       parentRoute: typeof dashboardLayoutRoute
     }
-    '/(dashboard)/_layout/settings': {
-      id: '/(dashboard)/_layout/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof dashboardLayoutSettingsRouteImport
-      parentRoute: typeof dashboardLayoutRoute
+    '/organization/_layout/select': {
+      id: '/organization/_layout/select'
+      path: '/select'
+      fullPath: '/organization/select'
+      preLoaderRoute: typeof OrganizationLayoutSelectRouteImport
+      parentRoute: typeof OrganizationLayoutRoute
+    }
+    '/organization/_layout/register': {
+      id: '/organization/_layout/register'
+      path: '/register'
+      fullPath: '/organization/register'
+      preLoaderRoute: typeof OrganizationLayoutRegisterRouteImport
+      parentRoute: typeof OrganizationLayoutRoute
+    }
+    '/auth/_layout/sign-up': {
+      id: '/auth/_layout/sign-up'
+      path: '/sign-up'
+      fullPath: '/auth/sign-up'
+      preLoaderRoute: typeof AuthLayoutSignUpRouteImport
+      parentRoute: typeof AuthLayoutRoute
+    }
+    '/auth/_layout/sign-in': {
+      id: '/auth/_layout/sign-in'
+      path: '/sign-in'
+      fullPath: '/auth/sign-in'
+      preLoaderRoute: typeof AuthLayoutSignInRouteImport
+      parentRoute: typeof AuthLayoutRoute
     }
     '/(dashboard)/_layout/sales': {
       id: '/(dashboard)/_layout/sales'
@@ -176,40 +275,92 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardLayoutInventoryRouteImport
       parentRoute: typeof dashboardLayoutRoute
     }
-    '/(dashboard)/_layout/clients': {
-      id: '/(dashboard)/_layout/clients'
+    '/(dashboard)/_layout/analytics': {
+      id: '/(dashboard)/_layout/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof dashboardLayoutAnalyticsRouteImport
+      parentRoute: typeof dashboardLayoutRoute
+    }
+    '/(dashboard)/_layout/members/': {
+      id: '/(dashboard)/_layout/members/'
+      path: '/members'
+      fullPath: '/members/'
+      preLoaderRoute: typeof dashboardLayoutMembersIndexRouteImport
+      parentRoute: typeof dashboardLayoutRoute
+    }
+    '/(dashboard)/_layout/groups/': {
+      id: '/(dashboard)/_layout/groups/'
+      path: '/groups'
+      fullPath: '/groups/'
+      preLoaderRoute: typeof dashboardLayoutGroupsIndexRouteImport
+      parentRoute: typeof dashboardLayoutRoute
+    }
+    '/(dashboard)/_layout/clients/': {
+      id: '/(dashboard)/_layout/clients/'
       path: '/clients'
-      fullPath: '/clients'
-      preLoaderRoute: typeof dashboardLayoutClientsRouteImport
+      fullPath: '/clients/'
+      preLoaderRoute: typeof dashboardLayoutClientsIndexRouteImport
       parentRoute: typeof dashboardLayoutRoute
     }
   }
 }
 
 interface dashboardLayoutRouteChildren {
-  dashboardLayoutClientsRoute: typeof dashboardLayoutClientsRoute
+  dashboardLayoutAnalyticsRoute: typeof dashboardLayoutAnalyticsRoute
   dashboardLayoutInventoryRoute: typeof dashboardLayoutInventoryRoute
   dashboardLayoutSalesRoute: typeof dashboardLayoutSalesRoute
-  dashboardLayoutSettingsRoute: typeof dashboardLayoutSettingsRoute
   dashboardLayoutIndexRoute: typeof dashboardLayoutIndexRoute
+  dashboardLayoutClientsIndexRoute: typeof dashboardLayoutClientsIndexRoute
+  dashboardLayoutGroupsIndexRoute: typeof dashboardLayoutGroupsIndexRoute
+  dashboardLayoutMembersIndexRoute: typeof dashboardLayoutMembersIndexRoute
 }
 
 const dashboardLayoutRouteChildren: dashboardLayoutRouteChildren = {
-  dashboardLayoutClientsRoute: dashboardLayoutClientsRoute,
+  dashboardLayoutAnalyticsRoute: dashboardLayoutAnalyticsRoute,
   dashboardLayoutInventoryRoute: dashboardLayoutInventoryRoute,
   dashboardLayoutSalesRoute: dashboardLayoutSalesRoute,
-  dashboardLayoutSettingsRoute: dashboardLayoutSettingsRoute,
   dashboardLayoutIndexRoute: dashboardLayoutIndexRoute,
+  dashboardLayoutClientsIndexRoute: dashboardLayoutClientsIndexRoute,
+  dashboardLayoutGroupsIndexRoute: dashboardLayoutGroupsIndexRoute,
+  dashboardLayoutMembersIndexRoute: dashboardLayoutMembersIndexRoute,
 }
 
 const dashboardLayoutRouteWithChildren = dashboardLayoutRoute._addFileChildren(
   dashboardLayoutRouteChildren,
 )
 
+interface AuthLayoutRouteChildren {
+  AuthLayoutSignInRoute: typeof AuthLayoutSignInRoute
+  AuthLayoutSignUpRoute: typeof AuthLayoutSignUpRoute
+}
+
+const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
+  AuthLayoutSignInRoute: AuthLayoutSignInRoute,
+  AuthLayoutSignUpRoute: AuthLayoutSignUpRoute,
+}
+
+const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
+  AuthLayoutRouteChildren,
+)
+
+interface OrganizationLayoutRouteChildren {
+  OrganizationLayoutRegisterRoute: typeof OrganizationLayoutRegisterRoute
+  OrganizationLayoutSelectRoute: typeof OrganizationLayoutSelectRoute
+}
+
+const OrganizationLayoutRouteChildren: OrganizationLayoutRouteChildren = {
+  OrganizationLayoutRegisterRoute: OrganizationLayoutRegisterRoute,
+  OrganizationLayoutSelectRoute: OrganizationLayoutSelectRoute,
+}
+
+const OrganizationLayoutRouteWithChildren =
+  OrganizationLayoutRoute._addFileChildren(OrganizationLayoutRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   dashboardLayoutRoute: dashboardLayoutRouteWithChildren,
-  AuthSignInRoute: AuthSignInRoute,
-  AuthSignUpRoute: AuthSignUpRoute,
+  AuthLayoutRoute: AuthLayoutRouteWithChildren,
+  OrganizationLayoutRoute: OrganizationLayoutRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

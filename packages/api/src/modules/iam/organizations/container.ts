@@ -7,6 +7,7 @@ import { UpdateOrganizationCommand } from "./application/commands/update-organiz
 import { FindOrganizationsByMemberQuery } from "./application/queries/find-orgnizations-by-member.query";
 import { OrganizationHasMembersQuery } from "./application/queries/organization-has-members.query";
 import { OrganizationHasGroupsQuery } from "./application/queries/organization-has-groups.query";
+import { FindActiveOrganizationQuery } from "./application/queries/find-active-organization.query";
 
 const organizationsCommandsRepository = new PGOrganizationCommandsRepository(
   dbConnection,
@@ -27,6 +28,7 @@ const organizationHasMembersQuery = new OrganizationHasMembersQuery(
   dbConnection,
 );
 const organizationHasGroupsQuery = new OrganizationHasGroupsQuery(dbConnection);
+const findActiveOrganizationQuery = new FindActiveOrganizationQuery();
 
 export const organizationsContainer = {
   commands: {
@@ -35,6 +37,7 @@ export const organizationsContainer = {
   },
   queries: {
     findAll: findOrganizationsByMemberQuery,
+    findActive: findActiveOrganizationQuery,
     organizationHasMembers: organizationHasMembersQuery,
     organizationHasGroups: organizationHasGroupsQuery,
   },

@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await authClient.signIn.email({
         email,
         password,
-        callbackURL: "/",
+        callbackURL: "/organization/select",
         fetchOptions: {
           onSuccess: async () => {
             session.refetch();
@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     orpc.auth.commands.signUpEmail.mutationOptions({
       onSuccess: () => {
         router.navigate({
-          to: "/",
+          to: "/auth/sign-in",
         });
       },
     }),

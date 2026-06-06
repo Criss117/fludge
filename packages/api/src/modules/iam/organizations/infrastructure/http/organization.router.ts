@@ -55,5 +55,15 @@ export const organizationRouter = {
           userId: context.session.user.id,
         }),
       ),
+
+    findActive: protectedProcedure
+      .route({
+        method: "GET",
+        path: "/organizations/active",
+        tags: ["organizations"],
+      })
+      .handler(({ context }) =>
+        organizationsContainer.queries.findActive.execute(context.headers),
+      ),
   },
 } as const;
