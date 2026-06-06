@@ -1,20 +1,18 @@
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
 
-import Loader from "./components/loader";
+import { LoaderPage } from "./components/loader-page";
 import { routeTree } from "./routeTree.gen";
 import { queryClient } from "./integrations/query";
 import { IntegrationsProvider } from "./integrations";
+import { useORPC } from "@fludge/client/providers/orpc.provider";
 
 const router = createRouter({
   routeTree,
   defaultPreload: "intent",
   scrollRestoration: true,
-  defaultPendingComponent: () => <Loader />,
-  context: { queryClient },
-  Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
-    return <IntegrationsProvider>{children}</IntegrationsProvider>;
-  },
+  defaultPendingComponent: () => <LoaderPage />,
+  context: { queryClient, orpc: undefined! },
 });
 
 declare module "@tanstack/react-router" {
@@ -23,13 +21,25 @@ declare module "@tanstack/react-router" {
   }
 }
 
+function App() {
+  const { orpc } = useORPC();
+  return <RouterProvider router={router} context={{ queryClient, orpc }} />;
+}
+
 const rootElement = document.getElementById("app");
 
 if (!rootElement) {
   throw new Error("Root element not found");
 }
 
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(<RouterProvider router={router} />);
+let root = (window as any).__reactRoot;
+if (!root) {
+  root = ReactDOM.createRoot(rootElement);
+  (window as any).__reactRoot = root;
 }
+
+root.render(
+  <IntegrationsProvider>
+    <App />
+  </IntegrationsProvider>,
+);

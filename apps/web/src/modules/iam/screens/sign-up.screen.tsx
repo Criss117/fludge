@@ -16,7 +16,7 @@ import {
   PhoneField,
 } from "@fludge/client/presentation/iam/auth-form/web";
 import { useSignUpForm } from "@fludge/client/application/iam/auth-form";
-import { useAuth } from "@/integrations/auth";
+import { useAuth } from "@/integrations/auth/provider";
 
 export function SignUpScreen() {
   const { signUp } = useAuth();

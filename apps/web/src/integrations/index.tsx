@@ -9,12 +9,12 @@ export function IntegrationsProvider({
   children: React.ReactNode;
 }) {
   return (
-    <ORPCProvider>
-      <QueryProvider>
+    <QueryProvider>
+      <ORPCProvider>
         <ThemeProvider>
           <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>
-      </QueryProvider>
-    </ORPCProvider>
+      </ORPCProvider>
+    </QueryProvider>
   );
 }

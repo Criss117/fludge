@@ -9,10 +9,10 @@ interface RootProps {
   options: RPCLinkOptions<ClientContext>;
 }
 
-export interface ORPCContextType {
+export type ORPCContextType = {
   orpc: ReturnType<typeof createTanstackQueryUtils<AppRouterClient>>;
   client: AppRouterClient;
-}
+};
 
 function createLink(options: RPCLinkOptions<ClientContext>) {
   const link = new RPCLink(options);

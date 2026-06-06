@@ -159,8 +159,8 @@ export function useSignUpForm(options: OnSignUpSubmit) {
 export function useSignInForm(options: OnSignInSubmit) {
   return useAppForm({
     defaultValues: {
-      email: "",
-      password: "",
+      email: "natalia@fludge.dev",
+      password: "holiwiss",
     },
     validators: {
       onChange: signInSchema,

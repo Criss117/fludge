@@ -14,7 +14,7 @@ import {
   PasswordField,
 } from "@fludge/client/presentation/iam/auth-form/web";
 import { useSignInForm } from "@fludge/client/application/iam/auth-form";
-import { useAuth } from "@/integrations/auth";
+import { useAuth } from "@/integrations/auth/provider";
 
 export function SignInScreen() {
   const { signInEmail } = useAuth();
