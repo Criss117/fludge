@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ErrorRouteImport } from './routes/error'
 import { Route as OrganizationLayoutRouteImport } from './routes/organization/_layout'
 import { Route as AuthLayoutRouteImport } from './routes/auth/_layout'
 import { Route as dashboardLayoutRouteImport } from './routes/(dashboard)/_layout'
@@ -24,6 +25,11 @@ import { Route as dashboardLayoutMembersIndexRouteImport } from './routes/(dashb
 import { Route as dashboardLayoutGroupsIndexRouteImport } from './routes/(dashboard)/_layout/groups/index'
 import { Route as dashboardLayoutClientsIndexRouteImport } from './routes/(dashboard)/_layout/clients/index'
 
+const ErrorRoute = ErrorRouteImport.update({
+  id: '/error',
+  path: '/error',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OrganizationLayoutRoute = OrganizationLayoutRouteImport.update({
   id: '/organization/_layout',
   path: '/organization',
@@ -102,6 +108,7 @@ const dashboardLayoutClientsIndexRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/error': typeof ErrorRoute
   '/auth': typeof AuthLayoutRouteWithChildren
   '/organization': typeof OrganizationLayoutRouteWithChildren
   '/analytics': typeof dashboardLayoutAnalyticsRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/members/': typeof dashboardLayoutMembersIndexRoute
 }
 export interface FileRoutesByTo {
+  '/error': typeof ErrorRoute
   '/auth': typeof AuthLayoutRouteWithChildren
   '/organization': typeof OrganizationLayoutRouteWithChildren
   '/analytics': typeof dashboardLayoutAnalyticsRoute
@@ -133,6 +141,7 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/error': typeof ErrorRoute
   '/(dashboard)/_layout': typeof dashboardLayoutRouteWithChildren
   '/auth/_layout': typeof AuthLayoutRouteWithChildren
   '/organization/_layout': typeof OrganizationLayoutRouteWithChildren
@@ -151,6 +160,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/error'
     | '/auth'
     | '/organization'
     | '/analytics'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/members/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/error'
     | '/auth'
     | '/organization'
     | '/analytics'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '/members'
   id:
     | '__root__'
+    | '/error'
     | '/(dashboard)/_layout'
     | '/auth/_layout'
     | '/organization/_layout'
@@ -198,6 +210,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  ErrorRoute: typeof ErrorRoute
   dashboardLayoutRoute: typeof dashboardLayoutRouteWithChildren
   AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
   OrganizationLayoutRoute: typeof OrganizationLayoutRouteWithChildren
@@ -205,6 +218,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/error': {
+      id: '/error'
+      path: '/error'
+      fullPath: '/error'
+      preLoaderRoute: typeof ErrorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/organization/_layout': {
       id: '/organization/_layout'
       path: '/organization'
@@ -358,6 +378,7 @@ const OrganizationLayoutRouteWithChildren =
   OrganizationLayoutRoute._addFileChildren(OrganizationLayoutRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
+  ErrorRoute: ErrorRoute,
   dashboardLayoutRoute: dashboardLayoutRouteWithChildren,
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
   OrganizationLayoutRoute: OrganizationLayoutRouteWithChildren,

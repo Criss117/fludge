@@ -1,5 +1,4 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useRouter } from "@tanstack/react-router";
 
 import { Button } from "@fludge/ui/components/button";
 import { useSetActiveOrganization } from "@/modules/iam/hooks/use-set-active-organization";
@@ -27,7 +26,6 @@ export const Route = createFileRoute("/organization/_layout/select")({
 });
 
 function RouteComponent() {
-  const router = useRouter();
   const organizations = Route.useLoaderData();
 
   const setActiveOrganization = useSetActiveOrganization();
@@ -35,10 +33,7 @@ function RouteComponent() {
   const handleClick = (org: { id: string; slug: string }) => {
     setActiveOrganization.mutate(org, {
       onSuccess: () => {
-        router.invalidate();
-        router.navigate({
-          to: "/",
-        });
+        window.location.replace("/");
       },
     });
   };

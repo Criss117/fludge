@@ -1,39 +1,50 @@
-import { createCollection } from "@tanstack/react-db";
+import { createCollection, BasicIndex } from "@tanstack/react-db";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import type { ORPCType } from "@fludge/client/providers/orpc.provider";
 import { QueryClient } from "@tanstack/react-query";
 
-export const GROUP_COLLECTION_KEY = ["iam", "groups"] as const;
 export type GroupSummary = Awaited<
   ReturnType<ORPCType["groups"]["queries"]["findAll"]["call"]>
 >[number];
 
-let collection: ReturnType<typeof builder> | null = null;
+const collectionCache = new Map<string, ReturnType<typeof builder>>();
 
-function builder(queryClient: QueryClient, orpc: ORPCType) {
+function builder(
+  organizationId: string,
+  queryClient: QueryClient,
+  orpc: ORPCType,
+) {
   const groupCollection = createCollection(
     queryCollectionOptions({
       queryClient,
-      queryKey: GROUP_COLLECTION_KEY,
+      queryKey: ["organizations", organizationId, "groups"],
       queryFn: async () => {
         const data = await orpc.groups.queries.findAll.call();
 
         return data;
       },
       getKey: (item) => item.id,
+      defaultIndexType: BasicIndex,
     }),
   );
+
+  groupCollection.createIndex((row) => row.name);
+  groupCollection.createIndex((row) => row.slug);
+  groupCollection.createIndex((row) => row.id);
 
   return groupCollection;
 }
 
 export function groupCollectionBuilder(
+  organizationId: string,
   queryClient: QueryClient,
   orpc: ORPCType,
 ) {
-  if (!collection) {
-    collection = builder(queryClient, orpc);
+  if (!collectionCache.has(organizationId)) {
+    collectionCache.set(
+      organizationId,
+      builder(organizationId, queryClient, orpc),
+    );
   }
-
-  return collection;
+  return collectionCache.get(organizationId)!;
 }

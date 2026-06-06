@@ -1,4 +1,4 @@
-import "../index.css";
+// import "../index.css";
 
 import { Toaster } from "@fludge/ui/components/sonner";
 import type { QueryClient } from "@tanstack/react-query";
@@ -12,6 +12,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { useORPC } from "@fludge/client/providers/orpc.provider";
 import { AuthProvider, Session } from "@/integrations/auth/provider";
+import { ErrorScreen } from "@/components/error.screen";
 
 export interface RouterAppContext {
   queryClient: QueryClient;
@@ -21,6 +22,15 @@ export interface RouterAppContext {
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
   component: RootComponent,
+  beforeLoad: async ({ context }) => {
+    const session = await context.queryClient.ensureQueryData(
+      context.orpc.auth.queries.getSession.queryOptions(),
+    );
+
+    return {
+      session,
+    };
+  },
   head: () => ({
     meta: [
       {
@@ -38,6 +48,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
       },
     ],
   }),
+  errorComponent: ErrorScreen,
 });
 
 function RootComponent() {

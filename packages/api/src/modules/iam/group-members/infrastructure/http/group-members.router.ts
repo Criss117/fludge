@@ -8,7 +8,8 @@ const TAGS = ["Group Members"] as const;
 export const groupMembersRouter = {
   commands: {
     assignMembers: withOrganization({
-      requirePermission: "groups:assign-member",
+      requirePermission: ["groups:assign-member", "members:assign-group"],
+      mode: "any",
     })
       .route({
         method: "POST",
@@ -25,7 +26,8 @@ export const groupMembersRouter = {
       ),
 
     unassignMembers: withOrganization({
-      requirePermission: "groups:assign-member",
+      requirePermission: ["groups:assign-member", "members:assign-group"],
+      mode: "any",
     })
       .route({
         method: "DELETE",

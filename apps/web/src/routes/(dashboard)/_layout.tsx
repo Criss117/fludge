@@ -6,17 +6,13 @@ import { AppSidebar } from "@/components/app-sidebar";
 export const Route = createFileRoute("/(dashboard)/_layout")({
   component: RouteComponent,
   beforeLoad: async ({ context }) => {
-    const session = await context.queryClient.ensureQueryData(
-      context.orpc.auth.queries.getSession.queryOptions(),
-    );
+    const session = context.session;
 
     if (!session) {
       throw redirect({
         to: "/auth/sign-in",
       });
     }
-
-    console.log({ session });
 
     if (!session.activeOrganizationId) {
       throw redirect({
@@ -28,13 +24,16 @@ export const Route = createFileRoute("/(dashboard)/_layout")({
       context.orpc.organizations.queries.findActive.queryOptions(),
     );
 
-    console.log({ activeOrganization });
-
     if (!activeOrganization) {
       throw redirect({
         to: "/organization/select",
       });
     }
+
+    return {
+      session,
+      activeOrganization,
+    };
   },
 });
 

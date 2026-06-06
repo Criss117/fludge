@@ -50,7 +50,6 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
   const { orpc } = useORPC();
   const queryClient = useQueryClient();
   const session = useSuspenseQuery(orpc.auth.queries.getSession.queryOptions());
@@ -74,9 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = useMutation(
     orpc.auth.commands.signUpEmail.mutationOptions({
       onSuccess: () => {
-        router.navigate({
-          to: "/auth/sign-in",
-        });
+        window.location.replace("/auth/sign-in");
       },
     }),
   );
@@ -85,17 +82,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     mutationKey: ["auth", "sign-out"],
     mutationFn: async () => {
       await authClient.signOut();
-      queryClient.invalidateQueries();
-      queryClient.setQueryData(
-        orpc.auth.queries.getSession.queryOptions().queryKey,
-        null,
-      );
     },
     onSuccess: () => {
-      router.options.context.session = null;
-      router.navigate({
-        to: "/auth/sign-in",
-      });
+      window.location.replace("/auth/sign-in");
     },
   });
 

@@ -36,7 +36,10 @@ export class FindAllGroupsQuery {
         .where(eq(group.organizationId, query.organizationId)),
     );
 
-    if (error) throw new ORPCError("INTERNAL_SERVER_ERROR", error);
+    if (error)
+      throw new ORPCError("INTERNAL_SERVER_ERROR", {
+        message: "Algo salio mal al buscar grupos",
+      });
 
     return data.map(({ createdBy, ...rest }) => ({
       ...rest,

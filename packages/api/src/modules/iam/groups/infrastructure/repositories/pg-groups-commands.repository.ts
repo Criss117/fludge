@@ -8,7 +8,6 @@ import type { DbConnection } from "@fludge/db";
 import {
   group,
   groupHistory,
-  groupMember,
   type GroupHistoryInsert,
   type GroupInsert,
 } from "@fludge/db/schemas/iam.schema";

@@ -1,8 +1,8 @@
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
 
 import type { DbConnection } from "@fludge/db";
-import { member } from "@fludge/db/schemas/auth.schema";
+import { member, user } from "@fludge/db/schemas/auth.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 
 type Query = {
@@ -15,8 +15,15 @@ export class FindAllMembersQuery {
   public async execute({ organizationId }: Query) {
     const [data, error] = await tryCatch(
       this.db
-        .select()
+        .select({
+          ...getTableColumns(member),
+          user: {
+            name: user.name,
+            email: user.email,
+          },
+        })
         .from(member)
+        .innerJoin(user, eq(user.id, member.userId))
         .where(eq(member.organizationId, organizationId)),
     );
 

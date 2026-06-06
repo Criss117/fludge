@@ -3,9 +3,9 @@ import {
   Archive,
   BookUser,
   Boxes,
+  Building,
   ChartBar,
   Home,
-  Settings,
   UserRound,
   Wallet,
 } from "lucide-react";
@@ -18,8 +18,11 @@ import {
   SidebarHeader,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@fludge/ui/components/sidebar";
 import { cn } from "@fludge/ui/lib/utils";
+import { useFindActiveOrganization } from "@fludge/client/application/iam/hooks/use-organization-queries";
+import { Button } from "@fludge/ui/components/button";
 
 const NavItems = [
   { name: "Dashboard", href: "/", Icon: Home },
@@ -33,6 +36,8 @@ const NavItems = [
 
 export function AppSidebar() {
   const location = useLocation();
+  const { open } = useSidebar();
+  const { data: organization } = useFindActiveOrganization();
 
   const isActive = (href: string) => {
     if (href === "/" && location.pathname === "/") {
@@ -43,10 +48,24 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar variant="inset" collapsible="offcanvas">
-      <SidebarHeader className="mb-4">
-        <h1 className="text-4xl text-sidebar-primary font-black">Fludge</h1>
-        <p className="text-muted-foreground text-sm">POS de trabajo</p>
+    <Sidebar variant="inset" collapsible="icon">
+      <SidebarHeader className="mb-4 ">
+        <div className="flex flex-row items-center justify-center">
+          {open ? (
+            <h1 className="text-xl text-sidebar-primary font-black line-clamp-2">
+              {organization?.name}
+            </h1>
+          ) : (
+            <Building size={24} />
+          )}
+        </div>
+        <Button
+          nativeButton={false}
+          render={(props) => <Link to="/organization/select" {...props} />}
+        >
+          <Building size={24} />
+          <span>Seleccionar organización</span>
+        </Button>
       </SidebarHeader>
       <Separator />
       <SidebarContent className="mt-4">

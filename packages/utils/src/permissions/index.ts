@@ -1,4 +1,9 @@
-import { PERMISSIONS, type Permission, type Resource } from "./data";
+import {
+  PERMISSION_DESCRIPTIONS,
+  PERMISSIONS,
+  type Permission,
+  type Resource,
+} from "./data";
 
 function hasPermission(
   userPermissions: Permission[],
@@ -57,3 +62,21 @@ export const ALL_PERMISSIONS = Object.entries(PERMISSIONS).flatMap(
   ([resource, actions]) =>
     Object.values(actions).map((action) => `${resource}:${action}`),
 ) as [Permission, ...Permission[]];
+
+function toCamelCase(str: string): string {
+  return str.replace(/[-_]([a-z])/g, (_, letter) => letter.toUpperCase());
+}
+
+export function getPermissionDescription(permission: Permission) {
+  const [resourse, action] = permission.split(":") as [Resource, string];
+
+  const resDescs = PERMISSION_DESCRIPTIONS[resourse];
+
+  const actionCamelCase = toCamelCase(action);
+
+  const desc = resDescs[actionCamelCase as keyof typeof resDescs];
+
+  if (!desc) return "-";
+
+  return desc;
+}
