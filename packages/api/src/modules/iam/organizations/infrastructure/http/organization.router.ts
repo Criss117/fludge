@@ -7,13 +7,15 @@ import { organizationsContainer } from "@fludge/api/modules/iam/organizations/co
 import { registerOrganizationCommand } from "@fludge/api/modules/iam/organizations/application/commands/register-organization.command";
 import { updateOrganizationCommand } from "@fludge/api/modules/iam/organizations/application/commands/update-organization.command";
 
+const TAGS = ["Organizations"] as const;
+
 export const organizationRouter = {
   commands: {
     register: rootOnlyProcedure
       .route({
         method: "POST",
         path: "/organizations",
-        tags: ["organizations"],
+        tags: TAGS,
       })
       .input(registerOrganizationCommand)
       .handler(({ input, context }) =>
@@ -29,7 +31,7 @@ export const organizationRouter = {
       .route({
         method: "PATCH",
         path: "/organizations",
-        tags: ["organizations"],
+        tags: TAGS,
       })
       .input(updateOrganizationCommand)
       .handler(({ input, context }) =>
@@ -48,7 +50,7 @@ export const organizationRouter = {
       .route({
         method: "GET",
         path: "/organizations",
-        tags: ["organizations"],
+        tags: TAGS,
       })
       .handler(({ context }) =>
         organizationsContainer.queries.findAll.execute({
@@ -60,7 +62,7 @@ export const organizationRouter = {
       .route({
         method: "GET",
         path: "/organizations/active",
-        tags: ["organizations"],
+        tags: TAGS,
       })
       .handler(({ context }) =>
         organizationsContainer.queries.findActive.execute(context.headers),

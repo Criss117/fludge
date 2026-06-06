@@ -2,13 +2,15 @@ import { publicProcedure } from "@fludge/api/index";
 import { signUpEmailCommand } from "@fludge/api/modules/iam/auth/application/commands/sign-up.command";
 import { authContainer } from "@fludge/api/modules/iam/auth/container";
 
+const TAGS = ["Auth"] as const;
+
 export const authRouter = {
   commands: {
     signUpEmail: publicProcedure
       .route({
         method: "POST",
         path: "/auth/sign-up-email",
-        tags: ["auth"],
+        tags: TAGS,
       })
       .input(signUpEmailCommand)
       .handler(({ input, context }) =>
@@ -20,7 +22,7 @@ export const authRouter = {
       .route({
         method: "GET",
         path: "/auth/session",
-        tags: ["auth"],
+        tags: TAGS,
       })
       .handler(({ context }) => context.session),
   },

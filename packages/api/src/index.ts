@@ -12,6 +12,7 @@ type RequireOrganizationOptions =
     }
   | {
       requirePermission: Permission | Permission[];
+      mode?: "all" | "any";
     };
 
 export const o = os.$context<Context>();
@@ -100,6 +101,7 @@ function requireOrganization(options: RequireOrganizationOptions) {
     const hasPemissions = checkPermissions(
       userPermissions,
       options.requirePermission,
+      options.mode,
     );
 
     if (!hasPemissions)

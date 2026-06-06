@@ -6,8 +6,8 @@ import { updateGroupCommand } from "@fludge/api/modules/iam/groups/application/c
 import { deleteGroupsCommand } from "@fludge/api/modules/iam/groups/application/commands/delete-groups.command";
 import { activateGroupsCommand } from "@fludge/api/modules/iam/groups/application/commands/activate-groups.command";
 import { deactivateGroupsCommand } from "@fludge/api/modules/iam/groups/application/commands/deactivate-groups.command";
-import { assignMembersToGroupCommand } from "@fludge/api/modules/iam/groups/application/commands/assign-members-to-group.command";
-import { unassignMembersOfGroupCommand } from "@fludge/api/modules/iam/groups/application/commands/unassign-members-of-group.command";
+
+const TAGS = ["Groups"] as const;
 
 export const groupsRouter = {
   commands: {
@@ -17,7 +17,7 @@ export const groupsRouter = {
       .route({
         method: "POST",
         path: "/groups",
-        tags: ["groups"],
+        tags: TAGS,
       })
       .input(createGroupCommand)
       .handler(({ input, context }) =>
@@ -34,7 +34,7 @@ export const groupsRouter = {
       .route({
         method: "PATCH",
         path: "/groups",
-        tags: ["groups"],
+        tags: TAGS,
       })
       .input(updateGroupCommand)
       .handler(({ input, context }) =>
@@ -51,7 +51,7 @@ export const groupsRouter = {
       .route({
         method: "DELETE",
         path: "/groups",
-        tags: ["groups"],
+        tags: TAGS,
       })
       .input(deleteGroupsCommand)
       .handler(({ input, context }) =>
@@ -67,7 +67,7 @@ export const groupsRouter = {
       .route({
         method: "PATCH",
         path: "/groups/activate",
-        tags: ["groups"],
+        tags: TAGS,
       })
       .input(activateGroupsCommand)
       .handler(({ input, context }) =>
@@ -84,45 +84,11 @@ export const groupsRouter = {
       .route({
         method: "PATCH",
         path: "/groups/deactivate",
-        tags: ["groups"],
+        tags: TAGS,
       })
       .input(deactivateGroupsCommand)
       .handler(({ input, context }) =>
         groupsContainer.commands.deactivate.execute({
-          ...input,
-          organizationId: context.session.activeOrganization.id,
-          changedByMemberId: context.session.member.id,
-        }),
-      ),
-
-    assignMembers: withOrganization({
-      requirePermission: "groups:assign-member",
-    })
-      .route({
-        method: "POST",
-        path: "/groups/members",
-        tags: ["groups"],
-      })
-      .input(assignMembersToGroupCommand)
-      .handler(({ input, context }) =>
-        groupsContainer.commands.assignMembers.execute({
-          ...input,
-          organizationId: context.session.activeOrganization.id,
-          changedByMemberId: context.session.member.id,
-        }),
-      ),
-
-    unassignMembers: withOrganization({
-      requirePermission: "groups:assign-member",
-    })
-      .route({
-        method: "DELETE",
-        path: "/groups/members",
-        tags: ["groups"],
-      })
-      .input(unassignMembersOfGroupCommand)
-      .handler(({ input, context }) =>
-        groupsContainer.commands.unassignMembers.execute({
           ...input,
           organizationId: context.session.activeOrganization.id,
           changedByMemberId: context.session.member.id,
@@ -136,7 +102,7 @@ export const groupsRouter = {
       .route({
         method: "GET",
         path: "/groups/by-member",
-        tags: ["groups"],
+        tags: TAGS,
       })
       .handler(({ context }) =>
         groupsContainer.queries.findAllByMember.execute({
@@ -150,7 +116,7 @@ export const groupsRouter = {
       .route({
         method: "GET",
         path: "/groups",
-        tags: ["groups"],
+        tags: TAGS,
       })
       .handler(({ context }) =>
         groupsContainer.queries.findAll.execute({
