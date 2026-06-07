@@ -20,7 +20,11 @@ export const memberRouter = {
           {
             ...input,
             organizationId: context.session.activeOrganization.id,
-            assignedByMemberId: context.session.member.id,
+            assignedBy: {
+              memberId: context.session.member.id,
+              name: context.session.user.name,
+              email: context.session.user.email,
+            },
           },
           context.headers,
         ),

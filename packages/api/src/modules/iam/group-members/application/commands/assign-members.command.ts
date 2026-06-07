@@ -28,7 +28,11 @@ export const assignMembersCommand = z.object({
 
 type CMD = z.infer<typeof assignMembersCommand> & {
   organizationId: string;
-  changedByMemberId: string;
+  assignedBy: {
+    memberId: string;
+    name: string;
+    email: string;
+  };
 };
 
 export class AssignMembersCommand {
@@ -68,7 +72,7 @@ export class AssignMembersCommand {
       await this.groupMembersCommandsRepository.assignMembers(
         cmd.groupIds,
         cmd.memberIds,
-        cmd.changedByMemberId,
+        cmd.assignedBy.memberId,
       );
 
     if (errorAssign) throw new ORPCError("INTERNAL_SERVER_ERROR", errorAssign);

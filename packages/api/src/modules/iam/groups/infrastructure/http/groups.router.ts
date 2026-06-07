@@ -45,7 +45,11 @@ export const groupsRouter = {
         groupsContainer.commands.update.execute({
           ...input,
           organizationId: context.session.activeOrganization.id,
-          changedByMemberId: context.session.member.id,
+          updatedBy: {
+            memberId: context.session.member.id,
+            name: context.session.user.name,
+            email: context.session.user.email,
+          },
         }),
       ),
 
@@ -78,7 +82,6 @@ export const groupsRouter = {
         groupsContainer.commands.activate.execute({
           ...input,
           organizationId: context.session.activeOrganization.id,
-          changedByMemberId: context.session.member.id,
         }),
       ),
 
@@ -95,7 +98,6 @@ export const groupsRouter = {
         groupsContainer.commands.deactivate.execute({
           ...input,
           organizationId: context.session.activeOrganization.id,
-          changedByMemberId: context.session.member.id,
         }),
       ),
   },

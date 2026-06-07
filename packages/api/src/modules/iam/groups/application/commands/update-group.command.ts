@@ -14,7 +14,11 @@ export const updateGroupCommand = createGroupCommand.extend({
 
 type CMD = z.infer<typeof updateGroupCommand> & {
   organizationId: string;
-  changedByMemberId: string;
+  updatedBy: {
+    memberId: string;
+    name: string;
+    email: string;
+  };
 };
 
 export class UpdateGroupCommand {
@@ -83,7 +87,7 @@ export class UpdateGroupCommand {
             description: `{user.name} actualizo el grupo con id ${cmd.groupId}`,
             before: existingGroup,
             after: updatedGroup,
-            by: cmd.changedByMemberId,
+            by: cmd.updatedBy.memberId,
           },
           {
             tx,

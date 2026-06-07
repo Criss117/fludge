@@ -21,7 +21,11 @@ export const groupMembersRouter = {
         groupMembersContainer.commands.assignMembers.execute({
           ...input,
           organizationId: context.session.activeOrganization.id,
-          changedByMemberId: context.session.member.id,
+          assignedBy: {
+            memberId: context.session.member.id,
+            name: context.session.user.name,
+            email: context.session.user.email,
+          },
         }),
       ),
 

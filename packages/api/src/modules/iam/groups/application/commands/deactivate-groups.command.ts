@@ -16,7 +16,6 @@ export const deactivateGroupsCommand = z.object({
 
 type CMD = z.infer<typeof deactivateGroupsCommand> & {
   organizationId: string;
-  changedByMemberId: string;
 };
 
 export class DeactivateGroupsCommand {
