@@ -9,6 +9,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@fludge/ui/components/card";
+import { Skeleton } from "@fludge/ui/components/skeleton";
 
 interface Props {
   organizationId: string;
@@ -67,6 +68,48 @@ export function GroupsHeaderSection({ organizationId }: Props) {
   );
 }
 
+const groupInfoSkeleton = [
+  {
+    title: "Grupos Totales",
+  },
+  {
+    title: "Miembros Asignados",
+  },
+  {
+    title: "Miembros Sin Asignar",
+  },
+];
+
 export function GroupsHeaderSectionSkeleton() {
-  return null;
+  return (
+    <section className="space-y-8">
+      <header className="flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-semibold">Listado de Grupos</h2>
+          <p className="text-muted-foreground">
+            Controla el nivel de acceso de los miembros a través de la
+            organización
+          </p>
+        </div>
+        <div>
+          <Button>
+            <PlusIcon />
+            <span>Nuevo Grupo</span>
+          </Button>
+        </div>
+      </header>
+      <div className="flex gap-x-4 justify-between">
+        {groupInfoSkeleton.map(({ title }) => (
+          <Card key={title} className="flex-1">
+            <CardHeader>
+              <CardTitle className="uppercase text-muted-foreground">
+                {title}
+              </CardTitle>
+              <Skeleton className="h-8 w-1/3" />
+            </CardHeader>
+          </Card>
+        ))}
+      </div>
+    </section>
+  );
 }

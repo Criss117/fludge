@@ -1,4 +1,10 @@
-import { GroupsHeaderSection } from "@/modules/iam/sections/groups-header.section";
+import {
+  GroupsHeaderSection,
+  GroupsHeaderSectionSkeleton,
+} from "@/modules/iam/sections/groups-header.section";
+import { GroupsTableSection } from "@/modules/iam/sections/groups-table.section";
+import { GroupsFiltersSection } from "@/modules/iam/sections/groups-filters.section";
+import { FiltersProvider } from "@fludge/client/presentation/shared/context/filter.context";
 
 interface Props {
   organizationId: string;
@@ -6,12 +12,20 @@ interface Props {
 
 export function GroupsScreen({ organizationId }: Props) {
   return (
-    <div className="p-8">
+    <div className="p-8 space-y-8">
       <GroupsHeaderSection organizationId={organizationId} />
+      <FiltersProvider>
+        <GroupsFiltersSection />
+        <GroupsTableSection organizationId={organizationId} />
+      </FiltersProvider>
     </div>
   );
 }
 
 export function GroupsScreenSkeleton() {
-  return <div className="px-5">Loading...</div>;
+  return (
+    <div className="p-8">
+      <GroupsHeaderSectionSkeleton />
+    </div>
+  );
 }
