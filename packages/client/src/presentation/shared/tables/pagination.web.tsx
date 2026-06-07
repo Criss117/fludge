@@ -40,11 +40,35 @@ interface LastPageProps {
   lastPage: () => void;
 }
 
+const PageSizeOptions = [
+  {
+    label: "10",
+    value: 10,
+  },
+  {
+    label: "20",
+    value: 20,
+  },
+  {
+    label: "30",
+    value: 30,
+  },
+  {
+    label: "40",
+    value: 40,
+  },
+  {
+    label: "50",
+    value: 50,
+  },
+] as const;
+
 export function PageSize({ pageSize, setPageSize }: PageSizeProps) {
   return (
     <div className="flex items-center gap-2">
       <span className="text-sm text-muted-foreground">Filas por página</span>
       <Select
+        items={PageSizeOptions}
         value={pageSize}
         defaultValue={pageSize}
         onValueChange={(v) => {
@@ -53,13 +77,13 @@ export function PageSize({ pageSize, setPageSize }: PageSizeProps) {
         }}
       >
         <SelectTrigger>
-          <SelectValue placeholder="10" />
+          <SelectValue />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {[10, 20, 30, 40, 50].map((size) => (
-              <SelectItem key={size} value={size}>
-                {size}
+            {PageSizeOptions.map((size) => (
+              <SelectItem key={size.value} value={size.value}>
+                {size.label}
               </SelectItem>
             ))}
           </SelectGroup>

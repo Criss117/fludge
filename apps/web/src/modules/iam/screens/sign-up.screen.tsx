@@ -9,13 +9,7 @@ import {
   CardTitle,
 } from "@fludge/ui/components/card";
 import { FieldGroup } from "@fludge/ui/components/field";
-import {
-  EmailField,
-  PasswordField,
-  NameField,
-  PhoneField,
-} from "@fludge/client/presentation/iam/auth-form/web";
-import { useSignUpForm } from "@fludge/client/application/iam/forms/auth.form";
+import { useSignUpForm } from "@fludge/client/presentation/iam/forms/auth/web";
 import { useAuth } from "@/integrations/auth/provider";
 
 export function SignUpScreen() {
@@ -47,32 +41,16 @@ export function SignUpScreen() {
           <CardContent className="space-y-4">
             <FieldGroup>
               <form.AppField name="name">
-                {(field) => (
-                  <field.NameField>
-                    {(p) => <NameField {...p} />}
-                  </field.NameField>
-                )}
+                {(field) => <field.NameField />}
               </form.AppField>
               <form.AppField name="phone">
-                {(field) => (
-                  <field.PhoneField>
-                    {(p) => <PhoneField {...p} />}
-                  </field.PhoneField>
-                )}
+                {(field) => <field.PhoneField />}
               </form.AppField>
               <form.AppField name="email">
-                {(field) => (
-                  <field.EmailField>
-                    {(p) => <EmailField {...p} />}
-                  </field.EmailField>
-                )}
+                {(field) => <field.EmailField />}
               </form.AppField>
               <form.AppField name="password">
-                {(field) => (
-                  <field.PasswordField>
-                    {(p) => <PasswordField {...p} />}
-                  </field.PasswordField>
-                )}
+                {(field) => <field.PasswordField />}
               </form.AppField>
             </FieldGroup>
             <Button type="submit" className="w-full" size="lg">

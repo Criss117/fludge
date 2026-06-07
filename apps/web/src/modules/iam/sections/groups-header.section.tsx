@@ -10,6 +10,7 @@ import {
   CardDescription,
 } from "@fludge/ui/components/card";
 import { Skeleton } from "@fludge/ui/components/skeleton";
+import { CreateGroup } from "../components/create-group";
 
 interface Props {
   organizationId: string;
@@ -46,10 +47,7 @@ export function GroupsHeaderSection({ organizationId }: Props) {
           </p>
         </div>
         <div>
-          <Button>
-            <PlusIcon />
-            <span>Nuevo Grupo</span>
-          </Button>
+          <CreateGroup />
         </div>
       </header>
       <div className="flex gap-x-4 justify-between">

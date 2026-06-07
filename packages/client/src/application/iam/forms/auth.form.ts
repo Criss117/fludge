@@ -1,89 +1,5 @@
-import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
+import { formOptions } from "@tanstack/react-form";
 import { z } from "zod";
-
-export const { fieldContext, formContext, useFieldContext } =
-  createFormHookContexts();
-
-const { useAppForm } = createFormHook({
-  fieldContext,
-  formContext,
-  fieldComponents: { NameField, EmailField, PasswordField, PhoneField },
-  formComponents: {},
-});
-
-export type FieldInput<T, Extra = {}> = {
-  field: ReturnType<typeof useFieldContext<T>>;
-  id: string;
-  isInvalid: boolean;
-} & Extra;
-
-function NameField<Extra>({
-  children,
-  extra,
-}: {
-  children: (props: FieldInput<string, Extra>) => React.ReactNode;
-  extra?: Extra;
-}) {
-  const field = useFieldContext<string>();
-  const id = "auth-form-name";
-  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-  return children({ field, id, isInvalid, ...(extra ?? {}) } as FieldInput<
-    string,
-    Extra
-  >);
-}
-
-function EmailField<Extra>({
-  children,
-  extra,
-}: {
-  children: (props: FieldInput<string, Extra>) => React.ReactNode;
-  extra?: Extra;
-}) {
-  const field = useFieldContext<string>();
-  const id = "auth-form-email";
-  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-  return children({ field, id, isInvalid, ...(extra ?? {}) } as FieldInput<
-    string,
-    Extra
-  >);
-}
-
-function PasswordField<Extra>({
-  children,
-  extra,
-}: {
-  children: (props: FieldInput<string, Extra>) => React.ReactNode;
-  extra?: Extra;
-}) {
-  const field = useFieldContext<string>();
-  const id = "auth-form-password";
-  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-  return children({ field, id, isInvalid, ...(extra ?? {}) } as FieldInput<
-    string,
-    Extra
-  >);
-}
-
-function PhoneField<Extra>({
-  children,
-  extra,
-}: {
-  children: (props: FieldInput<string, Extra>) => React.ReactNode;
-  extra?: Extra;
-}) {
-  const field = useFieldContext<string>();
-  const id = "auth-form-phone";
-  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-  return children({ field, id, isInvalid, ...(extra ?? {}) } as FieldInput<
-    string,
-    Extra
-  >);
-}
 
 const signInSchema = z.object({
   email: z.email({ error: "Ingresa un email válido" }),
@@ -131,16 +47,31 @@ const signUpSchema = z.object({
 export type SignInSchema = z.infer<typeof signInSchema>;
 export type SignUpSchema = z.infer<typeof signUpSchema>;
 
-type OnSignInSubmit = {
+export type OnSignInSubmit = {
   onSubmit: (options: { value: SignInSchema; resetForm: () => void }) => void;
 };
 
-type OnSignUpSubmit = {
+export type OnSignUpSubmit = {
   onSubmit: (options: { value: SignUpSchema; resetForm: () => void }) => void;
 };
 
-export function useSignUpForm(options: OnSignUpSubmit) {
-  return useAppForm({
+export function signInFormOptions(options: OnSignInSubmit) {
+  return formOptions({
+    defaultValues: {
+      email: "natalia@fludge.dev",
+      password: "holiwiss",
+    },
+    validators: {
+      onChange: signInSchema,
+    },
+    onSubmit: ({ value, formApi }) => {
+      options.onSubmit({ value, resetForm: formApi.reset });
+    },
+  });
+}
+
+export function signUpFormOptions(options: OnSignUpSubmit) {
+  return formOptions({
     defaultValues: {
       email: "",
       password: "",
@@ -149,21 +80,6 @@ export function useSignUpForm(options: OnSignUpSubmit) {
     },
     validators: {
       onChange: signUpSchema,
-    },
-    onSubmit: ({ value, formApi }) => {
-      options.onSubmit({ value, resetForm: formApi.reset });
-    },
-  });
-}
-
-export function useSignInForm(options: OnSignInSubmit) {
-  return useAppForm({
-    defaultValues: {
-      email: "natalia@fludge.dev",
-      password: "holiwiss",
-    },
-    validators: {
-      onChange: signInSchema,
     },
     onSubmit: ({ value, formApi }) => {
       options.onSubmit({ value, resetForm: formApi.reset });

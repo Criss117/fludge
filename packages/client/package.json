@@ -11,6 +11,7 @@
     "@fludge/api": "workspace:*",
     "@fludge/auth": "workspace:*",
     "@fludge/ui": "workspace:*",
+    "@fludge/utils": "workspace:*",
     "@orpc/client": "catalog:",
     "@orpc/server": "catalog:",
     "@orpc/tanstack-query": "catalog:",

@@ -76,7 +76,19 @@ export function getPermissionDescription(permission: Permission) {
 
   const desc = resDescs[actionCamelCase as keyof typeof resDescs];
 
-  if (!desc) return "-";
+  if (!desc)
+    return {
+      title: action,
+      description: "No description available",
+    };
 
   return desc;
+}
+
+export function getPermissionByResource(resource: Resource) {
+  const actions = PERMISSIONS[resource];
+
+  return Object.values(actions).map(
+    (action) => `${resource}:${action}`,
+  ) as Permission[];
 }

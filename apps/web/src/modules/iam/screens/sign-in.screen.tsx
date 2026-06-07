@@ -9,11 +9,7 @@ import {
   CardTitle,
 } from "@fludge/ui/components/card";
 import { FieldGroup } from "@fludge/ui/components/field";
-import {
-  EmailField,
-  PasswordField,
-} from "@fludge/client/presentation/iam/auth-form/web";
-import { useSignInForm } from "@fludge/client/application/iam/forms/auth.form";
+import { useSignInForm } from "@fludge/client/presentation/iam/forms/auth/web";
 import { useAuth } from "@/integrations/auth/provider";
 
 export function SignInScreen() {
@@ -44,18 +40,10 @@ export function SignInScreen() {
           <CardContent className="space-y-4">
             <FieldGroup>
               <form.AppField name="email">
-                {(field) => (
-                  <field.EmailField>
-                    {(p) => <EmailField {...p} />}
-                  </field.EmailField>
-                )}
+                {(field) => <field.EmailField />}
               </form.AppField>
               <form.AppField name="password">
-                {(field) => (
-                  <field.PasswordField>
-                    {(p) => <PasswordField {...p} />}
-                  </field.PasswordField>
-                )}
+                {(field) => <field.PasswordField />}
               </form.AppField>
             </FieldGroup>
             <Button

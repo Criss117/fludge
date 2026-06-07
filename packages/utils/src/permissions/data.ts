@@ -31,21 +31,61 @@ export type Permission = {
 
 export type PermissionDescriptions = {
   [R in Resource]: {
-    [A in keyof (typeof PERMISSIONS)[R]]: string;
+    [A in keyof (typeof PERMISSIONS)[R]]: {
+      title: string;
+      description: string;
+    };
   };
 };
 
+export const RESOURCE_DESCRIPTIONS = {
+  groups: "Grupos",
+  members: "Miembros",
+} as const satisfies Record<Resource, string>;
+
 export const PERMISSION_DESCRIPTIONS = {
   groups: {
-    view: "Permite ver grupos",
-    create: "Permite crear grupos",
-    delete: "Permite eliminar grupos",
-    assignMember: "Permite asignar miembros a grupos",
-    update: "Permite actualizar grupos",
+    view: {
+      title: "Ver grupos",
+      description:
+        "Permite visualizar el listado de grupos y acceder a sus detalles básicos.",
+    },
+    create: {
+      title: "Crear grupos",
+      description:
+        "Permite registrar nuevos grupos en el sistema y definir su configuración inicial.",
+    },
+    delete: {
+      title: "Eliminar grupos",
+      description:
+        "Permite borrar grupos permanentemente del sistema. Esta acción puede ser irreversible.",
+    },
+    assignMember: {
+      title: "Asignar miembros a grupos",
+      description:
+        "Permite añadir o remover usuarios dentro de un grupo específico.",
+    },
+    update: {
+      title: "Editar grupos",
+      description:
+        "Permite modificar el nombre, la configuración y los datos generales de los grupos existentes.",
+    },
   },
   members: {
-    view: "Permite ver los miembros",
-    create: "Permite crear miembros",
-    assignGroup: "Permite asignar grupos a miembros",
+    view: {
+      title: "Ver miembros",
+      description:
+        "Permite consultar la lista de miembros, sus perfiles y su estado actual.",
+    },
+    create: {
+      title: "Crear miembros",
+      description:
+        "Permite registrar nuevos miembros en la plataforma e invitarlos a participar.",
+    },
+    assignGroup: {
+      title: "Asignar grupos a miembros",
+      description:
+        "Permite vincular directamente a un miembro con uno o varios grupos disponibles.",
+    },
   },
 } as const satisfies PermissionDescriptions;
