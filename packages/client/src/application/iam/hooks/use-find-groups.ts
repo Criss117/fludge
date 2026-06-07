@@ -44,7 +44,8 @@ export function useFindAllGroups(organizationId: string, filters?: Filters) {
               assignedBy: gm.assignedBy,
             })),
         }))
-        .where(({ g }) => ilike(g.name, `%${name}%`)),
+        .where(({ g }) => ilike(g.name, `%${name}%`))
+        .orderBy(({ g }) => g.createdAt, "desc"),
     [name],
   );
 }

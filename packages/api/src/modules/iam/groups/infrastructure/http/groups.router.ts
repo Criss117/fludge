@@ -24,7 +24,11 @@ export const groupsRouter = {
         groupsContainer.commands.create.execute({
           ...input,
           organizationId: context.session.activeOrganization.id,
-          changedByMemberId: context.session.member.id,
+          createdBy: {
+            memberId: context.session.member.id,
+            name: context.session.user.name,
+            email: context.session.user.email,
+          },
         }),
       ),
 

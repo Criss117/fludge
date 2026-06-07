@@ -1,6 +1,9 @@
 import { ALL_PERMISSIONS } from "@fludge/utils/permissions/index";
 import { formOptions } from "@tanstack/react-form";
 import { z } from "zod";
+import { useGroupCollection } from "../hooks/use-group-collection";
+import { slugify } from "@fludge/utils/slugify";
+import { useMutation } from "@tanstack/react-query";
 
 const groupFormSchema = z.object({
   name: z
@@ -28,7 +31,45 @@ export type OnCreateGroupSubmit = {
   }) => void;
 };
 
-export function useCreateGroupFormOptions() {
+type Actions = {
+  onSuccess?: () => void;
+  onError?: (error: unknown) => void;
+};
+
+export function useCreateGroupFormOptions(
+  organizationId: string,
+  actions?: Actions,
+) {
+  const { groupCollection } = useGroupCollection(organizationId);
+
+  const insertGroupMutation = useMutation({
+    mutationKey: ["iam", "group", "insert"],
+    mutationFn: async (value: GroupFormSchema) => {
+      const now = new Date();
+
+      const tx = groupCollection.insert({
+        id: "xd",
+        organizationId: organizationId,
+        name: value.name,
+        slug: slugify(value.name),
+        description: value.description,
+        permissions: value.permissions,
+        createdAt: now,
+        updatedAt: now,
+        createdBy: null,
+        deletedAt: null,
+      });
+
+      await tx.isPersisted.promise;
+    },
+    onSuccess: () => {
+      actions?.onSuccess?.();
+    },
+    onError: (error) => {
+      actions?.onError?.(error);
+    },
+  });
+
   return formOptions({
     defaultValues: {
       name: "",
@@ -39,7 +80,11 @@ export function useCreateGroupFormOptions() {
       onChange: groupFormSchema,
     },
     onSubmit: ({ value, formApi }) => {
-      console.log(value);
+      insertGroupMutation.mutate(value, {
+        onSuccess: () => {
+          formApi.reset();
+        },
+      });
     },
   });
 }

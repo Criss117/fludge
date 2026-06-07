@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, useState } from "react";
 import { PlusIcon } from "lucide-react";
 import { Button } from "@fludge/ui/components/button";
 import {
@@ -23,14 +23,21 @@ import {
   CardTitle,
 } from "@fludge/ui/components/card";
 
-export function CreateGroup() {
-  const createGroupFormOptions = useCreateGroupFormOptions();
+interface Props {
+  organizationId: string;
+}
+
+export function CreateGroup({ organizationId }: Props) {
+  const [open, setOpen] = useState(false);
+  const createGroupFormOptions = useCreateGroupFormOptions(organizationId, {
+    onSuccess: () => setOpen(false),
+  });
   const form = useGroupForm(createGroupFormOptions);
 
   const formId = `create-group-form-${useId()}`;
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger render={(props) => <Button {...props} />}>
         <PlusIcon />
         <span>Nuevo Grupo</span>

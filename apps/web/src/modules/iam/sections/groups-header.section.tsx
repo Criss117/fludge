@@ -47,7 +47,7 @@ export function GroupsHeaderSection({ organizationId }: Props) {
           </p>
         </div>
         <div>
-          <CreateGroup />
+          <CreateGroup organizationId={organizationId} />
         </div>
       </header>
       <div className="flex gap-x-4 justify-between">

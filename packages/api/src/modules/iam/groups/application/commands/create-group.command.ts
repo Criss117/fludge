@@ -29,7 +29,11 @@ export const createGroupCommand = z.object({
 
 type CMD = z.infer<typeof createGroupCommand> & {
   organizationId: string;
-  changedByMemberId: string | null;
+  createdBy: {
+    memberId: string;
+    name: string;
+    email: string;
+  } | null;
 };
 
 export class CreateGroupCommand {
@@ -47,7 +51,7 @@ export class CreateGroupCommand {
       organizationId: cmd.organizationId,
       permissions: preparePermissions(cmd.permissions),
       description: cmd.description,
-      createdBy: cmd.changedByMemberId,
+      createdBy: cmd.createdBy?.memberId,
     });
 
     if (error || !data)
@@ -58,7 +62,7 @@ export class CreateGroupCommand {
         },
       );
 
-    return data;
+    return { ...data, createdBy: cmd.createdBy };
   }
 
   private async registerListeners() {
@@ -69,7 +73,7 @@ export class CreateGroupCommand {
           organizationId: event.organizationId,
           name: "Administradores",
           permissions: ALL_PERMISSIONS,
-          changedByMemberId: event.changedByMemberId,
+          createdBy: event.createdBy,
         });
       },
       {

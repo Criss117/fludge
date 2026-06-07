@@ -1,4 +1,4 @@
-import { and, eq, getTableColumns } from "drizzle-orm";
+import { and, desc, eq, getTableColumns } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
 
 import type { DbConnection } from "@fludge/db";
@@ -33,7 +33,8 @@ export class FindAllGroupsQuery {
           ),
         )
         .leftJoin(user, eq(user.id, member.userId))
-        .where(eq(group.organizationId, query.organizationId)),
+        .where(eq(group.organizationId, query.organizationId))
+        .orderBy(desc(group.createdAt)),
     );
 
     if (error)

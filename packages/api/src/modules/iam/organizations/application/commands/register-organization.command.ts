@@ -59,7 +59,13 @@ export const registerOrganizationCommand = z.object({
     }),
 });
 
-type CMD = z.infer<typeof registerOrganizationCommand>;
+type CMD = z.infer<typeof registerOrganizationCommand> & {
+  registeredBy: {
+    userId: string;
+    name: string;
+    email: string;
+  };
+};
 
 export class RegisterOrganizationCommand {
   constructor(private readonly eventBus: EventBus) {}
@@ -87,10 +93,14 @@ export class RegisterOrganizationCommand {
         },
       );
 
-    const memeberInfo = data.members.at(0);
+    const memeberInfo = data.members.at(0)!;
 
     await this.eventBus.dispatch(
-      new OrganizationRegisteredEvent(data.id, memeberInfo?.id ?? null),
+      new OrganizationRegisteredEvent(data.id, {
+        memberId: memeberInfo.id,
+        name: cmd.registeredBy.name,
+        email: cmd.registeredBy.email,
+      }),
     );
 
     return data;

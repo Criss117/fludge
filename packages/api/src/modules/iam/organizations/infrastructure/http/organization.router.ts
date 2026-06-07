@@ -20,7 +20,14 @@ export const organizationRouter = {
       .input(registerOrganizationCommand)
       .handler(({ input, context }) =>
         organizationsContainer.commands.register.execute(
-          input,
+          {
+            ...input,
+            registeredBy: {
+              email: context.session.user.email,
+              name: context.session.user.name,
+              userId: context.session.user.id,
+            },
+          },
           context.headers,
         ),
       ),

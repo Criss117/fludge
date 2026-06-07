@@ -25,6 +25,21 @@ function builder(
       },
       getKey: (item) => item.id,
       defaultIndexType: BasicIndex,
+      onInsert: async ({ transaction }) => {
+        const newGroup = transaction.mutations[0].modified;
+
+        const serverNewGroup = await orpc.groups.commands.create.call({
+          name: newGroup.name,
+          permissions: newGroup.permissions,
+          description: newGroup.description || "",
+        });
+
+        groupCollection.utils.writeInsert(serverNewGroup);
+
+        return {
+          refetch: false,
+        };
+      },
     }),
   );
 
