@@ -18,7 +18,7 @@ export class FindAllGroupMembersQuery {
       this.db
         .select({
           ...getTableColumns(groupMember),
-          asignedBy: {
+          assignedBy: {
             memberId: groupMember.assignedBy,
             name: user.name,
             email: user.email,
@@ -33,11 +33,11 @@ export class FindAllGroupMembersQuery {
 
     if (error) throw new ORPCError("INTERNAL_SERVER_ERROR", error);
 
-    return data.map(({ asignedBy, ...rest }) => ({
+    return data.map(({ assignedBy, ...rest }) => ({
       ...rest,
-      asignedBy:
-        asignedBy.memberId && asignedBy.name && asignedBy.email
-          ? (asignedBy as { memberId: string; name: string; email: string })
+      assignedBy:
+        assignedBy.memberId && assignedBy.name && assignedBy.email
+          ? (assignedBy as { memberId: string; name: string; email: string })
           : null,
     }));
   }

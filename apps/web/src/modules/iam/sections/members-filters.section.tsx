@@ -4,7 +4,7 @@ import { Card, CardContent } from "@fludge/ui/components/card";
 import { Input } from "@fludge/ui/components/input";
 import { useFilters } from "@fludge/client/presentation/shared/context/filter.context";
 
-export function GroupsFiltersSection() {
+export function MembersFiltersSection() {
   const { filters, dispatch } = useFilters();
 
   return (
@@ -35,7 +35,7 @@ export function GroupsFiltersSection() {
             <Input
               value={filters.query}
               className="w-full pl-8"
-              placeholder="Buscar grupos"
+              placeholder="Buscar miembros"
               onChange={(v) =>
                 dispatch({
                   type: "set:query",

@@ -1,9 +1,9 @@
-import { useFindAllGroups } from "@fludge/client/application/iam/hooks/use-find-groups";
-import { useGroupsTable } from "@fludge/client/application/iam/hooks/use-table";
-import { groupsTableColumns } from "@fludge/client/presentation/iam/tables/groups/columns";
-import { useFilters } from "@fludge/client/presentation/shared/context/filter.context";
+import { useFindAllMembers } from "@fludge/client/application/iam/hooks/use-find-members";
+import { useMembersTable } from "@fludge/client/application/iam/hooks/use-table";
+import { membersTableColumns } from "@fludge/client/presentation/iam/tables/members/columns";
 import { BaseTable } from "@fludge/client/presentation/shared/tables/base-table.web";
-import { GroupsTableActions } from "@fludge/client/presentation/iam/tables/groups/actions.web";
+import { MembersTableActions } from "@fludge/client/presentation/iam/tables/members/actions.web";
+import { MemberGroupsCell } from "@fludge/client/presentation/iam/tables/members/cells.web";
 import {
   PageSize,
   FirstPage,
@@ -11,30 +11,24 @@ import {
   NextPage,
   LastPage,
 } from "@fludge/client/presentation/shared/tables/pagination.web";
-import { useUpdateGroupForm } from "@/modules/iam/components/udpate-group";
+import { useFilters } from "@fludge/client/presentation/shared/context/filter.context";
 
 interface Props {
   organizationId: string;
 }
 
-export function GroupsTableSection({ organizationId }: Props) {
+export function MembersTableSection({ organizationId }: Props) {
   const { filters } = useFilters();
-  const { open } = useUpdateGroupForm();
-
-  const { data: groups } = useFindAllGroups(organizationId, {
+  const { data: members } = useFindAllMembers(organizationId, {
     name: filters.query,
   });
 
-  const columns = groupsTableColumns({
-    renderActions: (row) => (
-      <GroupsTableActions row={row} onUpdateClick={() => open(row)} />
-    ),
+  const columns = membersTableColumns({
+    renderActions: (row) => <MembersTableActions row={row} />,
+    groupsAssigned: (groups) => <MemberGroupsCell groups={groups} />,
   });
 
-  const table = useGroupsTable({
-    data: groups,
-    columns: columns,
-  });
+  const table = useMembersTable({ data: members, columns });
 
   const pageIndex = table.getState().pagination.pageIndex;
   const pageCount = table.getPageCount();
@@ -46,7 +40,7 @@ export function GroupsTableSection({ organizationId }: Props) {
           table={table}
           columnsLength={columns.length}
           EmptyComponent={
-            <div className="text-center">No se encontraron grupos</div>
+            <div className="text-center">No se encontraron miembros</div>
           }
         />
       </div>
@@ -84,8 +78,4 @@ export function GroupsTableSection({ organizationId }: Props) {
       </div>
     </section>
   );
-}
-
-export function GroupsTableSectionSkeleton() {
-  return null;
 }

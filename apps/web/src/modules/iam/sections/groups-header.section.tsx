@@ -1,7 +1,7 @@
 import { Button } from "@fludge/ui/components/button";
 import { PlusIcon } from "lucide-react";
 import { useTotalGroups } from "@fludge/client/application/iam/hooks/use-find-groups";
-import { useFindTotalMembers } from "@fludge/client/application/iam/hooks/use-find-members";
+import { useTotalMembers } from "@fludge/client/application/iam/hooks/use-find-members";
 import { useFindTotalGroupMembers } from "@fludge/client/application/iam/hooks/use-find-group-members";
 import {
   Card,
@@ -19,7 +19,7 @@ interface Props {
 export function GroupsHeaderSection({ organizationId }: Props) {
   const { data: totalGroups } = useTotalGroups(organizationId);
   const { data: totalGroupMembers } = useFindTotalGroupMembers(organizationId);
-  const { data: totalMembers } = useFindTotalMembers(organizationId);
+  const { data: totalMembers } = useTotalMembers(organizationId);
 
   const groupInfo = [
     {
@@ -50,7 +50,7 @@ export function GroupsHeaderSection({ organizationId }: Props) {
           <CreateGroup organizationId={organizationId} />
         </div>
       </header>
-      <div className="flex gap-x-4 justify-between">
+      <div className="grid grid-cols-4 gap-x-4 justify-between">
         {groupInfo.map(({ title, data }) => (
           <Card key={title} className="flex-1">
             <CardHeader>

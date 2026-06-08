@@ -138,7 +138,7 @@ export function UpdateGroup({ organizationId }: Props) {
 
         <SheetFooter>
           <Button type="submit" form={formId}>
-            Crear Grupo
+            Guardar Cambios
           </Button>
           <SheetClose
             render={(props) => (
