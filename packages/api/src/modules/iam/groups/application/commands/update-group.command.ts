@@ -102,7 +102,14 @@ export class UpdateGroupCommand {
           },
         );
 
-      return updatedGroup;
+      return {
+        ...updatedGroup,
+        createdBy: {
+          memberId: cmd.updatedBy.memberId,
+          name: cmd.updatedBy.name,
+          email: cmd.updatedBy.email,
+        },
+      };
     });
   }
 }

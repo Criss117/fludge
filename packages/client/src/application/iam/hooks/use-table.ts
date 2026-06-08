@@ -6,12 +6,12 @@ import {
 import type { GroupSummary } from "./use-find-groups";
 import type { GroupsTableColumns } from "@fludge/client/presentation/iam/tables/groups/columns";
 
-interface Params {
+interface Params<TNode> {
   data: GroupSummary[];
-  columns: GroupsTableColumns;
+  columns: GroupsTableColumns<TNode>;
 }
 
-export function useGroupsTable({ data, columns }: Params) {
+export function useGroupsTable<TNode>({ data, columns }: Params<TNode>) {
   return useReactTable({
     columns,
     data,

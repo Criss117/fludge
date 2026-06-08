@@ -40,6 +40,24 @@ function builder(
           refetch: false,
         };
       },
+
+      onUpdate: async ({ transaction }) => {
+        const originalGroup = transaction.mutations[0].original;
+        const modifiedGroup = transaction.mutations[0].modified;
+
+        const serverUpdatedGroup = await orpc.groups.commands.update.call({
+          groupId: originalGroup.id,
+          name: modifiedGroup.name,
+          permissions: modifiedGroup.permissions,
+          description: modifiedGroup.description || "",
+        });
+
+        groupCollection.utils.writeUpdate(serverUpdatedGroup);
+
+        return {
+          refetch: false,
+        };
+      },
     }),
   );
 

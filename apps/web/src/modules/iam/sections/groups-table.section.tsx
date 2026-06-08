@@ -3,6 +3,7 @@ import { useGroupsTable } from "@fludge/client/application/iam/hooks/use-table";
 import { groupsTableColumns } from "@fludge/client/presentation/iam/tables/groups/columns";
 import { useFilters } from "@fludge/client/presentation/shared/context/filter.context";
 import { BaseTable } from "@fludge/client/presentation/shared/tables/base-table.web";
+import { GroupsTableActions } from "@fludge/client/presentation/iam/tables/groups/actions.web";
 import {
   PageSize,
   FirstPage,
@@ -10,6 +11,7 @@ import {
   NextPage,
   LastPage,
 } from "@fludge/client/presentation/shared/tables/pagination.web";
+import { useUpdateGroupForm } from "@/modules/iam/components/udpate-group";
 
 interface Props {
   organizationId: string;
@@ -17,14 +19,21 @@ interface Props {
 
 export function GroupsTableSection({ organizationId }: Props) {
   const { filters } = useFilters();
+  const { open } = useUpdateGroupForm();
 
   const { data: groups } = useFindAllGroups(organizationId, {
     name: filters.query,
   });
 
+  const columns = groupsTableColumns({
+    renderActions: (row) => (
+      <GroupsTableActions row={row} onUpdateClick={() => open(row)} />
+    ),
+  });
+
   const table = useGroupsTable({
     data: groups,
-    columns: groupsTableColumns,
+    columns: columns,
   });
 
   const pageIndex = table.getState().pagination.pageIndex;
@@ -35,7 +44,7 @@ export function GroupsTableSection({ organizationId }: Props) {
       <div className="overflow-hidden  border">
         <BaseTable
           table={table}
-          columnsLength={groupsTableColumns.length}
+          columnsLength={columns.length}
           EmptyComponent={
             <div className="text-center">No se encontraron grupos</div>
           }

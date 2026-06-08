@@ -1,5 +1,11 @@
 import { useId, useState } from "react";
 import { PlusIcon } from "lucide-react";
+
+import { GroupSummary } from "@fludge/client/application/iam/hooks/use-find-groups";
+import {
+  createResourceFormContext,
+  useResourceFormState,
+} from "@fludge/client/presentation/shared/context/resourse-form.context";
 import { Button } from "@fludge/ui/components/button";
 import {
   Sheet,
@@ -14,7 +20,7 @@ import {
 import { Separator } from "@fludge/ui/components/separator";
 import { useGroupForm } from "@fludge/client/presentation/iam/forms/group/web";
 import { FieldGroup, FieldLegend, FieldSet } from "@fludge/ui/components/field";
-import { useCreateGroupFormOptions } from "@fludge/client/application/iam/forms/group.form";
+import { useUpdateGroupFormOptions } from "@fludge/client/application/iam/forms/group.form";
 import {
   Card,
   CardContent,
@@ -23,26 +29,55 @@ import {
   CardTitle,
 } from "@fludge/ui/components/card";
 
+const { Context: GroupsFormContext, useResourceForm } =
+  createResourceFormContext<GroupSummary>();
+
+export const useUpdateGroupForm = useResourceForm;
+
+export function UpdateGroupProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const formState = useResourceFormState<GroupSummary>();
+
+  return (
+    <GroupsFormContext.Provider value={formState}>
+      {children}
+    </GroupsFormContext.Provider>
+  );
+}
+
 interface Props {
   organizationId: string;
 }
 
-export function CreateGroup({ organizationId }: Props) {
-  const [open, setOpen] = useState(false);
-  const createGroupFormOptions = useCreateGroupFormOptions({
+export function UpdateGroup({ organizationId }: Props) {
+  const { close, data, isOpen } = useUpdateGroupForm();
+  const createGroupFormOptions = useUpdateGroupFormOptions({
     organizationId,
-    onSuccess: () => setOpen(false),
+    defaultValues: {
+      groupId: data?.id ?? "",
+      name: data?.name ?? "",
+      description: data?.description ?? "",
+      permissions: data?.permissions ?? [],
+    },
+    onSuccess: () => close(),
   });
   const form = useGroupForm(createGroupFormOptions);
 
   const formId = `create-group-form-${useId()}`;
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger render={(props) => <Button {...props} />}>
-        <PlusIcon />
-        <span>Nuevo Grupo</span>
-      </SheetTrigger>
+    <Sheet
+      open={isOpen}
+      onOpenChange={(v) => {
+        if (!v) {
+          form.reset();
+          close();
+        }
+      }}
+    >
       <SheetContent className="w-full sm:min-w-[40dvw]">
         <SheetHeader>
           <SheetTitle className="text-xl">Crear Nuevo Grupo</SheetTitle>

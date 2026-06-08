@@ -26,8 +26,10 @@ export function useFindAllGroups(organizationId: string, filters?: Filters) {
           id: g.id,
           name: g.name,
           permissions: g.permissions,
+          description: g.description,
           createdBy: g.createdBy,
           createdAt: g.createdAt,
+          deletedAt: g.deletedAt,
           updatedAt: g.updatedAt,
           members: q
             .from({
