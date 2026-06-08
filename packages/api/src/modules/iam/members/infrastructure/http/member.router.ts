@@ -1,12 +1,12 @@
 import { withOrganization } from "@fludge/api/index";
-import { signUpMemberCommand } from "@fludge/api/modules/iam/members/application/commands/sign-up-member.command";
 import { membersContainer } from "@fludge/api/modules/iam/members/container";
+import { registerMemberCommand } from "@fludge/api/modules/iam/members/application/commands/register-member.command";
 
 const TAGS = ["Members"] as const;
 
 export const memberRouter = {
   commands: {
-    create: withOrganization({
+    register: withOrganization({
       requirePermission: "members:create",
     })
       .route({
@@ -14,9 +14,9 @@ export const memberRouter = {
         path: "/members",
         tags: TAGS,
       })
-      .input(signUpMemberCommand)
+      .input(registerMemberCommand)
       .handler(({ input, context }) =>
-        membersContainer.commands.signUpMember.execute(
+        membersContainer.commands.register.execute(
           {
             ...input,
             organizationId: context.session.activeOrganization.id,

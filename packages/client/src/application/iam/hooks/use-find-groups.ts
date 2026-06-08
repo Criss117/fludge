@@ -14,7 +14,7 @@ export function useFindAllGroups(organizationId: string, filters?: Filters) {
   const { groupMembersCollection } = useGroupMembersCollection(organizationId);
   const { memberCollection } = useMemberCollection(organizationId);
 
-  const name = filters?.name;
+  const name = filters?.name ?? "";
 
   return useLiveSuspenseQuery(
     (q) =>

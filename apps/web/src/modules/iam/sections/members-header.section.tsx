@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@fludge/ui/components/card";
+import { RegisterMember } from "../components/register-member";
 
 interface Props {
   organizationId: string;
@@ -35,10 +36,7 @@ export function MembersHeaderSection({ organizationId }: Props) {
         </div>
 
         <div>
-          <Button>
-            <PlusCircle />
-            Nuevo Miembro
-          </Button>
+          <RegisterMember organizationId={organizationId} />
         </div>
       </header>
 

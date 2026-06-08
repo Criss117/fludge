@@ -22,6 +22,7 @@ function builder(
         const data = await orpc.members.queries.findAll.call();
 
         return data;
+        1;
       },
       getKey: (item) => item.id,
       defaultIndexType: BasicIndex,
