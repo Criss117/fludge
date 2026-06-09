@@ -1,7 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { Button } from "@fludge/ui/components/button";
-import { useSetActiveOrganization } from "@/modules/iam/hooks/use-set-active-organization";
+import {
+  SelectOrganizationScreen,
+  SelectOrganizationScreenSkeleton,
+} from "@/modules/iam/screens/select-organization.screen";
 
 export const Route = createFileRoute("/organization/_layout/select")({
   component: RouteComponent,
@@ -23,36 +25,11 @@ export const Route = createFileRoute("/organization/_layout/select")({
   loader: async ({ context }) => {
     return context.organizations;
   },
+  pendingComponent: SelectOrganizationScreenSkeleton,
 });
 
 function RouteComponent() {
   const organizations = Route.useLoaderData();
 
-  const setActiveOrganization = useSetActiveOrganization();
-
-  const handleClick = (org: { id: string; slug: string }) => {
-    setActiveOrganization.mutate(org, {
-      onSuccess: () => {
-        window.location.replace("/");
-      },
-    });
-  };
-
-  return (
-    <div>
-      {organizations.map((organization) => (
-        <Button
-          key={organization.id}
-          onClick={() =>
-            handleClick({
-              id: organization.id,
-              slug: organization.slug,
-            })
-          }
-        >
-          {organization.name}
-        </Button>
-      ))}
-    </div>
-  );
+  return <SelectOrganizationScreen organizations={organizations} />;
 }
