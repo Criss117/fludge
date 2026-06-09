@@ -31,7 +31,8 @@
       "drizzle-kit": "0.31.8",
       "react": "19.2.3",
       "react-dom": "19.2.3",
-      "lucide-react": "0.546.0"
+      "lucide-react": "0.546.0",
+      "date-fns": "4.4.0"
     }
   },
   "type": "module",

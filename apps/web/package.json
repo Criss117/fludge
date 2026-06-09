@@ -31,7 +31,8 @@
     "react-error-boundary": "6.1.2",
     "sonner": "2.0.7",
     "vite-plugin-pwa": "1.3.0",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "date-fns": "catalog:"
   },
   "devDependencies": {
     "@fludge/config": "workspace:*",

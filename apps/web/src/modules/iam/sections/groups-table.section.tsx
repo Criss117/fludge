@@ -12,6 +12,8 @@ import {
   LastPage,
 } from "@fludge/client/presentation/shared/tables/pagination.web";
 import { useUpdateGroupForm } from "@/modules/iam/components/udpate-group";
+import { Link } from "@tanstack/react-router";
+import { Button } from "@fludge/ui/components/button";
 
 interface Props {
   organizationId: string;
@@ -27,7 +29,28 @@ export function GroupsTableSection({ organizationId }: Props) {
 
   const columns = groupsTableColumns({
     renderActions: (row) => (
-      <GroupsTableActions row={row} onUpdateClick={() => open(row)} />
+      <GroupsTableActions
+        row={row}
+        onUpdateClick={() =>
+          open({
+            permissions: row.permissions,
+            groupId: row.id,
+            name: row.name,
+            description: row.description || "",
+          })
+        }
+      />
+    ),
+    nameCell: (row) => (
+      <Button
+        variant="link"
+        className="text-base"
+        render={(props) => (
+          <Link to="/groups/$slug" params={{ slug: row.slug }} {...props} />
+        )}
+      >
+        {row.name}
+      </Button>
     ),
   });
 

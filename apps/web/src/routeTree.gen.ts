@@ -24,6 +24,7 @@ import { Route as dashboardLayoutAnalyticsRouteImport } from './routes/(dashboar
 import { Route as dashboardLayoutMembersIndexRouteImport } from './routes/(dashboard)/_layout/members/index'
 import { Route as dashboardLayoutGroupsIndexRouteImport } from './routes/(dashboard)/_layout/groups/index'
 import { Route as dashboardLayoutClientsIndexRouteImport } from './routes/(dashboard)/_layout/clients/index'
+import { Route as dashboardLayoutGroupsSlugIndexRouteImport } from './routes/(dashboard)/_layout/groups/$slug/index'
 
 const ErrorRoute = ErrorRouteImport.update({
   id: '/error',
@@ -106,6 +107,12 @@ const dashboardLayoutClientsIndexRoute =
     path: '/clients/',
     getParentRoute: () => dashboardLayoutRoute,
   } as any)
+const dashboardLayoutGroupsSlugIndexRoute =
+  dashboardLayoutGroupsSlugIndexRouteImport.update({
+    id: '/groups/$slug/',
+    path: '/groups/$slug/',
+    getParentRoute: () => dashboardLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/error': typeof ErrorRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/clients/': typeof dashboardLayoutClientsIndexRoute
   '/groups/': typeof dashboardLayoutGroupsIndexRoute
   '/members/': typeof dashboardLayoutMembersIndexRoute
+  '/groups/$slug/': typeof dashboardLayoutGroupsSlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/error': typeof ErrorRoute
@@ -138,6 +146,7 @@ export interface FileRoutesByTo {
   '/clients': typeof dashboardLayoutClientsIndexRoute
   '/groups': typeof dashboardLayoutGroupsIndexRoute
   '/members': typeof dashboardLayoutMembersIndexRoute
+  '/groups/$slug': typeof dashboardLayoutGroupsSlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -156,6 +165,7 @@ export interface FileRoutesById {
   '/(dashboard)/_layout/clients/': typeof dashboardLayoutClientsIndexRoute
   '/(dashboard)/_layout/groups/': typeof dashboardLayoutGroupsIndexRoute
   '/(dashboard)/_layout/members/': typeof dashboardLayoutMembersIndexRoute
+  '/(dashboard)/_layout/groups/$slug/': typeof dashboardLayoutGroupsSlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/clients/'
     | '/groups/'
     | '/members/'
+    | '/groups/$slug/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/error'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/clients'
     | '/groups'
     | '/members'
+    | '/groups/$slug'
   id:
     | '__root__'
     | '/error'
@@ -207,6 +219,7 @@ export interface FileRouteTypes {
     | '/(dashboard)/_layout/clients/'
     | '/(dashboard)/_layout/groups/'
     | '/(dashboard)/_layout/members/'
+    | '/(dashboard)/_layout/groups/$slug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -323,6 +336,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardLayoutClientsIndexRouteImport
       parentRoute: typeof dashboardLayoutRoute
     }
+    '/(dashboard)/_layout/groups/$slug/': {
+      id: '/(dashboard)/_layout/groups/$slug/'
+      path: '/groups/$slug'
+      fullPath: '/groups/$slug/'
+      preLoaderRoute: typeof dashboardLayoutGroupsSlugIndexRouteImport
+      parentRoute: typeof dashboardLayoutRoute
+    }
   }
 }
 
@@ -334,6 +354,7 @@ interface dashboardLayoutRouteChildren {
   dashboardLayoutClientsIndexRoute: typeof dashboardLayoutClientsIndexRoute
   dashboardLayoutGroupsIndexRoute: typeof dashboardLayoutGroupsIndexRoute
   dashboardLayoutMembersIndexRoute: typeof dashboardLayoutMembersIndexRoute
+  dashboardLayoutGroupsSlugIndexRoute: typeof dashboardLayoutGroupsSlugIndexRoute
 }
 
 const dashboardLayoutRouteChildren: dashboardLayoutRouteChildren = {
@@ -344,6 +365,7 @@ const dashboardLayoutRouteChildren: dashboardLayoutRouteChildren = {
   dashboardLayoutClientsIndexRoute: dashboardLayoutClientsIndexRoute,
   dashboardLayoutGroupsIndexRoute: dashboardLayoutGroupsIndexRoute,
   dashboardLayoutMembersIndexRoute: dashboardLayoutMembersIndexRoute,
+  dashboardLayoutGroupsSlugIndexRoute: dashboardLayoutGroupsSlugIndexRoute,
 }
 
 const dashboardLayoutRouteWithChildren = dashboardLayoutRoute._addFileChildren(

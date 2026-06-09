@@ -5,16 +5,14 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@fludge/ui/components/card";
-import {
-  FieldGroup,
-  FieldLegend,
-  FieldSet,
-} from "@fludge/ui/components/field";
+import { FieldGroup, FieldLegend, FieldSet } from "@fludge/ui/components/field";
 import { Button } from "@fludge/ui/components/button";
 import { Skeleton } from "@fludge/ui/components/skeleton";
+import { Link } from "@tanstack/react-router";
 
 export function RegisterOrganizationScreen() {
   const [serverError, setServerError] = useState<string | null>(null);
@@ -25,9 +23,7 @@ export function RegisterOrganizationScreen() {
     },
     onError: (error) => {
       setServerError(
-        error instanceof Error
-          ? error.message
-          : "Error creando organización",
+        error instanceof Error ? error.message : "Error creando organización",
       );
     },
   });
@@ -87,6 +83,16 @@ export function RegisterOrganizationScreen() {
             </Button>
           </CardContent>
         </form>
+
+        <CardFooter>
+          <Button
+            nativeButton={false}
+            variant="link"
+            render={(props) => <Link to="/organization/select" {...props} />}
+          >
+            Ir a la selección de organización
+          </Button>
+        </CardFooter>
       </Card>
     </div>
   );

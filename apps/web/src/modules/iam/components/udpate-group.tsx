@@ -20,7 +20,10 @@ import {
 import { Separator } from "@fludge/ui/components/separator";
 import { useGroupForm } from "@fludge/client/presentation/iam/forms/group/web";
 import { FieldGroup, FieldLegend, FieldSet } from "@fludge/ui/components/field";
-import { useUpdateGroupFormOptions } from "@fludge/client/application/iam/forms/group.form";
+import {
+  type GroupFormDefaultValues,
+  useUpdateGroupFormOptions,
+} from "@fludge/client/application/iam/forms/group.form";
 import {
   Card,
   CardContent,
@@ -30,7 +33,7 @@ import {
 } from "@fludge/ui/components/card";
 
 const { Context: GroupsFormContext, useResourceForm } =
-  createResourceFormContext<GroupSummary>();
+  createResourceFormContext<GroupFormDefaultValues>();
 
 export const useUpdateGroupForm = useResourceForm;
 
@@ -39,7 +42,7 @@ export function UpdateGroupProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const formState = useResourceFormState<GroupSummary>();
+  const formState = useResourceFormState<GroupFormDefaultValues>();
 
   return (
     <GroupsFormContext.Provider value={formState}>
@@ -57,7 +60,7 @@ export function UpdateGroup({ organizationId }: Props) {
   const createGroupFormOptions = useUpdateGroupFormOptions({
     organizationId,
     defaultValues: {
-      groupId: data?.id ?? "",
+      groupId: data?.groupId ?? "",
       name: data?.name ?? "",
       description: data?.description ?? "",
       permissions: data?.permissions ?? [],

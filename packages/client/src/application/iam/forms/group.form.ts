@@ -44,6 +44,10 @@ type UpdateFormParams = CreateFormParams & {
   };
 };
 
+export type GroupFormDefaultValues = GroupFormSchema & {
+  groupId: string;
+};
+
 export function useCreateGroupFormOptions({
   organizationId,
   onSuccess,

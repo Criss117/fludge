@@ -6,6 +6,7 @@ const columnHelper = createColumnHelper<GroupSummary>();
 
 export interface GroupsTableActionsSlot<TNode> {
   renderActions: (row: GroupSummary) => TNode;
+  nameCell?: (row: GroupSummary) => TNode;
 }
 
 export function groupsTableColumns<TNode>(
@@ -14,7 +15,7 @@ export function groupsTableColumns<TNode>(
   return [
     columnHelper.accessor((row) => row.name, {
       header: "Nombre",
-      cell: (info) => info.getValue(),
+      cell: (info) => slots.nameCell?.(info.row.original) ?? info.getValue(),
     }),
     columnHelper.display({
       id: "members",
