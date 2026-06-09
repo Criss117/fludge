@@ -1,4 +1,4 @@
-import { eq, getTableColumns } from "drizzle-orm";
+import { and, eq, getTableColumns, not } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
 
 import type { DbConnection } from "@fludge/db";
@@ -28,7 +28,12 @@ export class FindAllGroupMembersQuery {
         .innerJoin(group, eq(group.id, groupMember.groupId))
         .leftJoin(member, eq(member.id, groupMember.memberId))
         .leftJoin(user, eq(user.id, member.userId))
-        .where(eq(group.organizationId, query.organizationId)),
+        .where(
+          and(
+            not(eq(member.role, "owner")),
+            eq(group.organizationId, query.organizationId),
+          ),
+        ),
     );
 
     if (error) throw new ORPCError("INTERNAL_SERVER_ERROR", error);

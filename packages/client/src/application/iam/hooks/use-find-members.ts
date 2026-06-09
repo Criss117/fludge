@@ -22,7 +22,6 @@ export function useTotalMembers(organizationId: string) {
       .select(({ m }) => ({
         total: count(m.id),
       }))
-      .where(({ m }) => not(eq(m.role, "owner")))
       .findOne(),
   );
 
