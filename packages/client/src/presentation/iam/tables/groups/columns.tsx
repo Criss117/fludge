@@ -20,7 +20,7 @@ export function groupsTableColumns<TNode>(
     columnHelper.display({
       id: "members",
       header: "Miembros",
-      cell: (info) => info.row.original.members.size,
+      cell: (info) => info.row.original.members[0]?.total ?? 0,
     }),
     columnHelper.display({
       id: "permissions",

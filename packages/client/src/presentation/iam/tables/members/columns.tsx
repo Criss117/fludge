@@ -12,11 +12,11 @@ export function membersTableColumns<TNode>(
   slots: MembersTableActionsSlot<TNode>,
 ) {
   return [
-    columnHelper.accessor((row) => row.name, {
+    columnHelper.accessor((row) => row.user.name, {
       header: "Nombre",
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor((row) => row.email, {
+    columnHelper.accessor((row) => row.user.email, {
       header: "Email",
       cell: (info) => info.getValue(),
     }),

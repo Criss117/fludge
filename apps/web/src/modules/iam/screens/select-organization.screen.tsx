@@ -18,20 +18,12 @@ import {
   AvatarFallback,
 } from "@fludge/ui/components/avatar";
 import { toast } from "sonner";
+import { getInitials } from "@fludge/utils/initials";
 
 interface Props {
   organizations: Awaited<
     ReturnType<ORPCType["organizations"]["queries"]["findAll"]["call"]>
   >;
-}
-
-function getInitials(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0]!.toUpperCase())
-    .join("");
 }
 
 function getMetadata(org: {
@@ -129,9 +121,7 @@ export function SelectOrganizationScreen({ organizations }: Props) {
                 <CardHeader>
                   <Avatar size="lg">
                     {org.logo && <AvatarImage src={org.logo} alt={org.name} />}
-                    <AvatarFallback>
-                      {getInitials(org.name)}
-                    </AvatarFallback>
+                    <AvatarFallback>{getInitials(org.name)}</AvatarFallback>
                   </Avatar>
                   <CardTitle>{org.name}</CardTitle>
                   {getMetadata(org) && (

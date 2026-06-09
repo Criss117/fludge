@@ -15,12 +15,14 @@ import { useFilters } from "@fludge/client/presentation/shared/context/filter.co
 
 interface Props {
   organizationId: string;
+  groupId?: string;
 }
 
-export function MembersTableSection({ organizationId }: Props) {
+export function MembersTableSection({ organizationId, groupId }: Props) {
   const { filters } = useFilters();
-  const { data: members } = useFindAllMembers(organizationId, {
+  const members = useFindAllMembers(organizationId, {
     name: filters.query,
+    groupId,
   });
 
   const columns = membersTableColumns({

@@ -1,6 +1,11 @@
 export const ALL_RESOURCES = ["groups", "members"] as const;
 export type RESOURCES = (typeof ALL_RESOURCES)[number];
 
+export const ES_RESOURCES: Record<RESOURCES, string> = {
+  groups: "Grupos",
+  members: "Miembros",
+} as const;
+
 export const PERMISSIONS = {
   groups: {
     view: "view",

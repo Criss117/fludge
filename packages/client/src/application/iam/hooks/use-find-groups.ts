@@ -3,6 +3,7 @@ import {
   count,
   eq,
   ilike,
+  toArray,
   useLiveSuspenseQuery,
 } from "@tanstack/react-db";
 import { useGroupCollection } from "./use-group-collection";
@@ -21,43 +22,33 @@ type Filters = {
 export function useFindAllGroups(organizationId: string, filters?: Filters) {
   const { groupCollection } = useGroupCollection(organizationId);
   const { groupMembersCollection } = useGroupMembersCollection(organizationId);
-  const { memberCollection } = useMemberCollection(organizationId);
 
   const name = filters?.name ?? "";
 
   return useLiveSuspenseQuery(
-    (q) =>
-      q
+    (q) => {
+      const membersQuery = q
+        .from({
+          gm: groupMembersCollection,
+        })
+        .select(({ gm }) => ({
+          total: count(gm.memberId),
+        }))
+        .findOne();
+
+      return q
         .from({
           g: groupCollection,
         })
         .select(({ g }) => ({
-          id: g.id,
-          name: g.name,
-          slug: g.slug,
-          permissions: g.permissions,
-          description: g.description,
-          createdBy: g.createdBy,
-          createdAt: g.createdAt,
-          deletedAt: g.deletedAt,
-          updatedAt: g.updatedAt,
-          members: q
-            .from({
-              gm: groupMembersCollection,
-            })
-            .innerJoin({ m: memberCollection }, ({ m, gm }) =>
-              eq(m.id, gm.memberId),
-            )
-            .where(({ gm }) => eq(gm.groupId, g.id))
-            .select(({ m, gm }) => ({
-              id: m.id,
-              name: m.user.name,
-              email: m.user.email,
-              assignedBy: gm.assignedBy,
-            })),
+          ...g,
+          members: toArray(
+            membersQuery.where(({ gm }) => eq(gm.groupId, g.id)),
+          ),
         }))
         .where(({ g }) => ilike(g.name, `%${name}%`))
-        .orderBy(({ g }) => g.createdAt, "desc"),
+        .orderBy(({ g }) => g.createdAt, "desc");
+    },
     [name],
   );
 }
@@ -67,40 +58,29 @@ export function useFindOneGroup(organizationId: string, groupSlug: string) {
   const { groupMembersCollection } = useGroupMembersCollection(organizationId);
   const { memberCollection } = useMemberCollection(organizationId);
 
-  return useLiveSuspenseQuery((q) =>
-    q
+  return useLiveSuspenseQuery((q) => {
+    const membersQuery = q
+      .from({
+        gm: groupMembersCollection,
+      })
+      .innerJoin({ m: memberCollection }, ({ m, gm }) => eq(m.id, gm.memberId))
+      .select(({ m, gm }) => ({
+        id: m.id,
+        user: m.user,
+        assignedBy: gm.assignedBy,
+      }));
+
+    return q
       .from({ g: groupCollection })
       .select(({ g }) => ({
-        createdBy: g.createdBy,
-        createdAt: g.createdAt,
-        updatedAt: g.updatedAt,
-        deletedAt: g.deletedAt,
-        id: g.id,
-        organizationId: g.organizationId,
-        name: g.name,
-        slug: g.slug,
-        description: g.description,
-        permissions: g.permissions,
-        members: q
-          .from({
-            gm: groupMembersCollection,
-          })
-          .innerJoin({ m: memberCollection }, ({ m, gm }) =>
-            eq(m.id, gm.memberId),
-          )
-          .where(({ gm }) => eq(gm.groupId, g.id))
-          .select(({ m, gm }) => ({
-            id: m.id,
-            name: m.user.name,
-            email: m.user.email,
-            assignedBy: gm.assignedBy,
-          })),
+        ...g,
+        members: toArray(membersQuery.where(({ gm }) => eq(gm.groupId, g.id))),
       }))
       .where(({ g }) =>
         and(eq(g.slug, groupSlug), eq(g.organizationId, organizationId)),
       )
-      .findOne(),
-  );
+      .findOne();
+  });
 }
 
 export function useTotalGroups(organizationId: string) {

@@ -1,4 +1,5 @@
 import {
+  ES_RESOURCES,
   PERMISSION_DESCRIPTIONS,
   PERMISSIONS,
   type Permission,
@@ -80,9 +81,10 @@ export function getPermissionDescription(permission: Permission) {
     return {
       title: action,
       description: "No description available",
+      target: ES_RESOURCES[resourse],
     };
 
-  return desc;
+  return { ...desc, target: ES_RESOURCES[resourse] };
 }
 
 export function getPermissionByResource(resource: Resource) {

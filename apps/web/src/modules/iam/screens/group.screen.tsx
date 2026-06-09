@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { GroupDetail } from "@fludge/client/application/iam/hooks/use-find-groups";
 import { GroupHeaderSection } from "@/modules/iam/sections/group-header.section";
 import {
@@ -8,8 +9,11 @@ import {
 } from "@fludge/ui/components/tabs";
 import { Card, CardContent } from "@fludge/ui/components/card";
 import { GroupOverviewSection } from "@/modules/iam/sections/group-overview.section";
-import { GroupMembersSection } from "@/modules/iam/sections/group-members.section";
 import { GroupPermissionsSection } from "@/modules/iam/sections/group-permissions.section";
+import { MembersTableSection } from "../sections/members-table.section";
+import { FiltersProvider } from "@fludge/client/presentation/shared/context/filter.context";
+import { MembersFiltersSection } from "../sections/members-filters.section";
+import { GroupsMemberSection } from "../sections/groups-member.section";
 
 interface Props {
   organizationId: string;
@@ -17,28 +21,51 @@ interface Props {
 }
 
 export function GroupScreen({ organizationId, group }: Props) {
+  const [selectedTab, setSelectedTab] = useState("overview");
+
   return (
     <main className="p-8 space-y-8">
       <GroupHeaderSection group={group} organizationId={organizationId} />
-      <Tabs defaultValue="overview">
+      <Tabs value={selectedTab} onValueChange={setSelectedTab}>
         <TabsList className="w-1/2">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="members">Miembros</TabsTrigger>
-          <TabsTrigger value="permissions">Permisos</TabsTrigger>
+          <TabsTrigger value="overview" className="flex-1">
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="members" className="flex-1">
+            Miembros
+          </TabsTrigger>
         </TabsList>
-        <Card>
-          <CardContent>
-            <TabsContent value="overview">
+        <TabsContent value="overview" className="space-y-4">
+          <Card>
+            <CardContent>
               <GroupOverviewSection group={group} />
-            </TabsContent>
-            <TabsContent value="members">
-              <GroupMembersSection group={group} />
-            </TabsContent>
-            <TabsContent value="permissions">
-              <GroupPermissionsSection group={group} />
-            </TabsContent>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+          <div className="flex gap-x-4">
+            <Card className="w-4/5">
+              <CardContent>
+                <GroupPermissionsSection group={group} />
+              </CardContent>
+            </Card>
+            <Card className="w-1/5 h-80">
+              <CardContent>
+                <GroupsMemberSection
+                  members={group.members}
+                  onViewAll={() => setSelectedTab("members")}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+        <TabsContent value="members" className="space-y-4">
+          <FiltersProvider>
+            <MembersFiltersSection />
+            <MembersTableSection
+              organizationId={organizationId}
+              groupId={group.id}
+            />
+          </FiltersProvider>
+        </TabsContent>
       </Tabs>
     </main>
   );

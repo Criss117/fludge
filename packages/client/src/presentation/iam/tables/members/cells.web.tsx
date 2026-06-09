@@ -5,9 +5,9 @@ interface MemberGroupsCellProps {
 }
 
 export function MemberGroupsCell({ groups }: MemberGroupsCellProps) {
-  const firstThree = groups.toArray.slice(0, 3);
+  const firstThree = groups.slice(0, 3);
 
-  const hasMore = groups.size > 3;
+  const hasMore = groups.length > 3;
 
   return (
     <div>
