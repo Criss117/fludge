@@ -14,6 +14,10 @@ export const Route = createFileRoute("/organization/_layout")({
     context.queryClient.prefetchQuery(
       context.orpc.organizations.queries.findAll.queryOptions(),
     );
+
+    return {
+      session,
+    };
   },
 });
 
