@@ -9,7 +9,10 @@
       "default": "./src/*.ts"
     }
   },
-  "scripts": {},
+  "scripts": {
+    "test": "bun test",
+    "test:watch": "bun test --watch"
+  },
   "dependencies": {
     "@fludge/auth": "workspace:*",
     "@fludge/utils": "workspace:*",
