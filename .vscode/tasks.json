@@ -1,0 +1,120 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dev",
+      "type": "shell",
+      "command": "bun run dev",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "isBackground": true
+    },
+    {
+      "label": "dev:web",
+      "type": "shell",
+      "command": "bun run dev:web",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "isBackground": true
+    },
+    {
+      "label": "dev:server",
+      "type": "shell",
+      "command": "bun run dev:server",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "isBackground": true
+    },
+    {
+      "label": "dev:native",
+      "type": "shell",
+      "command": "bun run dev:native",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "isBackground": true
+    },
+    {
+      "label": "check-types",
+      "type": "shell",
+      "command": "bunx tsc --build --verbose",
+      "problemMatcher": ["$tsc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "check-types:web",
+      "type": "shell",
+      "command": "bunx tsc --noEmit -p apps/web/tsconfig.json",
+      "problemMatcher": ["$tsc"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "check-types:server",
+      "type": "shell",
+      "command": "bunx tsc --noEmit -p apps/server/tsconfig.json",
+      "problemMatcher": ["$tsc"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "check-types:diagnostics",
+      "type": "shell",
+      "command": "bunx tsc --noEmit --extendedDiagnostics -p apps/web/tsconfig.json",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "db:push",
+      "type": "shell",
+      "command": "bun run db:push",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "db:studio",
+      "type": "shell",
+      "command": "bun run db:studio",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      },
+      "isBackground": true
+    },
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "bun run build",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}

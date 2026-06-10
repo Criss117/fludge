@@ -1,0 +1,22 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "expo.vscode-expo-tools",
+    "oven-studio.bun",
+    "esbenp.prettier-vscode",
+    "ms-playwright.playwright",
+    "vitest.explorer",
+    "mikestead.dotenv",
+    "Prisma.prisma",
+    "tamasfe.even-better-toml"
+  ],
+  "unwantedRecommendations": [
+    "ms-vscode.cpptools-extension-pack",
+    "ms-python.python",
+    "ms-dotnettools.csharp",
+    "redhat.java",
+    "golang.go",
+    "rust-lang.rust-analyzer"
+  ]
+}

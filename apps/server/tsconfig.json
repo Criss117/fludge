@@ -3,9 +3,14 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "dist",
+    "rootDir": "src",
+    "tsBuildInfoFile": "dist/.tsbuildinfo",
+    "types": ["bun"],
     "paths": {
       "@/*": ["./src/*"]
     },
     "jsx": "react-jsx"
-  }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

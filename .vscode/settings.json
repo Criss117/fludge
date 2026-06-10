@@ -1,0 +1,88 @@
+{
+  "js/ts.tsserver.maxMemory": 8192,
+  "js/ts.tsserver.experimental.enableProjectDiagnostics": false,
+  "js/ts.tsserver.log": "off",
+  "js/ts.tsserver.watchOptions": {
+    "watchFile": "useFsEvents",
+    "watchDirectory": "useFsEvents",
+  },
+  "js/ts.inlayHints.functionLikeReturnTypes.enabled": false,
+  "js/ts.inlayHints.parameterTypes.enabled": false,
+  "js/ts.inlayHints.parameterNames.enabled": "none",
+  "js/ts.inlayHints.variableTypes.enabled": false,
+  "js/ts.inlayHints.propertyDeclarationTypes.enabled": false,
+  "js/ts.inlayHints.indexSignatureParameters.enabled": false,
+  "js/ts.inlayHints.enumMemberValues.enabled": false,
+  "js/ts.preferences.includePackageJsonAutoImports": "off",
+  "js/ts.preferences.importModuleSpecifier": "non-relative",
+  "js/ts.preferences.preferTypeOnlyAutoImports": true,
+  "js/ts.workspaceSymbolsScope": "currentProject",
+  "js/ts.surveys.enabled": false,
+  "js/ts.updateImportsOnFileMove.enabled": "never",
+  "js/ts.disableAutomaticTypeAcquisition": true,
+  "js/ts.formatting.enable": false,
+  "files.watcherExclude": {
+    "**/dist/**": true,
+    "**/node_modules/**": true,
+    "**/.turbo/**": true,
+    "**/.next/**": true,
+    "**/.expo/**": true,
+    "**/coverage/**": true
+  },
+  "files.exclude": {
+    "**/dist": true,
+    "**/.turbo": true,
+    "**/.expo": true,
+    "**/.next": true,
+    "**/node_modules": true
+  },
+  "search.exclude": {
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/.turbo": true,
+    "**/.expo": true,
+    "**/.next": true,
+    "**/coverage": true,
+    "**/.tsbuildinfo": true
+  },
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "never",
+    "source.addMissingImports": "never"
+  },
+  "editor.quickSuggestions": {
+    "other": "off",
+    "comments": "off",
+    "strings": "off"
+  },
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "editor.inlineSuggest.enabled": true,
+  "editor.stickyScroll.enabled": false,
+  "editor.minimap.enabled": false,
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.limit.value": 10,
+  "workbench.editor.limit.enabled": true,
+  "workbench.tree.indent": 16,
+  "workbench.tree.renderIndentGuides": "none",
+  "window.titleBarStyle": "native",
+  "extensions.supportUntrustedWorkspaces": {},
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
+  },
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+  "[typescript]": {
+    "editor.formatOnSave": false
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": false
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  }
+}

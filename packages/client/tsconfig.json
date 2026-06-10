@@ -7,9 +7,13 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
+    "rootDir": "src",
     "composite": true,
+    "tsBuildInfoFile": "dist/.tsbuildinfo",
     "paths": {
       "@fludge/client/*": ["./src/*"]
     }
-  }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

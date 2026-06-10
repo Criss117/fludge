@@ -1,17 +1,22 @@
 {
+  "extends": "@fludge/config/tsconfig.base.json",
   "compilerOptions": {
-    "strict": true,
-    "esModuleInterop": true,
+    "composite": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "tsBuildInfoFile": "dist/.tsbuildinfo",
+    "declaration": true,
+    "declarationMap": true,
     "jsx": "react-jsx",
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "skipLibCheck": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": ["vite/client"],
-    "rootDirs": ["."],
+    "noEmit": false,
     "paths": {
       "@/*": ["./src/*"],
       "@fludge/ui/*": ["../../packages/ui/src/*"]
     }
-  }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "src/routeTree.gen.ts"]
 }

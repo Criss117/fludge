@@ -6,6 +6,10 @@
     "sourceMap": true,
     "composite": true,
     "outDir": "./dist",
-    "declarationDir": "./dist"
-  }
+    "rootDir": "./src",
+    "declarationDir": "./dist",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }
