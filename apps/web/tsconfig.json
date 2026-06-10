@@ -1,20 +1,12 @@
 {
   "extends": "@fludge/config/tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
-    "emitDeclarationOnly": true,
-    "outDir": "dist",
-    "rootDir": "src",
-    "tsBuildInfoFile": "dist/.tsbuildinfo",
-    "declaration": true,
-    "declarationMap": true,
+    "noEmit": true,
     "jsx": "react-jsx",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": ["vite/client"],
-    "noEmit": false,
     "paths": {
-      "@/*": ["./src/*"],
-      "@fludge/ui/*": ["../../packages/ui/src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src"],

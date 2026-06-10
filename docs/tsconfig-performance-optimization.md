@@ -11,6 +11,7 @@ propuesta de migración futura a TypeScript 7 + `tsgo`.
 | Fase | Estado | Resultado |
 |---|---|---|
 | 1. Refactor de `tsconfig` | Aplicada | -28% en build time, -52% en check time, -120 archivos procesados menos |
+| 1.5. Fix imports cross-package con `composite` | Aplicada | 0 errores `TS6059/TS6307/TS6305` desde `apps/web`, sin tocar errores preexistentes |
 | 2. Configuración de editor (VSCode + Zed) | Aplicada | Menos carga de trabajo para `tsserver`, menos ruido visual |
 | 3. Migración a TS 7 + `tsgo` | **No aplicada** (propuesta) | 3-8x speedup adicional esperado, pero con riesgos de dev preview |
 
@@ -161,6 +162,76 @@ Estos errores ya existían antes de los cambios y quedan fuera de scope:
   requiere type annotation explícito en algunas props).
 - `apps/native/app/(drawer)/index.tsx`: `Property 'healthCheck' does not exist`
   y firma de `signUpEmail` con campos faltantes (auth schema).
+
+### Fix adicional post-Fase 1: imports `@fludge/ui/*` con `composite`
+
+Después de aplicar Fase 1 quedó un error nuevo al usar `apps/web`:
+
+```
+File '.../packages/ui/src/components/breadcrumb.tsx' is not under 'rootDir'
+'.../apps/web/src'. 'rootDir' is expected to contain all source files.
+(TS6059 + TS6307)
+```
+
+**Causa:** `apps/web` tenía un hack en `tsconfig.json`:
+
+```json
+"paths": {
+  "@fludge/ui/*": ["../../packages/ui/src/*"]
+}
+```
+
+Esto resolvía los imports de `@fludge/ui/*` directamente a `packages/ui/src/*.tsx`,
+lo cual era aceptable cuando `apps/web` no era composite, pero rompía la
+semántica al activar `composite: true` + `rootDir: "src"`: TypeScript detecta
+archivos fuera del `rootDir` y los rechaza.
+
+**Fix aplicado (junio 2026):**
+
+1. **`apps/web/tsconfig.json`:** sacado el `paths["@fludge/ui/*"]` hackeado.
+   Paths queda solo con `"@/*": ["./src/*"]`.
+2. **`packages/ui/package.json` y `packages/client/package.json`:** cambiados
+   los `exports` para que declaren `types` (apunta a `dist/*.d.ts`) +
+   `default` (apunta a `src/*`). Patrón conditional exports estándar de Node:
+
+   ```json
+   "exports": {
+     "./components/*": {
+       "types": "./dist/components/*.d.ts",
+       "default": "./src/components/*.tsx"
+     }
+   }
+   ```
+
+   TypeScript usa el `types` (declaraciones generadas). Vite/Bun usan el
+   `default` (fuente real). Mismo patrón que ya usaba `@fludge/utils`.
+3. **`tsconfig.json` (raíz):** agregadas `references` a `packages/ui` y
+   `packages/client` para que `tsc --build` desde raíz los construya antes
+   de las apps.
+4. **`apps/web/tsconfig.json`:** quitado `composite: true`,
+   `emitDeclarationOnly`, `outDir`, `rootDir` strict, `tsBuildInfoFile`. La
+   app pasa a `noEmit: true` simple. Razón: con `composite: true` y references
+   a packages que no terminan de emitir (los `TS2883` preexistentes en
+   `packages/ui`), `apps/web` se quejaba con `TS6305: Output file ... has not
+   been built`. Como el bundler (Vite) y no `tsc --build` se encarga del
+   output de la app, no necesitamos que `apps/web` sea composite.
+
+**Trade-off aceptado:** se pierde el `composite: true` en `apps/web` (parte
+del -28% de build time de Fase 1). El speedup se mantiene por las otras
+mejoras (paths limpios, exclude explícito, project references entre packages).
+Cuando se arreglen los `TS2883` preexistentes de `packages/ui` (agregando
+type annotations explícitas a los forwardRef components), se puede volver
+a activar `composite: true` en `apps/web` y agregar `references` apuntando
+a `packages/ui` y `packages/client`.
+
+**Verificación post-fix:**
+
+- `bunx tsc --noEmit -p apps/web/tsconfig.json` → 0 errores `TS6059`/`TS6307`/`TS6305`.
+- `find . -name "*.d.ts" -not -path "*/node_modules/*" -not -path "*/dist/*"`
+  → solo `apps/native/uniwind-env.d.ts` (declarado a mano).
+- `bun run build` en `apps/web` → Vite resuelve `@fludge/ui/components/*`
+  vía `package.json` exports, bundle los `.tsx` desde `src/`, no hay
+  warnings de "could not resolve".
 
 ### Bug encontrado y corregido: `rootDir` + `include`
 
@@ -496,6 +567,20 @@ dentro de `dist/`.
 - `packages/client/tsconfig.json` — rootDir, tsBuildInfoFile, include/exclude.
 - `packages/db/tsconfig.json` — rootDir, tsBuildInfoFile, include/exclude.
 - `packages/utils/tsconfig.json` — rootDir, tsBuildInfoFile, include/exclude.
+
+### Fase 1.5 (fix post-Fase 1)
+
+- `apps/web/tsconfig.json` — sacado `paths["@fludge/ui/*"]` hackeado, quitado
+  `composite: true` y opciones asociadas (`emitDeclarationOnly`, `outDir`,
+  `tsBuildInfoFile`). Quedó con `noEmit: true` simple.
+- `tsconfig.json` (raíz) — agregadas `references` a `packages/ui` y
+  `packages/client` para que `tsc --build` desde raíz los construya antes
+  de las apps.
+- `packages/ui/package.json` — `exports` cambiados a `types` (apunta a
+  `dist/*.d.ts`) + `default` (apunta a `src/*`) para `./lib/*`,
+  `./components/*` y `./hooks/*`.
+- `packages/client/package.json` — mismo patrón para `./providers/*`,
+  `./presentation/*` y `./application/*`.
 
 ### Fase 2
 

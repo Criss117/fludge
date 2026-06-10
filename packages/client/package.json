@@ -2,9 +2,18 @@
   "name": "@fludge/client",
   "type": "module",
   "exports": {
-    "./providers/*": "./src/providers/*.tsx",
-    "./presentation/*": "./src/presentation/*.tsx",
-    "./application/*": "./src/application/*.ts"
+    "./providers/*": {
+      "types": "./dist/providers/*.d.ts",
+      "default": "./src/providers/*.tsx"
+    },
+    "./presentation/*": {
+      "types": "./dist/presentation/*.d.ts",
+      "default": "./src/presentation/*.tsx"
+    },
+    "./application/*": {
+      "types": "./dist/application/*.d.ts",
+      "default": "./src/application/*.ts"
+    }
   },
   "scripts": {},
   "dependencies": {

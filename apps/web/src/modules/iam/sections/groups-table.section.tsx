@@ -45,6 +45,7 @@ export function GroupsTableSection({ organizationId }: Props) {
       <Button
         variant="link"
         className="text-base"
+        nativeButton={false}
         render={(props) => (
           <Link to="/groups/$slug" params={{ slug: row.slug }} {...props} />
         )}
