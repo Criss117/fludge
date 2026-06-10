@@ -1,13 +1,5 @@
-import { GroupDetail } from "@fludge/client/application/iam/hooks/use-find-groups";
-import {
-  PERMISSIONS,
-  RESOURCE_DESCRIPTIONS,
-  type Resource,
-} from "@fludge/utils/permissions/data";
-import {
-  getPermissionByResource,
-  getPermissionDescription,
-} from "@fludge/utils/permissions/index";
+import type { GroupDetail } from "@fludge/client/application/iam/hooks/use-find-groups";
+import { getPermissionDescription } from "@fludge/utils/permissions/index";
 import {
   Table,
   TableBody,

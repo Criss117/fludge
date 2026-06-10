@@ -5,9 +5,8 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import type { MutationOptions, UseMutationResult } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
 import {
-  ORPCContextType,
+  type ORPCContextType,
   useORPC,
 } from "@fludge/client/providers/orpc.provider";
 import { authClient } from ".";

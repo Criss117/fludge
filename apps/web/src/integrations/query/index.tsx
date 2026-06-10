@@ -1,5 +1,4 @@
 import {
-  QueryCache,
   QueryClient,
   MutationCache,
   QueryClientProvider,

@@ -1,7 +1,5 @@
-import { useId, useState } from "react";
-import { PlusIcon } from "lucide-react";
+import { useId } from "react";
 
-import { GroupSummary } from "@fludge/client/application/iam/hooks/use-find-groups";
 import {
   createResourceFormContext,
   useResourceFormState,
@@ -15,7 +13,6 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@fludge/ui/components/sheet";
 import { Separator } from "@fludge/ui/components/separator";
 import { useGroupForm } from "@fludge/client/presentation/iam/forms/group/web";

@@ -1,5 +1,5 @@
 import { AlertCircle } from "lucide-react";
-import { ErrorComponentProps } from "@tanstack/react-router";
+import type { ErrorComponentProps } from "@tanstack/react-router";
 
 import { Button } from "@fludge/ui/components/button";
 

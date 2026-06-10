@@ -1,5 +1,4 @@
 import { ErrorScreen } from "@/components/error.screen";
-import { useRouter } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/error")({
@@ -7,8 +6,6 @@ export const Route = createFileRoute("/error")({
 });
 
 function RouteComponent() {
-  const router = useRouter();
-
   return (
     <ErrorScreen
       error={{

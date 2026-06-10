@@ -1,4 +1,4 @@
-import { GroupDetail } from "@fludge/client/application/iam/hooks/use-find-groups";
+import type { GroupDetail } from "@fludge/client/application/iam/hooks/use-find-groups";
 import { Avatar, AvatarFallback } from "@fludge/ui/components/avatar";
 import { Button } from "@fludge/ui/components/button";
 import { getInitials } from "@fludge/utils/initials";

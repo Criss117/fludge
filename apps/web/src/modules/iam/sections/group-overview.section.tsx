@@ -2,7 +2,7 @@ import { Calendar, ClockIcon, Hash, UserIcon } from "lucide-react";
 import { format, formatDistance } from "date-fns";
 import { es } from "date-fns/locale/es";
 
-import { GroupDetail } from "@fludge/client/application/iam/hooks/use-find-groups";
+import type { GroupDetail } from "@fludge/client/application/iam/hooks/use-find-groups";
 import { Badge } from "@fludge/ui/components/badge";
 import {
   Card,
@@ -17,7 +17,7 @@ interface Props {
 
 export function GroupOverviewSection({ group }: Props) {
   const stats = [
-    { title: "Miembros Totales", value: group.members.size },
+    { title: "Miembros Totales", value: group.members.length },
     { title: "Permisos Asignados", value: group.permissions.length },
     { title: "Creado Por", value: group.createdBy?.name || "—" },
   ];
@@ -26,7 +26,7 @@ export function GroupOverviewSection({ group }: Props) {
     <div className="space-y-6">
       <div className="flex items-center gap-x-3">
         <h3 className="font-mono text-lg font-semibold">{group.slug}</h3>
-        <Badge variant="secondary">{group.members.size} miembros</Badge>
+        <Badge variant="secondary">{group.members.length} miembros</Badge>
         <Badge>{group.permissions.length} permisos</Badge>
       </div>
 
@@ -47,8 +47,7 @@ export function GroupOverviewSection({ group }: Props) {
         <div className="flex items-center gap-x-1">
           <Calendar className="text-muted-foreground size-4" />
           <p className="text-muted-foreground text-sm">
-            Creado el:{" "}
-            {format(group.createdAt, "dd MMM yyyy", { locale: es })}
+            Creado el: {format(group.createdAt, "dd MMM yyyy", { locale: es })}
           </p>
         </div>
         <div className="flex items-center gap-x-1">

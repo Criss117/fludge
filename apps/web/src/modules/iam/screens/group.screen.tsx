@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GroupDetail } from "@fludge/client/application/iam/hooks/use-find-groups";
+import type { GroupDetail } from "@fludge/client/application/iam/hooks/use-find-groups";
 import { GroupHeaderSection } from "@/modules/iam/sections/group-header.section";
 import {
   Tabs,

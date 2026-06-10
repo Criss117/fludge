@@ -1,7 +1,7 @@
 import { Calendar, ClockIcon, DotIcon, Edit2Icon } from "lucide-react";
 import { format, formatDistance } from "date-fns";
 import { es } from "date-fns/locale/es";
-import { GroupDetail } from "@fludge/client/application/iam/hooks/use-find-groups";
+import type { GroupDetail } from "@fludge/client/application/iam/hooks/use-find-groups";
 import {
   UpdateGroup,
   UpdateGroupProvider,
