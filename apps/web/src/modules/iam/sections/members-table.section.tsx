@@ -1,9 +1,11 @@
-import { useFindAllMembers } from "@fludge/client/application/iam/hooks/use-find-members";
+import {
+  useFindAllMembers,
+  type MemberSummary,
+} from "@fludge/client/application/iam/hooks/use-find-members";
 import { useMembersTable } from "@fludge/client/application/iam/hooks/use-table";
 import { membersTableColumns } from "@fludge/client/presentation/iam/tables/members/columns";
 import { BaseTable } from "@fludge/client/presentation/shared/tables/base-table.web";
 import { MembersTableActions } from "@fludge/client/presentation/iam/tables/members/actions.web";
-import { MemberGroupsCell } from "@fludge/client/presentation/iam/tables/members/cells.web";
 import {
   PageSize,
   FirstPage,
@@ -12,10 +14,37 @@ import {
   LastPage,
 } from "@fludge/client/presentation/shared/tables/pagination.web";
 import { useFilters } from "@fludge/client/presentation/shared/context/filter.context";
+import { Button } from "@fludge/ui/components/button";
+import { Link } from "@tanstack/react-router";
 
 interface Props {
   organizationId: string;
   groupId?: string;
+}
+
+function GroupsAssigned({ groups }: { groups: MemberSummary["groups"] }) {
+  const firstThree = groups.slice(0, 3);
+
+  const hasMore = groups.length > 3;
+
+  return (
+    <div className="flex flex-col">
+      {firstThree.map((group) => (
+        <Button
+          key={group.id}
+          nativeButton={false}
+          variant="link"
+          className="w-fit text-base"
+          render={(props) => (
+            <Link {...props} to="/groups/$slug" params={{ slug: group.slug }} />
+          )}
+        >
+          {group.name}
+        </Button>
+      ))}
+      {hasMore && <span>...</span>}
+    </div>
+  );
 }
 
 export function MembersTableSection({ organizationId, groupId }: Props) {
@@ -27,7 +56,7 @@ export function MembersTableSection({ organizationId, groupId }: Props) {
 
   const columns = membersTableColumns({
     renderActions: (row) => <MembersTableActions row={row} />,
-    groupsAssigned: (groups) => <MemberGroupsCell groups={groups} />,
+    groupsAssigned: (groups) => <GroupsAssigned groups={groups} />,
   });
 
   const table = useMembersTable({ data: members, columns });
