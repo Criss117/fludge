@@ -6,8 +6,9 @@ import {
   UpdateGroup,
   UpdateGroupProvider,
   useUpdateGroupForm,
-} from "@/modules/iam/components/udpate-group";
+} from "@/modules/iam/components/update-group";
 import { Button } from "@fludge/ui/components/button";
+import { AssignMembersToGroup } from "@/modules/iam/components/assing-members-to-group";
 
 interface Props {
   organizationId: string;
@@ -43,10 +44,17 @@ export function GroupHeaderSection({ group, organizationId }: Props) {
           <p className="text-muted-foreground">{group.description || "-"}</p>
         </div>
 
-        <UpdateGroupProvider>
-          <UpdateGroupButton organizationId={organizationId} group={group} />
-          <UpdateGroup organizationId={organizationId} />
-        </UpdateGroupProvider>
+        <div className="flex items-center gap-x-4">
+          <AssignMembersToGroup
+            groupId={group.id}
+            organizationId={organizationId}
+            groupMembers={group.members}
+          />
+          <UpdateGroupProvider>
+            <UpdateGroupButton organizationId={organizationId} group={group} />
+            <UpdateGroup organizationId={organizationId} />
+          </UpdateGroupProvider>
+        </div>
       </div>
       <div className="flex items-center gap-x-4">
         <div className="flex items-center gap-x-1">

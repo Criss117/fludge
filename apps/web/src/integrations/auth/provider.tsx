@@ -1,9 +1,5 @@
 import { createContext, use } from "react";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import type { MutationOptions, UseMutationResult } from "@tanstack/react-query";
 import {
   type ORPCContextType,
@@ -50,7 +46,6 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { orpc } = useORPC();
-  const queryClient = useQueryClient();
   const session = useSuspenseQuery(orpc.auth.queries.getSession.queryOptions());
 
   const signInEmail = useMutation({

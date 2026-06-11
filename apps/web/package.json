@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
+    "dev:tsc": "concurrently -k -n tsc,vite -c blue,green \"bunx tsc --build --watch --preserveWatchOutput\" \"vite dev\"",
     "build": "vite build",
     "serve": "vite preview",
     "start": "vite",
@@ -19,6 +20,7 @@
     "@fludge/utils": "workspace:*",
     "@fontsource-variable/geist": "5.2.9",
     "@fontsource-variable/geist-mono": "5.2.8",
+    "@orpc/client": "catalog:",
     "@tailwindcss/vite": "4.3.0",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "1.170.11",
@@ -46,6 +48,7 @@
     "@types/react-dom": "catalog:",
     "@vite-pwa/assets-generator": "1.0.2",
     "@vitejs/plugin-react": "6.0.2",
+    "concurrently": "^10.0.3",
     "postcss": "8.5.15",
     "tailwindcss": "4.3.0",
     "typescript": "catalog:",

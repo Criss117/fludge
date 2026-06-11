@@ -11,7 +11,7 @@ import {
   NextPage,
   LastPage,
 } from "@fludge/client/presentation/shared/tables/pagination.web";
-import { useUpdateGroupForm } from "@/modules/iam/components/udpate-group";
+import { useUpdateGroupForm } from "@/modules/iam/components/update-group";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@fludge/ui/components/button";
 

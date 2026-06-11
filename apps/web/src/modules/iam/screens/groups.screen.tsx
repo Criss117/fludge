@@ -8,7 +8,7 @@ import { FiltersProvider } from "@fludge/client/presentation/shared/context/filt
 import {
   UpdateGroup,
   UpdateGroupProvider,
-} from "@/modules/iam/components/udpate-group";
+} from "@/modules/iam/components/update-group";
 
 interface Props {
   organizationId: string;
