@@ -7,54 +7,80 @@ import type { DbConnection } from "@fludge/db";
 import { groupMember } from "@fludge/db/schemas/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 
+type UnassignMembersParams =
+  | {
+      groupId: string;
+      memberIds: string[];
+    }
+  | {
+      groupIds: string[];
+      memberId: string;
+    };
+
+type AssignMembersParams =
+  | {
+      groupId: string;
+      memberIds: string[];
+      assignedBy: string | null;
+    }
+  | {
+      groupIds: string[];
+      memberId: string;
+      assignedBy: string | null;
+    };
+
 export class PgGroupMembersCommandsRepository extends TransactionalRepository {
   constructor(private readonly db: DbConnection) {
     super(db);
   }
 
   public async assignMembers(
-    groupIds: string | string[],
-    memberIds: string | string[],
-    assignedBy: string | null,
+    values: AssignMembersParams,
     options?: TransactionalOptions,
   ) {
-    if (!Array.isArray(memberIds)) memberIds = [memberIds];
-    if (!Array.isArray(groupIds)) groupIds = [groupIds];
+    let data: {
+      groupId: string;
+      memberId: string;
+      assignedBy: string | null;
+    }[] = [];
 
-    if (memberIds.length === 0 || groupIds.length === 0)
-      return err(new Error("No se especificó ningún id"));
+    if ("groupId" in values) {
+      data = values.memberIds.map((memberId) => ({
+        groupId: values.groupId,
+        memberId,
+        assignedBy: values.assignedBy,
+      }));
+    } else {
+      data = values.groupIds.map((groupId) => ({
+        groupId,
+        memberId: values.memberId,
+        assignedBy: values.assignedBy,
+      }));
+    }
 
     const db = options?.tx ?? this.db;
 
-    const values = groupIds
-      .map((groupId) => {
-        return memberIds.map((memberId) => ({
-          groupId,
-          memberId,
-          assignedBy,
-        }));
-      })
-      .flat();
-
-    const [, error] = await tryCatch(
-      db.insert(groupMember).values(values).onConflictDoNothing().execute(),
+    const [createdData, error] = await tryCatch(
+      db
+        .insert(groupMember)
+        .values(data)
+        .onConflictDoNothing()
+        .returning()
+        .execute(),
     );
 
     if (error) return err(error);
 
-    return ok(null);
+    return ok(createdData);
   }
 
   public async unassignMembers(
-    groupIds: string | string[],
-    memberIds: string | string[],
+    values: UnassignMembersParams,
     options?: TransactionalOptions,
   ) {
-    if (!Array.isArray(memberIds)) memberIds = [memberIds];
-    if (!Array.isArray(groupIds)) groupIds = [groupIds];
-
-    if (memberIds.length === 0 || groupIds.length === 0)
-      return err(new Error("No se especificó ningún id"));
+    const groupIds = "groupId" in values ? [values.groupId] : values.groupIds;
+    const memberIds =
+      "memberId" in values ? [values.memberId] : values.memberIds;
 
     const db = options?.tx ?? this.db;
 

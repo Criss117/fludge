@@ -48,6 +48,7 @@ export function useFindAllMembers(organizationId: string, filters?: Filters) {
         .select(({ g }) => ({
           id: g.id,
           name: g.name,
+          slug: g.slug,
           permissions: g.permissions,
         }));
 

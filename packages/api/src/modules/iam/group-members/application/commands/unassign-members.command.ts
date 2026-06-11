@@ -17,10 +17,7 @@ export class UnAssignMembersCommand {
 
   public async execute(cmd: CMD) {
     const [, errorAssign] =
-      await this.groupMembersCommandsRepository.unassignMembers(
-        cmd.groupIds,
-        cmd.memberIds,
-      );
+      await this.groupMembersCommandsRepository.unassignMembers(cmd);
 
     if (errorAssign) throw new ORPCError("INTERNAL_SERVER_ERROR", errorAssign);
   }

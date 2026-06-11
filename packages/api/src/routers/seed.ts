@@ -178,7 +178,7 @@ async function seedGroupMembers(
     return groupMembersContainer.commands.assignMembers.execute({
       assignedBy: d.assignedBy,
       groupIds: d.groupIds,
-      memberIds: [d.memberId],
+      memberId: d.memberId,
       organizationId: d.organizationId,
     });
   });

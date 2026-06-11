@@ -58,29 +58,36 @@ export function useFindOneGroup(organizationId: string, groupSlug: string) {
   const { groupMembersCollection } = useGroupMembersCollection(organizationId);
   const { memberCollection } = useMemberCollection(organizationId);
 
-  return useLiveSuspenseQuery((q) => {
-    const membersQuery = q
-      .from({
-        gm: groupMembersCollection,
-      })
-      .innerJoin({ m: memberCollection }, ({ m, gm }) => eq(m.id, gm.memberId))
-      .select(({ m, gm }) => ({
-        id: m.id,
-        user: m.user,
-        assignedBy: gm.assignedBy,
-      }));
+  return useLiveSuspenseQuery(
+    (q) => {
+      const membersQuery = q
+        .from({
+          gm: groupMembersCollection,
+        })
+        .innerJoin({ m: memberCollection }, ({ m, gm }) =>
+          eq(m.id, gm.memberId),
+        )
+        .select(({ m, gm }) => ({
+          id: m.id,
+          user: m.user,
+          assignedBy: gm.assignedBy,
+        }));
 
-    return q
-      .from({ g: groupCollection })
-      .select(({ g }) => ({
-        ...g,
-        members: toArray(membersQuery.where(({ gm }) => eq(gm.groupId, g.id))),
-      }))
-      .where(({ g }) =>
-        and(eq(g.slug, groupSlug), eq(g.organizationId, organizationId)),
-      )
-      .findOne();
-  });
+      return q
+        .from({ g: groupCollection })
+        .select(({ g }) => ({
+          ...g,
+          members: toArray(
+            membersQuery.where(({ gm }) => eq(gm.groupId, g.id)),
+          ),
+        }))
+        .where(({ g }) =>
+          and(eq(g.slug, groupSlug), eq(g.organizationId, organizationId)),
+        )
+        .findOne();
+    },
+    [groupSlug],
+  );
 }
 
 export function useTotalGroups(organizationId: string) {
