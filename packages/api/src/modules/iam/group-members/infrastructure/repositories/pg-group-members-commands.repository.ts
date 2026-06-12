@@ -7,27 +7,16 @@ import type { DbConnection } from "@fludge/db";
 import { groupMember } from "@fludge/db/schemas/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 
-type UnassignMembersParams =
-  | {
-      groupId: string;
-      memberIds: string[];
-    }
-  | {
-      groupIds: string[];
-      memberId: string;
-    };
+type GroupMembersDelete = {
+  groupIds: string[];
+  memberIds: string[];
+};
 
-type AssignMembersParams =
-  | {
-      groupId: string;
-      memberIds: string[];
-      assignedBy: string | null;
-    }
-  | {
-      groupIds: string[];
-      memberId: string;
-      assignedBy: string | null;
-    };
+type GroupMembersInsert = {
+  groupId: string;
+  memberId: string;
+  assignedBy: string | null;
+};
 
 export class PgGroupMembersCommandsRepository extends TransactionalRepository {
   constructor(private readonly db: DbConnection) {
@@ -35,35 +24,15 @@ export class PgGroupMembersCommandsRepository extends TransactionalRepository {
   }
 
   public async assignMembers(
-    values: AssignMembersParams,
+    values: GroupMembersInsert[],
     options?: TransactionalOptions,
   ) {
-    let data: {
-      groupId: string;
-      memberId: string;
-      assignedBy: string | null;
-    }[] = [];
-
-    if ("groupId" in values) {
-      data = values.memberIds.map((memberId) => ({
-        groupId: values.groupId,
-        memberId,
-        assignedBy: values.assignedBy,
-      }));
-    } else {
-      data = values.groupIds.map((groupId) => ({
-        groupId,
-        memberId: values.memberId,
-        assignedBy: values.assignedBy,
-      }));
-    }
-
     const db = options?.tx ?? this.db;
 
     const [createdData, error] = await tryCatch(
       db
         .insert(groupMember)
-        .values(data)
+        .values(values)
         .onConflictDoNothing()
         .returning()
         .execute(),
@@ -75,13 +44,9 @@ export class PgGroupMembersCommandsRepository extends TransactionalRepository {
   }
 
   public async unassignMembers(
-    values: UnassignMembersParams,
+    values: GroupMembersDelete,
     options?: TransactionalOptions,
   ) {
-    const groupIds = "groupId" in values ? [values.groupId] : values.groupIds;
-    const memberIds =
-      "memberId" in values ? [values.memberId] : values.memberIds;
-
     const db = options?.tx ?? this.db;
 
     const [, error] = await tryCatch(
@@ -89,8 +54,8 @@ export class PgGroupMembersCommandsRepository extends TransactionalRepository {
         .delete(groupMember)
         .where(
           and(
-            inArray(groupMember.groupId, groupIds),
-            inArray(groupMember.memberId, memberIds),
+            inArray(groupMember.groupId, values.groupIds),
+            inArray(groupMember.memberId, values.memberIds),
           ),
         )
         .execute(),

@@ -5,40 +5,26 @@ import type { OrganizationHasMembersQuery } from "@fludge/api/modules/iam/organi
 import type { PgGroupMembersCommandsRepository } from "@fludge/api/modules/iam/group-members/infrastructure/repositories/pg-group-members-commands.repository";
 import type { OrganizationHasGroupsQuery } from "@fludge/api/modules/iam/organizations/application/queries/organization-has-groups.query";
 
-export const assignMembersCommand = z.union([
-  z.object({
-    groupId: z.uuid({
-      error: "Id de miembro no válido.",
-    }),
-    memberIds: z
-      .array(
-        z.string({
-          error: "Id de miembro no válido.",
-        }),
-      )
-      .min(1, {
-        error: "Debe especificar al menos un id de miembro.",
-      }),
-  }),
-  z.object({
-    groupIds: z
-      .array(
-        z.uuid({
-          error: "Id de miembro no válido.",
-        }),
-      )
-      .min(1, {
-        error: "Debe especificar al menos un id de miembro.",
-      }),
-    memberId: z
-      .string({
+export const assignMembersCommand = z.object({
+  groupIds: z
+    .array(
+      z.uuid({
         error: "Id de miembro no válido.",
-      })
-      .min(1, {
-        error: "Debe especificar al menos un id de miembro.",
       }),
-  }),
-]);
+    )
+    .min(1, {
+      error: "Debe especificar al menos un id de miembro.",
+    }),
+  memberIds: z
+    .array(
+      z.string({
+        error: "Id de miembro no válido.",
+      }),
+    )
+    .min(1, {
+      error: "Debe especificar al menos un id de miembro.",
+    }),
+});
 
 type CMD = z.infer<typeof assignMembersCommand> & {
   organizationId: string;
@@ -57,13 +43,10 @@ export class AssignMembersCommand {
   ) {}
 
   public async execute(cmd: CMD) {
-    const groupIds = "groupId" in cmd ? [cmd.groupId] : cmd.groupIds;
-    const memberIds = "memberId" in cmd ? [cmd.memberId] : cmd.memberIds;
-
     const organizationHasGroups = await this.organizationHasGroupsQuery.execute(
       {
         organizationId: cmd.organizationId,
-        groupIds,
+        groupIds: cmd.groupIds,
       },
     );
 
@@ -74,7 +57,7 @@ export class AssignMembersCommand {
 
     const { exists } = await this.organizationHasMembersQuery.execute({
       organizationId: cmd.organizationId,
-      memberIds,
+      memberIds: cmd.memberIds,
       options: {
         filterBy: "member",
       },
@@ -87,17 +70,15 @@ export class AssignMembersCommand {
 
     const [data, errorAssign] =
       await this.groupMembersCommandsRepository.assignMembers(
-        "groupId" in cmd
-          ? {
-              groupId: cmd.groupId,
-              memberIds: cmd.memberIds,
+        cmd.groupIds
+          .map((groupId) =>
+            cmd.memberIds.map((memberId) => ({
+              groupId,
+              memberId,
               assignedBy: cmd.assignedBy.memberId,
-            }
-          : {
-              groupIds: cmd.groupIds,
-              memberId: cmd.memberId,
-              assignedBy: cmd.assignedBy.memberId,
-            },
+            })),
+          )
+          .flat(),
       );
 
     if (errorAssign) throw new ORPCError("INTERNAL_SERVER_ERROR", errorAssign);

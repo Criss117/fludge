@@ -9,50 +9,6 @@ export type GroupMemberSummary = Awaited<
 
 const collectionCache = new Map<string, ReturnType<typeof builder>>();
 
-type AssignMembers =
-  | {
-      groupId: string;
-      memberIds: string[];
-    }
-  | {
-      groupIds: string[];
-      memberId: string;
-    };
-
-function formatIds(
-  ids: {
-    groupId: string;
-    memberId: string;
-  }[],
-) {
-  const groupIds = new Set(ids.map((m) => m.groupId));
-
-  const memberIds = new Set(ids.map((m) => m.memberId));
-
-  if (groupIds.size === 0 || memberIds.size === 0) throw new Error("Invalid");
-  if (groupIds.size > 1 && memberIds.size > 1) throw new Error("Invalid");
-
-  let values: AssignMembers | null = null;
-
-  if (groupIds.size === 1) {
-    values = {
-      groupId: Array.from(groupIds)[0]!,
-      memberIds: Array.from(memberIds),
-    };
-  }
-
-  if (memberIds.size === 1) {
-    values = {
-      groupIds: Array.from(groupIds),
-      memberId: Array.from(memberIds)[0]!,
-    };
-  }
-
-  if (!values) throw new Error("Invalid");
-
-  return values;
-}
-
 function builder(
   organizationId: string,
   queryClient: QueryClient,
@@ -70,41 +26,47 @@ function builder(
       getKey: (item) => `${item.groupId}-${item.memberId}`,
       defaultIndexType: BasicIndex,
       onInsert: async ({ transaction }) => {
-        const toInsert = transaction.mutations.map((m) => ({
-          groupId: m.modified.groupId,
-          memberId: m.modified.memberId,
-        }));
+        const groupIds = new Set(
+          transaction.mutations.map((m) => m.modified.groupId),
+        );
+        const memberIds = new Set(
+          transaction.mutations.map((m) => m.modified.memberId),
+        );
 
-        const values = formatIds(toInsert);
-
-        const res =
-          await orpc.groupsMembers.commands.assignMembers.call(values);
+        const res = await orpc.groupsMembers.commands.assignMembers.call({
+          groupIds: Array.from(groupIds),
+          memberIds: Array.from(memberIds),
+        });
 
         groupMemberCollection.utils.writeInsert(res);
 
         return {
-          refretch: true,
+          refetch: false,
         };
       },
 
       onDelete: async ({ transaction }) => {
-        const toDelete = transaction.mutations.map((m) => ({
-          groupId: m.original.groupId,
-          memberId: m.original.memberId,
-        }));
+        const groupIds = new Set(
+          transaction.mutations.map((m) => m.original.groupId),
+        );
+        const memberIds = new Set(
+          transaction.mutations.map((m) => m.original.memberId),
+        );
 
-        const values = formatIds(toDelete);
-
-        await orpc.groupsMembers.commands.unassignMembers.call(values);
+        await orpc.groupsMembers.commands.unassignMembers.call({
+          groupIds: Array.from(groupIds),
+          memberIds: Array.from(memberIds),
+        });
 
         groupMemberCollection.utils.writeDelete(
-          toDelete.map(
-            (m) => `${m.groupId}-${m.memberId}` as `${string}-${string}`,
+          transaction.mutations.map(
+            (m) =>
+              `${m.original.groupId}-${m.original.memberId}` as `${string}-${string}`,
           ),
         );
 
         return {
-          refretch: true,
+          refetch: false,
         };
       },
     }),
