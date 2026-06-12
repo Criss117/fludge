@@ -9,7 +9,7 @@ interface Props {
 }
 
 export function GroupsMemberSection({ members, onViewAll }: Props) {
-  const firstMembers = members.slice(0, 5);
+  const firstMembers = members.slice(0, 3);
 
   return (
     <div className="space-y-6 h-full">

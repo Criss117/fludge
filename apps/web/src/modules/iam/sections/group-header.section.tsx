@@ -45,11 +45,7 @@ export function GroupHeaderSection({ group, organizationId }: Props) {
         </div>
 
         <div className="flex items-center gap-x-4">
-          <AssignMembersToGroup
-            groupId={group.id}
-            organizationId={organizationId}
-            groupMembers={group.members}
-          />
+          <AssignMembersToGroup organizationId={organizationId} group={group} />
           <UpdateGroupProvider>
             <UpdateGroupButton organizationId={organizationId} group={group} />
             <UpdateGroup organizationId={organizationId} />
