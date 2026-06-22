@@ -1,11 +1,9 @@
-import {
-  useFindAllMembers,
-  type MemberSummary,
-} from "@fludge/client/application/iam/hooks/use-find-members";
-import { useMembersTable } from "@fludge/client/application/iam/hooks/use-table";
-import { membersTableColumns } from "@fludge/client/presentation/iam/tables/members/columns";
+import { useMemo } from "react";
+import type { MemberGroup } from "@fludge/client/application/iam/hooks/use-find-members";
+import { useMemberGroupsTable } from "@fludge/client/application/iam/hooks/use-table";
+import { memberGroupsTableColumns } from "@fludge/client/presentation/iam/tables/member-groups/columns";
+import { useFilters } from "@fludge/client/presentation/shared/context/filter.context";
 import { BaseTable } from "@fludge/client/presentation/shared/tables/base-table.web";
-import { MembersTableActions } from "@fludge/client/presentation/iam/tables/members/actions.web";
 import {
   PageSize,
   FirstPage,
@@ -13,77 +11,55 @@ import {
   NextPage,
   LastPage,
 } from "@fludge/client/presentation/shared/tables/pagination.web";
-import { useFilters } from "@fludge/client/presentation/shared/context/filter.context";
-import { Button } from "@fludge/ui/components/button";
 import { Link } from "@tanstack/react-router";
+import { Button } from "@fludge/ui/components/button";
 
 interface Props {
-  organizationId: string;
-  groupId?: string;
+  groups: MemberGroup[];
 }
 
-function GroupsAssigned({ groups }: { groups: MemberSummary["groups"] }) {
-  const firstThree = groups.slice(0, 3);
-
-  const hasMore = groups.length > 3;
-
-  return (
-    <div className="flex flex-col">
-      {firstThree.map((group) => (
-        <Button
-          key={group.id}
-          nativeButton={false}
-          variant="link"
-          className="w-fit text-base"
-          render={(props) => (
-            <Link {...props} to="/groups/$slug" params={{ slug: group.slug }} />
-          )}
-        >
-          {group.name}
-        </Button>
-      ))}
-      {hasMore && <span>...</span>}
-    </div>
-  );
-}
-
-export function MembersTableSection({ organizationId, groupId }: Props) {
+export function MemberGroupsTableSection({ groups }: Props) {
   const { filters } = useFilters();
-  const members = useFindAllMembers(organizationId, {
-    name: filters.query,
-    groupId,
-  });
 
-  const columns = membersTableColumns({
-    renderActions: (row) => <MembersTableActions row={row} />,
-    groupsAssigned: (groups) => <GroupsAssigned groups={groups} />,
+  const filtered = useMemo(() => {
+    const query = filters.query?.trim().toLowerCase();
+    if (!query) return groups;
+    return groups.filter((g) => g.name.toLowerCase().includes(query));
+  }, [groups, filters.query]);
+
+  const columns = memberGroupsTableColumns({
     nameCell: (row) => (
       <Button
         variant="link"
         className="text-base"
         nativeButton={false}
         render={(props) => (
-          <Link to="/members/$id" params={{ id: row.id }} {...props} />
+          <Link to="/groups/$slug" params={{ slug: row.slug }} {...props} />
         )}
       >
-        {row.user.name}
+        {row.name}
       </Button>
     ),
   });
 
-  const table = useMembersTable({ data: members, columns });
+  const table = useMemberGroupsTable({
+    data: filtered,
+    columns: columns,
+  });
 
   const pageIndex = table.getState().pagination.pageIndex;
   const pageCount = table.getPageCount();
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="overflow-hidden  border">
+      <div className="overflow-hidden border">
         <BaseTable
           table={table}
           columnsLength={columns.length}
           EmptyComponent={
-            <div className="text-center">No se encontraron miembros</div>
+            <div className="text-center">
+              Este miembro no pertenece a ningún grupo
+            </div>
           }
         />
       </div>

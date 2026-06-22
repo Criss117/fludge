@@ -15,6 +15,47 @@ type Filters = {
   groupId?: string;
 };
 
+export function useFindOneMember(organizationId: string, memberId: string) {
+  const { memberCollection } = useMemberCollection(organizationId);
+  const { groupMembersCollection } = useGroupMembersCollection(organizationId);
+  const { groupCollection } = useGroupCollection(organizationId);
+
+  return useLiveSuspenseQuery(
+    (q) => {
+      const groupsQuery = q
+        .from({ gm: groupMembersCollection })
+        .innerJoin({ g: groupCollection }, ({ g, gm }) =>
+          eq(g.id, gm.groupId),
+        )
+        .select(({ g }) => ({
+          id: g.id,
+          name: g.name,
+          slug: g.slug,
+          permissions: g.permissions,
+          description: g.description,
+        }));
+
+      return q
+        .from({ m: memberCollection })
+        .select(({ m }) => ({
+          ...m,
+          groups: toArray(
+            groupsQuery.where(({ gm }) => eq(gm.memberId, m.id)),
+          ),
+        }))
+        .where(({ m }) => eq(m.id, memberId))
+        .findOne();
+    },
+    [memberId],
+  );
+}
+
+export type MemberWithGroups = NonNullable<
+  ReturnType<typeof useFindOneMember>["data"]
+>;
+
+export type MemberGroup = MemberWithGroups["groups"][number];
+
 export function useTotalMembers(organizationId: string) {
   const { memberCollection } = useMemberCollection(organizationId);
 
