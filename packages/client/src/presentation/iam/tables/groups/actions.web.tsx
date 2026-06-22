@@ -20,9 +20,18 @@ import {
 interface Props {
   row: GroupSummary;
   onUpdateClick: (group: GroupSummary) => void;
+  onDeleteClick: (group: GroupSummary) => void;
+  onActivateClick: (group: GroupSummary) => void;
+  onDeactivateClick: (group: GroupSummary) => void;
 }
 
-export function GroupsTableActions({ row, onUpdateClick }: Props) {
+export function GroupsTableActions({
+  row,
+  onUpdateClick,
+  onDeleteClick,
+  onActivateClick,
+  onDeactivateClick,
+}: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -38,12 +47,12 @@ export function GroupsTableActions({ row, onUpdateClick }: Props) {
             Editar
           </DropdownMenuItem>
           {!row.deletedAt ? (
-            <DropdownMenuItem closeOnClick={false}>
+            <DropdownMenuItem onClick={() => onDeactivateClick(row)}>
               <EyeOffIcon />
               Desactivar
             </DropdownMenuItem>
           ) : (
-            <DropdownMenuItem closeOnClick={false}>
+            <DropdownMenuItem onClick={() => onActivateClick(row)}>
               <EyeIcon />
               Activar
             </DropdownMenuItem>
@@ -52,7 +61,10 @@ export function GroupsTableActions({ row, onUpdateClick }: Props) {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuLabel>Peligro</DropdownMenuLabel>
-          <DropdownMenuItem closeOnClick={false} variant="destructive">
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={() => onDeleteClick(row)}
+          >
             <TrashIcon />
             Eliminar
           </DropdownMenuItem>

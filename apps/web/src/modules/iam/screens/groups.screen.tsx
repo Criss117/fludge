@@ -2,7 +2,10 @@ import {
   GroupsHeaderSection,
   GroupsHeaderSectionSkeleton,
 } from "@/modules/iam/sections/groups-header.section";
-import { GroupsTableSection } from "@/modules/iam/sections/groups-table.section";
+import {
+  GroupsTableSection,
+  GroupsTableSectionSkeleton,
+} from "@/modules/iam/sections/groups-table.section";
 import { GroupsFiltersSection } from "@/modules/iam/sections/groups-filters.section";
 import { FiltersProvider } from "@fludge/client/presentation/shared/context/filter.context";
 import {
@@ -31,8 +34,9 @@ export function GroupsScreen({ organizationId }: Props) {
 
 export function GroupsScreenSkeleton() {
   return (
-    <div className="p-8">
+    <div className="p-8 space-y-8">
       <GroupsHeaderSectionSkeleton />
+      <GroupsTableSectionSkeleton />
     </div>
   );
 }

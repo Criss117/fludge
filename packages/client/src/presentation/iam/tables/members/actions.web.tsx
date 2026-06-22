@@ -9,6 +9,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@fludge/ui/components/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@fludge/ui/components/tooltip";
 import { MoreVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
 
 interface Props {
@@ -17,29 +23,54 @@ interface Props {
 
 export function MembersTableActions({ row: _row }: Props) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={(props) => <Button {...props} variant="ghost" size="icon" />}
-      >
-        <MoreVerticalIcon />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-          <DropdownMenuItem>
-            <PencilIcon />
-            Editar
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>Peligro</DropdownMenuLabel>
-          <DropdownMenuItem closeOnClick={false} variant="destructive">
-            <TrashIcon />
-            Eliminar
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <TooltipProvider>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={(props) => <Button {...props} variant="ghost" size="icon" />}
+        >
+          <MoreVerticalIcon />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+            <Tooltip>
+              <TooltipTrigger
+                render={(props) => (
+                  <DropdownMenuItem
+                    {...props}
+                    disabled
+                    className="pointer-events-auto data-disabled:cursor-not-allowed"
+                  >
+                    <PencilIcon />
+                    Editar
+                  </DropdownMenuItem>
+                )}
+              />
+              <TooltipContent className="z-[60]">Próximamente</TooltipContent>
+            </Tooltip>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Peligro</DropdownMenuLabel>
+            <Tooltip>
+              <TooltipTrigger
+                render={(props) => (
+                  <DropdownMenuItem
+                    {...props}
+                    disabled
+                    variant="destructive"
+                    className="pointer-events-auto data-disabled:cursor-not-allowed"
+                  >
+                    <TrashIcon />
+                    Eliminar
+                  </DropdownMenuItem>
+                )}
+              />
+              <TooltipContent className="z-[60]">Próximamente</TooltipContent>
+            </Tooltip>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </TooltipProvider>
   );
 }

@@ -54,6 +54,18 @@ function builder(
           refetch: false,
         };
       },
+
+      onDelete: async ({ transaction }) => {
+        const groupIds = transaction.mutations.map((m) => m.original.id);
+
+        await orpc.groups.commands.delete.call({ groupIds });
+
+        groupCollection.utils.writeDelete(groupIds);
+
+        return {
+          refetch: false,
+        };
+      },
     }),
   );
 

@@ -8,7 +8,7 @@ import {
   useUpdateGroupForm,
 } from "@/modules/iam/components/update-group";
 import { Button } from "@fludge/ui/components/button";
-import { AssignMembersToGroup } from "@/modules/iam/components/assing-members-to-group";
+import { AssignMembersToGroup } from "@/modules/iam/components/assign-members-to-group";
 
 interface Props {
   organizationId: string;
