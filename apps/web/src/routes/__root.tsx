@@ -58,7 +58,7 @@ function RootComponent() {
           <Outlet />
         </AuthProvider>
       </div>
-      <Toaster richColors />
+      <Toaster richColors position="top-center" />
       <TanStackDevtools
         plugins={[
           {

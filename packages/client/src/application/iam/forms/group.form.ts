@@ -1,10 +1,24 @@
+import { useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { formOptions } from "@tanstack/react-form";
 
 import { ALL_PERMISSIONS } from "@fludge/utils/permissions/index";
 import { useGroupCollection } from "@fludge/client/application/iam/hooks/use-group-collection";
+import { toast } from "@fludge/ui/lib/toast";
 import { slugify } from "@fludge/utils/slugify";
+
+const CREATE_GROUP_TOASTS = {
+  loading: "Creando grupo...",
+  success: "Grupo creado",
+  error: "Error al crear grupo",
+} as const;
+
+const UPDATE_GROUP_TOASTS = {
+  loading: "Actualizando grupo...",
+  success: "Grupo actualizado",
+  error: "Error al actualizar grupo",
+} as const;
 
 const groupFormSchema = z.object({
   name: z
@@ -54,6 +68,7 @@ export function useCreateGroupFormOptions({
   onError,
 }: CreateFormParams) {
   const { groupCollection } = useGroupCollection(organizationId);
+  const toastIdRef = useRef<string | number>(undefined);
 
   const insertGroupMutation = useMutation({
     mutationKey: ["iam", "group", "insert"],
@@ -75,10 +90,15 @@ export function useCreateGroupFormOptions({
 
       await tx.isPersisted.promise;
     },
+    onMutate: () => {
+      toastIdRef.current = toast.loading(CREATE_GROUP_TOASTS.loading);
+    },
     onSuccess: () => {
+      toast.success(CREATE_GROUP_TOASTS.success, { id: toastIdRef.current });
       onSuccess?.();
     },
     onError: (error) => {
+      toast.error(CREATE_GROUP_TOASTS.error, { id: toastIdRef.current });
       onError?.(error);
     },
   });
@@ -109,6 +129,7 @@ export function useUpdateGroupFormOptions({
   onError,
 }: UpdateFormParams) {
   const { groupCollection } = useGroupCollection(organizationId);
+  const toastIdRef = useRef<string | number>(undefined);
 
   const updateGroupMutation = useMutation({
     mutationKey: ["iam", "group", "insert"],
@@ -124,10 +145,15 @@ export function useUpdateGroupFormOptions({
 
       await tx.isPersisted.promise;
     },
+    onMutate: () => {
+      toastIdRef.current = toast.loading(UPDATE_GROUP_TOASTS.loading);
+    },
     onSuccess: () => {
+      toast.success(UPDATE_GROUP_TOASTS.success, { id: toastIdRef.current });
       onSuccess?.();
     },
     onError: (error) => {
+      toast.error(UPDATE_GROUP_TOASTS.error, { id: toastIdRef.current });
       onError?.(error);
     },
   });

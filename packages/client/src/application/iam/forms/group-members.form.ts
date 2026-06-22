@@ -1,8 +1,34 @@
+import { useRef } from "react";
 import { z } from "zod";
 import { formOptions } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 
 import { useGroupMembersCollection } from "@fludge/client/application/iam/hooks/use-group-members-collection";
+import { toast } from "@fludge/ui/lib/toast";
+
+const ASSIGN_MEMBERS_TO_GROUP_TOASTS = {
+  loading: "Asignando miembros...",
+  success: "Miembros asignados",
+  error: "Error al asignar miembros",
+} as const;
+
+const UNASSIGN_MEMBERS_TO_GROUP_TOASTS = {
+  loading: "Quitando miembros...",
+  success: "Miembros quitados",
+  error: "Error al quitar miembros",
+} as const;
+
+const ASSIGN_GROUPS_TO_MEMBER_TOASTS = {
+  loading: "Asignando grupos...",
+  success: "Grupos asignados",
+  error: "Error al asignar grupos",
+} as const;
+
+const UNASSIGN_GROUPS_TO_MEMBER_TOASTS = {
+  loading: "Quitando grupos...",
+  success: "Grupos quitados",
+  error: "Error al quitar grupos",
+} as const;
 
 export const assingMembersToGroupSchema = z.object({
   memberIds: z.array(
@@ -49,6 +75,7 @@ export function useAssingMembersToGroupFormOptions({
   onError,
 }: AssingMembersToGroupFormParams) {
   const { groupMembersCollection } = useGroupMembersCollection(organizationId);
+  const toastIdRef = useRef<string | number>(undefined);
 
   const assignMembersToGroup = useMutation({
     mutationKey: ["iam", "assign-members-to-group"],
@@ -69,10 +96,19 @@ export function useAssingMembersToGroupFormOptions({
 
       await tx.isPersisted.promise;
     },
+    onMutate: () => {
+      toastIdRef.current = toast.loading(ASSIGN_MEMBERS_TO_GROUP_TOASTS.loading);
+    },
     onSuccess: () => {
+      toast.success(ASSIGN_MEMBERS_TO_GROUP_TOASTS.success, {
+        id: toastIdRef.current,
+      });
       onSuccess?.();
     },
     onError: (e) => {
+      toast.error(ASSIGN_MEMBERS_TO_GROUP_TOASTS.error, {
+        id: toastIdRef.current,
+      });
       onError?.(e);
     },
   });
@@ -101,6 +137,7 @@ export function useUnAssingMembersToGroupFormOptions({
   onError,
 }: AssingMembersToGroupFormParams) {
   const { groupMembersCollection } = useGroupMembersCollection(organizationId);
+  const toastIdRef = useRef<string | number>(undefined);
 
   const unAssignMembersToGroup = useMutation({
     mutationKey: ["iam", "un-assign-members-to-group"],
@@ -115,10 +152,21 @@ export function useUnAssingMembersToGroupFormOptions({
 
       await tx.isPersisted.promise;
     },
+    onMutate: () => {
+      toastIdRef.current = toast.loading(
+        UNASSIGN_MEMBERS_TO_GROUP_TOASTS.loading,
+      );
+    },
     onSuccess: () => {
+      toast.success(UNASSIGN_MEMBERS_TO_GROUP_TOASTS.success, {
+        id: toastIdRef.current,
+      });
       onSuccess?.();
     },
     onError: (e) => {
+      toast.error(UNASSIGN_MEMBERS_TO_GROUP_TOASTS.error, {
+        id: toastIdRef.current,
+      });
       onError?.(e);
     },
   });
@@ -147,6 +195,7 @@ export function useAssignGroupsToMemberFormOptions({
   onError,
 }: AssignGroupsToMemberFormParams) {
   const { groupMembersCollection } = useGroupMembersCollection(organizationId);
+  const toastIdRef = useRef<string | number>(undefined);
 
   const assignGroupsToMember = useMutation({
     mutationKey: ["iam", "assign-groups-to-member"],
@@ -167,10 +216,21 @@ export function useAssignGroupsToMemberFormOptions({
 
       await tx.isPersisted.promise;
     },
+    onMutate: () => {
+      toastIdRef.current = toast.loading(
+        ASSIGN_GROUPS_TO_MEMBER_TOASTS.loading,
+      );
+    },
     onSuccess: () => {
+      toast.success(ASSIGN_GROUPS_TO_MEMBER_TOASTS.success, {
+        id: toastIdRef.current,
+      });
       onSuccess?.();
     },
     onError: (e) => {
+      toast.error(ASSIGN_GROUPS_TO_MEMBER_TOASTS.error, {
+        id: toastIdRef.current,
+      });
       onError?.(e);
     },
   });
@@ -199,6 +259,7 @@ export function useUnAssignGroupsToMemberFormOptions({
   onError,
 }: AssignGroupsToMemberFormParams) {
   const { groupMembersCollection } = useGroupMembersCollection(organizationId);
+  const toastIdRef = useRef<string | number>(undefined);
 
   const unAssignGroupsToMember = useMutation({
     mutationKey: ["iam", "un-assign-groups-to-member"],
@@ -213,10 +274,21 @@ export function useUnAssignGroupsToMemberFormOptions({
 
       await tx.isPersisted.promise;
     },
+    onMutate: () => {
+      toastIdRef.current = toast.loading(
+        UNASSIGN_GROUPS_TO_MEMBER_TOASTS.loading,
+      );
+    },
     onSuccess: () => {
+      toast.success(UNASSIGN_GROUPS_TO_MEMBER_TOASTS.success, {
+        id: toastIdRef.current,
+      });
       onSuccess?.();
     },
     onError: (e) => {
+      toast.error(UNASSIGN_GROUPS_TO_MEMBER_TOASTS.error, {
+        id: toastIdRef.current,
+      });
       onError?.(e);
     },
   });

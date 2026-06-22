@@ -1,9 +1,17 @@
+import { useRef } from "react";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { formOptions } from "@tanstack/react-form";
 
 import { useORPC } from "@fludge/client/providers/orpc.provider";
+import { toast } from "@fludge/ui/lib/toast";
 import { useMemberCollection } from "../hooks/use-member-collection";
+
+const REGISTER_MEMBER_TOASTS = {
+  loading: "Registrando miembro...",
+  success: "Miembro registrado",
+  error: "Error al registrar miembro",
+} as const;
 
 const registerMemberSchema = z
   .object({
@@ -68,10 +76,17 @@ export function useRegisterMemberFormOptions({
 }: RegisterMemberFormParams) {
   const { orpc } = useORPC();
   const { memberCollection } = useMemberCollection(organizationId);
+  const toastIdRef = useRef<string | number>(undefined);
 
   const registerMemberMutation = useMutation(
     orpc.members.commands.register.mutationOptions({
+      onMutate: () => {
+        toastIdRef.current = toast.loading(REGISTER_MEMBER_TOASTS.loading);
+      },
       onSuccess: (values) => {
+        toast.success(REGISTER_MEMBER_TOASTS.success, {
+          id: toastIdRef.current,
+        });
         memberCollection.utils.writeInsert({
           organizationId,
           id: values.id,
@@ -87,6 +102,7 @@ export function useRegisterMemberFormOptions({
         onSuccess?.();
       },
       onError: (error) => {
+        toast.error(REGISTER_MEMBER_TOASTS.error, { id: toastIdRef.current });
         onError?.(error);
       },
     }),
