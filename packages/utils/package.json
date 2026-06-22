@@ -5,7 +5,6 @@
   "private": true,
   "exports": {
     "./*": {
-      "types": "./dist/*.d.ts",
       "default": "./src/*.ts"
     }
   },

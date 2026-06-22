@@ -3,15 +3,12 @@
   "type": "module",
   "exports": {
     "./providers/*": {
-      "types": "./dist/providers/*.d.ts",
       "default": "./src/providers/*.tsx"
     },
     "./presentation/*": {
-      "types": "./dist/presentation/*.d.ts",
       "default": "./src/presentation/*.tsx"
     },
     "./application/*": {
-      "types": "./dist/application/*.d.ts",
       "default": "./src/application/*.ts"
     }
   },

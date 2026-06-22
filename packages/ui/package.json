@@ -6,15 +6,12 @@
   "exports": {
     "./globals.css": "./src/styles/globals.css",
     "./lib/*": {
-      "types": "./dist/lib/*.d.ts",
       "default": "./src/lib/*.ts"
     },
     "./components/*": {
-      "types": "./dist/components/*.d.ts",
       "default": "./src/components/*.tsx"
     },
     "./hooks/*": {
-      "types": "./dist/hooks/*.d.ts",
       "default": "./src/hooks/*.ts"
     },
     "./postcss.config": "./postcss.config.mjs"
@@ -29,8 +26,8 @@
     "clsx": "2.1.1",
     "lucide-react": "catalog:",
     "next-themes": "catalog:",
-    "react": "19.2.6",
-    "react-dom": "19.2.6",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "shadcn": "3.6.2",
     "sonner": "2.0.5",
     "tailwind-merge": "3.3.1",
@@ -39,7 +36,7 @@
   },
   "devDependencies": {
     "@fludge/config": "workspace:*",
-    "@types/react": "19.2.15",
+    "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "tailwindcss": "4.1.18",
     "typescript": "catalog:"

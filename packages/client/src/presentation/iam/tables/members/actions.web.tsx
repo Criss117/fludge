@@ -15,7 +15,7 @@ interface Props {
   row: MemberSummary;
 }
 
-export function MembersTableActions({ row }: Props) {
+export function MembersTableActions({ row: _row }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
