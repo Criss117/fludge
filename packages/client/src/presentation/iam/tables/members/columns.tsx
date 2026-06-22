@@ -6,6 +6,7 @@ const columnHelper = createColumnHelper<MemberSummary>();
 export interface MembersTableActionsSlot<TNode> {
   renderActions: (row: MemberSummary) => TNode;
   groupsAssigned: (row: MemberSummary["groups"]) => TNode;
+  nameCell?: (row: MemberSummary) => TNode;
 }
 
 export function membersTableColumns<TNode>(
@@ -14,7 +15,7 @@ export function membersTableColumns<TNode>(
   return [
     columnHelper.accessor((row) => row.user.name, {
       header: "Nombre",
-      cell: (info) => info.getValue(),
+      cell: (info) => slots.nameCell?.(info.row.original) ?? info.getValue(),
     }),
     columnHelper.accessor((row) => row.user.email, {
       header: "Email",

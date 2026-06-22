@@ -57,6 +57,18 @@ export function MembersTableSection({ organizationId, groupId }: Props) {
   const columns = membersTableColumns({
     renderActions: (row) => <MembersTableActions row={row} />,
     groupsAssigned: (groups) => <GroupsAssigned groups={groups} />,
+    nameCell: (row) => (
+      <Button
+        variant="link"
+        className="text-base"
+        nativeButton={false}
+        render={(props) => (
+          <Link to="/groups/$slug" params={{ slug: row.id }} {...props} />
+        )}
+      >
+        {row.user.name}
+      </Button>
+    ),
   });
 
   const table = useMembersTable({ data: members, columns });
