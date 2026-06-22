@@ -10,9 +10,14 @@ import { AssignGroupsToMember } from "@/modules/iam/components/assign-groups-to-
 interface Props {
   organizationId: string;
   member: MemberWithGroups;
+  canAssignGroup: boolean;
 }
 
-export function MemberHeaderSection({ organizationId, member }: Props) {
+export function MemberHeaderSection({
+  organizationId,
+  member,
+  canAssignGroup,
+}: Props) {
   return (
     <header className="space-y-4">
       <div className="flex items-center gap-x-4">
@@ -48,10 +53,12 @@ export function MemberHeaderSection({ organizationId, member }: Props) {
           </p>
         </div>
         <div className="ml-auto">
-          <AssignGroupsToMember
-            organizationId={organizationId}
-            member={member}
-          />
+          {canAssignGroup && (
+            <AssignGroupsToMember
+              organizationId={organizationId}
+              member={member}
+            />
+          )}
         </div>
       </div>
     </header>

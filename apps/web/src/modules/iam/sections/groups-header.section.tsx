@@ -14,9 +14,10 @@ import { CreateGroup } from "../components/create-group";
 
 interface Props {
   organizationId: string;
+  canCreate: boolean;
 }
 
-export function GroupsHeaderSection({ organizationId }: Props) {
+export function GroupsHeaderSection({ organizationId, canCreate }: Props) {
   const { data: totalGroups } = useTotalGroups(organizationId);
   const { data: totalGroupMembers } = useFindTotalGroupMembers(organizationId);
   const { data: totalMembers } = useTotalMembers(organizationId);
@@ -47,7 +48,7 @@ export function GroupsHeaderSection({ organizationId }: Props) {
           </p>
         </div>
         <div>
-          <CreateGroup organizationId={organizationId} />
+          {canCreate && <CreateGroup organizationId={organizationId} />}
         </div>
       </header>
       <div className="grid grid-cols-4 gap-x-4 justify-between">

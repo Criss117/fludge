@@ -14,6 +14,8 @@ import { MembersTableSection } from "../sections/members-table.section";
 import { FiltersProvider } from "@fludge/client/presentation/shared/context/filter.context";
 import { MembersFiltersSection } from "../sections/members-filters.section";
 import { GroupsMemberSection } from "../sections/groups-member.section";
+import { PermissionDeniedAlert } from "@/modules/iam/components/permission-denied-alert";
+import { useMemberPermissions } from "@fludge/client/application/iam/hooks/use-member-permissions";
 
 interface Props {
   organizationId: string;
@@ -22,10 +24,20 @@ interface Props {
 
 export function GroupScreen({ organizationId, group }: Props) {
   const [selectedTab, setSelectedTab] = useState("overview");
+  const { can } = useMemberPermissions();
+
+  if (!can("groups:view")) {
+    return <PermissionDeniedAlert resource="grupos" />;
+  }
 
   return (
     <main className="p-8 space-y-8">
-      <GroupHeaderSection group={group} organizationId={organizationId} />
+      <GroupHeaderSection
+        group={group}
+        organizationId={organizationId}
+        canUpdate={can("groups:update")}
+        canAssignMember={can("groups:assign-member")}
+      />
       <Tabs value={selectedTab} onValueChange={setSelectedTab}>
         <TabsList className="w-1/2">
           <TabsTrigger value="overview" className="flex-1">

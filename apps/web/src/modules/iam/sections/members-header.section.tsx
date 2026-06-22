@@ -9,9 +9,10 @@ import { RegisterMember } from "../components/register-member";
 
 interface Props {
   organizationId: string;
+  canCreate: boolean;
 }
 
-export function MembersHeaderSection({ organizationId }: Props) {
+export function MembersHeaderSection({ organizationId, canCreate }: Props) {
   const { data: totaMembers } = useTotalMembers(organizationId);
 
   const membersInfo = [
@@ -33,7 +34,9 @@ export function MembersHeaderSection({ organizationId }: Props) {
         </div>
 
         <div>
-          <RegisterMember organizationId={organizationId} />
+          {canCreate && (
+            <RegisterMember organizationId={organizationId} />
+          )}
         </div>
       </header>
 

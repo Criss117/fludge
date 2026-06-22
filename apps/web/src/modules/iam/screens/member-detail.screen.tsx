@@ -12,6 +12,8 @@ import {
 } from "@fludge/ui/components/tabs";
 import { Card, CardContent } from "@fludge/ui/components/card";
 import { FiltersProvider } from "@fludge/client/presentation/shared/context/filter.context";
+import { PermissionDeniedAlert } from "@/modules/iam/components/permission-denied-alert";
+import { useMemberPermissions } from "@fludge/client/application/iam/hooks/use-member-permissions";
 
 interface Props {
   organizationId: string;
@@ -20,12 +22,18 @@ interface Props {
 
 export function MemberDetailScreen({ organizationId, member }: Props) {
   const [selectedTab, setSelectedTab] = useState("overview");
+  const { can } = useMemberPermissions();
+
+  if (!can("members:view")) {
+    return <PermissionDeniedAlert resource="miembros" />;
+  }
 
   return (
     <main className="p-8 space-y-8">
       <MemberHeaderSection
         organizationId={organizationId}
         member={member}
+        canAssignGroup={can("members:assign-group")}
       />
       <Tabs value={selectedTab} onValueChange={setSelectedTab}>
         <TabsList className="w-1/2">

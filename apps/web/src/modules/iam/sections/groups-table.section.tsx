@@ -27,9 +27,11 @@ import {
 
 interface Props {
   organizationId: string;
+  canUpdate: boolean;
+  canDelete: boolean;
 }
 
-export function GroupsTableSection({ organizationId }: Props) {
+export function GroupsTableSection({ organizationId, canUpdate, canDelete }: Props) {
   const { filters } = useFilters();
   const { open } = useUpdateGroupForm();
   const { deleteGroup, activateGroup, deactivateGroup } =
@@ -43,6 +45,8 @@ export function GroupsTableSection({ organizationId }: Props) {
     renderActions: (row) => (
       <GroupsTableActions
         row={row}
+        canUpdate={canUpdate}
+        canDelete={canDelete}
         onUpdateClick={() =>
           open({
             permissions: row.permissions,

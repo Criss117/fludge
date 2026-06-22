@@ -19,6 +19,8 @@ import {
 
 interface Props {
   row: GroupSummary;
+  canUpdate: boolean;
+  canDelete: boolean;
   onUpdateClick: (group: GroupSummary) => void;
   onDeleteClick: (group: GroupSummary) => void;
   onActivateClick: (group: GroupSummary) => void;
@@ -27,11 +29,15 @@ interface Props {
 
 export function GroupsTableActions({
   row,
+  canUpdate,
+  canDelete,
   onUpdateClick,
   onDeleteClick,
   onActivateClick,
   onDeactivateClick,
 }: Props) {
+  if (!canUpdate && !canDelete) return null;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -40,35 +46,41 @@ export function GroupsTableActions({
         <MoreVerticalIcon />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => onUpdateClick(row)}>
-            <PencilIcon />
-            Editar
-          </DropdownMenuItem>
-          {!row.deletedAt ? (
-            <DropdownMenuItem onClick={() => onDeactivateClick(row)}>
-              <EyeOffIcon />
-              Desactivar
+        {canUpdate && (
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => onUpdateClick(row)}>
+              <PencilIcon />
+              Editar
             </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem onClick={() => onActivateClick(row)}>
-              <EyeIcon />
-              Activar
-            </DropdownMenuItem>
-          )}
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>Peligro</DropdownMenuLabel>
-          <DropdownMenuItem
-            variant="destructive"
-            onClick={() => onDeleteClick(row)}
-          >
-            <TrashIcon />
-            Eliminar
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
+            {!row.deletedAt ? (
+              <DropdownMenuItem onClick={() => onDeactivateClick(row)}>
+                <EyeOffIcon />
+                Desactivar
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem onClick={() => onActivateClick(row)}>
+                <EyeIcon />
+                Activar
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuGroup>
+        )}
+        {canDelete && (
+          <>
+            {canUpdate && <DropdownMenuSeparator />}
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>Peligro</DropdownMenuLabel>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => onDeleteClick(row)}
+              >
+                <TrashIcon />
+                Eliminar
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

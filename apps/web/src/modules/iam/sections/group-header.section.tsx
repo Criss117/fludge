@@ -13,9 +13,11 @@ import { AssignMembersToGroup } from "@/modules/iam/components/assign-members-to
 interface Props {
   organizationId: string;
   group: GroupDetail;
+  canUpdate: boolean;
+  canAssignMember: boolean;
 }
 
-function UpdateGroupButton({ group }: Props) {
+function UpdateGroupButton({ group }: { group: GroupDetail }) {
   const { open } = useUpdateGroupForm();
 
   return (
@@ -35,7 +37,12 @@ function UpdateGroupButton({ group }: Props) {
   );
 }
 
-export function GroupHeaderSection({ group, organizationId }: Props) {
+export function GroupHeaderSection({
+  group,
+  organizationId,
+  canUpdate,
+  canAssignMember,
+}: Props) {
   return (
     <header className="space-y-4">
       <div className="flex justify-between">
@@ -45,11 +52,15 @@ export function GroupHeaderSection({ group, organizationId }: Props) {
         </div>
 
         <div className="flex items-center gap-x-4">
-          <AssignMembersToGroup organizationId={organizationId} group={group} />
-          <UpdateGroupProvider>
-            <UpdateGroupButton organizationId={organizationId} group={group} />
-            <UpdateGroup organizationId={organizationId} />
-          </UpdateGroupProvider>
+          {canAssignMember && (
+            <AssignMembersToGroup organizationId={organizationId} group={group} />
+          )}
+          {canUpdate && (
+            <UpdateGroupProvider>
+              <UpdateGroupButton group={group} />
+              <UpdateGroup organizationId={organizationId} />
+            </UpdateGroupProvider>
+          )}
         </div>
       </div>
       <div className="flex items-center gap-x-4">
