@@ -140,4 +140,100 @@ export function useUnAssingMembersToGroupFormOptions({
   });
 }
 
-export function useAssignGroupsToMemberFormOptions({}: AssignGroupsToMemberFormParams) {}
+export function useAssignGroupsToMemberFormOptions({
+  memberId,
+  organizationId,
+  onSuccess,
+  onError,
+}: AssignGroupsToMemberFormParams) {
+  const { groupMembersCollection } = useGroupMembersCollection(organizationId);
+
+  const assignGroupsToMember = useMutation({
+    mutationKey: ["iam", "assign-groups-to-member"],
+    mutationFn: async (values: AssignGroupsToMemberFormSchema) => {
+      if (!values.groupIds.length) return;
+
+      const now = new Date();
+
+      const tx = groupMembersCollection.insert(
+        values.groupIds.map((groupId) => ({
+          memberId,
+          groupId,
+          createdAt: now,
+          updatedAt: now,
+          assignedBy: null,
+        })),
+      );
+
+      await tx.isPersisted.promise;
+    },
+    onSuccess: () => {
+      onSuccess?.();
+    },
+    onError: (e) => {
+      onError?.(e);
+    },
+  });
+
+  return formOptions({
+    defaultValues: {
+      groupIds: [] as AssignGroupsToMemberFormSchema["groupIds"],
+    },
+    validators: {
+      onChange: assignGroupsToMemberSchema,
+    },
+    onSubmit: ({ value, formApi }) => {
+      assignGroupsToMember.mutate(value, {
+        onSuccess: () => {
+          formApi.reset();
+        },
+      });
+    },
+  });
+}
+
+export function useUnAssignGroupsToMemberFormOptions({
+  memberId,
+  organizationId,
+  onSuccess,
+  onError,
+}: AssignGroupsToMemberFormParams) {
+  const { groupMembersCollection } = useGroupMembersCollection(organizationId);
+
+  const unAssignGroupsToMember = useMutation({
+    mutationKey: ["iam", "un-assign-groups-to-member"],
+    mutationFn: async (values: AssignGroupsToMemberFormSchema) => {
+      if (!values.groupIds.length) return;
+
+      const tx = groupMembersCollection.delete(
+        values.groupIds.map(
+          (groupId) => `${groupId}-${memberId}` as `${string}-${string}`,
+        ),
+      );
+
+      await tx.isPersisted.promise;
+    },
+    onSuccess: () => {
+      onSuccess?.();
+    },
+    onError: (e) => {
+      onError?.(e);
+    },
+  });
+
+  return formOptions({
+    defaultValues: {
+      groupIds: [] as AssignGroupsToMemberFormSchema["groupIds"],
+    },
+    validators: {
+      onChange: assignGroupsToMemberSchema,
+    },
+    onSubmit: ({ value, formApi }) => {
+      unAssignGroupsToMember.mutate(value, {
+        onSuccess: () => {
+          formApi.reset();
+        },
+      });
+    },
+  });
+}

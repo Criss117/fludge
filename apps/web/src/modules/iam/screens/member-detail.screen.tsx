@@ -18,12 +18,15 @@ interface Props {
   member: MemberWithGroups;
 }
 
-export function MemberDetailScreen({ member }: Props) {
+export function MemberDetailScreen({ organizationId, member }: Props) {
   const [selectedTab, setSelectedTab] = useState("overview");
 
   return (
     <main className="p-8 space-y-8">
-      <MemberHeaderSection member={member} />
+      <MemberHeaderSection
+        organizationId={organizationId}
+        member={member}
+      />
       <Tabs value={selectedTab} onValueChange={setSelectedTab}>
         <TabsList className="w-1/2">
           <TabsTrigger value="overview" className="flex-1">
