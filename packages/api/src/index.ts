@@ -13,6 +13,9 @@ type RequireOrganizationOptions =
   | {
       requirePermission: Permission | Permission[];
       mode?: "all" | "any";
+    }
+  | {
+      resolveOnly: true;
     };
 
 export const o = os.$context<Context>();
@@ -58,6 +61,19 @@ function requireOrganization(options: RequireOrganizationOptions) {
       throw new ORPCError("FORBIDDEN", {
         message: "No tienes permisos requeridos para esta acción.",
       });
+
+    if ("resolveOnly" in options) {
+      return next({
+        context: {
+          ...context,
+          session: {
+            ...context.session,
+            member: memberInfo,
+            activeOrganization: organization,
+          },
+        },
+      });
+    }
 
     if ("onlyOwner" in options) {
       if (memberInfo.role !== "owner")

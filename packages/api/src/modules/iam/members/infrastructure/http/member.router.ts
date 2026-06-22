@@ -31,6 +31,20 @@ export const memberRouter = {
       ),
   },
   queries: {
+    me: withOrganization({
+      resolveOnly: true,
+    })
+      .route({
+        method: "GET",
+        path: "/members/me",
+        tags: TAGS,
+      })
+      .handler(({ context }) =>
+        membersContainer.queries.me.execute({
+          memberId: context.session.member.id,
+        }),
+      ),
+
     findAll: withOrganization({
       requirePermission: "members:view",
     })
