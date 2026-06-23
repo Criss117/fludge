@@ -67,7 +67,7 @@ export class UpdateOrganizationCommand {
         description: `{user.name} actualizó la organización con id ${cmd.organizationId}`,
         before: organization,
         after: data as OrganizationHistoryInsert["after"],
-        by: cmd.changesBy.memberId,
+        actorId: cmd.changesBy.memberId,
       });
 
     console.error(errorSaveHistory);

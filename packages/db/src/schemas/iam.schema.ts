@@ -22,15 +22,14 @@ export const organizationHistory = pgTable("organization_history", {
   action: actionEnum("action").notNull(),
   description: text("description"),
 
-  before: jsonb("before").notNull().$type<typeof organization.$inferSelect>(),
-  after: jsonb("after").notNull().$type<typeof organization.$inferSelect>(),
+  before: jsonb("before").$type<typeof organization.$inferSelect>(),
+  after: jsonb("after").$type<typeof organization.$inferSelect>(),
 
-  by: text("by").references(() => member.id, {
+  actorId: text("actor_id").references(() => member.id, {
     onDelete: "set null",
   }),
 
   createdAt: auditMetadata.createdAt,
-  updatedAt: auditMetadata.updatedAt,
 });
 
 export const group = pgTable(
@@ -75,15 +74,14 @@ export const groupHistory = pgTable(
     action: actionEnum("action").notNull(),
     description: text("description"),
 
-    before: jsonb("before").notNull().$type<typeof group.$inferSelect>(),
-    after: jsonb("after").notNull().$type<typeof group.$inferSelect>(),
+    before: jsonb("before").$type<typeof group.$inferSelect>(),
+    after: jsonb("after").$type<typeof group.$inferSelect>(),
 
-    by: text("by").references(() => member.id, {
+    actorId: text("actor_id").references(() => member.id, {
       onDelete: "set null",
     }),
 
     createdAt: auditMetadata.createdAt,
-    updatedAt: auditMetadata.updatedAt,
   },
   (t) => [index("group_history_group_id_idx").on(t.groupId)],
 );

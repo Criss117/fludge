@@ -140,7 +140,7 @@ export class PGGroupsCommandsRepository extends TransactionalRepository {
             description: values.description,
             before: values.before,
             after: values.after,
-            by: values.by,
+            actorId: values.actorId,
           },
         })
         .returning({
