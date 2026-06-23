@@ -5,6 +5,7 @@ import { organizationRouter } from "@fludge/api/modules/iam/organizations/infras
 import { groupsRouter } from "@fludge/api/modules/iam/groups/infrastructure/http/groups.router";
 import { memberRouter } from "@fludge/api/modules/iam/members/infrastructure/http/member.router";
 import { groupMembersRouter } from "@fludge/api/modules/iam/group-members/infrastructure/http/group-members.router";
+import { categoriesRouter } from "@fludge/api/modules/catalog/categories/infrastructure/http/categories.router";
 import { seedRouter } from "./seed";
 
 export const appRouter = {
@@ -13,6 +14,7 @@ export const appRouter = {
   groups: groupsRouter,
   members: memberRouter,
   groupsMembers: groupMembersRouter,
+  categories: categoriesRouter,
   seed: seedRouter,
 } as const;
 
