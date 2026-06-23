@@ -45,6 +45,41 @@ export class PGCategoriesCommandsRepository extends TransactionalRepository {
     return ok(created);
   }
 
+  public async update(
+    id: string,
+    organizationId: string,
+    values: Pick<CategoryInsert, "name" | "slug" | "parentId">,
+    options?: TransactionalOptions,
+  ) {
+    const db = options?.tx ?? this.db;
+
+    const [data, error] = await tryCatch(
+      db
+        .update(category)
+        .set({
+          name: values.name,
+          slug: values.slug,
+          parentId: values.parentId,
+        })
+        .where(
+          and(
+            eq(category.id, id),
+            eq(category.organizationId, organizationId),
+          ),
+        )
+        .returning()
+        .execute(),
+    );
+
+    if (error) return err(error);
+
+    const updated = data.at(0);
+
+    if (!updated) return ok(null);
+
+    return ok(updated);
+  }
+
   public async findOne(id: string, organizationId: string) {
     const [rows, error] = await tryCatch(
       this.db
