@@ -1,9 +1,10 @@
-export const ALL_RESOURCES = ["groups", "members"] as const;
+export const ALL_RESOURCES = ["groups", "members", "categories"] as const;
 export type RESOURCES = (typeof ALL_RESOURCES)[number];
 
 export const ES_RESOURCES: Record<RESOURCES, string> = {
   groups: "Grupos",
   members: "Miembros",
+  categories: "Categorías",
 } as const;
 
 export const PERMISSIONS = {
@@ -18,6 +19,12 @@ export const PERMISSIONS = {
     view: "view",
     create: "create",
     assignGroup: "assign-group",
+  },
+  categories: {
+    view: "view",
+    create: "create",
+    update: "update",
+    delete: "delete",
   },
 } as const;
 
@@ -46,6 +53,7 @@ export type PermissionDescriptions = {
 export const RESOURCE_DESCRIPTIONS = {
   groups: "Grupos",
   members: "Miembros",
+  categories: "Categorías",
 } as const satisfies Record<Resource, string>;
 
 export const PERMISSION_DESCRIPTIONS = {
@@ -91,6 +99,28 @@ export const PERMISSION_DESCRIPTIONS = {
       title: "Asignar grupos a miembros",
       description:
         "Permite vincular directamente a un miembro con uno o varios grupos disponibles.",
+    },
+  },
+  categories: {
+    view: {
+      title: "Ver categorías",
+      description:
+        "Permite visualizar el listado de categorías y acceder a sus detalles básicos.",
+    },
+    create: {
+      title: "Crear categorías",
+      description:
+        "Permite registrar nuevas categorías en el sistema y definir su configuración inicial.",
+    },
+    update: {
+      title: "Editar categorías",
+      description:
+        "Permite modificar el nombre, el slug y los datos generales de las categorías existentes.",
+    },
+    delete: {
+      title: "Eliminar categorías",
+      description:
+        "Permite borrar categorías permanentemente del sistema. Esta acción puede ser irreversible.",
     },
   },
 } as const satisfies PermissionDescriptions;
