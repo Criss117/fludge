@@ -1,7 +1,5 @@
 import { dbConnection } from "@fludge/db";
 
-import { eventBus } from "@fludge/api/modules/shared/domain/event-bus";
-
 import { CreateCategoryCommand } from "./application/commands/create-category.command";
 import { UpdateCategoryCommand } from "./application/commands/update-category.command";
 import {
@@ -19,7 +17,6 @@ const categoriesCommandsRepository = new PGCategoriesCommandsRepository(
 
 // Commands
 const createCategoryCommand = new CreateCategoryCommand(
-  eventBus,
   categoriesCommandsRepository,
 );
 const updateCategoryCommand = new UpdateCategoryCommand(

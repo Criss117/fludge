@@ -1,4 +1,4 @@
-import { count, eq, isNull, and, ne } from "drizzle-orm";
+import { eq, isNull, and, ne } from "drizzle-orm";
 
 import {
   TransactionalRepository,
