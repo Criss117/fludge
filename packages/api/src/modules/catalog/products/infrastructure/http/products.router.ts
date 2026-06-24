@@ -24,4 +24,19 @@ export const productsRouter = {
         }),
       ),
   },
+  queries: {
+    findAll: withOrganization({
+      requirePermission: "products:view",
+    })
+      .route({
+        method: "GET",
+        path: "/products",
+        tags: TAGS,
+      })
+      .handler(({ context }) =>
+        productsContainer.queries.findAll.execute({
+          organizationId: context.session.activeOrganization.id,
+        }),
+      ),
+  },
 } as const;

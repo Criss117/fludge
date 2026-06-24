@@ -87,7 +87,7 @@ export class UpdateGroupCommand {
             description: `{user.name} actualizo el grupo con id ${cmd.groupId}`,
             before: existingGroup,
             after: updatedGroup,
-            by: cmd.updatedBy.memberId,
+            actorId: cmd.updatedBy.memberId,
           },
           {
             tx,
