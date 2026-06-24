@@ -36,14 +36,20 @@ export const createProductCommand = z.object({
       error: "El código de barras es muy largo",
     }),
   priceRetail: z
-    .number({ error: "El precio de venta es requerido" })
-    .positive({ error: "El precio de venta debe ser mayor a 0" }),
+    .string({ error: "El precio de venta es requerido" })
+    .regex(/^\d+(\.\d{1,2})?$/, {
+      error: "El precio de venta no es válido",
+    }),
   pricePurchase: z
-    .number({ error: "El precio de compra es requerido" })
-    .nonnegative({ error: "El precio de compra no puede ser negativo" }),
+    .string({ error: "El precio de compra es requerido" })
+    .regex(/^\d+(\.\d{1,2})?$/, {
+      error: "El precio de compra no es válido",
+    }),
   priceWholesale: z
-    .number({ error: "El precio mayorista es requerido" })
-    .nonnegative({ error: "El precio mayorista no puede ser negativo" }),
+    .string({ error: "El precio mayorista es requerido" })
+    .regex(/^\d+(\.\d{1,2})?$/, {
+      error: "El precio mayorista no es válido",
+    }),
   minimumStock: z.number().int().nonnegative().optional(),
   allowNegativeStock: z.boolean().optional(),
 });
@@ -151,9 +157,9 @@ export class CreateProductCommand {
       barcode: cmd.barcode,
       description: cmd.description ?? null,
       imageUrl: cmd.imageUrl ?? null,
-      priceRetail: String(cmd.priceRetail),
-      pricePurchase: String(cmd.pricePurchase),
-      priceWholesale: String(cmd.priceWholesale),
+      priceRetail: cmd.priceRetail,
+      pricePurchase: cmd.pricePurchase,
+      priceWholesale: cmd.priceWholesale,
       minimumStock: cmd.minimumStock ?? 0,
       allowNegativeStock: cmd.allowNegativeStock ?? false,
       createdBy: cmd.createdBy,

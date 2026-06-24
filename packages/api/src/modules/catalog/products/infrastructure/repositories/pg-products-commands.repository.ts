@@ -11,6 +11,26 @@ import {
 } from "@fludge/db/schemas/catalog.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 
+export type ProductUpdatable = Partial<
+  Pick<
+    ProductInsert,
+    | "name"
+    | "slug"
+    | "description"
+    | "imageUrl"
+    | "categoryId"
+    | "sku"
+    | "barcode"
+    | "priceRetail"
+    | "pricePurchase"
+    | "priceWholesale"
+    | "stockQuantity"
+    | "minimumStock"
+    | "allowNegativeStock"
+    | "status"
+  >
+>;
+
 export class PGProductsCommandsRepository extends TransactionalRepository {
   constructor(private readonly db: DbConnection) {
     super(db);
@@ -37,6 +57,55 @@ export class PGProductsCommandsRepository extends TransactionalRepository {
     if (!created) return err(new Error("Error creando producto"));
 
     return ok(created);
+  }
+
+  public async findOne(id: string, organizationId: string) {
+    const [rows, error] = await tryCatch(
+      this.db
+        .select()
+        .from(product)
+        .where(
+          and(eq(product.id, id), eq(product.organizationId, organizationId)),
+        )
+        .limit(1)
+        .execute(),
+    );
+
+    if (error) return err(error);
+
+    const p = rows.at(0);
+
+    if (!p) return ok(null);
+
+    return ok(p);
+  }
+
+  public async update(
+    id: string,
+    organizationId: string,
+    values: ProductUpdatable,
+    options?: TransactionalOptions,
+  ) {
+    const db = options?.tx ?? this.db;
+
+    const [data, error] = await tryCatch(
+      db
+        .update(product)
+        .set(values)
+        .where(
+          and(eq(product.id, id), eq(product.organizationId, organizationId)),
+        )
+        .returning()
+        .execute(),
+    );
+
+    if (error) return err(error);
+
+    const updated = data.at(0);
+
+    if (!updated) return ok(null);
+
+    return ok(updated);
   }
 
   public async slugAvailable(

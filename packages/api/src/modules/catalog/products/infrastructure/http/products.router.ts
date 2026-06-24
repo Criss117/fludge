@@ -2,6 +2,7 @@ import { withOrganization } from "@fludge/api/index";
 import { productsContainer } from "@fludge/api/modules/catalog/products/container";
 
 import { createProductCommand } from "@fludge/api/modules/catalog/products/application/commands/create-product.command";
+import { updateProductCommand } from "@fludge/api/modules/catalog/products/application/commands/update-product.command";
 
 const TAGS = ["Products"] as const;
 
@@ -21,6 +22,22 @@ export const productsRouter = {
           ...input,
           organizationId: context.session.activeOrganization.id,
           createdBy: context.session.member.id,
+        }),
+      ),
+
+    update: withOrganization({
+      requirePermission: "products:update",
+    })
+      .route({
+        method: "PATCH",
+        path: "/products",
+        tags: TAGS,
+      })
+      .input(updateProductCommand)
+      .handler(({ input, context }) =>
+        productsContainer.commands.update.execute({
+          ...input,
+          organizationId: context.session.activeOrganization.id,
         }),
       ),
   },
