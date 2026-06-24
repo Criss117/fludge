@@ -21,42 +21,44 @@ function builder(
       },
       getKey: (item) => item.id,
       defaultIndexType: BasicIndex,
-      onInsert: async ({ transaction }) => {
+      onInsert: async ({ transaction, collection }) => {
         const newCategory = transaction.mutations[0].modified;
 
-        await orpc.categories.commands.create.call({
+        const createdCategory = await orpc.categories.commands.create.call({
           name: newCategory.name,
           parentId: newCategory.parentId ?? undefined,
         });
 
+        collection.utils.writeInsert(createdCategory);
+
         return {
-          refetch: true,
+          refetch: false,
         };
       },
 
-      onUpdate: async ({ transaction }) => {
+      onUpdate: async ({ transaction, collection }) => {
         const originalCategory = transaction.mutations[0].original;
         const modifiedCategory = transaction.mutations[0].modified;
 
-        await orpc.categories.commands.update.call({
+        const updatedCategory = await orpc.categories.commands.update.call({
           id: originalCategory.id,
           name: modifiedCategory.name,
           parentId: modifiedCategory.parentId ?? undefined,
         });
 
+        collection.utils.writeUpdate(updatedCategory);
+
         return {
-          refetch: true,
+          refetch: false,
         };
       },
 
-      onDelete: async ({ transaction }) => {
-        const categoryIds = transaction.mutations.map(
-          (m) => m.original.id,
-        );
+      onDelete: async ({ transaction, collection }) => {
+        const categoryIds = transaction.mutations.map((m) => m.original.id);
 
         await orpc.categories.commands.delete.call({ ids: categoryIds });
 
-        categoryCollection.utils.writeDelete(categoryIds);
+        collection.utils.writeDelete(categoryIds);
 
         return {
           refetch: false,

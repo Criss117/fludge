@@ -19,11 +19,12 @@ import { Route as OrganizationLayoutRegisterRouteImport } from './routes/organiz
 import { Route as AuthLayoutSignUpRouteImport } from './routes/auth/_layout/sign-up'
 import { Route as AuthLayoutSignInRouteImport } from './routes/auth/_layout/sign-in'
 import { Route as dashboardLayoutSalesRouteImport } from './routes/(dashboard)/_layout/sales'
-import { Route as dashboardLayoutInventoryRouteImport } from './routes/(dashboard)/_layout/inventory'
 import { Route as dashboardLayoutAnalyticsRouteImport } from './routes/(dashboard)/_layout/analytics'
+import { Route as dashboardLayoutProductsIndexRouteImport } from './routes/(dashboard)/_layout/products/index'
 import { Route as dashboardLayoutMembersIndexRouteImport } from './routes/(dashboard)/_layout/members/index'
 import { Route as dashboardLayoutGroupsIndexRouteImport } from './routes/(dashboard)/_layout/groups/index'
 import { Route as dashboardLayoutClientsIndexRouteImport } from './routes/(dashboard)/_layout/clients/index'
+import { Route as dashboardLayoutCategoriesIndexRouteImport } from './routes/(dashboard)/_layout/categories/index'
 import { Route as dashboardLayoutMembersIdIndexRouteImport } from './routes/(dashboard)/_layout/members/$id/index'
 import { Route as dashboardLayoutGroupsSlugIndexRouteImport } from './routes/(dashboard)/_layout/groups/$slug/index'
 
@@ -78,16 +79,16 @@ const dashboardLayoutSalesRoute = dashboardLayoutSalesRouteImport.update({
   path: '/sales',
   getParentRoute: () => dashboardLayoutRoute,
 } as any)
-const dashboardLayoutInventoryRoute =
-  dashboardLayoutInventoryRouteImport.update({
-    id: '/inventory',
-    path: '/inventory',
-    getParentRoute: () => dashboardLayoutRoute,
-  } as any)
 const dashboardLayoutAnalyticsRoute =
   dashboardLayoutAnalyticsRouteImport.update({
     id: '/analytics',
     path: '/analytics',
+    getParentRoute: () => dashboardLayoutRoute,
+  } as any)
+const dashboardLayoutProductsIndexRoute =
+  dashboardLayoutProductsIndexRouteImport.update({
+    id: '/products/',
+    path: '/products/',
     getParentRoute: () => dashboardLayoutRoute,
   } as any)
 const dashboardLayoutMembersIndexRoute =
@@ -108,6 +109,12 @@ const dashboardLayoutClientsIndexRoute =
     path: '/clients/',
     getParentRoute: () => dashboardLayoutRoute,
   } as any)
+const dashboardLayoutCategoriesIndexRoute =
+  dashboardLayoutCategoriesIndexRouteImport.update({
+    id: '/categories/',
+    path: '/categories/',
+    getParentRoute: () => dashboardLayoutRoute,
+  } as any)
 const dashboardLayoutMembersIdIndexRoute =
   dashboardLayoutMembersIdIndexRouteImport.update({
     id: '/members/$id/',
@@ -126,16 +133,17 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthLayoutRouteWithChildren
   '/organization': typeof OrganizationLayoutRouteWithChildren
   '/analytics': typeof dashboardLayoutAnalyticsRoute
-  '/inventory': typeof dashboardLayoutInventoryRoute
   '/sales': typeof dashboardLayoutSalesRoute
   '/auth/sign-in': typeof AuthLayoutSignInRoute
   '/auth/sign-up': typeof AuthLayoutSignUpRoute
   '/organization/register': typeof OrganizationLayoutRegisterRoute
   '/organization/select': typeof OrganizationLayoutSelectRoute
   '/': typeof dashboardLayoutIndexRoute
+  '/categories/': typeof dashboardLayoutCategoriesIndexRoute
   '/clients/': typeof dashboardLayoutClientsIndexRoute
   '/groups/': typeof dashboardLayoutGroupsIndexRoute
   '/members/': typeof dashboardLayoutMembersIndexRoute
+  '/products/': typeof dashboardLayoutProductsIndexRoute
   '/groups/$slug/': typeof dashboardLayoutGroupsSlugIndexRoute
   '/members/$id/': typeof dashboardLayoutMembersIdIndexRoute
 }
@@ -144,16 +152,17 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthLayoutRouteWithChildren
   '/organization': typeof OrganizationLayoutRouteWithChildren
   '/analytics': typeof dashboardLayoutAnalyticsRoute
-  '/inventory': typeof dashboardLayoutInventoryRoute
   '/sales': typeof dashboardLayoutSalesRoute
   '/auth/sign-in': typeof AuthLayoutSignInRoute
   '/auth/sign-up': typeof AuthLayoutSignUpRoute
   '/organization/register': typeof OrganizationLayoutRegisterRoute
   '/organization/select': typeof OrganizationLayoutSelectRoute
   '/': typeof dashboardLayoutIndexRoute
+  '/categories': typeof dashboardLayoutCategoriesIndexRoute
   '/clients': typeof dashboardLayoutClientsIndexRoute
   '/groups': typeof dashboardLayoutGroupsIndexRoute
   '/members': typeof dashboardLayoutMembersIndexRoute
+  '/products': typeof dashboardLayoutProductsIndexRoute
   '/groups/$slug': typeof dashboardLayoutGroupsSlugIndexRoute
   '/members/$id': typeof dashboardLayoutMembersIdIndexRoute
 }
@@ -164,16 +173,17 @@ export interface FileRoutesById {
   '/auth/_layout': typeof AuthLayoutRouteWithChildren
   '/organization/_layout': typeof OrganizationLayoutRouteWithChildren
   '/(dashboard)/_layout/analytics': typeof dashboardLayoutAnalyticsRoute
-  '/(dashboard)/_layout/inventory': typeof dashboardLayoutInventoryRoute
   '/(dashboard)/_layout/sales': typeof dashboardLayoutSalesRoute
   '/auth/_layout/sign-in': typeof AuthLayoutSignInRoute
   '/auth/_layout/sign-up': typeof AuthLayoutSignUpRoute
   '/organization/_layout/register': typeof OrganizationLayoutRegisterRoute
   '/organization/_layout/select': typeof OrganizationLayoutSelectRoute
   '/(dashboard)/_layout/': typeof dashboardLayoutIndexRoute
+  '/(dashboard)/_layout/categories/': typeof dashboardLayoutCategoriesIndexRoute
   '/(dashboard)/_layout/clients/': typeof dashboardLayoutClientsIndexRoute
   '/(dashboard)/_layout/groups/': typeof dashboardLayoutGroupsIndexRoute
   '/(dashboard)/_layout/members/': typeof dashboardLayoutMembersIndexRoute
+  '/(dashboard)/_layout/products/': typeof dashboardLayoutProductsIndexRoute
   '/(dashboard)/_layout/groups/$slug/': typeof dashboardLayoutGroupsSlugIndexRoute
   '/(dashboard)/_layout/members/$id/': typeof dashboardLayoutMembersIdIndexRoute
 }
@@ -184,16 +194,17 @@ export interface FileRouteTypes {
     | '/auth'
     | '/organization'
     | '/analytics'
-    | '/inventory'
     | '/sales'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/organization/register'
     | '/organization/select'
     | '/'
+    | '/categories/'
     | '/clients/'
     | '/groups/'
     | '/members/'
+    | '/products/'
     | '/groups/$slug/'
     | '/members/$id/'
   fileRoutesByTo: FileRoutesByTo
@@ -202,16 +213,17 @@ export interface FileRouteTypes {
     | '/auth'
     | '/organization'
     | '/analytics'
-    | '/inventory'
     | '/sales'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/organization/register'
     | '/organization/select'
     | '/'
+    | '/categories'
     | '/clients'
     | '/groups'
     | '/members'
+    | '/products'
     | '/groups/$slug'
     | '/members/$id'
   id:
@@ -221,16 +233,17 @@ export interface FileRouteTypes {
     | '/auth/_layout'
     | '/organization/_layout'
     | '/(dashboard)/_layout/analytics'
-    | '/(dashboard)/_layout/inventory'
     | '/(dashboard)/_layout/sales'
     | '/auth/_layout/sign-in'
     | '/auth/_layout/sign-up'
     | '/organization/_layout/register'
     | '/organization/_layout/select'
     | '/(dashboard)/_layout/'
+    | '/(dashboard)/_layout/categories/'
     | '/(dashboard)/_layout/clients/'
     | '/(dashboard)/_layout/groups/'
     | '/(dashboard)/_layout/members/'
+    | '/(dashboard)/_layout/products/'
     | '/(dashboard)/_layout/groups/$slug/'
     | '/(dashboard)/_layout/members/$id/'
   fileRoutesById: FileRoutesById
@@ -314,18 +327,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardLayoutSalesRouteImport
       parentRoute: typeof dashboardLayoutRoute
     }
-    '/(dashboard)/_layout/inventory': {
-      id: '/(dashboard)/_layout/inventory'
-      path: '/inventory'
-      fullPath: '/inventory'
-      preLoaderRoute: typeof dashboardLayoutInventoryRouteImport
-      parentRoute: typeof dashboardLayoutRoute
-    }
     '/(dashboard)/_layout/analytics': {
       id: '/(dashboard)/_layout/analytics'
       path: '/analytics'
       fullPath: '/analytics'
       preLoaderRoute: typeof dashboardLayoutAnalyticsRouteImport
+      parentRoute: typeof dashboardLayoutRoute
+    }
+    '/(dashboard)/_layout/products/': {
+      id: '/(dashboard)/_layout/products/'
+      path: '/products'
+      fullPath: '/products/'
+      preLoaderRoute: typeof dashboardLayoutProductsIndexRouteImport
       parentRoute: typeof dashboardLayoutRoute
     }
     '/(dashboard)/_layout/members/': {
@@ -349,6 +362,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardLayoutClientsIndexRouteImport
       parentRoute: typeof dashboardLayoutRoute
     }
+    '/(dashboard)/_layout/categories/': {
+      id: '/(dashboard)/_layout/categories/'
+      path: '/categories'
+      fullPath: '/categories/'
+      preLoaderRoute: typeof dashboardLayoutCategoriesIndexRouteImport
+      parentRoute: typeof dashboardLayoutRoute
+    }
     '/(dashboard)/_layout/members/$id/': {
       id: '/(dashboard)/_layout/members/$id/'
       path: '/members/$id'
@@ -368,24 +388,26 @@ declare module '@tanstack/react-router' {
 
 interface dashboardLayoutRouteChildren {
   dashboardLayoutAnalyticsRoute: typeof dashboardLayoutAnalyticsRoute
-  dashboardLayoutInventoryRoute: typeof dashboardLayoutInventoryRoute
   dashboardLayoutSalesRoute: typeof dashboardLayoutSalesRoute
   dashboardLayoutIndexRoute: typeof dashboardLayoutIndexRoute
+  dashboardLayoutCategoriesIndexRoute: typeof dashboardLayoutCategoriesIndexRoute
   dashboardLayoutClientsIndexRoute: typeof dashboardLayoutClientsIndexRoute
   dashboardLayoutGroupsIndexRoute: typeof dashboardLayoutGroupsIndexRoute
   dashboardLayoutMembersIndexRoute: typeof dashboardLayoutMembersIndexRoute
+  dashboardLayoutProductsIndexRoute: typeof dashboardLayoutProductsIndexRoute
   dashboardLayoutGroupsSlugIndexRoute: typeof dashboardLayoutGroupsSlugIndexRoute
   dashboardLayoutMembersIdIndexRoute: typeof dashboardLayoutMembersIdIndexRoute
 }
 
 const dashboardLayoutRouteChildren: dashboardLayoutRouteChildren = {
   dashboardLayoutAnalyticsRoute: dashboardLayoutAnalyticsRoute,
-  dashboardLayoutInventoryRoute: dashboardLayoutInventoryRoute,
   dashboardLayoutSalesRoute: dashboardLayoutSalesRoute,
   dashboardLayoutIndexRoute: dashboardLayoutIndexRoute,
+  dashboardLayoutCategoriesIndexRoute: dashboardLayoutCategoriesIndexRoute,
   dashboardLayoutClientsIndexRoute: dashboardLayoutClientsIndexRoute,
   dashboardLayoutGroupsIndexRoute: dashboardLayoutGroupsIndexRoute,
   dashboardLayoutMembersIndexRoute: dashboardLayoutMembersIndexRoute,
+  dashboardLayoutProductsIndexRoute: dashboardLayoutProductsIndexRoute,
   dashboardLayoutGroupsSlugIndexRoute: dashboardLayoutGroupsSlugIndexRoute,
   dashboardLayoutMembersIdIndexRoute: dashboardLayoutMembersIdIndexRoute,
 }

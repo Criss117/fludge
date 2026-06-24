@@ -1,11 +1,12 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import {
-  Archive,
   BookUser,
   Boxes,
   Building,
   ChartBar,
+  ChartBarStacked,
   Home,
+  PackageSearch,
   UserRound,
   Wallet,
 } from "lucide-react";
@@ -26,7 +27,8 @@ import { Button } from "@fludge/ui/components/button";
 
 const NavItems = [
   { name: "Dashboard", href: "/", Icon: Home },
-  { name: "Inventario", href: "/inventory", Icon: Archive },
+  { name: "Productos", href: "/products", Icon: PackageSearch },
+  { name: "Categorias", href: "/categories", Icon: ChartBarStacked },
   { name: "Ventas", href: "/sales", Icon: Wallet },
   { name: "Analiticas", href: "/analytics", Icon: ChartBar },
   { name: "Clientes", href: "/clients", Icon: UserRound },

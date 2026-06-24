@@ -21,10 +21,10 @@ function builder(
       },
       getKey: (item) => item.id,
       defaultIndexType: BasicIndex,
-      onInsert: async ({ transaction }) => {
+      onInsert: async ({ transaction, collection }) => {
         const newProduct = transaction.mutations[0].modified;
 
-        await orpc.products.commands.create.call({
+        const createdProduct = await orpc.products.commands.create.call({
           name: newProduct.name,
           barcode: newProduct.barcode,
           description: newProduct.description ?? undefined,
@@ -38,16 +38,18 @@ function builder(
           allowNegativeStock: newProduct.allowNegativeStock ?? undefined,
         });
 
+        collection.utils.writeInsert(createdProduct);
+
         return {
-          refetch: true,
+          refetch: false,
         };
       },
 
-      onUpdate: async ({ transaction }) => {
+      onUpdate: async ({ transaction, collection }) => {
         const originalProduct = transaction.mutations[0].original;
         const modifiedProduct = transaction.mutations[0].modified;
 
-        await orpc.products.commands.update.call({
+        const updatedProduct = await orpc.products.commands.update.call({
           id: originalProduct.id,
           name: modifiedProduct.name,
           barcode: modifiedProduct.barcode,
@@ -64,19 +66,19 @@ function builder(
           stockQuantity: modifiedProduct.stockQuantity ?? undefined,
         });
 
+        collection.utils.writeUpdate(updatedProduct);
+
         return {
-          refetch: true,
+          refetch: false,
         };
       },
 
-      onDelete: async ({ transaction }) => {
-        const productIds = transaction.mutations.map(
-          (m) => m.original.id,
-        );
+      onDelete: async ({ transaction, collection }) => {
+        const productIds = transaction.mutations.map((m) => m.original.id);
 
         await orpc.products.commands.delete.call({ productIds });
 
-        productCollection.utils.writeDelete(productIds);
+        collection.utils.writeDelete(productIds);
 
         return {
           refetch: false,
