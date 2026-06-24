@@ -101,7 +101,7 @@ export const product = pgTable(
     name: text("name").notNull(),
     slug: text("slug").notNull(),
     sku: text("sku"),
-    barcode: text("barcode"),
+    barcode: text("barcode").notNull(),
     description: text("description"),
     imageUrl: text("image_url"),
 
