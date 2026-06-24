@@ -7,7 +7,6 @@ import {
 import type { DbConnection } from "@fludge/db";
 import {
   product,
-  category,
   type ProductInsert,
 } from "@fludge/db/schemas/catalog.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
@@ -164,33 +163,6 @@ export class PGProductsCommandsRepository extends TransactionalRepository {
     const p = rows.at(0);
 
     if (!p) return ok(false);
-
-    return ok(true);
-  }
-
-  public async categoryExists(
-    categoryId: string,
-    organizationId: string,
-  ) {
-    const [rows, error] = await tryCatch(
-      this.db
-        .select({ id: category.id })
-        .from(category)
-        .where(
-          and(
-            eq(category.id, categoryId),
-            eq(category.organizationId, organizationId),
-          ),
-        )
-        .limit(1)
-        .execute(),
-    );
-
-    if (error) return err(error);
-
-    const c = rows.at(0);
-
-    if (!c) return ok(false);
 
     return ok(true);
   }
