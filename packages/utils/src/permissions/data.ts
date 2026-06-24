@@ -1,10 +1,16 @@
-export const ALL_RESOURCES = ["groups", "members", "categories"] as const;
+export const ALL_RESOURCES = [
+  "groups",
+  "members",
+  "categories",
+  "products",
+] as const;
 export type RESOURCES = (typeof ALL_RESOURCES)[number];
 
 export const ES_RESOURCES: Record<RESOURCES, string> = {
   groups: "Grupos",
   members: "Miembros",
   categories: "Categorías",
+  products: "Productos",
 } as const;
 
 export const PERMISSIONS = {
@@ -21,6 +27,12 @@ export const PERMISSIONS = {
     assignGroup: "assign-group",
   },
   categories: {
+    view: "view",
+    create: "create",
+    update: "update",
+    delete: "delete",
+  },
+  products: {
     view: "view",
     create: "create",
     update: "update",
@@ -54,6 +66,7 @@ export const RESOURCE_DESCRIPTIONS = {
   groups: "Grupos",
   members: "Miembros",
   categories: "Categorías",
+  products: "Productos",
 } as const satisfies Record<Resource, string>;
 
 export const PERMISSION_DESCRIPTIONS = {
@@ -121,6 +134,28 @@ export const PERMISSION_DESCRIPTIONS = {
       title: "Eliminar categorías",
       description:
         "Permite borrar categorías permanentemente del sistema. Esta acción puede ser irreversible.",
+    },
+  },
+  products: {
+    view: {
+      title: "Ver productos",
+      description:
+        "Permite visualizar el listado de productos y acceder a sus detalles básicos.",
+    },
+    create: {
+      title: "Crear productos",
+      description:
+        "Permite registrar nuevos productos en el sistema y definir su configuración inicial.",
+    },
+    update: {
+      title: "Editar productos",
+      description:
+        "Permite modificar el nombre, el slug y los datos generales de los productos existentes.",
+    },
+    delete: {
+      title: "Eliminar productos",
+      description:
+        "Permite borrar productos permanentemente del sistema. Esta acción puede ser irreversible.",
     },
   },
 } as const satisfies PermissionDescriptions;
