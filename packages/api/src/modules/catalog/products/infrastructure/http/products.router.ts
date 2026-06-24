@@ -3,6 +3,7 @@ import { productsContainer } from "@fludge/api/modules/catalog/products/containe
 
 import { createProductCommand } from "@fludge/api/modules/catalog/products/application/commands/create-product.command";
 import { updateProductCommand } from "@fludge/api/modules/catalog/products/application/commands/update-product.command";
+import { deleteProductCommand } from "@fludge/api/modules/catalog/products/application/commands/delete-product.command";
 
 const TAGS = ["Products"] as const;
 
@@ -36,6 +37,22 @@ export const productsRouter = {
       .input(updateProductCommand)
       .handler(({ input, context }) =>
         productsContainer.commands.update.execute({
+          ...input,
+          organizationId: context.session.activeOrganization.id,
+        }),
+      ),
+
+    delete: withOrganization({
+      requirePermission: "products:delete",
+    })
+      .route({
+        method: "DELETE",
+        path: "/products",
+        tags: TAGS,
+      })
+      .input(deleteProductCommand)
+      .handler(({ input, context }) =>
+        productsContainer.commands.delete.execute({
           ...input,
           organizationId: context.session.activeOrganization.id,
         }),
