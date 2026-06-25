@@ -38,7 +38,9 @@ export function CategoriesHeaderSection({
             organización
           </p>
         </div>
-        <div>{canCreate && <CreateCategory />}</div>
+        <div>
+          {canCreate && <CreateCategory organizationId={organizationId} />}
+        </div>
       </header>
       <div className="grid grid-cols-4 gap-x-4 justify-between">
         {categoryInfo.map(({ title, data }) => (
