@@ -24,7 +24,11 @@ export const categoriesRouter = {
         categoriesContainer.commands.create.execute({
           ...input,
           organizationId: context.session.activeOrganization.id,
-          createdBy: context.session.member.id,
+          createdBy: {
+            memberId: context.session.member.id,
+            email: context.session.user.email,
+            name: context.session.user.name,
+          },
         }),
       ),
 

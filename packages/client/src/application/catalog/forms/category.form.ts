@@ -69,7 +69,7 @@ export function useCreateCategoryFormOptions({
         organizationId: organizationId,
         name: value.name,
         slug: slugify(value.name),
-        parentId: value.parentId ?? null,
+        parentId: value.parentId || null,
         createdAt: now,
         updatedAt: now,
         createdBy: null,

@@ -29,6 +29,8 @@ function builder(
           parentId: newCategory.parentId ?? undefined,
         });
 
+        console.log({ createdCategory });
+
         collection.utils.writeInsert(createdCategory);
 
         return {

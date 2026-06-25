@@ -24,7 +24,11 @@ export const createCategoryCommand = z.object({
 
 type CMD = z.infer<typeof createCategoryCommand> & {
   organizationId: string;
-  createdBy: string;
+  createdBy: {
+    memberId: string;
+    name: string;
+    email: string;
+  } | null;
 };
 
 export class CreateCategoryCommand {
@@ -85,8 +89,7 @@ export class CreateCategoryCommand {
       const [depth, errorDepth] =
         await this.categoriesCommandsRepository.parentDepth(cmd.parentId);
 
-      if (errorDepth)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", errorDepth);
+      if (errorDepth) throw new ORPCError("INTERNAL_SERVER_ERROR", errorDepth);
 
       if (depth > 1)
         throw new ORPCError("BAD_REQUEST", {
@@ -101,7 +104,7 @@ export class CreateCategoryCommand {
       slug,
       organizationId: cmd.organizationId,
       parentId: cmd.parentId ?? null,
-      createdBy: cmd.createdBy,
+      createdBy: cmd.createdBy?.memberId,
     });
 
     if (error || !data)
@@ -112,6 +115,9 @@ export class CreateCategoryCommand {
         },
       );
 
-    return data;
+    return {
+      ...data,
+      createdBy: cmd.createdBy,
+    };
   }
 }
