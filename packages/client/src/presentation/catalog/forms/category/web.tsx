@@ -15,10 +15,7 @@ import {
   SelectValue,
 } from "@fludge/ui/components/select";
 import { Skeleton } from "@fludge/ui/components/skeleton";
-import {
-  createFormHook,
-  createFormHookContexts,
-} from "@tanstack/react-form";
+import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 
 import { useFindAllCategories } from "@fludge/client/application/catalog/hooks/use-find-categories";
 import { slugify } from "@fludge/utils/slugify";
@@ -48,11 +45,6 @@ function NameField() {
   );
 }
 
-/**
- * Read-only preview. The server generates the canonical slug from
- * `name`, so the form never owns a `slug` field — this component
- * only reflects `slugify(name)` so the user can see what to expect.
- */
 function SlugField() {
   const form = useFormContext();
 
@@ -101,11 +93,6 @@ function ParentIdField({ organizationId }: { organizationId: string }) {
   );
 }
 
-/**
- * Pulls active categories for the parent dropdown. Wrapped in a
- * local `Suspense` so a slow first read never collapses the whole
- * `CategoriesScreen` skeleton while the `Sheet` is open.
- */
 function ParentOptions({
   organizationId,
   value,

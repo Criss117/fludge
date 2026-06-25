@@ -40,8 +40,7 @@ export function CreateCategory({ organizationId }: Props) {
         <SheetHeader>
           <SheetTitle className="text-xl">Crear Nueva Categoría</SheetTitle>
           <SheetDescription>
-            Crea una categoría para organizar los productos de la
-            organización.
+            Crea una categoría para organizar los productos de la organización.
           </SheetDescription>
         </SheetHeader>
         <Separator />
@@ -60,7 +59,9 @@ export function CreateCategory({ organizationId }: Props) {
                 <form.AppField name="name">
                   {(field) => <field.NameField />}
                 </form.AppField>
-                <form.SlugField />
+                <form.AppForm>
+                  <form.SlugField />
+                </form.AppForm>
                 <form.AppField name="parentId">
                   {(field) => (
                     <field.ParentIdField organizationId={organizationId} />
