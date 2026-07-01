@@ -11,6 +11,7 @@ import {
   NextPage,
   LastPage,
 } from "@fludge/client/presentation/shared/tables/pagination.web";
+import { Badge } from "@fludge/ui/components/badge";
 import { Skeleton } from "@fludge/ui/components/skeleton";
 import {
   Table,
@@ -49,6 +50,11 @@ export function CategoriesTableSection({
         onActivateClick={() => {}}
         onDeactivateClick={() => {}}
       />
+    ),
+    statusCell: (row) => (
+      <Badge variant={row.deletedAt ? "destructive" : "default"}>
+        {row.deletedAt ? "Inactiva" : "Activa"}
+      </Badge>
     ),
   });
 
