@@ -9,13 +9,22 @@ import {
 import { useProductCollection } from "@fludge/client/application/catalog/hooks/use-product-collection";
 import { useMemberCollection } from "@fludge/client/application/iam/hooks/use-member-collection";
 import { useCategoryCollection } from "@fludge/client/application/catalog/hooks/use-categories-collection";
+import type { SortDirection } from "@fludge/client/presentation/shared/context/filter.context";
 
 export type ProductSummary = ReturnType<
   typeof useFindAllProducts
 >["data"][number];
 
+const PRODUCT_SORT_KEYS = {
+  stock: ({ p }: { p: any }) => p.stockQuantity,
+  priceRetail: ({ p }: { p: any }) => p.priceRetail,
+} as const;
+
+export type ProductSortKey = keyof typeof PRODUCT_SORT_KEYS;
+
 type Filters = {
   query?: string;
+  sort?: { key: string; direction: SortDirection };
 };
 
 export function useFindAllProducts(organizationId: string, filters?: Filters) {
@@ -24,6 +33,12 @@ export function useFindAllProducts(organizationId: string, filters?: Filters) {
   const { categoryCollection } = useCategoryCollection(organizationId);
 
   const query = filters?.query ?? "";
+  const sort = filters?.sort;
+
+  const sortKey = sort?.key as ProductSortKey | undefined;
+  const sortDirection = sort?.direction;
+  const hasValidSort = sortDirection != null && !!sortKey && sortKey in PRODUCT_SORT_KEYS;
+  const effectiveDirection: "asc" | "desc" = hasValidSort ? sortDirection : "desc";
 
   return useLiveSuspenseQuery(
     (q) => {
@@ -61,9 +76,15 @@ export function useFindAllProducts(organizationId: string, filters?: Filters) {
             ilike(p.barcode, `%${query}%`),
           ),
         )
-        .orderBy(({ p }) => p.createdAt, "desc");
+        .orderBy(
+          ({ p }) =>
+            hasValidSort && sortKey
+              ? PRODUCT_SORT_KEYS[sortKey]({ p })
+              : p.createdAt,
+          effectiveDirection,
+        );
     },
-    [query],
+    [query, sort],
   );
 }
 
