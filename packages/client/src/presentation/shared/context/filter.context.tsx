@@ -8,10 +8,13 @@ export const GroupBy = {
 
 export type GroupByType = (typeof GroupBy)[keyof typeof GroupBy];
 
+export type SortDirection = "asc" | "desc" | null;
+
 type Filters = {
   query: string;
   group: GroupByType;
   tag: string;
+  sort: { key: string; direction: SortDirection };
 };
 
 type Actions =
@@ -24,7 +27,9 @@ type Actions =
   | { type: "reset:query" }
   | { type: "reset" }
   | { type: "set:tag"; payload: string }
-  | { type: "reset:tag" };
+  | { type: "reset:tag" }
+  | { type: "set:sort"; payload: { key: string; direction: SortDirection } }
+  | { type: "reset:sort" };
 
 interface Context {
   filters: Filters;
@@ -53,12 +58,14 @@ export function filtersReducer(state: Filters, action: Actions) {
         query: "",
         group: GroupBy.all,
         tag: "",
+        sort: { key: "", direction: null },
       };
     case "reset:query":
       return {
         query: "",
         group: GroupBy.all,
         tag: "",
+        sort: { key: "", direction: null },
       };
     case "set:group":
       if (!Object.values(GroupBy).includes(action.payload as GroupByType))
@@ -85,6 +92,16 @@ export function filtersReducer(state: Filters, action: Actions) {
         ...state,
         tag: "",
       };
+    case "set:sort":
+      return {
+        ...state,
+        sort: action.payload,
+      };
+    case "reset:sort":
+      return {
+        ...state,
+        sort: { key: "", direction: null },
+      };
     default:
       return state;
   }
@@ -95,6 +112,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     query: "",
     group: GroupBy.all,
     tag: "",
+    sort: { key: "", direction: null },
   });
 
   return (
