@@ -22,6 +22,17 @@ import {
   TableHeader,
   TableRow,
 } from "@fludge/ui/components/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@fludge/ui/components/alert-dialog";
+import { useState } from "react";
 
 interface Props {
   organizationId: string;
@@ -37,6 +48,7 @@ export function CategoriesTableSection({
   const { filters } = useFilters();
   const { deleteCategory, activateCategory, deactivateCategory } =
     useCategoryActionsMutations({ organizationId });
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   const { data: categories } = useFindAllCategories(organizationId, {
     name: filters.query,
@@ -49,15 +61,7 @@ export function CategoriesTableSection({
         canUpdate={canUpdate}
         canDelete={canDelete}
         onUpdateClick={() => {}}
-        onDeleteClick={(category) => {
-          const confirmed = window.confirm(
-            "¿Estás seguro de eliminar esta categoría? Esta acción no se puede deshacer.",
-          );
-
-          if (confirmed) {
-            deleteCategory(category);
-          }
-        }}
+        onDeleteClick={(category) => setDeleteTarget(category)}
         onActivateClick={(category) => activateCategory(category)}
         onDeactivateClick={(category) => deactivateCategory(category)}
       />
@@ -121,6 +125,31 @@ export function CategoriesTableSection({
           />
         </div>
       </div>
+
+      <AlertDialog open={deleteTarget !== null} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Eliminar categoría</AlertDialogTitle>
+            <AlertDialogDescription>
+              ¿Estás seguro de eliminar esta categoría? Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => {
+                if (deleteTarget) {
+                  deleteCategory(deleteTarget);
+                  setDeleteTarget(null);
+                }
+              }}
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 }
