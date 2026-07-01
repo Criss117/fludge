@@ -48,8 +48,7 @@ export function productsTableColumns<TNode>(
       header: "Stock",
       cell: (info) => {
         const { stockQuantity, minimumStock } = info.row.original;
-        const isLowStock =
-          minimumStock > 0 && stockQuantity < minimumStock;
+        const isLowStock = minimumStock > 0 && stockQuantity < minimumStock;
         return (
           <span
             className={
@@ -91,7 +90,7 @@ export function productsTableColumns<TNode>(
         }
       },
     }),
-    columnHelper.accessor((row) => row.categoryId, {
+    columnHelper.accessor((row) => row.category, {
       header: "Categoría",
       cell: (info) => {
         const value = info.getValue();
@@ -99,9 +98,9 @@ export function productsTableColumns<TNode>(
         return (
           <span
             className="block max-w-[140px] truncate font-mono text-xs text-muted-foreground"
-            title={value}
+            title={value.name}
           >
-            {value}
+            {value.name}
           </span>
         );
       },
@@ -110,13 +109,15 @@ export function productsTableColumns<TNode>(
       header: "Creado Por",
       cell: (info) => {
         const value = info.getValue();
+
         if (!value) return "-";
+
         return (
           <span
             className="block max-w-[140px] truncate font-mono text-xs text-muted-foreground"
-            title={value}
+            title={value.memberId}
           >
-            {value}
+            {value.user.name}
           </span>
         );
       },
