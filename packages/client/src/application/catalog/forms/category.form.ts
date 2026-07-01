@@ -13,6 +13,12 @@ const CREATE_CATEGORY_TOASTS = {
   error: "Error al crear categoría",
 } as const;
 
+const UPDATE_CATEGORY_TOASTS = {
+  loading: "Actualizando categoría...",
+  success: "Categoría actualizada",
+  error: "Error al actualizar categoría",
+} as const;
+
 /**
  * Client-side form schema — independent from the API command schema.
  * The backend generates the canonical slug from `name`, so the form
@@ -46,6 +52,16 @@ type CreateFormParams = {
   organizationId: string;
   onSuccess?: () => void;
   onError?: (error: unknown) => void;
+};
+
+type UpdateFormParams = CreateFormParams & {
+  defaultValues: CategoryFormSchema & {
+    categoryId: string;
+  };
+};
+
+export type CategoryFormDefaultValues = CategoryFormSchema & {
+  categoryId: string;
 };
 
 export function useCreateCategoryFormOptions({
@@ -101,6 +117,61 @@ export function useCreateCategoryFormOptions({
     },
     onSubmit: ({ value, formApi }) => {
       insertCategoryMutation.mutate(value, {
+        onSuccess: () => {
+          formApi.reset();
+        },
+      });
+    },
+  });
+}
+
+export function useUpdateCategoryFormOptions({
+  organizationId,
+  defaultValues,
+  onSuccess,
+  onError,
+}: UpdateFormParams) {
+  const { categoryCollection } = useCategoryCollection(organizationId);
+  const toastIdRef = useRef<string | number>(undefined);
+
+  const updateCategoryMutation = useMutation({
+    mutationKey: ["catalog", "category", "update"],
+    mutationFn: async (value: CategoryFormSchema) => {
+      const now = new Date();
+
+      const tx = categoryCollection.update(defaultValues.categoryId, (draft) => {
+        draft.name = value.name;
+        draft.parentId = value.parentId || null;
+        draft.updatedAt = now;
+      });
+
+      await tx.isPersisted.promise;
+    },
+    onMutate: () => {
+      toastIdRef.current = toast.loading(UPDATE_CATEGORY_TOASTS.loading);
+    },
+    onSuccess: () => {
+      toast.success(UPDATE_CATEGORY_TOASTS.success, {
+        id: toastIdRef.current,
+      });
+      onSuccess?.();
+    },
+    onError: (error) => {
+      toast.error(UPDATE_CATEGORY_TOASTS.error, { id: toastIdRef.current });
+      onError?.(error);
+    },
+  });
+
+  return formOptions({
+    defaultValues: {
+      name: defaultValues.name,
+      parentId: defaultValues.parentId || "",
+    },
+    validators: {
+      onChange: categoryFormSchema,
+    },
+    onSubmit: ({ value, formApi }) => {
+      updateCategoryMutation.mutate(value, {
         onSuccess: () => {
           formApi.reset();
         },
