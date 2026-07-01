@@ -9,6 +9,10 @@ export const updateCategoryCommand = createCategoryCommand.extend({
   id: z.uuid({
     error: "El id de la categoría es requerido",
   }),
+  // null  => activate  (clears deleted_at)
+  // Date  => deactivate (sets deleted_at)
+  // omitted => leave status untouched (regular edit)
+  deletedAt: z.date().nullable().optional(),
 });
 
 type CMD = z.infer<typeof updateCategoryCommand> & {
@@ -34,6 +38,32 @@ export class UpdateCategoryCommand {
       throw new ORPCError("NOT_FOUND", {
         message: "Categoría no encontrada",
       });
+
+    // Status-only update: deletedAt is present (Date or null).
+    // Skip name/slug/parentId validation — only persist the status change,
+    // passing the existing name/slug/parentId through unchanged.
+    if (cmd.deletedAt !== undefined) {
+      const [updated, error] = await this.categoriesCommandsRepository.update(
+        cmd.id,
+        cmd.organizationId,
+        {
+          name: existingCategory.name,
+          slug: existingCategory.slug,
+          parentId: existingCategory.parentId,
+          deletedAt: cmd.deletedAt,
+        },
+      );
+
+      if (error)
+        throw new ORPCError("INTERNAL_SERVER_ERROR", error);
+
+      if (!updated)
+        throw new ORPCError("NOT_FOUND", {
+          message: "Categoría no encontrada",
+        });
+
+      return updated;
+    }
 
     const newParentId = cmd.parentId ?? null;
 

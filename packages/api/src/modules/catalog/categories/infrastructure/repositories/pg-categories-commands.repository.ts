@@ -48,7 +48,12 @@ export class PGCategoriesCommandsRepository extends TransactionalRepository {
   public async update(
     id: string,
     organizationId: string,
-    values: Pick<CategoryInsert, "name" | "slug" | "parentId">,
+    values: Pick<CategoryInsert, "name" | "slug" | "parentId"> & {
+      // null  => activate  (clears deleted_at)
+      // Date  => deactivate (sets deleted_at)
+      // omitted => leave status untouched (regular edit)
+      deletedAt?: Date | null;
+    },
     options?: TransactionalOptions,
   ) {
     const db = options?.tx ?? this.db;
@@ -60,6 +65,11 @@ export class PGCategoriesCommandsRepository extends TransactionalRepository {
           name: values.name,
           slug: values.slug,
           parentId: values.parentId,
+          // Only touch deleted_at when the caller expressed an intent:
+          // null = activate, Date = deactivate, undefined = leave as-is.
+          ...(values.deletedAt !== undefined && {
+            deletedAt: values.deletedAt,
+          }),
         })
         .where(
           and(
@@ -223,57 +233,4 @@ export class PGCategoriesCommandsRepository extends TransactionalRepository {
     return ok(null);
   }
 
-  public async activate(
-    id: string,
-    organizationId: string,
-    options?: TransactionalOptions,
-  ) {
-    const db = options?.tx ?? this.db;
-
-    const [, error] = await tryCatch(
-      db
-        .update(category)
-        .set({
-          deletedAt: null,
-        })
-        .where(
-          and(
-            eq(category.organizationId, organizationId),
-            eq(category.id, id),
-          ),
-        )
-        .execute(),
-    );
-
-    if (error) return err(error);
-
-    return ok(null);
   }
-
-  public async deactivate(
-    id: string,
-    organizationId: string,
-    options?: TransactionalOptions,
-  ) {
-    const db = options?.tx ?? this.db;
-
-    const [, error] = await tryCatch(
-      db
-        .update(category)
-        .set({
-          deletedAt: new Date(),
-        })
-        .where(
-          and(
-            eq(category.organizationId, organizationId),
-            eq(category.id, id),
-          ),
-        )
-        .execute(),
-    );
-
-    if (error) return err(error);
-
-    return ok(null);
-  }
-}
