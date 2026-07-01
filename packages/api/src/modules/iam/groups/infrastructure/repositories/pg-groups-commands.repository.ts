@@ -1,4 +1,4 @@
-import { and, count, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 import {
   TransactionalRepository,
@@ -32,6 +32,11 @@ export class PGGroupsCommandsRepository extends TransactionalRepository {
             slug: values.slug,
             permissions: values.permissions,
             description: values.description,
+            // Only touch deleted_at when the caller expressed an intent:
+            // null = activate, Date = deactivate, undefined = leave as-is.
+            ...(values.deletedAt !== undefined && {
+              deletedAt: values.deletedAt,
+            }),
           },
         })
         .returning()
@@ -45,38 +50,6 @@ export class PGGroupsCommandsRepository extends TransactionalRepository {
     if (!created) return err(new Error("Error creando grupo"));
 
     return ok(created);
-  }
-
-  public async exisits(organizationId: string, groupId: string | string[]) {
-    if (!Array.isArray(groupId)) groupId = [groupId];
-
-    if (groupId.length === 0)
-      return err(new Error("No se especificó ningún id de grupo"));
-
-    const [exists, error] = await tryCatch(
-      this.db
-        .select({
-          total: count(group.id),
-        })
-        .from(group)
-        .where(
-          and(
-            eq(group.organizationId, organizationId),
-            inArray(group.id, groupId),
-          ),
-        )
-        .execute(),
-    );
-
-    if (error) return err(error);
-
-    const g = exists.at(0);
-
-    if (!g) return ok(false);
-
-    if (g.total !== groupId.length) return ok(false);
-
-    return ok(true);
   }
 
   public async findOne(organizationId: string, groupId: string) {
@@ -173,70 +146,6 @@ export class PGGroupsCommandsRepository extends TransactionalRepository {
     const [, error] = await tryCatch(
       db
         .delete(group)
-        .where(
-          and(
-            eq(group.organizationId, organizationId),
-            inArray(group.id, groupIds),
-          ),
-        )
-        .execute(),
-    );
-
-    if (error) return err(error);
-
-    return ok(null);
-  }
-
-  public async deactivate(
-    organizationId: string,
-    groupIds: string | string[],
-    options?: TransactionalOptions,
-  ) {
-    if (!Array.isArray(groupIds)) groupIds = [groupIds];
-
-    if (groupIds.length === 0)
-      return err(new Error("No se especificó ningún id de grupo"));
-
-    const db = options?.tx ?? this.db;
-
-    const [, error] = await tryCatch(
-      db
-        .update(group)
-        .set({
-          deletedAt: new Date(),
-        })
-        .where(
-          and(
-            eq(group.organizationId, organizationId),
-            inArray(group.id, groupIds),
-          ),
-        )
-        .execute(),
-    );
-
-    if (error) return err(error);
-
-    return ok(null);
-  }
-
-  public async activate(
-    organizationId: string,
-    groupIds: string | string[],
-    options?: TransactionalOptions,
-  ) {
-    if (!Array.isArray(groupIds)) groupIds = [groupIds];
-
-    if (groupIds.length === 0)
-      return err(new Error("No se especificó ningún id de grupo"));
-
-    const db = options?.tx ?? this.db;
-
-    const [, error] = await tryCatch(
-      db
-        .update(group)
-        .set({
-          deletedAt: null,
-        })
         .where(
           and(
             eq(group.organizationId, organizationId),

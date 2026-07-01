@@ -3,6 +3,7 @@ import {
   count,
   eq,
   ilike,
+  materialize,
   toArray,
   useLiveSuspenseQuery,
 } from "@tanstack/react-db";
@@ -56,7 +57,7 @@ export function useFindAllGroups(organizationId: string, filters?: Filters) {
           members: toArray(
             membersQuery.where(({ gm }) => eq(gm.groupId, g.id)),
           ),
-          createdBy: toArray(
+          createdBy: materialize(
             createdByQuery.where(({ m }) => eq(m.id, g.createdBy)),
           ),
         }))

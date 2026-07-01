@@ -4,8 +4,6 @@ import { groupsContainer } from "@fludge/api/modules/iam/groups/container";
 import { createGroupCommand } from "@fludge/api/modules/iam/groups/application/commands/create-group.command";
 import { updateGroupCommand } from "@fludge/api/modules/iam/groups/application/commands/update-group.command";
 import { deleteGroupsCommand } from "@fludge/api/modules/iam/groups/application/commands/delete-groups.command";
-import { activateGroupsCommand } from "@fludge/api/modules/iam/groups/application/commands/activate-groups.command";
-import { deactivateGroupsCommand } from "@fludge/api/modules/iam/groups/application/commands/deactivate-groups.command";
 
 const TAGS = ["Groups"] as const;
 
@@ -60,38 +58,6 @@ export const groupsRouter = {
       .input(deleteGroupsCommand)
       .handler(({ input, context }) =>
         groupsContainer.commands.delete.execute({
-          ...input,
-          organizationId: context.session.activeOrganization.id,
-        }),
-      ),
-
-    activate: withOrganization({
-      requirePermission: "groups:update",
-    })
-      .route({
-        method: "PATCH",
-        path: "/groups/activate",
-        tags: TAGS,
-      })
-      .input(activateGroupsCommand)
-      .handler(({ input, context }) =>
-        groupsContainer.commands.activate.execute({
-          ...input,
-          organizationId: context.session.activeOrganization.id,
-        }),
-      ),
-
-    deactivate: withOrganization({
-      requirePermission: "groups:update",
-    })
-      .route({
-        method: "PATCH",
-        path: "/groups/deactivate",
-        tags: TAGS,
-      })
-      .input(deactivateGroupsCommand)
-      .handler(({ input, context }) =>
-        groupsContainer.commands.deactivate.execute({
           ...input,
           organizationId: context.session.activeOrganization.id,
         }),

@@ -47,6 +47,10 @@ function builder(
           name: modifiedGroup.name,
           permissions: modifiedGroup.permissions,
           description: modifiedGroup.description || "",
+          // null = activate, Date = deactivate, undefined = leave as-is.
+          // Sent as the current (possibly unchanged) value so a regular edit
+          // never silently resets the group's status.
+          deletedAt: modifiedGroup.deletedAt,
         });
 
         groupCollection.utils.writeUpdate(serverUpdatedGroup);

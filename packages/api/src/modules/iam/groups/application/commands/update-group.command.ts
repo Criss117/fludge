@@ -10,6 +10,10 @@ export const updateGroupCommand = createGroupCommand.extend({
   groupId: z.uuid({
     error: "El id del grupo es requerido",
   }),
+  // null  => activate  (clears deleted_at)
+  // Date  => deactivate (sets deleted_at)
+  // omitted => leave status untouched (regular edit)
+  deletedAt: z.date().nullable().optional(),
 });
 
 type CMD = z.infer<typeof updateGroupCommand> & {
@@ -63,6 +67,7 @@ export class UpdateGroupCommand {
           organizationId: cmd.organizationId,
           permissions: preparePermissions(cmd.permissions),
           description: cmd.description,
+          deletedAt: cmd.deletedAt,
         },
         {
           tx,

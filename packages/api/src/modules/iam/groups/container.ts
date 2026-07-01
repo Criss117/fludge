@@ -7,8 +7,6 @@ import { PGGroupsCommandsRepository } from "./infrastructure/repositories/pg-gro
 import { FindAllGroupsByMemberQuery } from "./application/queries/find-all-groups-by-member.query";
 import { UpdateGroupCommand } from "./application/commands/update-group.command";
 import { DeleteGroupsCommand } from "./application/commands/delete-groups.command";
-import { ActivateGroupsCommand } from "./application/commands/activate-groups.command";
-import { DeactivateGroupsCommand } from "./application/commands/deactivate-groups.command";
 import { FindAllGroupsQuery } from "./application/queries/find-all-groups.query";
 
 // Repositories
@@ -21,12 +19,6 @@ const createGroupCommand = new CreateGroupCommand(
 );
 const updateGroupCommand = new UpdateGroupCommand(groupsCommandsRepository);
 const deleteGroupCommand = new DeleteGroupsCommand(groupsCommandsRepository);
-const activateGroupCommand = new ActivateGroupsCommand(
-  groupsCommandsRepository,
-);
-const deactivateGroupCommand = new DeactivateGroupsCommand(
-  groupsCommandsRepository,
-);
 
 // Queries
 const findAllGroupsByMemberQuery = new FindAllGroupsByMemberQuery(dbConnection);
@@ -37,8 +29,6 @@ export const groupsContainer = {
     create: createGroupCommand,
     update: updateGroupCommand,
     delete: deleteGroupCommand,
-    activate: activateGroupCommand,
-    deactivate: deactivateGroupCommand,
   },
   queries: {
     findAllByMember: findAllGroupsByMemberQuery,
