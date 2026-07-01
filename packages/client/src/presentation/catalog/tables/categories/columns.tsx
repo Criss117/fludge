@@ -35,7 +35,7 @@ export function categoriesTableColumns<TNode>(
     }),
     columnHelper.accessor((row) => row.createdBy, {
       header: "Creado Por",
-      cell: (info) => info.getValue()?.name || "-",
+      cell: (info) => info.getValue()?.user.name || "-",
     }),
     columnHelper.display({
       id: "actions",

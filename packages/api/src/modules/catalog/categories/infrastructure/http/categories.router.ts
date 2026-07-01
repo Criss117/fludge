@@ -24,8 +24,6 @@ export const categoriesRouter = {
           organizationId: context.session.activeOrganization.id,
           createdBy: {
             memberId: context.session.member.id,
-            email: context.session.user.email,
-            name: context.session.user.name,
           },
         }),
       ),

@@ -26,8 +26,6 @@ type CMD = z.infer<typeof createCategoryCommand> & {
   organizationId: string;
   createdBy: {
     memberId: string;
-    name: string;
-    email: string;
   } | null;
 };
 
@@ -115,9 +113,6 @@ export class CreateCategoryCommand {
         },
       );
 
-    return {
-      ...data,
-      createdBy: cmd.createdBy,
-    };
+    return data;
   }
 }

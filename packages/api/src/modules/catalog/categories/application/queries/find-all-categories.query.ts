@@ -1,8 +1,7 @@
-import { and, desc, eq, getTableColumns } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
 
 import type { DbConnection } from "@fludge/db";
-import { member, user } from "@fludge/db/schemas/auth.schema";
 import { category } from "@fludge/db/schemas/catalog.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 
@@ -16,23 +15,8 @@ export class FindAllCategoriesQuery {
   public async execute(query: Query) {
     const [data, error] = await tryCatch(
       this.db
-        .select({
-          ...getTableColumns(category),
-          createdBy: {
-            memberId: member.id,
-            name: user.name,
-            email: user.email,
-          },
-        })
+        .select()
         .from(category)
-        .leftJoin(
-          member,
-          and(
-            eq(member.id, category.createdBy),
-            eq(member.organizationId, category.organizationId),
-          ),
-        )
-        .leftJoin(user, eq(user.id, member.userId))
         .where(eq(category.organizationId, query.organizationId))
         .orderBy(desc(category.createdAt)),
     );
@@ -42,12 +26,6 @@ export class FindAllCategoriesQuery {
         message: "Algo salió mal al buscar categorías",
       });
 
-    return data.map(({ createdBy, ...rest }) => ({
-      ...rest,
-      createdBy:
-        createdBy.memberId && createdBy.name && createdBy.email
-          ? (createdBy as { memberId: string; name: string; email: string })
-          : null,
-    }));
+    return data;
   }
 }
