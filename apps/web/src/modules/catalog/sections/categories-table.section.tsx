@@ -1,4 +1,5 @@
 import { useFindAllCategories } from "@fludge/client/application/catalog/hooks/use-find-categories";
+import { useCategoryActionsMutations } from "@fludge/client/application/catalog/forms/category-actions";
 import { useCategoriesTable } from "@fludge/client/application/catalog/hooks/use-table";
 import { categoriesTableColumns } from "@fludge/client/presentation/catalog/tables/categories/columns";
 import { useFilters } from "@fludge/client/presentation/shared/context/filter.context";
@@ -34,6 +35,8 @@ export function CategoriesTableSection({
   canDelete,
 }: Props) {
   const { filters } = useFilters();
+  const { deleteCategory, activateCategory, deactivateCategory } =
+    useCategoryActionsMutations({ organizationId });
 
   const { data: categories } = useFindAllCategories(organizationId, {
     name: filters.query,
@@ -46,9 +49,17 @@ export function CategoriesTableSection({
         canUpdate={canUpdate}
         canDelete={canDelete}
         onUpdateClick={() => {}}
-        onDeleteClick={() => {}}
-        onActivateClick={() => {}}
-        onDeactivateClick={() => {}}
+        onDeleteClick={(category) => {
+          const confirmed = window.confirm(
+            "¿Estás seguro de eliminar esta categoría? Esta acción no se puede deshacer.",
+          );
+
+          if (confirmed) {
+            deleteCategory(category);
+          }
+        }}
+        onActivateClick={(category) => activateCategory(category)}
+        onDeactivateClick={(category) => deactivateCategory(category)}
       />
     ),
     statusCell: (row) =>
