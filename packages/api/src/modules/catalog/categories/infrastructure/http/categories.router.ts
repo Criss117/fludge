@@ -4,8 +4,6 @@ import { categoriesContainer } from "@fludge/api/modules/catalog/categories/cont
 import { createCategoryCommand } from "@fludge/api/modules/catalog/categories/application/commands/create-category.command";
 import { updateCategoryCommand } from "@fludge/api/modules/catalog/categories/application/commands/update-category.command";
 import { deleteCategoriesCommand } from "@fludge/api/modules/catalog/categories/application/commands/delete-categories.command";
-import { activateCategoriesCommand } from "@fludge/api/modules/catalog/categories/application/commands/delete-categories.command";
-import { deactivateCategoriesCommand } from "@fludge/api/modules/catalog/categories/application/commands/delete-categories.command";
 
 const TAGS = ["Categories"] as const;
 
@@ -59,38 +57,6 @@ export const categoriesRouter = {
       .input(deleteCategoriesCommand)
       .handler(({ input, context }) =>
         categoriesContainer.commands.delete.execute({
-          ...input,
-          organizationId: context.session.activeOrganization.id,
-        }),
-      ),
-
-    activate: withOrganization({
-      requirePermission: "categories:update",
-    })
-      .route({
-        method: "PATCH",
-        path: "/categories/activate",
-        tags: TAGS,
-      })
-      .input(activateCategoriesCommand)
-      .handler(({ input, context }) =>
-        categoriesContainer.commands.activate.execute({
-          ...input,
-          organizationId: context.session.activeOrganization.id,
-        }),
-      ),
-
-    deactivate: withOrganization({
-      requirePermission: "categories:update",
-    })
-      .route({
-        method: "PATCH",
-        path: "/categories/deactivate",
-        tags: TAGS,
-      })
-      .input(deactivateCategoriesCommand)
-      .handler(({ input, context }) =>
-        categoriesContainer.commands.deactivate.execute({
           ...input,
           organizationId: context.session.activeOrganization.id,
         }),

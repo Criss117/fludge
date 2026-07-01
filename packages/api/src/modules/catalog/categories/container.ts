@@ -2,11 +2,7 @@ import { dbConnection } from "@fludge/db";
 
 import { CreateCategoryCommand } from "./application/commands/create-category.command";
 import { UpdateCategoryCommand } from "./application/commands/update-category.command";
-import {
-  HardDeleteCategoriesCommand,
-  ActivateCategoriesCommand,
-  DeactivateCategoriesCommand,
-} from "./application/commands/delete-categories.command";
+import { HardDeleteCategoriesCommand } from "./application/commands/delete-categories.command";
 import { FindAllCategoriesQuery } from "./application/queries/find-all-categories.query";
 import { PGCategoriesCommandsRepository } from "./infrastructure/repositories/pg-categories-commands.repository";
 
@@ -25,12 +21,6 @@ const updateCategoryCommand = new UpdateCategoryCommand(
 const hardDeleteCategoriesCommand = new HardDeleteCategoriesCommand(
   categoriesCommandsRepository,
 );
-const activateCategoriesCommand = new ActivateCategoriesCommand(
-  categoriesCommandsRepository,
-);
-const deactivateCategoriesCommand = new DeactivateCategoriesCommand(
-  categoriesCommandsRepository,
-);
 
 // Queries
 const findAllCategoriesQuery = new FindAllCategoriesQuery(dbConnection);
@@ -40,8 +30,6 @@ export const categoriesContainer = {
     create: createCategoryCommand,
     update: updateCategoryCommand,
     delete: hardDeleteCategoriesCommand,
-    activate: activateCategoriesCommand,
-    deactivate: deactivateCategoriesCommand,
   },
   queries: {
     findAll: findAllCategoriesQuery,
