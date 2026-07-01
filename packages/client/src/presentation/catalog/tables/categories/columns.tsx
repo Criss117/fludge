@@ -1,5 +1,4 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { Badge } from "@fludge/ui/components/badge";
 
 import type { CategorySummary } from "@fludge/client/application/catalog/hooks/use-find-categories";
 
@@ -8,6 +7,7 @@ const columnHelper = createColumnHelper<CategorySummary>();
 export interface CategoriesTableActionsSlot<TNode> {
   renderActions: (row: CategorySummary) => TNode;
   nameCell?: (row: CategorySummary) => TNode;
+  statusCell?: (row: CategorySummary) => TNode;
 }
 
 export function categoriesTableColumns<TNode>(
@@ -26,11 +26,8 @@ export function categoriesTableColumns<TNode>(
       id: "status",
       header: "Estado",
       cell: (info) =>
-        info.row.original.deletedAt ? (
-          <Badge variant="secondary">Inactivo</Badge>
-        ) : (
-          <Badge>Activo</Badge>
-        ),
+        slots.statusCell?.(info.row.original) ??
+        (info.row.original.deletedAt ? "inactive" : "active"),
     }),
     columnHelper.accessor((row) => row.updatedAt, {
       header: "Última Actualización",
