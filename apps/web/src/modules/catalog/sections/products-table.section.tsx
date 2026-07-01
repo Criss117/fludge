@@ -11,6 +11,7 @@ import {
   NextPage,
   LastPage,
 } from "@fludge/client/presentation/shared/tables/pagination.web";
+import { Badge } from "@fludge/ui/components/badge";
 import { Skeleton } from "@fludge/ui/components/skeleton";
 import {
   Table,
@@ -52,6 +53,68 @@ export function ProductsTableSection({
         onDiscontinueClick={() => {}}
       />
     ),
+    statusCell: (row) => {
+      switch (row.status) {
+        case "active":
+          return (
+            <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
+              Activo
+            </Badge>
+          );
+        case "inactive":
+          return <Badge variant="secondary">Inactivo</Badge>;
+        case "discontinued":
+          return <Badge variant="destructive">Descontinuado</Badge>;
+        default:
+          return <Badge variant="outline">{row.status}</Badge>;
+      }
+    },
+    stockCell: (row) => {
+      const isLowStock =
+        row.minimumStock > 0 && row.stockQuantity < row.minimumStock;
+      return (
+        <span
+          className={
+            isLowStock
+              ? "text-amber-600 dark:text-amber-400 font-medium"
+              : undefined
+          }
+        >
+          {row.stockQuantity}
+          {isLowStock && (
+            <span
+              className="ml-1 inline-flex size-1.5 rounded-full bg-amber-500"
+              aria-label="Stock bajo"
+              title={`Stock por debajo del mínimo (${row.minimumStock})`}
+            />
+          )}
+        </span>
+      );
+    },
+    categoryCell: (row) => {
+      const value = row.category;
+      if (!value) return "-";
+      return (
+        <span
+          className="block max-w-[140px] truncate font-mono text-xs text-muted-foreground"
+          title={value.name}
+        >
+          {value.name}
+        </span>
+      );
+    },
+    createdByCell: (row) => {
+      const value = row.createdBy;
+      if (!value) return "-";
+      return (
+        <span
+          className="block max-w-[140px] truncate font-mono text-xs text-muted-foreground"
+          title={value.memberId}
+        >
+          {value.user.name}
+        </span>
+      );
+    },
   });
 
   const table = useProductsTable({
