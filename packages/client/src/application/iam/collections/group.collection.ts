@@ -1,7 +1,8 @@
 import { createCollection, BasicIndex } from "@tanstack/react-db";
+import { QueryClient } from "@tanstack/react-query";
+
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import type { ORPCType } from "@fludge/client/providers/orpc.provider";
-import { QueryClient } from "@tanstack/react-query";
 
 const collectionCache = new Map<string, ReturnType<typeof builder>>();
 

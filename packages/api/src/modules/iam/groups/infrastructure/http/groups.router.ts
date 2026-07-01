@@ -26,8 +26,6 @@ export const groupsRouter = {
           organizationId: context.session.activeOrganization.id,
           createdBy: {
             memberId: context.session.member.id,
-            name: context.session.user.name,
-            email: context.session.user.email,
           },
         }),
       ),
@@ -47,8 +45,6 @@ export const groupsRouter = {
           organizationId: context.session.activeOrganization.id,
           updatedBy: {
             memberId: context.session.member.id,
-            name: context.session.user.name,
-            email: context.session.user.email,
           },
         }),
       ),

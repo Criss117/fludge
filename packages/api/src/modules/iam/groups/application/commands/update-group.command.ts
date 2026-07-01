@@ -16,8 +16,6 @@ type CMD = z.infer<typeof updateGroupCommand> & {
   organizationId: string;
   updatedBy: {
     memberId: string;
-    name: string;
-    email: string;
   };
 };
 
@@ -102,14 +100,7 @@ export class UpdateGroupCommand {
           },
         );
 
-      return {
-        ...updatedGroup,
-        createdBy: {
-          memberId: cmd.updatedBy.memberId,
-          name: cmd.updatedBy.name,
-          email: cmd.updatedBy.email,
-        },
-      };
+      return updatedGroup;
     });
   }
 }

@@ -33,7 +33,7 @@ export function groupsTableColumns<TNode>(
     }),
     columnHelper.accessor((row) => row.createdBy, {
       header: "Creado Por",
-      cell: (info) => info.getValue()?.name || "-",
+      cell: (info) => info.getValue().at(0)?.user.name || "-",
     }),
     columnHelper.display({
       id: "actions",

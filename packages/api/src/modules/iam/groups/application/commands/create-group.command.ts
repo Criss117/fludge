@@ -31,8 +31,6 @@ type CMD = z.infer<typeof createGroupCommand> & {
   organizationId: string;
   createdBy: {
     memberId: string;
-    name: string;
-    email: string;
   } | null;
 };
 
@@ -62,7 +60,7 @@ export class CreateGroupCommand {
         },
       );
 
-    return { ...data, createdBy: cmd.createdBy };
+    return data;
   }
 
   private async registerListeners() {

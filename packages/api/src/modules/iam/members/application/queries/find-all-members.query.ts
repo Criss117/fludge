@@ -1,4 +1,4 @@
-import { and, eq, getTableColumns, not } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
 import { alias } from "drizzle-orm/pg-core";
 
@@ -38,12 +38,7 @@ export class FindAllMembersQuery {
           assignedByUser,
           eq(assignedByUser.id, assignedByMember.userId),
         )
-        .where(
-          and(
-            eq(member.organizationId, organizationId),
-            not(eq(member.role, "owner")),
-          ),
-        ),
+        .where(eq(member.organizationId, organizationId)),
     );
 
     if (error)

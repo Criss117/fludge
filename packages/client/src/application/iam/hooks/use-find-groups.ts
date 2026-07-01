@@ -21,6 +21,7 @@ type Filters = {
 
 export function useFindAllGroups(organizationId: string, filters?: Filters) {
   const { groupCollection } = useGroupCollection(organizationId);
+  const { memberCollection } = useMemberCollection(organizationId);
   const { groupMembersCollection } = useGroupMembersCollection(organizationId);
 
   const name = filters?.name ?? "";
@@ -36,6 +37,16 @@ export function useFindAllGroups(organizationId: string, filters?: Filters) {
         }))
         .findOne();
 
+      const createdByQuery = q
+        .from({
+          m: memberCollection,
+        })
+        .select(({ m }) => ({
+          memberId: m.id,
+          user: m.user,
+        }))
+        .findOne();
+
       return q
         .from({
           g: groupCollection,
@@ -44,6 +55,9 @@ export function useFindAllGroups(organizationId: string, filters?: Filters) {
           ...g,
           members: toArray(
             membersQuery.where(({ gm }) => eq(gm.groupId, g.id)),
+          ),
+          createdBy: toArray(
+            createdByQuery.where(({ m }) => eq(m.id, g.createdBy)),
           ),
         }))
         .where(({ g }) => ilike(g.name, `%${name}%`))

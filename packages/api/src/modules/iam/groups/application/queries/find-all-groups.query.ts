@@ -1,8 +1,7 @@
-import { and, desc, eq, getTableColumns } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
 
 import type { DbConnection } from "@fludge/db";
-import { member, user } from "@fludge/db/schemas/auth.schema";
 import { group } from "@fludge/db/schemas/iam.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 
@@ -16,23 +15,8 @@ export class FindAllGroupsQuery {
   public async execute(query: Query) {
     const [data, error] = await tryCatch(
       this.db
-        .select({
-          ...getTableColumns(group),
-          createdBy: {
-            memberId: member.id,
-            name: user.name,
-            email: user.email,
-          },
-        })
+        .select()
         .from(group)
-        .leftJoin(
-          member,
-          and(
-            eq(member.id, group.createdBy),
-            eq(member.organizationId, group.organizationId),
-          ),
-        )
-        .leftJoin(user, eq(user.id, member.userId))
         .where(eq(group.organizationId, query.organizationId))
         .orderBy(desc(group.createdAt)),
     );
@@ -42,12 +26,6 @@ export class FindAllGroupsQuery {
         message: "Algo salio mal al buscar grupos",
       });
 
-    return data.map(({ createdBy, ...rest }) => ({
-      ...rest,
-      createdBy:
-        createdBy.memberId && createdBy.name && createdBy.email
-          ? (createdBy as { memberId: string; name: string; email: string })
-          : null,
-    }));
+    return data;
   }
 }
