@@ -51,11 +51,12 @@ export function CategoriesTableSection({
         onDeactivateClick={() => {}}
       />
     ),
-    statusCell: (row) => (
-      <Badge variant={row.deletedAt ? "destructive" : "default"}>
-        {row.deletedAt ? "Inactiva" : "Activa"}
-      </Badge>
-    ),
+    statusCell: (row) =>
+      row.deletedAt ? (
+        <Badge variant="secondary">Inactivo</Badge>
+      ) : (
+        <Badge>Activo</Badge>
+      ),
   });
 
   const table = useCategoriesTable({
