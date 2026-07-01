@@ -36,6 +36,7 @@ export function ProductsTableSection({
 
   const { data: products } = useFindAllProducts(organizationId, {
     query: filters.query,
+    sort: filters.sort,
   });
 
   const columns = productsTableColumns({
