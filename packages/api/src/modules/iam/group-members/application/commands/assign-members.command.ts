@@ -30,8 +30,6 @@ type CMD = z.infer<typeof assignMembersCommand> & {
   organizationId: string;
   assignedBy: {
     memberId: string;
-    name: string;
-    email: string;
   };
 };
 
@@ -83,9 +81,6 @@ export class AssignMembersCommand {
 
     if (errorAssign) throw new ORPCError("INTERNAL_SERVER_ERROR", errorAssign);
 
-    return data.map((d) => ({
-      ...d,
-      assignedBy: cmd.assignedBy,
-    }));
+    return data;
   }
 }

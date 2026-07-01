@@ -23,8 +23,6 @@ export const groupMembersRouter = {
           organizationId: context.session.activeOrganization.id,
           assignedBy: {
             memberId: context.session.member.id,
-            name: context.session.user.name,
-            email: context.session.user.email,
           },
         }),
       ),
