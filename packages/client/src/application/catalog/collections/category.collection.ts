@@ -47,7 +47,7 @@ function builder(
           // null = activate, Date = deactivate, undefined = leave as-is.
           // Sent as the current (possibly unchanged) value so a regular
           // edit never silently resets the category's status.
-          deletedAt: modifiedCategory.deletedAt ?? undefined,
+          deletedAt: modifiedCategory.deletedAt,
         });
 
         collection.utils.writeUpdate(updatedCategory);
