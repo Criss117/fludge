@@ -29,8 +29,6 @@ function builder(
           parentId: newCategory.parentId ?? undefined,
         });
 
-        console.log({ createdCategory });
-
         collection.utils.writeInsert(createdCategory);
 
         return {
@@ -46,6 +44,10 @@ function builder(
           id: originalCategory.id,
           name: modifiedCategory.name,
           parentId: modifiedCategory.parentId ?? undefined,
+          // null = activate, Date = deactivate, undefined = leave as-is.
+          // Sent as the current (possibly unchanged) value so a regular
+          // edit never silently resets the category's status.
+          deletedAt: modifiedCategory.deletedAt ?? undefined,
         });
 
         collection.utils.writeUpdate(updatedCategory);
