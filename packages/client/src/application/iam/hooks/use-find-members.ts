@@ -5,6 +5,8 @@ import {
   eq,
   ilike,
   toArray,
+  and,
+  not,
 } from "@tanstack/react-db";
 import { useMemberCollection } from "./use-member-collection";
 import { useGroupMembersCollection } from "./use-group-members-collection";
@@ -24,9 +26,7 @@ export function useFindOneMember(organizationId: string, memberId: string) {
     (q) => {
       const groupsQuery = q
         .from({ gm: groupMembersCollection })
-        .innerJoin({ g: groupCollection }, ({ g, gm }) =>
-          eq(g.id, gm.groupId),
-        )
+        .innerJoin({ g: groupCollection }, ({ g, gm }) => eq(g.id, gm.groupId))
         .select(({ g }) => ({
           id: g.id,
           name: g.name,
@@ -39,9 +39,7 @@ export function useFindOneMember(organizationId: string, memberId: string) {
         .from({ m: memberCollection })
         .select(({ m }) => ({
           ...m,
-          groups: toArray(
-            groupsQuery.where(({ gm }) => eq(gm.memberId, m.id)),
-          ),
+          groups: toArray(groupsQuery.where(({ gm }) => eq(gm.memberId, m.id))),
         }))
         .where(({ m }) => eq(m.id, memberId))
         .findOne();
@@ -99,7 +97,9 @@ export function useFindAllMembers(organizationId: string, filters?: Filters) {
           ...m,
           groups: toArray(groupsQuery.where(({ gm }) => eq(gm.memberId, m.id))),
         }))
-        .where(({ m }) => ilike(m.user.name, `%${name ?? ""}%`));
+        .where(({ m }) =>
+          and(not(eq(m.role, "owner")), ilike(m.user.name, `%${name ?? ""}%`)),
+        );
 
       return membersQuery;
     },

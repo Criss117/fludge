@@ -3,10 +3,6 @@ import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import type { ORPCType } from "@fludge/client/providers/orpc.provider";
 import { QueryClient } from "@tanstack/react-query";
 
-export type MemberSummary = Awaited<
-  ReturnType<ORPCType["members"]["queries"]["findAll"]["call"]>
->[number];
-
 const collectionCache = new Map<string, ReturnType<typeof builder>>();
 
 function builder(
@@ -22,7 +18,6 @@ function builder(
         const data = await orpc.members.queries.findAll.call();
 
         return data;
-        1;
       },
       getKey: (item) => item.id,
       defaultIndexType: BasicIndex,
