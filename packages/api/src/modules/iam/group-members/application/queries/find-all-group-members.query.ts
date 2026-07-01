@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
 
 import type { DbConnection } from "@fludge/db";
@@ -15,8 +15,9 @@ export class FindAllGroupMembersQuery {
   public async execute(query: Query) {
     const [data, error] = await tryCatch(
       this.db
-        .select()
+        .select({ ...getTableColumns(groupMember) })
         .from(groupMember)
+        .innerJoin(group, eq(group.id, groupMember.groupId))
         .where(eq(group.organizationId, query.organizationId)),
     );
 
