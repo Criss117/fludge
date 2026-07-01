@@ -10,11 +10,7 @@ export const registerMemberCommand = signUpEmailCommand;
 
 type CMD = z.infer<typeof registerMemberCommand> & {
   organizationId: string;
-  assignedBy: {
-    memberId: string;
-    name: string;
-    email: string;
-  };
+  assignedBy: string;
 };
 
 export class RegisterMemberCommand {
@@ -54,7 +50,7 @@ export class RegisterMemberCommand {
           organizationId: cmd.organizationId,
           userId: newUser.user.id,
           role: "member",
-          assignedBy: cmd.assignedBy.memberId,
+          assignedBy: cmd.assignedBy,
         },
       }),
     );

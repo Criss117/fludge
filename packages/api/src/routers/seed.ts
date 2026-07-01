@@ -84,11 +84,7 @@ async function seedRooUsers(headers: Headers) {
 async function seedMemberUsers(
   data: {
     organizationId: string;
-    assignedBy: {
-      memberId: string;
-      name: string;
-      email: string;
-    };
+    assignedBy: string;
   }[],
   headers: Headers,
 ) {
@@ -220,14 +216,9 @@ export const seedRouter = {
 
       const members = await seedMemberUsers(
         rootMembers.map((m) => {
-          const user = rootUsers.find((u) => u.id === m.userId)!;
           return {
             organizationId: m.organizationId,
-            assignedBy: {
-              memberId: m.id,
-              name: user.name,
-              email: user.email,
-            },
+            assignedBy: m.id,
           };
         }),
         context.headers,
@@ -253,10 +244,19 @@ export const seedRouter = {
           .arrayElements(orgGroups)
           .map((g) => g.id);
 
+        const inviter = rootMembers.find((r) => r.id === m.assignedBy);
+        const inviterUser = inviter
+          ? rootUsers.find((u) => u.id === inviter.userId)
+          : undefined;
+
         return {
           memberId: m.id,
           organizationId: m.organizationId,
-          assignedBy: m.assignedBy,
+          assignedBy: {
+            memberId: m.assignedBy,
+            name: inviterUser?.name ?? "",
+            email: inviterUser?.email ?? "",
+          },
           groupIds,
         };
       });
