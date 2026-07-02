@@ -80,9 +80,9 @@ export function UpdateGroup({ organizationId }: Props) {
     >
       <SheetContent className="w-full sm:min-w-[40dvw]">
         <SheetHeader>
-          <SheetTitle className="text-xl">Crear Nuevo Grupo</SheetTitle>
+          <SheetTitle className="text-xl">Editar Grupo</SheetTitle>
           <SheetDescription>
-            Crear un grupo de permisos que se pueda asignar a los empleados.
+            Editar un grupo de permisos que se pueda asignar a los empleados.
           </SheetDescription>
         </SheetHeader>
         <Separator />
