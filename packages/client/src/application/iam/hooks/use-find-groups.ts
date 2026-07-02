@@ -88,12 +88,25 @@ export function useFindOneGroup(organizationId: string, groupSlug: string) {
           assignedBy: gm.assignedBy,
         }));
 
+      const createdByQuery = q
+        .from({
+          m: memberCollection,
+        })
+        .select(({ m }) => ({
+          memberId: m.id,
+          user: m.user,
+        }))
+        .findOne();
+
       return q
         .from({ g: groupCollection })
         .select(({ g }) => ({
           ...g,
           members: toArray(
             membersQuery.where(({ gm }) => eq(gm.groupId, g.id)),
+          ),
+          createdBy: materialize(
+            createdByQuery.where(({ m }) => eq(m.id, g.createdBy)),
           ),
         }))
         .where(({ g }) =>

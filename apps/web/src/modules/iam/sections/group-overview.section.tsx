@@ -19,7 +19,7 @@ export function GroupOverviewSection({ group }: Props) {
   const stats = [
     { title: "Miembros Totales", value: group.members.length },
     { title: "Permisos Asignados", value: group.permissions.length },
-    { title: "Creado Por", value: group.createdBy?.name || "—" },
+    { title: "Creado Por", value: group.createdBy?.user.name || "—" },
   ];
 
   return (
@@ -64,7 +64,7 @@ export function GroupOverviewSection({ group }: Props) {
         <div className="flex items-center gap-x-1">
           <UserIcon className="text-muted-foreground size-4" />
           <p className="text-muted-foreground text-sm">
-            {group.createdBy?.name || "—"}
+            {group.createdBy?.user.name || "—"}
           </p>
         </div>
       </div>
