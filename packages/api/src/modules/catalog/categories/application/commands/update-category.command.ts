@@ -25,6 +25,8 @@ export class UpdateCategoryCommand {
   ) {}
 
   public async execute(cmd: CMD) {
+    console.log({ cmd });
+
     const [existingCategory, errorExists] =
       await this.categoriesCommandsRepository.findOne(
         cmd.id,
@@ -164,6 +166,7 @@ export class UpdateCategoryCommand {
         name: cmd.name,
         slug,
         parentId: newParentId,
+        deletedAt: cmd.deletedAt,
       },
     );
 
