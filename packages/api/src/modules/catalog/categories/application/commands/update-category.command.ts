@@ -31,8 +31,7 @@ export class UpdateCategoryCommand {
         cmd.organizationId,
       );
 
-    if (errorExists)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", errorExists);
+    if (errorExists) throw new ORPCError("INTERNAL_SERVER_ERROR", errorExists);
 
     if (!existingCategory)
       throw new ORPCError("NOT_FOUND", {
@@ -42,7 +41,7 @@ export class UpdateCategoryCommand {
     // Status-only update: deletedAt is present (Date or null).
     // Skip name/slug/parentId validation — only persist the status change,
     // passing the existing name/slug/parentId through unchanged.
-    if (cmd.deletedAt !== undefined) {
+    if (!!cmd.deletedAt) {
       const [updated, error] = await this.categoriesCommandsRepository.update(
         cmd.id,
         cmd.organizationId,
@@ -54,8 +53,7 @@ export class UpdateCategoryCommand {
         },
       );
 
-      if (error)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", error);
+      if (error) throw new ORPCError("INTERNAL_SERVER_ERROR", error);
 
       if (!updated)
         throw new ORPCError("NOT_FOUND", {
@@ -169,8 +167,7 @@ export class UpdateCategoryCommand {
       },
     );
 
-    if (error)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", error);
+    if (error) throw new ORPCError("INTERNAL_SERVER_ERROR", error);
 
     if (!updated)
       throw new ORPCError("NOT_FOUND", {
