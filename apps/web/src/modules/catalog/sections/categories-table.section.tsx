@@ -33,6 +33,7 @@ import {
   AlertDialogTitle,
 } from "@fludge/ui/components/alert-dialog";
 import { useState } from "react";
+import { useUpdateCategoryForm } from "@/modules/catalog/components/update-category";
 
 interface Props {
   organizationId: string;
@@ -46,6 +47,7 @@ export function CategoriesTableSection({
   canDelete,
 }: Props) {
   const { filters } = useFilters();
+  const { open: openUpdateCategory } = useUpdateCategoryForm();
   const { deleteCategory, activateCategory, deactivateCategory } =
     useCategoryActionsMutations({ organizationId });
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
@@ -60,7 +62,13 @@ export function CategoriesTableSection({
         row={row}
         canUpdate={canUpdate}
         canDelete={canDelete}
-        onUpdateClick={() => {}}
+        onUpdateClick={() =>
+          openUpdateCategory({
+            categoryId: row.id,
+            name: row.name,
+            parentId: row.parentId || "",
+          })
+        }
         onDeleteClick={(category) => setDeleteTarget(category)}
         onActivateClick={(category) => activateCategory(category)}
         onDeactivateClick={(category) => deactivateCategory(category)}

@@ -8,6 +8,10 @@ import {
 } from "@/modules/catalog/sections/categories-table.section";
 import { CategoriesFiltersSection } from "@/modules/catalog/sections/categories-filters.section";
 import { FiltersProvider } from "@fludge/client/presentation/shared/context/filter.context";
+import {
+  UpdateCategory,
+  UpdateCategoryProvider,
+} from "@/modules/catalog/components/update-category";
 import { PermissionDeniedAlert } from "@/modules/iam/components/permission-denied-alert";
 import { useMemberPermissions } from "@fludge/client/application/iam/hooks/use-member-permissions";
 
@@ -30,11 +34,14 @@ export function CategoriesScreen({ organizationId }: Props) {
       />
       <FiltersProvider>
         <CategoriesFiltersSection />
-        <CategoriesTableSection
-          organizationId={organizationId}
-          canUpdate={can("categories:update")}
-          canDelete={can("categories:delete")}
-        />
+        <UpdateCategoryProvider>
+          <UpdateCategory organizationId={organizationId} />
+          <CategoriesTableSection
+            organizationId={organizationId}
+            canUpdate={can("categories:update")}
+            canDelete={can("categories:delete")}
+          />
+        </UpdateCategoryProvider>
       </FiltersProvider>
     </div>
   );

@@ -72,7 +72,13 @@ function SlugField() {
   );
 }
 
-function ParentIdField({ organizationId }: { organizationId: string }) {
+function ParentIdField({
+  organizationId,
+  excludeId,
+}: {
+  organizationId: string;
+  excludeId?: string;
+}) {
   const field = useFieldContext<string>();
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
@@ -84,6 +90,7 @@ function ParentIdField({ organizationId }: { organizationId: string }) {
       <Suspense fallback={<Skeleton className="h-8 w-full" />}>
         <ParentOptions
           organizationId={organizationId}
+          excludeId={excludeId}
           value={field.state.value}
           onValueChange={(v) => field.handleChange(v ?? "")}
         />
@@ -95,10 +102,12 @@ function ParentIdField({ organizationId }: { organizationId: string }) {
 
 function ParentOptions({
   organizationId,
+  excludeId,
   value,
   onValueChange,
 }: {
   organizationId: string;
+  excludeId?: string;
   value: string;
   onValueChange: (v: string | null) => void;
 }) {
@@ -106,7 +115,9 @@ function ParentOptions({
 
   const options = [
     { value: "", label: "Sin categoría padre" },
-    ...categories.map((c) => ({ value: c.id, label: c.name })),
+    ...categories
+      .filter((c) => c.id !== excludeId)
+      .map((c) => ({ value: c.id, label: c.name })),
   ];
 
   return (
