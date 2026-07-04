@@ -58,3 +58,44 @@ describe("createProductCommand schema — stockQuantity refine", () => {
     expect(result.success).toBe(true);
   });
 });
+
+describe("createProductCommand schema — minimumStock refine", () => {
+  it("rejects minimumStock greater than stockQuantity", () => {
+    const result = createProductCommand.safeParse({
+      ...baseInput,
+      stockQuantity: 3,
+      minimumStock: 10,
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      const minIssue = result.error.issues.find(
+        (i) => i.path[0] === "minimumStock",
+      );
+      expect(minIssue).toBeDefined();
+      expect(minIssue?.message).toBe(
+        "El stock mínimo no puede ser mayor al stock actual",
+      );
+    }
+  });
+
+  it("accepts minimumStock less than or equal to stockQuantity", () => {
+    const result = createProductCommand.safeParse({
+      ...baseInput,
+      stockQuantity: 10,
+      minimumStock: 5,
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("skips minimumStock refine when only minimumStock is supplied", () => {
+    const result = createProductCommand.safeParse({
+      ...baseInput,
+      minimumStock: 10,
+    });
+
+    expect(result.success).toBe(true);
+  });
+});

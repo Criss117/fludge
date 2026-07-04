@@ -59,6 +59,15 @@ export const createProductCommand = z.object({
     error: "El stock no puede ser negativo si no se permite stock negativo",
     path: ["stockQuantity"],
   },
+).refine(
+  (data) =>
+    data.stockQuantity == null ||
+    data.minimumStock == null ||
+    data.stockQuantity >= data.minimumStock,
+  {
+    error: "El stock mínimo no puede ser mayor al stock actual",
+    path: ["minimumStock"],
+  },
 );
 
 type CMD = z.infer<typeof createProductCommand> & {

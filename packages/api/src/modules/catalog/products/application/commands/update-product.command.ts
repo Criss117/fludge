@@ -12,10 +12,35 @@ export const updateProductCommand = createProductCommand
     id: z.uuid({
       error: "El id del producto es requerido",
     }),
-    stockQuantity: z.number().int().nonnegative().optional(),
     // Mirrors productStatusEnum in catalog.schema — keep in sync.
     status: z.enum(["active", "inactive", "discontinued"]).optional(),
-  });
+    // stockQuantity is NOT redeclared here: `.extend()` replaces the field
+    // key, and `.partial()` drops the base schema's checks anyway, so the
+    // field shape (`z.number().int().optional()`) is inherited but the
+    // negative-stock `.refine()` from `createProductCommand` is NOT. We re-add
+    // the negative-stock guard explicitly below — see the OPEN QUESTION note in
+    // design: Zod 4 `.partial()`/`.extend()` do not carry refinements forward.
+  })
+  .refine(
+    (data) =>
+      data.stockQuantity == null ||
+      data.stockQuantity >= 0 ||
+      data.allowNegativeStock === true,
+    {
+      error: "El stock no puede ser negativo si no se permite stock negativo",
+      path: ["stockQuantity"],
+    },
+  )
+  .refine(
+    (data) =>
+      data.stockQuantity == null ||
+      data.minimumStock == null ||
+      data.stockQuantity >= data.minimumStock,
+    {
+      error: "El stock mínimo no puede ser mayor al stock actual",
+      path: ["minimumStock"],
+    },
+  );
 
 type CMD = z.infer<typeof updateProductCommand> & {
   organizationId: string;
@@ -135,7 +160,23 @@ export class UpdateProductCommand {
         });
     }
 
-    // 6. Build update payload from provided fields only
+    // 6. Normalize negative stock when allowNegativeStock becomes false.
+    // Schema can't see `existing`, so this lives in the handler: compute the
+    // effective stock/allow-negative from `cmd ?? existing`, and if the
+    // resulting state would be "no negative stock allowed" but the value is
+    // negative, force it to 0.
+    const effectiveAllowNegative =
+      cmd.allowNegativeStock ?? existing.allowNegativeStock;
+    const effectiveStock =
+      cmd.stockQuantity !== undefined
+        ? cmd.stockQuantity
+        : existing.stockQuantity;
+    const normalizedStock =
+      effectiveAllowNegative === false && effectiveStock < 0
+        ? 0
+        : effectiveStock;
+
+    // 7. Build update payload from provided fields only
     const values: ProductUpdatable = {};
 
     if (cmd.name !== undefined) {
@@ -158,13 +199,19 @@ export class UpdateProductCommand {
       values.minimumStock = cmd.minimumStock;
     if (cmd.allowNegativeStock !== undefined)
       values.allowNegativeStock = cmd.allowNegativeStock;
-    if (cmd.stockQuantity !== undefined) {
-      // TODO: integrate with inventory movements
-      values.stockQuantity = cmd.stockQuantity;
+    if (cmd.stockQuantity !== undefined || cmd.allowNegativeStock !== undefined) {
+      // Write the (possibly normalized) stock when the caller touched either
+      // stock field. Gate on `normalizedStock !== existing.stockQuantity` so a
+      // no-op update does not emit a redundant write, but the DB still receives
+      // the coercion when existing was negative.
+      if (normalizedStock !== existing.stockQuantity) {
+        // TODO: integrate with inventory movements
+        values.stockQuantity = normalizedStock;
+      }
     }
     if (cmd.status !== undefined) values.status = cmd.status;
 
-    // 7. Update
+    // 8. Update
     const [updated, error] = await this.productsCommandsRepository.update(
       cmd.id,
       cmd.organizationId,

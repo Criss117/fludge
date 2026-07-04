@@ -90,6 +90,15 @@ export const productFormSchema = z.object({
     error: "El stock no puede ser negativo si no se permite stock negativo",
     path: ["stockQuantity"],
   },
+).refine(
+  (data) =>
+    data.stockQuantity == null ||
+    data.minimumStock == null ||
+    data.stockQuantity >= data.minimumStock,
+  {
+    error: "El stock mínimo no puede ser mayor al stock actual",
+    path: ["minimumStock"],
+  },
 );
 
 // Form values keep the schema's INPUT shape (strings for numeric inputs
