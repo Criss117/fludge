@@ -52,7 +52,9 @@ export function UpdateCategory({ organizationId }: Props) {
     defaultValues: {
       categoryId: data?.categoryId ?? "",
       name: data?.name ?? "",
-      parentId: data?.parentId ?? "",
+      // Map a root category (parentId: null) to the "__none__" sentinel
+      // so the Select shows "Sin categoría padre" as selected.
+      parentId: data?.parentId ?? "__none__",
     },
     onSuccess: () => close(),
   });

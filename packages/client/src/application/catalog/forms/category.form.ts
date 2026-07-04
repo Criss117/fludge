@@ -23,8 +23,15 @@ const UPDATE_CATEGORY_TOASTS = {
  * Client-side form schema — independent from the API command schema.
  * The backend generates the canonical slug from `name`, so the form
  * does NOT send `slug`. `parentId` is a string from the `<select>`;
- * `""` is the natural "no parent" sentinel and is normalized to
- * `undefined` at the schema boundary.
+ * `"__none__"` is the "no parent" sentinel (non-empty so Base UI
+ * Select reliably fires `onValueChange`) and is normalized to `null`
+ * at the schema boundary.
+ *
+ * NOTE: TanStack Form uses the schema for VALIDATION only — it does
+ * NOT overwrite the field value with the schema's transformed output.
+ * The field keeps the raw `"__none__"` / UUID string; the mutation
+ * handlers below map `"__none__" => null` explicitly so `null` reaches
+ * the collection / API instead of collapsing to `undefined`.
  */
 const categoryFormSchema = z.object({
   name: z
@@ -42,8 +49,8 @@ const categoryFormSchema = z.object({
     }),
   parentId: z
     .string()
-    .transform((v) => (v === "" ? undefined : v))
-    .pipe(z.uuid().optional()),
+    .transform((v) => (v === "__none__" ? null : v))
+    .pipe(z.uuid().nullable()),
 });
 
 type CategoryFormSchema = z.infer<typeof categoryFormSchema>;
@@ -85,7 +92,10 @@ export function useCreateCategoryFormOptions({
         organizationId: organizationId,
         name: value.name,
         slug: slugify(value.name),
-        parentId: value.parentId || null,
+        // TanStack Form keeps the raw sentinel string; map it to null
+        // here so the collection draft carries "clear parent" intent.
+        parentId:
+          value.parentId === "__none__" ? null : value.parentId ?? null,
         createdAt: now,
         updatedAt: now,
         createdBy: null,
@@ -110,7 +120,7 @@ export function useCreateCategoryFormOptions({
   return formOptions({
     defaultValues: {
       name: "",
-      parentId: "",
+      parentId: "__none__",
     },
     validators: {
       onChange: categoryFormSchema,
@@ -141,7 +151,10 @@ export function useUpdateCategoryFormOptions({
 
       const tx = categoryCollection.update(defaultValues.categoryId, (draft) => {
         draft.name = value.name;
-        draft.parentId = value.parentId || null;
+        // Map the "__none__" sentinel to null so the collection / API
+        // can distinguish "clear parent" (null) from a UUID move.
+        draft.parentId =
+          value.parentId === "__none__" ? null : value.parentId ?? null;
         draft.updatedAt = now;
       });
 
@@ -165,7 +178,7 @@ export function useUpdateCategoryFormOptions({
   return formOptions({
     defaultValues: {
       name: defaultValues.name,
-      parentId: defaultValues.parentId || "",
+      parentId: defaultValues.parentId ?? "__none__",
     },
     validators: {
       onChange: categoryFormSchema,

@@ -66,7 +66,7 @@ export function CategoriesTableSection({
           openUpdateCategory({
             categoryId: row.id,
             name: row.name,
-            parentId: row.parentId || "",
+            parentId: row.parentId,
           })
         }
         onDeleteClick={(category) => setDeleteTarget(category)}

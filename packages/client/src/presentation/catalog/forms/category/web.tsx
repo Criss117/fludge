@@ -92,7 +92,7 @@ function ParentIdField({
           organizationId={organizationId}
           excludeId={excludeId}
           value={field.state.value}
-          onValueChange={(v) => field.handleChange(v ?? "")}
+          onValueChange={(v) => field.handleChange(v)}
         />
       </Suspense>
       {isInvalid ? <FieldError errors={field.state.meta.errors} /> : null}
@@ -109,12 +109,14 @@ function ParentOptions({
   organizationId: string;
   excludeId?: string;
   value: string;
-  onValueChange: (v: string | null) => void;
+  onValueChange: (v: string) => void;
 }) {
   const { data: categories } = useFindAllCategories(organizationId);
 
   const options = [
-    { value: "", label: "Sin categoría padre" },
+    // "__none__" (non-empty) is the sentinel for "no parent": Base UI Select
+    // reliably fires onValueChange for non-empty values, unlike "".
+    { value: "__none__", label: "Sin categoría padre" },
     ...categories
       .filter((c) => c.id !== excludeId)
       .map((c) => ({ value: c.id, label: c.name })),
@@ -124,7 +126,7 @@ function ParentOptions({
     <Select
       items={options}
       value={value}
-      onValueChange={(v) => onValueChange((v as string | null) ?? "")}
+      onValueChange={(v) => onValueChange(v as string)}
     >
       <SelectTrigger>
         <SelectValue />

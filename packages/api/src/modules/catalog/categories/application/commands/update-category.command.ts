@@ -9,6 +9,11 @@ export const updateCategoryCommand = createCategoryCommand.extend({
   id: z.uuid({
     error: "El id de la categoría es requerido",
   }),
+  // Tri-state, mirrors deletedAt:
+  //   undefined => leave parent untouched (regular edit omits it)
+  //   null      => clear parent (set parent_id = NULL)
+  //   UUID      => move category to this parent
+  parentId: z.uuid().nullable().optional(),
   // null  => activate  (clears deleted_at)
   // Date  => deactivate (sets deleted_at)
   // omitted => leave status untouched (regular edit)
@@ -25,8 +30,6 @@ export class UpdateCategoryCommand {
   ) {}
 
   public async execute(cmd: CMD) {
-    console.log({ cmd });
-
     const [existingCategory, errorExists] =
       await this.categoriesCommandsRepository.findOne(
         cmd.id,
@@ -65,7 +68,12 @@ export class UpdateCategoryCommand {
       return updated;
     }
 
-    const newParentId = cmd.parentId ?? null;
+    // Tri-state: undefined => preserve existing parent,
+    // null => clear parent, UUID => move to this parent.
+    const newParentId =
+      cmd.parentId === undefined
+        ? existingCategory.parentId
+        : cmd.parentId;
 
     // 1. Name changed → re-slugify and validate uniqueness
     if (existingCategory.name !== cmd.name) {

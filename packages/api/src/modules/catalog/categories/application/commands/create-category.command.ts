@@ -19,6 +19,7 @@ export const createCategoryCommand = z.object({
     .uuid({
       error: "El id de la categoría padre no es válido",
     })
+    .nullable()
     .optional(),
 });
 
