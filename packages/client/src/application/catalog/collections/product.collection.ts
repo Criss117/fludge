@@ -36,6 +36,7 @@ function builder(
           priceWholesale: newProduct.priceWholesale,
           minimumStock: newProduct.minimumStock ?? undefined,
           allowNegativeStock: newProduct.allowNegativeStock ?? undefined,
+          stockQuantity: newProduct.stockQuantity ?? undefined,
         });
 
         collection.utils.writeInsert(createdProduct);

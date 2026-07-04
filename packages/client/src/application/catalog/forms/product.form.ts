@@ -25,7 +25,7 @@ const CREATE_PRODUCT_TOASTS = {
  * Prices are kept as strings to preserve the exact decimal representation
  * the user types (e.g. "10.50"); the API persists them as `numeric(12,2)`.
  */
-const productFormSchema = z.object({
+export const productFormSchema = z.object({
   name: z
     .string({
       error: "El nombre es requerido",
@@ -72,9 +72,30 @@ const productFormSchema = z.object({
     .string()
     .transform((v) => (v === "" ? undefined : v))
     .pipe(z.uuid().optional()),
-});
+  stockQuantity: z
+    .string()
+    .transform((v) => (v === "" ? undefined : Number(v)))
+    .pipe(z.number().int().optional()),
+  minimumStock: z
+    .string()
+    .transform((v) => (v === "" ? undefined : Number(v)))
+    .pipe(z.number().int().nonnegative().optional()),
+  allowNegativeStock: z.boolean(),
+}).refine(
+  (data) =>
+    data.stockQuantity == null ||
+    data.stockQuantity >= 0 ||
+    data.allowNegativeStock === true,
+  {
+    error: "El stock no puede ser negativo si no se permite stock negativo",
+    path: ["stockQuantity"],
+  },
+);
 
-type ProductFormSchema = z.infer<typeof productFormSchema>;
+// Form values keep the schema's INPUT shape (strings for numeric inputs
+// with `transform().pipe()`, since the form stores raw input values).
+// Numbers are coerced when building the optimistic row and API payload.
+type ProductFormValues = z.input<typeof productFormSchema>;
 
 type CreateFormParams = {
   organizationId: string;
@@ -92,7 +113,7 @@ export function useCreateProductFormOptions({
 
   const insertProductMutation = useMutation({
     mutationKey: ["catalog", "product", "insert"],
-    mutationFn: async (value: ProductFormSchema) => {
+    mutationFn: async (value: ProductFormValues) => {
       const now = new Date();
 
       // The slug is computed locally for the optimistic row only.
@@ -111,9 +132,9 @@ export function useCreateProductFormOptions({
         priceRetail: value.priceRetail,
         description: null,
         imageUrl: null,
-        minimumStock: 0,
-        allowNegativeStock: false,
-        stockQuantity: 0,
+        minimumStock: Number(value.minimumStock) || 0,
+        allowNegativeStock: value.allowNegativeStock,
+        stockQuantity: Number(value.stockQuantity) || 0,
         status: "active",
         createdAt: now,
         updatedAt: now,
@@ -147,6 +168,9 @@ export function useCreateProductFormOptions({
       priceWholesale: "",
       priceRetail: "",
       categoryId: "",
+      stockQuantity: "0",
+      minimumStock: "0",
+      allowNegativeStock: false,
     },
     validators: {
       onChange: productFormSchema,

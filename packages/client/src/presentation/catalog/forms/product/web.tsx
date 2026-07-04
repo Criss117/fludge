@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldLabel,
 } from "@fludge/ui/components/field";
@@ -15,12 +14,12 @@ import {
   SelectValue,
 } from "@fludge/ui/components/select";
 import { Skeleton } from "@fludge/ui/components/skeleton";
+import { Switch } from "@fludge/ui/components/switch";
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 
 import { useFindAllCategories } from "@fludge/client/application/catalog/hooks/use-find-categories";
-import { slugify } from "@fludge/utils/slugify";
 
-const { fieldContext, formContext, useFieldContext, useFormContext } =
+const { fieldContext, formContext, useFieldContext } =
   createFormHookContexts();
 
 function NameField() {
@@ -150,6 +149,74 @@ function PriceRetailField() {
   );
 }
 
+function StockNumberField({
+  label,
+  id,
+  placeholder,
+}: {
+  label: string;
+  id: string;
+  placeholder: string;
+}) {
+  const field = useFieldContext<string>();
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+  return (
+    <Field data-invalid={isInvalid}>
+      <FieldLabel htmlFor={id}>{label}</FieldLabel>
+      <Input
+        id={id}
+        name={field.name}
+        type="number"
+        value={field.state.value}
+        onBlur={field.handleBlur}
+        onChange={(e) => field.handleChange(e.target.value)}
+        aria-invalid={isInvalid}
+        inputMode="numeric"
+        placeholder={placeholder}
+      />
+      {isInvalid ? <FieldError errors={field.state.meta.errors} /> : null}
+    </Field>
+  );
+}
+
+function StockQuantityField() {
+  return (
+    <StockNumberField
+      label="Cantidad de Stock"
+      id="product-form-stock-quantity"
+      placeholder="EJ: 0"
+    />
+  );
+}
+
+function MinimumStockField() {
+  return (
+    <StockNumberField
+      label="Stock Mínimo"
+      id="product-form-minimum-stock"
+      placeholder="EJ: 0"
+    />
+  );
+}
+
+function AllowNegativeStockField() {
+  const field = useFieldContext<boolean>();
+  const id = "product-form-allow-negative-stock";
+
+  return (
+    <Field orientation="horizontal">
+      <FieldLabel htmlFor={id}>Permitir stock negativo</FieldLabel>
+      <Switch
+        id={id}
+        name={field.name}
+        checked={field.state.value}
+        onCheckedChange={(checked) => field.handleChange(checked)}
+      />
+    </Field>
+  );
+}
+
 function CategoryIdField({ organizationId }: { organizationId: string }) {
   const field = useFieldContext<string>();
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
@@ -209,33 +276,6 @@ function CategoryOptions({
   );
 }
 
-function SlugPreviewField() {
-  const form = useFormContext();
-
-  return (
-    <Field>
-      <FieldLabel htmlFor="product-form-slug-preview">
-        Slug (auto-generado)
-      </FieldLabel>
-      <form.Subscribe selector={(s) => s.values.name}>
-        {(name) => (
-          <Input
-            id="product-form-slug-preview"
-            readOnly
-            tabIndex={-1}
-            value={name ? slugify(name) : ""}
-            placeholder="—"
-            aria-describedby="product-form-slug-preview-help"
-          />
-        )}
-      </form.Subscribe>
-      <FieldDescription id="product-form-slug-preview-help">
-        El slug se genera automáticamente a partir del nombre.
-      </FieldDescription>
-    </Field>
-  );
-}
-
 const { useAppForm } = createFormHook({
   fieldContext,
   formContext,
@@ -246,11 +286,12 @@ const { useAppForm } = createFormHook({
     PricePurchaseField,
     PriceWholesaleField,
     PriceRetailField,
+    StockQuantityField,
+    MinimumStockField,
+    AllowNegativeStockField,
     CategoryIdField,
   },
-  formComponents: {
-    SlugPreviewField,
-  },
+  formComponents: {},
 });
 
 export const useProductForm = useAppForm;

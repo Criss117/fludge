@@ -2,6 +2,13 @@ import { useId, useState } from "react";
 import { PlusIcon } from "lucide-react";
 import { Button } from "@fludge/ui/components/button";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@fludge/ui/components/card";
+import {
   Sheet,
   SheetClose,
   SheetContent,
@@ -56,27 +63,50 @@ export function CreateProduct({ organizationId }: Props) {
             <FieldSet>
               <FieldLegend>Información del Producto</FieldLegend>
               <FieldGroup>
-                <form.AppField name="name">
-                  {(field) => <field.NameField />}
-                </form.AppField>
                 <form.AppField name="barcode">
                   {(field) => <field.BarcodeField />}
                 </form.AppField>
-                <form.AppField name="sku">
-                  {(field) => <field.SkuField />}
-                </form.AppField>
-                <form.AppForm>
-                  <form.SlugPreviewField />
-                </form.AppForm>
-                <form.AppField name="pricePurchase">
-                  {(field) => <field.PricePurchaseField />}
-                </form.AppField>
-                <form.AppField name="priceWholesale">
-                  {(field) => <field.PriceWholesaleField />}
-                </form.AppField>
-                <form.AppField name="priceRetail">
-                  {(field) => <field.PriceRetailField />}
-                </form.AppField>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <form.AppField name="name">
+                    {(field) => <field.NameField />}
+                  </form.AppField>
+                  <form.AppField name="sku">
+                    {(field) => <field.SkuField />}
+                  </form.AppField>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <form.AppField name="pricePurchase">
+                    {(field) => <field.PricePurchaseField />}
+                  </form.AppField>
+                  <form.AppField name="priceWholesale">
+                    {(field) => <field.PriceWholesaleField />}
+                  </form.AppField>
+                  <form.AppField name="priceRetail">
+                    {(field) => <field.PriceRetailField />}
+                  </form.AppField>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <form.AppField name="stockQuantity">
+                    {(field) => <field.StockQuantityField />}
+                  </form.AppField>
+                  <form.AppField name="minimumStock">
+                    {(field) => <field.MinimumStockField />}
+                  </form.AppField>
+                </div>
+                <Card size="sm">
+                  <CardHeader>
+                    <CardTitle>Stock negativo</CardTitle>
+                    <CardDescription>
+                      Habilitá esta opción para permitir cantidades de stock
+                      negativas para este producto.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form.AppField name="allowNegativeStock">
+                      {(field) => <field.AllowNegativeStockField />}
+                    </form.AppField>
+                  </CardContent>
+                </Card>
                 <form.AppField name="categoryId">
                   {(field) => (
                     <field.CategoryIdField organizationId={organizationId} />

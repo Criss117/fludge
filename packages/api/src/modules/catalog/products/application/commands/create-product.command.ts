@@ -17,10 +17,7 @@ export const createProductCommand = z.object({
       error: "El nombre es muy largo",
     }),
   description: z.string().max(500).optional(),
-  imageUrl: z
-    .string()
-    .url({ error: "La URL de la imagen no es válida" })
-    .optional(),
+  imageUrl: z.url({ error: "La URL de la imagen no es válida" }).optional(),
   categoryId: z
     .uuid({ error: "El id de la categoría no es válido" })
     .optional(),
@@ -52,7 +49,17 @@ export const createProductCommand = z.object({
     }),
   minimumStock: z.number().int().nonnegative().optional(),
   allowNegativeStock: z.boolean().optional(),
-});
+  stockQuantity: z.number().int().optional(),
+}).refine(
+  (data) =>
+    data.stockQuantity == null ||
+    data.stockQuantity >= 0 ||
+    data.allowNegativeStock === true,
+  {
+    error: "El stock no puede ser negativo si no se permite stock negativo",
+    path: ["stockQuantity"],
+  },
+);
 
 type CMD = z.infer<typeof createProductCommand> & {
   organizationId: string;
@@ -162,6 +169,7 @@ export class CreateProductCommand {
       priceWholesale: cmd.priceWholesale,
       minimumStock: cmd.minimumStock ?? 0,
       allowNegativeStock: cmd.allowNegativeStock ?? false,
+      stockQuantity: cmd.stockQuantity ?? 0,
       createdBy: cmd.createdBy,
     });
 
