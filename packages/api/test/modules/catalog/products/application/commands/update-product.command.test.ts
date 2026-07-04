@@ -45,6 +45,12 @@ function makeRepos(
       onValues(values);
       return [{ ...existing, ...values }, null] as const;
     },
+    async transaction<T>(fn: (tx: unknown) => Promise<T>) {
+      return fn({});
+    },
+    async insertInventoryMovement() {
+      return [null, null] as const;
+    },
   };
 
   const categoriesCommandsRepository = {};
@@ -221,6 +227,7 @@ describe("UpdateProductCommand handler — normalization on allowNegativeStock f
         allowNegativeStock: false,
       }),
       organizationId: "org-1",
+      updatedBy: { memberId: "mem-1" },
     });
 
     expect(captured).not.toBeNull();
@@ -251,6 +258,7 @@ describe("UpdateProductCommand handler — normalization on allowNegativeStock f
         allowNegativeStock: false,
       }),
       organizationId: "org-1",
+      updatedBy: { memberId: "mem-1" },
     });
 
     expect(captured).not.toBeNull();
@@ -282,6 +290,7 @@ describe("UpdateProductCommand handler — normalization on allowNegativeStock f
         allowNegativeStock: true,
       }),
       organizationId: "org-1",
+      updatedBy: { memberId: "mem-1" },
     });
 
     // No stock change vs existing → no stockQuantity write emitted.
@@ -313,6 +322,7 @@ describe("UpdateProductCommand handler — normalization on allowNegativeStock f
         allowNegativeStock: false,
       }),
       organizationId: "org-1",
+      updatedBy: { memberId: "mem-1" },
     });
 
     // existing was non-negative; coercion to 0 not triggered, no change.

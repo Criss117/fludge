@@ -39,6 +39,7 @@ export const productsRouter = {
         productsContainer.commands.update.execute({
           ...input,
           organizationId: context.session.activeOrganization.id,
+          updatedBy: { memberId: context.session.member.id },
         }),
       ),
 

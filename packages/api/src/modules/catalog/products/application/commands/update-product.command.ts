@@ -44,6 +44,9 @@ export const updateProductCommand = createProductCommand
 
 type CMD = z.infer<typeof updateProductCommand> & {
   organizationId: string;
+  updatedBy: {
+    memberId: string;
+  };
 };
 
 export class UpdateProductCommand {
@@ -205,26 +208,49 @@ export class UpdateProductCommand {
       // no-op update does not emit a redundant write, but the DB still receives
       // the coercion when existing was negative.
       if (normalizedStock !== existing.stockQuantity) {
-        // TODO: integrate with inventory movements
         values.stockQuantity = normalizedStock;
       }
     }
     if (cmd.status !== undefined) values.status = cmd.status;
 
-    // 8. Update
-    const [updated, error] = await this.productsCommandsRepository.update(
-      cmd.id,
-      cmd.organizationId,
-      values,
-    );
+    // 8. Update + inventory movement (transactional)
+    return this.productsCommandsRepository.transaction(async (tx) => {
+      const [updated, error] = await this.productsCommandsRepository.update(
+        cmd.id,
+        cmd.organizationId,
+        values,
+        { tx },
+      );
 
-    if (error) throw new ORPCError("INTERNAL_SERVER_ERROR", error);
+      if (error) throw new ORPCError("INTERNAL_SERVER_ERROR", error);
 
-    if (!updated)
-      throw new ORPCError("NOT_FOUND", {
-        message: "Producto no encontrado",
-      });
+      if (!updated)
+        throw new ORPCError("NOT_FOUND", {
+          message: "Producto no encontrado",
+        });
 
-    return updated;
+      if (normalizedStock !== existing.stockQuantity) {
+        const [, mvError] =
+          await this.productsCommandsRepository.insertInventoryMovement(
+            {
+              organizationId: cmd.organizationId,
+              productId: cmd.id,
+              type: "adjustment",
+              quantity: normalizedStock - existing.stockQuantity,
+              stockBefore: existing.stockQuantity,
+              stockAfter: normalizedStock,
+              referenceId: cmd.id,
+              referenceType: "product",
+              reason: "ajuste manual",
+              actorId: cmd.updatedBy.memberId,
+            },
+            { tx },
+          );
+
+        if (mvError) throw new ORPCError("INTERNAL_SERVER_ERROR", mvError);
+      }
+
+      return updated;
+    });
   }
 }

@@ -8,9 +8,11 @@ import type { DbConnection } from "@fludge/db";
 import {
   product,
   inventoryMovement,
+  type InventoryMovementInsert,
+  type InventoryMovementSelect,
   type ProductInsert,
 } from "@fludge/db/schemas/catalog.schema";
-import { err, ok, tryCatch } from "@fludge/utils/trycatch";
+import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 
 export type ProductUpdatable = Partial<
   Pick<
@@ -56,6 +58,29 @@ export class PGProductsCommandsRepository extends TransactionalRepository {
     const created = data.at(0);
 
     if (!created) return err(new Error("Error creando producto"));
+
+    return ok(created);
+  }
+
+  public async insertInventoryMovement(
+    values: InventoryMovementInsert,
+    options?: TransactionalOptions,
+  ): Promise<Result<InventoryMovementSelect, Error>> {
+    const db = options?.tx ?? this.db;
+
+    const [data, error] = await tryCatch(
+      db
+        .insert(inventoryMovement)
+        .values(values)
+        .returning()
+        .execute(),
+    );
+
+    if (error) return err(error);
+
+    const created = data.at(0);
+
+    if (!created) return err(new Error("Error creando movimiento de inventario"));
 
     return ok(created);
   }
