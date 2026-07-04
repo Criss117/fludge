@@ -163,7 +163,7 @@ export function useCreateProductFormOptions({
         slug: slugify(value.name),
         barcode: value.barcode,
         sku: value.sku ?? null,
-        categoryId: value.categoryId ?? null,
+        categoryId: value.categoryId || null,
         pricePurchase: value.pricePurchase,
         priceWholesale: value.priceWholesale,
         priceRetail: value.priceRetail,
@@ -261,7 +261,7 @@ export function useUpdateProductFormOptions({
           draft.pricePurchase = value.pricePurchase;
           draft.priceWholesale = value.priceWholesale;
           draft.priceRetail = value.priceRetail;
-          draft.categoryId = value.categoryId ?? null;
+          draft.categoryId = value.categoryId || null;
           draft.stockQuantity = Number(value.stockQuantity) || 0;
           draft.minimumStock = Number(value.minimumStock) || 0;
           draft.allowNegativeStock = value.allowNegativeStock;
