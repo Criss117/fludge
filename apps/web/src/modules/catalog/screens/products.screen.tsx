@@ -8,6 +8,10 @@ import {
 } from "@/modules/catalog/sections/products-table.section";
 import { ProductsFiltersSection } from "@/modules/catalog/sections/products-filters.section";
 import { FiltersProvider } from "@fludge/client/presentation/shared/context/filter.context";
+import {
+  UpdateProduct,
+  UpdateProductProvider,
+} from "@/modules/catalog/components/update-product";
 import { PermissionDeniedAlert } from "@/modules/iam/components/permission-denied-alert";
 import { useMemberPermissions } from "@fludge/client/application/iam/hooks/use-member-permissions";
 
@@ -30,11 +34,14 @@ export function ProductsScreen({ organizationId }: Props) {
       />
       <FiltersProvider>
         <ProductsFiltersSection />
-        <ProductsTableSection
-          organizationId={organizationId}
-          canUpdate={can("products:update")}
-          canDelete={can("products:delete")}
-        />
+        <UpdateProductProvider>
+          <UpdateProduct organizationId={organizationId} />
+          <ProductsTableSection
+            organizationId={organizationId}
+            canUpdate={can("products:update")}
+            canDelete={can("products:delete")}
+          />
+        </UpdateProductProvider>
       </FiltersProvider>
     </div>
   );

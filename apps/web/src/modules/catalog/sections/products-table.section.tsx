@@ -4,6 +4,7 @@ import { productsTableColumns } from "@fludge/client/presentation/catalog/tables
 import { useFilters } from "@fludge/client/presentation/shared/context/filter.context";
 import { BaseTable } from "@fludge/client/presentation/shared/tables/base-table.web";
 import { ProductsTableActions } from "@fludge/client/presentation/catalog/tables/products/actions.web";
+import { useUpdateProductForm } from "@/modules/catalog/components/update-product";
 import {
   PageSize,
   FirstPage,
@@ -34,6 +35,7 @@ export function ProductsTableSection({
   canDelete,
 }: Props) {
   const { filters } = useFilters();
+  const { open: openUpdateProduct } = useUpdateProductForm();
 
   const { data: products } = useFindAllProducts(organizationId, {
     query: filters.query,
@@ -46,7 +48,21 @@ export function ProductsTableSection({
         row={row}
         canUpdate={canUpdate}
         canDelete={canDelete}
-        onUpdateClick={() => {}}
+        onUpdateClick={(row) =>
+          openUpdateProduct({
+            productId: row.id,
+            name: row.name,
+            barcode: row.barcode,
+            sku: row.sku ?? "",
+            pricePurchase: row.pricePurchase,
+            priceWholesale: row.priceWholesale,
+            priceRetail: row.priceRetail,
+            categoryId: row.categoryId ?? "",
+            stockQuantity: String(row.stockQuantity),
+            minimumStock: String(row.minimumStock ?? 0),
+            allowNegativeStock: row.allowNegativeStock,
+          })
+        }
         onDeleteClick={() => {}}
         onActivateClick={() => {}}
         onDeactivateClick={() => {}}

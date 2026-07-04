@@ -13,6 +13,12 @@ const CREATE_PRODUCT_TOASTS = {
   error: "Error al crear producto",
 } as const;
 
+const UPDATE_PRODUCT_TOASTS = {
+  loading: "Actualizando producto...",
+  success: "Producto actualizado",
+  error: "Error al actualizar producto",
+} as const;
+
 /**
  * Client-side form schema — independent from the API command schema.
  *
@@ -106,6 +112,28 @@ export const productFormSchema = z.object({
 // Numbers are coerced when building the optimistic row and API payload.
 type ProductFormValues = z.input<typeof productFormSchema>;
 
+/**
+ * Form-shaped default values for the update Sheet.
+ *
+ * Numeric server fields (`stockQuantity`, `minimumStock`) arrive as
+ * `number` on `ProductSummary`; they are converted to strings at the
+ * click site so the form schema's `transform().pipe()` inputs remain
+ * uniformly string-typed (mirrors `CategoryFormDefaultValues`).
+ */
+export type ProductFormDefaultValues = {
+  productId: string;
+  name: string;
+  barcode: string;
+  sku: string;
+  pricePurchase: string;
+  priceWholesale: string;
+  priceRetail: string;
+  categoryId: string;
+  stockQuantity: string;
+  minimumStock: string;
+  allowNegativeStock: boolean;
+};
+
 type CreateFormParams = {
   organizationId: string;
   onSuccess?: () => void;
@@ -186,6 +214,96 @@ export function useCreateProductFormOptions({
     },
     onSubmit: ({ value, formApi }) => {
       insertProductMutation.mutate(value, {
+        onSuccess: () => {
+          formApi.reset();
+        },
+      });
+    },
+  });
+}
+
+type UpdateProductFormParams = {
+  organizationId: string;
+  defaultValues: ProductFormDefaultValues;
+  onSuccess?: () => void;
+  onError?: (error: unknown) => void;
+};
+
+/**
+ * Form options for the product update Sheet.
+ *
+ * Mirrors `useUpdateCategoryFormOptions`: optimistic
+ * `productCollection.update(id, draft => {...})` followed by a toast
+ * and `formApi.reset()` on success. Reverse type conversion
+ * (`String → number | null`) happens here, keeping the Sheet/Form
+ * ignorant of `ProductSummary` (one canonical mapping).
+ */
+export function useUpdateProductFormOptions({
+  organizationId,
+  defaultValues,
+  onSuccess,
+  onError,
+}: UpdateProductFormParams) {
+  const { productCollection } = useProductCollection(organizationId);
+  const toastIdRef = useRef<string | number>(undefined);
+
+  const updateProductMutation = useMutation({
+    mutationKey: ["catalog", "product", "update"],
+    mutationFn: async (value: ProductFormValues) => {
+      const now = new Date();
+
+      const tx = productCollection.update(
+        defaultValues.productId,
+        (draft) => {
+          draft.name = value.name;
+          draft.barcode = value.barcode;
+          draft.sku = value.sku || null;
+          draft.pricePurchase = value.pricePurchase;
+          draft.priceWholesale = value.priceWholesale;
+          draft.priceRetail = value.priceRetail;
+          draft.categoryId = value.categoryId ?? null;
+          draft.stockQuantity = Number(value.stockQuantity) || 0;
+          draft.minimumStock = Number(value.minimumStock) || 0;
+          draft.allowNegativeStock = value.allowNegativeStock;
+          draft.updatedAt = now;
+        },
+      );
+
+      await tx.isPersisted.promise;
+    },
+    onMutate: () => {
+      toastIdRef.current = toast.loading(UPDATE_PRODUCT_TOASTS.loading);
+    },
+    onSuccess: () => {
+      toast.success(UPDATE_PRODUCT_TOASTS.success, {
+        id: toastIdRef.current,
+      });
+      onSuccess?.();
+    },
+    onError: (error) => {
+      toast.error(UPDATE_PRODUCT_TOASTS.error, { id: toastIdRef.current });
+      onError?.(error);
+    },
+  });
+
+  return formOptions({
+    defaultValues: {
+      name: defaultValues.name,
+      barcode: defaultValues.barcode,
+      sku: defaultValues.sku || "",
+      pricePurchase: defaultValues.pricePurchase,
+      priceWholesale: defaultValues.priceWholesale,
+      priceRetail: defaultValues.priceRetail,
+      categoryId: defaultValues.categoryId || "",
+      stockQuantity: defaultValues.stockQuantity,
+      minimumStock: defaultValues.minimumStock,
+      allowNegativeStock: defaultValues.allowNegativeStock,
+    },
+    validators: {
+      onChange: productFormSchema,
+    },
+    onSubmit: ({ value, formApi }) => {
+      updateProductMutation.mutate(value, {
         onSuccess: () => {
           formApi.reset();
         },
