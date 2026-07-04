@@ -7,6 +7,7 @@ import {
   toArray,
   and,
   not,
+  materialize,
 } from "@tanstack/react-db";
 import { useMemberCollection } from "./use-member-collection";
 import { useGroupMembersCollection } from "./use-group-members-collection";
@@ -35,11 +36,24 @@ export function useFindOneMember(organizationId: string, memberId: string) {
           description: g.description,
         }));
 
+      const assignedByQuery = q
+        .from({
+          a: memberCollection,
+        })
+        .select(({ a }) => ({
+          memberId: a.id,
+          user: a.user,
+        }))
+        .findOne();
+
       return q
         .from({ m: memberCollection })
         .select(({ m }) => ({
           ...m,
           groups: toArray(groupsQuery.where(({ gm }) => eq(gm.memberId, m.id))),
+          assignedBy: materialize(
+            assignedByQuery.where(({ a }) => eq(a.id, m.assignedBy)),
+          ),
         }))
         .where(({ m }) => eq(m.id, memberId))
         .findOne();

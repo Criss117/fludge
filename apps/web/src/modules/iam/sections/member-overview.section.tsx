@@ -28,9 +28,7 @@ export function MemberOverviewSection({ member }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-x-3">
-        <Badge variant="secondary">
-          {member.groups.length} grupos
-        </Badge>
+        <Badge variant="secondary">{member.groups.length} grupos</Badge>
         <Badge>{uniquePermissions.size} permisos</Badge>
       </div>
 
@@ -51,8 +49,7 @@ export function MemberOverviewSection({ member }: Props) {
         <div className="flex items-center gap-x-1">
           <Calendar className="text-muted-foreground size-4" />
           <p className="text-muted-foreground text-sm">
-            Creado el:{" "}
-            {format(member.createdAt, "dd MMM yyyy", { locale: es })}
+            Creado el: {format(member.createdAt, "dd MMM yyyy", { locale: es })}
           </p>
         </div>
         <div className="flex items-center gap-x-1">
@@ -62,7 +59,7 @@ export function MemberOverviewSection({ member }: Props) {
         <div className="flex items-center gap-x-1">
           <UserIcon className="text-muted-foreground size-4" />
           <p className="text-muted-foreground text-sm">
-            {member.assignedBy?.name || "—"}
+            {member.assignedBy?.user.name || "—"}
           </p>
         </div>
         <div className="flex items-center gap-x-1">

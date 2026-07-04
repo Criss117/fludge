@@ -49,7 +49,7 @@ export function MemberHeaderSection({
         <div className="flex items-center gap-x-1">
           <UserIcon className="text-muted-foreground size-4" />
           <p className="text-muted-foreground text-sm">
-            {member.assignedBy?.name || "—"}
+            {member.assignedBy?.user.name || "—"}
           </p>
         </div>
         <div className="ml-auto">
