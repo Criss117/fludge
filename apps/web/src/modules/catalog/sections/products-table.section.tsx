@@ -75,11 +75,7 @@ export function ProductsTableSection({
     statusCell: (row) => {
       switch (row.status) {
         case "active":
-          return (
-            <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
-              Activo
-            </Badge>
-          );
+          return <Badge>Activo</Badge>;
         case "inactive":
           return <Badge variant="secondary">Inactivo</Badge>;
         case "discontinued":
@@ -115,7 +111,7 @@ export function ProductsTableSection({
       if (!value) return "-";
       return (
         <span
-          className="block max-w-[140px] truncate font-mono text-xs text-muted-foreground"
+          className="block max-w-35 truncate font-mono text-xs text-muted-foreground"
           title={value.name}
         >
           {value.name}
@@ -127,7 +123,7 @@ export function ProductsTableSection({
       if (!value) return "-";
       return (
         <span
-          className="block max-w-[140px] truncate font-mono text-xs text-muted-foreground"
+          className="block max-w-35 truncate font-mono text-xs text-muted-foreground"
           title={value.memberId}
         >
           {value.user.name}
