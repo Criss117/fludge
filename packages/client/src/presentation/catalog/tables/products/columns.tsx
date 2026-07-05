@@ -1,13 +1,9 @@
 import { createColumnHelper } from "@tanstack/react-table";
 
 import type { ProductSummary } from "@fludge/client/application/catalog/hooks/use-find-products";
+import { formatPrice } from "@fludge/utils/currency";
 
 const columnHelper = createColumnHelper<ProductSummary>();
-
-const priceFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
 
 export interface ProductsTableActionsSlot<TNode> {
   renderActions: (row: ProductSummary) => TNode;
@@ -43,7 +39,7 @@ export function productsTableColumns<TNode>(
       cell: (info) => {
         const value = info.getValue();
         if (value === null || value === undefined) return "—";
-        return priceFormatter.format(Number(value));
+        return formatPrice(Number(value));
       },
     }),
     columnHelper.display({
@@ -63,13 +59,15 @@ export function productsTableColumns<TNode>(
       header: "Categoría",
       cell: (info) =>
         slots.categoryCell?.(info.row.original) ??
-        (info.row.original.category?.name ?? "-"),
+        info.row.original.category?.name ??
+        "-",
     }),
     columnHelper.accessor((row) => row.createdBy, {
       header: "Creado Por",
       cell: (info) =>
         slots.createdByCell?.(info.row.original) ??
-        (info.row.original.createdBy?.user.name ?? "-"),
+        info.row.original.createdBy?.user.name ??
+        "-",
     }),
     columnHelper.accessor((row) => row.updatedAt, {
       header: "Última Actualización",

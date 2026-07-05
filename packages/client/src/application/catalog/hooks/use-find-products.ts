@@ -37,8 +37,16 @@ export function useFindAllProducts(organizationId: string, filters?: Filters) {
 
   const sortKey = sort?.key as ProductSortKey | undefined;
   const sortDirection = sort?.direction;
-  const hasValidSort = sortDirection != null && !!sortKey && sortKey in PRODUCT_SORT_KEYS;
-  const effectiveDirection: "asc" | "desc" = hasValidSort ? sortDirection : "desc";
+  const hasValidSort =
+    sortDirection != null && !!sortKey && sortKey in PRODUCT_SORT_KEYS;
+  const effectiveDirection: "asc" | "desc" = hasValidSort
+    ? sortDirection
+    : "desc";
+
+  console.log({
+    priceRetail: sortKey,
+    priceRetailDirection: effectiveDirection,
+  });
 
   return useLiveSuspenseQuery(
     (q) => {
