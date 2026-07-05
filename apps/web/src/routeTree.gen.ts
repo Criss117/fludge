@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ErrorRouteImport } from './routes/error'
 import { Route as OrganizationLayoutRouteImport } from './routes/organization/_layout'
 import { Route as AuthLayoutRouteImport } from './routes/auth/_layout'
+import { Route as dashboardPosRouteImport } from './routes/(dashboard)/pos'
 import { Route as dashboardLayoutRouteImport } from './routes/(dashboard)/_layout'
 import { Route as dashboardLayoutIndexRouteImport } from './routes/(dashboard)/_layout/index'
 import { Route as OrganizationLayoutSelectRouteImport } from './routes/organization/_layout/select'
@@ -41,6 +42,11 @@ const OrganizationLayoutRoute = OrganizationLayoutRouteImport.update({
 const AuthLayoutRoute = AuthLayoutRouteImport.update({
   id: '/auth/_layout',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const dashboardPosRoute = dashboardPosRouteImport.update({
+  id: '/(dashboard)/pos',
+  path: '/pos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const dashboardLayoutRoute = dashboardLayoutRouteImport.update({
@@ -130,6 +136,7 @@ const dashboardLayoutGroupsSlugIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/error': typeof ErrorRoute
+  '/pos': typeof dashboardPosRoute
   '/auth': typeof AuthLayoutRouteWithChildren
   '/organization': typeof OrganizationLayoutRouteWithChildren
   '/analytics': typeof dashboardLayoutAnalyticsRoute
@@ -149,6 +156,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/error': typeof ErrorRoute
+  '/pos': typeof dashboardPosRoute
   '/auth': typeof AuthLayoutRouteWithChildren
   '/organization': typeof OrganizationLayoutRouteWithChildren
   '/analytics': typeof dashboardLayoutAnalyticsRoute
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/error': typeof ErrorRoute
   '/(dashboard)/_layout': typeof dashboardLayoutRouteWithChildren
+  '/(dashboard)/pos': typeof dashboardPosRoute
   '/auth/_layout': typeof AuthLayoutRouteWithChildren
   '/organization/_layout': typeof OrganizationLayoutRouteWithChildren
   '/(dashboard)/_layout/analytics': typeof dashboardLayoutAnalyticsRoute
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/error'
+    | '/pos'
     | '/auth'
     | '/organization'
     | '/analytics'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/error'
+    | '/pos'
     | '/auth'
     | '/organization'
     | '/analytics'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/error'
     | '/(dashboard)/_layout'
+    | '/(dashboard)/pos'
     | '/auth/_layout'
     | '/organization/_layout'
     | '/(dashboard)/_layout/analytics'
@@ -251,6 +263,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   ErrorRoute: typeof ErrorRoute
   dashboardLayoutRoute: typeof dashboardLayoutRouteWithChildren
+  dashboardPosRoute: typeof dashboardPosRoute
   AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
   OrganizationLayoutRoute: typeof OrganizationLayoutRouteWithChildren
 }
@@ -276,6 +289,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(dashboard)/pos': {
+      id: '/(dashboard)/pos'
+      path: '/pos'
+      fullPath: '/pos'
+      preLoaderRoute: typeof dashboardPosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(dashboard)/_layout': {
@@ -446,6 +466,7 @@ const OrganizationLayoutRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   ErrorRoute: ErrorRoute,
   dashboardLayoutRoute: dashboardLayoutRouteWithChildren,
+  dashboardPosRoute: dashboardPosRoute,
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
   OrganizationLayoutRoute: OrganizationLayoutRouteWithChildren,
 }

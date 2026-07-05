@@ -7,6 +7,7 @@ import {
   ChartBarStacked,
   Home,
   PackageSearch,
+  SearchAlert,
   UserRound,
   Wallet,
 } from "lucide-react";
@@ -67,6 +68,13 @@ export function AppSidebar() {
         >
           <Building size={24} />
           <span>Seleccionar organización</span>
+        </Button>
+        <Button
+          nativeButton={false}
+          render={(props) => <Link to="/pos" {...props} />}
+        >
+          <SearchAlert size={24} />
+          <span>Punto de venta</span>
         </Button>
       </SidebarHeader>
       <Separator />
