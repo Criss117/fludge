@@ -1,5 +1,6 @@
 import { useFindAllProducts } from "@fludge/client/application/catalog/hooks/use-find-products";
 import { useProductsTable } from "@fludge/client/application/catalog/hooks/use-table";
+import { useProductActionsMutations } from "@fludge/client/application/catalog/forms/product-actions";
 import { productsTableColumns } from "@fludge/client/presentation/catalog/tables/products/columns";
 import { useFilters } from "@fludge/client/presentation/shared/context/filter.context";
 import { BaseTable } from "@fludge/client/presentation/shared/tables/base-table.web";
@@ -36,6 +37,8 @@ export function ProductsTableSection({
 }: Props) {
   const { filters } = useFilters();
   const { open: openUpdateProduct } = useUpdateProductForm();
+  const { activateProduct, deactivateProduct, discontinueProduct } =
+    useProductActionsMutations({ organizationId });
 
   const { data: products } = useFindAllProducts(organizationId, {
     query: filters.query,
@@ -64,9 +67,9 @@ export function ProductsTableSection({
           })
         }
         onDeleteClick={() => {}}
-        onActivateClick={() => {}}
-        onDeactivateClick={() => {}}
-        onDiscontinueClick={() => {}}
+        onActivateClick={activateProduct}
+        onDeactivateClick={deactivateProduct}
+        onDiscontinueClick={discontinueProduct}
       />
     ),
     statusCell: (row) => {
