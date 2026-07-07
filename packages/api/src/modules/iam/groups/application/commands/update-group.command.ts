@@ -56,6 +56,21 @@ export class UpdateGroupCommand {
         throw new ORPCError("CONFLICT", {
           message: "El nombre del grupo ya esta en uso",
         });
+
+      const [nameAvailable, errorNameAvailable] =
+        await this.groupsCommandsRepository.nameAvailable(
+          cmd.name,
+          cmd.organizationId,
+          cmd.groupId,
+        );
+
+      if (errorNameAvailable)
+        throw new ORPCError("INTERNAL_SERVER_ERROR", errorNameAvailable);
+
+      if (!nameAvailable)
+        throw new ORPCError("CONFLICT", {
+          message: "El nombre del grupo ya esta en uso",
+        });
     }
 
     return this.groupsCommandsRepository.transaction(async (tx) => {

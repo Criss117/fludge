@@ -1,4 +1,4 @@
-import { createContext, use, useReducer } from "react";
+import { createContext, use, useMemo, useReducer } from "react";
 
 export const GroupBy = {
   all: "all",
@@ -115,13 +115,10 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     sort: { key: "", direction: null },
   });
 
+  const value = useMemo(() => ({ filters, dispatch }), [filters]);
+
   return (
-    <FiltersContext.Provider
-      value={{
-        filters,
-        dispatch,
-      }}
-    >
+    <FiltersContext.Provider value={value}>
       {children}
     </FiltersContext.Provider>
   );

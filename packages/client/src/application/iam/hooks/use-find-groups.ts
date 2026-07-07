@@ -3,7 +3,9 @@ import {
   count,
   eq,
   ilike,
+  isNull,
   materialize,
+  not,
   toArray,
   useLiveSuspenseQuery,
 } from "@tanstack/react-db";
@@ -18,6 +20,7 @@ export type GroupDetail = NonNullable<
 
 type Filters = {
   name?: string;
+  status?: "active" | "inactive";
 };
 
 export function useFindAllGroups(organizationId: string, filters?: Filters) {
@@ -26,6 +29,7 @@ export function useFindAllGroups(organizationId: string, filters?: Filters) {
   const { groupMembersCollection } = useGroupMembersCollection(organizationId);
 
   const name = filters?.name ?? "";
+  const status = filters?.status;
 
   return useLiveSuspenseQuery(
     (q) => {
@@ -61,10 +65,15 @@ export function useFindAllGroups(organizationId: string, filters?: Filters) {
             createdByQuery.where(({ m }) => eq(m.id, g.createdBy)),
           ),
         }))
-        .where(({ g }) => ilike(g.name, `%${name}%`))
+        .where(({ g }) => {
+          const nameCondition = ilike(g.name, `%${name}%`);
+          if (status === "active") return and(nameCondition, isNull(g.deletedAt));
+          if (status === "inactive") return and(nameCondition, not(isNull(g.deletedAt)));
+          return nameCondition;
+        })
         .orderBy(({ g }) => g.createdAt, "desc");
     },
-    [name],
+    [name, status],
   );
 }
 

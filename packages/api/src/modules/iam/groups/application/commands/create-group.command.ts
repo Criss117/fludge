@@ -43,6 +43,34 @@ export class CreateGroupCommand {
   }
 
   public async execute(cmd: CMD) {
+    const [slugAvailable, errorSlugAvailable] =
+      await this.groupsCommandsRepository.slugAvailable(
+        slugify(cmd.name),
+        cmd.organizationId,
+      );
+
+    if (errorSlugAvailable)
+      throw new ORPCError("INTERNAL_SERVER_ERROR", errorSlugAvailable);
+
+    if (!slugAvailable)
+      throw new ORPCError("CONFLICT", {
+        message: "El slug del grupo ya esta en uso",
+      });
+
+    const [nameAvailable, errorNameAvailable] =
+      await this.groupsCommandsRepository.nameAvailable(
+        cmd.name,
+        cmd.organizationId,
+      );
+
+    if (errorNameAvailable)
+      throw new ORPCError("INTERNAL_SERVER_ERROR", errorNameAvailable);
+
+    if (!nameAvailable)
+      throw new ORPCError("CONFLICT", {
+        message: "El nombre del grupo ya esta en uso",
+      });
+
     const [data, error] = await this.groupsCommandsRepository.save({
       name: cmd.name,
       slug: slugify(cmd.name),

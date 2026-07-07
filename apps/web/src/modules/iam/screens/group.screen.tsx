@@ -10,6 +10,7 @@ import {
 import { Card, CardContent } from "@fludge/ui/components/card";
 import { GroupOverviewSection } from "@/modules/iam/sections/group-overview.section";
 import { GroupPermissionsSection } from "@/modules/iam/sections/group-permissions.section";
+import { GroupHistorySection } from "@/modules/iam/sections/group-history.section";
 import { MembersTableSection } from "../sections/members-table.section";
 import { FiltersProvider } from "@fludge/client/presentation/shared/context/filter.context";
 import { MembersFiltersSection } from "../sections/members-filters.section";
@@ -46,6 +47,9 @@ export function GroupScreen({ organizationId, group }: Props) {
           <TabsTrigger value="members" className="flex-1">
             Miembros
           </TabsTrigger>
+          <TabsTrigger value="history" className="flex-1">
+            Historial
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="space-y-4">
           <Card>
@@ -77,6 +81,13 @@ export function GroupScreen({ organizationId, group }: Props) {
               groupId={group.id}
             />
           </FiltersProvider>
+        </TabsContent>
+        <TabsContent value="history" className="space-y-4">
+          <Card>
+            <CardContent>
+              <GroupHistorySection groupId={group.id} />
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </main>

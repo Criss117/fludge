@@ -27,7 +27,7 @@ interface FirstPageProps {
 
 interface PrevPageProps {
   canPreviousPage: boolean;
-  previusPage: () => void;
+  previousPage: () => void;
 }
 
 interface NextPageProps {
@@ -107,12 +107,12 @@ export function FirstPage({ firstPage, canPreviousPage }: FirstPageProps) {
   );
 }
 
-export function PrevPage({ previusPage, canPreviousPage }: PrevPageProps) {
+export function PrevPage({ previousPage, canPreviousPage }: PrevPageProps) {
   return (
     <Button
       variant="outline"
       size="icon-xs"
-      onClick={previusPage}
+      onClick={previousPage}
       disabled={!canPreviousPage}
       aria-label="Página anterior"
     >

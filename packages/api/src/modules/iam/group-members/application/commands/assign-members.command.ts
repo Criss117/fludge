@@ -9,11 +9,11 @@ export const assignMembersCommand = z.object({
   groupIds: z
     .array(
       z.uuid({
-        error: "Id de miembro no válido.",
+        error: "Id de grupo no válido.",
       }),
     )
     .min(1, {
-      error: "Debe especificar al menos un id de miembro.",
+      error: "Debe especificar al menos un id de grupo.",
     }),
   memberIds: z
     .array(

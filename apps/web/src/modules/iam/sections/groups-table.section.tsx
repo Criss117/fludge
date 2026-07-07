@@ -1,8 +1,12 @@
+import { useMemo } from "react";
 import { useFindAllGroups } from "@fludge/client/application/iam/hooks/use-find-groups";
 import { useGroupActionsMutations } from "@fludge/client/application/iam/forms/group-actions";
 import { useGroupsTable } from "@fludge/client/application/iam/hooks/use-table";
 import { groupsTableColumns } from "@fludge/client/presentation/iam/tables/groups/columns";
-import { useFilters } from "@fludge/client/presentation/shared/context/filter.context";
+import {
+  GroupBy,
+  useFilters,
+} from "@fludge/client/presentation/shared/context/filter.context";
 import { BaseTable } from "@fludge/client/presentation/shared/tables/base-table.web";
 import { GroupsTableActions } from "@fludge/client/presentation/iam/tables/groups/actions.web";
 import {
@@ -32,47 +36,67 @@ interface Props {
 }
 
 export function GroupsTableSection({ organizationId, canUpdate, canDelete }: Props) {
-  const { filters } = useFilters();
+  const { filters, dispatch } = useFilters();
   const { open } = useUpdateGroupForm();
   const { deleteGroup, activateGroup, deactivateGroup } =
     useGroupActionsMutations({ organizationId });
 
-  const { data: groups } = useFindAllGroups(organizationId, {
-    name: filters.query,
-  });
+  const groupFilters = useMemo(
+    () => ({
+      name: filters.query,
+      status:
+        filters.group === GroupBy.active
+          ? ("active" as const)
+          : filters.group === GroupBy.inactive
+            ? ("inactive" as const)
+            : undefined,
+    }),
+    [filters.query, filters.group],
+  );
 
-  const columns = groupsTableColumns({
-    renderActions: (row) => (
-      <GroupsTableActions
-        row={row}
-        canUpdate={canUpdate}
-        canDelete={canDelete}
-        onUpdateClick={() =>
-          open({
-            permissions: row.permissions,
-            groupId: row.id,
-            name: row.name,
-            description: row.description || "",
-          })
-        }
-        onDeleteClick={(group) => deleteGroup(group)}
-        onActivateClick={(group) => activateGroup(group)}
-        onDeactivateClick={(group) => deactivateGroup(group)}
-      />
-    ),
-    nameCell: (row) => (
-      <Button
-        variant="link"
-        className="text-base"
-        nativeButton={false}
-        render={(props) => (
-          <Link to="/groups/$slug" params={{ slug: row.slug }} {...props} />
-        )}
-      >
-        {row.name}
-      </Button>
-    ),
-  });
+  const { data: groups } = useFindAllGroups(organizationId, groupFilters);
+
+  const isFiltered = useMemo(
+    () => filters.query !== "" || filters.group !== GroupBy.all,
+    [filters.query, filters.group],
+  );
+
+  const columns = useMemo(
+    () =>
+      groupsTableColumns({
+        renderActions: (row) => (
+          <GroupsTableActions
+            row={row}
+            canUpdate={canUpdate}
+            canDelete={canDelete}
+            onUpdateClick={() =>
+              open({
+                permissions: row.permissions,
+                groupId: row.id,
+                name: row.name,
+                description: row.description || "",
+              })
+            }
+            onDeleteClick={(group) => deleteGroup(group)}
+            onActivateClick={(group) => activateGroup(group)}
+            onDeactivateClick={(group) => deactivateGroup(group)}
+          />
+        ),
+        nameCell: (row) => (
+          <Button
+            variant="link"
+            className="text-base"
+            nativeButton={false}
+            render={(props) => (
+              <Link to="/groups/$slug" params={{ slug: row.slug }} {...props} />
+            )}
+          >
+            {row.name}
+          </Button>
+        ),
+      }),
+    [canUpdate, canDelete, open, deleteGroup, activateGroup, deactivateGroup],
+  );
 
   const table = useGroupsTable({
     data: groups,
@@ -89,7 +113,20 @@ export function GroupsTableSection({ organizationId, canUpdate, canDelete }: Pro
           table={table}
           columnsLength={columns.length}
           EmptyComponent={
-            <div className="text-center">No se encontraron grupos</div>
+            isFiltered ? (
+              <div className="flex flex-col items-center gap-2">
+                <p>No se encontraron grupos</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => dispatch({ type: "reset" })}
+                >
+                  Limpiar filtros
+                </Button>
+              </div>
+            ) : (
+              <div className="text-center">No se encontraron grupos</div>
+            )
           }
         />
       </div>
@@ -112,7 +149,7 @@ export function GroupsTableSection({ organizationId, canUpdate, canDelete }: Pro
             canPreviousPage={table.getCanPreviousPage()}
           />
           <PrevPage
-            previusPage={() => table.previousPage()}
+            previousPage={() => table.previousPage()}
             canPreviousPage={table.getCanPreviousPage()}
           />
           <NextPage

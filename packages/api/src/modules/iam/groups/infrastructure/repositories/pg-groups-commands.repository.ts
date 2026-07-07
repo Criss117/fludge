@@ -1,4 +1,4 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, ne } from "drizzle-orm";
 
 import {
   TransactionalRepository,
@@ -83,6 +83,35 @@ export class PGGroupsCommandsRepository extends TransactionalRepository {
         .where(
           and(eq(group.organizationId, organizationId), eq(group.slug, slug)),
         )
+        .limit(1)
+        .execute(),
+    );
+
+    if (error) return err(error);
+
+    const g = exists.at(0);
+
+    if (!g) return ok(true);
+
+    return ok(false);
+  }
+
+  public async nameAvailable(
+    name: string,
+    organizationId: string,
+    excludeId?: string,
+  ) {
+    const where = [eq(group.organizationId, organizationId), eq(group.name, name)];
+
+    if (excludeId) where.push(ne(group.id, excludeId));
+
+    const [exists, error] = await tryCatch(
+      this.db
+        .select({
+          id: group.id,
+        })
+        .from(group)
+        .where(and(...where))
         .limit(1)
         .execute(),
     );

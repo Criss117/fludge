@@ -4,6 +4,7 @@ import { groupsContainer } from "@fludge/api/modules/iam/groups/container";
 import { createGroupCommand } from "@fludge/api/modules/iam/groups/application/commands/create-group.command";
 import { updateGroupCommand } from "@fludge/api/modules/iam/groups/application/commands/update-group.command";
 import { deleteGroupsCommand } from "@fludge/api/modules/iam/groups/application/commands/delete-groups.command";
+import { findGroupHistoryQuery } from "@fludge/api/modules/iam/groups/application/queries/find-group-history.query";
 
 const TAGS = ["Groups"] as const;
 
@@ -88,6 +89,22 @@ export const groupsRouter = {
       })
       .handler(({ context }) =>
         groupsContainer.queries.findAll.execute({
+          organizationId: context.session.activeOrganization.id,
+        }),
+      ),
+
+    findHistory: withOrganization({
+      requirePermission: "groups:view",
+    })
+      .route({
+        method: "GET",
+        path: "/groups/{groupId}/history",
+        tags: TAGS,
+      })
+      .input(findGroupHistoryQuery)
+      .handler(({ input, context }) =>
+        groupsContainer.queries.findHistory.execute({
+          groupId: input.groupId,
           organizationId: context.session.activeOrganization.id,
         }),
       ),

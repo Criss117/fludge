@@ -31,7 +31,14 @@ function setup() {
       }),
   );
 
-  const repo = { save: saveMock } as unknown as PGGroupsCommandsRepository;
+  const slugAvailableMock = mock(async () => ok(true));
+  const nameAvailableMock = mock(async () => ok(true));
+
+  const repo = {
+    save: saveMock,
+    slugAvailable: slugAvailableMock,
+    nameAvailable: nameAvailableMock,
+  } as unknown as PGGroupsCommandsRepository;
 
   const cmd = new CreateGroupCommand(eventBus, repo);
 
@@ -89,7 +96,14 @@ describe("CreateGroupCommand", () => {
       err(new Error("DB connection failed")),
     );
 
-    const repo = { save: saveMock } as unknown as PGGroupsCommandsRepository;
+    const slugAvailableMock = mock(async () => ok(true));
+    const nameAvailableMock = mock(async () => ok(true));
+
+    const repo = {
+      save: saveMock,
+      slugAvailable: slugAvailableMock,
+      nameAvailable: nameAvailableMock,
+    } as unknown as PGGroupsCommandsRepository;
 
     const cmd = new CreateGroupCommand(eventBus, repo);
 

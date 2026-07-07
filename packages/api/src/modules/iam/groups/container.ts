@@ -8,6 +8,7 @@ import { FindAllGroupsByMemberQuery } from "./application/queries/find-all-group
 import { UpdateGroupCommand } from "./application/commands/update-group.command";
 import { DeleteGroupsCommand } from "./application/commands/delete-groups.command";
 import { FindAllGroupsQuery } from "./application/queries/find-all-groups.query";
+import { FindGroupHistoryQuery } from "./application/queries/find-group-history.query";
 
 // Repositories
 const groupsCommandsRepository = new PGGroupsCommandsRepository(dbConnection);
@@ -23,6 +24,7 @@ const deleteGroupCommand = new DeleteGroupsCommand(groupsCommandsRepository);
 // Queries
 const findAllGroupsByMemberQuery = new FindAllGroupsByMemberQuery(dbConnection);
 const findAllGroupsQuery = new FindAllGroupsQuery(dbConnection);
+const findGroupHistoryQuery = new FindGroupHistoryQuery(dbConnection);
 
 export const groupsContainer = {
   commands: {
@@ -33,5 +35,6 @@ export const groupsContainer = {
   queries: {
     findAllByMember: findAllGroupsByMemberQuery,
     findAll: findAllGroupsQuery,
+    findHistory: findGroupHistoryQuery,
   },
 } as const;

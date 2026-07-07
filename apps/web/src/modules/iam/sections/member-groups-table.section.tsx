@@ -82,7 +82,7 @@ export function MemberGroupsTableSection({ groups }: Props) {
             canPreviousPage={table.getCanPreviousPage()}
           />
           <PrevPage
-            previusPage={() => table.previousPage()}
+            previousPage={() => table.previousPage()}
             canPreviousPage={table.getCanPreviousPage()}
           />
           <NextPage

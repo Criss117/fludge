@@ -170,7 +170,7 @@ export function ProductsTableSection({
             canPreviousPage={table.getCanPreviousPage()}
           />
           <PrevPage
-            previusPage={() => table.previousPage()}
+            previousPage={() => table.previousPage()}
             canPreviousPage={table.getCanPreviousPage()}
           />
           <NextPage

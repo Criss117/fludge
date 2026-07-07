@@ -10,11 +10,11 @@ export const organizationHasGroupsQuery = z.object({
   groupIds: z
     .array(
       z.string({
-        error: "Id de miembro no válido.",
+        error: "Id de grupo no válido.",
       }),
     )
     .min(1, {
-      error: "Debe especificar al menos un id de miembro.",
+      error: "Debe especificar al menos un id de grupo.",
     }),
 });
 
@@ -28,7 +28,7 @@ export class OrganizationHasGroupsQuery {
   public async execute({ organizationId, groupIds }: Query) {
     if (groupIds.length === 0)
       throw new ORPCError("BAD_REQUEST", {
-        message: "No se especificó ningún id de miembro",
+        message: "No se especificó ningún id de grupo",
       });
 
     const where = [
