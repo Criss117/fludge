@@ -72,7 +72,7 @@ export class CreateCategoryCommand {
     // 3. Parent validation (if provided)
     if (cmd.parentId) {
       const [parent, errorParent] =
-        await this.categoriesCommandsRepository.findOne(
+        await this.categoriesCommandsRepository.findActiveOne(
           cmd.parentId,
           cmd.organizationId,
         );

@@ -95,6 +95,9 @@ export function UpdateCategory({ organizationId }: Props) {
                 <form.AppField name="name">
                   {(field) => <field.NameField />}
                 </form.AppField>
+                <form.AppForm>
+                  <form.SlugField />
+                </form.AppForm>
                 <form.AppField name="parentId">
                   {(field) => (
                     <field.ParentIdField

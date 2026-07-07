@@ -82,7 +82,7 @@ export function CategoriesHeaderSectionSkeleton() {
           </Button>
         </div>
       </header>
-      <div className="flex gap-x-4 justify-between">
+      <div className="grid grid-cols-4 gap-x-4 justify-between">
         {categoryInfoSkeleton.map(({ title }) => (
           <Card key={title} className="flex-1">
             <CardHeader>

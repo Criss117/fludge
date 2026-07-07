@@ -5,20 +5,31 @@ import { slugify } from "@fludge/utils/slugify";
 import type { PGCategoriesCommandsRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/pg-categories-commands.repository";
 import { createCategoryCommand } from "@fludge/api/modules/catalog/categories/application/commands/create-category.command";
 
-export const updateCategoryCommand = createCategoryCommand.extend({
-  id: z.uuid({
-    error: "El id de la categoría es requerido",
-  }),
-  // Tri-state, mirrors deletedAt:
-  //   undefined => leave parent untouched (regular edit omits it)
-  //   null      => clear parent (set parent_id = NULL)
-  //   UUID      => move category to this parent
-  parentId: z.uuid().nullable().optional(),
-  // null  => activate  (clears deleted_at)
-  // Date  => deactivate (sets deleted_at)
-  // omitted => leave status untouched (regular edit)
-  deletedAt: z.date().nullable().optional(),
-});
+export const updateCategoryCommand = createCategoryCommand
+  .partial()
+  .extend({
+    id: z.uuid({
+      error: "El id de la categoría es requerido",
+    }),
+    // Tri-state, mirrors deletedAt:
+    //   undefined => leave parent untouched (regular edit omits it)
+    //   null      => clear parent (set parent_id = NULL)
+    //   UUID      => move category to this parent
+    parentId: z.uuid().nullable().optional(),
+    // null  => activate  (clears deleted_at)
+    // Date  => deactivate (sets deleted_at)
+    // omitted => leave status untouched (regular edit)
+    deletedAt: z.date().nullable().optional(),
+  })
+  .refine(
+    (data) =>
+      data.name !== undefined ||
+      data.parentId !== undefined ||
+      data.deletedAt !== undefined,
+    {
+      error: "Debe enviar al menos un campo para actualizar",
+    },
+  );
 
 type CMD = z.infer<typeof updateCategoryCommand> & {
   organizationId: string;
@@ -30,6 +41,7 @@ export class UpdateCategoryCommand {
   ) {}
 
   public async execute(cmd: CMD) {
+    // 1. Existing category (allows soft-deleted for status recovery)
     const [existingCategory, errorExists] =
       await this.categoriesCommandsRepository.findOne(
         cmd.id,
@@ -43,10 +55,13 @@ export class UpdateCategoryCommand {
         message: "Categoría no encontrada",
       });
 
-    // Status-only update: deletedAt is present (Date or null).
-    // Skip name/slug/parentId validation — only persist the status change,
-    // passing the existing name/slug/parentId through unchanged.
-    if (!!cmd.deletedAt) {
+    // 2. Status-only fast path: deletedAt present, name/parentId absent.
+    //    Skip validation — only persist the status change.
+    if (
+      cmd.deletedAt !== undefined &&
+      cmd.name === undefined &&
+      cmd.parentId === undefined
+    ) {
       const [updated, error] = await this.categoriesCommandsRepository.update(
         cmd.id,
         cmd.organizationId,
@@ -68,17 +83,21 @@ export class UpdateCategoryCommand {
       return updated;
     }
 
-    // Tri-state: undefined => preserve existing parent,
-    // null => clear parent, UUID => move to this parent.
+    // 3. Resolve effective parent (undefined => preserve existing)
     const newParentId =
       cmd.parentId === undefined
         ? existingCategory.parentId
         : cmd.parentId;
 
-    // 1. Name changed → re-slugify and validate uniqueness
-    if (existingCategory.name !== cmd.name) {
-      const slug = slugify(cmd.name);
+    // 4. Name changed → re-slugify and validate uniqueness
+    const effectiveName = cmd.name ?? existingCategory.name;
+    const nameChanged =
+      cmd.name !== undefined && cmd.name !== existingCategory.name;
+    const slug = nameChanged
+      ? slugify(effectiveName)
+      : existingCategory.slug;
 
+    if (nameChanged) {
       const [slugAvailable, errorSlugAvailable] =
         await this.categoriesCommandsRepository.slugAvailable(
           slug,
@@ -96,7 +115,7 @@ export class UpdateCategoryCommand {
 
       const [nameExists, errorNameExists] =
         await this.categoriesCommandsRepository.exists(
-          cmd.name,
+          effectiveName,
           newParentId,
           cmd.organizationId,
           cmd.id,
@@ -111,16 +130,38 @@ export class UpdateCategoryCommand {
         });
     }
 
-    // 2. Parent changed → validate it exists and check depth
-    if (existingCategory.parentId !== newParentId) {
+    // 5. Parent changed → cycle detection, validate parent active, check depth
+    const parentChanged =
+      cmd.parentId !== undefined &&
+      cmd.parentId !== existingCategory.parentId;
+
+    if (parentChanged) {
       if (cmd.id === cmd.parentId)
         throw new ORPCError("BAD_REQUEST", {
           message: "Una categoría no puede ser su propia padre",
         });
 
       if (cmd.parentId) {
+        // 5a. Cycle detection — moving category under its own descendant
+        const [hasCycle, errorCycle] =
+          await this.categoriesCommandsRepository.wouldCreateCycle(
+            cmd.id,
+            cmd.parentId,
+            cmd.organizationId,
+          );
+
+        if (errorCycle)
+          throw new ORPCError("INTERNAL_SERVER_ERROR", errorCycle);
+
+        if (hasCycle)
+          throw new ORPCError("BAD_REQUEST", {
+            message:
+              "No se puede mover una categoría dentro de su propio sub-árbol",
+          });
+
+        // 5b. Parent must be active (not soft-deleted)
         const [parent, errorParent] =
-          await this.categoriesCommandsRepository.findOne(
+          await this.categoriesCommandsRepository.findActiveOne(
             cmd.parentId,
             cmd.organizationId,
           );
@@ -130,9 +171,10 @@ export class UpdateCategoryCommand {
 
         if (!parent)
           throw new ORPCError("NOT_FOUND", {
-            message: "La categoría padre no existe",
+            message: "La categoría padre no existe o está eliminada",
           });
 
+        // 5c. Depth check — max 2 levels
         const [depth, errorDepth] =
           await this.categoriesCommandsRepository.parentDepth(cmd.parentId);
 
@@ -146,35 +188,36 @@ export class UpdateCategoryCommand {
           });
       }
 
-      // Re-check name uniqueness under the new parent scope
-      const [nameExists, errorNameExists] =
-        await this.categoriesCommandsRepository.exists(
-          cmd.name,
-          newParentId,
-          cmd.organizationId,
-          cmd.id,
-        );
+      // 5d. Re-check name uniqueness under the new parent scope
+      //     (only if we didn't already check in step 4)
+      if (!nameChanged) {
+        const [nameExists, errorNameExists] =
+          await this.categoriesCommandsRepository.exists(
+            effectiveName,
+            newParentId,
+            cmd.organizationId,
+            cmd.id,
+          );
 
-      if (errorNameExists)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", errorNameExists);
+        if (errorNameExists)
+          throw new ORPCError("INTERNAL_SERVER_ERROR", errorNameExists);
 
-      if (nameExists)
-        throw new ORPCError("CONFLICT", {
-          message: "Ya existe una categoría con ese nombre bajo ese padre",
-        });
+        if (nameExists)
+          throw new ORPCError("CONFLICT", {
+            message: "Ya existe una categoría con ese nombre bajo ese padre",
+          });
+      }
     }
 
-    // 3. Update
-    const slug = slugify(cmd.name);
-
+    // 6. Build update payload from provided fields only
     const [updated, error] = await this.categoriesCommandsRepository.update(
       cmd.id,
       cmd.organizationId,
       {
-        name: cmd.name,
+        name: effectiveName,
         slug,
         parentId: newParentId,
-        deletedAt: cmd.deletedAt,
+        ...(cmd.deletedAt !== undefined && { deletedAt: cmd.deletedAt }),
       },
     );
 
