@@ -32,6 +32,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@fludge/ui/components/alert-dialog";
+import type { CategorySummary } from "@fludge/client/application/catalog/hooks/use-find-categories";
 import { useState } from "react";
 import { useUpdateCategoryForm } from "@/modules/catalog/components/update-category";
 
@@ -50,7 +51,7 @@ export function CategoriesTableSection({
   const { open: openUpdateCategory } = useUpdateCategoryForm();
   const { deleteCategory, activateCategory, deactivateCategory } =
     useCategoryActionsMutations({ organizationId });
-  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<CategorySummary | null>(null);
 
   const { data: categories } = useFindAllCategories(organizationId, {
     name: filters.query,

@@ -22,7 +22,7 @@ export function MemberOverviewSection({ member }: Props) {
   const stats = [
     { title: "Grupos Totales", value: member.groups.length },
     { title: "Permisos Heredados", value: uniquePermissions.size },
-    { title: "Asignado Por", value: member.assignedBy?.name || "—" },
+    { title: "Asignado Por", value: member.assignedBy?.user.name || "—" },
   ];
 
   return (
