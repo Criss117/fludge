@@ -24,6 +24,7 @@ import { groupsContainer } from "../modules/iam/groups/container";
 import { ALL_PERMISSIONS } from "@fludge/utils/permissions/index";
 import { groupMembersContainer } from "../modules/iam/group-members/container";
 import { categoriesContainer } from "../modules/catalog/categories/container";
+import { productsContainer } from "../modules/catalog/products/container";
 
 async function clearUsers() {
   await dbConnection.delete(session);
@@ -273,6 +274,72 @@ async function seedCategories(
   return orgCategories;
 }
 
+function generatePrices(faker: Faker) {
+  const purchase = faker.number.float({ min: 10, max: 500, fractionDigits: 2 });
+  return {
+    pricePurchase: purchase.toFixed(2),
+    priceRetail: (purchase * 1.4).toFixed(2),
+    priceWholesale: (purchase * 1.2).toFixed(2),
+  };
+}
+
+async function seedProducts(
+  orgCategories: Map<string, { roots: any[]; subs: any[] }>,
+  rootMembers: Array<{ id: string; organizationId: string }>,
+  faker: Faker,
+): Promise<void> {
+  for (const rootMember of rootMembers) {
+    const { organizationId } = rootMember;
+    const { subs } = orgCategories.get(organizationId)!;
+    const usedBarcodes = new Set<string>();
+
+    // ~5 products per subcategory, fanned out in parallel per org.
+    const promises = subs.flatMap((sub) =>
+      Array.from({ length: 5 }).map(() => {
+        let barcode = "";
+        for (let i = 0; i < 5; i++) {
+          const candidate = faker.string.numeric({
+            length: 13,
+            allowLeadingZeros: false,
+          });
+          if (!usedBarcodes.has(candidate)) {
+            usedBarcodes.add(candidate);
+            barcode = candidate;
+            break;
+          }
+        }
+        // Fallback if retry budget exhausted — append a discriminator.
+        if (!barcode) {
+          barcode = `${faker.string.numeric({ length: 10, allowLeadingZeros: false })}${faker.string.alphanumeric({ length: 3 })}`.slice(0, 13);
+          usedBarcodes.add(barcode);
+        }
+
+        const { pricePurchase, priceRetail, priceWholesale } =
+          generatePrices(faker);
+
+        return productsContainer.commands.create.execute({
+          name: faker.commerce.productName(),
+          description: faker.commerce.productDescription().slice(0, 500),
+          categoryId: sub.id,
+          barcode,
+          stockQuantity: faker.number.int({ min: 0, max: 200 }),
+          minimumStock: faker.number.int({ min: 0, max: 20 }),
+          allowNegativeStock: false,
+          pricePurchase,
+          priceRetail,
+          priceWholesale,
+          organizationId,
+          // Products take the root member id as a plain string,
+          // unlike categories which take { memberId }.
+          createdBy: rootMember.id,
+        });
+      }),
+    );
+
+    await Promise.all(promises);
+  }
+}
+
 export const seedRouter = {
   clear: publicProcedure
     .route({
@@ -355,6 +422,7 @@ export const seedRouter = {
       await seedGroupMembers(data);
 
       const orgCategories = await seedCategories(rootMembers, faker);
+      await seedProducts(orgCategories, rootMembers, faker);
 
       return {
         rootUsers,
