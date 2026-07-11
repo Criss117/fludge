@@ -5,70 +5,73 @@ import { slugify } from "@fludge/utils/slugify";
 import type { PGProductsCommandsRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/pg-products-commands.repository";
 import type { PGCategoriesCommandsRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/pg-categories-commands.repository";
 
-export const createProductCommand = z.object({
-  name: z
-    .string({
-      error: "El nombre es requerido",
-    })
-    .min(3, {
-      error: "El nombre es muy corto",
-    })
-    .max(100, {
-      error: "El nombre es muy largo",
-    }),
-  description: z.string().max(500).optional(),
-  imageUrl: z.url({ error: "La URL de la imagen no es válida" }).optional(),
-  categoryId: z
-    .uuid({ error: "El id de la categoría no es válido" })
-    .optional(),
-  sku: z.string().min(1).max(50).optional(),
-  barcode: z
-    .string({
-      error: "El código de barras es requerido",
-    })
-    .min(1, {
-      error: "El código de barras es requerido",
-    })
-    .max(50, {
-      error: "El código de barras es muy largo",
-    }),
-  priceRetail: z
-    .string({ error: "El precio de venta es requerido" })
-    .regex(/^\d+(\.\d{1,2})?$/, {
-      error: "El precio de venta no es válido",
-    }),
-  pricePurchase: z
-    .string({ error: "El precio de compra es requerido" })
-    .regex(/^\d+(\.\d{1,2})?$/, {
-      error: "El precio de compra no es válido",
-    }),
-  priceWholesale: z
-    .string({ error: "El precio mayorista es requerido" })
-    .regex(/^\d+(\.\d{1,2})?$/, {
-      error: "El precio mayorista no es válido",
-    }),
-  minimumStock: z.number().int().nonnegative().optional(),
-  allowNegativeStock: z.boolean().optional(),
-  stockQuantity: z.number().int().optional(),
-}).refine(
-  (data) =>
-    data.stockQuantity == null ||
-    data.stockQuantity >= 0 ||
-    data.allowNegativeStock === true,
-  {
-    error: "El stock no puede ser negativo si no se permite stock negativo",
-    path: ["stockQuantity"],
-  },
-).refine(
-  (data) =>
-    data.stockQuantity == null ||
-    data.minimumStock == null ||
-    data.stockQuantity >= data.minimumStock,
-  {
-    error: "El stock mínimo no puede ser mayor al stock actual",
-    path: ["minimumStock"],
-  },
-);
+export const createProductCommand = z
+  .object({
+    name: z
+      .string({
+        error: "El nombre es requerido",
+      })
+      .min(3, {
+        error: "El nombre es muy corto",
+      })
+      .max(100, {
+        error: "El nombre es muy largo",
+      }),
+    description: z.string().max(500).optional(),
+    imageUrl: z.url({ error: "La URL de la imagen no es válida" }).optional(),
+    categoryId: z
+      .uuid({ error: "El id de la categoría no es válido" })
+      .optional(),
+    sku: z.string().min(1).max(50).optional(),
+    barcode: z
+      .string({
+        error: "El código de barras es requerido",
+      })
+      .min(1, {
+        error: "El código de barras es requerido",
+      })
+      .max(50, {
+        error: "El código de barras es muy largo",
+      }),
+    priceRetail: z
+      .string({ error: "El precio de venta es requerido" })
+      .regex(/^\d+(\.\d{1,2})?$/, {
+        error: "El precio de venta no es válido",
+      }),
+    pricePurchase: z
+      .string({ error: "El precio de compra es requerido" })
+      .regex(/^\d+(\.\d{1,2})?$/, {
+        error: "El precio de compra no es válido",
+      }),
+    priceWholesale: z
+      .string({ error: "El precio mayorista es requerido" })
+      .regex(/^\d+(\.\d{1,2})?$/, {
+        error: "El precio mayorista no es válido",
+      }),
+    minimumStock: z.number().int().nonnegative().optional(),
+    allowNegativeStock: z.boolean().optional(),
+    stockQuantity: z.number().int().optional(),
+  })
+  .refine(
+    (data) =>
+      data.stockQuantity == null ||
+      data.stockQuantity >= 0 ||
+      data.allowNegativeStock === true,
+    {
+      error: "El stock no puede ser negativo si no se permite stock negativo",
+      path: ["stockQuantity"],
+    },
+  )
+  .refine(
+    (data) =>
+      data.stockQuantity == null ||
+      data.minimumStock == null ||
+      data.stockQuantity >= data.minimumStock,
+    {
+      error: "El stock mínimo no puede ser mayor al stock actual",
+      path: ["minimumStock"],
+    },
+  );
 
 type CMD = z.infer<typeof createProductCommand> & {
   organizationId: string;
@@ -84,63 +87,34 @@ export class CreateProductCommand {
   public async execute(cmd: CMD) {
     const slug = slugify(cmd.name);
 
-    // 1. Slug uniqueness
-    const [slugAvailable, errorSlugAvailable] =
-      await this.productsCommandsRepository.slugAvailable(
-        slug,
+    const [check, errorCheck] =
+      await this.productsCommandsRepository.checkUniqueFields(
+        {
+          slug,
+        },
         cmd.organizationId,
       );
 
-    if (errorSlugAvailable)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", errorSlugAvailable);
+    if (errorCheck) throw new ORPCError("INTERNAL_SERVER_ERROR", errorCheck);
 
-    if (!slugAvailable)
+    if (check.slugTaken)
       throw new ORPCError("CONFLICT", {
         message: "El slug ya está en uso",
       });
 
-    // 2. Name uniqueness
-    const [nameExists, errorNameExists] =
-      await this.productsCommandsRepository.nameExists(
-        cmd.name,
-        cmd.organizationId,
-      );
-
-    if (errorNameExists)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", errorNameExists);
-
-    if (nameExists)
+    if (check.nameTaken)
       throw new ORPCError("CONFLICT", {
         message: "Ya existe un producto con ese nombre",
       });
 
-    // 3. Barcode uniqueness
-    const [barcodeExists, errorBarcodeExists] =
-      await this.productsCommandsRepository.barcodeExists(
-        cmd.barcode,
-        cmd.organizationId,
-      );
-
-    if (errorBarcodeExists)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", errorBarcodeExists);
-
-    if (barcodeExists)
+    if (check.barcodeTaken)
       throw new ORPCError("CONFLICT", {
         message: "Ya existe un producto con ese código de barras",
       });
 
     // 4. SKU uniqueness (only when provided)
     if (cmd.sku) {
-      const [skuExists, errorSkuExists] =
-        await this.productsCommandsRepository.skuExists(
-          cmd.sku,
-          cmd.organizationId,
-        );
-
-      if (errorSkuExists)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", errorSkuExists);
-
-      if (skuExists)
+      if (check.skuTaken)
         throw new ORPCError("CONFLICT", {
           message: "Ya existe un producto con ese SKU",
         });

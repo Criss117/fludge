@@ -1,4 +1,4 @@
-import { eq, and, ne, inArray } from "drizzle-orm";
+import { eq, and, ne, inArray, type SQL, or } from "drizzle-orm";
 
 import {
   TransactionalRepository,
@@ -39,10 +39,7 @@ export class PGProductsCommandsRepository extends TransactionalRepository {
     super(db);
   }
 
-  public async save(
-    values: ProductInsert,
-    options?: TransactionalOptions,
-  ) {
+  public async save(values: ProductInsert, options?: TransactionalOptions) {
     const db = options?.tx ?? this.db;
 
     const [data, error] = await tryCatch(
@@ -69,18 +66,15 @@ export class PGProductsCommandsRepository extends TransactionalRepository {
     const db = options?.tx ?? this.db;
 
     const [data, error] = await tryCatch(
-      db
-        .insert(inventoryMovement)
-        .values(values)
-        .returning()
-        .execute(),
+      db.insert(inventoryMovement).values(values).returning().execute(),
     );
 
     if (error) return err(error);
 
     const created = data.at(0);
 
-    if (!created) return err(new Error("Error creando movimiento de inventario"));
+    if (!created)
+      return err(new Error("Error creando movimiento de inventario"));
 
     return ok(created);
   }
@@ -262,10 +256,7 @@ export class PGProductsCommandsRepository extends TransactionalRepository {
     return ok(true);
   }
 
-  public async hardDelete(
-    organizationId: string,
-    productIds: string[],
-  ) {
+  public async hardDelete(organizationId: string, productIds: string[]) {
     return this.transaction(async (tx) => {
       // 1. Cascade: remove ledger rows for these products first.
       //    No organizationId filter — productIds are globally unique UUIDs and
@@ -298,6 +289,75 @@ export class PGProductsCommandsRepository extends TransactionalRepository {
       if (error) return err(error);
 
       return ok(rows.length);
+    });
+  }
+
+  public async checkUniqueFields(
+    values: {
+      slug?: string;
+      name?: string;
+      barcode?: string;
+      sku?: string;
+    },
+    organizationId: string,
+    excludeId?: string,
+  ) {
+    const { slug, name, barcode, sku } = values;
+
+    const orConditions = [
+      slug ? eq(product.slug, slug) : undefined,
+      name ? eq(product.name, name) : undefined,
+      barcode ? eq(product.barcode, barcode) : undefined,
+      sku ? eq(product.sku, sku) : undefined,
+    ].filter(Boolean) as SQL[];
+
+    // Si no hay ningún valor para comparar, no hay nada que consultar
+    if (orConditions.length === 0) {
+      return ok({
+        slugTaken: false,
+        nameTaken: false,
+        barcodeTaken: false,
+        skuTaken: false,
+      });
+    }
+
+    const conditions = [
+      eq(product.organizationId, organizationId),
+      or(...orConditions),
+    ];
+
+    if (excludeId) {
+      conditions.push(ne(product.id, excludeId));
+    }
+
+    const [rows, error] = await tryCatch(
+      this.db
+        .select({
+          id: product.id,
+          slug: product.slug,
+          name: product.name,
+          barcode: product.barcode,
+          sku: product.sku,
+        })
+        .from(product)
+        .where(and(...conditions))
+        .execute(),
+    );
+
+    if (error) return err(error);
+
+    const slugTaken = slug ? rows.some((r) => r.slug === slug) : false;
+    const nameTaken = name ? rows.some((r) => r.name === name) : false;
+    const barcodeTaken = barcode
+      ? rows.some((r) => r.barcode === barcode)
+      : false;
+    const skuTaken = sku ? rows.some((r) => r.sku === sku) : false;
+
+    return ok({
+      slugTaken,
+      nameTaken,
+      barcodeTaken,
+      skuTaken,
     });
   }
 }
