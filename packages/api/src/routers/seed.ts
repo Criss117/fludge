@@ -2,6 +2,7 @@ import { dbConnection } from "@fludge/db";
 import { publicProcedure } from "..";
 import { authContainer } from "../modules/iam/auth/container";
 import { faker } from "@faker-js/faker/locale/es_MX";
+import type { Faker } from "@faker-js/faker";
 import {
   account,
   member,
@@ -22,6 +23,7 @@ import { membersContainer } from "../modules/iam/members/container";
 import { groupsContainer } from "../modules/iam/groups/container";
 import { ALL_PERMISSIONS } from "@fludge/utils/permissions/index";
 import { groupMembersContainer } from "../modules/iam/group-members/container";
+import { categoriesContainer } from "../modules/catalog/categories/container";
 
 async function clearUsers() {
   await dbConnection.delete(session);
@@ -199,6 +201,78 @@ async function seedGroupMembers(
   return Promise.all(promises);
 }
 
+function generateUniqueName(
+  faker: Faker,
+  used: Set<string>,
+  generator: () => string,
+  maxAttempts = 5,
+): string {
+  for (let i = 0; i < maxAttempts; i++) {
+    const name = generator();
+    if (!used.has(name)) {
+      used.add(name);
+      return name;
+    }
+  }
+  // Guaranteed-unique fallback: append a discriminator so seeding never
+  // fails on faker collisions within an org/parent scope.
+  const unique = `${generator()} ${faker.string.alphanumeric(3)}`.slice(0, 50);
+  used.add(unique);
+  return unique;
+}
+
+async function seedCategories(
+  rootMembers: Array<{ id: string; organizationId: string }>,
+  faker: Faker,
+): Promise<Map<string, { roots: any[]; subs: any[] }>> {
+  const orgCategories = new Map<string, { roots: any[]; subs: any[] }>();
+
+  for (const rootMember of rootMembers) {
+    const { organizationId } = rootMember;
+    const roots: any[] = [];
+    const subs: any[] = [];
+    const usedRootNames = new Set<string>();
+
+    // 6 root categories — names unique within the org (parentId = null scope).
+    const rootPromises = Array.from({ length: 6 }).map(() => {
+      const name = generateUniqueName(faker, usedRootNames, () =>
+        faker.commerce.department(),
+      );
+      return categoriesContainer.commands.create.execute({
+        name,
+        organizationId,
+        createdBy: { memberId: rootMember.id },
+      });
+    });
+
+    const createdRoots = await Promise.all(rootPromises);
+    roots.push(...createdRoots);
+
+    // 3 subcategories per root — names unique within each parent scope.
+    const subPromises = createdRoots.flatMap((root) => {
+      const usedSubNames = new Set<string>();
+      return Array.from({ length: 3 }).map(() => {
+        const name = generateUniqueName(faker, usedSubNames, () =>
+          faker.commerce.productName(),
+        );
+        return categoriesContainer.commands.create.execute({
+          name,
+          parentId: root.id,
+          organizationId,
+          createdBy: { memberId: rootMember.id },
+        });
+      });
+    });
+
+    const createdSubs = await Promise.all(subPromises);
+    subs.push(...createdSubs);
+
+    orgCategories.set(organizationId, { roots, subs });
+  }
+
+  return orgCategories;
+}
+
 export const seedRouter = {
   clear: publicProcedure
     .route({
@@ -280,12 +354,15 @@ export const seedRouter = {
 
       await seedGroupMembers(data);
 
+      const orgCategories = await seedCategories(rootMembers, faker);
+
       return {
         rootUsers,
         rootMembers,
         members,
         groups,
         data,
+        orgCategories,
       };
     }),
-};
+  };
