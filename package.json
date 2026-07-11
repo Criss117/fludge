@@ -51,7 +51,8 @@
     "db:watch": "turbo -F @fludge/db db:watch",
     "db:stop": "turbo -F @fludge/db db:stop",
     "db:down": "turbo -F @fludge/db db:down",
-    "auth:generate": "turbo -F server auth:generate"
+    "auth:generate": "turbo -F server auth:generate",
+    "test": "turbo test -F @fludge/api -F @fludge/utils"
   },
   "dependencies": {
     "@fludge/env": "workspace:*",
