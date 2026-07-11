@@ -11,6 +11,13 @@ import {
 } from "@fludge/db/schemas/auth.schema";
 import { slugify } from "@fludge/utils/slugify";
 import { group, groupMember } from "@fludge/db/schemas/iam.schema";
+import {
+  category,
+  inventoryMovement,
+  product,
+  supplier,
+  supplierProduct,
+} from "@fludge/db/schemas/catalog.schema";
 import { membersContainer } from "../modules/iam/members/container";
 import { groupsContainer } from "../modules/iam/groups/container";
 import { ALL_PERMISSIONS } from "@fludge/utils/permissions/index";
@@ -23,6 +30,16 @@ async function clearUsers() {
 }
 
 async function clearOrganizations() {
+  // Catalog tables — children first, respecting FK dependencies.
+  // supplierProduct → supplier (cascade from supplier)
+  // inventoryMovement RESTRICT on product — must clear before product
+  // product → category (set null), category → organization (cascade)
+  await dbConnection.delete(supplierProduct);
+  await dbConnection.delete(supplier);
+  await dbConnection.delete(inventoryMovement);
+  await dbConnection.delete(product);
+  await dbConnection.delete(category);
+
   await dbConnection.delete(groupMember);
   await dbConnection.delete(group);
   await dbConnection.delete(member);
