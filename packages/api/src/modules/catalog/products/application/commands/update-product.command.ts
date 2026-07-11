@@ -4,22 +4,61 @@ import { ORPCError } from "@orpc/client";
 import { slugify } from "@fludge/utils/slugify";
 import type { PGProductsCommandsRepository, ProductUpdatable } from "@fludge/api/modules/catalog/products/infrastructure/repositories/pg-products-commands.repository";
 import type { PGCategoriesCommandsRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/pg-categories-commands.repository";
-import { createProductCommand } from "@fludge/api/modules/catalog/products/application/commands/create-product.command";
 
-export const updateProductCommand = createProductCommand
-  .partial()
-  .extend({
+// Full PUT schema — no `.partial()`. All create fields are present with the
+// same optionality as `createProductCommand`; `id` and `status` are required.
+// Slugs are never accepted from the client — always derived from `cmd.name`.
+export const updateProductCommand = z
+  .object({
     id: z.uuid({
       error: "El id del producto es requerido",
     }),
+    name: z
+      .string({
+        error: "El nombre es requerido",
+      })
+      .min(3, {
+        error: "El nombre es muy corto",
+      })
+      .max(100, {
+        error: "El nombre es muy largo",
+      }),
+    description: z.string().max(500).nullish(),
+    imageUrl: z.url({ error: "La URL de la imagen no es válida" }).nullish(),
+    categoryId: z
+      .uuid({ error: "El id de la categoría no es válido" })
+      .nullish(),
+    sku: z.string().min(1).max(50).nullish(),
+    barcode: z
+      .string({
+        error: "El código de barras es requerido",
+      })
+      .min(1, {
+        error: "El código de barras es requerido",
+      })
+      .max(50, {
+        error: "El código de barras es muy largo",
+      }),
+    priceRetail: z
+      .string({ error: "El precio de venta es requerido" })
+      .regex(/^\d+(\.\d{1,2})?$/, {
+        error: "El precio de venta no es válido",
+      }),
+    pricePurchase: z
+      .string({ error: "El precio de compra es requerido" })
+      .regex(/^\d+(\.\d{1,2})?$/, {
+        error: "El precio de compra no es válido",
+      }),
+    priceWholesale: z
+      .string({ error: "El precio mayorista es requerido" })
+      .regex(/^\d+(\.\d{1,2})?$/, {
+        error: "El precio mayorista no es válido",
+      }),
+    minimumStock: z.number().int().nonnegative().optional(),
+    allowNegativeStock: z.boolean().optional(),
+    stockQuantity: z.number().int().optional(),
     // Mirrors productStatusEnum in catalog.schema — keep in sync.
-    status: z.enum(["active", "inactive", "discontinued"]).optional(),
-    // stockQuantity is NOT redeclared here: `.extend()` replaces the field
-    // key, and `.partial()` drops the base schema's checks anyway, so the
-    // field shape (`z.number().int().optional()`) is inherited but the
-    // negative-stock `.refine()` from `createProductCommand` is NOT. We re-add
-    // the negative-stock guard explicitly below — see the OPEN QUESTION note in
-    // design: Zod 4 `.partial()`/`.extend()` do not carry refinements forward.
+    status: z.enum(["active", "inactive", "discontinued"]),
   })
   .refine(
     (data) =>
@@ -71,83 +110,48 @@ export class UpdateProductCommand {
         message: "Producto no encontrado",
       });
 
-    // 2. Name changed → re-slugify + uniqueness (exclude self)
-    if (cmd.name !== undefined && cmd.name !== existing.name) {
-      const slug = slugify(cmd.name);
+    // 2. Slug is always derived from the provided name
+    const slug = slugify(cmd.name);
 
-      const [slugAvailable, errorSlugAvailable] =
-        await this.productsCommandsRepository.slugAvailable(
+    // 3. Batched uniqueness check — single query covering slug, name, barcode,
+    //    and sku. Excludes the product being updated by id.
+    const [check, errorCheck] =
+      await this.productsCommandsRepository.checkUniqueFields(
+        {
           slug,
-          cmd.organizationId,
-          cmd.id,
-        );
+          name: cmd.name,
+          barcode: cmd.barcode,
+          sku: cmd.sku ?? undefined,
+        },
+        cmd.organizationId,
+        cmd.id,
+      );
 
-      if (errorSlugAvailable)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", errorSlugAvailable);
+    if (errorCheck)
+      throw new ORPCError("INTERNAL_SERVER_ERROR", errorCheck);
 
-      if (!slugAvailable)
-        throw new ORPCError("CONFLICT", {
-          message: "El slug ya está en uso",
-        });
+    if (check.slugTaken)
+      throw new ORPCError("CONFLICT", {
+        message: "El slug ya está en uso",
+      });
 
-      const [nameExists, errorNameExists] =
-        await this.productsCommandsRepository.nameExists(
-          cmd.name,
-          cmd.organizationId,
-          cmd.id,
-        );
+    if (check.nameTaken)
+      throw new ORPCError("CONFLICT", {
+        message: "Ya existe un producto con ese nombre",
+      });
 
-      if (errorNameExists)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", errorNameExists);
+    if (check.barcodeTaken)
+      throw new ORPCError("CONFLICT", {
+        message: "Ya existe un producto con ese código de barras",
+      });
 
-      if (nameExists)
-        throw new ORPCError("CONFLICT", {
-          message: "Ya existe un producto con ese nombre",
-        });
-    }
+    if (cmd.sku && check.skuTaken)
+      throw new ORPCError("CONFLICT", {
+        message: "Ya existe un producto con ese SKU",
+      });
 
-    // 3. Barcode changed → uniqueness (exclude self)
-    if (cmd.barcode !== undefined && cmd.barcode !== existing.barcode) {
-      const [barcodeExists, errorBarcodeExists] =
-        await this.productsCommandsRepository.barcodeExists(
-          cmd.barcode,
-          cmd.organizationId,
-          cmd.id,
-        );
-
-      if (errorBarcodeExists)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", errorBarcodeExists);
-
-      if (barcodeExists)
-        throw new ORPCError("CONFLICT", {
-          message: "Ya existe un producto con ese código de barras",
-        });
-    }
-
-    // 4. SKU changed/added → uniqueness (exclude self)
-    if (cmd.sku !== undefined && cmd.sku !== existing.sku) {
-      const [skuExists, errorSkuExists] =
-        await this.productsCommandsRepository.skuExists(
-          cmd.sku,
-          cmd.organizationId,
-          cmd.id,
-        );
-
-      if (errorSkuExists)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", errorSkuExists);
-
-      if (skuExists)
-        throw new ORPCError("CONFLICT", {
-          message: "Ya existe un producto con ese SKU",
-        });
-    }
-
-    // 5. Category changed → validate it exists (only when a new one is set)
-    if (
-      cmd.categoryId !== undefined &&
-      cmd.categoryId !== existing.categoryId &&
-      cmd.categoryId
-    ) {
+    // 4. Category validation (only when provided)
+    if (cmd.categoryId) {
       const [category, errorCategory] =
         await this.categoriesCommandsRepository.findOne(
           cmd.categoryId,
@@ -163,57 +167,44 @@ export class UpdateProductCommand {
         });
     }
 
-    // 6. Normalize negative stock when allowNegativeStock becomes false.
-    // Schema can't see `existing`, so this lives in the handler: compute the
-    // effective stock/allow-negative from `cmd ?? existing`, and if the
-    // resulting state would be "no negative stock allowed" but the value is
-    // negative, force it to 0.
+    // 5. Normalize negative stock when allowNegativeStock is false. The schema
+    //    cannot see `existing`, so the handler computes the effective stock
+    //    from `cmd ?? existing` and coerces to 0 when negative stock is not
+    //    allowed.
     const effectiveAllowNegative =
       cmd.allowNegativeStock ?? existing.allowNegativeStock;
     const effectiveStock =
-      cmd.stockQuantity !== undefined
-        ? cmd.stockQuantity
-        : existing.stockQuantity;
+      cmd.stockQuantity ?? existing.stockQuantity;
     const normalizedStock =
       effectiveAllowNegative === false && effectiveStock < 0
         ? 0
         : effectiveStock;
 
-    // 7. Build update payload from provided fields only
-    const values: ProductUpdatable = {};
+    // 6. Build update payload directly from cmd (PUT semantics — full state).
+    //    No `if (x !== undefined)` guards; every field is written.
+    const values: ProductUpdatable = {
+      name: cmd.name,
+      slug,
+      description: cmd.description ?? null,
+      imageUrl: cmd.imageUrl ?? null,
+      categoryId: cmd.categoryId ?? null,
+      sku: cmd.sku ?? null,
+      barcode: cmd.barcode,
+      priceRetail: cmd.priceRetail,
+      pricePurchase: cmd.pricePurchase,
+      priceWholesale: cmd.priceWholesale,
+      minimumStock: cmd.minimumStock ?? 0,
+      allowNegativeStock: cmd.allowNegativeStock ?? false,
+      status: cmd.status,
+    };
 
-    if (cmd.name !== undefined) {
-      values.name = cmd.name;
-      values.slug = slugify(cmd.name);
+    // Only write stockQuantity when it actually changed — avoids a redundant
+    // DB write and gates the inventory movement below.
+    if (normalizedStock !== existing.stockQuantity) {
+      values.stockQuantity = normalizedStock;
     }
-    if (cmd.description !== undefined)
-      values.description = cmd.description ?? null;
-    if (cmd.imageUrl !== undefined) values.imageUrl = cmd.imageUrl ?? null;
-    if (cmd.categoryId !== undefined)
-      values.categoryId = cmd.categoryId ?? null;
-    if (cmd.sku !== undefined) values.sku = cmd.sku ?? null;
-    if (cmd.barcode !== undefined) values.barcode = cmd.barcode;
-    if (cmd.priceRetail !== undefined) values.priceRetail = cmd.priceRetail;
-    if (cmd.pricePurchase !== undefined)
-      values.pricePurchase = cmd.pricePurchase;
-    if (cmd.priceWholesale !== undefined)
-      values.priceWholesale = cmd.priceWholesale;
-    if (cmd.minimumStock !== undefined)
-      values.minimumStock = cmd.minimumStock;
-    if (cmd.allowNegativeStock !== undefined)
-      values.allowNegativeStock = cmd.allowNegativeStock;
-    if (cmd.stockQuantity !== undefined || cmd.allowNegativeStock !== undefined) {
-      // Write the (possibly normalized) stock when the caller touched either
-      // stock field. Gate on `normalizedStock !== existing.stockQuantity` so a
-      // no-op update does not emit a redundant write, but the DB still receives
-      // the coercion when existing was negative.
-      if (normalizedStock !== existing.stockQuantity) {
-        values.stockQuantity = normalizedStock;
-      }
-    }
-    if (cmd.status !== undefined) values.status = cmd.status;
 
-    // 8. Update + inventory movement (transactional)
+    // 7. Update + inventory movement (transactional)
     return this.productsCommandsRepository.transaction(async (tx) => {
       const [updated, error] = await this.productsCommandsRepository.update(
         cmd.id,

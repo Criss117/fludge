@@ -91,6 +91,9 @@ export class CreateProductCommand {
       await this.productsCommandsRepository.checkUniqueFields(
         {
           slug,
+          barcode: cmd.barcode,
+          name: cmd.name,
+          sku: cmd.sku,
         },
         cmd.organizationId,
       );

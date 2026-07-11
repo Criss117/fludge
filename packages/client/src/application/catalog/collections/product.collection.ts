@@ -50,21 +50,13 @@ function builder(
         const originalProduct = transaction.mutations[0].original;
         const modifiedProduct = transaction.mutations[0].modified;
 
+        // Strip non-API fields and spread the rest. `id` comes from the
+        // original product (trust the router param, not the optimistic clone).
+        const { id: _id, ...rest } = modifiedProduct;
+
         const updatedProduct = await orpc.products.commands.update.call({
           id: originalProduct.id,
-          name: modifiedProduct.name,
-          barcode: modifiedProduct.barcode,
-          description: modifiedProduct.description ?? undefined,
-          imageUrl: modifiedProduct.imageUrl ?? undefined,
-          categoryId: modifiedProduct.categoryId ?? undefined,
-          sku: modifiedProduct.sku ?? undefined,
-          priceRetail: modifiedProduct.priceRetail,
-          pricePurchase: modifiedProduct.pricePurchase,
-          priceWholesale: modifiedProduct.priceWholesale,
-          minimumStock: modifiedProduct.minimumStock ?? undefined,
-          allowNegativeStock: modifiedProduct.allowNegativeStock ?? undefined,
-          status: modifiedProduct.status ?? undefined,
-          stockQuantity: modifiedProduct.stockQuantity ?? undefined,
+          ...rest,
         });
 
         collection.utils.writeUpdate(updatedProduct);

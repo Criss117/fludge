@@ -30,7 +30,7 @@ export const productsRouter = {
       requirePermission: "products:update",
     })
       .route({
-        method: "PATCH",
+        method: "PUT",
         path: "/products",
         tags: TAGS,
       })

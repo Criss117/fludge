@@ -41,7 +41,22 @@ function makeRepos(
     async findOne(_id: string, _orgId: string) {
       return [existing, null] as const;
     },
-    async update(_id: string, _orgId: string, values: Record<string, unknown>) {
+    async checkUniqueFields() {
+      return [
+        {
+          slugTaken: false,
+          nameTaken: false,
+          barcodeTaken: false,
+          skuTaken: false,
+        },
+        null,
+      ] as const;
+    },
+    async update(
+      _id: string,
+      _orgId: string,
+      values: Record<string, unknown>,
+    ) {
       onValues(values);
       return [{ ...existing, ...values }, null] as const;
     },
@@ -59,14 +74,15 @@ function makeRepos(
 }
 
 // ---------------------------------------------------------------------------
-// Schema tests
+// Schema tests — shared constants
 // ---------------------------------------------------------------------------
 
 const baseUpdateInput = {
   id: "00000000-0000-0000-0000-000000000000",
+  status: "active" as const,
 };
 
-const validCreateBase = {
+const validBase = {
   name: "Gaseosa Cola 1.5L",
   barcode: "7791234567890",
   priceRetail: "15.00",
@@ -74,11 +90,90 @@ const validCreateBase = {
   priceWholesale: "8.50",
 };
 
-describe("updateProductCommand schema — inherited negative-stock refine", () => {
+// ---------------------------------------------------------------------------
+// Schema tests — PUT required-field enforcement
+// ---------------------------------------------------------------------------
+
+describe("updateProductCommand schema — required fields (PUT semantics)", () => {
+  it("accepts a full valid payload", () => {
+    const result = updateProductCommand.safeParse({
+      ...baseUpdateInput,
+      ...validBase,
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects missing name", () => {
+    const { name: _name, ...withoutName } = {
+      ...baseUpdateInput,
+      ...validBase,
+    };
+    const result = updateProductCommand.safeParse(withoutName);
+
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects missing barcode", () => {
+    const { barcode: _barcode, ...withoutBarcode } = {
+      ...baseUpdateInput,
+      ...validBase,
+    };
+    const result = updateProductCommand.safeParse(withoutBarcode);
+
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects missing priceRetail", () => {
+    const { priceRetail: _price, ...withoutPrice } = {
+      ...baseUpdateInput,
+      ...validBase,
+    };
+    const result = updateProductCommand.safeParse(withoutPrice);
+
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects missing pricePurchase", () => {
+    const { pricePurchase: _price, ...withoutPrice } = {
+      ...baseUpdateInput,
+      ...validBase,
+    };
+    const result = updateProductCommand.safeParse(withoutPrice);
+
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects missing priceWholesale", () => {
+    const { priceWholesale: _price, ...withoutPrice } = {
+      ...baseUpdateInput,
+      ...validBase,
+    };
+    const result = updateProductCommand.safeParse(withoutPrice);
+
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects missing status", () => {
+    const { status: _status, ...withoutStatus } = {
+      ...baseUpdateInput,
+      ...validBase,
+    };
+    const result = updateProductCommand.safeParse(withoutStatus);
+
+    expect(result.success).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Schema tests — negative-stock refine
+// ---------------------------------------------------------------------------
+
+describe("updateProductCommand schema — negative-stock refine", () => {
   it("rejects stockQuantity = -5 when allowNegativeStock is false", () => {
     const result = updateProductCommand.safeParse({
       ...baseUpdateInput,
-      ...validCreateBase,
+      ...validBase,
       stockQuantity: -5,
       allowNegativeStock: false,
     });
@@ -99,7 +194,7 @@ describe("updateProductCommand schema — inherited negative-stock refine", () =
   it("allows stockQuantity = -5 when allowNegativeStock is true", () => {
     const result = updateProductCommand.safeParse({
       ...baseUpdateInput,
-      ...validCreateBase,
+      ...validBase,
       stockQuantity: -5,
       allowNegativeStock: true,
     });
@@ -110,7 +205,7 @@ describe("updateProductCommand schema — inherited negative-stock refine", () =
   it("allows stockQuantity = 0 when allowNegativeStock is false", () => {
     const result = updateProductCommand.safeParse({
       ...baseUpdateInput,
-      ...validCreateBase,
+      ...validBase,
       stockQuantity: 0,
       allowNegativeStock: false,
     });
@@ -118,21 +213,25 @@ describe("updateProductCommand schema — inherited negative-stock refine", () =
     expect(result.success).toBe(true);
   });
 
-  it("allows stockQuantity to be omitted (partial update)", () => {
+  it("allows stockQuantity to be omitted", () => {
     const result = updateProductCommand.safeParse({
       ...baseUpdateInput,
-      ...validCreateBase,
+      ...validBase,
     });
 
     expect(result.success).toBe(true);
   });
 });
 
+// ---------------------------------------------------------------------------
+// Schema tests — minimumStock refine
+// ---------------------------------------------------------------------------
+
 describe("updateProductCommand schema — minimumStock refine", () => {
   it("rejects minimumStock greater than stockQuantity", () => {
     const result = updateProductCommand.safeParse({
       ...baseUpdateInput,
-      ...validCreateBase,
+      ...validBase,
       stockQuantity: 5,
       minimumStock: 10,
     });
@@ -153,7 +252,7 @@ describe("updateProductCommand schema — minimumStock refine", () => {
   it("accepts minimumStock equal to stockQuantity", () => {
     const result = updateProductCommand.safeParse({
       ...baseUpdateInput,
-      ...validCreateBase,
+      ...validBase,
       stockQuantity: 5,
       minimumStock: 5,
     });
@@ -164,7 +263,7 @@ describe("updateProductCommand schema — minimumStock refine", () => {
   it("accepts minimumStock less than stockQuantity", () => {
     const result = updateProductCommand.safeParse({
       ...baseUpdateInput,
-      ...validCreateBase,
+      ...validBase,
       stockQuantity: 10,
       minimumStock: 5,
     });
@@ -175,7 +274,7 @@ describe("updateProductCommand schema — minimumStock refine", () => {
   it("skips minimumStock refine when stockQuantity is undefined", () => {
     const result = updateProductCommand.safeParse({
       ...baseUpdateInput,
-      ...validCreateBase,
+      ...validBase,
       minimumStock: 10,
     });
 
@@ -185,7 +284,7 @@ describe("updateProductCommand schema — minimumStock refine", () => {
   it("skips minimumStock refine when minimumStock is undefined", () => {
     const result = updateProductCommand.safeParse({
       ...baseUpdateInput,
-      ...validCreateBase,
+      ...validBase,
       stockQuantity: -5,
       allowNegativeStock: true,
     });
@@ -200,10 +299,6 @@ describe("updateProductCommand schema — minimumStock refine", () => {
 
 describe("UpdateProductCommand handler — normalization on allowNegativeStock flip", () => {
   it("coerces stockQuantity to 0 when existing is -5 and allowNegativeStock flips to false (stock omitted)", async () => {
-    // Per spec: existing stock -5 + allowNegativeStock true; update sets
-    // allowNegativeStock:false WITHOUT changing stockQuantity. The schema
-    // accepts this (stockQuantity absent → negative-stock refine skipped),
-    // and the handler normalizes the effective (negative) stock to 0.
     const existing = makeExisting({
       stockQuantity: -5,
       allowNegativeStock: true,
@@ -223,7 +318,7 @@ describe("UpdateProductCommand handler — normalization on allowNegativeStock f
     await command.execute({
       ...updateProductCommand.parse({
         ...baseUpdateInput,
-        ...validCreateBase,
+        ...validBase,
         allowNegativeStock: false,
       }),
       organizationId: "org-1",
@@ -254,7 +349,7 @@ describe("UpdateProductCommand handler — normalization on allowNegativeStock f
     await command.execute({
       ...updateProductCommand.parse({
         ...baseUpdateInput,
-        ...validCreateBase,
+        ...validBase,
         allowNegativeStock: false,
       }),
       organizationId: "org-1",
@@ -285,7 +380,7 @@ describe("UpdateProductCommand handler — normalization on allowNegativeStock f
     await command.execute({
       ...updateProductCommand.parse({
         ...baseUpdateInput,
-        ...validCreateBase,
+        ...validBase,
         stockQuantity: -5,
         allowNegativeStock: true,
       }),
@@ -318,7 +413,7 @@ describe("UpdateProductCommand handler — normalization on allowNegativeStock f
     await command.execute({
       ...updateProductCommand.parse({
         ...baseUpdateInput,
-        ...validCreateBase,
+        ...validBase,
         allowNegativeStock: false,
       }),
       organizationId: "org-1",
