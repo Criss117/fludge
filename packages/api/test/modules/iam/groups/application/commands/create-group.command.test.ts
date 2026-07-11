@@ -80,7 +80,7 @@ describe("CreateGroupCommand", () => {
 
     expect(result).toEqual(
       expect.objectContaining({
-        createdBy: { memberId: "m1", name: "Alice", email: "alice@example.com" },
+        createdBy: "m1",
       }),
     );
   });
