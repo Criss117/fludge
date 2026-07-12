@@ -294,7 +294,7 @@ async function seedProducts(
     const usedBarcodes = new Set<string>();
 
     // ~5 products per subcategory, fanned out in parallel per org.
-    const promises = subs.flatMap((sub) =>
+    const promises = subs.flatMap((sub, index) =>
       Array.from({ length: 5 }).map(() => {
         let barcode = "";
         for (let i = 0; i < 5; i++) {
@@ -310,7 +310,11 @@ async function seedProducts(
         }
         // Fallback if retry budget exhausted — append a discriminator.
         if (!barcode) {
-          barcode = `${faker.string.numeric({ length: 10, allowLeadingZeros: false })}${faker.string.alphanumeric({ length: 3 })}`.slice(0, 13);
+          barcode =
+            `${faker.string.numeric({ length: 10, allowLeadingZeros: false })}${faker.string.alphanumeric({ length: 3 })}`.slice(
+              0,
+              13,
+            );
           usedBarcodes.add(barcode);
         }
 
@@ -318,7 +322,7 @@ async function seedProducts(
           generatePrices(faker);
 
         return productsContainer.commands.create.execute({
-          name: faker.commerce.productName(),
+          name: faker.commerce.productName() + " " + index,
           description: faker.commerce.productDescription().slice(0, 500),
           categoryId: sub.id,
           barcode,
@@ -433,4 +437,4 @@ export const seedRouter = {
         orgCategories,
       };
     }),
-  };
+};
