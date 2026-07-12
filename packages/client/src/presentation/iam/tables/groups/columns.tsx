@@ -1,5 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table";
 
+import { formatDistance } from "date-fns";
+import { es } from "date-fns/locale/es";
 import type { GroupSummary } from "@fludge/client/application/iam/hooks/use-find-groups";
 
 const columnHelper = createColumnHelper<GroupSummary>();
@@ -27,13 +29,17 @@ export function groupsTableColumns<TNode>(
       header: "Permisos",
       cell: (info) => info.row.original.permissions.length + " Permisos",
     }),
-    columnHelper.accessor((row) => row.updatedAt, {
-      header: "Última Actualización",
-      cell: (info) => info.getValue().toLocaleDateString(),
-    }),
     columnHelper.accessor((row) => row.createdBy, {
       header: "Creado Por",
       cell: (info) => info.getValue()?.user.name || "-",
+    }),
+    columnHelper.accessor((row) => row.updatedAt, {
+      header: "Última Actualización",
+      cell: (info) =>
+        formatDistance(info.getValue(), new Date(), {
+          locale: es,
+          addSuffix: true,
+        }),
     }),
     columnHelper.display({
       id: "actions",

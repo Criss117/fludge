@@ -1,4 +1,6 @@
 import { createColumnHelper } from "@tanstack/react-table";
+import { formatDistance } from "date-fns";
+import { es } from "date-fns/locale/es";
 
 import type { CategorySummary } from "@fludge/client/application/catalog/hooks/use-find-categories";
 
@@ -31,7 +33,11 @@ export function categoriesTableColumns<TNode>(
     }),
     columnHelper.accessor((row) => row.updatedAt, {
       header: "Última Actualización",
-      cell: (info) => info.getValue().toLocaleDateString(),
+      cell: (info) =>
+        formatDistance(info.getValue(), new Date(), {
+          locale: es,
+          addSuffix: true,
+        }),
     }),
     columnHelper.accessor((row) => row.createdBy, {
       header: "Creado Por",
