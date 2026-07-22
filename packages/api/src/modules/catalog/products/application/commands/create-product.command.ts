@@ -4,9 +4,97 @@ import { ORPCError } from "@orpc/client";
 import { slugify } from "@fludge/utils/slugify";
 import type { PGProductsCommandsRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/pg-products-commands.repository";
 import type { PGCategoriesCommandsRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/pg-categories-commands.repository";
+import type { ProductService } from "@fludge/api/modules/catalog/products/application/services/product.service";
+import type { PGProductPresentationRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/pg-product-presentation.repository";
+
+const productPresentationSchema = z
+  .object({
+    name: z
+      .string({
+        error: "El nombre de la presentación es requerido",
+      })
+      .min(3, {
+        error: "El nombre de la presentación es muy corto",
+      })
+      .max(50, {
+        error: "El nombre de la presentación es muy largo",
+      }),
+    barcode: z
+      .string({
+        error: "El código de barras de la presentación es requerido",
+      })
+      .min(5, {
+        error: "El código de barras de la presentación es muy corto",
+      })
+      .max(50, {
+        error: "El código de barras de la presentación es muy largo",
+      })
+      .nullable(),
+    unitLabel: z
+      .string({
+        error: "El nombre de la unidad de la presentación es requerido",
+      })
+      .min(3, {
+        error: "El nombre de la unidad de la presentación es muy corto",
+      })
+      .max(50, {
+        error: "El nombre de la unidad de la presentación es muy largo",
+      }),
+    conversionFactor: z.int().positive().min(1, {
+      error: "El factor de conversión es requerido",
+    }),
+
+    priceRetail: z
+      .string({ error: "El precio de venta es requerido" })
+      .regex(/^\d+(\.\d{1,2})?$/, {
+        error: "El precio de venta no es válido",
+      }),
+    pricePurchase: z
+      .string({ error: "El precio de compra es requerido" })
+      .regex(/^\d+(\.\d{1,2})?$/, {
+        error: "El precio de compra no es válido",
+      })
+      .nullable(),
+    priceWholesale: z
+      .string({ error: "El precio mayorista es requerido" })
+      .regex(/^\d+(\.\d{1,2})?$/, {
+        error: "El precio mayorista no es válido",
+      })
+      .nullable(),
+  })
+  .refine(
+    (data) =>
+      data.pricePurchase !== null && data.pricePurchase <= data.priceRetail,
+    {
+      path: ["priceRetail"],
+      message:
+        "El precio de venta debe ser menor o igual que el precio de compra",
+    },
+  )
+  .refine(
+    (data) =>
+      data.priceWholesale !== null && data.priceWholesale <= data.priceRetail,
+    {
+      path: ["priceWholesale"],
+      message:
+        "El precio mayorista debe ser menor o igual que el precio de venta",
+    },
+  );
 
 export const createProductCommand = z
   .object({
+    categoryId: z.uuid().nullable(),
+    barcode: z
+      .string({
+        error: "El código de barras es requerido",
+      })
+      .min(5, {
+        error: "El código de barras es muy corto",
+      })
+      .max(50, {
+        error: "El código de barras es muy largo",
+      }),
+
     name: z
       .string({
         error: "El nombre es requerido",
@@ -17,59 +105,65 @@ export const createProductCommand = z
       .max(100, {
         error: "El nombre es muy largo",
       }),
-    description: z.string().max(500).optional(),
-    imageUrl: z.url({ error: "La URL de la imagen no es válida" }).optional(),
-    categoryId: z
-      .uuid({ error: "El id de la categoría no es válido" })
-      .optional(),
-    sku: z.string().min(1).max(50).optional(),
-    barcode: z
-      .string({
-        error: "El código de barras es requerido",
+
+    description: z.preprocess(
+      (val) => (val === "" ? null : val),
+      z
+        .string()
+        .min(5, {
+          error: "La descripción es muy corta",
+        })
+        .max(255, {
+          error: "La descripción es muy larga",
+        })
+        .nullable(),
+    ),
+
+    notes: z.preprocess(
+      (val) => (val === "" ? null : val),
+      z
+        .string()
+        .min(5, {
+          error: "La descripción es muy corta",
+        })
+        .max(255, {
+          error: "La descripción es muy larga",
+        })
+        .nullable(),
+    ),
+
+    stockQuantity: z.int().positive().min(1, {
+      error: "La cantidad de stock es requerida",
+    }),
+
+    minimumStock: z
+      .int()
+      .positive()
+      .min(0, {
+        error: "El stock mínimo es requerido",
       })
-      .min(1, {
-        error: "El código de barras es requerido",
-      })
-      .max(50, {
-        error: "El código de barras es muy largo",
-      }),
-    priceRetail: z
-      .string({ error: "El precio de venta es requerido" })
-      .regex(/^\d+(\.\d{1,2})?$/, {
-        error: "El precio de venta no es válido",
-      }),
-    pricePurchase: z
-      .string({ error: "El precio de compra es requerido" })
-      .regex(/^\d+(\.\d{1,2})?$/, {
-        error: "El precio de compra no es válido",
-      }),
-    priceWholesale: z
-      .string({ error: "El precio mayorista es requerido" })
-      .regex(/^\d+(\.\d{1,2})?$/, {
-        error: "El precio mayorista no es válido",
-      }),
-    minimumStock: z.number().int().nonnegative().optional(),
-    allowNegativeStock: z.boolean().optional(),
-    stockQuantity: z.number().int().optional(),
+      .default(0),
+
+    allowNegativeStock: z.boolean().default(false),
+
+    presentation: z.array(productPresentationSchema).min(1, {
+      error: "La presentación es requerida",
+    }),
   })
   .refine(
-    (data) =>
-      data.stockQuantity == null ||
-      data.stockQuantity >= 0 ||
-      data.allowNegativeStock === true,
+    (data) => data.allowNegativeStock === false && data.minimumStock >= 0,
     {
-      error: "El stock no puede ser negativo si no se permite stock negativo",
-      path: ["stockQuantity"],
+      path: ["minimumStock"],
+      message: "El stock mínimo no puede ser 0",
     },
   )
   .refine(
     (data) =>
-      data.stockQuantity == null ||
-      data.minimumStock == null ||
+      data.allowNegativeStock === false &&
       data.stockQuantity >= data.minimumStock,
     {
-      error: "El stock mínimo no puede ser mayor al stock actual",
-      path: ["minimumStock"],
+      path: ["stockQuantity"],
+      message: "El stock mínimo no puede ser mayor al stock actual",
     },
   );
 
@@ -81,22 +175,22 @@ type CMD = z.infer<typeof createProductCommand> & {
 export class CreateProductCommand {
   constructor(
     private readonly productsCommandsRepository: PGProductsCommandsRepository,
+    private readonly productPresentationRepository: PGProductPresentationRepository,
     private readonly categoriesCommandsRepository: PGCategoriesCommandsRepository,
+    private readonly productService: ProductService,
   ) {}
 
   public async execute(cmd: CMD) {
     const slug = slugify(cmd.name);
 
-    const [check, errorCheck] =
-      await this.productsCommandsRepository.checkUniqueFields(
-        {
-          slug,
-          barcode: cmd.barcode,
-          name: cmd.name,
-          sku: cmd.sku,
-        },
-        cmd.organizationId,
-      );
+    const [check, errorCheck] = await this.productService.checkUniqueFields(
+      {
+        slug,
+        barcode: cmd.barcode,
+        name: cmd.name,
+      },
+      cmd.organizationId,
+    );
 
     if (errorCheck) throw new ORPCError("INTERNAL_SERVER_ERROR", errorCheck);
 
@@ -115,14 +209,6 @@ export class CreateProductCommand {
         message: "Ya existe un producto con ese código de barras",
       });
 
-    // 4. SKU uniqueness (only when provided)
-    if (cmd.sku) {
-      if (check.skuTaken)
-        throw new ORPCError("CONFLICT", {
-          message: "Ya existe un producto con ese SKU",
-        });
-    }
-
     // 5. Category validation (only when provided)
     if (cmd.categoryId) {
       const [category, errorCategory] =
@@ -140,33 +226,51 @@ export class CreateProductCommand {
         });
     }
 
-    // 6. Save
-    const [data, error] = await this.productsCommandsRepository.save({
-      name: cmd.name,
-      slug,
-      organizationId: cmd.organizationId,
-      categoryId: cmd.categoryId ?? null,
-      sku: cmd.sku ?? null,
-      barcode: cmd.barcode,
-      description: cmd.description ?? null,
-      imageUrl: cmd.imageUrl ?? null,
-      priceRetail: cmd.priceRetail,
-      pricePurchase: cmd.pricePurchase,
-      priceWholesale: cmd.priceWholesale,
-      minimumStock: cmd.minimumStock ?? 0,
-      allowNegativeStock: cmd.allowNegativeStock ?? false,
-      stockQuantity: cmd.stockQuantity ?? 0,
-      createdBy: cmd.createdBy,
+    this.productsCommandsRepository.transaction(async (tx) => {
+      const [productCreated, errorCreatingProduct] =
+        await this.productsCommandsRepository.save(
+          {
+            name: cmd.name,
+            searchName: cmd.name,
+            slug,
+            organizationId: cmd.organizationId,
+            categoryId: cmd.categoryId,
+            barcode: cmd.barcode,
+            description: cmd.description,
+            minimumStock: cmd.minimumStock,
+            allowNegativeStock: cmd.allowNegativeStock,
+            stockQuantity: cmd.stockQuantity,
+            createdBy: cmd.createdBy,
+          },
+          { tx },
+        );
+
+      if (errorCreatingProduct || !productCreated)
+        throw new ORPCError(
+          "INTERNAL_SERVER_ERROR",
+          errorCreatingProduct ?? {
+            message: "Error creando producto",
+          },
+        );
+
+      const [, errorCreatingPresentation] =
+        await this.productPresentationRepository.save(
+          cmd.presentation.map((p) => ({
+            productId: productCreated.id,
+            organizationId: cmd.organizationId,
+            ...p,
+          })),
+        );
+
+      if (errorCreatingPresentation)
+        throw new ORPCError(
+          "INTERNAL_SERVER_ERROR",
+          errorCreatingPresentation ?? {
+            message: "Error creando presentación",
+          },
+        );
+
+      return productCreated;
     });
-
-    if (error || !data)
-      throw new ORPCError(
-        "INTERNAL_SERVER_ERROR",
-        error ?? {
-          message: "Error creando producto",
-        },
-      );
-
-    return data;
   }
 }

@@ -78,9 +78,9 @@ export const product = pgTable(
     notes: text("notes"),
     imageUrl: text("image_url"),
 
-    stockQuantity: integer("stock_quantity").notNull().default(0),
+    stockQuantity: integer("stock_quantity").notNull(),
 
-    minimumStock: integer("minimum_stock").notNull().default(0),
+    minimumStock: integer("minimum_stock"),
 
     allowNegativeStock: boolean("allow_negative_stock")
       .notNull()
@@ -173,9 +173,6 @@ export const productPresentation = pgTable(
       precision: 12,
       scale: 2,
     }),
-
-    // Orden en el que aparecerá en la UI
-    displayOrder: integer("display_order").notNull().default(0),
 
     status: presentationStatusEnum("status").notNull().default("active"),
 
