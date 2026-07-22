@@ -26,9 +26,7 @@ function builder(
 
         const createdCategory = await orpc.categories.commands.create.call({
           name: newCategory.name,
-          // Let null (root) survive to the API instead of collapsing to
-          // undefined; the create command schema accepts nullable.
-          parentId: newCategory.parentId,
+          description: newCategory.description,
         });
 
         collection.utils.writeInsert(createdCategory);
@@ -45,13 +43,7 @@ function builder(
         const updatedCategory = await orpc.categories.commands.update.call({
           id: originalCategory.id,
           name: modifiedCategory.name,
-          // Let null (clear parent) survive to the API instead of
-          // collapsing to undefined (preserve). The form always sends
-          // a concrete value (UUID or null), never undefined.
-          parentId: modifiedCategory.parentId,
-          // null = activate, Date = deactivate, undefined = leave as-is.
-          // Sent as the current (possibly unchanged) value so a regular
-          // edit never silently resets the category's status.
+          description: modifiedCategory.description,
           deletedAt: modifiedCategory.deletedAt,
         });
 
@@ -79,7 +71,6 @@ function builder(
   categoryCollection.createIndex((row) => row.name);
   categoryCollection.createIndex((row) => row.slug);
   categoryCollection.createIndex((row) => row.id);
-  categoryCollection.createIndex((row) => row.parentId);
 
   return categoryCollection;
 }

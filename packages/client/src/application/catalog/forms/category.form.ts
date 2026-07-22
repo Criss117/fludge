@@ -19,20 +19,6 @@ const UPDATE_CATEGORY_TOASTS = {
   error: "Error al actualizar categoría",
 } as const;
 
-/**
- * Client-side form schema — independent from the API command schema.
- * The backend generates the canonical slug from `name`, so the form
- * does NOT send `slug`. `parentId` is a string from the `<select>`;
- * `"__none__"` is the "no parent" sentinel (non-empty so Base UI
- * Select reliably fires `onValueChange`) and is normalized to `null`
- * at the schema boundary.
- *
- * NOTE: TanStack Form uses the schema for VALIDATION only — it does
- * NOT overwrite the field value with the schema's transformed output.
- * The field keeps the raw `"__none__"` / UUID string; the mutation
- * handlers below map `"__none__" => null` explicitly so `null` reaches
- * the collection / API instead of collapsing to `undefined`.
- */
 const categoryFormSchema = z.object({
   name: z
     .string({
@@ -47,10 +33,15 @@ const categoryFormSchema = z.object({
     .max(50, {
       error: "El nombre es muy largo",
     }),
-  parentId: z
+  description: z
     .string()
-    .transform((v) => (v === "__none__" ? null : v))
-    .pipe(z.uuid().nullable()),
+    .min(5, {
+      error: "La descripción es muy corta",
+    })
+    .max(255, {
+      error: "La descripción es muy larga",
+    })
+    .or(z.literal("")),
 });
 
 type CategoryFormSchema = z.infer<typeof categoryFormSchema>;
@@ -84,18 +75,12 @@ export function useCreateCategoryFormOptions({
     mutationFn: async (value: CategoryFormSchema) => {
       const now = new Date();
 
-      // The slug is computed locally for the optimistic row only.
-      // The server returns the authoritative category (with its own
-      // slug) and replaces this row via `collection.utils.writeInsert`.
       const tx = categoryCollection.insert({
         id: crypto.randomUUID(),
         organizationId: organizationId,
         name: value.name,
         slug: slugify(value.name),
-        // TanStack Form keeps the raw sentinel string; map it to null
-        // here so the collection draft carries "clear parent" intent.
-        parentId:
-          value.parentId === "__none__" ? null : value.parentId ?? null,
+        description: value.description,
         createdAt: now,
         updatedAt: now,
         createdBy: null,
@@ -120,7 +105,7 @@ export function useCreateCategoryFormOptions({
   return formOptions({
     defaultValues: {
       name: "",
-      parentId: "__none__",
+      description: "",
     },
     validators: {
       onChange: categoryFormSchema,
@@ -149,14 +134,13 @@ export function useUpdateCategoryFormOptions({
     mutationFn: async (value: CategoryFormSchema) => {
       const now = new Date();
 
-      const tx = categoryCollection.update(defaultValues.categoryId, (draft) => {
-        draft.name = value.name;
-        // Map the "__none__" sentinel to null so the collection / API
-        // can distinguish "clear parent" (null) from a UUID move.
-        draft.parentId =
-          value.parentId === "__none__" ? null : value.parentId ?? null;
-        draft.updatedAt = now;
-      });
+      const tx = categoryCollection.update(
+        defaultValues.categoryId,
+        (draft) => {
+          draft.name = value.name;
+          draft.updatedAt = now;
+        },
+      );
 
       await tx.isPersisted.promise;
     },
@@ -178,7 +162,7 @@ export function useUpdateCategoryFormOptions({
   return formOptions({
     defaultValues: {
       name: defaultValues.name,
-      parentId: defaultValues.parentId ?? "__none__",
+      description: defaultValues.description,
     },
     validators: {
       onChange: categoryFormSchema,

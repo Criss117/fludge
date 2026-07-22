@@ -15,15 +15,19 @@ export const createCategoryCommand = z.object({
     .max(50, {
       error: "El nombre es muy largo",
     }),
-  description: z
-    .string()
-    .min(5, {
-      error: "La descripción es muy corta",
-    })
-    .max(255, {
-      error: "La descripción es muy larga",
-    })
-    .optional(),
+
+  description: z.preprocess(
+    (val) => (val === "" ? null : val),
+    z
+      .string()
+      .min(5, {
+        error: "La descripción es muy corta",
+      })
+      .max(255, {
+        error: "La descripción es muy larga",
+      })
+      .nullable(),
+  ),
 });
 
 type CMD = z.infer<typeof createCategoryCommand> & {
@@ -74,6 +78,7 @@ export class CreateCategoryCommand {
     // 4. Save
     const [data, error] = await this.categoriesCommandsRepository.save({
       name: cmd.name,
+      description: cmd.description,
       slug,
       organizationId: cmd.organizationId,
       createdBy: cmd.createdBy?.memberId,
