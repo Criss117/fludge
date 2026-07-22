@@ -197,3 +197,9 @@ export const organizationMetadata = {
       onDelete: "cascade",
     }),
 };
+
+export const createdByMetadata = {
+  createdBy: text("created_by").references(() => member.id, {
+    onDelete: "set null",
+  }),
+};

@@ -15,11 +15,14 @@ export const createCategoryCommand = z.object({
     .max(50, {
       error: "El nombre es muy largo",
     }),
-  parentId: z
-    .uuid({
-      error: "El id de la categoría padre no es válido",
+  description: z
+    .string()
+    .min(5, {
+      error: "La descripción es muy corta",
     })
-    .nullable()
+    .max(255, {
+      error: "La descripción es muy larga",
+    })
     .optional(),
 });
 
@@ -57,7 +60,6 @@ export class CreateCategoryCommand {
     const [nameExists, errorNameExists] =
       await this.categoriesCommandsRepository.exists(
         cmd.name,
-        cmd.parentId ?? null,
         cmd.organizationId,
       );
 
@@ -69,40 +71,11 @@ export class CreateCategoryCommand {
         message: "Ya existe una categoría con ese nombre",
       });
 
-    // 3. Parent validation (if provided)
-    if (cmd.parentId) {
-      const [parent, errorParent] =
-        await this.categoriesCommandsRepository.findActiveOne(
-          cmd.parentId,
-          cmd.organizationId,
-        );
-
-      if (errorParent)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", errorParent);
-
-      if (!parent)
-        throw new ORPCError("NOT_FOUND", {
-          message: "La categoría padre no existe",
-        });
-
-      const [depth, errorDepth] =
-        await this.categoriesCommandsRepository.parentDepth(cmd.parentId);
-
-      if (errorDepth) throw new ORPCError("INTERNAL_SERVER_ERROR", errorDepth);
-
-      if (depth > 1)
-        throw new ORPCError("BAD_REQUEST", {
-          message:
-            "No se puede crear una categoría de nivel 3, el máximo permitido es 2",
-        });
-    }
-
     // 4. Save
     const [data, error] = await this.categoriesCommandsRepository.save({
       name: cmd.name,
       slug,
       organizationId: cmd.organizationId,
-      parentId: cmd.parentId ?? null,
       createdBy: cmd.createdBy?.memberId,
     });
 

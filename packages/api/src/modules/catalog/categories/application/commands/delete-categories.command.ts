@@ -25,53 +25,13 @@ export class HardDeleteCategoriesCommand {
   ) {}
 
   public async execute(cmd: DeleteCMD) {
-    return this.categoriesCommandsRepository.transaction(async (tx) => {
-      let deletedCount = 0;
+    const [, error] = await this.categoriesCommandsRepository.hardDelete(
+      cmd.ids,
+      cmd.organizationId,
+    );
 
-      for (const id of cmd.ids) {
-        // Pre-check: fetch category to get its name for potential error message
-        const [cat, catError] =
-          await this.categoriesCommandsRepository.findOne(
-            id,
-            cmd.organizationId,
-          );
+    if (error) throw new ORPCError("INTERNAL_SERVER_ERROR", error);
 
-        if (catError)
-          throw new ORPCError("INTERNAL_SERVER_ERROR", catError);
-
-        if (!cat) {
-          // Category not found or already hard-deleted — skip silently
-          continue;
-        }
-
-        // Orphan guard: reject if this category has active children
-        const [childCount, childrenError] =
-          await this.categoriesCommandsRepository.hasActiveChildren(
-            id,
-            cmd.organizationId,
-            { tx },
-          );
-
-        if (childrenError)
-          throw new ORPCError("INTERNAL_SERVER_ERROR", childrenError);
-
-        if (childCount > 0)
-          throw new ORPCError("BAD_REQUEST", {
-            message: `No se puede eliminar la categoría "${cat.name}" porque tiene ${childCount} subcategoría(s) activa(s). Elimina primero las subcategorías.`,
-          });
-
-        const [, error] = await this.categoriesCommandsRepository.hardDelete(
-          id,
-          cmd.organizationId,
-          { tx },
-        );
-
-        if (error) throw new ORPCError("INTERNAL_SERVER_ERROR", error);
-
-        deletedCount++;
-      }
-
-      return deletedCount;
-    });
+    return null;
   }
 }

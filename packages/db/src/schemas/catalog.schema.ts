@@ -11,7 +11,11 @@ import {
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { auditMetadata } from "./shared";
-import { organization, organizationMetadata } from "./auth.schema";
+import {
+  createdByMetadata,
+  organization,
+  organizationMetadata,
+} from "./auth.schema";
 import {
   inventoryMovementReasonEnum,
   movementReferenceTypeEnum,
@@ -30,6 +34,7 @@ export const category = pgTable(
 
     description: text("description"),
 
+    ...createdByMetadata,
     ...organizationMetadata,
     ...auditMetadata,
   },
@@ -85,6 +90,7 @@ export const product = pgTable(
 
     deletedReason: text("deleted_reason"),
 
+    ...createdByMetadata,
     ...auditMetadata,
   },
   (t) => [
@@ -175,6 +181,7 @@ export const productPresentation = pgTable(
 
     deletedReason: text("deleted_reason"),
 
+    ...createdByMetadata,
     ...organizationMetadata,
     ...auditMetadata,
   },
@@ -254,6 +261,7 @@ export const inventoryMovement = pgTable(
 
     notes: text("notes"),
 
+    ...createdByMetadata,
     ...organizationMetadata,
     createdAt: auditMetadata.createdAt,
   },
@@ -296,3 +304,15 @@ export const inventoryMovement = pgTable(
     ),
   ],
 );
+
+export type CategoryInsert = typeof category.$inferInsert;
+export type CategorySelect = typeof category.$inferSelect;
+
+export type ProductInsert = typeof product.$inferInsert;
+export type ProductSelect = typeof product.$inferSelect;
+
+export type ProductPresentationInsert = typeof productPresentation.$inferInsert;
+export type ProductPresentationSelect = typeof productPresentation.$inferSelect;
+
+export type InventoryMovementInsert = typeof inventoryMovement.$inferInsert;
+export type InventoryMovementSelect = typeof inventoryMovement.$inferSelect;

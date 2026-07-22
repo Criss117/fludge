@@ -8,7 +8,12 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { auditMetadata } from "./shared";
-import { member, organization, organizationMetadata } from "./auth.schema";
+import {
+  createdByMetadata,
+  member,
+  organization,
+  organizationMetadata,
+} from "./auth.schema";
 import { actionEnum, permissionEnum } from "./enums.schema";
 
 export const organizationHistory = pgTable("organization_history", {
@@ -37,10 +42,7 @@ export const group = pgTable(
     description: text("description"),
     permissions: permissionEnum("permissions").array().notNull(),
 
-    createdBy: text("created_by").references(() => member.id, {
-      onDelete: "set null",
-    }),
-
+    ...createdByMetadata,
     ...organizationMetadata,
     ...auditMetadata,
   },
@@ -69,10 +71,7 @@ export const groupHistory = pgTable(
     before: jsonb("before").$type<typeof group.$inferSelect>(),
     after: jsonb("after").$type<typeof group.$inferSelect>(),
 
-    actorId: text("actor_id").references(() => member.id, {
-      onDelete: "set null",
-    }),
-
+    ...createdByMetadata,
     createdAt: auditMetadata.createdAt,
   },
   (t) => [index("group_history_group_id_idx").on(t.groupId)],
@@ -92,10 +91,7 @@ export const groupMember = pgTable(
         onDelete: "cascade",
       }),
 
-    assignedBy: text("assigned_by").references(() => member.id, {
-      onDelete: "set null",
-    }),
-
+    ...createdByMetadata,
     createdAt: auditMetadata.createdAt,
     updatedAt: auditMetadata.updatedAt,
   },
