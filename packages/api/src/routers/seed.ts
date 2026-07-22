@@ -2,6 +2,7 @@ import { dbConnection } from "@fludge/db";
 import { publicProcedure } from "..";
 import { authContainer } from "../modules/iam/auth/container";
 import { faker } from "@faker-js/faker/locale/es_MX";
+import type { Faker } from "@faker-js/faker";
 import {
   account,
   member,
@@ -11,10 +12,19 @@ import {
 } from "@fludge/db/schemas/auth.schema";
 import { slugify } from "@fludge/utils/slugify";
 import { group, groupMember } from "@fludge/db/schemas/iam.schema";
+import {
+  category,
+  inventoryMovement,
+  product,
+  supplier,
+  supplierProduct,
+} from "@fludge/db/schemas/catalog.schema";
 import { membersContainer } from "../modules/iam/members/container";
 import { groupsContainer } from "../modules/iam/groups/container";
 import { ALL_PERMISSIONS } from "@fludge/utils/permissions/index";
 import { groupMembersContainer } from "../modules/iam/group-members/container";
+import { categoriesContainer } from "../modules/catalog/categories/container";
+import { productsContainer } from "../modules/catalog/products/container";
 
 async function clearUsers() {
   await dbConnection.delete(session);
@@ -23,6 +33,16 @@ async function clearUsers() {
 }
 
 async function clearOrganizations() {
+  // Catalog tables — children first, respecting FK dependencies.
+  // supplierProduct → supplier (cascade from supplier)
+  // inventoryMovement RESTRICT on product — must clear before product
+  // product → category (set null), category → organization (cascade)
+  await dbConnection.delete(supplierProduct);
+  await dbConnection.delete(supplier);
+  await dbConnection.delete(inventoryMovement);
+  await dbConnection.delete(product);
+  await dbConnection.delete(category);
+
   await dbConnection.delete(groupMember);
   await dbConnection.delete(group);
   await dbConnection.delete(member);
@@ -182,6 +202,148 @@ async function seedGroupMembers(
   return Promise.all(promises);
 }
 
+function generateUniqueName(
+  faker: Faker,
+  used: Set<string>,
+  generator: () => string,
+  maxAttempts = 5,
+): string {
+  for (let i = 0; i < maxAttempts; i++) {
+    const name = generator();
+    if (!used.has(name)) {
+      used.add(name);
+      return name;
+    }
+  }
+  // Guaranteed-unique fallback: append a discriminator so seeding never
+  // fails on faker collisions within an org/parent scope.
+  const unique = `${generator()} ${faker.string.alphanumeric(3)}`.slice(0, 50);
+  used.add(unique);
+  return unique;
+}
+
+async function seedCategories(
+  rootMembers: Array<{ id: string; organizationId: string }>,
+  faker: Faker,
+): Promise<Map<string, { roots: any[]; subs: any[] }>> {
+  const orgCategories = new Map<string, { roots: any[]; subs: any[] }>();
+
+  for (const rootMember of rootMembers) {
+    const { organizationId } = rootMember;
+    const roots: any[] = [];
+    const subs: any[] = [];
+    const usedRootNames = new Set<string>();
+
+    // 6 root categories — names unique within the org (parentId = null scope).
+    const rootPromises = Array.from({ length: 6 }).map(() => {
+      const name = generateUniqueName(faker, usedRootNames, () =>
+        faker.commerce.department(),
+      );
+      return categoriesContainer.commands.create.execute({
+        name,
+        organizationId,
+        createdBy: { memberId: rootMember.id },
+      });
+    });
+
+    const createdRoots = await Promise.all(rootPromises);
+    roots.push(...createdRoots);
+
+    // 3 subcategories per root — names unique within each parent scope.
+    const subPromises = createdRoots.flatMap((root) => {
+      const usedSubNames = new Set<string>();
+      return Array.from({ length: 3 }).map(() => {
+        const name = generateUniqueName(faker, usedSubNames, () =>
+          faker.commerce.productName(),
+        );
+        return categoriesContainer.commands.create.execute({
+          name,
+          parentId: root.id,
+          organizationId,
+          createdBy: { memberId: rootMember.id },
+        });
+      });
+    });
+
+    const createdSubs = await Promise.all(subPromises);
+    subs.push(...createdSubs);
+
+    orgCategories.set(organizationId, { roots, subs });
+  }
+
+  return orgCategories;
+}
+
+function generatePrices(faker: Faker) {
+  const purchase = faker.number.float({ min: 10, max: 500, fractionDigits: 2 });
+  return {
+    pricePurchase: purchase.toFixed(2),
+    priceRetail: (purchase * 1.4).toFixed(2),
+    priceWholesale: (purchase * 1.2).toFixed(2),
+  };
+}
+
+async function seedProducts(
+  orgCategories: Map<string, { roots: any[]; subs: any[] }>,
+  rootMembers: Array<{ id: string; organizationId: string }>,
+  faker: Faker,
+): Promise<void> {
+  for (const rootMember of rootMembers) {
+    const { organizationId } = rootMember;
+    const { subs } = orgCategories.get(organizationId)!;
+    const usedBarcodes = new Set<string>();
+
+    // ~5 products per subcategory, fanned out in parallel per org.
+    const promises = subs.flatMap((sub, index) =>
+      Array.from({ length: 5 }).map(() => {
+        let barcode = "";
+        for (let i = 0; i < 5; i++) {
+          const candidate = faker.string.numeric({
+            length: 13,
+            allowLeadingZeros: false,
+          });
+          if (!usedBarcodes.has(candidate)) {
+            usedBarcodes.add(candidate);
+            barcode = candidate;
+            break;
+          }
+        }
+        // Fallback if retry budget exhausted — append a discriminator.
+        if (!barcode) {
+          barcode =
+            `${faker.string.numeric({ length: 10, allowLeadingZeros: false })}${faker.string.alphanumeric({ length: 3 })}`.slice(
+              0,
+              13,
+            );
+          usedBarcodes.add(barcode);
+        }
+
+        const { pricePurchase, priceRetail, priceWholesale } =
+          generatePrices(faker);
+
+        return productsContainer.commands.create.execute({
+          name: faker.commerce.productName() + " " + index,
+          description: faker.commerce.productDescription().slice(0, 500),
+          categoryId: sub.id,
+          barcode,
+          stockQuantity: faker.number.int({ min: 0, max: 200 }),
+          minimumStock: faker.number.int({ min: 0, max: 20 }),
+          allowNegativeStock: false,
+          pricePurchase,
+          priceRetail,
+          priceWholesale,
+          organizationId,
+          // Products take the root member id as a plain string,
+          // unlike categories which take { memberId }.
+          createdBy: rootMember.id,
+        });
+      }),
+    );
+
+    await Promise.all(promises);
+  }
+}
+
 export const seedRouter = {
   clear: publicProcedure
     .route({
@@ -263,12 +425,16 @@ export const seedRouter = {
 
       await seedGroupMembers(data);
 
+      const orgCategories = await seedCategories(rootMembers, faker);
+      await seedProducts(orgCategories, rootMembers, faker);
+
       return {
         rootUsers,
         rootMembers,
         members,
         groups,
         data,
+        orgCategories,
       };
     }),
 };

@@ -65,7 +65,7 @@
         "@fludge/config": "workspace:*",
         "@types/node": "25.9.1",
         "@types/react": "catalog:",
-        "typescript": "npm:typescript@6.0.3",
+        "typescript": "catalog:",
       },
     },
     "apps/server": {
@@ -191,6 +191,7 @@
         "@tanstack/react-query": "catalog:",
         "@tanstack/react-table": "catalog:",
         "better-auth": "catalog:",
+        "date-fns": "catalog:",
         "lucide-react": "catalog:",
         "react": "catalog:",
         "zod": "catalog:",
@@ -3106,8 +3107,6 @@
     "native/tailwind-merge": ["tailwind-merge@3.6.0", "", {}, "sha512-uxL7qAVQriqRQPAyK3pj66VqskWqoZ37PW94jwOTwNfq/z9oyu1V+eqrZqtR2+fCiXdYOZe/Modt8GtvqNzu+w=="],
 
     "native/tailwindcss": ["tailwindcss@4.3.0", "", {}, "sha512-y6nxMGB1nMW9R6k96e5gdIFzcfL/gTJRNaqGes1YvkLnPVXzWgbqFF2yLC0T8G774n24cx3Pe8XrKoniCOAH+Q=="],
-
-    "native/typescript": ["typescript@6.0.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw=="],
 
     "npm-run-path/path-key": ["path-key@4.0.0", "", {}, "sha512-haREypq7xkM7ErfgIyA0z+Bj4AGKlMSdlQE2jvJo6huWD1EdkKYV+G/T4nq0YEF2vgTT8kqMFKo1uHn950r4SQ=="],
 

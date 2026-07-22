@@ -29,7 +29,8 @@
     "better-auth": "catalog:",
     "react": "catalog:",
     "zod": "catalog:",
-    "lucide-react": "catalog:"
+    "lucide-react": "catalog:",
+    "date-fns": "catalog:"
   },
   "devDependencies": {
     "@fludge/config": "workspace:*",

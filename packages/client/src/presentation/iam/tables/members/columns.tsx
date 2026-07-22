@@ -1,5 +1,7 @@
 import type { MemberSummary } from "@fludge/client/application/iam/hooks/use-find-members";
 import { createColumnHelper } from "@tanstack/react-table";
+import { formatDistance } from "date-fns";
+import { es } from "date-fns/locale/es";
 
 const columnHelper = createColumnHelper<MemberSummary>();
 
@@ -27,8 +29,12 @@ export function membersTableColumns<TNode>(
       cell: (info) => slots.groupsAssigned(info.row.original.groups),
     }),
     columnHelper.accessor((row) => row.createdAt, {
-      header: "Ingresado el",
-      cell: (info) => info.getValue().toLocaleDateString(),
+      header: "Ingresado",
+      cell: (info) =>
+        formatDistance(info.getValue(), new Date(), {
+          locale: es,
+          addSuffix: true,
+        }),
     }),
     columnHelper.display({
       id: "actions",

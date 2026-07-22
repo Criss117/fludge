@@ -1,4 +1,6 @@
 import { createColumnHelper } from "@tanstack/react-table";
+import { formatDistance } from "date-fns";
+import { es } from "date-fns/locale/es";
 
 import type { ProductSummary } from "@fludge/client/application/catalog/hooks/use-find-products";
 import { formatPrice } from "@fludge/utils/currency";
@@ -21,14 +23,6 @@ export function productsTableColumns<TNode>(
     columnHelper.accessor((row) => row.name, {
       header: "Nombre",
       cell: (info) => slots.nameCell?.(info.row.original) ?? info.getValue(),
-    }),
-    columnHelper.accessor((row) => row.slug, {
-      header: "Slug",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor((row) => row.sku, {
-      header: "SKU",
-      cell: (info) => info.getValue() ?? "-",
     }),
     columnHelper.accessor((row) => row.barcode, {
       header: "Código de Barras",
@@ -62,16 +56,13 @@ export function productsTableColumns<TNode>(
         info.row.original.category?.name ??
         "-",
     }),
-    columnHelper.accessor((row) => row.createdBy, {
-      header: "Creado Por",
-      cell: (info) =>
-        slots.createdByCell?.(info.row.original) ??
-        info.row.original.createdBy?.user.name ??
-        "-",
-    }),
     columnHelper.accessor((row) => row.updatedAt, {
       header: "Última Actualización",
-      cell: (info) => info.getValue().toLocaleDateString(),
+      cell: (info) =>
+        formatDistance(info.getValue(), new Date(), {
+          locale: es,
+          addSuffix: true,
+        }),
     }),
     columnHelper.display({
       id: "actions",
