@@ -189,3 +189,11 @@ export const invitationRelations = relations(invitation, ({ one }) => ({
     references: [user.id],
   }),
 }));
+
+export const organizationMetadata = {
+  organizationId: text("organization_id")
+    .notNull()
+    .references(() => organization.id, {
+      onDelete: "cascade",
+    }),
+};

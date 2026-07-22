@@ -7,17 +7,12 @@ import {
   unique,
   uuid,
 } from "drizzle-orm/pg-core";
-import { auditMetadata } from "./audit-metadata";
-import { member, organization } from "./auth.schema";
-import { actionEnum, permissionEnum } from "./shared.schema";
+import { auditMetadata } from "./shared";
+import { member, organization, organizationMetadata } from "./auth.schema";
+import { actionEnum, permissionEnum } from "./enums.schema";
 
 export const organizationHistory = pgTable("organization_history", {
   id: uuid("id").primaryKey().defaultRandom(),
-  organizationId: text("organization_id")
-    .notNull()
-    .references(() => organization.id, {
-      onDelete: "cascade",
-    }),
 
   action: actionEnum("action").notNull(),
   description: text("description"),
@@ -30,17 +25,13 @@ export const organizationHistory = pgTable("organization_history", {
   }),
 
   createdAt: auditMetadata.createdAt,
+  ...organizationMetadata,
 });
 
 export const group = pgTable(
   "group",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    organizationId: text("organization_id")
-      .notNull()
-      .references(() => organization.id, {
-        onDelete: "cascade",
-      }),
     name: text("name").notNull(),
     slug: text("slug").notNull(),
     description: text("description"),
@@ -50,6 +41,7 @@ export const group = pgTable(
       onDelete: "set null",
     }),
 
+    ...organizationMetadata,
     ...auditMetadata,
   },
   (t) => [
