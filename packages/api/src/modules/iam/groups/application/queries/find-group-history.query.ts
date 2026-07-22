@@ -2,7 +2,7 @@ import { z } from "zod";
 import { and, desc, eq, getTableColumns } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
 
-import type { DbConnection } from "@fludge/db";
+import type { DBConnection } from "@fludge/db";
 import { group, groupHistory } from "@fludge/db/schemas/iam.schema";
 import { member, user } from "@fludge/db/schemas/auth.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
@@ -18,7 +18,7 @@ type Query = z.infer<typeof findGroupHistoryQuery> & {
 };
 
 export class FindGroupHistoryQuery {
-  constructor(private readonly db: DbConnection) {}
+  constructor(private readonly db: DBConnection) {}
 
   public async execute({ groupId, organizationId }: Query) {
     const [data, error] = await tryCatch(
@@ -29,7 +29,7 @@ export class FindGroupHistoryQuery {
         })
         .from(groupHistory)
         .innerJoin(group, eq(group.id, groupHistory.groupId))
-        .leftJoin(member, eq(member.id, groupHistory.actorId))
+        .leftJoin(member, eq(member.id, groupHistory.createdBy))
         .leftJoin(user, eq(user.id, member.userId))
         .where(
           and(

@@ -2,13 +2,14 @@ import { z } from "zod";
 
 import type { EventBus } from "@fludge/api/modules/shared/domain/event-bus";
 import type { OrganizationRegisteredEvent } from "@fludge/api/modules/shared/domain/events";
-import type { PGGroupsCommandsRepository } from "@fludge/api/modules/iam/groups/infrastructure/repositories/pg-groups-commands.repository";
+import type { PGGroupRepository } from "@fludge/api/modules/iam/groups/infrastructure/repositories/pg-group.repository";
 import { ORPCError } from "@orpc/client";
 import { slugify } from "@fludge/utils/slugify";
 import {
   ALL_PERMISSIONS,
   preparePermissions,
 } from "@fludge/utils/permissions/index";
+import type { GroupsChecksService } from "@fludge/api/modules/iam/groups/application/services/groups-checks.service";
 
 export const createGroupCommand = z.object({
   name: z
@@ -37,41 +38,36 @@ type CMD = z.infer<typeof createGroupCommand> & {
 export class CreateGroupCommand {
   constructor(
     private readonly eventBus: EventBus,
-    private readonly groupsCommandsRepository: PGGroupsCommandsRepository,
+    private readonly groupRepository: PGGroupRepository,
+    private readonly groupsChecksService: GroupsChecksService,
   ) {
     this.registerListeners();
   }
 
   public async execute(cmd: CMD) {
-    const [slugAvailable, errorSlugAvailable] =
-      await this.groupsCommandsRepository.slugAvailable(
-        slugify(cmd.name),
+    const [fieldCheck, errorFieldCheck] =
+      await this.groupsChecksService.checkUniqueFields(
+        {
+          slug: slugify(cmd.name),
+          name: cmd.name,
+        },
         cmd.organizationId,
       );
 
-    if (errorSlugAvailable)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", errorSlugAvailable);
+    if (errorFieldCheck)
+      throw new ORPCError("INTERNAL_SERVER_ERROR", errorFieldCheck);
 
-    if (!slugAvailable)
+    if (!fieldCheck.slugTaken)
       throw new ORPCError("CONFLICT", {
         message: "El slug del grupo ya esta en uso",
       });
 
-    const [nameAvailable, errorNameAvailable] =
-      await this.groupsCommandsRepository.nameAvailable(
-        cmd.name,
-        cmd.organizationId,
-      );
-
-    if (errorNameAvailable)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", errorNameAvailable);
-
-    if (!nameAvailable)
+    if (!fieldCheck.nameTaken)
       throw new ORPCError("CONFLICT", {
         message: "El nombre del grupo ya esta en uso",
       });
 
-    const [data, error] = await this.groupsCommandsRepository.save({
+    const [data, error] = await this.groupRepository.save({
       name: cmd.name,
       slug: slugify(cmd.name),
       organizationId: cmd.organizationId,

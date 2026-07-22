@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { PGGroupsCommandsRepository } from "@fludge/api/modules/iam/groups/infrastructure/repositories/pg-groups-commands.repository";
+import type { PGGroupRepository } from "@fludge/api/modules/iam/groups/infrastructure/repositories/pg-group.repository";
 import { ORPCError } from "@orpc/client";
 
 export const deleteGroupsCommand = z.object({
@@ -19,12 +19,10 @@ type CDM = z.infer<typeof deleteGroupsCommand> & {
 };
 
 export class DeleteGroupsCommand {
-  constructor(
-    private readonly groupsCommandsRepository: PGGroupsCommandsRepository,
-  ) {}
+  constructor(private readonly groupRepository: PGGroupRepository) {}
 
   public async execute(cmd: CDM) {
-    const [, errorDelete] = await this.groupsCommandsRepository.hardDelete(
+    const [, errorDelete] = await this.groupRepository.hardDelete(
       cmd.organizationId,
       cmd.groupIds,
     );

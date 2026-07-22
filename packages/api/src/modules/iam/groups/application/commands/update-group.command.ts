@@ -3,8 +3,10 @@ import { ORPCError } from "@orpc/client";
 
 import { slugify } from "@fludge/utils/slugify";
 import { preparePermissions } from "@fludge/utils/permissions/index";
-import type { PGGroupsCommandsRepository } from "@fludge/api/modules/iam/groups/infrastructure/repositories/pg-groups-commands.repository";
+import type { PGGroupRepository } from "@fludge/api/modules/iam/groups/infrastructure/repositories/pg-group.repository";
 import { createGroupCommand } from "@fludge/api/modules/iam/groups/application/commands/create-group.command";
+import type { GroupsChecksService } from "@fludge/api/modules/iam/groups/application/services/groups-checks.service";
+import type { PGGroupHistoryRepository } from "@fludge/api/modules/iam/groups/infrastructure/repositories/pg-group-history.respository";
 
 export const updateGroupCommand = createGroupCommand.extend({
   groupId: z.uuid({
@@ -25,15 +27,16 @@ type CMD = z.infer<typeof updateGroupCommand> & {
 
 export class UpdateGroupCommand {
   constructor(
-    private readonly groupsCommandsRepository: PGGroupsCommandsRepository,
+    private readonly groupRepository: PGGroupRepository,
+    private readonly groupHistoryRepository: PGGroupHistoryRepository,
+    private readonly groupsChecksService: GroupsChecksService,
   ) {}
 
   public async execute(cmd: CMD) {
-    const [existingGroup, errorExists] =
-      await this.groupsCommandsRepository.findOne(
-        cmd.organizationId,
-        cmd.groupId,
-      );
+    const [existingGroup, errorExists] = await this.groupRepository.findOne(
+      cmd.organizationId,
+      cmd.groupId,
+    );
 
     if (errorExists) throw new ORPCError("INTERNAL_SERVER_ERROR", errorExists);
 
@@ -43,38 +46,32 @@ export class UpdateGroupCommand {
       });
 
     if (existingGroup.name !== cmd.name) {
-      const [slugAvailable, errorSlugAvailable] =
-        await this.groupsCommandsRepository.slugAvailable(
-          slugify(cmd.name),
-          cmd.organizationId,
-        );
-
-      if (errorSlugAvailable)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", errorSlugAvailable);
-
-      if (!slugAvailable)
-        throw new ORPCError("CONFLICT", {
-          message: "El nombre del grupo ya esta en uso",
-        });
-
-      const [nameAvailable, errorNameAvailable] =
-        await this.groupsCommandsRepository.nameAvailable(
-          cmd.name,
+      const [fieldCheck, errorFieldCheck] =
+        await this.groupsChecksService.checkUniqueFields(
+          {
+            slug: slugify(cmd.name),
+            name: cmd.name,
+          },
           cmd.organizationId,
           cmd.groupId,
         );
 
-      if (errorNameAvailable)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", errorNameAvailable);
+      if (errorFieldCheck)
+        throw new ORPCError("INTERNAL_SERVER_ERROR", errorFieldCheck);
 
-      if (!nameAvailable)
+      if (!fieldCheck.slugTaken)
+        throw new ORPCError("CONFLICT", {
+          message: "El slug del grupo ya esta en uso",
+        });
+
+      if (!fieldCheck.nameTaken)
         throw new ORPCError("CONFLICT", {
           message: "El nombre del grupo ya esta en uso",
         });
     }
 
-    return this.groupsCommandsRepository.transaction(async (tx) => {
-      const [updatedGroup, error] = await this.groupsCommandsRepository.save(
+    return this.groupRepository.transaction(async (tx) => {
+      const [updatedGroup, error] = await this.groupRepository.save(
         {
           id: cmd.groupId,
           name: cmd.name,
@@ -97,20 +94,19 @@ export class UpdateGroupCommand {
           },
         );
 
-      const [history, errorHistory] =
-        await this.groupsCommandsRepository.saveHistory(
-          {
-            groupId: cmd.groupId,
-            action: "update",
-            description: `{user.name} actualizo el grupo con id ${cmd.groupId}`,
-            before: existingGroup,
-            after: updatedGroup,
-            actorId: cmd.updatedBy.memberId,
-          },
-          {
-            tx,
-          },
-        );
+      const [history, errorHistory] = await this.groupHistoryRepository.save(
+        {
+          groupId: cmd.groupId,
+          action: "update",
+          description: `{user.name} actualizo el grupo con id ${cmd.groupId}`,
+          before: existingGroup,
+          after: updatedGroup,
+          createdBy: cmd.updatedBy.memberId,
+        },
+        {
+          tx,
+        },
+      );
 
       if (errorHistory || !history)
         throw new ORPCError(

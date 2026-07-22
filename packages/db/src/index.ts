@@ -1,5 +1,9 @@
 import { env } from "@fludge/env/server";
-import { drizzle, type NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
+import {
+  drizzle,
+  type NodePgDatabase,
+  type NodePgQueryResultHKT,
+} from "drizzle-orm/node-postgres";
 
 import * as schema from "./schemas";
 import type { PgTable, PgTransaction } from "drizzle-orm/pg-core";
@@ -9,14 +13,17 @@ import {
   sql,
   type ExtractTablesWithRelations,
 } from "drizzle-orm";
+import type { Pool } from "pg";
 
-export function createDb() {
+export function createDb(): NodePgDatabase<typeof schema> & {
+  $client: Pool;
+} {
   return drizzle(env.DATABASE_URL, { schema });
 }
 
 export const dbConnection = createDb();
 
-export type DbConnection = Awaited<ReturnType<typeof createDb>>;
+export type DBConnection = Awaited<ReturnType<typeof createDb>>;
 
 export type TXConnection = PgTransaction<
   NodePgQueryResultHKT,

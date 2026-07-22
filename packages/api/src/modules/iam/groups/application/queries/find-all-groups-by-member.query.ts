@@ -1,7 +1,7 @@
 import { ORPCError } from "@orpc/client";
 import { and, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
 
-import type { DbConnection } from "@fludge/db";
+import type { DBConnection } from "@fludge/db";
 import { group, groupMember } from "@fludge/db/schemas/iam.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 
@@ -13,7 +13,7 @@ type Query = {
 };
 
 export class FindAllGroupsByMemberQuery {
-  constructor(public readonly db: DbConnection) {}
+  constructor(public readonly db: DBConnection) {}
 
   public async execute(query: Query) {
     const where: SQL[] = [eq(groupMember.memberId, query.memberId)];

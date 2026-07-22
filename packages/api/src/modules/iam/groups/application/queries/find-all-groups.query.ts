@@ -1,7 +1,7 @@
 import { desc, eq } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
 
-import type { DbConnection } from "@fludge/db";
+import type { DBConnection } from "@fludge/db";
 import { group } from "@fludge/db/schemas/iam.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 
@@ -10,7 +10,7 @@ type Query = {
 };
 
 export class FindAllGroupsQuery {
-  constructor(private readonly db: DbConnection) {}
+  constructor(private readonly db: DBConnection) {}
 
   public async execute(query: Query) {
     const [data, error] = await tryCatch(
