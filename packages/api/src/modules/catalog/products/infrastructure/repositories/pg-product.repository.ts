@@ -4,7 +4,7 @@ import {
   TransactionalRepository,
   type TransactionalOptions,
 } from "@fludge/api/modules/shared/repositories/transactional-repository";
-import type { DbConnection } from "@fludge/db";
+import type { DBConnection } from "@fludge/db";
 import {
   product,
   inventoryMovement,
@@ -30,8 +30,8 @@ export type ProductUpdatable = Partial<
   >
 >;
 
-export class PGProductsCommandsRepository extends TransactionalRepository {
-  constructor(private readonly db: DbConnection) {
+export class PGProductRepository extends TransactionalRepository {
+  constructor(private readonly db: DBConnection) {
     super(db);
   }
 

@@ -2,8 +2,8 @@ import { z } from "zod";
 import { ORPCError } from "@orpc/client";
 
 import { slugify } from "@fludge/utils/slugify";
-import type { PGProductsCommandsRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/pg-products-commands.repository";
-import type { PGCategoriesCommandsRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/pg-categories-commands.repository";
+import type { PGProductRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/pg-product.repository";
+import type { PGCategoryRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/pg-category.repository";
 import type { ProductService } from "@fludge/api/modules/catalog/products/application/services/product.service";
 import type { PGProductPresentationRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/pg-product-presentation.repository";
 
@@ -174,9 +174,9 @@ type CMD = z.infer<typeof createProductCommand> & {
 
 export class CreateProductCommand {
   constructor(
-    private readonly productsCommandsRepository: PGProductsCommandsRepository,
+    private readonly productRepository: PGProductRepository,
     private readonly productPresentationRepository: PGProductPresentationRepository,
-    private readonly categoriesCommandsRepository: PGCategoriesCommandsRepository,
+    private readonly categoryRepository: PGCategoryRepository,
     private readonly productService: ProductService,
   ) {}
 
@@ -211,11 +211,10 @@ export class CreateProductCommand {
 
     // 5. Category validation (only when provided)
     if (cmd.categoryId) {
-      const [category, errorCategory] =
-        await this.categoriesCommandsRepository.findOne(
-          cmd.categoryId,
-          cmd.organizationId,
-        );
+      const [category, errorCategory] = await this.categoryRepository.findOne(
+        cmd.categoryId,
+        cmd.organizationId,
+      );
 
       if (errorCategory)
         throw new ORPCError("INTERNAL_SERVER_ERROR", errorCategory);
@@ -226,9 +225,9 @@ export class CreateProductCommand {
         });
     }
 
-    this.productsCommandsRepository.transaction(async (tx) => {
+    this.productRepository.transaction(async (tx) => {
       const [productCreated, errorCreatingProduct] =
-        await this.productsCommandsRepository.save(
+        await this.productRepository.save(
           {
             name: cmd.name,
             searchName: cmd.name,

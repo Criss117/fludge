@@ -2,7 +2,7 @@ import { z } from "zod";
 import { ORPCError } from "@orpc/client";
 
 import { slugify } from "@fludge/utils/slugify";
-import type { PGCategoriesCommandsRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/pg-categories-commands.repository";
+import type { PGCategoryRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/pg-category.repository";
 
 export const createCategoryCommand = z.object({
   name: z
@@ -39,7 +39,7 @@ type CMD = z.infer<typeof createCategoryCommand> & {
 
 export class CreateCategoryCommand {
   constructor(
-    private readonly categoriesCommandsRepository: PGCategoriesCommandsRepository,
+    private readonly categoriesCommandsRepository: PGCategoryRepository,
   ) {}
 
   public async execute(cmd: CMD) {

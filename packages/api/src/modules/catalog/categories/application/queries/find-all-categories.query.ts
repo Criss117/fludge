@@ -1,7 +1,7 @@
 import { desc, eq } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
 
-import type { DbConnection } from "@fludge/db";
+import type { DBConnection } from "@fludge/db";
 import { category } from "@fludge/db/schemas/catalog.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 
@@ -10,7 +10,7 @@ type Query = {
 };
 
 export class FindAllCategoriesQuery {
-  constructor(private readonly db: DbConnection) {}
+  constructor(private readonly db: DBConnection) {}
 
   public async execute(query: Query) {
     const [data, error] = await tryCatch(

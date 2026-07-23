@@ -1,31 +1,27 @@
 import { dbConnection } from "@fludge/db";
 
 import { CreateProductCommand } from "./application/commands/create-product.command";
-import { UpdateProductCommand } from "./application/commands/update-product.command";
-import { DeleteProductCommand } from "./application/commands/delete-product.command";
 import { FindAllProductsQuery } from "./application/queries/find-all-products.query";
-import { PGProductsCommandsRepository } from "./infrastructure/repositories/pg-products-commands.repository";
-import { PGCategoriesCommandsRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/pg-categories-commands.repository";
+import { PGProductRepository } from "./infrastructure/repositories/pg-product.repository";
+import { categoriesContainer } from "@fludge/api/modules/catalog/categories/container";
+import { PGProductPresentationRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/pg-product-presentation.repository";
+import { ProductService } from "@fludge/api/modules/catalog/products/application/services/product.service";
 
 // Repositories
-const productsCommandsRepository = new PGProductsCommandsRepository(
+const productRepository = new PGProductRepository(dbConnection);
+const productPresentationRepository = new PGProductPresentationRepository(
   dbConnection,
 );
-const categoriesCommandsRepository = new PGCategoriesCommandsRepository(
-  dbConnection,
-);
+
+// Services
+const productService = new ProductService(dbConnection);
 
 // Commands
 const createProductCommand = new CreateProductCommand(
-  productsCommandsRepository,
-  categoriesCommandsRepository,
-);
-const updateProductCommand = new UpdateProductCommand(
-  productsCommandsRepository,
-  categoriesCommandsRepository,
-);
-const deleteProductCommand = new DeleteProductCommand(
-  productsCommandsRepository,
+  productRepository,
+  productPresentationRepository,
+  categoriesContainer.repositories.categoryRepository,
+  productService,
 );
 
 // Queries
@@ -34,8 +30,8 @@ const findAllProductsQuery = new FindAllProductsQuery(dbConnection);
 export const productsContainer = {
   commands: {
     create: createProductCommand,
-    update: updateProductCommand,
-    delete: deleteProductCommand,
+    delete: () => {},
+    update: () => {},
   },
   queries: {
     findAll: findAllProductsQuery,

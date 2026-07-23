@@ -4,15 +4,15 @@ import {
   TransactionalRepository,
   type TransactionalOptions,
 } from "@fludge/api/modules/shared/repositories/transactional-repository";
-import type { DbConnection } from "@fludge/db";
+import type { DBConnection } from "@fludge/db";
 import {
   category,
   type CategoryInsert,
 } from "@fludge/db/schemas/catalog.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 
-export class PGCategoriesCommandsRepository extends TransactionalRepository {
-  constructor(private readonly db: DbConnection) {
+export class PGCategoryRepository extends TransactionalRepository {
+  constructor(private readonly db: DBConnection) {
     super(db);
   }
 

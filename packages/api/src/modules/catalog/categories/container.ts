@@ -4,22 +4,16 @@ import { CreateCategoryCommand } from "./application/commands/create-category.co
 import { UpdateCategoryCommand } from "./application/commands/update-category.command";
 import { HardDeleteCategoriesCommand } from "./application/commands/delete-categories.command";
 import { FindAllCategoriesQuery } from "./application/queries/find-all-categories.query";
-import { PGCategoriesCommandsRepository } from "./infrastructure/repositories/pg-categories-commands.repository";
+import { PGCategoryRepository } from "./infrastructure/repositories/pg-category.repository";
 
 // Repositories
-const categoriesCommandsRepository = new PGCategoriesCommandsRepository(
-  dbConnection,
-);
+const categoryRepository = new PGCategoryRepository(dbConnection);
 
 // Commands
-const createCategoryCommand = new CreateCategoryCommand(
-  categoriesCommandsRepository,
-);
-const updateCategoryCommand = new UpdateCategoryCommand(
-  categoriesCommandsRepository,
-);
+const createCategoryCommand = new CreateCategoryCommand(categoryRepository);
+const updateCategoryCommand = new UpdateCategoryCommand(categoryRepository);
 const hardDeleteCategoriesCommand = new HardDeleteCategoriesCommand(
-  categoriesCommandsRepository,
+  categoryRepository,
 );
 
 // Queries
@@ -33,5 +27,8 @@ export const categoriesContainer = {
   },
   queries: {
     findAll: findAllCategoriesQuery,
+  },
+  repositories: {
+    categoryRepository,
   },
 } as const;

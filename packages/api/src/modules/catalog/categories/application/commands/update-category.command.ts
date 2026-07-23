@@ -2,7 +2,7 @@ import { z } from "zod";
 import { ORPCError } from "@orpc/client";
 
 import { slugify } from "@fludge/utils/slugify";
-import type { PGCategoriesCommandsRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/pg-categories-commands.repository";
+import type { PGCategoryRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/pg-category.repository";
 import { createCategoryCommand } from "@fludge/api/modules/catalog/categories/application/commands/create-category.command";
 
 export const updateCategoryCommand = createCategoryCommand.extend({
@@ -17,16 +17,11 @@ type CMD = z.infer<typeof updateCategoryCommand> & {
 };
 
 export class UpdateCategoryCommand {
-  constructor(
-    private readonly categoriesCommandsRepository: PGCategoriesCommandsRepository,
-  ) {}
+  constructor(private readonly categoryRepository: PGCategoryRepository) {}
 
   public async execute(cmd: CMD) {
     const [existingCategory, errorExists] =
-      await this.categoriesCommandsRepository.findOne(
-        cmd.id,
-        cmd.organizationId,
-      );
+      await this.categoryRepository.findOne(cmd.id, cmd.organizationId);
 
     if (errorExists) throw new ORPCError("INTERNAL_SERVER_ERROR", errorExists);
 
@@ -37,7 +32,7 @@ export class UpdateCategoryCommand {
 
     if (existingCategory.name !== cmd.name) {
       const [slugAvailable, errorSlugAvailable] =
-        await this.categoriesCommandsRepository.slugAvailable(
+        await this.categoryRepository.slugAvailable(
           slugify(cmd.name),
           cmd.organizationId,
           cmd.id,
@@ -52,7 +47,7 @@ export class UpdateCategoryCommand {
         });
     }
 
-    const [updated, error] = await this.categoriesCommandsRepository.update(
+    const [updated, error] = await this.categoryRepository.update(
       cmd.id,
       cmd.organizationId,
       {

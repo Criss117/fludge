@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ORPCError } from "@orpc/client";
 
-import type { PGCategoriesCommandsRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/pg-categories-commands.repository";
+import type { PGCategoryRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/pg-category.repository";
 
 export const deleteCategoriesCommand = z.object({
   ids: z
@@ -20,12 +20,10 @@ type DeleteCMD = z.infer<typeof deleteCategoriesCommand> & {
 };
 
 export class HardDeleteCategoriesCommand {
-  constructor(
-    private readonly categoriesCommandsRepository: PGCategoriesCommandsRepository,
-  ) {}
+  constructor(private readonly categoryRepository: PGCategoryRepository) {}
 
   public async execute(cmd: DeleteCMD) {
-    const [, error] = await this.categoriesCommandsRepository.hardDelete(
+    const [, error] = await this.categoryRepository.hardDelete(
       cmd.ids,
       cmd.organizationId,
     );
