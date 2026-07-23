@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 
 import type { PgGroupMemberRepository } from "@fludge/api/modules/iam/group-members/infrastructure/repositories/pg-group-member.repository";
 import type { OrganizationHasService } from "@fludge/api/modules/iam/organizations/application/services/organization-has.service";

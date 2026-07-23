@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { EventBus } from "@fludge/api/modules/shared/domain/event-bus";
 import type { OrganizationRegisteredEvent } from "@fludge/api/modules/shared/domain/events";
 import type { PGGroupRepository } from "@fludge/api/modules/iam/groups/infrastructure/repositories/pg-group.repository";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 import { slugify } from "@fludge/utils/slugify";
 import {
   ALL_PERMISSIONS,

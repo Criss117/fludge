@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 
 import { auth } from "@fludge/auth";
 import { tryCatch } from "@fludge/utils/trycatch";

@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 
 import type { DBConnection } from "@fludge/db";
 import { member } from "@fludge/db/schemas/auth.schema";

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { slugify } from "@fludge/utils/slugify";
 import { EventBus } from "@fludge/api/modules/shared/domain/event-bus";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 import { OrganizationRegisteredEvent } from "@fludge/api/modules/shared/domain/events";
 import { auth } from "@fludge/auth";
 import { tryCatch } from "@fludge/utils/trycatch";

@@ -1,4 +1,4 @@
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 import { and, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
 
 import type { DBConnection } from "@fludge/db";

@@ -5,7 +5,7 @@ import type { PGOrganizationRepository } from "@fludge/api/modules/iam/organizat
 import { tryCatch } from "@fludge/utils/trycatch";
 import { auth } from "@fludge/auth";
 import { slugify } from "@fludge/utils/slugify";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 import type { OrganizationHistoryInsert } from "@fludge/db/schemas/iam.schema";
 
 export const updateOrganizationCommand = registerOrganizationCommand;

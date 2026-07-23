@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { PGGroupRepository } from "@fludge/api/modules/iam/groups/infrastructure/repositories/pg-group.repository";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 
 export const deleteGroupsCommand = z.object({
   groupIds: z

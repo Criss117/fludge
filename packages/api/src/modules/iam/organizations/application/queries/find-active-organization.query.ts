@@ -1,6 +1,6 @@
 import { auth } from "@fludge/auth";
 import { tryCatch } from "@fludge/utils/trycatch";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 
 export class FindActiveOrganizationQuery {
   public async execute(headers: Headers) {

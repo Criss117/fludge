@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 
 import { slugify } from "@fludge/utils/slugify";
 import type { PGCategoryRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/pg-category.repository";

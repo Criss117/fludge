@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { and, desc, eq, getTableColumns } from "drizzle-orm";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 
 import type { DBConnection } from "@fludge/db";
 import { group, groupHistory } from "@fludge/db/schemas/iam.schema";

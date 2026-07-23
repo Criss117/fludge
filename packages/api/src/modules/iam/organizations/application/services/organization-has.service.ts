@@ -2,7 +2,7 @@ import type { DBConnection } from "@fludge/db";
 import { member } from "@fludge/db/schemas/auth.schema";
 import { group } from "@fludge/db/schemas/iam.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 import { and, count, eq, inArray } from "drizzle-orm";
 
 type HasMembersQuery = {

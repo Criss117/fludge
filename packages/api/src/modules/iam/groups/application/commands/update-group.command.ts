@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 
 import { slugify } from "@fludge/utils/slugify";
 import { preparePermissions } from "@fludge/utils/permissions/index";

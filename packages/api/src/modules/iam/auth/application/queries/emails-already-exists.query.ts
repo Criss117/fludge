@@ -1,8 +1,8 @@
 import { count, inArray } from "drizzle-orm";
 import { z } from "zod";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 
-import type { DbConnection } from "@fludge/db";
+import type { DBConnection } from "@fludge/db";
 import { user } from "@fludge/db/schemas/auth.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 
@@ -20,7 +20,7 @@ export const emailsAlreadyExistsQuery = z.object({
 type CMD = z.infer<typeof emailsAlreadyExistsQuery>;
 
 export class EmailsAlreadyExistsQuery {
-  constructor(private readonly db: DbConnection) {}
+  constructor(private readonly db: DBConnection) {}
 
   public async execute(cmd: CMD) {
     const [exists, errorExists] = await tryCatch(

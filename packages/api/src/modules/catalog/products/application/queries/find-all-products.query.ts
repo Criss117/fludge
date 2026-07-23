@@ -1,5 +1,5 @@
 import { desc, eq, getTableColumns } from "drizzle-orm";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 
 import type { DbConnection } from "@fludge/db";
 import { product } from "@fludge/db/schemas/catalog.schema";

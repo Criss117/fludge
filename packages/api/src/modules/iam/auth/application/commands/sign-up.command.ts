@@ -2,7 +2,7 @@ import z from "zod";
 
 import { auth } from "@fludge/auth";
 import { tryCatch } from "@fludge/utils/trycatch";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 
 export const signUpEmailCommand = z.object({
   email: z.email({

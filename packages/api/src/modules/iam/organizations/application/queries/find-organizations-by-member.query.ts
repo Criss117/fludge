@@ -1,7 +1,7 @@
 import { and, eq, getTableColumns, SQL } from "drizzle-orm";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 
-import type { DbConnection } from "@fludge/db";
+import type { DBConnection } from "@fludge/db";
 import { member, organization } from "@fludge/db/schemas/auth.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 
@@ -13,7 +13,7 @@ type Query = {
 };
 
 export class FindOrganizationsByMemberQuery {
-  constructor(private readonly db: DbConnection) {}
+  constructor(private readonly db: DBConnection) {}
 
   public async execute({ userId, options }: Query) {
     const where: SQL[] = [eq(member.userId, userId)];

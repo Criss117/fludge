@@ -4,7 +4,7 @@ import { eventBus } from "@fludge/api/modules/shared/domain/event-bus";
 import { PGOrganizationRepository } from "./infrastructure/repositories/pg-organization.repository";
 import { RegisterOrganizationCommand } from "./application/commands/register-organization.command";
 import { UpdateOrganizationCommand } from "./application/commands/update-organization.command";
-import { FindOrganizationsByMemberQuery } from "./application/queries/find-orgnizations-by-member.query";
+import { FindOrganizationsByMemberQuery } from "./application/queries/find-organizations-by-member.query";
 import { FindActiveOrganizationQuery } from "./application/queries/find-active-organization.query";
 import { OrganizationHasService } from "@fludge/api/modules/iam/organizations/application/services/organization-has.service";
 
