@@ -1,7 +1,7 @@
 import { eq, getTableColumns } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
 
-import type { DbConnection } from "@fludge/db";
+import type { DBConnection } from "@fludge/db";
 import { member, user } from "@fludge/db/schemas/auth.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 
@@ -10,7 +10,7 @@ type Query = {
 };
 
 export class FindAllMembersQuery {
-  constructor(private readonly db: DbConnection) {}
+  constructor(private readonly db: DBConnection) {}
 
   public async execute({ organizationId }: Query) {
     const [data, error] = await tryCatch(

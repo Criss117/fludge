@@ -1,9 +1,8 @@
 import { z } from "zod";
 import { ORPCError } from "@orpc/client";
 
-import type { OrganizationHasMembersQuery } from "@fludge/api/modules/iam/organizations/application/queries/organization-has-members.query";
-import type { PgGroupMembersCommandsRepository } from "@fludge/api/modules/iam/group-members/infrastructure/repositories/pg-group-members-commands.repository";
-import type { OrganizationHasGroupsQuery } from "@fludge/api/modules/iam/organizations/application/queries/organization-has-groups.query";
+import type { PgGroupMemberRepository } from "@fludge/api/modules/iam/group-members/infrastructure/repositories/pg-group-member.repository";
+import type { OrganizationHasService } from "@fludge/api/modules/iam/organizations/application/services/organization-has.service";
 
 export const assignMembersCommand = z.object({
   groupIds: z
@@ -35,25 +34,22 @@ type CMD = z.infer<typeof assignMembersCommand> & {
 
 export class AssignMembersCommand {
   constructor(
-    private readonly organizationHasMembersQuery: OrganizationHasMembersQuery,
-    private readonly organizationHasGroupsQuery: OrganizationHasGroupsQuery,
-    private readonly groupMembersCommandsRepository: PgGroupMembersCommandsRepository,
+    private readonly groupMemberRepository: PgGroupMemberRepository,
+    private readonly organizationHasService: OrganizationHasService,
   ) {}
 
   public async execute(cmd: CMD) {
-    const organizationHasGroups = await this.organizationHasGroupsQuery.execute(
-      {
-        organizationId: cmd.organizationId,
-        groupIds: cmd.groupIds,
-      },
-    );
+    const organizationHasGroups = await this.organizationHasService.hasGroups({
+      organizationId: cmd.organizationId,
+      groupIds: cmd.groupIds,
+    });
 
     if (!organizationHasGroups.exists)
       throw new ORPCError("NOT_FOUND", {
         message: "No se encontraron grupos",
       });
 
-    const { exists } = await this.organizationHasMembersQuery.execute({
+    const { exists } = await this.organizationHasService.hasMembers({
       organizationId: cmd.organizationId,
       memberIds: cmd.memberIds,
       options: {
@@ -66,18 +62,17 @@ export class AssignMembersCommand {
         message: "No se encontraron miembros",
       });
 
-    const [data, errorAssign] =
-      await this.groupMembersCommandsRepository.assignMembers(
-        cmd.groupIds
-          .map((groupId) =>
-            cmd.memberIds.map((memberId) => ({
-              groupId,
-              memberId,
-              assignedBy: cmd.assignedBy.memberId,
-            })),
-          )
-          .flat(),
-      );
+    const [data, errorAssign] = await this.groupMemberRepository.assignMembers(
+      cmd.groupIds
+        .map((groupId) =>
+          cmd.memberIds.map((memberId) => ({
+            groupId,
+            memberId,
+            assignedBy: cmd.assignedBy.memberId,
+          })),
+        )
+        .flat(),
+    );
 
     if (errorAssign) throw new ORPCError("INTERNAL_SERVER_ERROR", errorAssign);
 

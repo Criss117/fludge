@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { ORPCError } from "@orpc/client";
 
-import type { DbConnection } from "@fludge/db";
+import type { DBConnection } from "@fludge/db";
 import { member } from "@fludge/db/schemas/auth.schema";
 import type { Permission } from "@fludge/utils/permissions/data";
 import { tryCatch } from "@fludge/utils/trycatch";
@@ -19,7 +19,7 @@ export type FindMeResponse = {
 };
 
 export class FindMeQuery {
-  constructor(private readonly db: DbConnection) {}
+  constructor(private readonly db: DBConnection) {}
 
   public async execute({ memberId }: Query): Promise<FindMeResponse> {
     const [memberData, memberError] = await tryCatch(

@@ -3,7 +3,7 @@ import {
   TransactionalRepository,
   type TransactionalOptions,
 } from "@fludge/api/modules/shared/repositories/transactional-repository";
-import type { DbConnection } from "@fludge/db";
+import type { DBConnection } from "@fludge/db";
 import { groupMember } from "@fludge/db/schemas/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 
@@ -18,8 +18,8 @@ type GroupMembersInsert = {
   assignedBy: string | null;
 };
 
-export class PgGroupMembersCommandsRepository extends TransactionalRepository {
-  constructor(private readonly db: DbConnection) {
+export class PgGroupMemberRepository extends TransactionalRepository {
+  constructor(private readonly db: DBConnection) {
     super(db);
   }
 

@@ -2,25 +2,22 @@ import { dbConnection } from "@fludge/db";
 import { FindAllGroupMembersQuery } from "./application/queries/find-all-group-members.query";
 import { AssignMembersCommand } from "./application/commands/assign-members.command";
 import { UnAssignMembersCommand } from "./application/commands/unassign-members.command";
-import { organizationsContainer } from "../organizations/container";
-import { PgGroupMembersCommandsRepository } from "./infrastructure/repositories/pg-group-members-commands.repository";
+import { organizationsContainer } from "@fludge/api/modules/iam/organizations/container";
+import { PgGroupMemberRepository } from "./infrastructure/repositories/pg-group-member.repository";
 
 // Repositories
-const groupMembersCommandsRepository = new PgGroupMembersCommandsRepository(
-  dbConnection,
-);
+const groupMemberRepository = new PgGroupMemberRepository(dbConnection);
 
 // Queries
 const findAllGroupMembersQuery = new FindAllGroupMembersQuery(dbConnection);
 
 // Commands
 const assignMembersCommand = new AssignMembersCommand(
-  organizationsContainer.queries.organizationHasMembers,
-  organizationsContainer.queries.organizationHasGroups,
-  groupMembersCommandsRepository,
+  groupMemberRepository,
+  organizationsContainer.services.organizationHas,
 );
 const unassignMembersCommand = new UnAssignMembersCommand(
-  groupMembersCommandsRepository,
+  groupMemberRepository,
 );
 
 export const groupMembersContainer = {

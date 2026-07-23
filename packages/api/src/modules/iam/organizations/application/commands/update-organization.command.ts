@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { registerOrganizationCommand } from "@fludge/api/modules/iam/organizations/application/commands/register-organization.command";
-import type { PGOrganizationCommandsRepository } from "@fludge/api/modules/iam/organizations/infrastructure/repositories/pg-organization-commands.repository";
+import type { PGOrganizationRepository } from "@fludge/api/modules/iam/organizations/infrastructure/repositories/pg-organization.repository";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { auth } from "@fludge/auth";
 import { slugify } from "@fludge/utils/slugify";
@@ -21,12 +21,13 @@ type CMD = z.infer<typeof updateOrganizationCommand> & {
 
 export class UpdateOrganizationCommand {
   constructor(
-    private readonly organizationCommandsRepository: PGOrganizationCommandsRepository,
+    private readonly organizationRepository: PGOrganizationRepository,
   ) {}
 
   public async execute(cmd: CMD, headers: Headers) {
-    const [organization, errorFind] =
-      await this.organizationCommandsRepository.findOne(cmd.organizationId);
+    const [organization, errorFind] = await this.organizationRepository.findOne(
+      cmd.organizationId,
+    );
 
     if (errorFind) throw new ORPCError("INTERNAL_SERVER_ERROR", errorFind);
 
@@ -60,15 +61,14 @@ export class UpdateOrganizationCommand {
         },
       );
 
-    const [, errorSaveHistory] =
-      await this.organizationCommandsRepository.saveHistory({
-        organizationId: cmd.organizationId,
-        action: "update",
-        description: `{user.name} actualizó la organización con id ${cmd.organizationId}`,
-        before: organization,
-        after: data as OrganizationHistoryInsert["after"],
-        actorId: cmd.changesBy.memberId,
-      });
+    const [, errorSaveHistory] = await this.organizationRepository.saveHistory({
+      organizationId: cmd.organizationId,
+      action: "update",
+      description: `{user.name} actualizó la organización con id ${cmd.organizationId}`,
+      before: organization,
+      after: data as OrganizationHistoryInsert["after"],
+      actorId: cmd.changesBy.memberId,
+    });
 
     console.error(errorSaveHistory);
 
