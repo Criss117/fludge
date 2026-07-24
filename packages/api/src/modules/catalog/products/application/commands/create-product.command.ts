@@ -7,7 +7,7 @@ import type { PGCategoryRepository } from "@fludge/api/modules/catalog/categorie
 import type { ProductService } from "@fludge/api/modules/catalog/products/application/services/product.service";
 import type { PGProductPresentationRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/pg-product-presentation.repository";
 
-const productPresentationSchema = z
+export const productPresentationSchema = z
   .object({
     name: z
       .string({
