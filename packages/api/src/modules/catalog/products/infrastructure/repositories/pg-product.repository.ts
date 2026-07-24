@@ -1,4 +1,5 @@
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, inArray, getTableColumns, sql } from "drizzle-orm";
+import { Decimal } from "decimal.js";
 
 import {
   TransactionalRepository,
@@ -11,24 +12,12 @@ import {
   type InventoryMovementInsert,
   type InventoryMovementSelect,
   type ProductInsert,
+  productPresentation,
+  type ProductPresentationSelect,
 } from "@fludge/db/schemas/catalog.schema";
 import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 
-export type ProductUpdatable = Partial<
-  Pick<
-    ProductInsert,
-    | "name"
-    | "slug"
-    | "description"
-    | "imageUrl"
-    | "categoryId"
-    | "barcode"
-    | "stockQuantity"
-    | "minimumStock"
-    | "allowNegativeStock"
-    | "status"
-  >
->;
+export type ProductUpdatable = Omit<ProductInsert, "id" | "organizationId">;
 
 export class PGProductRepository extends TransactionalRepository {
   constructor(private readonly db: DBConnection) {
@@ -78,8 +67,41 @@ export class PGProductRepository extends TransactionalRepository {
   public async findOne(id: string, organizationId: string) {
     const [rows, error] = await tryCatch(
       this.db
-        .select()
+        .select({
+          ...getTableColumns(product),
+          presentations: sql<ProductPresentationSelect[]>`
+            COALESCE(
+              json_agg(
+                json_build_object(
+                  'id': ${productPresentation.id},
+                  'organizationId': ${productPresentation.organizationId},
+                  'barcode': ${productPresentation.barcode},
+                  'name': ${productPresentation.name},
+                  'conversionFactor': ${productPresentation.conversionFactor},
+                  'createdBy': ${productPresentation.createdBy},
+                  'imageUrl': ${productPresentation.imageUrl},
+                  'pricePurchase': ${productPresentation.pricePurchase},
+                  'priceRetail': ${productPresentation.priceRetail},
+                  'priceWholesale': ${productPresentation.priceWholesale},
+                  'productId': ${productPresentation.productId},
+                  'status': ${productPresentation.status},
+                  'unitLabel': ${productPresentation.unitLabel},
+                  'deletedReason': ${productPresentation.deletedReason},
+                  'createdAt': ${productPresentation.createdAt},
+                  'updatedAt': ${productPresentation.updatedAt},
+                  'deletedAt': ${productPresentation.deletedAt}
+                )
+                ORDER BY ${productPresentation.createdAt} DESC
+              ) FILTER (WHERE ${productPresentation.id} IS NOT NULL),
+              '[]'::json
+            ) AS presentations
+          `,
+        })
         .from(product)
+        .innerJoin(
+          productPresentation,
+          eq(productPresentation.productId, product.id),
+        )
         .where(
           and(eq(product.id, id), eq(product.organizationId, organizationId)),
         )
@@ -93,11 +115,23 @@ export class PGProductRepository extends TransactionalRepository {
 
     if (!p) return ok(null);
 
-    return ok(p);
+    return ok({
+      ...p,
+      presentations: p.presentations.map((presentation) => ({
+        ...presentation,
+        priceRetail: new Decimal(presentation.priceRetail),
+        pricePurchase: presentation.pricePurchase
+          ? new Decimal(presentation.pricePurchase)
+          : null,
+        priceWholesale: presentation.priceWholesale
+          ? new Decimal(presentation.priceWholesale)
+          : null,
+      })),
+    });
   }
 
   public async update(
-    id: string,
+    productId: string,
     organizationId: string,
     values: ProductUpdatable,
     options?: TransactionalOptions,
@@ -109,7 +143,10 @@ export class PGProductRepository extends TransactionalRepository {
         .update(product)
         .set(values)
         .where(
-          and(eq(product.id, id), eq(product.organizationId, organizationId)),
+          and(
+            eq(product.id, productId),
+            eq(product.organizationId, organizationId),
+          ),
         )
         .returning()
         .execute(),

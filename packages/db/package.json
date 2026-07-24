@@ -25,7 +25,8 @@
     "dotenv": "catalog:",
     "drizzle-orm": "catalog:",
     "pg": "^8.17.1",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "decimal.js": "catalog:"
   },
   "devDependencies": {
     "@fludge/config": "workspace:*",

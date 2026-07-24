@@ -1,10 +1,10 @@
-import type { DbConnection } from "@fludge/db";
+import type { DBConnection } from "@fludge/db";
 import { product } from "@fludge/db/schemas/catalog.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { and, eq, ne, or, type SQL } from "drizzle-orm";
 
 export class ProductService {
-  constructor(private readonly db: DbConnection) {}
+  constructor(private readonly db: DBConnection) {}
 
   public async slugAvailable(
     slug: string,
