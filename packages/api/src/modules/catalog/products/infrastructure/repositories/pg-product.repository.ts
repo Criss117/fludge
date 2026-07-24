@@ -161,39 +161,27 @@ export class PGProductRepository extends TransactionalRepository {
     return ok(updated);
   }
 
-  public async hardDelete(organizationId: string, productIds: string[]) {
-    return this.transaction(async (tx) => {
-      // 1. Cascade: remove ledger rows for these products first.
-      //    No organizationId filter — productIds are globally unique UUIDs and
-      //    the product delete below is org-scoped, so cross-org leakage is
-      //    impossible. The FK on inventoryMovement.productId is
-      //    onDelete: "restrict", so movements must be removed before products.
-      await tx
-        .delete(inventoryMovement)
-        .where(inArray(inventoryMovement.productId, productIds))
-        .execute();
+  public async hardDelete(
+    organizationId: string,
+    productIds: string[],
+    options?: TransactionalOptions,
+  ) {
+    const db = options?.tx ?? this.db;
 
-      // 2. Delete the products themselves, org-scoped. `.returning()` gives an
-      //    accurate count without a second SELECT and is atomic with the
-      //    DELETE. A bare await on step 1 lets a movement-delete failure
-      //    rollback the whole transaction (the intended cascade semantics);
-      //    step 2 errors are wrapped so the count flows back as a Result.
-      const [rows, error] = await tryCatch(
-        tx
-          .delete(product)
-          .where(
-            and(
-              eq(product.organizationId, organizationId),
-              inArray(product.id, productIds),
-            ),
-          )
-          .returning({ id: product.id })
-          .execute(),
-      );
+    const [, error] = await tryCatch(
+      db
+        .delete(product)
+        .where(
+          and(
+            eq(product.organizationId, organizationId),
+            inArray(product.id, productIds),
+          ),
+        )
+        .execute(),
+    );
 
-      if (error) return err(error);
+    if (error) return err(error);
 
-      return ok(rows.length);
-    });
+    return ok(null);
   }
 }

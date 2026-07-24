@@ -80,7 +80,7 @@ export const product = pgTable(
 
     stockQuantity: integer("stock_quantity").notNull(),
 
-    minimumStock: integer("minimum_stock"),
+    minimumStock: integer("minimum_stock").notNull(),
 
     allowNegativeStock: boolean("allow_negative_stock")
       .notNull()

@@ -25,41 +25,26 @@ function builder(
         const newProduct = transaction.mutations[0].modified;
 
         const createdProduct = await orpc.products.commands.create.call({
-          name: newProduct.name,
           barcode: newProduct.barcode,
-          description: newProduct.description || undefined,
-          imageUrl: newProduct.imageUrl || undefined,
-          categoryId: newProduct.categoryId || undefined,
-          sku: newProduct.sku || undefined,
-          priceRetail: newProduct.priceRetail,
-          pricePurchase: newProduct.pricePurchase,
-          priceWholesale: newProduct.priceWholesale,
-          minimumStock: newProduct.minimumStock ?? undefined,
-          allowNegativeStock: newProduct.allowNegativeStock ?? undefined,
-          stockQuantity: newProduct.stockQuantity ?? undefined,
+          categoryId: newProduct.categoryId,
+          name: newProduct.name,
+          description: newProduct.description,
+          notes: newProduct.notes,
+          stockQuantity: newProduct.stockQuantity,
+          minimumStock: newProduct.minimumStock,
+          allowNegativeStock: newProduct.allowNegativeStock,
+          presentation: newProduct.presentations.map((p) => ({
+            name: p.name,
+            barcode: p.barcode,
+            unitLabel: p.unitLabel,
+            conversionFactor: p.conversionFactor,
+            priceRetail: p.priceRetail,
+            pricePurchase: p.pricePurchase,
+            priceWholesale: p.priceWholesale,
+          })),
         });
 
         collection.utils.writeInsert(createdProduct);
-
-        return {
-          refetch: false,
-        };
-      },
-
-      onUpdate: async ({ transaction, collection }) => {
-        const originalProduct = transaction.mutations[0].original;
-        const modifiedProduct = transaction.mutations[0].modified;
-
-        // Strip non-API fields and spread the rest. `id` comes from the
-        // original product (trust the router param, not the optimistic clone).
-        const { id: _id, ...rest } = modifiedProduct;
-
-        const updatedProduct = await orpc.products.commands.update.call({
-          id: originalProduct.id,
-          ...rest,
-        });
-
-        collection.utils.writeUpdate(updatedProduct);
 
         return {
           refetch: false,
@@ -83,7 +68,6 @@ function builder(
   productCollection.createIndex((row) => row.name);
   productCollection.createIndex((row) => row.slug);
   productCollection.createIndex((row) => row.id);
-  productCollection.createIndex((row) => row.sku);
   productCollection.createIndex((row) => row.barcode);
   productCollection.createIndex((row) => row.categoryId);
 

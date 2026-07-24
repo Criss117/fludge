@@ -107,7 +107,7 @@ export const createProductCommand = z
       }),
 
     description: z.preprocess(
-      (val) => (val === "" ? null : val),
+      (val) => (val === "" ? null : (val as string)),
       z
         .string()
         .min(5, {
@@ -120,7 +120,7 @@ export const createProductCommand = z
     ),
 
     notes: z.preprocess(
-      (val) => (val === "" ? null : val),
+      (val) => (val === "" ? null : (val as string)),
       z
         .string()
         .min(5, {

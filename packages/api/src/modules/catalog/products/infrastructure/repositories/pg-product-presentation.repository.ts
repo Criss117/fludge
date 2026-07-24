@@ -7,7 +7,8 @@ import {
   productPresentation,
   type ProductPresentationInsert,
 } from "@fludge/db/schemas/catalog.schema";
-import { tryCatch } from "@fludge/utils/trycatch";
+import { err, ok, tryCatch } from "@fludge/utils/trycatch";
+import { and, eq, inArray } from "drizzle-orm";
 
 export class PGProductPresentationRepository extends TransactionalRepository {
   constructor(private readonly db: DBConnection) {
@@ -40,5 +41,29 @@ export class PGProductPresentationRepository extends TransactionalRepository {
         .returning()
         .execute(),
     );
+  }
+
+  public async hardDelete(
+    organizationId: string,
+    productPresentationIds: string[],
+    options?: TransactionalOptions,
+  ) {
+    const db = options?.tx ?? this.db;
+
+    const [, error] = await tryCatch(
+      db
+        .delete(productPresentation)
+        .where(
+          and(
+            eq(productPresentation.organizationId, organizationId),
+            inArray(productPresentation.id, productPresentationIds),
+          ),
+        )
+        .execute(),
+    );
+
+    if (error) return err(error);
+
+    return ok(null);
   }
 }

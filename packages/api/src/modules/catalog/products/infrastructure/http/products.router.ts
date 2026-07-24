@@ -3,7 +3,7 @@ import { productsContainer } from "@fludge/api/modules/catalog/products/containe
 
 import { createProductCommand } from "@fludge/api/modules/catalog/products/application/commands/create-product.command";
 import { updateProductCommand } from "@fludge/api/modules/catalog/products/application/commands/update-product.command";
-import { deleteProductCommand } from "@fludge/api/modules/catalog/products/application/commands/delete-product.command";
+import { deleteProductCommand } from "@fludge/api/modules/catalog/products/application/commands/delete-product.commad";
 
 const TAGS = ["Products"] as const;
 
