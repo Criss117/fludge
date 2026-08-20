@@ -7,10 +7,11 @@
     "check-types": "tsc -b",
     "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
     "dev": "bun run --hot src/index.ts",
-    "start": "bun run dist/index.mjs"
+    "start": "bun run dist/index.mjs",
+    "auth:generate": "bunx auth@latest generate --config='../../packages/auth/src/index.ts'"
   },
   "dependencies": {
-    "@elysiajs/cors": "^1.4.2",
+    "@elysiajs/cors": "1.4.2",
     "@fludge/api": "workspace:*",
     "@fludge/auth": "workspace:*",
     "@fludge/db": "workspace:*",
@@ -18,7 +19,7 @@
     "@orpc/openapi": "catalog:",
     "@orpc/server": "catalog:",
     "@orpc/zod": "catalog:",
-    "@sinclair/typebox": "^0.34.52",
+    "@sinclair/typebox": "0.34.52",
     "better-auth": "catalog:",
     "dotenv": "catalog:",
     "elysia": "catalog:",
@@ -27,7 +28,7 @@
   "devDependencies": {
     "@fludge/config": "workspace:*",
     "@types/bun": "catalog:",
-    "tsdown": "^0.22.14",
-    "typescript": "^6.0.3"
+    "tsdown": "0.22.14",
+    "typescript": "6.0.3"
   }
 }

@@ -9,13 +9,13 @@
     "./native": "./src/native.ts"
   },
   "dependencies": {
-    "@t3-oss/env-core": "^0.13.11",
+    "@t3-oss/env-core": "0.13.11",
     "dotenv": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@fludge/config": "workspace:*",
     "@types/bun": "catalog:",
-    "typescript": "^6.0.3"
+    "typescript": "6.0.3"
   }
 }

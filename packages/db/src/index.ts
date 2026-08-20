@@ -1,10 +1,19 @@
 import { env } from "@fludge/env/server";
 import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 
-import * as schema from "./schema";
+const globalForDb = globalThis as unknown as {
+  pool: Pool | undefined;
+};
 
-export function createDb() {
-  return drizzle(env.DATABASE_URL, { schema });
+const pool =
+  globalForDb.pool ??
+  new Pool({
+    connectionString: env.DATABASE_URL,
+  });
+
+if (process.env.NODE_ENV !== "production") {
+  globalForDb.pool = pool;
 }
 
-export const db = createDb();
+export const db = drizzle({ client: pool });
