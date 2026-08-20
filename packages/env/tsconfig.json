@@ -1,0 +1,3 @@
+{
+  "extends": "@fludge/config/tsconfig.base.json"
+}
