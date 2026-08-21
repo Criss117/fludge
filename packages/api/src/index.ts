@@ -2,6 +2,14 @@ import { ORPCError, os } from "@orpc/server";
 
 import type { Context } from "./context";
 
+type RequireOrganizationOptions =
+  | {
+      onlyOwner: true;
+    }
+  | {
+      resolveOnly: true;
+    };
+
 export const o = os.$context<Context>();
 
 export const publicProcedure = o;
@@ -17,4 +25,18 @@ const requireAuth = o.middleware(async ({ context, next }) => {
   });
 });
 
+const rootOnly = requireAuth.concat(({ context, next }) => {
+  if (!context.session.user.isRoot)
+    throw new ORPCError("FORBIDDEN", {
+      message: "Solo el usuario root puede acceder a este recurso.",
+    });
+
+  return next({
+    context: {
+      session: context.session,
+    },
+  });
+});
+
 export const protectedProcedure = publicProcedure.use(requireAuth);
+export const rootOnlyProcedure = publicProcedure.use(rootOnly);

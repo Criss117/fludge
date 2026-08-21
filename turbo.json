@@ -45,6 +45,9 @@
     },
     "db:down": {
       "cache": false
+    },
+    "auth:generate": {
+      "cache": false
     }
   }
 }

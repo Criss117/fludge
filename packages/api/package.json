@@ -11,6 +11,7 @@
   },
   "scripts": {},
   "dependencies": {
+    "@fludge/utils": "workspace:*",
     "@fludge/auth": "workspace:*",
     "@fludge/db": "workspace:*",
     "@fludge/env": "workspace:*",
@@ -18,8 +19,10 @@
     "@orpc/openapi": "catalog:",
     "@orpc/server": "catalog:",
     "@orpc/zod": "catalog:",
+    "drizzle-orm": "catalog:",
     "dotenv": "catalog:",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "uuid": "catalog:"
   },
   "devDependencies": {
     "@fludge/config": "workspace:*",

@@ -1,5 +1,5 @@
 import { expo } from "@better-auth/expo";
-import { db } from "@fludge/db";
+import { databaseService } from "@fludge/db";
 import * as schema from "@fludge/db/schema/index";
 import { env } from "@fludge/env/server";
 import { APIError, betterAuth } from "better-auth";
@@ -20,8 +20,8 @@ export const PUBLIC_ENDPOINTS = [
 
 export function createAuth() {
   return betterAuth({
-    database: drizzleAdapter(db, {
-      provider: "pg",
+    database: drizzleAdapter(databaseService, {
+      provider: "sqlite",
 
       schema: schema,
     }),
@@ -85,11 +85,13 @@ export function createAuth() {
                 type: "string",
                 required: true,
                 returned: true,
+                unique: true,
               },
               taxId: {
                 type: "string",
                 required: true,
                 returned: true,
+                unique: true,
               },
               address: {
                 type: "string",
@@ -100,6 +102,7 @@ export function createAuth() {
                 type: "string",
                 required: true,
                 returned: true,
+                unique: true,
               },
             },
           },
@@ -117,5 +120,7 @@ export function createAuth() {
     ],
   });
 }
+
+export type AuthService = ReturnType<typeof createAuth>;
 
 export const auth = createAuth();

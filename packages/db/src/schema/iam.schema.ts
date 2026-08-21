@@ -1,110 +1,109 @@
 import {
   index,
-  jsonb,
-  pgTable,
   primaryKey,
+  sqliteTable,
   text,
   unique,
-  uuid,
-} from 'drizzle-orm/pg-core';
-import { auditMetadata } from './shared';
+} from "drizzle-orm/sqlite-core";
+import { auditMetadata } from "./shared";
 import {
   createdByMetadata,
   member,
-  organization,
   organizationMetadata,
-} from './auth.schema';
-import { actionEnum } from './enums.schema';
-import { AppStatement } from '@/src/shared/domain/value-objects/permissions';
+  type OrganizationSelect,
+} from "./auth.schema";
+import { actionEnum } from "./enums.schema";
+import type { AppStatement } from "@fludge/utils/permissions";
 
-export const organizationHistory = pgTable('organization_history', {
-  id: uuid('id').primaryKey(),
+export const organizationHistory = sqliteTable("organization_history", {
+  id: text("id").primaryKey(),
 
-  action: actionEnum('action').notNull(),
-  description: text('description'),
+  action: text("action", { enum: actionEnum }).notNull(),
+  description: text("description"),
 
-  before: jsonb('before').$type<typeof organization.$inferSelect>(),
-  after: jsonb('after').$type<typeof organization.$inferSelect>(),
+  before: text("before", { mode: "json" }).$type<OrganizationSelect>(),
+  after: text("after", { mode: "json" }).$type<OrganizationSelect>(),
 
-  actorId: text('actor_id').references(() => member.id, {
-    onDelete: 'set null',
+  actorId: text("actor_id").references(() => member.id, {
+    onDelete: "set null",
   }),
 
   createdAt: auditMetadata.createdAt,
   ...organizationMetadata,
 });
 
-export const group = pgTable(
-  'group',
+export const group = sqliteTable(
+  "group",
   {
-    id: uuid('id').primaryKey(),
-    name: text('name').notNull(),
-    slug: text('slug').notNull(),
-    description: text('description'),
-    permissions: jsonb('permissions').notNull().$type<AppStatement>(),
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    description: text("description"),
+    permissions: text("permissions", { mode: "json" })
+      .notNull()
+      .$type<AppStatement>(),
 
     ...createdByMetadata,
     ...organizationMetadata,
     ...auditMetadata,
   },
   (t) => [
-    index('group_organization_id_idx').on(t.organizationId),
-    index('group_slug_idx').on(t.slug),
+    index("group_organization_id_idx").on(t.organizationId),
+    index("group_slug_idx").on(t.slug),
 
-    unique('group_organization_id_slug_unique').on(t.organizationId, t.slug),
-    unique('group_organization_id_name_unique').on(t.organizationId, t.name),
+    unique("group_organization_id_slug_unique").on(t.organizationId, t.slug),
+    unique("group_organization_id_name_unique").on(t.organizationId, t.name),
   ],
 );
 
-export const groupHistory = pgTable(
-  'group_history',
+export const groupHistory = sqliteTable(
+  "group_history",
   {
-    id: uuid('id').primaryKey(),
-    groupId: uuid('group_id')
+    id: text("id").primaryKey(),
+    groupId: text("group_id")
       .notNull()
       .references(() => group.id, {
-        onDelete: 'cascade',
+        onDelete: "cascade",
       }),
 
-    action: actionEnum('action').notNull(),
-    description: text('description'),
+    action: text("action", { enum: actionEnum }).notNull(),
+    description: text("description"),
 
-    before: jsonb('before').$type<typeof group.$inferSelect>(),
-    after: jsonb('after').$type<typeof group.$inferSelect>(),
+    before: text("before", { mode: "json" }).$type<GroupSelect>(),
+    after: text("after", { mode: "json" }).$type<GroupSelect>(),
 
     ...createdByMetadata,
     ...organizationMetadata,
 
     createdAt: auditMetadata.createdAt,
   },
-  (t) => [index('group_history_group_id_idx').on(t.groupId)],
+  (t) => [index("group_history_group_id_idx").on(t.groupId)],
 );
 
-export const groupMember = pgTable(
-  'group_member',
+export const groupMember = sqliteTable(
+  "group_member",
   {
-    groupId: uuid('group_id')
+    groupId: text("group_id")
       .notNull()
       .references(() => group.id, {
-        onDelete: 'cascade',
+        onDelete: "cascade",
       }),
-    memberId: text('member_id')
+    memberId: text("member_id")
       .notNull()
       .references(() => member.id, {
-        onDelete: 'cascade',
+        onDelete: "cascade",
       }),
 
     ...createdByMetadata,
     ...organizationMetadata,
 
     createdAt: auditMetadata.createdAt,
-    updatedAt: auditMetadata.updatedAt,
   },
   (t) => [
     primaryKey({
       columns: [t.groupId, t.memberId],
     }),
-    index('group_member_group_id_member_id_idx').on(t.groupId, t.memberId),
+    index("group_member_group_id_member_id_idx").on(t.groupId, t.memberId),
   ],
 );
 

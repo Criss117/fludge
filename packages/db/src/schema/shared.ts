@@ -1,12 +1,14 @@
-import { timestamp } from 'drizzle-orm/pg-core';
+// audit-metadata.ts
+import { sql } from "drizzle-orm";
+import { integer } from "drizzle-orm/sqlite-core";
 
 export const auditMetadata = {
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
-    .defaultNow()
+  createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
+    .default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`)
     .$onUpdate(() => new Date()),
-  deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  deletedAt: integer("deleted_at", { mode: "timestamp" }),
 };

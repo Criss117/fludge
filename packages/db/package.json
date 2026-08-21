@@ -22,10 +22,11 @@
   },
   "dependencies": {
     "@fludge/env": "workspace:*",
+    "@fludge/utils": "workspace:*",
     "dotenv": "catalog:",
     "drizzle-orm": "catalog:",
-    "pg": "8.23.0",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "@tursodatabase/serverless": "catalog:"
   },
   "devDependencies": {
     "@fludge/config": "workspace:*",
