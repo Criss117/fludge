@@ -1,17 +1,18 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // 1. Fuente única de verdad
 export const allPermissions = {
-  project: ['create', 'read', 'update', 'delete'],
-  billing: ['read', 'update'],
-  // Si agregas 'user', 'settings', etc. ¡TypeScript y Zod los tomarán automáticamente!
+  groups: ["create", "read", "update", "delete"],
+  organizations: ["update"],
+  members: ["create", "read", "update", "delete"],
+  products: ["create", "read", "update", "delete"],
+  categories: ["create", "read", "update", "delete"],
+  sales: ["create", "read", "update", "delete"],
 } as const;
 
 // 2. Tipo TS derivado dinámicamente de allPermissions
 export type AppStatement = {
-  [
-    K in keyof typeof allPermissions
-  ]?: readonly (typeof allPermissions)[K][number][];
+  [K in keyof typeof allPermissions]?: readonly (typeof allPermissions)[K][number][];
 };
 
 // 3. Generación DINÁMICA del esquema Zod

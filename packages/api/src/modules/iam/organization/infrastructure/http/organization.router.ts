@@ -1,4 +1,4 @@
-import { rootOnlyProcedure } from "@fludge/api/index";
+import { protectedProcedure, rootOnlyProcedure } from "@fludge/api/index";
 import { registerOrganizationCommand } from "../../application/commands/register-organization.commad";
 import { organizationContainer } from "../../container";
 const TAGS = ["Organizations"] as const;
@@ -17,6 +17,18 @@ export const organizationRouter = {
           context.session.user.id,
           input,
         ),
+      ),
+  },
+
+  queries: {
+    finAll: protectedProcedure
+      .route({
+        method: "GET",
+        path: "/organizations",
+        tags: TAGS,
+      })
+      .handler(({ context }) =>
+        organizationContainer.queries.findAll.execute(context.session.user.id),
       ),
   },
 };

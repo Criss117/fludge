@@ -35,3 +35,14 @@ export function buildConflictUpdateColumn<
     {} as Record<Q, SQL>,
   );
 }
+
+export function jsonObject<T extends SQLiteTable>(table: T) {
+  const cls = getColumns(table);
+
+  const chunks = Object.entries(cls).flatMap(([key, column], index) => {
+    const pair = [sql.raw(`'${key}',`), sql`${column}`];
+    return index === 0 ? pair : [sql.raw(","), ...pair];
+  });
+
+  return sql`json_object(${sql.join(chunks, sql``)})`;
+}
