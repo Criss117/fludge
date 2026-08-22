@@ -1,6 +1,11 @@
-import { protectedProcedure, rootOnlyProcedure } from "@fludge/api/index";
-import { registerOrganizationCommand } from "../../application/commands/register-organization.commad";
-import { organizationContainer } from "../../container";
+import {
+  protectedProcedure,
+  requireOrganizationProcedure,
+  rootOnlyProcedure,
+} from "@fludge/api/index";
+import { registerOrganizationCommand } from "@fludge/api/modules/iam/organization/application/commands/register-organization.commad";
+import { organizationContainer } from "@fludge/api/modules/iam/organization/container";
+
 const TAGS = ["Organizations"] as const;
 
 export const organizationRouter = {
@@ -21,7 +26,7 @@ export const organizationRouter = {
   },
 
   queries: {
-    finAll: protectedProcedure
+    findAll: protectedProcedure
       .route({
         method: "GET",
         path: "/organizations",
@@ -30,5 +35,13 @@ export const organizationRouter = {
       .handler(({ context }) =>
         organizationContainer.queries.findAll.execute(context.session.user.id),
       ),
+
+    findActive: requireOrganizationProcedure
+      .route({
+        method: "GET",
+        path: "/organizations/active",
+        tags: TAGS,
+      })
+      .handler(({ context }) => context.session.activeOrganization.values),
   },
 };

@@ -16,6 +16,7 @@ import type {
 } from "@fludge/db/schema/iam.schema";
 import { GroupMember } from "./group-members";
 import { GroupMemberAlreadyExistsException } from "../exceptions/group-member-elready-exists.exception";
+import type { AppStatement } from "@fludge/utils/permissions";
 
 type CreateOrganization = {
   name: string;
@@ -179,6 +180,38 @@ export class Organization {
     return gms
       .map((gm) => this._groups.get(gm.groupId.toString()))
       .filter(Boolean) as Group[];
+  }
+
+  public getMemberByUserId(userId: UUID) {
+    let member: Member | null = null;
+    for (const m of this._members.values()) {
+      if (m.userId.equals(userId)) {
+        member = m;
+        break;
+      }
+    }
+
+    return member;
+  }
+
+  public hasPermission(
+    memberId: UUID,
+    permission: Partial<AppStatement>,
+  ): boolean {
+    const member = this._members.get(memberId.toString());
+    if (!member) return false;
+
+    if (member.isOwner()) return true;
+
+    const groups = this.getGroupsOfMember(memberId);
+
+    return (
+      Object.entries(permission) as [keyof AppStatement, string[]][]
+    ).every(([resource, actions]) =>
+      actions.every((action) =>
+        groups.some((group) => group.permissions.has(resource, action as any)),
+      ),
+    );
   }
 
   public get id() {

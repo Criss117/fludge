@@ -23,6 +23,7 @@ const buildSchema = () => {
       // z.enum requiere al menos un elemento ([string, ...string[]])
       acc[resource as keyof typeof allPermissions] = z
         .array(z.enum([firstAction, ...restActions]))
+        .transform((arr) => [...new Set(arr)])
         .optional();
       return acc;
     },

@@ -41,6 +41,10 @@ export class Member {
     return this._id;
   }
 
+  public get userId() {
+    return this._userId;
+  }
+
   public isOwner() {
     return this._role === "owner";
   }

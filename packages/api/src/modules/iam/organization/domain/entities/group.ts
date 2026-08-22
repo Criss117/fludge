@@ -57,6 +57,10 @@ export class Group {
     return this._id;
   }
 
+  public get permissions() {
+    return this._permissions;
+  }
+
   public get values(): Omit<GroupSelect, "organizationId"> {
     return {
       id: this._id.toString(),

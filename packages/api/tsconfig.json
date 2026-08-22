@@ -6,7 +6,11 @@
     "sourceMap": true,
     "outDir": "dist",
     "composite": true,
-    "rootDir": "./src"
+    "rootDir": "./src",
+
+    "paths": {
+      "@fludge/api/*": ["./src/*"]
+    }
   },
   "include": ["src"]
 }

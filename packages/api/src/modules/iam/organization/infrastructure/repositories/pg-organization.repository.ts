@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { buildConflictUpdateColumn, type DatabaseService } from "@fludge/db";
 import { member, organization } from "@fludge/db/schema/auth.schema";
 import { group, groupMember } from "@fludge/db/schema/iam.schema";
@@ -26,7 +26,7 @@ export class PgOrganizationRepository {
     const membersQuery = this.db
       .select()
       .from(member)
-      .where(and(eq(member.organizationId, org.id), eq(member.role, "member")));
+      .where(eq(member.organizationId, org.id));
 
     const groupsQuery = this.db
       .select()

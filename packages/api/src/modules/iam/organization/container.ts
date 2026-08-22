@@ -25,6 +25,8 @@ const findAllOrganizationsQuery = new FindAllOrganizationsQuery(
 );
 
 export const organizationContainer = {
+  repositories: { organizationRepository },
+  services: { organizationUniquenessValidator },
   commands: { register: registerOrganizationCommand },
   queries: { findAll: findAllOrganizationsQuery },
 };
