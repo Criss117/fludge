@@ -1,9 +1,11 @@
 import type { RouterClient } from "@orpc/server";
 
 import { organizationRouter } from "../modules/iam/organization/infrastructure/http/organization.router";
+import { authRouter } from "../modules/iam/auth/infrastructure/http/auth.router";
 
 export const appRouter = {
   organization: organizationRouter,
+  auth: authRouter,
 };
 export type AppRouter = typeof appRouter;
 export type AppRouterClient = RouterClient<typeof appRouter>;
