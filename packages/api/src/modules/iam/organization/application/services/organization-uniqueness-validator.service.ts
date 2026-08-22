@@ -1,5 +1,5 @@
 import type { DatabaseService } from "@fludge/db";
-import { organization } from "@fludge/db/schema/auth.schema";
+import { organization } from "@fludge/db/schema/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { eq, ne, or, SQL } from "drizzle-orm";
 

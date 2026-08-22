@@ -1,19 +1,86 @@
 import {
   index,
+  integer,
   primaryKey,
   sqliteTable,
   text,
   unique,
+  uniqueIndex,
+  type AnySQLiteColumn,
 } from "drizzle-orm/sqlite-core";
 import { auditMetadata } from "./shared";
-import {
-  createdByMetadata,
-  member,
-  organizationMetadata,
-  type OrganizationSelect,
-} from "./auth.schema";
 import { actionEnum } from "./enums.schema";
 import type { AppStatement } from "@fludge/utils/permissions";
+import { user } from "./auth.schema";
+
+export const organization = sqliteTable(
+  "organization",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    logo: text("logo"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    metadata: text("metadata", { mode: "json" }),
+    legalName: text("legal_name").notNull(),
+    taxId: text("tax_id").notNull(),
+    address: text("address").notNull(),
+    phone: text("phone").notNull(),
+  },
+  (table) => [
+    uniqueIndex("organization_slug_unique").on(table.slug),
+    uniqueIndex("organization_legal_name_unique").on(table.legalName),
+    uniqueIndex("organization_tax_id_unique").on(table.taxId),
+    uniqueIndex("organization_phone_unique").on(table.phone),
+    index("organization_created_at_idx").on(table.createdAt),
+    index("organization_name_idx").on(table.name),
+  ],
+);
+
+export const member = sqliteTable(
+  "member",
+  {
+    id: text("id").primaryKey(),
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    role: text("role", { enum: ["owner", "admin", "member"] })
+      .default("member")
+      .notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    assignedBy: text("assigned_by").references(
+      (): AnySQLiteColumn => member.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+  },
+  (table) => [
+    uniqueIndex("member_organizationId_userId_unique").on(
+      table.organizationId,
+      table.userId,
+    ),
+    index("member_organizationId_idx").on(table.organizationId),
+    index("member_userId_idx").on(table.userId),
+  ],
+);
+
+export const organizationMetadata = {
+  organizationId: text("organization_id")
+    .notNull()
+    .references(() => organization.id, {
+      onDelete: "cascade",
+    }),
+};
+
+export const createdByMetadata = {
+  createdBy: text("created_by").references(() => member.id, {
+    onDelete: "set null",
+  }),
+};
 
 export const organizationHistory = sqliteTable("organization_history", {
   id: text("id").primaryKey(),
@@ -118,3 +185,9 @@ export type GroupHistoryInsert = typeof groupHistory.$inferInsert;
 
 export type GroupMemberSelect = typeof groupMember.$inferSelect;
 export type GroupMemberInsert = typeof groupMember.$inferInsert;
+
+export type OrganizationSelect = typeof organization.$inferSelect;
+export type OrganizationInsert = typeof organization.$inferInsert;
+
+export type MemberSelect = typeof member.$inferSelect;
+export type MemberInsert = typeof member.$inferInsert;

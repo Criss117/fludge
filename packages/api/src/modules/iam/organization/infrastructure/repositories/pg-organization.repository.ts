@@ -1,20 +1,66 @@
-import { eq } from "drizzle-orm";
-import { buildConflictUpdateColumn, type DatabaseService } from "@fludge/db";
-import { member, organization } from "@fludge/db/schema/auth.schema";
-import { group, groupMember } from "@fludge/db/schema/iam.schema";
+import { and, desc, eq, getColumns, sql } from "drizzle-orm";
+import {
+  buildConflictUpdateColumn,
+  jsonObject,
+  type DatabaseService,
+} from "@fludge/db";
+import {
+  member,
+  organization,
+  type MemberSelect,
+} from "@fludge/db/schema/iam.schema";
+import {
+  group,
+  groupMember,
+  type GroupMemberSelect,
+  type GroupSelect,
+} from "@fludge/db/schema/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization";
+import type { AppStatement } from "@fludge/utils/permissions";
+import { alias } from "drizzle-orm/sqlite-core";
+
+const memberAuth = alias(member, "memberAuth");
 
 export class PgOrganizationRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  public async findOneById(id: string) {
+  public async findOneById(loggedUserId: string, organizationId: string) {
     const [orgs, errOrg] = await tryCatch(
       this.db
-        .select()
+        .select({
+          ...getColumns(organization),
+          members: sql<string>`
+              json_group_array(
+                DISTINCT ${jsonObject(member)}
+              ) FILTER (WHERE ${member.userId} IS NOT NULL)
+          `.as("members"),
+          groups: sql<string>`
+              json_group_array(
+                DISTINCT ${jsonObject(group)}
+              ) FILTER (WHERE ${group.id} IS NOT NULL)
+          `.as("groups"),
+
+          groupMembers: sql<string>`
+              json_group_array(
+                DISTINCT ${jsonObject(groupMember)}
+              ) FILTER (WHERE ${groupMember.groupId} IS NOT NULL)
+          `.as("groupMembers"),
+        })
         .from(organization)
-        .where(eq(organization.id, id))
-        .limit(1),
+        .innerJoin(
+          memberAuth,
+          and(
+            eq(memberAuth.organizationId, organization.id),
+            eq(memberAuth.userId, loggedUserId),
+          ),
+        )
+        .leftJoin(member, eq(member.organizationId, organization.id))
+        .leftJoin(group, eq(group.organizationId, organization.id))
+        .leftJoin(groupMember, eq(groupMember.organizationId, organization.id))
+        .where(eq(organization.id, organizationId))
+        .orderBy(desc(organization.createdAt))
+        .groupBy(organization.id),
     );
 
     if (errOrg) return err(errOrg);
@@ -23,28 +69,24 @@ export class PgOrganizationRepository {
 
     if (!org) return ok(null);
 
-    const membersQuery = this.db
-      .select()
-      .from(member)
-      .where(eq(member.organizationId, org.id));
+    const members = (JSON.parse(org.members) as MemberSelect[]).map((m) => ({
+      ...m,
+      createdAt: new Date(m.createdAt),
+    }));
+    const groups = (JSON.parse(org.groups) as GroupSelect[]).map((g) => ({
+      ...g,
+      createdAt: new Date(g.createdAt),
+      updatedAt: new Date(g.updatedAt),
+      deletedAt: g.deletedAt ? new Date(g.deletedAt) : null,
+      permissions: JSON.parse(g.permissions as string) as AppStatement,
+    }));
 
-    const groupsQuery = this.db
-      .select()
-      .from(group)
-      .where(eq(group.organizationId, org.id));
-
-    const groupMembersQuery = this.db
-      .select()
-      .from(groupMember)
-      .where(eq(groupMember.organizationId, org.id));
-
-    const [result, errFind] = await tryCatch(
-      Promise.all([membersQuery, groupsQuery, groupMembersQuery]),
-    );
-
-    if (errFind) return err(errFind);
-
-    const [members, groups, groupMembers] = result;
+    const groupMembers = (
+      JSON.parse(org.groupMembers) as GroupMemberSelect[]
+    ).map((gm) => ({
+      ...gm,
+      createdAt: new Date(gm.createdAt),
+    }));
 
     return ok(
       Organization.reconstitute({

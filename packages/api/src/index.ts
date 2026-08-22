@@ -43,6 +43,7 @@ const requireOrganization = requireAuth.concat(async ({ context, next }) => {
 
   const [organization, errOrganization] =
     await organizationContainer.repositories.organizationRepository.findOneById(
+      context.session.user.id,
       activeOrganizationId,
     );
 

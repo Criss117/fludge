@@ -5,7 +5,7 @@ import { env } from "@fludge/env/server";
 import { APIError, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
-import { openAPI, organization } from "better-auth/plugins";
+import { openAPI } from "better-auth/plugins";
 
 export const PUBLIC_ENDPOINTS = [
   "/sign-out",
@@ -13,9 +13,6 @@ export const PUBLIC_ENDPOINTS = [
   "/sign-up/email",
   "/get-session",
   "/reference",
-
-  "/organization/get-full-organization",
-  "/organization/set-active",
 ];
 
 export function createAuth() {
@@ -74,50 +71,16 @@ export function createAuth() {
         },
       },
     },
-    plugins: [
-      expo(),
-      openAPI(),
-      organization({
-        schema: {
-          organization: {
-            additionalFields: {
-              legalName: {
-                type: "string",
-                required: true,
-                returned: true,
-                unique: true,
-              },
-              taxId: {
-                type: "string",
-                required: true,
-                returned: true,
-                unique: true,
-              },
-              address: {
-                type: "string",
-                required: true,
-                returned: true,
-              },
-              phone: {
-                type: "string",
-                required: true,
-                returned: true,
-                unique: true,
-              },
-            },
-          },
-          member: {
-            additionalFields: {
-              assignedBy: {
-                type: "string",
-                required: false,
-                returned: true,
-              },
-            },
-          },
+    session: {
+      additionalFields: {
+        activeOrganizationId: {
+          type: "string",
+          returned: true,
+          required: false,
         },
-      }),
-    ],
+      },
+    },
+    plugins: [expo(), openAPI()],
   });
 }
 

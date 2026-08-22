@@ -1,4 +1,4 @@
-import type { MemberSelect } from "@fludge/db/schema/auth.schema";
+import type { MemberSelect } from "@fludge/db/schema/iam.schema";
 import { UUID } from "@fludge/utils/uuid";
 
 export type CreateMember = {
