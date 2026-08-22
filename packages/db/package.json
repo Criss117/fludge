@@ -10,6 +10,7 @@
     }
   },
   "scripts": {
+    "check-types": "tsc -b",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate:deploy": "drizzle-kit migrate",
@@ -32,6 +33,6 @@
     "@fludge/config": "workspace:*",
     "@types/pg": "8.23.1",
     "drizzle-kit": "catalog:",
-    "typescript": "6.0.3"
+    "typescript": "7.0.2"
   }
 }

@@ -9,7 +9,9 @@
       "default": "./src/*.ts"
     }
   },
-  "scripts": {},
+  "scripts": {
+    "check-types": "tsc -b"
+  },
   "dependencies": {
     "@fludge/utils": "workspace:*",
     "@fludge/auth": "workspace:*",
@@ -27,6 +29,6 @@
   "devDependencies": {
     "@fludge/config": "workspace:*",
     "elysia": "catalog:",
-    "typescript": "^6.0.3"
+    "typescript": "7.0.2"
   }
 }

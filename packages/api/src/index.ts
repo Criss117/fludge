@@ -2,14 +2,6 @@ import { ORPCError, os } from "@orpc/server";
 
 import type { Context } from "./context";
 
-type RequireOrganizationOptions =
-  | {
-      onlyOwner: true;
-    }
-  | {
-      resolveOnly: true;
-    };
-
 export const o = os.$context<Context>();
 
 export const publicProcedure = o;

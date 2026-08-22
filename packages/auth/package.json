@@ -9,7 +9,9 @@
       "default": "./src/*.ts"
     }
   },
-  "scripts": {},
+  "scripts": {
+    "check-types": "tsc -b"
+  },
   "dependencies": {
     "@better-auth/expo": "catalog:",
     "@fludge/db": "workspace:*",
@@ -20,6 +22,6 @@
   },
   "devDependencies": {
     "@fludge/config": "workspace:*",
-    "typescript": "^6.0.3"
+    "typescript": "7.0.2"
   }
 }
