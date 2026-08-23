@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { UUID } from "@fludge/utils/uuid";
-import { Member } from "../src/modules/iam/organization/domain/entities/member.entity";
+import { Member } from "@fludge/api/modules/iam/organization/domain/entities/member.entity";
 
 const member = (role: "member" | "owner" = "member") =>
   Member.create({ userId: UUID.generate(), assignedBy: null, role });

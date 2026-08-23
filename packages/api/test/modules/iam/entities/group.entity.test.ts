@@ -1,8 +1,14 @@
 import { describe, expect, it } from "bun:test";
 import { Permissions } from "@fludge/utils/permissions";
-import { Group } from "../src/modules/iam/organization/domain/entities/group.entity";
+import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 
-const group = (name = "Editors") => Group.create({ name, description: "A group", permissions: Permissions.create({ groups: ["read"] }), createdBy: null });
+const group = (name = "Editors") =>
+  Group.create({
+    name,
+    description: "A group",
+    permissions: Permissions.create({ groups: ["read"] }),
+    createdBy: null,
+  });
 
 describe("Group", () => {
   it("creates with a slug and permissions", () => {
