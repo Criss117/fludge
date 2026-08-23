@@ -19,7 +19,7 @@ export class EnsureOrganizationExistsService {
 
     if (errOrganization) return err(errOrganization);
 
-    if (!exists) return ok(false);
+    if (exists.length === 0) return ok(false);
 
     return ok(true);
   }

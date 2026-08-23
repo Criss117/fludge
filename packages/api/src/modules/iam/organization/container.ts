@@ -29,8 +29,8 @@ const registerOrganizationCommand = new RegisterOrganizationCommand(
   organizationRepository,
 );
 const updateOrganizationCommand = new UpdateOrganizationCommand(
-  organizationRepository,
   organizationUniquenessValidator,
+  organizationRepository,
 );
 
 const createGroupCommand = new CreateGroupCommand(organizationRepository);
