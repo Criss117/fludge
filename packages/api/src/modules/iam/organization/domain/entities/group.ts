@@ -10,6 +10,8 @@ export type CreateGroup = {
   createdBy: UUID | null;
 };
 
+export type UpdateGroup = Partial<Omit<CreateGroup, "createdBy">>;
+
 export class Group {
   private constructor(
     private readonly _id: UUID,
@@ -51,6 +53,30 @@ export class Group {
       values.updatedAt,
       values.deletedAt,
     );
+  }
+
+  public nameIsTaken(name: string) {
+    const slug = new Slug(name);
+
+    return this._name === name || this._slug.equals(slug);
+  }
+
+  public update(values: UpdateGroup) {
+    if (values.name) {
+      this._name = values.name;
+      this._slug = new Slug(values.name);
+    }
+
+    if (values.description !== undefined)
+      this._description = values.description;
+    if (values.permissions !== undefined)
+      this._permissions = values.permissions;
+
+    this._updatedAt = new Date();
+  }
+
+  public get isActive() {
+    return this._deletedAt === null;
   }
 
   public get id() {

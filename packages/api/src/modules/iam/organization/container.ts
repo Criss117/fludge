@@ -7,6 +7,7 @@ import { FindAllOrganizationsQuery } from "./application/queries/find-all-organi
 import { EnsureOrganizationExistsService } from "./application/services/ensure-organization-exists.service";
 import { UpdateOrganizationCommand } from "./application/commands/update-organization.command";
 import { CreateGroupCommand } from "./application/commands/create-group.command";
+import { UpdateGroupCommand } from "./application/commands/update-group.command";
 
 //Repositories
 const organizationRepository = new PgOrganizationRepository(databaseService);
@@ -28,8 +29,9 @@ const updateOrganizationCommand = new UpdateOrganizationCommand(
   organizationRepository,
   organizationUniquenessValidator,
 );
-const createGroupCommand = new CreateGroupCommand(organizationRepository);
 
+const createGroupCommand = new CreateGroupCommand(organizationRepository);
+const updateGroupCommand = new UpdateGroupCommand(organizationRepository);
 //Queries
 const findAllOrganizationsQuery = new FindAllOrganizationsQuery(
   databaseService,
@@ -47,6 +49,7 @@ export const organizationContainer = {
 
     group: {
       create: createGroupCommand,
+      update: updateGroupCommand,
     },
   },
   queries: { findAll: findAllOrganizationsQuery },

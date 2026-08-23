@@ -76,10 +76,11 @@ function hasPermission(permission: AppStatement) {
         message: "El usuario no es miembro de la organización",
       });
 
-    const hasPermissions = context.session.activeOrganization.hasPermission(
-      userMember.id,
-      permission,
-    );
+    const hasPermissions =
+      context.session.activeOrganization.memberHasPermission(
+        userMember.id,
+        permission,
+      );
 
     if (!hasPermissions)
       throw new ORPCError("FORBIDDEN", {

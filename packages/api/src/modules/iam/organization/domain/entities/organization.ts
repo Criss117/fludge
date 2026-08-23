@@ -1,5 +1,5 @@
 import { Member } from "./members";
-import { type CreateGroup, Group } from "./group";
+import { type CreateGroup, Group, type UpdateGroup } from "./group";
 
 import { GroupNotFoundException } from "../exceptions/group-not-found.exception";
 import { MemberNotFoundException } from "../exceptions/member-not-found.exeption";
@@ -118,6 +118,7 @@ export class Organization {
     this._updatedAt = now;
   }
 
+  // Member methods
   public addMember(member: Member) {
     if (member.isOwner()) {
       let existingOwner = false;
@@ -152,7 +153,59 @@ export class Organization {
     this._members.delete(memberId.toString());
   }
 
+  public getMemberByUserId(userId: UUID) {
+    let member: Member | null = null;
+    for (const m of this._members.values()) {
+      if (m.userId.equals(userId)) {
+        member = m;
+        break;
+      }
+    }
+
+    return member;
+  }
+
+  // Group methods
   public addGroup(group: Group) {
+    this._groups.set(group.id.toString(), group);
+  }
+
+  public getGroup(groupId: UUID) {
+    return this._groups.get(groupId.toString());
+  }
+
+  public groupNameIsAvailable(name: string, excludeId?: UUID) {
+    let available = true;
+
+    for (const group of this._groups.values()) {
+      const nameIsTaken = group.nameIsTaken(name);
+      const excludeThisGroup = excludeId && excludeId.equals(group.id);
+
+      if (nameIsTaken && !excludeThisGroup) {
+        available = false;
+        break;
+      }
+    }
+
+    return available;
+  }
+
+  public updateGroup(groupId: UUID, values: UpdateGroup) {
+    const group = this._groups.get(groupId.toString());
+
+    if (!group) return;
+
+    if (
+      values.name &&
+      values.name !== group.values.name &&
+      !this.groupNameIsAvailable(values.name, group.id)
+    )
+      return;
+
+    group.update(values);
+
+    console.log("group", group.values);
+
     this._groups.set(group.id.toString(), group);
   }
 
@@ -163,6 +216,7 @@ export class Organization {
     );
   }
 
+  // GroupMember methods
   public addGroupMember(groupId: UUID, memberId: UUID, createdBy: UUID) {
     if (!this._groups.has(groupId.toString()))
       throw new GroupNotFoundException();
@@ -191,13 +245,6 @@ export class Organization {
     );
   }
 
-  public getMembersOfGroup(groupId: UUID): Member[] {
-    const gms = this._groupMembers.filter((gm) => gm.groupId.equals(groupId));
-    return gms
-      .map((gm) => this._members.get(gm.memberId.toString()))
-      .filter(Boolean) as Member[];
-  }
-
   public getGroupsOfMember(memberId: UUID): Group[] {
     const gms = this._groupMembers.filter((gm) => gm.memberId.equals(memberId));
     return gms
@@ -205,19 +252,14 @@ export class Organization {
       .filter(Boolean) as Group[];
   }
 
-  public getMemberByUserId(userId: UUID) {
-    let member: Member | null = null;
-    for (const m of this._members.values()) {
-      if (m.userId.equals(userId)) {
-        member = m;
-        break;
-      }
-    }
-
-    return member;
+  public getMembersOfGroup(groupId: UUID): Member[] {
+    const gms = this._groupMembers.filter((gm) => gm.groupId.equals(groupId));
+    return gms
+      .map((gm) => this._members.get(gm.memberId.toString()))
+      .filter(Boolean) as Member[];
   }
 
-  public hasPermission(
+  public memberHasPermission(
     memberId: UUID,
     permission: Partial<AppStatement>,
   ): boolean {
@@ -232,7 +274,11 @@ export class Organization {
       Object.entries(permission) as [keyof AppStatement, string[]][]
     ).every(([resource, actions]) =>
       actions.every((action) =>
-        groups.some((group) => group.permissions.has(resource, action as any)),
+        groups.some((group) => {
+          if (!group.isActive) return false;
+
+          return group.permissions.has(resource, action as any);
+        }),
       ),
     );
   }
