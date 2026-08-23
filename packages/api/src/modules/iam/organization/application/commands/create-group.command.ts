@@ -1,0 +1,59 @@
+import { appStatementSchema, Permissions } from "@fludge/utils/permissions";
+import { z } from "zod";
+import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
+import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization";
+import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group";
+import { UUID } from "@fludge/utils/uuid";
+import { ORPCError } from "@orpc/server";
+
+export const createGroupCommand = z.object({
+  name: z.string({
+    error: "El nombre es requerido",
+  }),
+  description: z.string({
+    error: "La descripción es requerida",
+  }),
+  permissions: appStatementSchema,
+});
+
+type CMD = z.infer<typeof createGroupCommand>;
+
+export class CreateGroupCommand {
+  constructor(
+    private readonly organizationRepository: PgOrganizationRepository,
+  ) {}
+
+  public async execute(
+    loggedUserId: string,
+    activeOrganization: Organization,
+    cmd: CMD,
+  ) {
+    const loggedMember = activeOrganization.getMemberByUserId(
+      UUID.fromString(loggedUserId),
+    )!;
+
+    activeOrganization.addGroup(
+      Group.create({
+        name: cmd.name,
+        description: cmd.description,
+        permissions: Permissions.create(cmd.permissions),
+        createdBy: loggedMember.id,
+      }),
+    );
+
+    const [, errSaving] = await this.organizationRepository.save(
+      activeOrganization,
+      {
+        onlySave: ["groups"],
+      },
+    );
+
+    if (errSaving)
+      throw new ORPCError("INTERNAL_SERVER_ERROR", {
+        message: "Error al guardar la organización",
+        cause: errSaving.cause,
+      });
+
+    return activeOrganization.values;
+  }
+}

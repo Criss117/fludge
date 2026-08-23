@@ -8,27 +8,21 @@ import { Slug } from "@fludge/utils/slugify";
 
 export const updateOrganizationCommand = registerOrganizationCommand.partial();
 
-type CMD = z.infer<typeof updateOrganizationCommand> & {
-  loggedUserId: string;
-  activeOrganization: Organization;
-};
-
+type CMD = z.infer<typeof updateOrganizationCommand>;
 export class UpdateOrganizationCommand {
   constructor(
     private readonly organizationRepository: PgOrganizationRepository,
     private readonly organizationUniquenessValidator: OrganizationUniquenessValidator,
   ) {}
 
-  public async execute(cmd: CMD) {
-    const { loggedUserId, activeOrganization, ...values } = cmd;
-
+  public async execute(activeOrganization: Organization, cmd: CMD) {
     const [uniqueness, errUniqueness] =
       await this.organizationUniquenessValidator.validateUniqueFields(
         {
-          name: values.name,
-          slug: values.name ? new Slug(values.name).toString() : undefined,
-          legalName: values.legalName,
-          taxId: values.taxId,
+          name: cmd.name,
+          slug: cmd.name ? new Slug(cmd.name).toString() : undefined,
+          legalName: cmd.legalName,
+          taxId: cmd.taxId,
         },
         activeOrganization.id.toString(),
       );
@@ -64,12 +58,12 @@ export class UpdateOrganizationCommand {
         message: "El teléfono ya está en uso",
       });
 
-    activeOrganization.update(values);
+    activeOrganization.update(cmd);
 
     const [, errSaving] = await this.organizationRepository.save(
       activeOrganization,
       {
-        onlySaveOrganization: true,
+        onlySave: ["organization"],
       },
     );
 

@@ -36,11 +36,10 @@ export const organizationRouter = {
       })
       .input(updateOrganizationCommand)
       .handler(({ input, context }) =>
-        organizationContainer.commands.update.execute({
-          loggedUserId: context.session.user.id,
-          activeOrganization: context.session.activeOrganization,
-          ...input,
-        }),
+        organizationContainer.commands.update.execute(
+          context.session.activeOrganization,
+          input,
+        ),
       ),
   },
 

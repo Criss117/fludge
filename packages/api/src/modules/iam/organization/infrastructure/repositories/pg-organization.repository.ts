@@ -8,6 +8,7 @@ import {
   member,
   organization,
   type MemberSelect,
+  type OrganizationSelect,
 } from "@fludge/db/schema/iam.schema";
 import {
   group,
@@ -100,27 +101,34 @@ export class PgOrganizationRepository {
 
   public async save(
     data: Organization,
-    options?: { onlySaveOrganization?: boolean },
+    options?: {
+      onlySave?: Array<"organization" | "groupMembers" | "members" | "groups">;
+    },
   ) {
     const { groups, members, groupMembers, ...values } = data.values;
 
-    const onlySaveOrganization = options?.onlySaveOrganization ?? false;
+    const toSave = new Set(
+      options?.onlySave ??
+        (["organization", "members", "groups", "groupMembers"] as const),
+    );
 
     const transaction = this.db.transaction(async (tx) => {
-      const newOrganizations = await tx
-        .insert(organization)
-        .values(values)
-        .onConflictDoUpdate({
-          target: organization.id,
-          set: values,
-        })
-        .returning();
+      let newOrganization: OrganizationSelect | null = null;
 
-      const newOrganization = newOrganizations.at(0)!;
+      if (toSave.has("organization")) {
+        const [saved] = await tx
+          .insert(organization)
+          .values(values)
+          .onConflictDoUpdate({
+            target: organization.id,
+            set: values,
+          })
+          .returning();
 
-      if (onlySaveOrganization) return newOrganization;
+        newOrganization = saved ?? null;
+      }
 
-      if (members.length > 0) {
+      if (toSave.has("members") && members.length > 0) {
         await tx
           .insert(member)
           .values(members)
@@ -134,7 +142,7 @@ export class PgOrganizationRepository {
           });
       }
 
-      if (groups.length > 0) {
+      if (toSave.has("groups") && groups.length > 0) {
         await tx
           .insert(group)
           .values(groups)
@@ -151,7 +159,7 @@ export class PgOrganizationRepository {
           });
       }
 
-      if (groupMembers.length > 0) {
+      if (toSave.has("groupMembers") && groupMembers.length > 0) {
         await tx.insert(groupMember).values(groupMembers).onConflictDoNothing();
       }
 
