@@ -26,6 +26,13 @@ describe("MemberCollection", () => {
     expect(() => collection.addMember(createMember("owner"))).toThrow(MemberAlreadyExistsException);
     expect(collection.owner).toBe(owner);
   });
+  it("returns null when the collection has no owner", () => {
+    const collection = MemberCollection.create([
+      { userId: UUID.generate(), assignedBy: null, role: "member" },
+    ]);
+
+    expect(collection.owner).toBeNull();
+  });
   it("finds by ID or user ID and removes regular members only", () => {
     const collection = MemberCollection.create();
     const regular = createMember();

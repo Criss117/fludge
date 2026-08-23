@@ -46,4 +46,15 @@ describe("GroupCollection", () => {
     expect(() => collection.updateGroup(first.id, {})).toThrow(GroupNotFoundException);
     expect(() => collection.removeGroup(first.id)).toThrow(GroupNotFoundException);
   });
+  it("rejects updating a group to an existing name", () => {
+    const collection = GroupCollection.create();
+    const first = createGroup("Editors");
+    const second = createGroup("Viewers");
+    collection.addGroup(first);
+    collection.addGroup(second);
+
+    expect(() => collection.updateGroup(first.id, { name: "Viewers" })).toThrow(
+      GroupAlreadyExistsException,
+    );
+  });
 });
