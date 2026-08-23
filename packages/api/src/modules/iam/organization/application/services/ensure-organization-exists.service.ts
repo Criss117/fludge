@@ -7,13 +7,15 @@ export class EnsureOrganizationExistsService {
   constructor(private readonly db: DatabaseService) {}
 
   public async byId(organizationId: string) {
-    const [exists, errOrganization] = await this.db
-      .select({
-        id: organization.id,
-      })
-      .from(organization)
-      .where(eq(organization.id, organizationId))
-      .limit(1);
+    const [exists, errOrganization] = await tryCatch(
+      this.db
+        .select({
+          id: organization.id,
+        })
+        .from(organization)
+        .where(eq(organization.id, organizationId))
+        .limit(1),
+    );
 
     if (errOrganization) return err(errOrganization);
 

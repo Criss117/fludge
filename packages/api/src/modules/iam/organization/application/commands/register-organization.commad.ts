@@ -6,6 +6,7 @@ import { allPermissions, Permissions } from "@fludge/utils/permissions";
 import { UUID } from "@fludge/utils/uuid";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import type { OrganizationUniquenessValidator } from "../services/organization-uniqueness-validator.service";
+import { OrganizationAlreadyExistsException } from "../../domain/exceptions/organization-already-exists.exception";
 
 export const registerOrganizationCommand = z.object({
   name: z
@@ -109,24 +110,22 @@ export class RegisterOrganizationCommand {
       });
 
     if (uniqueness.nameTaken || uniqueness.slugTaken)
-      throw new ORPCError("CONFLICT", {
-        message: "El nombre o el slug ya está en uso",
-      });
+      throw new OrganizationAlreadyExistsException(
+        "El nombre o el slug ya está en uso",
+      );
 
     if (uniqueness.legalNameTaken)
-      throw new ORPCError("CONFLICT", {
-        message: "El nombre legal ya está en uso",
-      });
+      throw new OrganizationAlreadyExistsException(
+        "El nombre legal ya está en uso",
+      );
 
     if (uniqueness.taxIdTaken)
-      throw new ORPCError("CONFLICT", {
-        message: "El TAX ID ya está en uso",
-      });
+      throw new OrganizationAlreadyExistsException("El TAX ID ya está en uso");
 
     if (uniqueness.phoneTaken)
-      throw new ORPCError("CONFLICT", {
-        message: "El teléfono ya está en uso",
-      });
+      throw new OrganizationAlreadyExistsException(
+        "El teléfono ya está en uso",
+      );
 
     const [, errSaving] = await this.organizationRepository.save(organization);
 

@@ -8,7 +8,6 @@ import {
   member,
   organization,
   type MemberSelect,
-  type OrganizationSelect,
 } from "@fludge/db/schema/iam.schema";
 import {
   group,
@@ -16,7 +15,7 @@ import {
   type GroupMemberSelect,
   type GroupSelect,
 } from "@fludge/db/schema/iam.schema";
-import { err, ok, tryCatch } from "@fludge/utils/trycatch";
+import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import type { AppStatement } from "@fludge/utils/permissions";
 import { alias } from "drizzle-orm/sqlite-core";
@@ -26,7 +25,10 @@ const memberAuth = alias(member, "memberAuth");
 export class PgOrganizationRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  public async findOneById(loggedUserId: string, organizationId: string) {
+  public async findOneById(
+    loggedUserId: string,
+    organizationId: string,
+  ): Promise<Result<Organization | null, Error>> {
     const [orgs, errOrg] = await tryCatch(
       this.db
         .select({
@@ -104,7 +106,7 @@ export class PgOrganizationRepository {
     options?: {
       onlySave?: Array<"organization" | "groupMembers" | "members" | "groups">;
     },
-  ) {
+  ): Promise<Result<undefined, Error>> {
     const { groups, members, groupMembers, ...values } = data.values;
 
     const toSave = new Set(
@@ -113,10 +115,8 @@ export class PgOrganizationRepository {
     );
 
     const transaction = this.db.transaction(async (tx) => {
-      let newOrganization: OrganizationSelect | null = null;
-
       if (toSave.has("organization")) {
-        const [saved] = await tx
+        await tx
           .insert(organization)
           .values(values)
           .onConflictDoUpdate({
@@ -124,8 +124,6 @@ export class PgOrganizationRepository {
             set: values,
           })
           .returning();
-
-        newOrganization = saved ?? null;
       }
 
       if (toSave.has("members") && members.length > 0) {
@@ -162,10 +160,12 @@ export class PgOrganizationRepository {
       if (toSave.has("groupMembers") && groupMembers.length > 0) {
         await tx.insert(groupMember).values(groupMembers).onConflictDoNothing();
       }
-
-      return newOrganization;
     });
 
-    return tryCatch(transaction);
+    const [, errTransaction] = await tryCatch(transaction);
+
+    if (errTransaction) return err(errTransaction);
+
+    return ok(undefined);
   }
 }
