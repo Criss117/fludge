@@ -5,14 +5,15 @@ import { ORPCError } from "@orpc/server";
 import type { OrganizationUniquenessValidator } from "../services/organization-uniqueness-validator.service";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Slug } from "@fludge/utils/slugify";
+import { OrganizationAlreadyExistsException } from "../../domain/exceptions/organization-already-exists.exception";
 
 export const updateOrganizationCommand = registerOrganizationCommand.partial();
 
 type CMD = z.infer<typeof updateOrganizationCommand>;
 export class UpdateOrganizationCommand {
   constructor(
-    private readonly organizationRepository: PgOrganizationRepository,
     private readonly organizationUniquenessValidator: OrganizationUniquenessValidator,
+    private readonly organizationRepository: PgOrganizationRepository,
   ) {}
 
   public async execute(activeOrganization: Organization, cmd: CMD) {
@@ -34,29 +35,23 @@ export class UpdateOrganizationCommand {
       });
 
     if (uniqueness.nameTaken)
-      throw new ORPCError("CONFLICT", {
-        message: "El nombre ya está en uso",
-      });
+      throw new OrganizationAlreadyExistsException("El nombre ya está en uso");
 
     if (uniqueness.slugTaken)
-      throw new ORPCError("CONFLICT", {
-        message: "El slug ya está en uso",
-      });
+      throw new OrganizationAlreadyExistsException("El slug ya está en uso");
 
     if (uniqueness.legalNameTaken)
-      throw new ORPCError("CONFLICT", {
-        message: "El nombre legal ya está en uso",
-      });
+      throw new OrganizationAlreadyExistsException(
+        "El nombre legal ya está en uso",
+      );
 
     if (uniqueness.taxIdTaken)
-      throw new ORPCError("CONFLICT", {
-        message: "El TAX ID ya está en uso",
-      });
+      throw new OrganizationAlreadyExistsException("El TAX ID ya está en uso");
 
     if (uniqueness.phoneTaken)
-      throw new ORPCError("CONFLICT", {
-        message: "El teléfono ya está en uso",
-      });
+      throw new OrganizationAlreadyExistsException(
+        "El teléfono ya está en uso",
+      );
 
     activeOrganization.update(cmd);
 
