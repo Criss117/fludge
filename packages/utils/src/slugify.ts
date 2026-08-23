@@ -3,10 +3,11 @@ export class Slug {
 
   constructor(value: string) {
     this._value = value
+      .trim()
       .toLowerCase()
       .replace(/[^\w\s-]/g, "")
       .replace(/[\s_-]+/g, "-")
-      .trim();
+      .replace(/^-+|-+$/g, "");
   }
 
   public toString() {

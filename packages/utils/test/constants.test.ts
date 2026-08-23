@@ -1,43 +1,23 @@
-import { describe, test, expect } from "bun:test";
+import { describe, expect, it } from "bun:test";
 import {
-  MILISECOND,
-  SECOND,
-  MINUTE,
-  HOUR,
   DAY,
+  HOUR,
+  MILISECOND,
+  MINUTE,
   ORGANIZATION_HEADER_kEY,
-} from "@fludge/utils/constants";
+  SECOND,
+} from "../src/constants";
 
 describe("time constants", () => {
-  test("MILISECOND is the base unit (1)", () => {
+  it("defines the expected millisecond values", () => {
     expect(MILISECOND).toBe(1);
+    expect(SECOND).toBe(1_000);
+    expect(MINUTE).toBe(60_000);
+    expect(HOUR).toBe(3_600_000);
+    expect(DAY).toBe(86_400_000);
   });
 
-  test("SECOND is 1000 milliseconds", () => {
-    expect(SECOND).toBe(1000);
-    expect(SECOND).toBe(1000 * MILISECOND);
-  });
-
-  // Note: the source uses `1000 * <unit>` rather than the conventional
-  // 60×/24× multipliers. These tests pin the actual computed values.
-  test("MINUTE is computed as 1000 * SECOND", () => {
-    expect(MINUTE).toBe(1000 * SECOND);
-    expect(MINUTE).toBe(1_000_000);
-  });
-
-  test("HOUR is computed as 1000 * MINUTE", () => {
-    expect(HOUR).toBe(1000 * MINUTE);
-    expect(HOUR).toBe(1_000_000_000);
-  });
-
-  test("DAY is computed as 1000 * HOUR", () => {
-    expect(DAY).toBe(1000 * HOUR);
-    expect(DAY).toBe(1_000_000_000_000);
-  });
-});
-
-describe("ORGANIZATION_HEADER_kEY", () => {
-  test("is the lowercase organization id header", () => {
+  it("defines the organization header key", () => {
     expect(ORGANIZATION_HEADER_kEY).toBe("x-organization-id");
   });
 });

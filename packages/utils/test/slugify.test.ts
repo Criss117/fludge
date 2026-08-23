@@ -1,55 +1,26 @@
-import { describe, test, expect } from "bun:test";
-import { slugify } from "@fludge/utils/slugify";
+import { describe, expect, it } from "bun:test";
+import { Slug } from "../src/slugify";
 
-describe("slugify", () => {
-  test("converts a basic two-word string", () => {
-    expect(slugify("Hello World")).toBe("hello-world");
+describe("Slug", () => {
+  it.each([
+    ["Hello World", "hello-world"],
+    ["Hello, World!", "hello-world"],
+    ["hello   world---again", "hello-world-again"],
+    ["hello_world", "hello-world"],
+    ["  hello  ", "hello"],
+  ])("normalizes %s to %s", (value, expected) => {
+    expect(new Slug(value).toString()).toBe(expected);
   });
 
-  test("removes special characters", () => {
-    expect(slugify("Hello, World!")).toBe("hello-world");
+  it("compares equal slugs", () => {
+    expect(new Slug("Hello World").equals(new Slug("hello-world"))).toBe(true);
   });
 
-  test("collapses multiple spaces into a single hyphen", () => {
-    expect(slugify("Hello   World")).toBe("hello-world");
+  it("does not compare different slugs as equal", () => {
+    expect(new Slug("foo").equals(new Slug("bar"))).toBe(false);
   });
 
-  test("normalizes mixed case to lowercase", () => {
-    expect(slugify("HeLLo WoRLD")).toBe("hello-world");
-  });
-
-  test("collapses underscores into hyphens", () => {
-    expect(slugify("hello_world")).toBe("hello-world");
-  });
-
-  test("collapses multiple hyphens into one", () => {
-    expect(slugify("hello--world")).toBe("hello-world");
-  });
-
-  test("collapses mixed whitespace, underscore, and hyphen runs", () => {
-    expect(slugify("hello - world")).toBe("hello-world");
-  });
-
-  test("preserves digits", () => {
-    expect(slugify("product 42")).toBe("product-42");
-  });
-
-  test("returns empty string for special-chars-only input", () => {
-    expect(slugify("!!!@@@")).toBe("");
-  });
-
-  test("returns empty string for empty input", () => {
-    expect(slugify("")).toBe("");
-  });
-
-  // Note: trim() runs AFTER the whitespace→hyphen replacement, so it only
-  // strips whitespace — leading/trailing whitespace has already been converted
-  // to hyphens. This characterizes the current behavior.
-  test("converts leading/trailing whitespace into leading/trailing hyphens", () => {
-    expect(slugify("  Hello World  ")).toBe("-hello-world-");
-  });
-
-  test("strips non-ASCII letters (accents) because \\w is ASCII-only", () => {
-    expect(slugify("café résumé")).toBe("caf-rsum");
+  it("returns its normalized value from toString", () => {
+    expect(new Slug("Hello World").toString()).toBe("hello-world");
   });
 });

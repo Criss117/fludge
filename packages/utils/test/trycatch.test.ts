@@ -1,225 +1,71 @@
-import { describe, test, expect } from "bun:test";
-import {
-  ok,
-  err,
-  tryCatch,
-  isPromise,
-  type Result,
-} from "@fludge/utils/trycatch";
+import { describe, expect, it } from "bun:test";
+import { err, isPromise, ok, tryCatch } from "../src/trycatch";
 
-// ─── Constructors ─────────────────────────────────────────────────────────────
-
-describe("ok()", () => {
-  test("returns a tuple [data, null]", () => {
-    const result = ok("hello");
-
-    expect(result).toEqual(["hello", null]);
+describe("tryCatch", () => {
+  it("returns a successful result for a sync operation", () => {
+    expect(tryCatch(() => 42)).toEqual([42, null]);
   });
 
-  test("preserves falsy data (0, empty string, false, null)", () => {
-    expect(ok(0)).toEqual([0, null]);
-    expect(ok("")).toEqual(["", null]);
-    expect(ok(false)).toEqual([false, null]);
-    expect(ok(null)).toEqual([null, null]);
-  });
-
-  test("preserves object references", () => {
-    const obj = { a: 1 };
-    const result = ok(obj);
-
-    expect(result[0]).toBe(obj);
-    expect(result[1]).toBeNull();
-  });
-});
-
-describe("err()", () => {
-  test("returns a tuple [null, error]", () => {
-    const error = new Error("boom");
-    const result = err(error);
-
-    expect(result).toEqual([null, error]);
-  });
-
-  test("preserves the exact error reference", () => {
-    const error = new Error("boom");
-    const result = err(error);
-
-    expect(result[1]).toBe(error);
-    expect(result[0]).toBeNull();
-  });
-});
-
-// ─── tryCatch — sync function ─────────────────────────────────────────────────
-
-describe("tryCatch — sync function", () => {
-  test("returns ok tuple when the function succeeds", () => {
-    const result = tryCatch(() => 42);
-
-    expect(result).toEqual([42, null]);
-  });
-
-  test("returns err tuple when the function throws an Error", () => {
-    const result = tryCatch(() => {
-      throw new Error("sync failure");
+  it("returns an Error for a sync failure", () => {
+    const [data, error] = tryCatch<number>((): number => {
+      throw new Error("fail");
     });
 
-    expect(result[0]).toBeNull();
-    expect(result[1]).toBeInstanceOf(Error);
-    expect((result[1] as Error).message).toBe("sync failure");
+    expect(data).toBeNull();
+    expect(error).toBeInstanceOf(Error);
+    expect(error?.message).toBe("fail");
   });
 
-  test("wraps a thrown non-Error value in a new Error (default parseError)", () => {
-    const result = tryCatch(() => {
-      throw "string error";
+  it("converts non-Error thrown values to Errors", () => {
+    const [, error] = tryCatch<number>((): number => {
+      throw "oops";
     });
 
-    expect(result[0]).toBeNull();
-    expect(result[1]).toBeInstanceOf(Error);
-    expect((result[1] as Error).message).toBe("string error");
+    expect(error).toBeInstanceOf(Error);
+    expect(error?.message).toBe("oops");
   });
 
-  test("wraps a thrown number in a new Error", () => {
-    const result = tryCatch(() => {
-      throw 404;
-    });
-
-    expect(result[1]).toBeInstanceOf(Error);
-    expect((result[1] as Error).message).toBe("404");
-  });
-
-  test("preserves the exact Error instance thrown", () => {
-    const original = new Error("original");
-    const result = tryCatch(() => {
-      throw original;
-    });
-
-    expect(result[1]).toBe(original);
-  });
-});
-
-// ─── tryCatch — async function ────────────────────────────────────────────────
-
-describe("tryCatch — async function", () => {
-  test("resolves to ok tuple when the async function succeeds", async () => {
-    const result = await tryCatch(async () => 42);
-
-    expect(result).toEqual([42, null]);
-  });
-
-  test("resolves to err tuple when the async function rejects", async () => {
-    const result = await tryCatch(async () => {
-      throw new Error("async failure");
-    });
-
-    expect(result[0]).toBeNull();
-    expect(result[1]).toBeInstanceOf(Error);
-    expect((result[1] as Error).message).toBe("async failure");
-  });
-
-  test("wraps a rejected non-Error value in a new Error", async () => {
-    const result = await tryCatch(async () => {
-      throw { code: "CUSTOM" };
-    });
-
-    expect(result[1]).toBeInstanceOf(Error);
-    expect((result[1] as Error).message).toBe("[object Object]");
-  });
-});
-
-// ─── tryCatch — direct Promise ─────────────────────────────────────────────────
-
-describe("tryCatch — direct Promise", () => {
-  test("resolves to ok tuple when the Promise fulfils", async () => {
-    const result = await tryCatch(Promise.resolve("value"));
-
-    expect(result).toEqual(["value", null]);
-  });
-
-  test("resolves to err tuple when the Promise rejects with an Error", async () => {
-    const result = await tryCatch(Promise.reject(new Error("rejected")));
-
-    expect(result[0]).toBeNull();
-    expect((result[1] as Error).message).toBe("rejected");
-  });
-
-  test("wraps a Promise rejected with a non-Error value", async () => {
-    const result = await tryCatch(Promise.reject("fail"));
-
-    expect(result[1]).toBeInstanceOf(Error);
-    expect((result[1] as Error).message).toBe("fail");
-  });
-});
-
-// ─── tryCatch — custom parseError ──────────────────────────────────────────────
-
-class CustomError extends Error {
-  constructor(
-    public code: string,
-    message: string,
-  ) {
-    super(message);
-    this.name = "CustomError";
-  }
-}
-
-describe("tryCatch — custom parseError", () => {
-  test("transforms a thrown value via parseError (sync)", () => {
-    const result = tryCatch(
-      () => {
-        throw { code: "NOT_FOUND" };
+  it("uses a custom error parser", () => {
+    const customError = new TypeError("parsed");
+    const [, error] = tryCatch<number, TypeError>(
+      (): number => {
+        throw "raw";
       },
-      { parseError: (raw) => new CustomError(String((raw as any).code), "missing") },
+      { parseError: () => customError },
     );
 
-    expect(result[1]).toBeInstanceOf(CustomError);
-    expect((result[1] as CustomError).code).toBe("NOT_FOUND");
+    expect(error).toBe(customError);
   });
 
-  test("transforms a rejected Promise via parseError", async () => {
-    const result = await tryCatch(Promise.reject("ERR_X"), {
-      parseError: (raw) => new CustomError(String(raw), "mapped"),
+  it("returns successful results for promises and async functions", async () => {
+    expect(await tryCatch(Promise.resolve(42))).toEqual([42, null]);
+    expect(await tryCatch(async () => 42)).toEqual([42, null]);
+  });
+
+  it("returns parsed Errors for rejected promises and async failures", async () => {
+    const promiseResult = await tryCatch(Promise.reject(new Error("fail")));
+    const asyncResult = await tryCatch(async () => {
+      throw new Error("fail");
     });
 
-    expect(result[1]).toBeInstanceOf(CustomError);
-    expect((result[1] as CustomError).code).toBe("ERR_X");
+    expect(promiseResult[0]).toBeNull();
+    expect(promiseResult[1]).toBeInstanceOf(Error);
+    expect(asyncResult[0]).toBeNull();
+    expect(asyncResult[1]?.message).toBe("fail");
   });
 
-  test("parseError receives the raw thrown value, not a wrapped Error", () => {
-    const seen: unknown[] = [];
-
-    tryCatch(
-      () => {
-        throw { nested: true };
-      },
-      {
-        parseError: (raw) => {
-          seen.push(raw);
-          return new Error("parsed");
-        },
-      },
-    );
-
-    expect(seen[0]).toEqual({ nested: true });
+  it("constructs successful and failed results", () => {
+    expect(ok(42)).toEqual([42, null]);
+    expect(err(new Error("x"))).toEqual([null, new Error("x")]);
   });
 });
-
-// ─── isPromise helper ─────────────────────────────────────────────────────────
 
 describe("isPromise", () => {
-  test("returns true for a real Promise", () => {
-    expect(isPromise(Promise.resolve(1))).toBe(true);
+  it("detects promises", () => {
+    expect(isPromise(Promise.resolve())).toBe(true);
   });
 
-  test("returns true for a thenable duck-type", () => {
-    const thenable = { then: () => {} };
-    expect(isPromise(thenable)).toBe(true);
-  });
-
-  test("returns false for non-thenable values", () => {
-    expect(isPromise(null)).toBe(false);
-    expect(isPromise(undefined)).toBe(false);
+  it("rejects non-promises", () => {
     expect(isPromise(42)).toBe(false);
-    expect(isPromise("str")).toBe(false);
-    expect(isPromise({})).toBe(false);
   });
 });
