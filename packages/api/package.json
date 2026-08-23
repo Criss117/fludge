@@ -13,19 +13,21 @@
     "check-types": "tsc -b"
   },
   "dependencies": {
-    "@fludge/utils": "workspace:*",
     "@fludge/auth": "workspace:*",
     "@fludge/db": "workspace:*",
     "@fludge/env": "workspace:*",
+    "@fludge/utils": "workspace:*",
     "@orpc/openapi": "catalog:",
     "@orpc/server": "catalog:",
     "@orpc/zod": "catalog:",
-    "drizzle-orm": "catalog:",
     "dotenv": "catalog:",
-    "zod": "catalog:",
-    "uuid": "catalog:"
+    "drizzle-orm": "catalog:",
+    "p-limit": "7.3.1",
+    "uuid": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
+    "@faker-js/faker": "10.6.0",
     "@fludge/config": "workspace:*",
     "elysia": "catalog:",
     "typescript": "7.0.2"

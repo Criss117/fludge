@@ -4,15 +4,18 @@ import type { Context } from "./context";
 import { organizationContainer } from "./modules/iam/organization/container";
 import type { AppStatement } from "@fludge/utils/permissions";
 import { UUID } from "@fludge/utils/uuid";
+import { env } from "@fludge/env/server";
 
 export const o = os.$context<Context>();
 
 export const publicProcedure = o;
 
 const requireAuth = o.middleware(async ({ context, next }) => {
-  if (!context.session?.user) {
-    throw new ORPCError("UNAUTHORIZED");
-  }
+  if (!context.session)
+    throw new ORPCError("UNAUTHORIZED", {
+      message: "No se ha autenticado",
+    });
+
   return next({
     context: {
       session: context.session,
@@ -94,10 +97,22 @@ function hasPermission(permission: AppStatement) {
   });
 }
 
+const devOnly = o.middleware(({ context, next }) => {
+  if (env.NODE_ENV !== "development")
+    throw new ORPCError("FORBIDDEN", {
+      message: "Solo para desarrollo",
+    });
+
+  return next({
+    context,
+  });
+});
+
 export const protectedProcedure = publicProcedure.use(requireAuth);
 export const rootOnlyProcedure = publicProcedure.use(rootOnly);
 export const requireOrganizationProcedure =
   publicProcedure.use(requireOrganization);
+export const devOnlyProcedure = publicProcedure.use(devOnly);
 export function hasPermissionProcedure(permission: AppStatement) {
   return publicProcedure.use(hasPermission(permission));
 }

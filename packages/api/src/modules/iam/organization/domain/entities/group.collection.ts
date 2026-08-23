@@ -25,9 +25,9 @@ export class GroupCollection {
     if (this._groups.has(group.id.toString()))
       throw new GroupAlreadyExistsException();
 
-    const nameIsTaken = this.groupNameIsAvailable(group.values.name);
+    const nameIsAvailable = this.groupNameIsAvailable(group.values.name);
 
-    if (nameIsTaken)
+    if (!nameIsAvailable)
       throw new GroupAlreadyExistsException("El nombre ya está en uso");
 
     this._groups.set(group.id.toString(), group);
