@@ -15,8 +15,10 @@ import type {
   GroupSelect,
 } from "@fludge/db/schema/iam.schema";
 import { GroupMember } from "./group-members";
-import { GroupMemberAlreadyExistsException } from "../exceptions/group-member-elready-exists.exception";
+import { GroupMemberAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-member-elready-exists.exception";
 import type { AppStatement } from "@fludge/utils/permissions";
+import { CantRemoveOwnerException } from "../exceptions/cant-remove-owner.exception";
+import { GroupAlreadyExistsException } from "../exceptions/group-already-exists.exception";
 
 type CreateOrganization = {
   name: string;
@@ -120,31 +122,36 @@ export class Organization {
 
   // Member methods
   public addMember(member: Member) {
-    if (member.isOwner()) {
-      let existingOwner = false;
+    if (member.isOwner() && this.owner)
+      throw new MemberAlreadyExistsException(
+        "La organizacion ya tiene un propietario",
+      );
 
-      for (const m of this._members.values()) {
-        if (m.isOwner()) {
-          existingOwner = true;
-          break;
-        }
-      }
-
-      if (existingOwner) return;
-    }
-
-    if (this._members.has(member.id.toString())) {
+    if (this._members.has(member.id.toString()))
       throw new MemberAlreadyExistsException();
-    }
+
     this._members.set(member.id.toString(), member);
+  }
+
+  public get owner() {
+    let owner: Member | null = null;
+
+    for (const m of this._members.values()) {
+      if (m.isOwner()) {
+        owner = m;
+        break;
+      }
+    }
+
+    return owner;
   }
 
   public removeMember(memberId: UUID) {
     const member = this._members.get(memberId.toString());
 
-    if (!member) return;
+    if (!member) throw new MemberNotFoundException();
 
-    if (member.isOwner()) return;
+    if (member.isOwner()) throw new CantRemoveOwnerException();
 
     this._groupMembers = this._groupMembers.filter(
       (gm) => !gm.memberId.equals(memberId),
@@ -155,6 +162,7 @@ export class Organization {
 
   public getMemberByUserId(userId: UUID) {
     let member: Member | null = null;
+
     for (const m of this._members.values()) {
       if (m.userId.equals(userId)) {
         member = m;
@@ -167,6 +175,14 @@ export class Organization {
 
   // Group methods
   public addGroup(group: Group) {
+    if (this._groups.has(group.id.toString()))
+      throw new GroupAlreadyExistsException();
+
+    const nameIsTaken = this.groupNameIsAvailable(group.values.name);
+
+    if (nameIsTaken)
+      throw new GroupAlreadyExistsException("El nombre ya está en uso");
+
     this._groups.set(group.id.toString(), group);
   }
 
@@ -196,7 +212,7 @@ export class Organization {
   ) {
     const group = this._groups.get(groupId.toString());
 
-    if (!group) return;
+    if (!group) throw new GroupNotFoundException();
 
     if (values.toogleActive) {
       if (group.isActive) group.disable();
@@ -208,11 +224,9 @@ export class Organization {
       values.name !== group.values.name &&
       !this.groupNameIsAvailable(values.name, group.id)
     )
-      return;
+      throw new GroupAlreadyExistsException("El nombre ya está en uso");
 
     group.update(values);
-
-    console.log("group", group.values);
 
     this._groups.set(group.id.toString(), group);
   }
@@ -220,7 +234,7 @@ export class Organization {
   public disableGroup(groupId: UUID) {
     const group = this._groups.get(groupId.toString());
 
-    if (!group) return;
+    if (!group) throw new GroupNotFoundException();
 
     group.disable();
 
@@ -230,7 +244,7 @@ export class Organization {
   public enableGroup(groupId: UUID) {
     const group = this._groups.get(groupId.toString());
 
-    if (!group) return;
+    if (!group) throw new GroupNotFoundException();
 
     group.enable();
 
@@ -238,7 +252,12 @@ export class Organization {
   }
 
   public removeGroup(groupId: UUID) {
+    const group = this._groups.get(groupId.toString());
+
+    if (!group) throw new GroupNotFoundException();
+
     this._groups.delete(groupId.toString());
+
     this._groupMembers = this._groupMembers.filter(
       (gm) => !gm.groupId.equals(groupId),
     );
@@ -265,8 +284,8 @@ export class Organization {
   }
 
   public removeGroupMember(groupId: UUID, memberId: UUID) {
-    const groupKey = groupId.toString();
-    if (!this._groups.has(groupKey)) throw new GroupNotFoundException();
+    if (!this._groups.has(groupId.toString()))
+      throw new GroupNotFoundException();
 
     this._groupMembers = this._groupMembers.filter(
       (gm) => !gm.groupId.equals(groupId) || !gm.memberId.equals(memberId),
@@ -292,6 +311,7 @@ export class Organization {
     permission: Partial<AppStatement>,
   ): boolean {
     const member = this._members.get(memberId.toString());
+
     if (!member) return false;
 
     if (member.isOwner()) return true;
