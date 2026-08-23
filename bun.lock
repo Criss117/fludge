@@ -137,7 +137,6 @@
         "@fludge/db": "workspace:*",
         "@fludge/env": "workspace:*",
         "@fludge/utils": "workspace:*",
-        "@orpc/client": "catalog:",
         "@orpc/openapi": "catalog:",
         "@orpc/server": "catalog:",
         "@orpc/zod": "catalog:",

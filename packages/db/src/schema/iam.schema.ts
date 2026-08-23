@@ -20,19 +20,20 @@ export const organization = sqliteTable(
     name: text("name").notNull(),
     slug: text("slug").notNull(),
     logo: text("logo"),
-    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
-    metadata: text("metadata", { mode: "json" }),
+    metadata: text("metadata", { mode: "json" }).$type<string>(),
     legalName: text("legal_name").notNull(),
     taxId: text("tax_id").notNull(),
     address: text("address").notNull(),
     phone: text("phone").notNull(),
+
+    createdAt: auditMetadata.createdAt,
+    updatedAt: auditMetadata.updatedAt,
   },
   (table) => [
     uniqueIndex("organization_slug_unique").on(table.slug),
     uniqueIndex("organization_legal_name_unique").on(table.legalName),
     uniqueIndex("organization_tax_id_unique").on(table.taxId),
     uniqueIndex("organization_phone_unique").on(table.phone),
-    index("organization_created_at_idx").on(table.createdAt),
     index("organization_name_idx").on(table.name),
   ],
 );

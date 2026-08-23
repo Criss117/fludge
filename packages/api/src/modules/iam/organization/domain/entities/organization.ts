@@ -9,7 +9,7 @@ import { Slug } from "@fludge/utils/slugify";
 import type {
   MemberSelect,
   OrganizationSelect,
-} from "@fludge/db/schema/auth.schema";
+} from "@fludge/db/schema/iam.schema";
 import type {
   GroupMemberSelect,
   GroupSelect,
@@ -29,6 +29,8 @@ type CreateOrganization = {
   groups?: CreateGroup[];
 };
 
+export type UpdateOrganization = Partial<Omit<CreateOrganization, "groups">>;
+
 export class Organization {
   private constructor(
     private readonly _id: UUID,
@@ -40,10 +42,11 @@ export class Organization {
     private _taxId: string,
     private _address: string,
     private _phone: string,
-    private readonly _createdAt: Date,
     private _groups: Map<string, Group>,
     private _members: Map<string, Member>,
     private _groupMembers: GroupMember[],
+    private readonly _createdAt: Date,
+    private _updatedAt: Date,
   ) {}
 
   public static create(values: CreateOrganization) {
@@ -61,10 +64,11 @@ export class Organization {
       values.taxId,
       values.address,
       values.phone,
-      now,
       new Map(groups.map((g) => [g.id.toString(), g])),
       new Map(),
       [],
+      now,
+      now,
     );
   }
 
@@ -88,11 +92,30 @@ export class Organization {
       values.taxId,
       values.address,
       values.phone,
-      new Date(values.createdAt),
       new Map(groups.map((g) => [g.id.toString(), g])),
       new Map(members.map((m) => [m.id.toString(), m])),
       values.groupMembers.map((gm) => GroupMember.reconstitute(gm)),
+      values.createdAt,
+      values.updatedAt,
     );
+  }
+
+  public update(values: UpdateOrganization) {
+    const now = new Date();
+
+    if (values.name) {
+      this._name = values.name;
+      this._slug = new Slug(values.name);
+    }
+
+    if (values.logo) this._logo = values.logo;
+    if (values.metadata) this._metadata = values.metadata;
+    if (values.legalName) this._legalName = values.legalName;
+    if (values.taxId) this._taxId = values.taxId;
+    if (values.address) this._address = values.address;
+    if (values.phone) this._phone = values.phone;
+
+    this._updatedAt = now;
   }
 
   public addMember(member: Member) {
@@ -215,7 +238,7 @@ export class Organization {
   }
 
   public get id() {
-    return this._id.toString();
+    return this._id;
   }
 
   public get values(): OrganizationSelect & {
@@ -234,17 +257,18 @@ export class Organization {
       address: this._address,
       phone: this._phone,
       createdAt: this._createdAt,
+      updatedAt: this._updatedAt,
       members: Array.from(this._members.values()).map((member) => ({
         ...member.values,
-        organizationId: this.id,
+        organizationId: this.id.toString(),
       })),
       groups: Array.from(this._groups.values()).map((group) => ({
-        organizationId: this.id,
         ...group.values,
+        organizationId: this.id.toString(),
       })),
       groupMembers: this._groupMembers.map((member) => ({
         ...member.values,
-        organizationId: this.id,
+        organizationId: this.id.toString(),
       })),
     };
   }

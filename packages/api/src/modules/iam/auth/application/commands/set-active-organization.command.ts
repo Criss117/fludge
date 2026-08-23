@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { EnsureOrganizationExistsService } from "@fludge/api/modules/iam/organization/application/services/ensure-organization-exists.service";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 import type { DatabaseService } from "@fludge/db";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { session } from "@fludge/db/schema/auth.schema";

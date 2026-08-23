@@ -1,7 +1,7 @@
 import type { DatabaseService } from "@fludge/db";
 import { organization } from "@fludge/db/schema/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
-import { eq, ne, or, SQL } from "drizzle-orm";
+import { and, eq, ne, or, SQL } from "drizzle-orm";
 
 type Values = {
   slug?: string;
@@ -34,8 +34,10 @@ export class OrganizationUniquenessValidator {
         slugTaken: false,
       });
 
+    const conditions = [or(...orConditions)];
+
     if (excludeId) {
-      orConditions.push(ne(organization.id, excludeId));
+      conditions.push(ne(organization.id, excludeId));
     }
 
     const [rows, errFind] = await tryCatch(
@@ -48,7 +50,7 @@ export class OrganizationUniquenessValidator {
           slug: organization.slug,
         })
         .from(organization)
-        .where(or(...orConditions)),
+        .where(and(...conditions)),
     );
 
     if (errFind) return err(errFind);

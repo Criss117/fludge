@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group";
 import { allPermissions, Permissions } from "@fludge/utils/permissions";

@@ -98,9 +98,13 @@ export class PgOrganizationRepository {
     );
   }
 
-  public async save(data: Organization) {
+  public async save(
+    data: Organization,
+    options?: { onlySaveOrganization?: boolean },
+  ) {
     const { groups, members, groupMembers, ...values } = data.values;
-    console.log("insertando group members");
+
+    const onlySaveOrganization = options?.onlySaveOrganization ?? false;
 
     const transaction = this.db.transaction(async (tx) => {
       const newOrganizations = await tx
@@ -113,6 +117,8 @@ export class PgOrganizationRepository {
         .returning();
 
       const newOrganization = newOrganizations.at(0)!;
+
+      if (onlySaveOrganization) return newOrganization;
 
       if (members.length > 0) {
         await tx

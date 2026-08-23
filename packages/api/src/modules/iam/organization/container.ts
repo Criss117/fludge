@@ -5,6 +5,7 @@ import { OrganizationUniquenessValidator } from "./application/services/organiza
 import { PgOrganizationRepository } from "./infrastructure/repositories/pg-organization.repository";
 import { FindAllOrganizationsQuery } from "./application/queries/find-all-organizations.query";
 import { EnsureOrganizationExistsService } from "./application/services/ensure-organization-exists.service";
+import { UpdateOrganizationCommand } from "./application/commands/update-organization.command";
 
 //Repositories
 const organizationRepository = new PgOrganizationRepository(databaseService);
@@ -22,6 +23,10 @@ const registerOrganizationCommand = new RegisterOrganizationCommand(
   organizationUniquenessValidator,
   organizationRepository,
 );
+const updateOrganizationCommand = new UpdateOrganizationCommand(
+  organizationRepository,
+  organizationUniquenessValidator,
+);
 
 //Queries
 const findAllOrganizationsQuery = new FindAllOrganizationsQuery(
@@ -34,6 +39,9 @@ export const organizationContainer = {
     organizationUniquenessValidator,
     ensureOrganizationExistsService,
   },
-  commands: { register: registerOrganizationCommand },
+  commands: {
+    register: registerOrganizationCommand,
+    update: updateOrganizationCommand,
+  },
   queries: { findAll: findAllOrganizationsQuery },
 };

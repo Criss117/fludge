@@ -1,10 +1,12 @@
 import {
+  hasPermissionProcedure,
   protectedProcedure,
   requireOrganizationProcedure,
   rootOnlyProcedure,
 } from "@fludge/api/index";
 import { registerOrganizationCommand } from "@fludge/api/modules/iam/organization/application/commands/register-organization.commad";
 import { organizationContainer } from "@fludge/api/modules/iam/organization/container";
+import { updateOrganizationCommand } from "@fludge/api/modules/iam/organization/application/commands/update-organization.command";
 
 const TAGS = ["Organizations"] as const;
 
@@ -22,6 +24,23 @@ export const organizationRouter = {
           context.session.user.id,
           input,
         ),
+      ),
+
+    update: hasPermissionProcedure({
+      organizations: ["update"],
+    })
+      .route({
+        method: "PUT",
+        path: "/organizations",
+        tags: TAGS,
+      })
+      .input(updateOrganizationCommand)
+      .handler(({ input, context }) =>
+        organizationContainer.commands.update.execute({
+          loggedUserId: context.session.user.id,
+          activeOrganization: context.session.activeOrganization,
+          ...input,
+        }),
       ),
   },
 
