@@ -10,7 +10,8 @@
     }
   },
   "scripts": {
-    "check-types": "tsc -b"
+    "check-types": "tsc -b",
+    "test": "bun test"
   },
   "dependencies": {
     "@fludge/auth": "workspace:*",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@faker-js/faker": "10.6.0",
     "@fludge/config": "workspace:*",
+    "@types/bun": "catalog:",
     "elysia": "catalog:",
     "typescript": "7.0.2"
   }
