@@ -4,7 +4,7 @@ import { tryCatch } from "@fludge/utils/trycatch";
 import { ORPCError } from "@orpc/server";
 import type { AuthService } from "@fludge/auth";
 import type { AddMemberCommand } from "@fludge/api/modules/iam/organization/application/commands/add-member.command";
-import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization";
+import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 
 export const signUpMemberCommand = z.object({
   email: z.string({
