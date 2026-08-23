@@ -17,7 +17,7 @@ import {
   type GroupSelect,
 } from "@fludge/db/schema/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
-import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization";
+import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import type { AppStatement } from "@fludge/utils/permissions";
 import { alias } from "drizzle-orm/sqlite-core";
 

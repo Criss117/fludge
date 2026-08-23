@@ -1,20 +1,28 @@
 import { z } from "zod";
+import { ORPCError } from "@orpc/server";
 
 import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
-import { Member } from "@fludge/api/modules/iam/organization/domain/entities/member.entity";
 import { UUID } from "@fludge/utils/uuid";
-import { ORPCError } from "@orpc/server";
 
-export const addMemberCommand = z.object({
-  userId: z.uuid({
-    error: "El id del usuario es requerido",
+export const assignMembersToGroupCommand = z.object({
+  groupId: z.uuid({
+    error: "El id del grupo es requerido",
   }),
+  memberIds: z
+    .array(
+      z.uuid({
+        error: "El id del miembro es requerido",
+      }),
+    )
+    .min(1, {
+      error: "Debe especificar al menos un miembro",
+    }),
 });
 
-type CMD = z.infer<typeof addMemberCommand>;
+type CMD = z.infer<typeof assignMembersToGroupCommand>;
 
-export class AddMemberCommand {
+export class AssignMembersToGroupCommand {
   constructor(
     private readonly organizationRepository: PgOrganizationRepository,
   ) {}
@@ -28,24 +36,24 @@ export class AddMemberCommand {
       UUID.fromString(loggedUserId),
     )!;
 
-    activeOrganization.members.addMember(
-      Member.create({
-        userId: UUID.fromString(cmd.userId),
-        role: "member",
-        assignedBy: loggedMember.id,
-      }),
-    );
+    cmd.memberIds.forEach((memberId) => {
+      activeOrganization.addGroupMember(
+        UUID.fromString(cmd.groupId),
+        UUID.fromString(memberId),
+        loggedMember.id,
+      );
+    });
 
     const [, errSaving] = await this.organizationRepository.save(
       activeOrganization,
       {
-        onlySave: ["members"],
+        onlySave: ["groupMembers"],
       },
     );
 
     if (errSaving)
       throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al guardar la organización",
+        message: "Error al guardar los cambios",
         cause: errSaving.cause,
       });
 

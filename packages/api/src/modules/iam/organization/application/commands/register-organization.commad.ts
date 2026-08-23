@@ -1,11 +1,10 @@
 import { z } from "zod";
 import { ORPCError } from "@orpc/server";
 import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
-import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group";
+import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { allPermissions, Permissions } from "@fludge/utils/permissions";
 import { UUID } from "@fludge/utils/uuid";
-import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization";
-import { Member } from "@fludge/api/modules/iam/organization/domain/entities/members";
+import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import type { OrganizationUniquenessValidator } from "../services/organization-uniqueness-validator.service";
 
 export const registerOrganizationCommand = z.object({
@@ -76,7 +75,24 @@ export class RegisterOrganizationCommand {
       phone: cmd.phone,
       taxId: cmd.taxId,
       address: cmd.address,
+      owner: {
+        userId: UUID.fromString(rootUserId),
+        role: "owner",
+        assignedBy: null,
+      },
     });
+
+    const ownerMember = organization.members.owner!;
+
+    organization.groups.addGroup(
+      Group.create({
+        name: "Administradores",
+        description: "Grupo de administradores",
+        permissions: Permissions.create(allPermissions),
+        createdBy: ownerMember.id,
+      }),
+    );
+
     const [uniqueness, errUniqueness] =
       await this.organizationUniquenessValidator.validateUniqueFields({
         legalName: organization.values.legalName,
@@ -111,23 +127,6 @@ export class RegisterOrganizationCommand {
       throw new ORPCError("CONFLICT", {
         message: "El teléfono ya está en uso",
       });
-
-    const ownerMember = Member.create({
-      userId: UUID.fromString(rootUserId),
-      role: "owner",
-      assignedBy: null,
-    });
-
-    organization.addMember(ownerMember);
-
-    organization.addGroup(
-      Group.create({
-        name: "Administradores",
-        description: "Grupo de administradores",
-        permissions: Permissions.create(allPermissions),
-        createdBy: ownerMember.id,
-      }),
-    );
 
     const [, errSaving] = await this.organizationRepository.save(organization);
 

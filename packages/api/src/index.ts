@@ -67,9 +67,10 @@ const requireOrganization = requireAuth.concat(async ({ context, next }) => {
 
 function hasPermission(permission: AppStatement) {
   return requireOrganization.concat(({ context, next }) => {
-    const userMember = context.session.activeOrganization.getMemberByUserId(
-      UUID.fromString(context.session.user.id),
-    );
+    const userMember =
+      context.session.activeOrganization.members.getMemberByUserId(
+        UUID.fromString(context.session.user.id),
+      );
 
     if (!userMember)
       throw new ORPCError("FORBIDDEN", {

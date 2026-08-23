@@ -1,8 +1,8 @@
 import { appStatementSchema, Permissions } from "@fludge/utils/permissions";
 import { z } from "zod";
 import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
-import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization";
-import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group";
+import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
+import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
 
@@ -28,11 +28,11 @@ export class CreateGroupCommand {
     activeOrganization: Organization,
     cmd: CMD,
   ) {
-    const loggedMember = activeOrganization.getMemberByUserId(
+    const loggedMember = activeOrganization.members.getMemberByUserId(
       UUID.fromString(loggedUserId),
     )!;
 
-    activeOrganization.addGroup(
+    activeOrganization.groups.addGroup(
       Group.create({
         name: cmd.name,
         description: cmd.description,

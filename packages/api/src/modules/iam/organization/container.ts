@@ -9,6 +9,8 @@ import { UpdateOrganizationCommand } from "./application/commands/update-organiz
 import { CreateGroupCommand } from "./application/commands/create-group.command";
 import { UpdateGroupCommand } from "./application/commands/update-group.command";
 import { AddMemberCommand } from "./application/commands/add-member.command";
+import { AssignMembersToGroupCommand } from "./application/commands/assign-members-to-group.command";
+import { AssignGroupsToMemberCommand } from "./application/commands/assign-groups-to-member.command";
 
 //Repositories
 const organizationRepository = new PgOrganizationRepository(databaseService);
@@ -36,6 +38,14 @@ const updateGroupCommand = new UpdateGroupCommand(organizationRepository);
 
 const addMemberCommand = new AddMemberCommand(organizationRepository);
 
+const assignMembersToGroupCommand = new AssignMembersToGroupCommand(
+  organizationRepository,
+);
+
+const assignGroupsToMemberCommand = new AssignGroupsToMemberCommand(
+  organizationRepository,
+);
+
 //Queries
 const findAllOrganizationsQuery = new FindAllOrganizationsQuery(
   databaseService,
@@ -54,10 +64,12 @@ export const organizationContainer = {
     group: {
       create: createGroupCommand,
       update: updateGroupCommand,
+      assignMembers: assignMembersToGroupCommand,
     },
 
     member: {
       add: addMemberCommand,
+      assignGroups: assignGroupsToMemberCommand,
     },
   },
   queries: { findAll: findAllOrganizationsQuery },

@@ -3,7 +3,7 @@ import { registerOrganizationCommand } from "./register-organization.commad";
 import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
 import { ORPCError } from "@orpc/server";
 import type { OrganizationUniquenessValidator } from "../services/organization-uniqueness-validator.service";
-import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization";
+import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Slug } from "@fludge/utils/slugify";
 
 export const updateOrganizationCommand = registerOrganizationCommand.partial();
