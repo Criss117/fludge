@@ -190,10 +190,18 @@ export class Organization {
     return available;
   }
 
-  public updateGroup(groupId: UUID, values: UpdateGroup) {
+  public updateGroup(
+    groupId: UUID,
+    values: UpdateGroup & { toogleActive?: boolean },
+  ) {
     const group = this._groups.get(groupId.toString());
 
     if (!group) return;
+
+    if (values.toogleActive) {
+      if (group.isActive) group.disable();
+      else group.enable();
+    }
 
     if (
       values.name &&
@@ -205,6 +213,26 @@ export class Organization {
     group.update(values);
 
     console.log("group", group.values);
+
+    this._groups.set(group.id.toString(), group);
+  }
+
+  public disableGroup(groupId: UUID) {
+    const group = this._groups.get(groupId.toString());
+
+    if (!group) return;
+
+    group.disable();
+
+    this._groups.set(group.id.toString(), group);
+  }
+
+  public enableGroup(groupId: UUID) {
+    const group = this._groups.get(groupId.toString());
+
+    if (!group) return;
+
+    group.enable();
 
     this._groups.set(group.id.toString(), group);
   }

@@ -10,6 +10,12 @@ export const updateGroupCommand = createGroupCommand.partial().extend({
   id: z.uuid({
     error: "El id del grupo es requerido",
   }),
+  toogleActive: z
+    .boolean({
+      error: "La opción de activar o desactivar el grupo no es válida",
+    })
+    .default(false)
+    .optional(),
 });
 
 type CMD = z.infer<typeof updateGroupCommand>;
@@ -26,6 +32,7 @@ export class UpdateGroupCommand {
         ? Permissions.create(cmd.permissions)
         : undefined,
       name: cmd.name,
+      toogleActive: cmd.toogleActive,
     });
 
     const [, errSaving] = await this.organizationRepository.save(

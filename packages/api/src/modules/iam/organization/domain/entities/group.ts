@@ -75,6 +75,20 @@ export class Group {
     this._updatedAt = new Date();
   }
 
+  public disable() {
+    if (this._deletedAt) return;
+
+    this._deletedAt = new Date();
+    this._updatedAt = new Date();
+  }
+
+  public enable() {
+    if (!this._deletedAt) return;
+
+    this._deletedAt = null;
+    this._updatedAt = new Date();
+  }
+
   public get isActive() {
     return this._deletedAt === null;
   }

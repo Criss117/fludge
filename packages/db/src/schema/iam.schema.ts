@@ -1,6 +1,5 @@
 import {
   index,
-  integer,
   primaryKey,
   sqliteTable,
   text,
@@ -38,26 +37,35 @@ export const organization = sqliteTable(
   ],
 );
 
+export const organizationMetadata = {
+  organizationId: text("organization_id")
+    .notNull()
+    .references(() => organization.id, {
+      onDelete: "cascade",
+    }),
+};
+
 export const member = sqliteTable(
   "member",
   {
     id: text("id").primaryKey(),
-    organizationId: text("organization_id")
-      .notNull()
-      .references(() => organization.id, { onDelete: "cascade" }),
+
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     role: text("role", { enum: ["owner", "admin", "member"] })
       .default("member")
       .notNull(),
-    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
     assignedBy: text("assigned_by").references(
       (): AnySQLiteColumn => member.id,
       {
         onDelete: "set null",
       },
     ),
+
+    ...organizationMetadata,
+
+    createdAt: auditMetadata.createdAt,
   },
   (table) => [
     uniqueIndex("member_organizationId_userId_unique").on(
@@ -68,14 +76,6 @@ export const member = sqliteTable(
     index("member_userId_idx").on(table.userId),
   ],
 );
-
-export const organizationMetadata = {
-  organizationId: text("organization_id")
-    .notNull()
-    .references(() => organization.id, {
-      onDelete: "cascade",
-    }),
-};
 
 export const createdByMetadata = {
   createdBy: text("created_by").references(() => member.id, {
