@@ -145,11 +145,18 @@ export class Organization {
     );
   }
 
-  public getGroupsOfMember(memberId: UUID): Group[] {
+  public getGroupsOfMember(
+    memberId: UUID,
+    options?: { onlyActive?: boolean },
+  ): Group[] {
     const gms = this._groupMembers.filter((gm) => gm.memberId.equals(memberId));
-    return gms
+    const groups = gms
       .map((gm) => this._groups.getGroup(gm.groupId))
       .filter(Boolean) as Group[];
+
+    return options?.onlyActive
+      ? groups.filter((g) => g.status.isActive())
+      : groups;
   }
 
   public getMembersOfGroup(groupId: UUID): Member[] {
@@ -169,7 +176,9 @@ export class Organization {
 
     if (member.role.isOwner()) return true;
 
-    const groups = this.getGroupsOfMember(memberId);
+    const groups = this.getGroupsOfMember(memberId, {
+      onlyActive: true,
+    });
 
     const mergedPermissions = Permissions.merge(
       groups.map((g) => g.permissions),

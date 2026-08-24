@@ -1,4 +1,5 @@
 import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
+import type { StatusEnum } from "@fludge/db/schema/enums";
 import type { GroupSelect } from "@fludge/db/schema/iam.schema";
 import { Permissions } from "@fludge/utils/permissions";
 import { Slug } from "@fludge/utils/slugify";
@@ -11,7 +12,9 @@ export type CreateGroup = {
   createdBy: UUID | null;
 };
 
-export type UpdateGroup = Partial<Omit<CreateGroup, "createdBy">>;
+export type UpdateGroup = Partial<Omit<CreateGroup, "createdBy">> & {
+  status?: StatusEnum;
+};
 
 export class Group {
   private constructor(
@@ -72,6 +75,8 @@ export class Group {
       this._description = values.description;
     if (values.permissions !== undefined)
       this._permissions = values.permissions;
+
+    if (values.status !== undefined) this._status = new Status(values.status);
 
     this._updatedAt = new Date();
   }

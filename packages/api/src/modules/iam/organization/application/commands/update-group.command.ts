@@ -6,17 +6,13 @@ import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
 import { createGroupCommand } from "./create-group.command";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
+import { statusEnum } from "@fludge/db/schema/enums";
 
 export const updateGroupCommand = createGroupCommand.partial().extend({
   id: z.uuid({
     error: "El id del grupo es requerido",
   }),
-  toogleActive: z
-    .boolean({
-      error: "La opción de activar o desactivar el grupo no es válida",
-    })
-    .default(false)
-    .optional(),
+  status: z.enum(statusEnum).optional(),
 });
 
 type CMD = z.infer<typeof updateGroupCommand>;
@@ -33,7 +29,7 @@ export class UpdateGroupCommand {
         ? Permissions.create(cmd.permissions)
         : undefined,
       name: cmd.name,
-      toogleActive: cmd.toogleActive,
+      status: cmd.status,
     });
 
     const [, errSaving] =

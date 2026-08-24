@@ -58,7 +58,7 @@ describe("UpdateGroupCommand", () => {
     const { activeOrganization, group } = makeActiveOrganization();
     await command.execute(activeOrganization, {
       id: group.id.toString(),
-      toogleActive: true,
+      status: "inactive",
     });
     expect(
       activeOrganization.groups.getGroup(group.id)!.status.isActive(),

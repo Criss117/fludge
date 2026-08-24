@@ -55,18 +55,10 @@ export class GroupCollection {
     return available;
   }
 
-  public updateGroup(
-    groupId: UUID,
-    values: UpdateGroup & { toogleActive?: boolean },
-  ) {
+  public updateGroup(groupId: UUID, values: UpdateGroup) {
     const group = this._groups.get(groupId.toString());
 
     if (!group) throw new GroupNotFoundException();
-
-    if (values.toogleActive) {
-      if (group.status.isActive()) group.setInactive();
-      else group.setActive();
-    }
 
     if (
       values.name &&
