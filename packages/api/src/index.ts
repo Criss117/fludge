@@ -61,6 +61,15 @@ const requireOrganization = requireAuth.concat(async ({ context, next }) => {
       message: "No se encontró la organización",
     });
 
+  const loggedUserIsMember = organization.members.getMemberByUserId(
+    UUID.fromString(context.session.user.id),
+  );
+
+  if (!loggedUserIsMember)
+    throw new ORPCError("FORBIDDEN", {
+      message: "El usuario no es miembro de la organización",
+    });
+
   return next({
     context: {
       session: { ...context.session, activeOrganization: organization },
