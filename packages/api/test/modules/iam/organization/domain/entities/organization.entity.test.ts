@@ -3,6 +3,7 @@ import { Permissions } from "@fludge/utils/permissions";
 import { UUID } from "@fludge/utils/uuid";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Member } from "@fludge/api/modules/iam/organization/domain/entities/member.entity";
+import { GroupMember } from "@fludge/api/modules/iam/organization/domain/entities/group-member.entity";
 import { GroupNotFoundException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-not-found.exception";
 import { MemberNotFoundException } from "@fludge/api/modules/iam/organization/domain/exceptions/member-not-found.exeption";
 import { GroupMemberAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-member-elready-exists.exception";
@@ -58,19 +59,21 @@ describe("Organization", () => {
     const group = organization.groups.values(organization.id)[0]!;
     const owner = organization.members.owner!;
     const createdBy = owner.id;
-    organization.addGroupMember(UUID.fromString(group.id), owner.id, createdBy);
+    const groupMember = GroupMember.create({
+      groupId: group.id,
+      memberId: owner.id.toString(),
+      createdBy: createdBy.toString(),
+    });
+    organization.addGroupMember(groupMember);
     expect(organization.getGroupsOfMember(owner.id)).toHaveLength(1);
     expect(
       organization.getMembersOfGroup(UUID.fromString(group.id)),
     ).toHaveLength(1);
     expect(organization.values.groupMembers).toHaveLength(1);
-    expect(() =>
-      organization.addGroupMember(
-        UUID.fromString(group.id),
-        owner.id,
-        createdBy,
-      ),
-    ).toThrow(GroupMemberAlreadyExistsException);
+    expect(() => organization.addGroupMember(groupMember)).toThrow(
+      GroupMemberAlreadyExistsException,
+    );
+    expect(organization.values.groupMembers).toHaveLength(1);
     organization.removeGroupMember(UUID.fromString(group.id), owner.id);
     expect(organization.values.groupMembers).toEqual([]);
   });
@@ -78,14 +81,22 @@ describe("Organization", () => {
     const { organization, ownerUserId } = createOrganization();
     const owner = organization.members.owner!;
     expect(() =>
-      organization.addGroupMember(UUID.generate(), owner.id, owner.id),
+      organization.addGroupMember(
+        GroupMember.create({
+          groupId: UUID.generate().toString(),
+          memberId: owner.id.toString(),
+          createdBy: owner.id.toString(),
+        }),
+      ),
     ).toThrow(GroupNotFoundException);
     const group = organization.groups.values(organization.id)[0]!;
     expect(() =>
       organization.addGroupMember(
-        UUID.fromString(group.id),
-        UUID.generate(),
-        owner.id,
+        GroupMember.create({
+          groupId: group.id,
+          memberId: UUID.generate().toString(),
+          createdBy: owner.id.toString(),
+        }),
       ),
     ).toThrow(MemberNotFoundException);
     expect(organization.members.getMemberByUserId(ownerUserId)).toBe(owner);
@@ -103,7 +114,13 @@ describe("Organization", () => {
     });
     organization.members.addMember(member);
     const group = organization.groups.values(organization.id)[0]!;
-    organization.addGroupMember(UUID.fromString(group.id), member.id, owner.id);
+    organization.addGroupMember(
+      GroupMember.create({
+        groupId: group.id,
+        memberId: member.id.toString(),
+        createdBy: owner.id.toString(),
+      }),
+    );
     expect(
       organization.memberHasPermission(member.id, { groups: ["read"] }),
     ).toBe(true);

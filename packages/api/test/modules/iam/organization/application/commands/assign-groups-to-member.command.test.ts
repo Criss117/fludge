@@ -7,15 +7,13 @@ import { GroupNotFoundException } from "@fludge/api/modules/iam/organization/dom
 import { Permissions } from "@fludge/utils/permissions";
 import { UUID } from "@fludge/utils/uuid";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
-import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
+import type { PgGroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group-member.repository";
 
-type SaveReturnType = ReturnType<
-  PgOrganizationRepository["saveOnlyGroupMembers"]
->;
+type SaveReturnType = ReturnType<PgGroupMemberRepository["save"]>;
 
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {
   return {
-    saveOnlyGroupMembers: mock(
+    save: mock(
       (): SaveReturnType => Promise.resolve(saveResult),
     ),
   };
@@ -63,8 +61,9 @@ describe("AssignGroupsToMemberCommand", () => {
       },
     );
     expect(result.groupMembers).toHaveLength(2);
-    expect(repository.saveOnlyGroupMembers).toHaveBeenCalledWith(
-      activeOrganization,
+    expect(repository.save).toHaveBeenCalledWith(
+      activeOrganization.id.toString(),
+      expect.arrayContaining(activeOrganization.groupMembers),
     );
   });
   it("throws NOT_FOUND when one group is unknown", async () => {
@@ -79,7 +78,7 @@ describe("AssignGroupsToMemberCommand", () => {
         groupIds: [groups[0].id.toString(), "missing"],
       }),
     ).rejects.toBeInstanceOf(GroupNotFoundException);
-    expect(repository.saveOnlyGroupMembers).not.toHaveBeenCalled();
+    expect(repository.save).not.toHaveBeenCalled();
   });
   it("throws INTERNAL_SERVER_ERROR when saving fails", async () => {
     const repository = makeRepository(err(new Error("boom")));

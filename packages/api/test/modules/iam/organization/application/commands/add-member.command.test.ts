@@ -3,13 +3,13 @@ import { AddMemberCommand } from "@fludge/api/modules/iam/organization/applicati
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
-import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
+import type { PgMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-member.repository";
 
-type SaveReturnType = ReturnType<PgOrganizationRepository["save"]>;
+type SaveReturnType = ReturnType<PgMemberRepository["save"]>;
 
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {
   return {
-    saveOnlyMembers: mock((): SaveReturnType => Promise.resolve(saveResult)),
+    save: mock((): SaveReturnType => Promise.resolve(saveResult)),
   };
 }
 
@@ -46,7 +46,13 @@ describe("AddMemberCommand", () => {
       role: "member",
       assignedBy: activeOrganization.members.owner!.id.toString(),
     });
-    expect(repository.saveOnlyMembers).toHaveBeenCalledWith(activeOrganization);
+    const newMember = activeOrganization.members.getMemberByUserId(
+      UUID.fromString("new-user-1"),
+    );
+    expect(repository.save).toHaveBeenCalledWith(
+      activeOrganization.id.toString(),
+      newMember,
+    );
   });
 
   it("throws INTERNAL_SERVER_ERROR when saving fails", async () => {
@@ -59,6 +65,6 @@ describe("AddMemberCommand", () => {
         userId: "new-user-2",
       }),
     ).rejects.toMatchObject({ code: "INTERNAL_SERVER_ERROR" });
-    expect(repository.saveOnlyMembers).toHaveBeenCalledTimes(1);
+    expect(repository.save).toHaveBeenCalledTimes(1);
   });
 });

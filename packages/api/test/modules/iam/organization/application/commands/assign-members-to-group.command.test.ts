@@ -9,14 +9,12 @@ import { GroupMemberAlreadyExistsException } from "@fludge/api/modules/iam/organ
 import { Permissions } from "@fludge/utils/permissions";
 import { UUID } from "@fludge/utils/uuid";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
-import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
+import type { PgGroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group-member.repository";
 
-type SaveReturnType = ReturnType<
-  PgOrganizationRepository["saveOnlyGroupMembers"]
->;
+type SaveReturnType = ReturnType<PgGroupMemberRepository["save"]>;
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {
   return {
-    saveOnlyGroupMembers: mock(
+    save: mock(
       (): SaveReturnType => Promise.resolve(saveResult),
     ),
   };
@@ -68,8 +66,9 @@ describe("AssignMembersToGroupCommand", () => {
       },
     );
     expect(result.groupMembers).toHaveLength(2);
-    expect(repository.saveOnlyGroupMembers).toHaveBeenCalledWith(
-      activeOrganization,
+    expect(repository.save).toHaveBeenCalledWith(
+      activeOrganization.id.toString(),
+      expect.arrayContaining(activeOrganization.groupMembers),
     );
   });
   it("throws NOT_FOUND for an unknown group", async () => {
@@ -82,7 +81,7 @@ describe("AssignMembersToGroupCommand", () => {
         memberIds: ["member-1"],
       }),
     ).rejects.toBeInstanceOf(GroupNotFoundException);
-    expect(repository.saveOnlyGroupMembers).not.toHaveBeenCalled();
+    expect(repository.save).not.toHaveBeenCalled();
   });
   it("throws NOT_FOUND for an unknown member", async () => {
     const repository = makeRepository();
@@ -95,7 +94,7 @@ describe("AssignMembersToGroupCommand", () => {
         memberIds: ["missing"],
       }),
     ).rejects.toBeInstanceOf(MemberNotFoundException);
-    expect(repository.saveOnlyGroupMembers).not.toHaveBeenCalled();
+    expect(repository.save).not.toHaveBeenCalled();
   });
   it("throws CONFLICT for a duplicate group-member pair", async () => {
     const repository = makeRepository();
@@ -113,6 +112,7 @@ describe("AssignMembersToGroupCommand", () => {
         memberIds: [member.id.toString()],
       }),
     ).rejects.toBeInstanceOf(GroupMemberAlreadyExistsException);
+    expect(repository.save).toHaveBeenCalledTimes(1);
   });
   it("throws INTERNAL_SERVER_ERROR when saving fails", async () => {
     const repository = makeRepository(err(new Error("boom")));

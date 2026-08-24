@@ -1,18 +1,18 @@
 import { describe, expect, it, mock } from "bun:test";
 import { CreateGroupCommand } from "@fludge/api/modules/iam/organization/application/commands/create-group.command";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
-import { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
+import type { PgGroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
 import { UUID } from "@fludge/utils/uuid";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Permissions, type AppStatement } from "@fludge/utils/permissions";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { GroupAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-already-exists.exception";
 
-type SaveReturnType = ReturnType<PgOrganizationRepository["saveOnlyGroups"]>;
+type SaveReturnType = ReturnType<PgGroupRepository["save"]>;
 
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {
   return {
-    saveOnlyGroups: mock((): SaveReturnType => Promise.resolve(saveResult)),
+    save: mock((): SaveReturnType => Promise.resolve(saveResult)),
   };
 }
 
@@ -65,7 +65,10 @@ describe("CreateGroupCommand", () => {
       ...validCMD,
       createdBy: owner.id.toString(),
     });
-    expect(repository.saveOnlyGroups).toHaveBeenCalledTimes(1);
+    expect(repository.save).toHaveBeenCalledWith(
+      activeOrganization.id.toString(),
+      expect.any(Group),
+    );
   });
 
   it("creates a new group when the command is valid and organiation has groups", async () => {
@@ -100,7 +103,10 @@ describe("CreateGroupCommand", () => {
       ...validCMD,
       createdBy: owner.id.toString(),
     });
-    expect(repository.saveOnlyGroups).toHaveBeenCalledTimes(1);
+    expect(repository.save).toHaveBeenCalledWith(
+      activeOrganization.id.toString(),
+      expect.any(Group),
+    );
   });
 
   it("throws CONFLICT if the name is already taken", async () => {
@@ -125,7 +131,7 @@ describe("CreateGroupCommand", () => {
     await expect(
       command.execute(loggedUserId.toString(), activeOrganization, validCMD),
     ).rejects.toThrow(GroupAlreadyExistsException);
-    expect(repository.saveOnlyGroups).toHaveBeenCalledTimes(0);
+    expect(repository.save).not.toHaveBeenCalled();
   });
 
   it("throws INTERNAL_SERVER_ERROR if the save fails", async () => {
@@ -138,6 +144,9 @@ describe("CreateGroupCommand", () => {
     ).rejects.toMatchObject({
       code: "INTERNAL_SERVER_ERROR",
     });
-    expect(repository.saveOnlyGroups).toHaveBeenCalledTimes(1);
+    expect(repository.save).toHaveBeenCalledWith(
+      activeOrganization.id.toString(),
+      expect.any(Group),
+    );
   });
 });

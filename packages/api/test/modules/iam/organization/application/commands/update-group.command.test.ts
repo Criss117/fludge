@@ -6,12 +6,12 @@ import { GroupNotFoundException } from "@fludge/api/modules/iam/organization/dom
 import { GroupAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-already-exists.exception";
 import { Permissions } from "@fludge/utils/permissions";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
-import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
+import type { PgGroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
 
-type SaveReturnType = ReturnType<PgOrganizationRepository["saveOnlyGroups"]>;
+type SaveReturnType = ReturnType<PgGroupRepository["save"]>;
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {
   return {
-    saveOnlyGroups: mock((): SaveReturnType => Promise.resolve(saveResult)),
+    save: mock((): SaveReturnType => Promise.resolve(saveResult)),
   };
 }
 function makeActiveOrganization() {
@@ -50,7 +50,10 @@ describe("UpdateGroupCommand", () => {
       description: "New",
       permissions: { groups: ["update"] },
     });
-    expect(repository.saveOnlyGroups).toHaveBeenCalledWith(activeOrganization);
+    expect(repository.save).toHaveBeenCalledWith(
+      activeOrganization.id.toString(),
+      group,
+    );
   });
   it("flips active state with the load-bearing toogleActive option", async () => {
     const repository = makeRepository();
@@ -63,7 +66,7 @@ describe("UpdateGroupCommand", () => {
     expect(
       activeOrganization.groups.getGroup(group.id)!.status.isActive(),
     ).toBe(false);
-    expect(repository.saveOnlyGroups).toHaveBeenCalledTimes(1);
+    expect(repository.save).toHaveBeenCalledTimes(1);
   });
   it("throws NOT_FOUND for an unknown group", async () => {
     const repository = makeRepository();
@@ -72,7 +75,7 @@ describe("UpdateGroupCommand", () => {
     await expect(
       command.execute(activeOrganization, { id: "missing" }),
     ).rejects.toBeInstanceOf(GroupNotFoundException);
-    expect(repository.saveOnlyGroups).not.toHaveBeenCalled();
+    expect(repository.save).not.toHaveBeenCalled();
   });
   it("throws CONFLICT when the new name belongs to another group", async () => {
     const repository = makeRepository();
@@ -92,7 +95,7 @@ describe("UpdateGroupCommand", () => {
         name: "Managers",
       }),
     ).rejects.toBeInstanceOf(GroupAlreadyExistsException);
-    expect(repository.saveOnlyGroups).not.toHaveBeenCalled();
+    expect(repository.save).not.toHaveBeenCalled();
   });
   it("throws INTERNAL_SERVER_ERROR when saving fails", async () => {
     const repository = makeRepository(err(new Error("boom")));
