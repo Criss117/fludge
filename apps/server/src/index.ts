@@ -1,7 +1,7 @@
 import { cors } from "@elysiajs/cors";
 import { createContext } from "@fludge/api/context";
 import { appRouter } from "@fludge/api/routers/index";
-import { auth } from "@fludge/auth";
+import { auth, isAvailableEndpoint } from "@fludge/auth";
 import { env } from "@fludge/env/server";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
@@ -40,6 +40,12 @@ new Elysia()
     }),
   )
   .all("/api/auth/*", async (context) => {
+    const isAvailable = isAvailableEndpoint(context.request.url);
+    if (!isAvailable)
+      return context.status(404, {
+        message: "Endpoint no disponible",
+      });
+
     const { request, status } = context;
     if (["POST", "GET"].includes(request.method)) {
       return auth.handler(request);
