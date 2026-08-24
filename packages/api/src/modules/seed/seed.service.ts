@@ -17,6 +17,7 @@ import { Group } from "../iam/organization/domain/entities/group.entity";
 import { allPermissions, Permissions } from "@fludge/utils/permissions";
 import { faker } from "@faker-js/faker/locale/es_MX";
 import { Member } from "../iam/organization/domain/entities/member.entity";
+import { GroupMember } from "../iam/organization/domain/entities/group-member.entity";
 
 export const seedUsers = z.object({
   totalRoots: z.number().optional().default(2),
@@ -205,7 +206,13 @@ export class SeedService {
         org.members.addMember(member);
 
         for (const g of toAssign) {
-          org.addGroupMember(UUID.fromString(g.id), member.id, owner.id);
+          org.addGroupMember(
+            GroupMember.create({
+              groupId: g.id,
+              memberId: member.id.toString(),
+              createdBy: owner.id.toString(),
+            }),
+          );
         }
       }
     });

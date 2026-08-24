@@ -227,7 +227,7 @@ export class Organization {
   }
 
   public get groupMembers() {
-    return this._groupMembers;
+    return Array.from(this._groupMembers.values());
   }
 
   public get id() {
