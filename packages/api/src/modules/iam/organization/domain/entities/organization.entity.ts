@@ -19,6 +19,7 @@ import { GroupCollection } from "./group.collection";
 import { MemberCollection } from "./member.collection";
 import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
 import { GroupMemberNotFoundException } from "../exceptions/group-member-not-found.exception";
+import { GroupMemberAlreadyExistsException } from "../exceptions/group-member-elready-exists.exception";
 
 type CreateOrganization = {
   name: string;
@@ -142,6 +143,12 @@ export class Organization {
 
     if (!this._members.getMember(groupMember.memberId))
       throw new MemberNotFoundException();
+
+    const existingGroupMember = this._groupMembers.get(
+      Organization.generateGroupMemberKey(groupMember),
+    );
+
+    if (existingGroupMember) throw new GroupMemberAlreadyExistsException();
 
     this._groupMembers.set(
       Organization.generateGroupMemberKey(groupMember),
