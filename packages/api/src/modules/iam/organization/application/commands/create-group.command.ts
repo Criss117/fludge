@@ -41,12 +41,8 @@ export class CreateGroupCommand {
       }),
     );
 
-    const [, errSaving] = await this.organizationRepository.save(
-      activeOrganization,
-      {
-        onlySave: ["groups"],
-      },
-    );
+    const [, errSaving] =
+      await this.organizationRepository.saveOnlyGroups(activeOrganization);
 
     if (errSaving)
       throw new ORPCError("INTERNAL_SERVER_ERROR", {

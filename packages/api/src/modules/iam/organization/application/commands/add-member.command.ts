@@ -36,12 +36,8 @@ export class AddMemberCommand {
       }),
     );
 
-    const [, errSaving] = await this.organizationRepository.save(
-      activeOrganization,
-      {
-        onlySave: ["members"],
-      },
-    );
+    const [, errSaving] =
+      await this.organizationRepository.saveOnlyMembers(activeOrganization);
 
     if (errSaving)
       throw new ORPCError("INTERNAL_SERVER_ERROR", {

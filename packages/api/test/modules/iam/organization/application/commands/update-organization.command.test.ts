@@ -13,7 +13,9 @@ type ValidateUniqueFieldsReturnType = ReturnType<
   OrganizationUniquenessValidator["validateUniqueFields"]
 >;
 
-type SaveReturnType = ReturnType<PgOrganizationRepository["save"]>;
+type SaveReturnType = ReturnType<
+  PgOrganizationRepository["saveOnlyOrganization"]
+>;
 
 function makeValidator(response?: {
   legalNameTaken?: boolean;
@@ -41,7 +43,9 @@ function makeValidator(response?: {
 
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {
   return {
-    save: mock((): SaveReturnType => Promise.resolve(saveResult)),
+    saveOnlyOrganization: mock(
+      (): SaveReturnType => Promise.resolve(saveResult),
+    ),
   };
 }
 
@@ -80,7 +84,7 @@ describe("UpdateOrganizationCommand", () => {
     expect(result.name).toBe(validCMD.name);
     expect(result.slug).toBe(new Slug(validCMD.name).toString());
     expect(validator.validateUniqueFields).toHaveBeenCalledTimes(1);
-    expect(repository.save).toHaveBeenCalledTimes(1);
+    expect(repository.saveOnlyOrganization).toHaveBeenCalledTimes(1);
   });
 
   it("throws CONFLICT if the name is already taken", async () => {
@@ -95,7 +99,7 @@ describe("UpdateOrganizationCommand", () => {
       OrganizationAlreadyExistsException,
     );
     expect(validator.validateUniqueFields).toHaveBeenCalledTimes(1);
-    expect(repository.save).toHaveBeenCalledTimes(0);
+    expect(repository.saveOnlyOrganization).toHaveBeenCalledTimes(0);
   });
 
   it("throws CONFLICT if the taxId is already taken", async () => {
@@ -110,7 +114,7 @@ describe("UpdateOrganizationCommand", () => {
       OrganizationAlreadyExistsException,
     );
     expect(validator.validateUniqueFields).toHaveBeenCalledTimes(1);
-    expect(repository.save).toHaveBeenCalledTimes(0);
+    expect(repository.saveOnlyOrganization).toHaveBeenCalledTimes(0);
   });
 
   it("throws CONFLICT if the phone is already taken", async () => {
@@ -125,7 +129,7 @@ describe("UpdateOrganizationCommand", () => {
       OrganizationAlreadyExistsException,
     );
     expect(validator.validateUniqueFields).toHaveBeenCalledTimes(1);
-    expect(repository.save).toHaveBeenCalledTimes(0);
+    expect(repository.saveOnlyOrganization).toHaveBeenCalledTimes(0);
   });
 
   it("throws CONFLICT if the legalName is already taken", async () => {
@@ -140,7 +144,7 @@ describe("UpdateOrganizationCommand", () => {
       OrganizationAlreadyExistsException,
     );
     expect(validator.validateUniqueFields).toHaveBeenCalledTimes(1);
-    expect(repository.save).toHaveBeenCalledTimes(0);
+    expect(repository.saveOnlyOrganization).toHaveBeenCalledTimes(0);
   });
 
   it("throws INTERNAL_SERVER_ERROR if the uniqueness validation fails", async () => {
@@ -159,7 +163,7 @@ describe("UpdateOrganizationCommand", () => {
       code: "INTERNAL_SERVER_ERROR",
     });
     expect(validator.validateUniqueFields).toHaveBeenCalledTimes(1);
-    expect(repository.save).toHaveBeenCalledTimes(0);
+    expect(repository.saveOnlyOrganization).toHaveBeenCalledTimes(0);
   });
 
   it("throws INTERNAL_SERVER_ERROR if the save fails", async () => {
@@ -176,6 +180,6 @@ describe("UpdateOrganizationCommand", () => {
       code: "INTERNAL_SERVER_ERROR",
     });
     expect(validator.validateUniqueFields).toHaveBeenCalledTimes(1);
-    expect(repository.save).toHaveBeenCalledTimes(1);
+    expect(repository.saveOnlyOrganization).toHaveBeenCalledTimes(1);
   });
 });

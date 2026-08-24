@@ -1,8 +1,11 @@
 import { env } from "@fludge/env/server";
 import { drizzle, LibSQLDatabase } from "drizzle-orm/libsql";
-import type { Client } from "@libsql/client";
+import type { Client, ResultSet } from "@libsql/client";
 import { type EmptyRelations, getColumns, type SQL, sql } from "drizzle-orm";
-import type { SQLiteTable } from "drizzle-orm/sqlite-core";
+import type {
+  SQLiteAsyncTransaction,
+  SQLiteTable,
+} from "drizzle-orm/sqlite-core";
 import { createResilientClient } from "./resilient-client";
 import type { Logger } from "drizzle-orm/logger";
 
@@ -36,6 +39,12 @@ export const databaseService = createDb({
 export type DatabaseService = LibSQLDatabase<EmptyRelations> & {
   $client: Client;
 };
+
+export type TransactionService = SQLiteAsyncTransaction<
+  "async",
+  ResultSet,
+  EmptyRelations
+>;
 
 export function buildConflictUpdateColumn<
   T extends SQLiteTable,

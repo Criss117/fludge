@@ -3,11 +3,13 @@ import {
   buildConflictUpdateColumn,
   jsonObject,
   type DatabaseService,
+  type TransactionService,
 } from "@fludge/db";
 import {
   member,
   organization,
   type MemberSelect,
+  type OrganizationInsert,
 } from "@fludge/db/schema/iam.schema";
 import {
   group,
@@ -21,6 +23,8 @@ import type { AppStatement } from "@fludge/utils/permissions";
 import { alias } from "drizzle-orm/sqlite-core";
 
 const memberAuth = alias(member, "memberAuth");
+
+type Options = { tx?: TransactionService };
 
 export class PgOrganizationRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -100,63 +104,152 @@ export class PgOrganizationRepository {
     );
   }
 
-  public async save(
+  public async saveOnlyOrganization(
     data: Organization,
-    options?: {
-      onlySave?: Array<"organization" | "groupMembers" | "members" | "groups">;
-    },
+    options?: Options,
   ): Promise<Result<undefined, Error>> {
-    const { groups, members, groupMembers, ...values } = data.values;
+    const db = options?.tx ?? this.db;
+    const values = data.values;
 
-    const toSave = new Set(
-      options?.onlySave ??
-        (["organization", "members", "groups", "groupMembers"] as const),
+    const insertValues: OrganizationInsert = {
+      address: values.address,
+      legalName: values.legalName,
+      logo: values.logo,
+      metadata: values.metadata,
+      name: values.name,
+      phone: values.phone,
+      taxId: values.taxId,
+      updatedAt: values.updatedAt,
+      id: values.id,
+      slug: values.slug,
+      createdAt: values.createdAt,
+      status: values.status,
+    };
+
+    const [, errInsert] = await tryCatch(
+      db
+        .insert(organization)
+        .values(insertValues)
+        .onConflictDoUpdate({
+          target: organization.id,
+          set: insertValues,
+        })
+        .returning(),
     );
 
+    if (errInsert) return err(errInsert);
+
+    return ok(undefined);
+  }
+
+  public async saveOnlyGroups(
+    data: Organization,
+    options?: Options,
+  ): Promise<Result<undefined, Error>> {
+    const { groups } = data.values;
+
+    const db = options?.tx ?? this.db;
+
+    const [, errInsert] = await tryCatch(
+      db
+        .insert(group)
+        .values(groups)
+        .onConflictDoUpdate({
+          target: group.id,
+          set: buildConflictUpdateColumn(group, [
+            "name",
+            "slug",
+            "description",
+            "permissions",
+            "updatedAt",
+          ]),
+        }),
+    );
+
+    if (errInsert) return err(errInsert);
+
+    return ok(undefined);
+  }
+
+  public async saveOnlyMembers(
+    data: Organization,
+    options?: Options,
+  ): Promise<Result<undefined, Error>> {
+    const { members } = data.values;
+
+    const db = options?.tx ?? this.db;
+
+    const [, errInsert] = await tryCatch(
+      db
+        .insert(member)
+        .values(members)
+        .onConflictDoUpdate({
+          target: member.id,
+          set: buildConflictUpdateColumn(member, [
+            "userId",
+            "assignedBy",
+            "role",
+          ]),
+        }),
+    );
+
+    if (errInsert) return err(errInsert);
+
+    return ok(undefined);
+  }
+
+  public async saveOnlyGroupMembers(
+    data: Organization,
+    options?: Options,
+  ): Promise<Result<undefined, Error>> {
+    const { groupMembers } = data.values;
+
+    const db = options?.tx ?? this.db;
+
+    const [, errInsert] = await tryCatch(
+      db.insert(groupMember).values(groupMembers).onConflictDoNothing(),
+    );
+
+    if (errInsert) return err(errInsert);
+
+    return ok(undefined);
+  }
+
+  public async save(data: Organization): Promise<Result<undefined, Error>> {
+    const { groups, members, groupMembers } = data.values;
+
     const transaction = this.db.transaction(async (tx) => {
-      if (toSave.has("organization")) {
-        await tx
-          .insert(organization)
-          .values(values)
-          .onConflictDoUpdate({
-            target: organization.id,
-            set: values,
-          })
-          .returning();
+      const [, errInsertOrganization] = await this.saveOnlyOrganization(data, {
+        tx: tx,
+      });
+
+      if (errInsertOrganization) throw errInsertOrganization;
+
+      if (members.length > 0) {
+        const [, errInsertMembers] = await this.saveOnlyMembers(data, {
+          tx: tx,
+        });
+
+        if (errInsertMembers) throw errInsertMembers;
       }
 
-      if (toSave.has("members") && members.length > 0) {
-        await tx
-          .insert(member)
-          .values(members)
-          .onConflictDoUpdate({
-            target: member.id,
-            set: buildConflictUpdateColumn(member, [
-              "userId",
-              "assignedBy",
-              "role",
-            ]),
-          });
+      if (groups.length > 0) {
+        const [, errInsertGroups] = await this.saveOnlyGroups(data, {
+          tx: tx,
+        });
+
+        if (errInsertGroups) throw errInsertGroups;
       }
 
-      if (toSave.has("groups") && groups.length > 0) {
-        await tx
-          .insert(group)
-          .values(groups)
-          .onConflictDoUpdate({
-            target: group.id,
-            set: buildConflictUpdateColumn(group, [
-              "name",
-              "slug",
-              "description",
-              "permissions",
-              "updatedAt",
-            ]),
-          });
-      }
+      if (groupMembers.length > 0) {
+        const [, errInsertGroupMembers] = await this.saveOnlyGroupMembers(
+          data,
+          {
+            tx: tx,
+          },
+        );
 
-      if (toSave.has("groupMembers") && groupMembers.length > 0) {
-        await tx.insert(groupMember).values(groupMembers).onConflictDoNothing();
+        if (errInsertGroupMembers) throw errInsertGroupMembers;
       }
     });
 

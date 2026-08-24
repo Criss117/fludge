@@ -55,12 +55,10 @@ export class UpdateOrganizationCommand {
 
     activeOrganization.update(cmd);
 
-    const [, errSaving] = await this.organizationRepository.save(
-      activeOrganization,
-      {
-        onlySave: ["organization"],
-      },
-    );
+    const [, errSaving] =
+      await this.organizationRepository.saveOnlyOrganization(
+        activeOrganization,
+      );
 
     if (errSaving)
       throw new ORPCError("INTERNAL_SERVER_ERROR", {

@@ -8,11 +8,11 @@ import { Permissions, type AppStatement } from "@fludge/utils/permissions";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { GroupAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-already-exists.exception";
 
-type SaveReturnType = ReturnType<PgOrganizationRepository["save"]>;
+type SaveReturnType = ReturnType<PgOrganizationRepository["saveOnlyGroups"]>;
 
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {
   return {
-    save: mock((): SaveReturnType => Promise.resolve(saveResult)),
+    saveOnlyGroups: mock((): SaveReturnType => Promise.resolve(saveResult)),
   };
 }
 
@@ -65,7 +65,7 @@ describe("CreateGroupCommand", () => {
       ...validCMD,
       createdBy: owner.id.toString(),
     });
-    expect(repository.save).toHaveBeenCalledTimes(1);
+    expect(repository.saveOnlyGroups).toHaveBeenCalledTimes(1);
   });
 
   it("creates a new group when the command is valid and organiation has groups", async () => {
@@ -100,7 +100,7 @@ describe("CreateGroupCommand", () => {
       ...validCMD,
       createdBy: owner.id.toString(),
     });
-    expect(repository.save).toHaveBeenCalledTimes(1);
+    expect(repository.saveOnlyGroups).toHaveBeenCalledTimes(1);
   });
 
   it("throws CONFLICT if the name is already taken", async () => {
@@ -125,7 +125,7 @@ describe("CreateGroupCommand", () => {
     await expect(
       command.execute(loggedUserId.toString(), activeOrganization, validCMD),
     ).rejects.toThrow(GroupAlreadyExistsException);
-    expect(repository.save).toHaveBeenCalledTimes(0);
+    expect(repository.saveOnlyGroups).toHaveBeenCalledTimes(0);
   });
 
   it("throws INTERNAL_SERVER_ERROR if the save fails", async () => {
@@ -138,6 +138,6 @@ describe("CreateGroupCommand", () => {
     ).rejects.toMatchObject({
       code: "INTERNAL_SERVER_ERROR",
     });
-    expect(repository.save).toHaveBeenCalledTimes(1);
+    expect(repository.saveOnlyGroups).toHaveBeenCalledTimes(1);
   });
 });

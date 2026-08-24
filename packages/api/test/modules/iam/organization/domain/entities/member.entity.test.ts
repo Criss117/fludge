@@ -7,12 +7,12 @@ const member = (role: "member" | "owner" = "member") =>
 
 describe("Member", () => {
   it("creates owner and regular members with their roles", () => {
-    expect(member("owner").isOwner()).toBe(true);
-    expect(member().isMember()).toBe(true);
+    expect(member("owner").role.isOwner()).toBe(true);
+    expect(member().role.isMember()).toBe(true);
   });
   it("does not report the opposite role", () => {
-    expect(member("owner").isMember()).toBe(false);
-    expect(member().isOwner()).toBe(false);
+    expect(member("owner").role.isMember()).toBe(false);
+    expect(member().role.isOwner()).toBe(false);
   });
   it("compares members by ID", () => {
     const one = member();

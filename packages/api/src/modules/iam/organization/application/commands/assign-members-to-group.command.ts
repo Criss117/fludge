@@ -44,12 +44,10 @@ export class AssignMembersToGroupCommand {
       );
     });
 
-    const [, errSaving] = await this.organizationRepository.save(
-      activeOrganization,
-      {
-        onlySave: ["groupMembers"],
-      },
-    );
+    const [, errSaving] =
+      await this.organizationRepository.saveOnlyGroupMembers(
+        activeOrganization,
+      );
 
     if (errSaving)
       throw new ORPCError("INTERNAL_SERVER_ERROR", {

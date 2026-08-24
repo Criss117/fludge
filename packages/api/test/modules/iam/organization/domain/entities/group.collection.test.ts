@@ -55,9 +55,9 @@ describe("GroupCollection", () => {
     collection.updateGroup(first.id, { name: "Viewers" });
     expect(collection.getGroup(first.id)?.values.slug).toBe("viewers");
     collection.updateGroup(first.id, { toogleActive: true });
-    expect(first.isActive).toBe(false);
+    expect(first.status.isActive()).toBe(false);
     collection.updateGroup(first.id, { toogleActive: true });
-    expect(first.isActive).toBe(true);
+    expect(first.status.isActive()).toBe(true);
     collection.removeGroup(first.id);
     expect(collection.getGroup(first.id)).toBeNull();
     expect(() => collection.updateGroup(first.id, {})).toThrow(

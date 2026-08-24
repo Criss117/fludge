@@ -42,7 +42,7 @@ describe("Organization", () => {
     expect(organization.values.slug).toBe("acme-corporation");
     expect(organization.values.logo).toBeNull();
     expect(organization.values.metadata).toBeNull();
-    expect(organization.members.owner?.isOwner()).toBe(true);
+    expect(organization.members.owner?.role.isOwner()).toBe(true);
   });
   it("updates the name/slug and partial fields", () => {
     const { organization } = createOrganization();

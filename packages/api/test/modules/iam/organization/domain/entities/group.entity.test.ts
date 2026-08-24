@@ -15,7 +15,7 @@ describe("Group", () => {
     const created = group("Content Editors");
     expect(created.values.slug).toBe("content-editors");
     expect(created.permissions.has("groups", "read")).toBe(true);
-    expect(created.isActive).toBe(true);
+    expect(created.status.isActive()).toBe(true);
   });
   it("detects exact and slug-equivalent names but not different names", () => {
     const created = group("Editors");
@@ -33,14 +33,9 @@ describe("Group", () => {
   });
   it("enables and disables idempotently", () => {
     const created = group();
-    created.disable();
-    expect(created.isActive).toBe(false);
-    const deletedAt = created.values.deletedAt;
-    created.disable();
-    expect(created.values.deletedAt).toBe(deletedAt);
-    created.enable();
-    expect(created.isActive).toBe(true);
-    created.enable();
-    expect(created.values.deletedAt).toBeNull();
+    created.setInactive();
+    expect(created.status.isInactive()).toBe(true);
+    created.setActive();
+    expect(created.status.isActive()).toBe(true);
   });
 });

@@ -8,7 +8,9 @@ import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organizat
 type SaveReturnType = ReturnType<PgOrganizationRepository["save"]>;
 
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {
-  return { save: mock((): SaveReturnType => Promise.resolve(saveResult)) };
+  return {
+    saveOnlyMembers: mock((): SaveReturnType => Promise.resolve(saveResult)),
+  };
 }
 
 function makeActiveOrganization() {
@@ -30,9 +32,13 @@ describe("AddMemberCommand", () => {
     const command = new AddMemberCommand(repository as any);
     const { activeOrganization, loggedUserId } = makeActiveOrganization();
 
-    const result = await command.execute(loggedUserId.toString(), activeOrganization, {
-      userId: "new-user-1",
-    });
+    const result = await command.execute(
+      loggedUserId.toString(),
+      activeOrganization,
+      {
+        userId: "new-user-1",
+      },
+    );
 
     expect(result.members).toHaveLength(2);
     expect(result.members[1]).toMatchObject({
@@ -40,9 +46,7 @@ describe("AddMemberCommand", () => {
       role: "member",
       assignedBy: activeOrganization.members.owner!.id.toString(),
     });
-    expect(repository.save).toHaveBeenCalledWith(activeOrganization, {
-      onlySave: ["members"],
-    });
+    expect(repository.saveOnlyMembers).toHaveBeenCalledWith(activeOrganization);
   });
 
   it("throws INTERNAL_SERVER_ERROR when saving fails", async () => {
@@ -50,9 +54,11 @@ describe("AddMemberCommand", () => {
     const command = new AddMemberCommand(repository as any);
     const { activeOrganization, loggedUserId } = makeActiveOrganization();
 
-    await expect(command.execute(loggedUserId.toString(), activeOrganization, {
-      userId: "new-user-2",
-    })).rejects.toMatchObject({ code: "INTERNAL_SERVER_ERROR" });
-    expect(repository.save).toHaveBeenCalledTimes(1);
+    await expect(
+      command.execute(loggedUserId.toString(), activeOrganization, {
+        userId: "new-user-2",
+      }),
+    ).rejects.toMatchObject({ code: "INTERNAL_SERVER_ERROR" });
+    expect(repository.saveOnlyMembers).toHaveBeenCalledTimes(1);
   });
 });
