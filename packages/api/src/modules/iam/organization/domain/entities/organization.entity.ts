@@ -14,11 +14,11 @@ import type {
   GroupSelect,
 } from "@fludge/db/schema/iam.schema";
 import { GroupMember } from "./group-member.entity";
-import { GroupMemberAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-member-elready-exists.exception";
 import { Permissions, type AppStatement } from "@fludge/utils/permissions";
 import { GroupCollection } from "./group.collection";
 import { MemberCollection } from "./member.collection";
 import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
+import { GroupMemberNotFoundException } from "../exceptions/group-member-not-found.exception";
 
 type CreateOrganization = {
   name: string;
@@ -47,7 +47,7 @@ export class Organization {
     private _phone: string,
     private _groups: GroupCollection,
     private _members: MemberCollection,
-    private _groupMembers: GroupMember[],
+    private _groupMembers: Map<string, GroupMember>,
     private readonly _createdAt: Date,
     private _updatedAt: Date,
     private _status: Status,
@@ -68,7 +68,7 @@ export class Organization {
       values.phone,
       GroupCollection.create(values.groups),
       MemberCollection.create([values.owner]),
-      [],
+      new Map(),
       now,
       now,
       new Status("active"),
@@ -82,6 +82,14 @@ export class Organization {
       groupMembers: GroupMemberSelect[];
     },
   ) {
+    const groupMembers = new Map(
+      values.groupMembers.map((gm) => {
+        const groupMember = GroupMember.reconstitute(gm);
+
+        return [Organization.generateGroupMemberKey(groupMember), groupMember];
+      }),
+    );
+
     return new Organization(
       UUID.fromString(values.id),
       values.name,
@@ -94,11 +102,19 @@ export class Organization {
       values.phone,
       GroupCollection.reconstitute(values.groups),
       MemberCollection.reconstitute(values.members),
-      values.groupMembers.map((gm) => GroupMember.reconstitute(gm)),
+      groupMembers,
       values.createdAt,
       values.updatedAt,
       new Status(values.status),
     );
+  }
+
+  public static generateGroupMemberKey(gm: GroupMember) {
+    return Organization.generateGroupMemberKeyFromIds(gm.groupId, gm.memberId);
+  }
+
+  public static generateGroupMemberKeyFromIds(groupId: UUID, memberId: UUID) {
+    return `${groupId.toString()}-${memberId.toString()}`;
   }
 
   public update(values: UpdateOrganization) {
@@ -120,36 +136,44 @@ export class Organization {
   }
 
   // GroupMember methods
-  public addGroupMember(groupId: UUID, memberId: UUID, createdBy: UUID) {
-    if (!this._groups.getGroup(groupId)) throw new GroupNotFoundException();
+  public addGroupMember(groupMember: GroupMember) {
+    if (!this._groups.getGroup(groupMember.groupId))
+      throw new GroupNotFoundException();
 
-    if (!this._members.getMember(memberId)) throw new MemberNotFoundException();
+    if (!this._members.getMember(groupMember.memberId))
+      throw new MemberNotFoundException();
 
-    if (this._groupMembers.some((gm) => gm.equals(groupId, memberId)))
-      throw new GroupMemberAlreadyExistsException();
-
-    this._groupMembers.push(
-      GroupMember.create({
-        groupId: groupId.toString(),
-        memberId: memberId.toString(),
-        createdBy: createdBy.toString(),
-      }),
+    this._groupMembers.set(
+      Organization.generateGroupMemberKey(groupMember),
+      groupMember,
     );
   }
 
   public removeGroupMember(groupId: UUID, memberId: UUID) {
     if (!this._groups.getGroup(groupId)) throw new GroupNotFoundException();
+    if (!this._members.getMember(memberId)) throw new MemberNotFoundException();
 
-    this._groupMembers = this._groupMembers.filter(
-      (gm) => !gm.groupId.equals(groupId) || !gm.memberId.equals(memberId),
+    const existingGroupMember = this._groupMembers.get(
+      Organization.generateGroupMemberKeyFromIds(groupId, memberId),
     );
+
+    if (!existingGroupMember) throw new GroupMemberNotFoundException();
+
+    this._groupMembers.delete(
+      Organization.generateGroupMemberKeyFromIds(groupId, memberId),
+    );
+
+    return existingGroupMember;
   }
 
   public getGroupsOfMember(
     memberId: UUID,
     options?: { onlyActive?: boolean },
   ): Group[] {
-    const gms = this._groupMembers.filter((gm) => gm.memberId.equals(memberId));
+    const gms = Array.from(this._groupMembers.values()).filter((gm) =>
+      gm.memberId.equals(memberId),
+    );
+
     const groups = gms
       .map((gm) => this._groups.getGroup(gm.groupId))
       .filter(Boolean) as Group[];
@@ -160,7 +184,10 @@ export class Organization {
   }
 
   public getMembersOfGroup(groupId: UUID): Member[] {
-    const gms = this._groupMembers.filter((gm) => gm.groupId.equals(groupId));
+    const gms = Array.from(this._groupMembers.values()).filter((gm) =>
+      gm.groupId.equals(groupId),
+    );
+
     return gms
       .map((gm) => this._members.getMember(gm.memberId))
       .filter(Boolean) as Member[];
@@ -226,7 +253,7 @@ export class Organization {
       updatedAt: this._updatedAt,
       members: this._members.values(this.id),
       groups: this._groups.values(this.id),
-      groupMembers: this._groupMembers.map((member) => ({
+      groupMembers: Array.from(this._groupMembers.values()).map((member) => ({
         ...member.values,
         organizationId: this.id.toString(),
       })),

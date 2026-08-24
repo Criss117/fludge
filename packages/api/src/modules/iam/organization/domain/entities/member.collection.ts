@@ -61,6 +61,8 @@ export class MemberCollection {
     if (member.role.isOwner()) throw new CantRemoveOwnerException();
 
     this._members.delete(memberId.toString());
+
+    return member;
   }
 
   public getMemberByUserId(userId: UUID) {

@@ -70,6 +70,8 @@ export class GroupCollection {
     group.update(values);
 
     this._groups.set(group.id.toString(), group);
+
+    return group;
   }
 
   public disableGroup(groupId: UUID) {

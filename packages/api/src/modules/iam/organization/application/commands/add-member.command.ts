@@ -26,17 +26,17 @@ export class AddMemberCommand {
       UUID.fromString(loggedUserId),
     )!;
 
-    activeOrganization.members.addMember(
-      Member.create({
-        userId: UUID.fromString(cmd.userId),
-        role: "member",
-        assignedBy: loggedMember.id,
-      }),
-    );
+    const newMember = Member.create({
+      userId: UUID.fromString(cmd.userId),
+      role: "member",
+      assignedBy: loggedMember.id,
+    });
+
+    activeOrganization.members.addMember(newMember);
 
     const [, errSaving] = await this.memberRepository.save(
       activeOrganization.id.toString(),
-      activeOrganization.members.all,
+      newMember,
     );
 
     if (errSaving)

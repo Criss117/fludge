@@ -21,18 +21,21 @@ export class UpdateGroupCommand {
   constructor(private readonly groupRepository: PgGroupRepository) {}
 
   public async execute(activeOrganization: Organization, cmd: CMD) {
-    activeOrganization.groups.updateGroup(UUID.fromString(cmd.id), {
-      description: cmd.description,
-      permissions: cmd.permissions
-        ? Permissions.create(cmd.permissions)
-        : undefined,
-      name: cmd.name,
-      status: cmd.status,
-    });
+    const updatedGroup = activeOrganization.groups.updateGroup(
+      UUID.fromString(cmd.id),
+      {
+        description: cmd.description,
+        permissions: cmd.permissions
+          ? Permissions.create(cmd.permissions)
+          : undefined,
+        name: cmd.name,
+        status: cmd.status,
+      },
+    );
 
     const [, errSaving] = await this.groupRepository.save(
       activeOrganization.id.toString(),
-      activeOrganization.groups.all,
+      updatedGroup,
     );
 
     if (errSaving)

@@ -30,18 +30,18 @@ export class CreateGroupCommand {
       UUID.fromString(loggedUserId),
     )!;
 
-    activeOrganization.groups.addGroup(
-      Group.create({
-        name: cmd.name,
-        description: cmd.description,
-        permissions: Permissions.create(cmd.permissions),
-        createdBy: loggedMember.id,
-      }),
-    );
+    const newGroup = Group.create({
+      name: cmd.name,
+      description: cmd.description,
+      permissions: Permissions.create(cmd.permissions),
+      createdBy: loggedMember.id,
+    });
+
+    activeOrganization.groups.addGroup(newGroup);
 
     const [, errSaving] = await this.groupRepository.save(
       activeOrganization.id.toString(),
-      activeOrganization.groups.all,
+      newGroup,
     );
 
     if (errSaving)

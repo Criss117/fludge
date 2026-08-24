@@ -3,6 +3,7 @@ import type { Organization } from "@fludge/api/modules/iam/organization/domain/e
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
 import type { PgGroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group-member.repository";
+import { GroupMember } from "../../domain/entities/group-member.entity";
 
 export const assignGroupsToMemberCommand = z.object({
   memberId: z.uuid({
@@ -35,17 +36,23 @@ export class AssignGroupsToMemberCommand {
       UUID.fromString(loggedUserId),
     )!;
 
+    let groupMembersToSave: GroupMember[] = [];
+
     cmd.groupIds.forEach((gId) => {
-      activeOrganization.addGroupMember(
-        UUID.fromString(gId),
-        UUID.fromString(cmd.memberId),
-        loggedMember.id,
-      );
+      const newGroupMember = GroupMember.create({
+        createdBy: loggedMember.id.toString(),
+        groupId: gId,
+        memberId: cmd.memberId,
+      });
+
+      activeOrganization.addGroupMember(newGroupMember);
+
+      groupMembersToSave.push(newGroupMember);
     });
 
     const [, errSaving] = await this.groupMemberRepository.save(
       activeOrganization.id.toString(),
-      activeOrganization.groupMembers,
+      groupMembersToSave,
     );
 
     if (errSaving)
