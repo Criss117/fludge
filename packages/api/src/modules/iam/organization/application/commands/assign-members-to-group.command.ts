@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { ORPCError } from "@orpc/server";
 
-import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
+import type { PgGroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group-member.repository";
 
 export const assignMembersToGroupCommand = z.object({
   groupId: z.uuid({
@@ -24,7 +24,7 @@ type CMD = z.infer<typeof assignMembersToGroupCommand>;
 
 export class AssignMembersToGroupCommand {
   constructor(
-    private readonly organizationRepository: PgOrganizationRepository,
+    private readonly groupMemberRepository: PgGroupMemberRepository,
   ) {}
 
   public async execute(
@@ -44,10 +44,10 @@ export class AssignMembersToGroupCommand {
       );
     });
 
-    const [, errSaving] =
-      await this.organizationRepository.saveOnlyGroupMembers(
-        activeOrganization,
-      );
+    const [, errSaving] = await this.groupMemberRepository.save(
+      activeOrganization.id.toString(),
+      activeOrganization.groupMembers,
+    );
 
     if (errSaving)
       throw new ORPCError("INTERNAL_SERVER_ERROR", {

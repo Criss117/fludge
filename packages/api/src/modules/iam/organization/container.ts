@@ -11,9 +11,20 @@ import { UpdateGroupCommand } from "./application/commands/update-group.command"
 import { AddMemberCommand } from "./application/commands/add-member.command";
 import { AssignMembersToGroupCommand } from "./application/commands/assign-members-to-group.command";
 import { AssignGroupsToMemberCommand } from "./application/commands/assign-groups-to-member.command";
+import { PgMemberRepository } from "./infrastructure/repositories/pg-member.repository";
+import { PgGroupRepository } from "./infrastructure/repositories/pg-group.repository";
+import { PgGroupMemberRepository } from "./infrastructure/repositories/pg-group-member.repository";
 
 //Repositories
-const organizationRepository = new PgOrganizationRepository(databaseService);
+const memberRepository = new PgMemberRepository(databaseService);
+const groupRepository = new PgGroupRepository(databaseService);
+const groupMemberRepository = new PgGroupMemberRepository(databaseService);
+const organizationRepository = new PgOrganizationRepository(
+  databaseService,
+  groupRepository,
+  memberRepository,
+  groupMemberRepository,
+);
 
 //Services
 const organizationUniquenessValidator = new OrganizationUniquenessValidator(
@@ -33,17 +44,17 @@ const updateOrganizationCommand = new UpdateOrganizationCommand(
   organizationRepository,
 );
 
-const createGroupCommand = new CreateGroupCommand(organizationRepository);
-const updateGroupCommand = new UpdateGroupCommand(organizationRepository);
+const createGroupCommand = new CreateGroupCommand(groupRepository);
+const updateGroupCommand = new UpdateGroupCommand(groupRepository);
 
-const addMemberCommand = new AddMemberCommand(organizationRepository);
+const addMemberCommand = new AddMemberCommand(memberRepository);
 
 const assignMembersToGroupCommand = new AssignMembersToGroupCommand(
-  organizationRepository,
+  groupMemberRepository,
 );
 
 const assignGroupsToMemberCommand = new AssignGroupsToMemberCommand(
-  organizationRepository,
+  groupMemberRepository,
 );
 
 //Queries

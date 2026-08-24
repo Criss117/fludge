@@ -100,6 +100,10 @@ export class GroupCollection {
     this._groups.delete(groupId.toString());
   }
 
+  public get all() {
+    return Array.from(this._groups.values());
+  }
+
   public values(organizationId: UUID): GroupSelect[] {
     return Array.from(this._groups.values()).map((group) => ({
       ...group.values,

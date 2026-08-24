@@ -199,6 +199,10 @@ export class Organization {
     return this._members;
   }
 
+  public get groupMembers() {
+    return this._groupMembers;
+  }
+
   public get id() {
     return this._id;
   }

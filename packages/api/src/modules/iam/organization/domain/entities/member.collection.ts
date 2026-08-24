@@ -76,6 +76,10 @@ export class MemberCollection {
     return member;
   }
 
+  public get all() {
+    return Array.from(this._members.values());
+  }
+
   public values(organizationId: UUID): MemberSelect[] {
     return Array.from(this._members.values()).map((member) => ({
       ...member.values,

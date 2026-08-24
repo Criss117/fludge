@@ -1,10 +1,10 @@
 import { appStatementSchema, Permissions } from "@fludge/utils/permissions";
 import { z } from "zod";
-import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
+import type { PgGroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
 
 export const createGroupCommand = z.object({
   name: z.string({
@@ -19,9 +19,7 @@ export const createGroupCommand = z.object({
 type CMD = z.infer<typeof createGroupCommand>;
 
 export class CreateGroupCommand {
-  constructor(
-    private readonly organizationRepository: PgOrganizationRepository,
-  ) {}
+  constructor(private readonly groupRepository: PgGroupRepository) {}
 
   public async execute(
     loggedUserId: string,
@@ -41,8 +39,10 @@ export class CreateGroupCommand {
       }),
     );
 
-    const [, errSaving] =
-      await this.organizationRepository.saveOnlyGroups(activeOrganization);
+    const [, errSaving] = await this.groupRepository.save(
+      activeOrganization.id.toString(),
+      activeOrganization.groups.all,
+    );
 
     if (errSaving)
       throw new ORPCError("INTERNAL_SERVER_ERROR", {

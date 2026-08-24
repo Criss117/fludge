@@ -1,6 +1,5 @@
 import { and, desc, eq, getColumns, sql } from "drizzle-orm";
 import {
-  buildConflictUpdateColumn,
   jsonObject,
   type DatabaseService,
   type TransactionService,
@@ -21,13 +20,21 @@ import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import type { AppStatement } from "@fludge/utils/permissions";
 import { alias } from "drizzle-orm/sqlite-core";
+import type { PgGroupRepository } from "./pg-group.repository";
+import type { PgMemberRepository } from "./pg-member.repository";
+import type { PgGroupMemberRepository } from "./pg-group-member.repository";
 
 const memberAuth = alias(member, "memberAuth");
 
 type Options = { tx?: TransactionService };
 
 export class PgOrganizationRepository {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly groupRepository: PgGroupRepository,
+    private readonly memberRepository: PgMemberRepository,
+    private readonly groupMemberRepository: PgGroupMemberRepository,
+  ) {}
 
   public async findOneById(
     loggedUserId: string,
@@ -142,79 +149,6 @@ export class PgOrganizationRepository {
     return ok(undefined);
   }
 
-  public async saveOnlyGroups(
-    data: Organization,
-    options?: Options,
-  ): Promise<Result<undefined, Error>> {
-    const { groups } = data.values;
-
-    const db = options?.tx ?? this.db;
-
-    const [, errInsert] = await tryCatch(
-      db
-        .insert(group)
-        .values(groups)
-        .onConflictDoUpdate({
-          target: group.id,
-          set: buildConflictUpdateColumn(group, [
-            "name",
-            "slug",
-            "description",
-            "permissions",
-            "updatedAt",
-          ]),
-        }),
-    );
-
-    if (errInsert) return err(errInsert);
-
-    return ok(undefined);
-  }
-
-  public async saveOnlyMembers(
-    data: Organization,
-    options?: Options,
-  ): Promise<Result<undefined, Error>> {
-    const { members } = data.values;
-
-    const db = options?.tx ?? this.db;
-
-    const [, errInsert] = await tryCatch(
-      db
-        .insert(member)
-        .values(members)
-        .onConflictDoUpdate({
-          target: member.id,
-          set: buildConflictUpdateColumn(member, [
-            "userId",
-            "assignedBy",
-            "role",
-          ]),
-        }),
-    );
-
-    if (errInsert) return err(errInsert);
-
-    return ok(undefined);
-  }
-
-  public async saveOnlyGroupMembers(
-    data: Organization,
-    options?: Options,
-  ): Promise<Result<undefined, Error>> {
-    const { groupMembers } = data.values;
-
-    const db = options?.tx ?? this.db;
-
-    const [, errInsert] = await tryCatch(
-      db.insert(groupMember).values(groupMembers).onConflictDoNothing(),
-    );
-
-    if (errInsert) return err(errInsert);
-
-    return ok(undefined);
-  }
-
   public async save(data: Organization): Promise<Result<undefined, Error>> {
     const { groups, members, groupMembers } = data.values;
 
@@ -226,24 +160,33 @@ export class PgOrganizationRepository {
       if (errInsertOrganization) throw errInsertOrganization;
 
       if (members.length > 0) {
-        const [, errInsertMembers] = await this.saveOnlyMembers(data, {
-          tx: tx,
-        });
+        const [, errInsertMembers] = await this.memberRepository.save(
+          data.id.toString(),
+          data.members.all,
+          {
+            tx: tx,
+          },
+        );
 
         if (errInsertMembers) throw errInsertMembers;
       }
 
       if (groups.length > 0) {
-        const [, errInsertGroups] = await this.saveOnlyGroups(data, {
-          tx: tx,
-        });
+        const [, errInsertGroups] = await this.groupRepository.save(
+          data.id.toString(),
+          data.groups.all,
+          {
+            tx: tx,
+          },
+        );
 
         if (errInsertGroups) throw errInsertGroups;
       }
 
       if (groupMembers.length > 0) {
-        const [, errInsertGroupMembers] = await this.saveOnlyGroupMembers(
-          data,
+        const [, errInsertGroupMembers] = await this.groupMemberRepository.save(
+          data.id.toString(),
+          data.groupMembers,
           {
             tx: tx,
           },

@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Member } from "@fludge/api/modules/iam/organization/domain/entities/member.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
+import type { PgMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-member.repository";
 
 export const addMemberCommand = z.object({
   userId: z.uuid({
@@ -15,9 +15,7 @@ export const addMemberCommand = z.object({
 type CMD = z.infer<typeof addMemberCommand>;
 
 export class AddMemberCommand {
-  constructor(
-    private readonly organizationRepository: PgOrganizationRepository,
-  ) {}
+  constructor(private readonly memberRepository: PgMemberRepository) {}
 
   public async execute(
     loggedUserId: string,
@@ -36,8 +34,10 @@ export class AddMemberCommand {
       }),
     );
 
-    const [, errSaving] =
-      await this.organizationRepository.saveOnlyMembers(activeOrganization);
+    const [, errSaving] = await this.memberRepository.save(
+      activeOrganization.id.toString(),
+      activeOrganization.members.all,
+    );
 
     if (errSaving)
       throw new ORPCError("INTERNAL_SERVER_ERROR", {

@@ -1,12 +1,12 @@
 import { Permissions } from "@fludge/utils/permissions";
 import { z } from "zod";
-import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
 
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
 import { createGroupCommand } from "./create-group.command";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { statusEnum } from "@fludge/db/schema/enums";
+import type { PgGroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
 
 export const updateGroupCommand = createGroupCommand.partial().extend({
   id: z.uuid({
@@ -18,9 +18,7 @@ export const updateGroupCommand = createGroupCommand.partial().extend({
 type CMD = z.infer<typeof updateGroupCommand>;
 
 export class UpdateGroupCommand {
-  constructor(
-    private readonly organizationRepository: PgOrganizationRepository,
-  ) {}
+  constructor(private readonly groupRepository: PgGroupRepository) {}
 
   public async execute(activeOrganization: Organization, cmd: CMD) {
     activeOrganization.groups.updateGroup(UUID.fromString(cmd.id), {
@@ -32,8 +30,10 @@ export class UpdateGroupCommand {
       status: cmd.status,
     });
 
-    const [, errSaving] =
-      await this.organizationRepository.saveOnlyGroups(activeOrganization);
+    const [, errSaving] = await this.groupRepository.save(
+      activeOrganization.id.toString(),
+      activeOrganization.groups.all,
+    );
 
     if (errSaving)
       throw new ORPCError("INTERNAL_SERVER_ERROR", {
