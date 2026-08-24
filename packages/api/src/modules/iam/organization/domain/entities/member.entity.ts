@@ -1,10 +1,13 @@
+import { Role } from "@fludge/api/modules/shared/domain/value-objects/role";
+import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
+import type { RoleEnum } from "@fludge/db/schema/enums";
 import type { MemberSelect } from "@fludge/db/schema/iam.schema";
 import { UUID } from "@fludge/utils/uuid";
 
 export type CreateMember = {
   userId: UUID;
   assignedBy: UUID | null;
-  role: "member" | "owner";
+  role: RoleEnum;
 };
 
 export class Member {
@@ -13,7 +16,8 @@ export class Member {
     private readonly _userId: UUID,
     private readonly _createdAt: Date,
     private readonly _assignedBy: UUID | null,
-    private readonly _role: "member" | "owner",
+    private readonly _role: Role,
+    private _status: Status,
   ) {}
 
   public static create(values: CreateMember) {
@@ -23,7 +27,8 @@ export class Member {
       values.userId,
       now,
       values.assignedBy,
-      values.role,
+      new Role(values.role),
+      new Status("active"),
     );
   }
 
@@ -33,7 +38,8 @@ export class Member {
       UUID.fromString(values.userId),
       new Date(values.createdAt),
       values.assignedBy ? UUID.fromString(values.assignedBy) : null,
-      values.role as "member" | "owner",
+      new Role(values.role),
+      new Status(values.status),
     );
   }
 
@@ -45,12 +51,8 @@ export class Member {
     return this._userId;
   }
 
-  public isOwner() {
-    return this._role === "owner";
-  }
-
-  public isMember() {
-    return this._role === "member";
+  public get role() {
+    return this._role;
   }
 
   public get values(): Omit<MemberSelect, "organizationId"> {
@@ -59,7 +61,8 @@ export class Member {
       userId: this._userId.toString(),
       createdAt: this._createdAt,
       assignedBy: this._assignedBy?.toString() ?? null,
-      role: this._role,
+      role: this._role.value,
+      status: this._status.value,
     };
   }
 

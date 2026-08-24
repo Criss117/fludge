@@ -64,8 +64,8 @@ export class GroupCollection {
     if (!group) throw new GroupNotFoundException();
 
     if (values.toogleActive) {
-      if (group.isActive) group.disable();
-      else group.enable();
+      if (group.status.isActive()) group.setInactive();
+      else group.setActive();
     }
 
     if (
@@ -85,7 +85,7 @@ export class GroupCollection {
 
     if (!group) throw new GroupNotFoundException();
 
-    group.disable();
+    group.setInactive();
 
     this._groups.set(group.id.toString(), group);
   }
@@ -95,7 +95,7 @@ export class GroupCollection {
 
     if (!group) throw new GroupNotFoundException();
 
-    group.enable();
+    group.setActive();
 
     this._groups.set(group.id.toString(), group);
   }

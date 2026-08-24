@@ -9,5 +9,4 @@ export const auditMetadata = {
     .notNull()
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .$onUpdate(() => new Date()),
-  deletedAt: integer("deleted_at", { mode: "timestamp_ms" }),
 };

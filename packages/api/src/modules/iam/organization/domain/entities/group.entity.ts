@@ -1,3 +1,4 @@
+import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
 import type { GroupSelect } from "@fludge/db/schema/iam.schema";
 import { Permissions } from "@fludge/utils/permissions";
 import { Slug } from "@fludge/utils/slugify";
@@ -23,7 +24,7 @@ export class Group {
 
     private readonly _createdAt: Date,
     private _updatedAt: Date,
-    private _deletedAt: Date | null,
+    private _status: Status,
   ) {}
 
   public static create(values: CreateGroup) {
@@ -37,7 +38,7 @@ export class Group {
       values.createdBy,
       now,
       now,
-      null,
+      new Status("active"),
     );
   }
 
@@ -51,7 +52,7 @@ export class Group {
       values.createdBy ? UUID.fromString(values.createdBy) : null,
       new Date(values.createdAt),
       values.updatedAt,
-      values.deletedAt,
+      new Status(values.status),
     );
   }
 
@@ -75,22 +76,22 @@ export class Group {
     this._updatedAt = new Date();
   }
 
-  public disable() {
-    if (this._deletedAt) return;
+  public setInactive() {
+    if (this._status.isInactive()) return;
 
-    this._deletedAt = new Date();
+    this._status = new Status("inactive");
     this._updatedAt = new Date();
   }
 
-  public enable() {
-    if (!this._deletedAt) return;
+  public setActive() {
+    if (this._status.isActive()) return;
 
-    this._deletedAt = null;
+    this._status = new Status("active");
     this._updatedAt = new Date();
   }
 
-  public get isActive() {
-    return this._deletedAt === null;
+  public get status() {
+    return this._status;
   }
 
   public get id() {
@@ -111,7 +112,7 @@ export class Group {
       createdBy: this._createdBy?.toString() ?? null,
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
-      deletedAt: this._deletedAt,
+      status: this._status.value,
     };
   }
 }

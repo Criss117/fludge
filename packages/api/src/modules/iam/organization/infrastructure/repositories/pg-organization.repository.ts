@@ -80,7 +80,6 @@ export class PgOrganizationRepository {
       ...g,
       createdAt: new Date(g.createdAt),
       updatedAt: new Date(g.updatedAt),
-      deletedAt: g.deletedAt ? new Date(g.deletedAt) : null,
       permissions: JSON.parse(g.permissions as string) as AppStatement,
     }));
 
@@ -151,7 +150,6 @@ export class PgOrganizationRepository {
               "slug",
               "description",
               "permissions",
-              "deletedAt",
               "updatedAt",
             ]),
           });

@@ -26,7 +26,7 @@ export class MemberCollection {
     let owner: Member | null = null;
 
     for (const m of this._members.values()) {
-      if (m.isOwner()) {
+      if (m.role.isOwner()) {
         owner = m;
         break;
       }
@@ -42,7 +42,7 @@ export class MemberCollection {
   }
 
   public addMember(member: Member) {
-    if (member.isOwner() && this.owner)
+    if (member.role.isOwner() && this.owner)
       throw new MemberAlreadyExistsException(
         "La organizacion ya tiene un propietario",
       );
@@ -58,7 +58,7 @@ export class MemberCollection {
 
     if (!member) throw new MemberNotFoundException();
 
-    if (member.isOwner()) throw new CantRemoveOwnerException();
+    if (member.role.isOwner()) throw new CantRemoveOwnerException();
 
     this._members.delete(memberId.toString());
   }

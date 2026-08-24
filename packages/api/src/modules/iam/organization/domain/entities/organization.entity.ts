@@ -18,6 +18,7 @@ import { GroupMemberAlreadyExistsException } from "@fludge/api/modules/iam/organ
 import { Permissions, type AppStatement } from "@fludge/utils/permissions";
 import { GroupCollection } from "./group.collection";
 import { MemberCollection } from "./member.collection";
+import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
 
 type CreateOrganization = {
   name: string;
@@ -49,6 +50,7 @@ export class Organization {
     private _groupMembers: GroupMember[],
     private readonly _createdAt: Date,
     private _updatedAt: Date,
+    private _status: Status,
   ) {}
 
   public static create(values: CreateOrganization) {
@@ -69,6 +71,7 @@ export class Organization {
       [],
       now,
       now,
+      new Status("active"),
     );
   }
 
@@ -94,6 +97,7 @@ export class Organization {
       values.groupMembers.map((gm) => GroupMember.reconstitute(gm)),
       values.createdAt,
       values.updatedAt,
+      new Status(values.status),
     );
   }
 
@@ -163,7 +167,7 @@ export class Organization {
 
     if (!member) return false;
 
-    if (member.isOwner()) return true;
+    if (member.role.isOwner()) return true;
 
     const groups = this.getGroupsOfMember(memberId);
 
@@ -172,6 +176,10 @@ export class Organization {
     );
 
     return mergedPermissions.satisfies(permission);
+  }
+
+  public get status() {
+    return this._status;
   }
 
   public get groups() {
@@ -209,6 +217,7 @@ export class Organization {
         ...member.values,
         organizationId: this.id.toString(),
       })),
+      status: this._status.value,
     };
   }
 }

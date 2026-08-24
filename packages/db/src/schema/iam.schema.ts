@@ -8,7 +8,7 @@ import {
   type AnySQLiteColumn,
 } from "drizzle-orm/sqlite-core";
 import { auditMetadata } from "./shared";
-import { actionEnum } from "./enums.schema";
+import { statusEnum, historyActionEnum, roleEnum } from "./enums";
 import type { AppStatement } from "@fludge/utils/permissions";
 import { user } from "./auth.schema";
 
@@ -24,9 +24,9 @@ export const organization = sqliteTable(
     taxId: text("tax_id").notNull(),
     address: text("address").notNull(),
     phone: text("phone").notNull(),
+    status: text("status", { enum: statusEnum }).notNull().default("active"),
 
-    createdAt: auditMetadata.createdAt,
-    updatedAt: auditMetadata.updatedAt,
+    ...auditMetadata,
   },
   (table) => [
     uniqueIndex("organization_slug_unique").on(table.slug),
@@ -53,9 +53,7 @@ export const member = sqliteTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    role: text("role", { enum: ["owner", "admin", "member"] })
-      .default("member")
-      .notNull(),
+    role: text("role", { enum: roleEnum }).notNull(),
     assignedBy: text("assigned_by").references(
       (): AnySQLiteColumn => member.id,
       {
@@ -63,9 +61,11 @@ export const member = sqliteTable(
       },
     ),
 
-    ...organizationMetadata,
+    status: text("status", { enum: statusEnum }).notNull().default("active"),
 
     createdAt: auditMetadata.createdAt,
+
+    ...organizationMetadata,
   },
   (table) => [
     uniqueIndex("member_organizationId_userId_unique").on(
@@ -86,7 +86,7 @@ export const createdByMetadata = {
 export const organizationHistory = sqliteTable("organization_history", {
   id: text("id").primaryKey(),
 
-  action: text("action", { enum: actionEnum }).notNull(),
+  action: text("action", { enum: historyActionEnum }).notNull(),
   description: text("description"),
 
   before: text("before", { mode: "json" }).$type<OrganizationSelect>(),
@@ -111,6 +111,8 @@ export const group = sqliteTable(
       .notNull()
       .$type<AppStatement>(),
 
+    status: text("status", { enum: statusEnum }).notNull().default("active"),
+
     ...createdByMetadata,
     ...organizationMetadata,
     ...auditMetadata,
@@ -134,7 +136,7 @@ export const groupHistory = sqliteTable(
         onDelete: "cascade",
       }),
 
-    action: text("action", { enum: actionEnum }).notNull(),
+    action: text("action", { enum: historyActionEnum }).notNull(),
     description: text("description"),
 
     before: text("before", { mode: "json" }).$type<GroupSelect>(),
