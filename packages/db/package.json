@@ -24,10 +24,10 @@
   "dependencies": {
     "@fludge/env": "workspace:*",
     "@fludge/utils": "workspace:*",
+    "@libsql/client": "0.17.4",
     "dotenv": "catalog:",
     "drizzle-orm": "catalog:",
-    "zod": "catalog:",
-    "@tursodatabase/serverless": "catalog:"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@fludge/config": "workspace:*",
