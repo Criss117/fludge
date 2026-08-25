@@ -2,18 +2,11 @@
   "extends": "@fludge/config/tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
-
+    "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
-    "outDir": "dist",
-    "composite": true,
     "rootDir": "./src",
-
-    "paths": {
-      "@fludge/client/*": ["./src/*"]
-    }
+    "outDir": "dist"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules"]

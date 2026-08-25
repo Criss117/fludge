@@ -22,6 +22,8 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
   const session = queryOptions({
     queryKey: ["session"],
     queryFn: async () => {
+      console.log("session");
+
       const { data, error } = await authClient.getSession();
       if (error || !data) return null;
       return { ...data.session, user: data.user };
@@ -33,9 +35,14 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
     mutationFn: async (
       values: Parameters<AuthContextAdapter["signUpEmail"]>[0],
     ) => {
+      console.log("signUpEmail");
+
       const { error } = await authClient.signUpEmail(values);
+
       if (error) throw new Error(error.message, { cause: error });
+
       await queryClient.invalidateQueries({ queryKey: session.queryKey });
+
       return queryClient.ensureQueryData(session);
     },
   });
@@ -45,6 +52,7 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
     mutationFn: async (
       values: Parameters<AuthContextAdapter["signInEmail"]>[0],
     ) => {
+      console.log("signInEmail");
       const { error } = await authClient.signInEmail(values);
       if (error) throw new Error(error.message, { cause: error });
       await queryClient.invalidateQueries({ queryKey: session.queryKey });
@@ -55,6 +63,7 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
   const signOut = mutationOptions({
     mutationKey: ["signOut"],
     mutationFn: async () => {
+      console.log("signOut");
       const { error } = await authClient.signOut();
       if (error) throw new Error(error.message, { cause: error });
       await queryClient.invalidateQueries({ queryKey: session.queryKey });
