@@ -2,11 +2,14 @@
   "name": "@fludge/client",
   "type": "module",
   "exports": {
-    ".": {
-      "default": "./src/index.ts"
+    "./providers/*": {
+      "default": "./src/providers/*.tsx"
     },
-    "./*": {
-      "default": "./src/*.ts"
+    "./presentation/*": {
+      "default": "./src/presentation/*.tsx"
+    },
+    "./application/*": {
+      "default": "./src/application/*.ts"
     }
   },
   "scripts": {

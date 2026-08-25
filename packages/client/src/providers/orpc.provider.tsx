@@ -10,7 +10,7 @@ type Context = {
 
 const OrpcContext = createContext<Context | null>(null);
 
-export function createOrpcQueryClient(options: RPCLinkOptions<ClientContext>) {
+function createOrpcQueryClient(options: RPCLinkOptions<ClientContext>) {
   const link = new RPCLink(options);
 
   const client: AppRouterClient = createORPCClient(link);
@@ -32,7 +32,7 @@ export function createOrpcProvider(options: RPCLinkOptions<ClientContext>) {
   return OrpcProvider;
 }
 
-export type OrpcQueryClient = ReturnType<typeof createOrpcQueryClient>;
+type OrpcQueryClient = ReturnType<typeof createOrpcQueryClient>;
 
 export function useOrpc() {
   const context = use(OrpcContext);

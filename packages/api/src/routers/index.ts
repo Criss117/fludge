@@ -5,6 +5,7 @@ import { authRouter } from "../modules/iam/auth/infrastructure/http/auth.router"
 import { groupRouter } from "../modules/iam/organization/infrastructure/http/group.router";
 import { memberRouter } from "../modules/iam/organization/infrastructure/http/member.router";
 import { seedRouter } from "../modules/seed/seed.router";
+import { publicProcedure } from "..";
 
 export const appRouter = {
   organization: organizationRouter,
@@ -12,6 +13,11 @@ export const appRouter = {
   auth: authRouter,
   member: memberRouter,
   seed: seedRouter,
+  ping: publicProcedure.handler(() => {
+    return {
+      message: "pong",
+    };
+  }),
 };
 
 export type AppRouter = typeof appRouter;
