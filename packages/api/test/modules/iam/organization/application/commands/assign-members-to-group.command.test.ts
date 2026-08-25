@@ -10,13 +10,12 @@ import { Permissions } from "@fludge/utils/permissions";
 import { UUID } from "@fludge/utils/uuid";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
 import type { PgGroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group-member.repository";
+import { MemberIsOwnerException } from "../../../../../../src/modules/iam/organization/domain/exceptions/member-is-owner.exception";
 
 type SaveReturnType = ReturnType<PgGroupMemberRepository["save"]>;
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {
   return {
-    save: mock(
-      (): SaveReturnType => Promise.resolve(saveResult),
-    ),
+    save: mock((): SaveReturnType => Promise.resolve(saveResult)),
   };
 }
 function makeActiveOrganization() {
@@ -126,5 +125,22 @@ describe("AssignMembersToGroupCommand", () => {
         memberIds: [member.id.toString()],
       }),
     ).rejects.toMatchObject({ code: "INTERNAL_SERVER_ERROR" });
+  });
+
+  it("throws BAD_REQUEST when member is owner", async () => {
+    const repository = makeRepository(err(new Error("boom")));
+    const command = new AssignMembersToGroupCommand(repository as any);
+    const { activeOrganization, loggedUserId, group } =
+      makeActiveOrganization();
+
+    const owner = activeOrganization.members.owner!;
+
+    await expect(
+      command.execute(loggedUserId.toString(), activeOrganization, {
+        groupId: group.id.toString(),
+        memberIds: [owner.id.toString()],
+      }),
+    ).rejects.toThrow(MemberIsOwnerException);
+    expect(repository.save).not.toHaveBeenCalled();
   });
 });

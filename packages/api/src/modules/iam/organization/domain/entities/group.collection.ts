@@ -100,6 +100,8 @@ export class GroupCollection {
     if (!group) throw new GroupNotFoundException();
 
     this._groups.delete(groupId.toString());
+
+    return group;
   }
 
   public get all() {

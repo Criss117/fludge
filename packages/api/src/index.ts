@@ -70,6 +70,11 @@ const requireOrganization = requireAuth.concat(async ({ context, next }) => {
       message: "El usuario no es miembro de la organización",
     });
 
+  if (loggedUserIsMember.status.isInactive())
+    throw new ORPCError("FORBIDDEN", {
+      message: "El usuario no tiene permisos para acceder a esta organización",
+    });
+
   return next({
     context: {
       session: { ...context.session, activeOrganization: organization },

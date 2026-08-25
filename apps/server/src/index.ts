@@ -81,4 +81,8 @@ new Elysia()
   .get("/", () => "OK")
   .listen(3000, () => {
     console.log("Server is running on http://localhost:3000");
+    console.log("Server ORPC is running on http://localhost:3000/api-rpc");
+    console.log(
+      "Server Better Auth is running on http://localhost:3000/api/auth/reference",
+    );
   });

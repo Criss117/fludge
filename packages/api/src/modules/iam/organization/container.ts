@@ -14,6 +14,7 @@ import { AssignGroupsToMemberCommand } from "./application/commands/assign-group
 import { PgMemberRepository } from "./infrastructure/repositories/pg-member.repository";
 import { PgGroupRepository } from "./infrastructure/repositories/pg-group.repository";
 import { PgGroupMemberRepository } from "./infrastructure/repositories/pg-group-member.repository";
+import { DeleteGroupsCommand } from "./application/commands/delete-groups.command";
 
 //Repositories
 const memberRepository = new PgMemberRepository(databaseService);
@@ -46,6 +47,10 @@ const updateOrganizationCommand = new UpdateOrganizationCommand(
 
 const createGroupCommand = new CreateGroupCommand(groupRepository);
 const updateGroupCommand = new UpdateGroupCommand(groupRepository);
+const deleteGroupCommand = new DeleteGroupsCommand(
+  groupRepository,
+  groupMemberRepository,
+);
 
 const addMemberCommand = new AddMemberCommand(memberRepository);
 
@@ -76,6 +81,7 @@ export const organizationContainer = {
       create: createGroupCommand,
       update: updateGroupCommand,
       assignMembers: assignMembersToGroupCommand,
+      delete: deleteGroupCommand,
     },
 
     member: {

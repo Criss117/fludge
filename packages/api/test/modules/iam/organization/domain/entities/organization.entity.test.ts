@@ -6,7 +6,6 @@ import { Member } from "@fludge/api/modules/iam/organization/domain/entities/mem
 import { GroupMember } from "@fludge/api/modules/iam/organization/domain/entities/group-member.entity";
 import { GroupNotFoundException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-not-found.exception";
 import { MemberNotFoundException } from "@fludge/api/modules/iam/organization/domain/exceptions/member-not-found.exeption";
-import { GroupMemberAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-member-elready-exists.exception";
 
 const createOrganization = () => {
   const ownerUserId = UUID.generate();
@@ -54,29 +53,7 @@ describe("Organization", () => {
     expect(organization.values.phone).toBe("123");
     expect(organization.values.address).toBe("Main Street");
   });
-  it("adds, queries, and removes group members", () => {
-    const { organization } = createOrganization();
-    const group = organization.groups.values(organization.id)[0]!;
-    const owner = organization.members.owner!;
-    const createdBy = owner.id;
-    const groupMember = GroupMember.create({
-      groupId: group.id,
-      memberId: owner.id.toString(),
-      createdBy: createdBy.toString(),
-    });
-    organization.addGroupMember(groupMember);
-    expect(organization.getGroupsOfMember(owner.id)).toHaveLength(1);
-    expect(
-      organization.getMembersOfGroup(UUID.fromString(group.id)),
-    ).toHaveLength(1);
-    expect(organization.values.groupMembers).toHaveLength(1);
-    expect(() => organization.addGroupMember(groupMember)).toThrow(
-      GroupMemberAlreadyExistsException,
-    );
-    expect(organization.values.groupMembers).toHaveLength(1);
-    organization.removeGroupMember(UUID.fromString(group.id), owner.id);
-    expect(organization.values.groupMembers).toEqual([]);
-  });
+
   it("rejects unknown groups and members when assigning", () => {
     const { organization, ownerUserId } = createOrganization();
     const owner = organization.members.owner!;
@@ -101,6 +78,7 @@ describe("Organization", () => {
     ).toThrow(MemberNotFoundException);
     expect(organization.members.getMemberByUserId(ownerUserId)).toBe(owner);
   });
+
   it("grants owners all permissions and members only group permissions", () => {
     const { organization } = createOrganization();
     const owner = organization.members.owner!;

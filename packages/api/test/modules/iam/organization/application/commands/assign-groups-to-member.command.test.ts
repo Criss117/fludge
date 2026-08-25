@@ -8,14 +8,13 @@ import { Permissions } from "@fludge/utils/permissions";
 import { UUID } from "@fludge/utils/uuid";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
 import type { PgGroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group-member.repository";
+import { MemberIsOwnerException } from "../../../../../../src/modules/iam/organization/domain/exceptions/member-is-owner.exception";
 
 type SaveReturnType = ReturnType<PgGroupMemberRepository["save"]>;
 
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {
   return {
-    save: mock(
-      (): SaveReturnType => Promise.resolve(saveResult),
-    ),
+    save: mock((): SaveReturnType => Promise.resolve(saveResult)),
   };
 }
 function makeActiveOrganization() {
@@ -75,7 +74,7 @@ describe("AssignGroupsToMemberCommand", () => {
     await expect(
       command.execute(loggedUserId.toString(), activeOrganization, {
         memberId: member.id.toString(),
-        groupIds: [groups[0].id.toString(), "missing"],
+        groupIds: groups[0] ? [groups[0].id.toString(), "missing"] : [],
       }),
     ).rejects.toBeInstanceOf(GroupNotFoundException);
     expect(repository.save).not.toHaveBeenCalled();
@@ -85,11 +84,29 @@ describe("AssignGroupsToMemberCommand", () => {
     const command = new AssignGroupsToMemberCommand(repository as any);
     const { activeOrganization, loggedUserId, member, groups } =
       makeActiveOrganization();
+
     await expect(
       command.execute(loggedUserId.toString(), activeOrganization, {
         memberId: member.id.toString(),
-        groupIds: [groups[0].id.toString()],
+        groupIds: groups[0] ? [groups[0].id.toString()] : [],
       }),
     ).rejects.toMatchObject({ code: "INTERNAL_SERVER_ERROR" });
+  });
+
+  it("throws BAD_REQUEST when member is owner", async () => {
+    const repository = makeRepository();
+    const command = new AssignGroupsToMemberCommand(repository as any);
+    const { activeOrganization, loggedUserId, groups } =
+      makeActiveOrganization();
+
+    const owner = activeOrganization.members.owner!;
+
+    await expect(
+      command.execute(loggedUserId.toString(), activeOrganization, {
+        memberId: owner.id.toString(),
+        groupIds: groups[0] ? [groups[0].id.toString()] : [],
+      }),
+    ).rejects.toThrow(MemberIsOwnerException);
+    expect(repository.save).not.toHaveBeenCalled();
   });
 });

@@ -20,6 +20,7 @@ import { MemberCollection } from "./member.collection";
 import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
 import { GroupMemberNotFoundException } from "../exceptions/group-member-not-found.exception";
 import { GroupMemberAlreadyExistsException } from "../exceptions/group-member-elready-exists.exception";
+import { MemberIsOwnerException } from "../exceptions/member-is-owner.exception";
 
 type CreateOrganization = {
   name: string;
@@ -136,13 +137,34 @@ export class Organization {
     this._updatedAt = now;
   }
 
+  public deleteGroup(groupId: UUID) {
+    const members = this.getMembersOfGroup(groupId);
+
+    const groupMembers: GroupMember[] = [];
+    for (const member of members) {
+      const gm = this.removeGroupMember(groupId, member.id);
+
+      groupMembers.push(gm);
+    }
+
+    const group = this._groups.removeGroup(groupId);
+
+    return {
+      group,
+      groupMembers,
+    };
+  }
+
   // GroupMember methods
   public addGroupMember(groupMember: GroupMember) {
     if (!this._groups.getGroup(groupMember.groupId))
       throw new GroupNotFoundException();
 
-    if (!this._members.getMember(groupMember.memberId))
-      throw new MemberNotFoundException();
+    const member = this._members.getMember(groupMember.memberId);
+
+    if (!member) throw new MemberNotFoundException();
+
+    if (member.role.isOwner()) throw new MemberIsOwnerException();
 
     const existingGroupMember = this._groupMembers.get(
       Organization.generateGroupMemberKey(groupMember),

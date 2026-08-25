@@ -55,6 +55,10 @@ export class Member {
     return this._role;
   }
 
+  public get status() {
+    return this._status;
+  }
+
   public get values(): Omit<MemberSelect, "organizationId"> {
     return {
       id: this._id.toString(),
