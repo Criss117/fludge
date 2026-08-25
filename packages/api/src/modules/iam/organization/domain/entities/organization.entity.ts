@@ -30,7 +30,7 @@ type CreateOrganization = {
   taxId: string;
   address: string;
   phone: string;
-  groups?: CreateGroup[];
+  groups?: Omit<CreateGroup, "createdBy">[];
   owner: CreateMember;
 };
 
@@ -58,6 +58,10 @@ export class Organization {
   public static create(values: CreateOrganization) {
     const now = new Date();
 
+    const memberCollection = MemberCollection.create([values.owner]);
+
+    const owner = memberCollection.owner!;
+
     return new Organization(
       UUID.generate(),
       values.name,
@@ -68,8 +72,12 @@ export class Organization {
       values.taxId,
       values.address,
       values.phone,
-      GroupCollection.create(values.groups),
-      MemberCollection.create([values.owner]),
+      values.groups
+        ? GroupCollection.create(
+            values.groups.map((g) => ({ ...g, createdBy: owner.id })),
+          )
+        : GroupCollection.create(),
+      memberCollection,
       new Map(),
       now,
       now,

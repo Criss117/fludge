@@ -14,7 +14,11 @@ import { ORPCError } from "@orpc/server";
 import { Organization } from "../iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { Group } from "../iam/organization/domain/entities/group.entity";
-import { allPermissions, Permissions } from "@fludge/utils/permissions";
+import {
+  allPermissions,
+  getRandomPermissions,
+  Permissions,
+} from "@fludge/utils/permissions";
 import { faker } from "@faker-js/faker/locale/es_MX";
 import { Member } from "../iam/organization/domain/entities/member.entity";
 import { GroupMember } from "../iam/organization/domain/entities/group-member.entity";
@@ -27,6 +31,7 @@ export const seedUsers = z.object({
 
 export const seedOrganizations = z.object({
   organizationsPerUser: z.number().optional().default(2),
+  groupsPerOrganization: z.number().optional().default(2),
 });
 
 export const seedAll = z.object({
@@ -51,6 +56,17 @@ function chunkMembersForOrganizations<T>(
   }
 
   return result;
+}
+
+function generateGroups(createdBy: UUID, count: number) {
+  return Array.from({ length: count }).map(() =>
+    Group.create({
+      name: faker.company.name(),
+      permissions: Permissions.create(getRandomPermissions()),
+      description: faker.lorem.sentence(),
+      createdBy,
+    }),
+  );
 }
 
 export class SeedService {
@@ -170,17 +186,19 @@ export class SeedService {
             role: "owner",
             assignedBy: null,
           },
+          groups: [
+            {
+              name: "Administradores",
+              description: "Grupo de administradores",
+              permissions: Permissions.create(allPermissions),
+            },
+          ],
         });
 
         const owner = organization.members.owner!;
 
-        organization.groups.addGroup(
-          Group.create({
-            name: "Administradores",
-            description: "Grupo de administradores",
-            permissions: Permissions.create(allPermissions),
-            createdBy: owner.id,
-          }),
+        generateGroups(owner.id, values.groupsPerOrganization).forEach((g) =>
+          organization.groups.addGroup(g),
         );
 
         allOrganizations.push(organization);

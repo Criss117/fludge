@@ -11,10 +11,39 @@ export const allPermissions = {
   groupMembers: ["assign", "read", "remove"],
 } as const;
 
+type PermissionsType = typeof allPermissions;
 // 2. Tipo TS derivado dinámicamente de allPermissions
 export type AppStatement = {
   -readonly [K in keyof typeof allPermissions]?: readonly (typeof allPermissions)[K][number][];
 };
+
+type RandomPermissions = {
+  -readonly [K in keyof PermissionsType]: PermissionsType[K][number][];
+};
+
+export function getRandomPermissions(): RandomPermissions {
+  const result = {} as RandomPermissions;
+
+  (Object.keys(allPermissions) as Array<keyof PermissionsType>).forEach(
+    (resource) => {
+      const actions = [...allPermissions[resource]] as string[];
+
+      // Baraja el array (Fisher-Yates)
+      for (let i = actions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = actions[i]!;
+        actions[i] = actions[j]!;
+        actions[j] = temp;
+      }
+
+      const count = Math.floor(Math.random() * (actions.length + 1));
+
+      result[resource] = actions.slice(0, count) as any;
+    },
+  );
+
+  return result;
+}
 
 // 3. Generación DINÁMICA del esquema Zod
 const buildSchema = () => {
