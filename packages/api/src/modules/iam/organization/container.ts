@@ -15,6 +15,8 @@ import { PgMemberRepository } from "./infrastructure/repositories/pg-member.repo
 import { PgGroupRepository } from "./infrastructure/repositories/pg-group.repository";
 import { PgGroupMemberRepository } from "./infrastructure/repositories/pg-group-member.repository";
 import { DeleteGroupsCommand } from "./application/commands/delete-groups.command";
+import { RemoveMembersFromGroupCommand } from "./application/commands/remove-members-from-group.command";
+import { RemoveGroupsFromMemberCommand } from "./application/commands/remove-groups-from-member.command";
 
 //Repositories
 const memberRepository = new PgMemberRepository(databaseService);
@@ -57,8 +59,14 @@ const addMemberCommand = new AddMemberCommand(memberRepository);
 const assignMembersToGroupCommand = new AssignMembersToGroupCommand(
   groupMemberRepository,
 );
+const removeMembersFromGroupCommand = new RemoveMembersFromGroupCommand(
+  groupMemberRepository,
+);
 
 const assignGroupsToMemberCommand = new AssignGroupsToMemberCommand(
+  groupMemberRepository,
+);
+const removeGroupsFromMemberCommand = new RemoveGroupsFromMemberCommand(
   groupMemberRepository,
 );
 
@@ -80,13 +88,15 @@ export const organizationContainer = {
     group: {
       create: createGroupCommand,
       update: updateGroupCommand,
-      assignMembers: assignMembersToGroupCommand,
       delete: deleteGroupCommand,
+      assignMembers: assignMembersToGroupCommand,
+      removeMembers: removeMembersFromGroupCommand,
     },
 
     member: {
       add: addMemberCommand,
       assignGroups: assignGroupsToMemberCommand,
+      removeGroups: removeGroupsFromMemberCommand,
     },
   },
   queries: { findAll: findAllOrganizationsQuery },

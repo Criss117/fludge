@@ -8,7 +8,7 @@ export const allPermissions = {
   products: ["create", "read", "update", "delete"],
   categories: ["create", "read", "update", "delete"],
   sales: ["create", "read", "update", "delete"],
-  groupMembers: ["assign", "read"],
+  groupMembers: ["assign", "read", "remove"],
 } as const;
 
 // 2. Tipo TS derivado dinámicamente de allPermissions

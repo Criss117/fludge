@@ -180,7 +180,12 @@ export class Organization {
 
   public removeGroupMember(groupId: UUID, memberId: UUID) {
     if (!this._groups.getGroup(groupId)) throw new GroupNotFoundException();
-    if (!this._members.getMember(memberId)) throw new MemberNotFoundException();
+
+    const member = this._members.getMember(memberId);
+
+    if (!member) throw new MemberNotFoundException();
+
+    if (member.role.isOwner()) throw new MemberIsOwnerException();
 
     const existingGroupMember = this._groupMembers.get(
       Organization.generateGroupMemberKeyFromIds(groupId, memberId),
