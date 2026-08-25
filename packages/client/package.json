@@ -1,0 +1,38 @@
+{
+  "name": "@fludge/client",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {
+    "check-types": "tsc -b",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@fludge/auth": "workspace:*",
+    "@fludge/db": "workspace:*",
+    "@fludge/utils": "workspace:*",
+    "@fludge/api": "workspace:*",
+    "@orpc/client": "catalog:",
+    "better-auth": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "@orpc/tanstack-query": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "uuid": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@fludge/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "elysia": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "7.0.2"
+  }
+}

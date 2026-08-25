@@ -13,7 +13,7 @@ export const publicProcedure = o;
 const requireAuth = o.middleware(async ({ context, next }) => {
   if (!context.session)
     throw new ORPCError("UNAUTHORIZED", {
-      message: "No se ha autenticado",
+      message: "No ha iniciado sesión",
     });
 
   return next({
