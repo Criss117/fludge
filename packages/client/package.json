@@ -6,7 +6,7 @@
       "default": "./src/providers/*.tsx"
     },
     "./presentation/*": {
-      "default": "./src/presentation/*.tsx"
+      "default": "./src/presentation/*.ts"
     },
     "./application/*": {
       "default": "./src/application/*.ts"
@@ -24,6 +24,7 @@
     "@orpc/client": "catalog:",
     "better-auth": "catalog:",
     "@tanstack/react-query": "catalog:",
+    "@tanstack/react-form": "catalog:",
     "@orpc/tanstack-query": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

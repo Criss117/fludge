@@ -25,8 +25,19 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
       console.log("session");
 
       const { data, error } = await authClient.getSession();
+
       if (error || !data) return null;
-      return { ...data.session, user: data.user };
+
+      const sessionData = data.session as typeof data.session & {
+        activeOrganizationId: string | null;
+      };
+
+      return {
+        ...sessionData,
+        activeOrganizationId: sessionData.activeOrganizationId as unknown as
+          string | null,
+        user: data.user,
+      };
     },
   });
 
@@ -35,8 +46,6 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
     mutationFn: async (
       values: Parameters<AuthContextAdapter["signUpEmail"]>[0],
     ) => {
-      console.log("signUpEmail");
-
       const { error } = await authClient.signUpEmail(values);
 
       if (error) throw new Error(error.message, { cause: error });
@@ -86,13 +95,21 @@ function useAuthState(
     [authClient, queryClient],
   );
 
-  return {
-    authClient,
-    session: useSuspenseQuery(options.session),
-    signUpEmail: useMutation(options.signUpEmail),
-    signInEmail: useMutation(options.signInEmail),
-    signOut: useMutation(options.signOut),
-  };
+  const session = useSuspenseQuery(options.session);
+  const signUpEmail = useMutation(options.signUpEmail);
+  const signInEmail = useMutation(options.signInEmail);
+  const signOut = useMutation(options.signOut);
+
+  return useMemo(
+    () => ({
+      authClient,
+      session,
+      signUpEmail,
+      signInEmail,
+      signOut,
+    }),
+    [authClient, session, signUpEmail, signInEmail, signOut],
+  );
 }
 
 // El Context se tipa con ReturnType de useAuthState — cero anotación manual.

@@ -7,7 +7,7 @@ import {
   AuthProvider as AProvider,
   type AuthContextAdapter,
 } from "@fludge/client/providers/auth.provider";
-import { Text } from "@/components/app-text";
+import { Text } from "@/modules/shared/components/app-text";
 
 export const authClient = createAuthClient({
   baseURL: env.EXPO_PUBLIC_SERVER_URL,
