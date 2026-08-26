@@ -68,11 +68,11 @@ export type OnRegisterSubmit = {
 export function registerFormOptions(options: OnRegisterSubmit) {
   return formOptions({
     defaultValues: {
-      name: "Fludge",
-      phone: "3212345678",
-      legalName: "Fludge",
-      taxId: "123456789",
-      address: "Calle de la casa, 123",
+      name: "",
+      phone: "",
+      legalName: "",
+      taxId: "",
+      address: "",
     },
     validators: {
       onChange: registerOrganizationSchema,

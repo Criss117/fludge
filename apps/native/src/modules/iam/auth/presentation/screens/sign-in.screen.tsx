@@ -63,6 +63,7 @@ export function SignInScreen() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
+                    errors={field.state.meta.errors}
                   />
                 )}
               />
@@ -87,6 +88,7 @@ export function SignInScreen() {
                     onChangeText={(e) => field.handleChange(e)}
                     setShowPassword={setShowPassword}
                     showPassword={showPassword}
+                    errors={field.state.meta.errors}
                   />
                 )}
               />

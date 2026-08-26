@@ -1,3 +1,4 @@
+import { FieldError } from "@/modules/shared/components/field-error";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { Input } from "heroui-native/input";
 import { Label } from "heroui-native/label";
@@ -8,11 +9,19 @@ interface Props {
   isInvalid: boolean;
   id: string;
   value: string;
+  errors?: Array<{ message?: string } | undefined>;
   onBlur: (e: BlurEvent) => void;
   onChangeText: (text: string) => void;
 }
 
-function NameInput({ isInvalid, id, value, onBlur, onChangeText }: Props) {
+function NameInput({
+  isInvalid,
+  id,
+  value,
+  onBlur,
+  onChangeText,
+  errors,
+}: Props) {
   return (
     <TextField isInvalid={isInvalid} isRequired>
       <Label isInvalid={isInvalid}>Nombre Comercial</Label>
@@ -31,11 +40,19 @@ function NameInput({ isInvalid, id, value, onBlur, onChangeText }: Props) {
           <MaterialIcons size={20} name="add-business" />
         </View>
       </View>
+      {isInvalid && <FieldError errors={errors} />}
     </TextField>
   );
 }
 
-function LegalNameInput({ isInvalid, id, value, onBlur, onChangeText }: Props) {
+function LegalNameInput({
+  isInvalid,
+  id,
+  value,
+  onBlur,
+  onChangeText,
+  errors,
+}: Props) {
   return (
     <TextField isInvalid={isInvalid} isRequired>
       <Label isInvalid={isInvalid}>Razón Social</Label>
@@ -54,11 +71,19 @@ function LegalNameInput({ isInvalid, id, value, onBlur, onChangeText }: Props) {
           <MaterialIcons size={20} name="apartment" />
         </View>
       </View>
+      {isInvalid && <FieldError errors={errors} />}
     </TextField>
   );
 }
 
-function TaxIdInput({ isInvalid, id, value, onBlur, onChangeText }: Props) {
+function TaxIdInput({
+  isInvalid,
+  id,
+  value,
+  onBlur,
+  onChangeText,
+  errors,
+}: Props) {
   return (
     <TextField isInvalid={isInvalid} isRequired>
       <Label isInvalid={isInvalid}>
@@ -79,11 +104,19 @@ function TaxIdInput({ isInvalid, id, value, onBlur, onChangeText }: Props) {
           <MaterialIcons size={20} name="badge" />
         </View>
       </View>
+      {isInvalid && <FieldError errors={errors} />}
     </TextField>
   );
 }
 
-function AddressInput({ isInvalid, id, value, onBlur, onChangeText }: Props) {
+function AddressInput({
+  isInvalid,
+  id,
+  value,
+  onBlur,
+  onChangeText,
+  errors,
+}: Props) {
   return (
     <TextField isInvalid={isInvalid} isRequired>
       <Label isInvalid={isInvalid}>Dirección Comercial</Label>
@@ -102,11 +135,19 @@ function AddressInput({ isInvalid, id, value, onBlur, onChangeText }: Props) {
           <MaterialIcons size={20} name="location-on" />
         </View>
       </View>
+      {isInvalid && <FieldError errors={errors} />}
     </TextField>
   );
 }
 
-function PhoneInput({ isInvalid, id, value, onBlur, onChangeText }: Props) {
+function PhoneInput({
+  isInvalid,
+  id,
+  value,
+  onBlur,
+  onChangeText,
+  errors,
+}: Props) {
   return (
     <TextField isInvalid={isInvalid} isRequired>
       <Label isInvalid={isInvalid}>Número de Teléfono</Label>
@@ -126,6 +167,7 @@ function PhoneInput({ isInvalid, id, value, onBlur, onChangeText }: Props) {
           <MaterialIcons size={20} name="phone" />
         </View>
       </View>
+      {isInvalid && <FieldError errors={errors} />}
     </TextField>
   );
 }

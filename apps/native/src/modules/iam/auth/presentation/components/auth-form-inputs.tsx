@@ -1,3 +1,4 @@
+import { FieldError } from "@/modules/shared/components/field-error";
 import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { Button } from "heroui-native/button";
 import { Input } from "heroui-native/input";
@@ -12,6 +13,7 @@ interface Props {
   value: string;
   onBlur: (e: BlurEvent) => void;
   onChangeText: (text: string) => void;
+  errors?: Array<{ message?: string } | undefined>;
 }
 
 export function EmailInput({
@@ -20,6 +22,7 @@ export function EmailInput({
   value,
   onBlur,
   onChangeText,
+  errors,
 }: Props) {
   return (
     <TextField isInvalid={isInvalid} isRequired>
@@ -39,6 +42,7 @@ export function EmailInput({
         <View className="absolute inset-s-3.5" pointerEvents="none">
           <MaterialIcons size={20} name="mail-outline" />
         </View>
+        {isInvalid && <FieldError errors={errors} />}
       </View>
     </TextField>
   );
@@ -52,6 +56,7 @@ export function PasswordInput({
   onChangeText,
   setShowPassword,
   showPassword,
+  errors,
 }: Props & {
   setShowPassword: Dispatch<SetStateAction<boolean>>;
   showPassword: boolean;
@@ -86,6 +91,7 @@ export function PasswordInput({
           )}
         </Button>
       </View>
+      {isInvalid && <FieldError errors={errors} />}
     </TextField>
   );
 }
@@ -96,6 +102,7 @@ export function NameInput({
   value,
   onBlur,
   onChangeText,
+  errors,
 }: Props) {
   return (
     <TextField isInvalid={isInvalid} isRequired>
@@ -115,6 +122,7 @@ export function NameInput({
           <MaterialIcons size={20} name="person" />
         </View>
       </View>
+      {isInvalid && <FieldError errors={errors} />}
     </TextField>
   );
 }
@@ -125,6 +133,7 @@ export function PhoneInput({
   value,
   onBlur,
   onChangeText,
+  errors,
 }: Props) {
   return (
     <TextField isInvalid={isInvalid} isRequired>
@@ -145,6 +154,7 @@ export function PhoneInput({
           <MaterialIcons size={20} name="phone" />
         </View>
       </View>
+      {isInvalid && <FieldError errors={errors} />}
     </TextField>
   );
 }

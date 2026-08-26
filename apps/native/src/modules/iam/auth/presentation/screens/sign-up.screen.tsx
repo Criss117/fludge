@@ -67,6 +67,7 @@ export function SignUpScreen() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
+                    errors={field.state.meta.errors}
                   />
                 )}
               />
@@ -83,6 +84,7 @@ export function SignUpScreen() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
+                    errors={field.state.meta.errors}
                   />
                 )}
               />
@@ -99,6 +101,7 @@ export function SignUpScreen() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
+                    errors={field.state.meta.errors}
                   />
                 )}
               />
@@ -123,6 +126,7 @@ export function SignUpScreen() {
                     onChangeText={(e) => field.handleChange(e)}
                     setShowPassword={setShowPassword}
                     showPassword={showPassword}
+                    errors={field.state.meta.errors}
                   />
                 )}
               />
