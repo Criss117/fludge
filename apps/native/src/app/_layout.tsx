@@ -1,9 +1,10 @@
+import "../globals.css";
 import { Integrations } from "@/integrations";
 import { Stack } from "expo-router";
-import "../globals.css";
 import { useThemeColor } from "heroui-native";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { useNetworkActivityDevTools } from "@rozenite/network-activity-plugin";
+import { StatusBar } from "expo-status-bar";
 
 function StackConfig() {
   const background = useThemeColor("background");
@@ -12,21 +13,25 @@ function StackConfig() {
   const isLogged = session.data !== null;
 
   return (
-    <Stack
-      screenOptions={{
-        contentStyle: {
-          backgroundColor: background,
-        },
-        headerShown: false,
-      }}
-    >
-      <Stack.Protected guard={!isLogged}>
-        <Stack.Screen name="auth" />
-      </Stack.Protected>
-      <Stack.Protected guard={isLogged}>
-        <Stack.Screen name="(private)" />
-      </Stack.Protected>
-    </Stack>
+    <>
+      <StatusBar style="dark" />
+      <Stack
+        screenOptions={{
+          contentStyle: {
+            backgroundColor: background,
+          },
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="index" />
+        <Stack.Protected guard={!isLogged}>
+          <Stack.Screen name="auth" />
+        </Stack.Protected>
+        <Stack.Protected guard={isLogged}>
+          <Stack.Screen name="(private)" />
+        </Stack.Protected>
+      </Stack>
+    </>
   );
 }
 

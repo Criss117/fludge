@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-query";
 import type { createAuthClient } from "better-auth/client";
 import { createContext, use, useMemo, Suspense, type ReactNode } from "react";
+import { useOrpc } from "./orpc.provider";
 
 type AuthClient = ReturnType<typeof createAuthClient>;
 
@@ -32,11 +33,15 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
         activeOrganizationId: string | null;
       };
 
+      const userData = data.user as typeof data.user & {
+        isRoot: boolean;
+      };
+
       return {
         ...sessionData,
         activeOrganizationId: sessionData.activeOrganizationId as unknown as
           string | null,
-        user: data.user,
+        user: userData,
       };
     },
   });
@@ -79,7 +84,6 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
       return queryClient.ensureQueryData(session);
     },
   });
-
   return { session, signUpEmail, signInEmail, signOut };
 }
 
@@ -90,6 +94,7 @@ function useAuthState(
   authClient: AuthContextAdapter,
   queryClient: QueryClient,
 ) {
+  const orpc = useOrpc();
   const options = useMemo(
     () => authOptions(authClient, queryClient),
     [authClient, queryClient],
@@ -99,6 +104,13 @@ function useAuthState(
   const signUpEmail = useMutation(options.signUpEmail);
   const signInEmail = useMutation(options.signInEmail);
   const signOut = useMutation(options.signOut);
+  const setActiveOrganization = useMutation(
+    orpc.auth.commands.setActiveOrganization.mutationOptions({
+      onSuccess: () => {
+        session.refetch();
+      },
+    }),
+  );
 
   return useMemo(
     () => ({
@@ -107,8 +119,16 @@ function useAuthState(
       signUpEmail,
       signInEmail,
       signOut,
+      setActiveOrganization,
     }),
-    [authClient, session, signUpEmail, signInEmail, signOut],
+    [
+      authClient,
+      session,
+      signUpEmail,
+      signInEmail,
+      signOut,
+      setActiveOrganization,
+    ],
   );
 }
 

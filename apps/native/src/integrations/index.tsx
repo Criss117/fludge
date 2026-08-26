@@ -9,13 +9,13 @@ export function Integrations({ children }: { children: React.ReactNode }) {
   return (
     <GestureHandlerRootView>
       <QueryClientProvider>
-        <AuthProvider>
-          <ORPCProvider>
+        <ORPCProvider>
+          <AuthProvider>
             <FontsProvider>
               <HeroUIProvider>{children}</HeroUIProvider>
             </FontsProvider>
-          </ORPCProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </ORPCProvider>
       </QueryClientProvider>
     </GestureHandlerRootView>
   );

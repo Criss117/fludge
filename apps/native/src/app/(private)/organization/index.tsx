@@ -1,3 +1,5 @@
+import { Typography } from "heroui-native/text";
+
 export default function Organization() {
-  return <></>;
+  return <Typography>Organization</Typography>;
 }

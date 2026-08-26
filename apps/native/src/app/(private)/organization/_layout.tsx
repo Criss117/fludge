@@ -1,24 +1,30 @@
-import { useOrpc } from "@fludge/client/providers/orpc.provider";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useAuth } from "@fludge/client/providers/auth.provider";
 import { Stack } from "expo-router";
+import { useThemeColor } from "heroui-native";
 
 export default function OrganizationLayout() {
-  const orpc = useOrpc();
-  const { data } = useSuspenseQuery(
-    orpc.organization.queries.findAll.queryOptions()
-  );
+  const { session } = useAuth();
+  const background = useThemeColor("background");
 
-  const userHasOrganizations = data?.length > 0;
+  const userIsRoot = !!session.data?.user.isRoot;
 
   return (
-    <Stack>
-      <Stack.Protected guard={!userHasOrganizations}>
+    <Stack
+      screenOptions={{
+        headerShadowVisible: false,
+        title: "Fludge",
+        headerStyle: {
+          backgroundColor: background,
+        },
+        contentStyle: {
+          backgroundColor: background,
+        },
+      }}
+    >
+      <Stack.Protected guard={userIsRoot}>
         <Stack.Screen name="index" />
       </Stack.Protected>
-
-      <Stack.Protected guard={userHasOrganizations}>
-        <Stack.Screen name="select" />
-      </Stack.Protected>
+      <Stack.Screen name="select" />
     </Stack>
   );
 }
