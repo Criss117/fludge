@@ -1,12 +1,8 @@
 import {
-  signInFormOptions,
-  signUpFormOptions,
-  type OnSignInSubmit,
-  type OnSignUpSubmit,
-} from "@fludge/client/application/iam/auth/form/sign-in-form";
-
+  registerFormOptions,
+  type OnRegisterSubmit,
+} from "@fludge/client/application/iam/organization/form/register-organization-form";
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
-import { useState } from "react";
 
 const { fieldContext, formContext, useFieldContext } = createFormHookContexts();
 
@@ -23,21 +19,35 @@ interface FieldProps<T> {
 const { useAppForm } = createFormHook({
   fieldContext,
   formContext,
-  fieldComponents: { NameField, EmailField, PasswordField, PhoneField },
+  fieldComponents: {
+    NameField,
+    PhoneField,
+    LegalNameField,
+    TaxIdField,
+    AddressField,
+  },
   formComponents: {},
 });
 
 function NameField({ children }: FieldProps<string>) {
   const field = useFieldContext<string>();
-  const id = "auth-form-name";
+  const id = "register-organization-form-name";
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return children({ field, id, isInvalid });
 }
 
-function EmailField({ children }: FieldProps<string>) {
+function PhoneField({ children }: FieldProps<string>) {
   const field = useFieldContext<string>();
-  const id = "auth-form-email";
+  const id = "register-organization-form-phone";
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+  return children({ field, id, isInvalid });
+}
+
+function LegalNameField({ children }: FieldProps<string>) {
+  const field = useFieldContext<string>();
+  const id = "register-organization-form-legalname";
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return children({
@@ -47,36 +57,22 @@ function EmailField({ children }: FieldProps<string>) {
   });
 }
 
-interface PasswordFieldProps {
-  children: (
-    props: ChildrenProps<string> & {
-      showPassword: boolean;
-      setShowPassword: React.Dispatch<React.SetStateAction<boolean>>;
-    },
-  ) => React.ReactNode;
-}
-
-function PasswordField({ children }: PasswordFieldProps) {
-  const [showPassword, setShowPassword] = useState(false);
+function TaxIdField({ children }: FieldProps<string>) {
   const field = useFieldContext<string>();
-  const id = "auth-form-password";
-  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-  return children({ field, id, isInvalid, showPassword, setShowPassword });
-}
-
-function PhoneField({ children }: FieldProps<string>) {
-  const field = useFieldContext<string>();
-  const id = "auth-form-phone";
+  const id = "register-organization-form-tax-id";
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return children({ field, id, isInvalid });
 }
 
-export function useSignUpForm(options: OnSignUpSubmit) {
-  return useAppForm(signUpFormOptions(options));
+function AddressField({ children }: FieldProps<string>) {
+  const field = useFieldContext<string>();
+  const id = "register-organization-form-address";
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+  return children({ field, id, isInvalid });
 }
 
-export function useSignInForm(options: OnSignInSubmit) {
-  return useAppForm(signInFormOptions(options));
+export function useRegisterOrganizationForm(options: OnRegisterSubmit) {
+  return useAppForm(registerFormOptions(options));
 }

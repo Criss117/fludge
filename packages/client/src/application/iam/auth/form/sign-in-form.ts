@@ -31,10 +31,10 @@ export type OnSignInSubmit = {
 export function signUpFormOptions(options: OnSignUpSubmit) {
   return formOptions({
     defaultValues: {
-      name: "Natalia Arturo",
-      email: "natalia@fludge.dev",
-      password: "holiwiss",
-      phone: "3212345678",
+      name: "",
+      email: "",
+      password: "",
+      phone: "",
     },
     validators: {
       onChange: signUpSchema,
@@ -48,8 +48,8 @@ export function signUpFormOptions(options: OnSignUpSubmit) {
 export function signInFormOptions(options: OnSignInSubmit) {
   return formOptions({
     defaultValues: {
-      email: "root0@fludge.com",
-      password: "holiwiss",
+      email: "",
+      password: "",
     },
     validators: {
       onChange: signInSchema,

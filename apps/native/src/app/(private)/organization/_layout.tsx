@@ -19,6 +19,7 @@ export default function OrganizationLayout() {
         contentStyle: {
           backgroundColor: background,
         },
+        animation: "fade",
       }}
     >
       <Stack.Protected guard={userIsRoot}>
