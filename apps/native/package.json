@@ -48,6 +48,8 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@rozenite/tanstack-query-plugin": "2.2.0",
     "@testing-library/react-native": "14.0.1",
     "@types/jest": "29.5.14",
     "@types/react": "~19.2.2",
@@ -59,8 +61,8 @@
     "jest-expo": "~57.0.4",
     "prettier": "3.9.6",
     "prettier-plugin-tailwindcss": "0.8.1",
-    "typescript": "~6.0.3",
-    "@babel/core": "^7.29.7"
+    "rozenite": "2.2.0",
+    "typescript": "~6.0.3"
   },
   "scripts": {
     "start": "expo start",
