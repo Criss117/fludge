@@ -18,7 +18,9 @@ export function QueryClientProvider({
 }: {
   children: React.ReactNode;
 }) {
-  useTanStackQueryDevTools(queryClient);
+  if (__DEV__) {
+    useTanStackQueryDevTools(queryClient);
+  }
 
   return <Provider client={queryClient}>{children}</Provider>;
 }
