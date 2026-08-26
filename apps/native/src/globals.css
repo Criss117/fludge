@@ -2,13 +2,12 @@
 @import "uniwind";
 
 @import "heroui-native/styles";
-
 @theme {
   /* Primitive Colors (Do not change between light and dark) */
   --white: oklch(100% 0 0);
   --black: oklch(0% 0 0);
   --snow: oklch(0.9911 0 0);
-  --eclipse: oklch(0.2103 0.0059 285.89);
+  --eclipse: oklch(0.235 0 0);
 
   /* Border */
   --border-width: 1px;
@@ -20,7 +19,6 @@
 
   /* Opacity */
   --opacity-disabled: 0.5;
-  /* Font Family */
 
   /* fonts */
   --font-thin: geist-thin;
@@ -40,35 +38,35 @@
   :root {
     @variant light {
       /* Base Colors */
-      --background: oklch(0.9702 0 0);
+      --background: oklch(0.9195 0.0169 88.003);
       --foreground: var(--eclipse);
 
       /* Surface: Used for non-overlay components (cards, accordions, disclosure groups) */
-      --surface: var(--white);
+      --surface: oklch(0.953 0.0156 86.4257);
       --surface-foreground: var(--foreground);
 
-      --surface-secondary: oklch(0.9524 0.0013 286.37);
+      --surface-secondary: oklch(0.8647 0.0201 87.5232);
       --surface-secondary-foreground: var(--foreground);
 
-      --surface-tertiary: oklch(0.9373 0.0013 286.37);
+      --surface-tertiary: oklch(0.834 0.0232 87.163);
       --surface-tertiary-foreground: var(--foreground);
 
       /* Overlay: Used for floating/overlay components (dialogs, popovers, modals, menus) */
-      --overlay: var(--white);
+      --overlay: oklch(0.953 0.0156 86.4257);
       --overlay-foreground: var(--foreground);
       --backdrop: oklch(0% 0 0 / 20%);
 
-      --muted: oklch(0.5517 0.0138 285.94);
+      --muted: oklch(0.834 0.0232 87.163);
 
-      --default: oklch(94% 0.001 286.375);
+      --default: oklch(0.8647 0.0201 87.5232);
       --default-foreground: var(--eclipse);
 
-      --accent: oklch(0.6204 0.195 253.83);
-      --accent-foreground: var(--snow);
+      --accent: oklch(0.3012 0 0);
+      --accent-foreground: oklch(0.953 0.0156 86.4257);
 
       /* Form Fields */
-      --field-background: var(--white);
-      --field-foreground: oklch(0.2103 0.0059 285.89);
+      --field-background: oklch(0.953 0.0156 86.4257);
+      --field-foreground: var(--foreground);
       --field-placeholder: var(--muted);
       --field-border: transparent; /* no border by default on form fields */
 
@@ -79,16 +77,16 @@
       --warning: oklch(0.7819 0.1585 72.33);
       --warning-foreground: var(--eclipse);
 
-      --danger: oklch(0.6532 0.2328 25.74);
+      --danger: oklch(0.5771 0.2152 27.325);
       --danger-foreground: var(--snow);
 
       /* Component Colors */
-      --segment: var(--white);
+      --segment: oklch(0.953 0.0156 86.4257);
       --segment-foreground: var(--eclipse);
 
       /* Misc Colors */
-      --border: oklch(90% 0.004 286.32);
-      --separator: oklch(74% 0.004 286.32);
+      --border: oklch(0.8434 0.0231 87.1621);
+      --separator: oklch(0.8434 0.0231 87.1621);
       --focus: var(--accent);
       --link: var(--foreground);
 
@@ -106,62 +104,62 @@
 
     @variant dark {
       /* Base Colors */
-      --background: oklch(12% 0.005 285.823);
-      --foreground: var(--snow);
+      --background: oklch(0.1913 0 0);
+      --foreground: oklch(0.9173 0.0133 82.4015);
 
       /* Surface: Used for non-overlay components (cards, accordions, disclosure groups) */
-      --surface: oklch(0.2103 0.0059 285.89);
+      --surface: oklch(0.2264 0 0);
       --surface-foreground: var(--foreground);
 
-      --surface-secondary: oklch(0.257 0.0037 286.14);
+      --surface-secondary: oklch(0.26 0 0);
       --surface-secondary-foreground: var(--foreground);
 
-      --surface-tertiary: oklch(0.2721 0.0024 247.91);
+      --surface-tertiary: oklch(0.29 0 0);
       --surface-tertiary-foreground: var(--foreground);
 
-      /* Overlay: Used for floating/overlay components (dialogs, popovers, modals, menus) - lighter for contrast */
-      --overlay: oklch(0.2103 0.0059 285.89);
+      /* Overlay: Used for floating/overlay components (dialogs, popovers, modals, menus) */
+      --overlay: oklch(0.2264 0 0);
       --overlay-foreground: var(--foreground);
       --backdrop: oklch(0% 0 0 / 20%);
 
-      --muted: oklch(70.5% 0.015 286.067);
+      --muted: oklch(0.6348 0.0113 81.7875);
 
-      --default: oklch(27.4% 0.006 286.033);
-      --default-foreground: var(--snow);
+      --default: oklch(0.26 0 0);
+      --default-foreground: var(--foreground);
 
-      --accent: oklch(0.6204 0.195 253.83);
-      --accent-foreground: var(--snow);
+      --accent: oklch(0.852 0.0205 100.6306);
+      --accent-foreground: oklch(0.1913 0 0);
 
-      /* Form Field Defaults - Colors (only the ones that are different from light theme) */
-      --field-background: oklch(0.2103 0.0059 285.89);
+      /* Form Field Defaults */
+      --field-background: oklch(0.2264 0 0);
       --field-foreground: var(--foreground);
       --field-placeholder: var(--muted);
       --field-border: transparent; /* no border by default on form fields */
 
       /* Status Colors */
       --success: oklch(0.7329 0.1935 150.81);
-      --success-foreground: var(--eclipse);
+      --success-foreground: oklch(0.1913 0 0);
 
       --warning: oklch(0.8203 0.1388 76.34);
-      --warning-foreground: var(--eclipse);
+      --warning-foreground: oklch(0.1913 0 0);
 
-      --danger: oklch(0.594 0.1967 24.63);
+      --danger: oklch(0.5771 0.2152 27.325);
       --danger-foreground: var(--snow);
 
       /* Component Colors */
-      --segment: oklch(0.3964 0.01 285.93);
+      --segment: oklch(0.26 0 0);
       --segment-foreground: var(--foreground);
 
       /* Misc Colors */
-      --border: oklch(28% 0.006 286.033);
-      --separator: oklch(40% 0.006 286.033);
+      --border: oklch(0.2931 0 0);
+      --separator: oklch(0.2931 0 0);
       --focus: var(--accent);
       --link: var(--foreground);
 
       /* Shadows */
-      --surface-shadow: 0 0 0 0 transparent inset; /* No shadow on dark mode */
+      --surface-shadow: 0 0 0 0 transparent inset;
       --overlay-shadow: 0 0 1px 0 rgba(255, 255, 255, 0.2) inset;
-      --field-shadow: 0 0 0 0 transparent inset; /* Transparent shadow to allow ring utilities to work */
+      --field-shadow: 0 0 0 0 transparent inset;
     }
   }
 }
