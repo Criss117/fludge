@@ -11,10 +11,29 @@ export const allPermissions = {
   groupMembers: ["assign", "read", "remove"],
 } as const;
 
+export const allPermissionsEs = {
+  groups: {
+    es: "grupos",
+    values: {
+      create: {
+        es: "crear",
+      },
+    },
+  },
+  organizations: ["update"],
+  members: ["create", "read", "update", "delete"],
+  products: ["create", "read", "update", "delete"],
+  categories: ["create", "read", "update", "delete"],
+  sales: ["create", "read", "update", "delete"],
+  groupMembers: ["assign", "read", "remove"],
+} as const;
+
 type PermissionsType = typeof allPermissions;
 // 2. Tipo TS derivado dinámicamente de allPermissions
 export type AppStatement = {
-  -readonly [K in keyof typeof allPermissions]?: readonly (typeof allPermissions)[K][number][];
+  -readonly [
+    K in keyof typeof allPermissions
+  ]?: readonly (typeof allPermissions)[K][number][];
 };
 
 type RandomPermissions = {
@@ -158,4 +177,31 @@ export class Permissions {
   ): boolean {
     return Permissions.merge(permissionsList).satisfies(required);
   }
+}
+
+type PermissionKey = keyof typeof allPermissions;
+
+type FormattedStatement = {
+  [K in PermissionKey]?: string;
+};
+
+export function formatStatement(statement: AppStatement): FormattedStatement {
+  const result: FormattedStatement = {};
+
+  (Object.keys(statement) as PermissionKey[]).forEach((key) => {
+    const actions = statement[key];
+
+    if (!actions || actions.length === 0) return;
+
+    const fullList = allPermissions[key] as readonly string[];
+
+    // ordenamos según el orden "canónico" definido en allPermissions
+    const ordered = fullList.filter((a) => actions.includes(a as any));
+
+    const isFull = ordered.length === fullList.length;
+
+    result[key] = isFull ? "full" : ordered.join("/");
+  });
+
+  return result;
 }

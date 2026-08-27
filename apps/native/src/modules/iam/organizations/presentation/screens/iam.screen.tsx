@@ -28,7 +28,7 @@ export function IamScreen() {
         <Tabs.Content value="members" className="flex-1">
           <IamMembersSection />
         </Tabs.Content>
-        <Tabs.Content value="groups">
+        <Tabs.Content value="groups" className="flex-1">
           <IamGroupsSection />
         </Tabs.Content>
       </Tabs>
