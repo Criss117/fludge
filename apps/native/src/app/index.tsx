@@ -22,7 +22,8 @@ function RedirecTo() {
 
   if (!isLogged) return <Redirect href="/auth/sign-in" />;
 
-  if (activeOrganizationId) return <Redirect href="/(private)/dashboard" />;
+  if (activeOrganizationId)
+    return <Redirect href="/(private)/dashboard/(tabs)" />;
 
   return <RedirectIntoOrganization />;
 }
