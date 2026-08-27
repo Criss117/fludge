@@ -156,7 +156,11 @@ export function RegisterOrganizationScreen() {
           onPress={form.handleSubmit}
           isDisabled={registerOrganization.isPending}
         >
-          <MaterialIcons name="add-business" size={20} />
+          <MaterialIcons
+            name="add-business"
+            size={20}
+            className="text-white dark:text-black"
+          />
           <Button.Label>Registrar Organización</Button.Label>
         </Button>
         {hasOrganizations && (

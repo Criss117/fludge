@@ -90,7 +90,7 @@ export default function DashboardSettings() {
                 />
               </PressableFeedback>
             </Link>
-            <Link href="/(private)/organization/select" asChild push>
+            <Link href="/(private)/organization/select" asChild replace>
               <PressableFeedback className="flex flex-row items-center justify-between py-2">
                 <View className="flex-row items-center gap-x-2">
                   <MaterialIcons
