@@ -14,13 +14,14 @@ import type {
   GroupSelect,
 } from "@fludge/db/schema/iam.schema";
 import { GroupMember } from "./group-member.entity";
-import { Permissions, type AppStatement } from "@fludge/utils/permissions";
 import { GroupCollection } from "./group.collection";
 import { MemberCollection } from "./member.collection";
 import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
 import { GroupMemberNotFoundException } from "../exceptions/group-member-not-found.exception";
 import { GroupMemberAlreadyExistsException } from "../exceptions/group-member-elready-exists.exception";
 import { MemberIsOwnerException } from "../exceptions/member-is-owner.exception";
+import type { AppStatement } from "@fludge/utils/permissions/data";
+import { Permissions } from "@fludge/utils/permissions/index";
 
 type CreateOrganization = {
   name: string;

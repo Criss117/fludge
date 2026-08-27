@@ -1,68 +1,5 @@
 import { z } from "zod";
-
-// 1. Fuente única de verdad
-export const allPermissions = {
-  groups: ["create", "read", "update", "delete"],
-  organizations: ["update"],
-  members: ["create", "read", "update", "delete"],
-  products: ["create", "read", "update", "delete"],
-  categories: ["create", "read", "update", "delete"],
-  sales: ["create", "read", "update", "delete"],
-  groupMembers: ["assign", "read", "remove"],
-} as const;
-
-export const allPermissionsEs = {
-  groups: {
-    es: "grupos",
-    values: {
-      create: {
-        es: "crear",
-      },
-    },
-  },
-  organizations: ["update"],
-  members: ["create", "read", "update", "delete"],
-  products: ["create", "read", "update", "delete"],
-  categories: ["create", "read", "update", "delete"],
-  sales: ["create", "read", "update", "delete"],
-  groupMembers: ["assign", "read", "remove"],
-} as const;
-
-type PermissionsType = typeof allPermissions;
-// 2. Tipo TS derivado dinámicamente de allPermissions
-export type AppStatement = {
-  -readonly [
-    K in keyof typeof allPermissions
-  ]?: readonly (typeof allPermissions)[K][number][];
-};
-
-type RandomPermissions = {
-  -readonly [K in keyof PermissionsType]: PermissionsType[K][number][];
-};
-
-export function getRandomPermissions(): RandomPermissions {
-  const result = {} as RandomPermissions;
-
-  (Object.keys(allPermissions) as Array<keyof PermissionsType>).forEach(
-    (resource) => {
-      const actions = [...allPermissions[resource]] as string[];
-
-      // Baraja el array (Fisher-Yates)
-      for (let i = actions.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        const temp = actions[i]!;
-        actions[i] = actions[j]!;
-        actions[j] = temp;
-      }
-
-      const count = Math.floor(Math.random() * (actions.length + 1));
-
-      result[resource] = actions.slice(0, count) as any;
-    },
-  );
-
-  return result;
-}
+import { allPermissions, type AppStatement } from "./data";
 
 // 3. Generación DINÁMICA del esquema Zod
 const buildSchema = () => {
@@ -177,31 +114,4 @@ export class Permissions {
   ): boolean {
     return Permissions.merge(permissionsList).satisfies(required);
   }
-}
-
-type PermissionKey = keyof typeof allPermissions;
-
-type FormattedStatement = {
-  [K in PermissionKey]?: string;
-};
-
-export function formatStatement(statement: AppStatement): FormattedStatement {
-  const result: FormattedStatement = {};
-
-  (Object.keys(statement) as PermissionKey[]).forEach((key) => {
-    const actions = statement[key];
-
-    if (!actions || actions.length === 0) return;
-
-    const fullList = allPermissions[key] as readonly string[];
-
-    // ordenamos según el orden "canónico" definido en allPermissions
-    const ordered = fullList.filter((a) => actions.includes(a as any));
-
-    const isFull = ordered.length === fullList.length;
-
-    result[key] = isFull ? "full" : ordered.join("/");
-  });
-
-  return result;
 }

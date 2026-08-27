@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { auditMetadata } from "./shared";
 import { statusEnum, historyActionEnum, roleEnum } from "./enums";
-import type { AppStatement } from "@fludge/utils/permissions";
+import type { AppStatement } from "@fludge/utils/permissions/data";
 import { user } from "./auth.schema";
 
 export const organization = sqliteTable(

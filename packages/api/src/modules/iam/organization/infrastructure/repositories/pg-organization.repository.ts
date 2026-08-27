@@ -18,7 +18,7 @@ import {
 } from "@fludge/db/schema/iam.schema";
 import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
-import type { AppStatement } from "@fludge/utils/permissions";
+import type { AppStatement } from "@fludge/utils/permissions/data";
 import { alias } from "drizzle-orm/sqlite-core";
 import type { PgGroupRepository } from "./pg-group.repository";
 import type { PgMemberRepository } from "./pg-member.repository";

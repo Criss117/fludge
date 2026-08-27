@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { Permissions } from "@fludge/utils/permissions";
+import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Member } from "@fludge/api/modules/iam/organization/domain/entities/member.entity";
@@ -25,7 +25,6 @@ const createOrganization = () => {
             groups: ["read"],
             products: ["read"],
           }),
-          createdBy: null,
         },
       ],
       owner: { userId: ownerUserId, assignedBy: null, role: "owner" as const },

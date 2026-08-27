@@ -4,9 +4,11 @@ import { err, ok, type Result } from "@fludge/utils/trycatch";
 import type { PgGroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
 import { UUID } from "@fludge/utils/uuid";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
-import { Permissions, type AppStatement } from "@fludge/utils/permissions";
+
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { GroupAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-already-exists.exception";
+import type { AppStatement } from "@fludge/utils/permissions/data";
+import { Permissions } from "@fludge/utils/permissions/index";
 
 type SaveReturnType = ReturnType<PgGroupRepository["save"]>;
 

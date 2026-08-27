@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { Permissions } from "@fludge/utils/permissions";
+import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { GroupCollection } from "@fludge/api/modules/iam/organization/domain/entities/group.collection";

@@ -2,7 +2,7 @@ import { ORPCError, os } from "@orpc/server";
 
 import type { Context } from "./context";
 import { organizationContainer } from "./modules/iam/organization/container";
-import type { AppStatement } from "@fludge/utils/permissions";
+import type { AppStatement } from "@fludge/utils/permissions/data";
 import { UUID } from "@fludge/utils/uuid";
 import { env } from "@fludge/env/server";
 

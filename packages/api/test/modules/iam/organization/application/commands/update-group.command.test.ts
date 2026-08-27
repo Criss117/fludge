@@ -4,7 +4,7 @@ import { Organization } from "@fludge/api/modules/iam/organization/domain/entiti
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { GroupNotFoundException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-not-found.exception";
 import { GroupAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-already-exists.exception";
-import { Permissions } from "@fludge/utils/permissions";
+import { Permissions } from "@fludge/utils/permissions/index";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
 import type { PgGroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
 

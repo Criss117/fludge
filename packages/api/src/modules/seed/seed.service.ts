@@ -14,14 +14,13 @@ import { ORPCError } from "@orpc/server";
 import { Organization } from "../iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { Group } from "../iam/organization/domain/entities/group.entity";
-import {
-  allPermissions,
-  getRandomPermissions,
-  Permissions,
-} from "@fludge/utils/permissions";
+
 import { faker } from "@faker-js/faker/locale/es_MX";
 import { Member } from "../iam/organization/domain/entities/member.entity";
 import { GroupMember } from "../iam/organization/domain/entities/group-member.entity";
+import { Permissions } from "@fludge/utils/permissions/index";
+import { getRandomPermissions } from "@fludge/utils/permissions/helpers";
+import { allPermissions } from "@fludge/utils/permissions/data";
 
 export const seedUsers = z.object({
   totalRoots: z.number().optional().default(2),

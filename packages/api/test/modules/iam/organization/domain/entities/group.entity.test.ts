@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { Permissions } from "@fludge/utils/permissions";
+import { Permissions } from "@fludge/utils/permissions/index";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 
 const group = (name = "Editors") =>

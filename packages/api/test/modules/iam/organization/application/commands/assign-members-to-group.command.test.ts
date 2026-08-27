@@ -6,11 +6,11 @@ import { Group } from "@fludge/api/modules/iam/organization/domain/entities/grou
 import { MemberNotFoundException } from "@fludge/api/modules/iam/organization/domain/exceptions/member-not-found.exeption";
 import { GroupNotFoundException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-not-found.exception";
 import { GroupMemberAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-member-elready-exists.exception";
-import { Permissions } from "@fludge/utils/permissions";
+import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
 import type { PgGroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group-member.repository";
-import { MemberIsOwnerException } from "../../../../../../src/modules/iam/organization/domain/exceptions/member-is-owner.exception";
+import { MemberIsOwnerException } from "@fludge/api/modules/iam/organization/domain/exceptions/member-is-owner.exception";
 
 type SaveReturnType = ReturnType<PgGroupMemberRepository["save"]>;
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {

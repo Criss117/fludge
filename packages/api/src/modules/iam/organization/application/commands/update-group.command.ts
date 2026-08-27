@@ -1,4 +1,4 @@
-import { Permissions } from "@fludge/utils/permissions";
+import { Permissions } from "@fludge/utils/permissions/index";
 import { z } from "zod";
 
 import { UUID } from "@fludge/utils/uuid";

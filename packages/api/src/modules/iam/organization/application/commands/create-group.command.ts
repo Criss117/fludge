@@ -1,10 +1,13 @@
-import { appStatementSchema, Permissions } from "@fludge/utils/permissions";
 import { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
 import type { PgGroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
+import {
+  appStatementSchema,
+  Permissions,
+} from "@fludge/utils/permissions/index";
 
 export const createGroupCommand = z.object({
   name: z.string({

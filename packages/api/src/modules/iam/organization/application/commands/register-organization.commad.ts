@@ -2,11 +2,12 @@ import { z } from "zod";
 import { ORPCError } from "@orpc/server";
 import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
-import { allPermissions, Permissions } from "@fludge/utils/permissions";
+import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
-import type { OrganizationUniquenessValidator } from "../services/organization-uniqueness-validator.service";
-import { OrganizationAlreadyExistsException } from "../../domain/exceptions/organization-already-exists.exception";
+import type { OrganizationUniquenessValidator } from "@fludge/api/modules/iam/organization/application/services/organization-uniqueness-validator.service";
+import { OrganizationAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/organization-already-exists.exception";
+import { allPermissions } from "@fludge/utils/permissions/data";
 
 export const registerOrganizationCommand = z.object({
   name: z
