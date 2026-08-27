@@ -1,8 +1,8 @@
 import { Tabs } from "heroui-native/tabs";
 import { useState } from "react";
 import { View } from "react-native";
-import { IamMembersSection } from "../secttions/iam-members.section";
-import { IamGroupsSection } from "../secttions/iam-groups.section";
+import { IamMembersSection } from "../sections/iam-members.section";
+import { IamGroupsSection } from "../sections/iam-groups.section";
 
 export function IamScreen() {
   const [tab, setTab] = useState("members");

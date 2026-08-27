@@ -1,9 +1,6 @@
 import { useFindActiveOrganization } from "@fludge/client/application/iam/organization/queries/use-find-organization";
 import { FlatList, View } from "react-native";
-import {
-  GroupCard,
-  CARD_HEIGHT,
-} from "@/modules/iam/organizations/presentation/components/group-card";
+import { GroupCard } from "@/modules/iam/organizations/presentation/components/group-card";
 import { useMemo } from "react";
 
 const ITEM_SEPARATOR_HEIGHT = 16;
@@ -34,11 +31,6 @@ export function IamGroupsSection() {
       }
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 96 }}
-      getItemLayout={(_, index) => ({
-        length: CARD_HEIGHT,
-        offset: (CARD_HEIGHT + ITEM_SEPARATOR_HEIGHT) * index,
-        index,
-      })}
     />
   );
 }

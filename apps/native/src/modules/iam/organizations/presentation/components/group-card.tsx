@@ -6,7 +6,7 @@ import { Chip } from "heroui-native/chip";
 import { Separator } from "heroui-native/separator";
 import { Typography } from "heroui-native/text";
 import { View } from "react-native";
-import { formatStatement } from "@fludge/utils/permissions";
+import { formatStatementEs } from "@fludge/utils/permissions/helpers";
 
 interface Props {
   group: ActiveOrganization["groups"][number] & {
@@ -14,16 +14,16 @@ interface Props {
   };
 }
 
-export const CARD_HEIGHT = 152;
-
 export function GroupCard({ group }: Props) {
-  const permissions = formatStatement(group.permissions);
+  const permissions = formatStatementEs(group.permissions, {
+    translateKeys: true,
+  });
 
   return (
     <Card className="gap-y-2">
       <Card.Header className="gap-y-2">
         <View className="w-full flex-row items-start">
-          <View className="flex-1">
+          <View className="flex-1 gap-y-1">
             <Card.Title className="line-clamp-1 flex-1">
               {group.name}
             </Card.Title>
@@ -64,11 +64,20 @@ export function GroupCard({ group }: Props) {
             </Chip>
           ))}
       </Card.Body>
+
       <Separator />
-      <Card.Footer>
-        <Typography color="muted" type="body-sm">
-          Creado el: {group.createdAt.toLocaleDateString()}
-        </Typography>
+      <Card.Footer className="flex-row items-center justify-between">
+        <View>
+          <Typography color="muted" type="body-sm">
+            Creado el: {group.createdAt.toLocaleDateString()}
+          </Typography>
+        </View>
+        <View className="flex-row items-center gap-x-1">
+          <MaterialIcons name="people" size={20} className="text-muted" />
+          <Typography color="muted" type="body-sm">
+            {group.tolalMembers}
+          </Typography>
+        </View>
       </Card.Footer>
     </Card>
   );
