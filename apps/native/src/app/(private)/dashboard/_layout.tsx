@@ -10,15 +10,12 @@ export default function DashboardLayout() {
         contentStyle: {
           backgroundColor,
         },
+
+        headerShown: false,
       }}
     >
-      <Stack.Screen
-        name="(tabs)"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen name="index" />
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="settings" />
     </Stack>
   );
 }

@@ -1,8 +1,10 @@
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { Stack } from "expo-router";
+import { useThemeColor } from "heroui-native";
 
 export default function PrivateLayout() {
   const { session } = useAuth();
+  const backgroundColor = useThemeColor("background");
 
   const hasActiveOrganization = session.data?.activeOrganizationId !== null;
 
@@ -10,6 +12,9 @@ export default function PrivateLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
+        contentStyle: {
+          backgroundColor,
+        },
       }}
     >
       <Stack.Protected guard={hasActiveOrganization}>

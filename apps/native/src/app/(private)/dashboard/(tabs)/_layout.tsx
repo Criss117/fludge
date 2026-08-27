@@ -1,18 +1,21 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { Tabs as ExpoTabs } from "expo-router";
+import { useAppTheme } from "@/modules/shared/context/app-theme-context";
+import { useAuth } from "@fludge/client/providers/auth.provider";
+import { Tabs as ExpoTabs, Link } from "expo-router";
 import type { BottomTabDescriptorMap } from "expo-router/build/react-navigation/bottom-tabs/types";
 import type {
   NavigationRoute,
   ParamListBase,
 } from "expo-router/react-navigation";
 import type { BottomTabBarProps } from "expo-router/tabs";
-import { cn, useThemeColor } from "heroui-native";
+import { cn, PressableFeedback, useThemeColor } from "heroui-native";
+import { Avatar } from "heroui-native/avatar";
 import { Tabs } from "heroui-native/tabs";
 import { useMemo } from "react";
 import { View } from "react-native";
 
 const TabsIcons = {
-  catalog: "business",
+  catalog: "inventory-2",
   index: "shopping-cart",
   clients: "people",
   iam: "security",
@@ -93,8 +96,34 @@ function BottomTabs({ descriptors, state, navigation }: BottomTabBarProps) {
   );
 }
 
+function UserButton() {
+  const { session } = useAuth();
+
+  const user = session.data?.user!;
+
+  return (
+    <View className="px-4">
+      <Link href="/(private)/dashboard/settings" push asChild>
+        <PressableFeedback>
+          <Avatar>
+            <Avatar.Fallback>{user.name.charAt(0)}</Avatar.Fallback>
+            {user.image && (
+              <Avatar.Image
+                source={{
+                  uri: user.image,
+                }}
+              />
+            )}
+          </Avatar>
+        </PressableFeedback>
+      </Link>
+    </View>
+  );
+}
+
 export default function DashboardTabsLayout() {
   const [background] = useThemeColor(["background"]);
+  const { isDark } = useAppTheme();
 
   return (
     <ExpoTabs
@@ -107,6 +136,11 @@ export default function DashboardTabsLayout() {
         sceneStyle: {
           backgroundColor: background,
         },
+        headerTitleStyle: {
+          color: isDark ? "white" : "black",
+        },
+        headerRight: () => <UserButton />,
+        animation: "shift",
       }}
     >
       <ExpoTabs.Screen

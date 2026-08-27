@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/modules/shared/context/app-theme-context";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { Stack } from "expo-router";
 import { useThemeColor } from "heroui-native";
@@ -5,6 +6,7 @@ import { useThemeColor } from "heroui-native";
 export default function OrganizationLayout() {
   const { session } = useAuth();
   const background = useThemeColor("background");
+  const { isDark } = useAppTheme();
 
   const userIsRoot = !!session.data?.user.isRoot;
 
@@ -18,6 +20,9 @@ export default function OrganizationLayout() {
         },
         contentStyle: {
           backgroundColor: background,
+        },
+        headerTitleStyle: {
+          color: isDark ? "white" : "black",
         },
         animation: "fade",
       }}

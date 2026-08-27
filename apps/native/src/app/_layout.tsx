@@ -5,33 +5,34 @@ import { useThemeColor } from "heroui-native";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { useNetworkActivityDevTools } from "@rozenite/network-activity-plugin";
 import { StatusBar } from "expo-status-bar";
+import { useAppTheme } from "@/modules/shared/context/app-theme-context";
+import { MaterialIcons } from "@/modules/shared/components/icons";
 
 function StackConfig() {
   const background = useThemeColor("background");
   const { session } = useAuth();
+  const { isDark } = useAppTheme();
 
   const isLogged = session.data !== null;
 
   return (
-    <>
-      <StatusBar style="dark" />
-      <Stack
-        screenOptions={{
-          contentStyle: {
-            backgroundColor: background,
-          },
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name="index" />
-        <Stack.Protected guard={!isLogged}>
-          <Stack.Screen name="auth" />
-        </Stack.Protected>
-        <Stack.Protected guard={isLogged}>
-          <Stack.Screen name="(private)" />
-        </Stack.Protected>
-      </Stack>
-    </>
+    <Stack
+      screenOptions={{
+        contentStyle: {
+          backgroundColor: background,
+        },
+        statusBarStyle: isDark ? "light" : "dark",
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="index" />
+      <Stack.Protected guard={!isLogged}>
+        <Stack.Screen name="auth" />
+      </Stack.Protected>
+      <Stack.Protected guard={isLogged}>
+        <Stack.Screen name="(private)" />
+      </Stack.Protected>
+    </Stack>
   );
 }
 

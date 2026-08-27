@@ -38,7 +38,7 @@ export function SelectOrganizationScreen() {
       {
         onSuccess: () => {
           router.replace({
-            pathname: "/(private)/dashboard",
+            pathname: "/(private)/dashboard/(tabs)",
           });
         },
       }
@@ -92,11 +92,7 @@ export function SelectOrganizationScreen() {
             disabled={setActiveOrganization.isPending}
           >
             <Button isDisabled={setActiveOrganization.isPending}>
-              <MaterialIcons
-                name="add-business"
-                size={20}
-                className="text-white"
-              />
+              <MaterialIcons name="add-business" size={20} />
               <Button.Label>Registrar Nueva Organización</Button.Label>
             </Button>
           </Link>

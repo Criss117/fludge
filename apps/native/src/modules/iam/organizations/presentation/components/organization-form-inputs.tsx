@@ -37,7 +37,7 @@ function NameInput({
           placeholder="Ej. Tienda Andres"
         />
         <View className="absolute inset-s-3.5" pointerEvents="none">
-          <MaterialIcons size={20} name="add-business" />
+          <MaterialIcons size={20} name="add-business" className="text-muted" />
         </View>
       </View>
       {isInvalid && <FieldError errors={errors} />}
@@ -68,7 +68,7 @@ function LegalNameInput({
           placeholder="Ej. Tienda Andres S.A.S."
         />
         <View className="absolute inset-s-3.5" pointerEvents="none">
-          <MaterialIcons size={20} name="apartment" />
+          <MaterialIcons size={20} name="apartment" className="text-muted" />
         </View>
       </View>
       {isInvalid && <FieldError errors={errors} />}
@@ -101,7 +101,7 @@ function TaxIdInput({
           placeholder="Ingresa el código único"
         />
         <View className="absolute inset-s-3.5" pointerEvents="none">
-          <MaterialIcons size={20} name="badge" />
+          <MaterialIcons size={20} name="badge" className="text-muted" />
         </View>
       </View>
       {isInvalid && <FieldError errors={errors} />}
@@ -132,7 +132,7 @@ function AddressInput({
           placeholder="Ej. Calle de la casa, 123"
         />
         <View className="absolute inset-s-3.5" pointerEvents="none">
-          <MaterialIcons size={20} name="location-on" />
+          <MaterialIcons size={20} name="location-on" className="text-muted" />
         </View>
       </View>
       {isInvalid && <FieldError errors={errors} />}
@@ -164,7 +164,7 @@ function PhoneInput({
           keyboardType="phone-pad"
         />
         <View className="absolute inset-s-3.5" pointerEvents="none">
-          <MaterialIcons size={20} name="phone" />
+          <MaterialIcons size={20} name="phone" className="text-muted" />
         </View>
       </View>
       {isInvalid && <FieldError errors={errors} />}

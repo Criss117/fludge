@@ -53,13 +53,21 @@ export function OrganizationCard({ organization, isPending, onPress }: Props) {
             </Card.Header>
             <Card.Body className="flex-1">
               <View className="flex flex-row items-center gap-x-2">
-                <MaterialIcons name="location-pin" size={16} />
+                <MaterialIcons
+                  name="location-pin"
+                  size={16}
+                  className="dark:text-white"
+                />
                 <Typography className="line-clamp-1">
                   {organization.address}
                 </Typography>
               </View>
               <View className="flex flex-row items-center gap-x-2">
-                <MaterialIcons name="phone" size={16} />
+                <MaterialIcons
+                  name="phone"
+                  size={16}
+                  className="dark:text-white"
+                />
                 <Typography className="line-clamp-1">
                   {organization.phone}
                 </Typography>
@@ -67,7 +75,11 @@ export function OrganizationCard({ organization, isPending, onPress }: Props) {
             </Card.Body>
           </View>
           <Card.Footer>
-            <MaterialIcons name="chevron-right" size={24} />
+            <MaterialIcons
+              name="chevron-right"
+              size={24}
+              className="dark:text-white"
+            />
           </Card.Footer>
         </View>
       </Card>

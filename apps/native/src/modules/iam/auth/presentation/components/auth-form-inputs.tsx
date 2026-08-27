@@ -1,5 +1,5 @@
 import { FieldError } from "@/modules/shared/components/field-error";
-import { MaterialIcons } from "@react-native-vector-icons/material-icons";
+import { MaterialIcons } from "@/modules/shared/components/icons";
 import { Button } from "heroui-native/button";
 import { Input } from "heroui-native/input";
 import { Label } from "heroui-native/label";
@@ -40,10 +40,10 @@ export function EmailInput({
           keyboardType="email-address"
         />
         <View className="absolute inset-s-3.5" pointerEvents="none">
-          <MaterialIcons size={20} name="mail-outline" />
+          <MaterialIcons size={20} name="mail-outline" className="text-muted" />
         </View>
-        {isInvalid && <FieldError errors={errors} />}
       </View>
+      {isInvalid && <FieldError errors={errors} />}
     </TextField>
   );
 }
@@ -76,7 +76,7 @@ export function PasswordInput({
           placeholder="*********"
         />
         <View className="absolute inset-s-3.5" pointerEvents="none">
-          <MaterialIcons size={20} name="lock-outline" />
+          <MaterialIcons size={20} name="lock-outline" className="text-muted" />
         </View>
         <Button
           variant="ghost"
@@ -85,9 +85,13 @@ export function PasswordInput({
           className="absolute inset-e-0"
         >
           {showPassword ? (
-            <MaterialIcons name="visibility-off" size={20} />
+            <MaterialIcons
+              name="visibility-off"
+              size={20}
+              className="text-muted"
+            />
           ) : (
-            <MaterialIcons name="visibility" size={20} />
+            <MaterialIcons name="visibility" size={20} className="text-muted" />
           )}
         </Button>
       </View>
@@ -119,7 +123,7 @@ export function NameInput({
           placeholder="Natalia Arturo"
         />
         <View className="absolute inset-s-3.5" pointerEvents="none">
-          <MaterialIcons size={20} name="person" />
+          <MaterialIcons size={20} name="person" className="text-muted" />
         </View>
       </View>
       {isInvalid && <FieldError errors={errors} />}
@@ -151,7 +155,7 @@ export function PhoneInput({
           keyboardType="phone-pad"
         />
         <View className="absolute inset-s-3.5" pointerEvents="none">
-          <MaterialIcons size={20} name="phone" />
+          <MaterialIcons size={20} name="phone" className="text-muted" />
         </View>
       </View>
       {isInvalid && <FieldError errors={errors} />}
