@@ -17,6 +17,7 @@ import { PgGroupMemberRepository } from "./infrastructure/repositories/pg-group-
 import { DeleteGroupsCommand } from "./application/commands/delete-groups.command";
 import { RemoveMembersFromGroupCommand } from "./application/commands/remove-members-from-group.command";
 import { RemoveGroupsFromMemberCommand } from "./application/commands/remove-groups-from-member.command";
+import { FindAllMembersQuery } from "./application/queries/find-all-members.query";
 
 //Repositories
 const memberRepository = new PgMemberRepository(databaseService);
@@ -75,6 +76,8 @@ const findAllOrganizationsQuery = new FindAllOrganizationsQuery(
   databaseService,
 );
 
+const findAllMembersQuery = new FindAllMembersQuery(databaseService);
+
 export const organizationContainer = {
   repositories: { organizationRepository },
   services: {
@@ -99,5 +102,9 @@ export const organizationContainer = {
       removeGroups: removeGroupsFromMemberCommand,
     },
   },
-  queries: { findAll: findAllOrganizationsQuery },
+  queries: {
+    findAll: findAllOrganizationsQuery,
+
+    members: { findAll: findAllMembersQuery },
+  },
 } as const;

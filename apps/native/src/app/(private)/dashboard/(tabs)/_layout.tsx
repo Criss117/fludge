@@ -76,23 +76,25 @@ function BottomTabs({ descriptors, state, navigation }: BottomTabBarProps) {
   };
 
   return (
-    <View className="px-3 pb-3">
-      <Tabs value={focused.key} onValueChange={onPress}>
-        <Tabs.List className="bg-accent rounded-full">
-          <Tabs.ScrollView>
-            <Tabs.Indicator />
-            {state.routes.map((route) => (
-              <TabTrigger
-                key={route.key}
-                route={route}
-                descriptors={descriptors}
-                isFocused={route.key === focused.key}
-              />
-            ))}
-          </Tabs.ScrollView>
-        </Tabs.List>
-      </Tabs>
-    </View>
+    <Tabs
+      value={focused.key}
+      onValueChange={onPress}
+      className="absolute bottom-0 mx-3 mb-3"
+    >
+      <Tabs.List className="bg-accent rounded-full">
+        <Tabs.ScrollView>
+          <Tabs.Indicator />
+          {state.routes.map((route) => (
+            <TabTrigger
+              key={route.key}
+              route={route}
+              descriptors={descriptors}
+              isFocused={route.key === focused.key}
+            />
+          ))}
+        </Tabs.ScrollView>
+      </Tabs.List>
+    </Tabs>
   );
 }
 

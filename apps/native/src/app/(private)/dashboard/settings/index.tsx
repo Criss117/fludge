@@ -90,7 +90,7 @@ export default function DashboardSettings() {
                 />
               </PressableFeedback>
             </Link>
-            <Link href="/(private)/dashboard/settings" asChild push>
+            <Link href="/(private)/organization/select" asChild push>
               <PressableFeedback className="flex flex-row items-center justify-between py-2">
                 <View className="flex-row items-center gap-x-2">
                   <MaterialIcons
@@ -98,7 +98,7 @@ export default function DashboardSettings() {
                     size={20}
                     className="dark:text-white"
                   />
-                  <Typography>Gestion de Organizaciones</Typography>
+                  <Typography>Gestión de Organizaciones</Typography>
                 </View>
                 <MaterialIcons
                   name="chevron-right"

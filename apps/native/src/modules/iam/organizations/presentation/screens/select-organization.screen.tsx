@@ -92,7 +92,11 @@ export function SelectOrganizationScreen() {
             disabled={setActiveOrganization.isPending}
           >
             <Button isDisabled={setActiveOrganization.isPending}>
-              <MaterialIcons name="add-business" size={20} />
+              <MaterialIcons
+                name="add-business"
+                size={20}
+                className="text-white dark:text-black"
+              />
               <Button.Label>Registrar Nueva Organización</Button.Label>
             </Button>
           </Link>

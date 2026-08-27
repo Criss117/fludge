@@ -58,4 +58,20 @@ export const memberRouter = {
         ),
       ),
   },
+
+  queries: {
+    findAll: hasPermissionProcedure({
+      members: ["read"],
+    })
+      .route({
+        method: "GET",
+        path: "/organizations/members",
+        tags: TAGS,
+      })
+      .handler(({ context }) =>
+        organizationContainer.queries.members.findAll.execute(
+          context.session.activeOrganization.id.toString(),
+        ),
+      ),
+  },
 };
