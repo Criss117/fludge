@@ -27,6 +27,7 @@ function EmailField({ children }: FieldProps<string>) {
 
 function PasswordField({ children }: FieldProps<string>) {
   const field = useFieldContext<string>();
+
   return children({
     field,
     id: "register-member-form-password",

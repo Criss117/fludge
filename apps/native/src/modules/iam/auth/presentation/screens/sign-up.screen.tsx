@@ -104,21 +104,13 @@ export function SignUpScreen() {
             name="password"
             children={(field) => (
               <field.PasswordField
-                children={({
-                  field,
-                  id,
-                  isInvalid,
-                  setShowPassword,
-                  showPassword,
-                }) => (
+                children={({ field, id, isInvalid }) => (
                   <CommonInputs.PasswordInput
                     isInvalid={isInvalid}
                     id={id}
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
-                    setShowPassword={setShowPassword}
-                    showPassword={showPassword}
                     errors={field.state.meta.errors}
                   />
                 )}

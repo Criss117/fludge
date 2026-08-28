@@ -6,7 +6,6 @@ import {
 } from "@fludge/client/application/iam/auth/form/sign-in-form";
 
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
-import { useState } from "react";
 
 const { fieldContext, formContext, useFieldContext } = createFormHookContexts();
 
@@ -47,22 +46,12 @@ function EmailField({ children }: FieldProps<string>) {
   });
 }
 
-interface PasswordFieldProps {
-  children: (
-    props: ChildrenProps<string> & {
-      showPassword: boolean;
-      setShowPassword: React.Dispatch<React.SetStateAction<boolean>>;
-    },
-  ) => React.ReactNode;
-}
-
-function PasswordField({ children }: PasswordFieldProps) {
-  const [showPassword, setShowPassword] = useState(false);
+function PasswordField({ children }: FieldProps<string>) {
   const field = useFieldContext<string>();
   const id = "auth-form-password";
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
-  return children({ field, id, isInvalid, showPassword, setShowPassword });
+  return children({ field, id, isInvalid });
 }
 
 function PhoneField({ children }: FieldProps<string>) {

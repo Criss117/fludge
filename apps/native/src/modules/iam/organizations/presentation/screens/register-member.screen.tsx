@@ -2,11 +2,11 @@ import { useRegisterMember } from "@fludge/client/application/iam/organization/m
 import { useRegisterMemberForm } from "@fludge/client/presentation/iam/organization/register-member.form";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gradual-height";
-import { MemberFormInputs } from "../components/member-form-inputs";
 import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { ScrollView, View } from "react-native";
+import { CommonInputs } from "@/modules/shared/components/common-input";
 
 const PADDING_BOTTOM = 20;
 
@@ -43,7 +43,7 @@ export function RegisterMemberScreen() {
                 children={(field) => (
                   <field.EmailField
                     children={({ field: state, id, isInvalid }) => (
-                      <MemberFormInputs.EmailInput
+                      <CommonInputs.EmailInput
                         isInvalid={isInvalid}
                         id={id}
                         value={state.state.value}
@@ -60,7 +60,7 @@ export function RegisterMemberScreen() {
                 children={(field) => (
                   <field.PasswordField
                     children={({ field: state, id, isInvalid }) => (
-                      <MemberFormInputs.PasswordInput
+                      <CommonInputs.PasswordInput
                         isInvalid={isInvalid}
                         id={id}
                         value={state.state.value}
@@ -85,7 +85,7 @@ export function RegisterMemberScreen() {
                 children={(field) => (
                   <field.PhoneField
                     children={({ field: state, id, isInvalid }) => (
-                      <MemberFormInputs.PhoneInput
+                      <CommonInputs.PhoneInput
                         isInvalid={isInvalid}
                         id={id}
                         value={state.state.value}
@@ -102,7 +102,7 @@ export function RegisterMemberScreen() {
                 children={(field) => (
                   <field.NameField
                     children={({ field: state, id, isInvalid }) => (
-                      <MemberFormInputs.NameInput
+                      <CommonInputs.UserNameInput
                         isInvalid={isInvalid}
                         id={id}
                         value={state.state.value}
