@@ -2,7 +2,6 @@ import { MaterialIcons } from "@/modules/shared/components/icons";
 import { AllMembers } from "@fludge/client/application/iam/organization/queries/use-find-members";
 import { useRouter } from "expo-router";
 import { Avatar } from "heroui-native/avatar";
-import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import { Chip } from "heroui-native/chip";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
@@ -11,6 +10,7 @@ import { SkeletonGroup } from "heroui-native/skeleton-group";
 import { Typography } from "heroui-native/text";
 import { View } from "react-native";
 import { MemberOptions } from "./member-options";
+import { StatusChip } from "@/modules/shared/components/status-chip";
 
 interface Props {
   member: AllMembers[number];
@@ -60,20 +60,7 @@ export function MemberCard({ member }: Props) {
                 <Chip.Label>Miembro</Chip.Label>
               </Chip>
             )}
-            {member.status === "active" ? (
-              <Chip className="bg-green-500">
-                <MaterialIcons
-                  name="check-circle"
-                  className="text-white dark:text-black"
-                />
-                <Chip.Label>Activo</Chip.Label>
-              </Chip>
-            ) : (
-              <Chip variant="secondary">
-                <MaterialIcons name="cancel" />
-                <Chip.Label>Inactivo</Chip.Label>
-              </Chip>
-            )}
+            <StatusChip status={member.status} />
           </View>
 
           <View className="pt-2">

@@ -5,7 +5,11 @@ import { useMemo } from "react";
 
 const ITEM_SEPARATOR_HEIGHT = 16;
 
-export function IamGroupsSection() {
+interface Props {
+  query: string;
+}
+
+export function IamGroupsSection({ query }: Props) {
   const { data: activeOrganization } = useFindActiveOrganization();
 
   const groups = useMemo(
@@ -20,9 +24,17 @@ export function IamGroupsSection() {
     [activeOrganization.groups]
   );
 
+  const groupsFiltered = useMemo(() => {
+    if (!query) return groups;
+
+    return groups.filter((d) =>
+      d.name.toLowerCase().includes(query.toLowerCase())
+    );
+  }, [groups, query]);
+
   return (
     <FlatList
-      data={groups}
+      data={groupsFiltered}
       className="flex-1 pb-1"
       renderItem={({ item }) => <GroupCard group={item} />}
       keyExtractor={(d) => d.id}

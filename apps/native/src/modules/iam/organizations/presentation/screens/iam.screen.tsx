@@ -6,12 +6,26 @@ import {
   IamMembersSectionSkeleton,
 } from "../sections/iam-members.section";
 import { IamGroupsSection } from "../sections/iam-groups.section";
+import { Input } from "heroui-native/input";
+import { MaterialIcons } from "@/modules/shared/components/icons";
 
 export function IamScreen() {
+  const [query, setQuery] = useState("");
   const [tab, setTab] = useState("members");
 
   return (
-    <View className="flex-1 px-3">
+    <View className="flex-1 gap-y-4 px-3">
+      <View className="relative w-full flex-row items-center">
+        <Input
+          value={query}
+          onChangeText={setQuery}
+          className="flex-1 px-10"
+          placeholder={tab === "members" ? "Buscar miembros" : "Buscar grupos"}
+        />
+        <View className="absolute left-4" pointerEvents="none">
+          <MaterialIcons size={20} name="search" className="text-muted" />
+        </View>
+      </View>
       <Tabs value={tab} onValueChange={setTab} className="flex-1">
         <Tabs.List className="bg-muted rounded-full">
           <Tabs.ScrollView>
@@ -30,11 +44,11 @@ export function IamScreen() {
         </Tabs.List>
         <Tabs.Content value="members" className="flex-1">
           <Suspense fallback={<IamMembersSectionSkeleton />}>
-            <IamMembersSection />
+            <IamMembersSection query={query.trim()} />
           </Suspense>
         </Tabs.Content>
         <Tabs.Content value="groups" className="flex-1">
-          <IamGroupsSection />
+          <IamGroupsSection query={query.trim()} />
         </Tabs.Content>
       </Tabs>
     </View>

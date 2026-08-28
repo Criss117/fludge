@@ -7,6 +7,7 @@ import { Separator } from "heroui-native/separator";
 import { Typography } from "heroui-native/text";
 import { View } from "react-native";
 import { formatStatementEs } from "@fludge/utils/permissions/helpers";
+import { StatusChip } from "@/modules/shared/components/status-chip";
 
 interface Props {
   group: ActiveOrganization["groups"][number] & {
@@ -27,17 +28,7 @@ export function GroupCard({ group }: Props) {
             <Card.Title className="line-clamp-1 flex-1">
               {group.name}
             </Card.Title>
-            {group.status === "active" ? (
-              <Chip className="bg-green-500">
-                <MaterialIcons name="check-circle" className="text-accent" />
-                <Chip.Label>Activo</Chip.Label>
-              </Chip>
-            ) : (
-              <Chip variant="secondary">
-                <MaterialIcons name="cancel" />
-                <Chip.Label>Inactivo</Chip.Label>
-              </Chip>
-            )}
+            <StatusChip status={group.status} />
           </View>
           <Button isIconOnly variant="ghost">
             <MaterialIcons name="more-vert" size={24} className="text-accent" />
