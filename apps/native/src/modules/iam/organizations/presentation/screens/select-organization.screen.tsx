@@ -1,7 +1,7 @@
 import { useFindAllOrganizations } from "@fludge/client/application/iam/organization/queries/use-find-organization";
 import { FlatList, View } from "react-native";
 import { CARD_HEIGHT, OrganizationCard } from "../components/organization-card";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { Input } from "heroui-native/input";
 import { MaterialIcons } from "@/modules/shared/components/icons";
@@ -33,17 +33,30 @@ export function SelectOrganizationScreen() {
   const onChangeText = (text: string) => setQuery(text.trim());
 
   const onPress = (organizationId: string) => {
-    setActiveOrganization.mutate(
-      { organizationId },
-      {
-        onSuccess: () => {
-          router.replace({
-            pathname: "/(private)/dashboard/(tabs)",
-          });
-        },
-      }
-    );
+    if (organizationId === session.data?.activeOrganizationId) {
+      router.replace({
+        pathname: "/(private)/dashboard/(tabs)",
+      });
+
+      return;
+    }
+
+    setActiveOrganization.mutate({ organizationId });
   };
+
+  useEffect(() => {
+    if (setActiveOrganization.isSuccess && session.data?.activeOrganizationId) {
+      router.replace({ pathname: "/(private)/dashboard/(tabs)" });
+    }
+
+    return () => {
+      setActiveOrganization.reset();
+    };
+  }, [
+    setActiveOrganization.isSuccess,
+    session.data?.activeOrganizationId,
+    router,
+  ]);
 
   return (
     <View className="flex-1 gap-y-5">

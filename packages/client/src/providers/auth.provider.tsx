@@ -23,8 +23,6 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
   const session = queryOptions({
     queryKey: ["session"],
     queryFn: async () => {
-      console.log("session");
-
       const { data, error } = await authClient.getSession();
 
       if (error || !data) return null;
@@ -51,7 +49,9 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
     mutationFn: async (
       values: Parameters<AuthContextAdapter["signUpEmail"]>[0],
     ) => {
-      const { error } = await authClient.signUpEmail(values);
+      const { error } = await authClient.signUpEmail(values, {
+        query: { disableCookieCache: true },
+      });
 
       if (error) throw new Error(error.message, { cause: error });
 
@@ -66,10 +66,12 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
     mutationFn: async (
       values: Parameters<AuthContextAdapter["signInEmail"]>[0],
     ) => {
-      console.log("signInEmail");
       const { error } = await authClient.signInEmail(values);
+
       if (error) throw new Error(error.message, { cause: error });
+
       await queryClient.invalidateQueries({ queryKey: session.queryKey });
+
       return queryClient.ensureQueryData(session);
     },
   });
@@ -77,10 +79,12 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
   const signOut = mutationOptions({
     mutationKey: ["signOut"],
     mutationFn: async () => {
-      console.log("signOut");
       const { error } = await authClient.signOut();
+
       if (error) throw new Error(error.message, { cause: error });
+
       await queryClient.invalidateQueries({ queryKey: session.queryKey });
+
       return queryClient.ensureQueryData(session);
     },
   });
@@ -106,8 +110,8 @@ function useAuthState(
   const signOut = useMutation(options.signOut);
   const setActiveOrganization = useMutation(
     orpc.auth.commands.setActiveOrganization.mutationOptions({
-      onSuccess: () => {
-        session.refetch();
+      onSuccess: async () => {
+        await session.refetch();
       },
     }),
   );

@@ -12,15 +12,15 @@ export function Integrations({ children }: { children: React.ReactNode }) {
     <GestureHandlerRootView>
       <KeyboardProvider>
         <QueryClientProvider>
-          <ORPCProvider>
-            <AuthProvider>
-              <FontsProvider>
-                <AppThemeProvider>
-                  <HeroUIProvider>{children}</HeroUIProvider>
-                </AppThemeProvider>
-              </FontsProvider>
-            </AuthProvider>
-          </ORPCProvider>
+          <HeroUIProvider>
+            <ORPCProvider>
+              <AuthProvider>
+                <FontsProvider>
+                  <AppThemeProvider>{children}</AppThemeProvider>
+                </FontsProvider>
+              </AuthProvider>
+            </ORPCProvider>
+          </HeroUIProvider>
         </QueryClientProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>

@@ -56,7 +56,7 @@
       --overlay-foreground: var(--foreground);
       --backdrop: oklch(0% 0 0 / 20%);
 
-      --muted: oklch(0.834 0.0232 87.163);
+      --muted: oklch(0.595 0.0232 87.16);
 
       --default: oklch(0.8647 0.0201 87.5232);
       --default-foreground: var(--eclipse);

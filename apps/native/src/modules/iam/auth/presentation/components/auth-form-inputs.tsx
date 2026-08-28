@@ -88,10 +88,14 @@ export function PasswordInput({
             <MaterialIcons
               name="visibility-off"
               size={20}
-              className="text-muted"
+              className="text-accent"
             />
           ) : (
-            <MaterialIcons name="visibility" size={20} className="text-muted" />
+            <MaterialIcons
+              name="visibility"
+              size={20}
+              className="text-accent"
+            />
           )}
         </Button>
       </View>

@@ -7,7 +7,7 @@ import {
   AuthProvider as AProvider,
   type AuthContextAdapter,
 } from "@fludge/client/providers/auth.provider";
-import { Text } from "@/modules/shared/components/app-text";
+import { LoadingScreen } from "@/modules/shared/components/loading-screen";
 
 export const authClient = createAuthClient({
   baseURL: env.EXPO_PUBLIC_SERVER_URL,
@@ -29,7 +29,10 @@ const authAdapter: AuthContextAdapter = {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
-    <AProvider authClient={authAdapter} fallback={<Text>Loading...</Text>}>
+    <AProvider
+      authClient={authAdapter}
+      fallback={<LoadingScreen message="Consultando Sesion ..." />}
+    >
       {children}
     </AProvider>
   );

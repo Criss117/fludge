@@ -5,6 +5,8 @@ import { useThemeColor } from "heroui-native";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { useNetworkActivityDevTools } from "@rozenite/network-activity-plugin";
 import { useAppTheme } from "@/modules/shared/context/app-theme-context";
+import { Suspense } from "react";
+import { LoadingScreen } from "@/modules/shared/components/loading-screen";
 
 function StackConfig() {
   const background = useThemeColor("background");
@@ -41,7 +43,9 @@ export default function RootLayout() {
 
   return (
     <Integrations>
-      <StackConfig />
+      <Suspense fallback={<LoadingScreen message="Cargando datos..." />}>
+        <StackConfig />
+      </Suspense>
     </Integrations>
   );
 }
