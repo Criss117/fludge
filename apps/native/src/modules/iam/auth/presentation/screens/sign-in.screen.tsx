@@ -7,10 +7,10 @@ import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import { Separator } from "heroui-native/separator";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
-import { EmailInput, PasswordInput } from "../components/auth-form-inputs";
 import { Typography } from "heroui-native/text";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { FieldError } from "heroui-native/field-error";
+import { CommonInputs } from "@/modules/shared/components/common-input";
 
 export function SignInScreen() {
   const router = useRouter();
@@ -19,10 +19,8 @@ export function SignInScreen() {
 
   const form = useSignInForm({
     onSubmit: ({ value, resetForm }) => {
+      setRootError(null);
       signInEmail.mutate(value, {
-        onSettled: () => {
-          setRootError(null);
-        },
         onSuccess: () => {
           resetForm();
           router.replace({
@@ -57,7 +55,7 @@ export function SignInScreen() {
             children={(field) => (
               <field.EmailField
                 children={({ field, id, isInvalid }) => (
-                  <EmailInput
+                  <CommonInputs.EmailInput
                     isInvalid={isInvalid}
                     id={id}
                     value={field.state.value}
@@ -80,7 +78,7 @@ export function SignInScreen() {
                   setShowPassword,
                   showPassword,
                 }) => (
-                  <PasswordInput
+                  <CommonInputs.PasswordInput
                     isInvalid={isInvalid}
                     id={id}
                     value={field.state.value}

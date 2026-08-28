@@ -6,15 +6,10 @@ import { Card } from "heroui-native/card";
 import { Separator } from "heroui-native/separator";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
-import {
-  EmailInput,
-  NameInput,
-  PasswordInput,
-  PhoneInput,
-} from "../components/auth-form-inputs";
 import { useState } from "react";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { FieldError } from "heroui-native/field-error";
+import { CommonInputs } from "@/modules/shared/components/common-input";
 
 export function SignUpScreen() {
   const router = useRouter();
@@ -23,10 +18,8 @@ export function SignUpScreen() {
 
   const form = useSignUpForm({
     onSubmit: ({ value, resetForm }) => {
+      setRootError(null);
       signUpEmail.mutate(value, {
-        onSettled: () => {
-          setRootError(null);
-        },
         onSuccess: () => {
           resetForm();
           router.replace({
@@ -61,7 +54,7 @@ export function SignUpScreen() {
             children={(field) => (
               <field.NameField
                 children={({ field, id, isInvalid }) => (
-                  <NameInput
+                  <CommonInputs.UserNameInput
                     isInvalid={isInvalid}
                     id={id}
                     value={field.state.value}
@@ -78,7 +71,7 @@ export function SignUpScreen() {
             children={(field) => (
               <field.PhoneField
                 children={({ field, id, isInvalid }) => (
-                  <PhoneInput
+                  <CommonInputs.PhoneInput
                     isInvalid={isInvalid}
                     id={id}
                     value={field.state.value}
@@ -95,7 +88,7 @@ export function SignUpScreen() {
             children={(field) => (
               <field.EmailField
                 children={({ field, id, isInvalid }) => (
-                  <EmailInput
+                  <CommonInputs.EmailInput
                     isInvalid={isInvalid}
                     id={id}
                     value={field.state.value}
@@ -118,7 +111,7 @@ export function SignUpScreen() {
                   setShowPassword,
                   showPassword,
                 }) => (
-                  <PasswordInput
+                  <CommonInputs.PasswordInput
                     isInvalid={isInvalid}
                     id={id}
                     value={field.state.value}

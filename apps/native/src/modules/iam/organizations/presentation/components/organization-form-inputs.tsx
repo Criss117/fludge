@@ -1,3 +1,4 @@
+import { CommonInput } from "@/modules/shared/components/common-input";
 import { FieldError } from "@/modules/shared/components/field-error";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { Input } from "heroui-native/input";
@@ -23,25 +24,19 @@ function NameInput({
   errors,
 }: Props) {
   return (
-    <TextField isInvalid={isInvalid} isRequired>
-      <Label isInvalid={isInvalid}>Nombre Comercial</Label>
-      <View className="w-full flex-row items-center">
-        <Input
-          className="flex-1 px-10"
-          isInvalid={isInvalid}
-          id={id}
-          value={value}
-          onBlur={onBlur}
-          onChangeText={onChangeText}
-          aria-invalid={isInvalid}
-          placeholder="Ej. Tienda Andres"
-        />
-        <View className="absolute inset-s-3.5" pointerEvents="none">
-          <MaterialIcons size={20} name="add-business" className="text-muted" />
-        </View>
-      </View>
-      {isInvalid && <FieldError errors={errors} />}
-    </TextField>
+    <CommonInput
+      isInvalid={isInvalid}
+      errors={errors}
+      label="Nombre Comercial"
+      icon="add-business"
+      inputProps={{
+        id,
+        value,
+        onBlur,
+        onChangeText,
+        placeholder: "Ej. Tienda Andres",
+      }}
+    />
   );
 }
 
@@ -54,25 +49,19 @@ function LegalNameInput({
   errors,
 }: Props) {
   return (
-    <TextField isInvalid={isInvalid} isRequired>
-      <Label isInvalid={isInvalid}>Razón Social</Label>
-      <View className="w-full flex-row items-center">
-        <Input
-          className="flex-1 px-10"
-          isInvalid={isInvalid}
-          id={id}
-          value={value}
-          onBlur={onBlur}
-          onChangeText={onChangeText}
-          aria-invalid={isInvalid}
-          placeholder="Ej. Tienda Andres S.A.S."
-        />
-        <View className="absolute inset-s-3.5" pointerEvents="none">
-          <MaterialIcons size={20} name="apartment" className="text-muted" />
-        </View>
-      </View>
-      {isInvalid && <FieldError errors={errors} />}
-    </TextField>
+    <CommonInput
+      isInvalid={isInvalid}
+      errors={errors}
+      label="Razón Social"
+      icon="apartment"
+      inputProps={{
+        id,
+        value,
+        onBlur,
+        onChangeText,
+        placeholder: "Ej. Tienda Andres S.A.S.",
+      }}
+    />
   );
 }
 
@@ -85,90 +74,19 @@ function TaxIdInput({
   errors,
 }: Props) {
   return (
-    <TextField isInvalid={isInvalid} isRequired>
-      <Label isInvalid={isInvalid}>
-        Identificación Fiscal (Tax ID / NIT / RFC)
-      </Label>
-      <View className="w-full flex-row items-center">
-        <Input
-          className="flex-1 px-10"
-          isInvalid={isInvalid}
-          id={id}
-          value={value}
-          onBlur={onBlur}
-          onChangeText={onChangeText}
-          aria-invalid={isInvalid}
-          placeholder="Ingresa el código único"
-        />
-        <View className="absolute inset-s-3.5" pointerEvents="none">
-          <MaterialIcons size={20} name="badge" className="text-muted" />
-        </View>
-      </View>
-      {isInvalid && <FieldError errors={errors} />}
-    </TextField>
-  );
-}
-
-function AddressInput({
-  isInvalid,
-  id,
-  value,
-  onBlur,
-  onChangeText,
-  errors,
-}: Props) {
-  return (
-    <TextField isInvalid={isInvalid} isRequired>
-      <Label isInvalid={isInvalid}>Dirección Comercial</Label>
-      <View className="w-full flex-row items-center">
-        <Input
-          className="flex-1 px-10"
-          isInvalid={isInvalid}
-          id={id}
-          value={value}
-          onBlur={onBlur}
-          onChangeText={onChangeText}
-          aria-invalid={isInvalid}
-          placeholder="Ej. Calle de la casa, 123"
-        />
-        <View className="absolute inset-s-3.5" pointerEvents="none">
-          <MaterialIcons size={20} name="location-on" className="text-muted" />
-        </View>
-      </View>
-      {isInvalid && <FieldError errors={errors} />}
-    </TextField>
-  );
-}
-
-function PhoneInput({
-  isInvalid,
-  id,
-  value,
-  onBlur,
-  onChangeText,
-  errors,
-}: Props) {
-  return (
-    <TextField isInvalid={isInvalid} isRequired>
-      <Label isInvalid={isInvalid}>Número de Teléfono</Label>
-      <View className="w-full flex-row items-center">
-        <Input
-          className="flex-1 px-10"
-          isInvalid={isInvalid}
-          id={id}
-          value={value}
-          onBlur={onBlur}
-          onChangeText={onChangeText}
-          aria-invalid={isInvalid}
-          placeholder="321-234-5678"
-          keyboardType="phone-pad"
-        />
-        <View className="absolute inset-s-3.5" pointerEvents="none">
-          <MaterialIcons size={20} name="phone" className="text-muted" />
-        </View>
-      </View>
-      {isInvalid && <FieldError errors={errors} />}
-    </TextField>
+    <CommonInput
+      isInvalid={isInvalid}
+      errors={errors}
+      label="Identificación Fiscal (Tax ID / NIT / RFC)"
+      icon="badge"
+      inputProps={{
+        id,
+        value,
+        onBlur,
+        onChangeText,
+        placeholder: "Ingresa el código único",
+      }}
+    />
   );
 }
 
@@ -176,6 +94,4 @@ export const OrganizationFormInputs = {
   NameInput,
   LegalNameInput,
   TaxIdInput,
-  AddressInput,
-  PhoneInput,
 };

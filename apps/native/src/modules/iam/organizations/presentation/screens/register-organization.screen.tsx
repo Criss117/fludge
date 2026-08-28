@@ -11,6 +11,7 @@ import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gr
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
+import { CommonInputs } from "@/modules/shared/components/common-input";
 
 const PADDING_BOTTOM = 20;
 
@@ -116,7 +117,7 @@ export function RegisterOrganizationScreen() {
                 children={(field) => (
                   <field.NameField
                     children={({ field, id, isInvalid }) => (
-                      <OrganizationFormInputs.PhoneInput
+                      <CommonInputs.PhoneInput
                         isInvalid={isInvalid}
                         id={id}
                         value={field.state.value}
@@ -133,7 +134,7 @@ export function RegisterOrganizationScreen() {
                 children={(field) => (
                   <field.NameField
                     children={({ field, id, isInvalid }) => (
-                      <OrganizationFormInputs.AddressInput
+                      <CommonInputs.AddressInput
                         isInvalid={isInvalid}
                         id={id}
                         value={field.state.value}
