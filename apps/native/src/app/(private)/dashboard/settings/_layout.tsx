@@ -1,36 +1,24 @@
-import { MaterialIcons } from "@/modules/shared/components/icons";
-import { useAppTheme } from "@/modules/shared/context/app-theme-context";
-import { Stack, useRouter } from "expo-router";
+import { BackButton } from "@/modules/shared/components/back-button";
+import { Stack } from "expo-router";
 import { useThemeColor } from "heroui-native";
-import { PressableFeedback } from "heroui-native/pressable-feedback";
 
 export default function DashboardSettingsLayout() {
-  const backgroundColor = useThemeColor("background");
-  const { isDark } = useAppTheme();
-  const router = useRouter();
+  const [background, accent] = useThemeColor(["background", "accent"]);
 
   return (
     <Stack
       screenOptions={{
         contentStyle: {
-          backgroundColor: backgroundColor,
+          backgroundColor: background,
         },
         headerStyle: {
-          backgroundColor,
+          backgroundColor: background,
         },
         headerTitleStyle: {
-          color: isDark ? "white" : "black",
+          color: accent,
         },
         headerShadowVisible: false,
-        headerLeft: () => (
-          <PressableFeedback onPress={() => router.back()} className="pr-4">
-            <MaterialIcons
-              name="arrow-back"
-              size={20}
-              className="dark:text-white"
-            />
-          </PressableFeedback>
-        ),
+        headerLeft: () => <BackButton />,
       }}
     >
       <Stack.Screen

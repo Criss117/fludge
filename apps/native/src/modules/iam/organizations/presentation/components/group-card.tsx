@@ -29,10 +29,7 @@ export function GroupCard({ group }: Props) {
             </Card.Title>
             {group.status === "active" ? (
               <Chip className="bg-green-500">
-                <MaterialIcons
-                  name="check-circle"
-                  className="text-white dark:text-black"
-                />
+                <MaterialIcons name="check-circle" className="text-accent" />
                 <Chip.Label>Activo</Chip.Label>
               </Chip>
             ) : (
@@ -43,11 +40,7 @@ export function GroupCard({ group }: Props) {
             )}
           </View>
           <Button isIconOnly variant="ghost">
-            <MaterialIcons
-              name="more-vert"
-              size={24}
-              className="dark:text-white"
-            />
+            <MaterialIcons name="more-vert" size={24} className="text-accent" />
           </Button>
         </View>
 

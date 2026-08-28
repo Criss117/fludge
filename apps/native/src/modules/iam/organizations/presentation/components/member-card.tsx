@@ -32,11 +32,7 @@ export function MemberCard({ member }: Props) {
         </View>
         {!isOwner && (
           <Button isIconOnly variant="ghost">
-            <MaterialIcons
-              name="more-vert"
-              size={24}
-              className="dark:text-white"
-            />
+            <MaterialIcons name="more-vert" size={24} className="text-accent" />
           </Button>
         )}
       </Card.Header>
@@ -52,7 +48,7 @@ export function MemberCard({ member }: Props) {
             </Chip>
           ) : (
             <Chip variant="secondary">
-              <MaterialIcons name="person" className="dark:text-white" />
+              <MaterialIcons name="person" className="text-accent" />
               <Chip.Label>Miembro</Chip.Label>
             </Chip>
           )}

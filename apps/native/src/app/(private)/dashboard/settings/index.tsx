@@ -58,7 +58,7 @@ export default function DashboardSettings() {
                   <MaterialIcons
                     name="dark-mode"
                     size={26}
-                    className="dark:text-white"
+                    className="text-accent"
                   />
                   <Label>Modo Oscuro</Label>
                 </View>
@@ -79,14 +79,14 @@ export default function DashboardSettings() {
                   <MaterialIcons
                     name="lock-outline"
                     size={20}
-                    className="dark:text-white"
+                    className="text-accent"
                   />
                   <Typography>Cambiar Contraseña</Typography>
                 </View>
                 <MaterialIcons
                   name="chevron-right"
                   size={20}
-                  className="dark:text-white"
+                  className="text-accent"
                 />
               </PressableFeedback>
             </Link>
@@ -96,14 +96,14 @@ export default function DashboardSettings() {
                   <MaterialIcons
                     name="business"
                     size={20}
-                    className="dark:text-white"
+                    className="text-accent"
                   />
                   <Typography>Gestión de Organizaciones</Typography>
                 </View>
                 <MaterialIcons
                   name="chevron-right"
                   size={20}
-                  className="dark:text-white"
+                  className="text-accent"
                 />
               </PressableFeedback>
             </Link>
