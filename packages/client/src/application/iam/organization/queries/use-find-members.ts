@@ -16,4 +16,11 @@ export function useFindAllMembers() {
   });
 }
 
-export type AllMembers = Awaited<ReturnType<typeof useFindAllMembers>>["data"];
+export function useFindMember(memberId: string) {
+  const { data: allMembers } = useFindAllMembers();
+
+  return allMembers.find((d) => d.id === memberId)!;
+}
+
+export type Member = ReturnType<typeof useFindMember>;
+export type AllMembers = ReturnType<typeof useFindAllMembers>["data"];

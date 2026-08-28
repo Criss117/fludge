@@ -1,4 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
+import { UserButton } from "@/modules/shared/components/user-button";
 import { useAppTheme } from "@/modules/shared/context/app-theme-context";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { Tabs as ExpoTabs, Link } from "expo-router";
@@ -95,31 +96,6 @@ function BottomTabs({ descriptors, state, navigation }: BottomTabBarProps) {
         </Tabs.ScrollView>
       </Tabs.List>
     </Tabs>
-  );
-}
-
-function UserButton() {
-  const { session } = useAuth();
-
-  const user = session.data?.user!;
-
-  return (
-    <View className="px-4">
-      <Link href="/(private)/dashboard/settings" push asChild>
-        <PressableFeedback>
-          <Avatar>
-            <Avatar.Fallback>{user.name.charAt(0)}</Avatar.Fallback>
-            {user.image && (
-              <Avatar.Image
-                source={{
-                  uri: user.image,
-                }}
-              />
-            )}
-          </Avatar>
-        </PressableFeedback>
-      </Link>
-    </View>
   );
 }
 
