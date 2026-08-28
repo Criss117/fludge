@@ -4,6 +4,8 @@ import { Avatar } from "heroui-native/avatar";
 import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import { Chip } from "heroui-native/chip";
+import { Skeleton } from "heroui-native/skeleton";
+import { SkeletonGroup } from "heroui-native/skeleton-group";
 import { Typography } from "heroui-native/text";
 import { View } from "react-native";
 
@@ -74,6 +76,33 @@ export function MemberCard({ member }: Props) {
           <Typography color="muted">
             Unido el: {member.createdAt.toLocaleDateString()}
           </Typography>
+        </View>
+      </Card.Body>
+    </Card>
+  );
+}
+
+export function MemberCardSkeleton() {
+  return (
+    <Card className="gap-y-2" style={{ height: CARD_HEIGHT }}>
+      <Card.Header className="flex flex-row gap-x-2">
+        <Avatar>
+          <Avatar.Fallback>FG</Avatar.Fallback>
+        </Avatar>
+        <SkeletonGroup className="flex-1 gap-y-0.5">
+          <SkeletonGroup.Item className="h-7 w-3/4 rounded-full" />
+          <SkeletonGroup.Item className="h-6 w-1/2 rounded-full" />
+        </SkeletonGroup>
+      </Card.Header>
+      <Card.Body>
+        <SkeletonGroup className="flex flex-row gap-x-2" variant="shimmer">
+          <SkeletonGroup.Item className="h-7 w-24 rounded-full" />
+          <SkeletonGroup.Item className="h-7 w-20 rounded-full" />
+        </SkeletonGroup>
+
+        <View className="flex-row items-center gap-x-1 pt-2">
+          <Typography color="muted">Unido el: </Typography>
+          <Skeleton className="h-6 w-1/2 rounded-full" variant="shimmer" />
         </View>
       </Card.Body>
     </Card>
