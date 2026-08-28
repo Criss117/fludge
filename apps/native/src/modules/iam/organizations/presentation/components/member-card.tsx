@@ -19,8 +19,61 @@ interface Props {
 export const CARD_HEIGHT = 152;
 
 export function MemberCard({ member }: Props) {
-  const router = useRouter();
   const isOwner = member.role === "owner";
+
+  if (isOwner) return <MemberCardBase member={member} />;
+
+  return <MemberCardRedirect member={member} />;
+}
+
+export function MemberCardBase({ member }: Props) {
+  const isOwner = member.role === "owner";
+
+  return (
+    <Card className="gap-y-2" style={{ height: CARD_HEIGHT }}>
+      <Card.Header className="flex flex-row gap-x-2">
+        <Avatar>
+          <Avatar.Fallback>
+            {member.user.name.charAt(0).toUpperCase()}
+          </Avatar.Fallback>
+        </Avatar>
+        <View className="flex-1">
+          <Card.Title className="line-clamp-1">{member.user.name}</Card.Title>
+          <Card.Description>{member.user.email}</Card.Description>
+        </View>
+        {!isOwner && <MemberOptions member={member} />}
+      </Card.Header>
+      <Card.Body>
+        <View className="flex flex-row gap-x-2">
+          {isOwner ? (
+            <Chip variant="primary">
+              <MaterialIcons
+                name="verified-user"
+                className="text-white dark:text-black"
+              />
+              <Chip.Label>Propietario</Chip.Label>
+            </Chip>
+          ) : (
+            <Chip variant="secondary">
+              <MaterialIcons name="person" className="text-accent" />
+              <Chip.Label>Miembro</Chip.Label>
+            </Chip>
+          )}
+          <StatusChip status={member.status} />
+        </View>
+
+        <View className="pt-2">
+          <Typography color="muted">
+            Unido el: {member.createdAt.toLocaleDateString()}
+          </Typography>
+        </View>
+      </Card.Body>
+    </Card>
+  );
+}
+
+export function MemberCardRedirect({ member }: Props) {
+  const router = useRouter();
 
   return (
     <PressableFeedback
@@ -31,45 +84,7 @@ export function MemberCard({ member }: Props) {
         })
       }
     >
-      <Card className="gap-y-2" style={{ height: CARD_HEIGHT }}>
-        <Card.Header className="flex flex-row gap-x-2">
-          <Avatar>
-            <Avatar.Fallback>
-              {member.user.name.charAt(0).toUpperCase()}
-            </Avatar.Fallback>
-          </Avatar>
-          <View className="flex-1">
-            <Card.Title className="line-clamp-1">{member.user.name}</Card.Title>
-            <Card.Description>{member.user.email}</Card.Description>
-          </View>
-          {!isOwner && <MemberOptions member={member} />}
-        </Card.Header>
-        <Card.Body>
-          <View className="flex flex-row gap-x-2">
-            {isOwner ? (
-              <Chip variant="primary">
-                <MaterialIcons
-                  name="verified-user"
-                  className="text-white dark:text-black"
-                />
-                <Chip.Label>Propietario</Chip.Label>
-              </Chip>
-            ) : (
-              <Chip variant="secondary">
-                <MaterialIcons name="person" className="text-accent" />
-                <Chip.Label>Miembro</Chip.Label>
-              </Chip>
-            )}
-            <StatusChip status={member.status} />
-          </View>
-
-          <View className="pt-2">
-            <Typography color="muted">
-              Unido el: {member.createdAt.toLocaleDateString()}
-            </Typography>
-          </View>
-        </Card.Body>
-      </Card>
+      <MemberCardBase member={member} />
     </PressableFeedback>
   );
 }

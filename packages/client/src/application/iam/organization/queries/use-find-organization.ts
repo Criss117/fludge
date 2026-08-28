@@ -2,31 +2,37 @@ import { useAuth } from "@fludge/client/providers/auth.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-export function useFindAllOrganizations() {
+export function useFindOrganizationsQueryOptions() {
   const orpc = useOrpc();
   const { session } = useAuth();
 
-  const userId = session.data?.user.id;
-  const options = orpc.organization.queries.findAll.queryOptions();
+  const findAllOptions = {
+    ...orpc.organization.queries.findAll.queryOptions(),
+    queryKey: orpc.organization.queries.findAll
+      .queryKey()
+      .concat([session.data?.user.id]),
+  };
 
-  return useSuspenseQuery({
-    ...options,
-    queryKey: options.queryKey.concat([userId]),
-  });
+  const findActiveOptions = {
+    ...orpc.organization.queries.findActive.queryOptions(),
+    queryKey: orpc.organization.queries.findActive
+      .queryKey()
+      .concat([session.data?.user.id, session.data?.activeOrganizationId]),
+  };
+
+  return { findAllOptions, findActiveOptions };
+}
+
+export function useFindAllOrganizations() {
+  const { findAllOptions } = useFindOrganizationsQueryOptions();
+
+  return useSuspenseQuery(findAllOptions);
 }
 
 export function useFindActiveOrganization() {
-  const orpc = useOrpc();
-  const { session } = useAuth();
+  const { findActiveOptions } = useFindOrganizationsQueryOptions();
 
-  const userId = session.data?.user.id!;
-  const activeOrganizationId = session.data?.activeOrganizationId!;
-  const options = orpc.organization.queries.findActive.queryOptions();
-
-  return useSuspenseQuery({
-    ...options,
-    queryKey: options.queryKey.concat([userId, activeOrganizationId]),
-  });
+  return useSuspenseQuery(findActiveOptions);
 }
 
 export type ActiveOrganization = ReturnType<

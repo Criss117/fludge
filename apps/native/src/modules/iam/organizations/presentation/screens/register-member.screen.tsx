@@ -1,4 +1,4 @@
-import { useRegisterMember } from "@fludge/client/application/iam/organization/mutations/use-register-member";
+import { useRegisterMember } from "@fludge/client/application/iam/organization/mutations/use-member.mutations";
 import { useRegisterMemberForm } from "@fludge/client/presentation/iam/organization/register-member.form";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gradual-height";
