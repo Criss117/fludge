@@ -4,9 +4,7 @@ import { Stack } from "expo-router";
 import { useThemeColor } from "heroui-native";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { useNetworkActivityDevTools } from "@rozenite/network-activity-plugin";
-import { StatusBar } from "expo-status-bar";
 import { useAppTheme } from "@/modules/shared/context/app-theme-context";
-import { MaterialIcons } from "@/modules/shared/components/icons";
 
 function StackConfig() {
   const background = useThemeColor("background");
@@ -40,6 +38,7 @@ export default function RootLayout() {
   if (__DEV__) {
     useNetworkActivityDevTools();
   }
+
   return (
     <Integrations>
       <StackConfig />

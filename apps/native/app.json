@@ -48,7 +48,15 @@
       "expo-status-bar",
       "expo-web-browser",
       "expo-secure-store",
-      "@react-native-vector-icons/material-icons"
+      "@react-native-vector-icons/material-icons",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
