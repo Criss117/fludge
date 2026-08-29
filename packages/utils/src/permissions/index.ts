@@ -19,7 +19,10 @@ const buildSchema = () => {
   return z.object(shape).strict();
 };
 
-export const appStatementSchema = buildSchema() as z.ZodType<AppStatement>;
+export const appStatementSchema = buildSchema() as unknown as z.ZodType<
+  AppStatement,
+  AppStatement
+>;
 
 export class Permissions {
   private constructor(private readonly _statements: AppStatement) {
