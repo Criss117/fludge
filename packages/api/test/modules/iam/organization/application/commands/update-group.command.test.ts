@@ -26,7 +26,7 @@ function makeActiveOrganization() {
   const group = Group.create({
     name: "Editors",
     description: "Old",
-    permissions: Permissions.create({ groups: ["read"] }),
+    permissions: Permissions.create(["groups:read"]),
     createdBy: null,
   });
   organization.groups.addGroup(group);
@@ -42,13 +42,13 @@ describe("UpdateGroupCommand", () => {
       id: group.id.toString(),
       name: "Managers",
       description: "New",
-      permissions: { groups: ["update"] },
+      permissions: ["groups:update"],
     });
     expect(result.groups[0]).toMatchObject({
       name: "Managers",
       slug: "managers",
       description: "New",
-      permissions: { groups: ["update"] },
+      permissions: ["groups:update", "groups:read"],
     });
     expect(repository.save).toHaveBeenCalledWith(
       activeOrganization.id.toString(),
@@ -85,7 +85,7 @@ describe("UpdateGroupCommand", () => {
       Group.create({
         name: "Managers",
         description: null,
-        permissions: Permissions.create({}),
+        permissions: Permissions.create([]),
         createdBy: null,
       }),
     );

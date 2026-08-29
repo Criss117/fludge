@@ -31,7 +31,7 @@ function makeActiveOrganization() {
   const group = Group.create({
     name: "Editors",
     description: "Editors",
-    permissions: Permissions.create({ groups: ["read"] }),
+    permissions: Permissions.create(["groups:read"]),
     createdBy: organization.members.owner!.id,
   });
   organization.groups.addGroup(group);

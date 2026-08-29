@@ -10,7 +10,7 @@ const createGroup = (name = "Editors") =>
   Group.create({
     name,
     description: null,
-    permissions: Permissions.empty(),
+    permissions: Permissions.create([]),
     createdBy: null,
   });
 
@@ -21,7 +21,7 @@ describe("GroupCollection", () => {
       {
         name: "Editors",
         description: null,
-        permissions: Permissions.empty(),
+        permissions: Permissions.create([]),
         createdBy: null,
       },
     ]);

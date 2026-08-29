@@ -6,7 +6,7 @@ const group = (name = "Editors") =>
   Group.create({
     name,
     description: "A group",
-    permissions: Permissions.create({ groups: ["read"] }),
+    permissions: Permissions.create(["groups:read"]),
     createdBy: null,
   });
 
@@ -14,7 +14,7 @@ describe("Group", () => {
   it("creates with a slug and permissions", () => {
     const created = group("Content Editors");
     expect(created.values.slug).toBe("content-editors");
-    expect(created.permissions.has("groups", "read")).toBe(true);
+    expect(created.permissions.hasPermission("groups:read")).toBe(true);
     expect(created.status.isActive()).toBe(true);
   });
   it("detects exact and slug-equivalent names but not different names", () => {
@@ -25,11 +25,11 @@ describe("Group", () => {
   });
   it("updates name and permissions", () => {
     const created = group();
-    const permissions = Permissions.create({ groups: ["delete"] });
+    const permissions = Permissions.create(["groups:delete"]);
     created.update({ name: "Viewers", permissions });
     expect(created.values.name).toBe("Viewers");
     expect(created.values.slug).toBe("viewers");
-    expect(created.permissions.has("groups", "delete")).toBe(true);
+    expect(created.permissions.hasPermission("groups:delete")).toBe(true);
   });
   it("enables and disables idempotently", () => {
     const created = group();

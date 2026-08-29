@@ -37,7 +37,7 @@ function makeActiveOrganization() {
     Group.create({
       name,
       description: name,
-      permissions: Permissions.create({ groups: ["read"] }),
+       permissions: Permissions.create(["groups:read"]),
       createdBy: organization.members.owner!.id,
     }),
   );

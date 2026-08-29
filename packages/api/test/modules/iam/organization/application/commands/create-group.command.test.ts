@@ -7,7 +7,7 @@ import { Organization } from "@fludge/api/modules/iam/organization/domain/entiti
 
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { GroupAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-already-exists.exception";
-import type { AppStatement } from "@fludge/utils/permissions/data";
+import type { PermissionEnum } from "@fludge/utils/permissions/data";
 import { Permissions } from "@fludge/utils/permissions/index";
 
 type SaveReturnType = ReturnType<PgGroupRepository["save"]>;
@@ -40,10 +40,7 @@ function makeActiveOrganization() {
 const validCMD = {
   name: "Editors",
   description: "A group",
-  permissions: {
-    groups: ["read"],
-    products: ["read"],
-  } satisfies AppStatement,
+  permissions: ["groups:read"] satisfies PermissionEnum[],
 };
 
 describe("CreateGroupCommand", () => {
@@ -84,10 +81,7 @@ describe("CreateGroupCommand", () => {
       Group.create({
         name: "Otro grupo",
         description: validCMD.description,
-        permissions: Permissions.create({
-          groups: ["read"],
-          products: ["read"],
-        }),
+        permissions: Permissions.create(["groups:read"]),
         createdBy: owner.id,
       }),
     );
@@ -122,10 +116,7 @@ describe("CreateGroupCommand", () => {
       Group.create({
         name: validCMD.name,
         description: validCMD.description,
-        permissions: Permissions.create({
-          groups: ["read"],
-          products: ["read"],
-        }),
+        permissions: Permissions.create(["groups:read"]),
         createdBy: owner.id,
       }),
     );

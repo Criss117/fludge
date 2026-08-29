@@ -21,10 +21,7 @@ const createOrganization = () => {
         {
           name: "Editors",
           description: null,
-          permissions: Permissions.create({
-            groups: ["read"],
-            products: ["read"],
-          }),
+          permissions: Permissions.create(["groups:read"]),
         },
       ],
       owner: { userId: ownerUserId, assignedBy: null, role: "owner" as const },
@@ -82,7 +79,7 @@ describe("Organization", () => {
     const { organization } = createOrganization();
     const owner = organization.members.owner!;
     expect(
-      organization.memberHasPermission(owner.id, { sales: ["delete"] }),
+      organization.memberHasPermission(owner.id, ["groups:delete"]),
     ).toBe(true);
     const member = Member.create({
       userId: UUID.generate(),
@@ -99,13 +96,13 @@ describe("Organization", () => {
       }),
     );
     expect(
-      organization.memberHasPermission(member.id, { groups: ["read"] }),
+      organization.memberHasPermission(member.id, ["groups:read"]),
     ).toBe(true);
     expect(
-      organization.memberHasPermission(member.id, { groups: ["delete"] }),
+      organization.memberHasPermission(member.id, ["groups:delete"]),
     ).toBe(false);
     expect(
-      organization.memberHasPermission(UUID.generate(), { groups: ["read"] }),
+      organization.memberHasPermission(UUID.generate(), ["groups:read"]),
     ).toBe(false);
   });
 });

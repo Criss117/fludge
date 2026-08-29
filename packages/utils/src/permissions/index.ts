@@ -13,10 +13,6 @@ export const permissionsSchema = z.enum(ALL_PERMISSIONS).array().min(1, {
   error: "Debe tener al menos una autorización",
 });
 
-function toCamelCase(str: string): string {
-  return str.replace(/[-_]([a-z])/g, (_, letter) => letter.toUpperCase());
-}
-
 export function permissionsFromObject(obj: AppStatement) {
   return Object.entries(obj).flatMap(([resource, actions]) =>
     actions.map((action) => `${resource as RESOURCES}:${action}`),
@@ -28,9 +24,7 @@ export function getPermissionDescription(permission: PermissionEnum) {
 
   const resDescs = PERMISSION_DESCRIPTIONS_ES[resourse];
 
-  const actionCamelCase = toCamelCase(action) as keyof typeof resDescs;
-
-  const desc = resDescs[actionCamelCase] as {
+  const desc = resDescs[action as keyof typeof resDescs] as {
     title: string;
     description: string;
   };
