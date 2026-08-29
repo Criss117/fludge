@@ -6,10 +6,8 @@ type ORPC = ReturnType<typeof useOrpc>;
 
 export function findAllMembersOptions(orpc: ORPC, organizationId: string) {
   return {
-    ...orpc.organization.queries.findAll.queryOptions(),
-    queryKey: orpc.organization.queries.findAll
-      .queryKey()
-      .concat([organizationId]),
+    ...orpc.member.queries.findAll.queryOptions(),
+    queryKey: orpc.member.queries.findAll.queryKey().concat([organizationId]),
   };
 }
 
