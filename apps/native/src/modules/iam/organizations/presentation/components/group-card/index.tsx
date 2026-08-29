@@ -1,6 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { ActiveOrganization } from "@fludge/client/application/iam/organization/queries/use-find-organization";
-import { Button } from "heroui-native/button";
+
 import { Card } from "heroui-native/card";
 import { Chip } from "heroui-native/chip";
 import { Separator } from "heroui-native/separator";
@@ -11,11 +10,10 @@ import { StatusChip } from "@/modules/shared/components/status-chip";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { useRouter } from "expo-router";
 import { GroupsOptions } from "./options";
+import type { GroupSummary } from "@fludge/client/application/iam/organization/queries/use-find-groups";
 
 interface Props {
-  group: ActiveOrganization["groups"][number] & {
-    tolalMembers: number;
-  };
+  group: GroupSummary;
   asMemberGroup?: {
     onPress: (groupId: string, close: () => void) => void;
   };
@@ -80,7 +78,7 @@ export function GroupCardBase({ group, asMemberGroup }: Props) {
         <View className="flex-row items-center gap-x-1">
           <MaterialIcons name="people" size={20} className="text-muted" />
           <Typography color="muted" type="body-sm">
-            {group.tolalMembers}
+            {group.members.length}
           </Typography>
         </View>
       </Card.Footer>

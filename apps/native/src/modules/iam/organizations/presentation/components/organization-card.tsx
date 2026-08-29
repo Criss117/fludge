@@ -1,4 +1,3 @@
-import type { AllOrganizations } from "@fludge/client/application/iam/organization/queries/use-find-organization";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { Avatar } from "heroui-native/avatar";
 import { Card } from "heroui-native/card";
@@ -6,11 +5,12 @@ import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
 import { View } from "react-native";
 import { Chip } from "heroui-native/chip";
+import type { OrganizationSummary } from "@fludge/client/application/iam/organization/queries/use-find-organization";
 
 interface Props {
   onPress: (organizationId: string) => void;
   isPending: boolean;
-  organization: AllOrganizations[number];
+  organization: OrganizationSummary;
 }
 
 export const CARD_HEIGHT = 170;

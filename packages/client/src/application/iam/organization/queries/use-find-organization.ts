@@ -57,10 +57,10 @@ export function useFindActiveOrganization() {
   return useSuspenseQuery(findActiveOptions);
 }
 
-export type ActiveOrganization = ReturnType<
+export type OrganizationDetail = ReturnType<
   typeof useFindActiveOrganization
 >["data"];
 
-export type AllOrganizations = ReturnType<
+export type OrganizationSummary = ReturnType<
   typeof useFindAllOrganizations
->["data"];
+>["data"][number];

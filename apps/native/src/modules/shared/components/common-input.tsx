@@ -4,12 +4,7 @@ import { TextField } from "heroui-native/text-field";
 import { BlurEvent, View } from "react-native";
 import { MaterialIcons } from "./icons";
 import { FieldError } from "./field-error";
-import {
-  useState,
-  type ComponentProps,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { useState, type ComponentProps } from "react";
 import { Button } from "heroui-native/button";
 
 type MaterialIconName = ComponentProps<typeof MaterialIcons>["name"];

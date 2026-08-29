@@ -6,7 +6,6 @@ import {
 } from "@/modules/iam/organizations/presentation/components/member-card";
 import { useFindAllMembers } from "@fludge/client/application/iam/organization/queries/use-find-members";
 import { FloatingLink } from "@/modules/shared/components/floating-link";
-import { useMemo } from "react";
 
 const ITEM_SEPARATOR_HEIGHT = 16;
 
@@ -15,17 +14,9 @@ interface Props {
 }
 
 export function IamMembersSection({ query }: Props) {
-  const { data } = useFindAllMembers();
-
-  const members = useMemo(() => {
-    if (!query) return data;
-
-    return data.filter(
-      (d) =>
-        d.user.name.toLowerCase().includes(query.toLowerCase()) ||
-        d.user.email.toLowerCase().includes(query.toLowerCase())
-    );
-  }, [data, query]);
+  const { data: members } = useFindAllMembers({
+    query,
+  });
 
   return (
     <View className="relative flex-1">

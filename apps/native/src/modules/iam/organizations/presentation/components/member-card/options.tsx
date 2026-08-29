@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { Member } from "@fludge/client/application/iam/organization/queries/use-find-members";
+import type { MemberSummary } from "@fludge/client/application/iam/organization/queries/use-find-members";
 import { Link } from "expo-router";
 import { Button } from "heroui-native/button";
 import { Popover } from "heroui-native/popover";
@@ -7,7 +7,7 @@ import { Separator } from "heroui-native/separator";
 import { useState } from "react";
 
 interface Props {
-  member: Member;
+  member: MemberSummary;
 }
 
 export function MemberOptions({ member }: Props) {

@@ -6,7 +6,7 @@ export default function Member() {
   const { memberid } = useLocalSearchParams<{
     memberid: string;
   }>();
-  const member = useFindMember(memberid);
+  const { data: member } = useFindMember(memberid);
 
   return (
     <>

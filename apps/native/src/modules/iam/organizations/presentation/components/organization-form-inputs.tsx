@@ -1,10 +1,5 @@
 import { CommonInput } from "@/modules/shared/components/common-input";
-import { FieldError } from "@/modules/shared/components/field-error";
-import { MaterialIcons } from "@/modules/shared/components/icons";
-import { Input } from "heroui-native/input";
-import { Label } from "heroui-native/label";
-import { TextField } from "heroui-native/text-field";
-import { type BlurEvent, View } from "react-native";
+import type { BlurEvent } from "react-native";
 
 interface Props {
   isInvalid: boolean;

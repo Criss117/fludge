@@ -1,35 +1,29 @@
-import type { ActiveOrganization } from "@fludge/client/application/iam/organization/queries/use-find-organization";
 import { Typography } from "heroui-native/text";
 import { View } from "react-native";
 import { GroupCardBase } from "../components/group-card";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Input } from "heroui-native/input";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { Dialog } from "heroui-native/dialog";
 import { Button } from "heroui-native/button";
 import { useRemoveGroupsFromMember } from "@fludge/client/application/iam/organization/mutations/use-member.mutations";
+import {
+  useFindAllGroups,
+  type GroupSummary,
+} from "@fludge/client/application/iam/organization/queries/use-find-groups";
 
 interface Props {
   memberId: string;
-  groups: (ActiveOrganization["groups"][number] & {
-    tolalMembers: number;
-  })[];
 }
 
-export function MemberGroupsSection({ groups, memberId }: Props) {
+export function MemberGroupsSection({ memberId }: Props) {
   const removeGroupsFromMember = useRemoveGroupsFromMember();
-  const [groupToRemove, setGroupToRemove] = useState<
-    (typeof groups)[number] | null
-  >(null);
+  const [groupToRemove, setGroupToRemove] = useState<GroupSummary | null>(null);
   const [query, setQuery] = useState("");
-
-  const groupsFiltered = useMemo(() => {
-    if (!query) return groups;
-
-    return groups.filter((d) =>
-      d.name.toLowerCase().includes(query.toLowerCase())
-    );
-  }, [groups, query]);
+  const { data: groups } = useFindAllGroups({
+    query,
+    byMemberId: memberId,
+  });
 
   const onPressRemoveGroup = (groupId: string, close: () => void) => {
     const g = groups.find((d) => d.id === groupId);
@@ -76,7 +70,7 @@ export function MemberGroupsSection({ groups, memberId }: Props) {
         </View>
       </View>
 
-      {groupsFiltered.length === 0 && (
+      {groups.length === 0 && (
         <View className="flex-1 items-center justify-center">
           <Typography.Paragraph color="muted">
             No hay grupos
@@ -84,7 +78,7 @@ export function MemberGroupsSection({ groups, memberId }: Props) {
         </View>
       )}
 
-      {groupsFiltered.map((g) => (
+      {groups.map((g) => (
         <GroupCardBase
           key={g.id}
           group={g}

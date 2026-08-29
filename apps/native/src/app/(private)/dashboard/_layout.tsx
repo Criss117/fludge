@@ -18,6 +18,8 @@ export default function DashboardLayout() {
     >
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="settings" />
+      <Stack.Screen name="members" />
+      <Stack.Screen name="groups" />
     </Stack>
   );
 }

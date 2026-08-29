@@ -1,15 +1,13 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useUpdateGroup } from "@fludge/client/application/iam/organization/mutations/use-group.mutations";
-import { ActiveOrganization } from "@fludge/client/application/iam/organization/queries/use-find-organization";
+import type { GroupSummary } from "@fludge/client/application/iam/organization/queries/use-find-groups";
 import { Button } from "heroui-native/button";
 import { Popover } from "heroui-native/popover";
 import { Separator } from "heroui-native/separator";
 import { useState } from "react";
 
 interface Props {
-  group: ActiveOrganization["groups"][number] & {
-    tolalMembers: number;
-  };
+  group: GroupSummary;
   asMemberGroup?: {
     onPress: (groupId: string, close: () => void) => void;
   };

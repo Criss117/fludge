@@ -1,5 +1,4 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { AllMembers } from "@fludge/client/application/iam/organization/queries/use-find-members";
 import { useRouter } from "expo-router";
 import { Avatar } from "heroui-native/avatar";
 import { Card } from "heroui-native/card";
@@ -12,9 +11,10 @@ import { View } from "react-native";
 
 import { StatusChip } from "@/modules/shared/components/status-chip";
 import { MemberOptions } from "./options";
+import type { MemberSummary } from "@fludge/client/application/iam/organization/queries/use-find-members";
 
 interface Props {
-  member: AllMembers[number];
+  member: MemberSummary;
 }
 
 export const CARD_HEIGHT = 152;

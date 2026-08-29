@@ -1,19 +1,16 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { UserButton } from "@/modules/shared/components/user-button";
 import { useAppTheme } from "@/modules/shared/context/app-theme-context";
-import { useAuth } from "@fludge/client/providers/auth.provider";
-import { Tabs as ExpoTabs, Link } from "expo-router";
+import { Tabs as ExpoTabs } from "expo-router";
 import type { BottomTabDescriptorMap } from "expo-router/build/react-navigation/bottom-tabs/types";
 import type {
   NavigationRoute,
   ParamListBase,
 } from "expo-router/react-navigation";
 import type { BottomTabBarProps } from "expo-router/tabs";
-import { cn, PressableFeedback, useThemeColor } from "heroui-native";
-import { Avatar } from "heroui-native/avatar";
+import { cn, useThemeColor } from "heroui-native";
 import { Tabs } from "heroui-native/tabs";
 import { useMemo } from "react";
-import { View } from "react-native";
 
 const TabsIcons = {
   catalog: "inventory-2",
