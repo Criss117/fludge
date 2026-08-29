@@ -49,23 +49,6 @@ export function MemberOptions({ member }: Props) {
               <Button.Label>Ver Detalles</Button.Label>
             </Button>
           </Link>
-          <Link
-            href={{
-              pathname: "/(private)/dashboard/members/[memberid]/update",
-              params: { memberid: member.id },
-            }}
-            push
-            asChild
-          >
-            <Button size="sm" onPress={close}>
-              <MaterialIcons
-                name="edit"
-                size={20}
-                className="text-white dark:text-black"
-              />
-              <Button.Label>Editar</Button.Label>
-            </Button>
-          </Link>
 
           <Separator />
         </Popover.Content>

@@ -9,8 +9,9 @@ import { Skeleton } from "heroui-native/skeleton";
 import { SkeletonGroup } from "heroui-native/skeleton-group";
 import { Typography } from "heroui-native/text";
 import { View } from "react-native";
-import { MemberOptions } from "./member-options";
+
 import { StatusChip } from "@/modules/shared/components/status-chip";
+import { MemberOptions } from "./options";
 
 interface Props {
   member: AllMembers[number];

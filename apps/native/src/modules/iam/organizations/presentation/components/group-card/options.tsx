@@ -1,7 +1,6 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { Member } from "@fludge/client/application/iam/organization/queries/use-find-members";
+import { useUpdateGroup } from "@fludge/client/application/iam/organization/mutations/use-group.mutations";
 import { ActiveOrganization } from "@fludge/client/application/iam/organization/queries/use-find-organization";
-import { Link } from "expo-router";
 import { Button } from "heroui-native/button";
 import { Popover } from "heroui-native/popover";
 import { Separator } from "heroui-native/separator";
@@ -18,12 +17,22 @@ interface Props {
 
 export function GroupsOptions({ group, asMemberGroup }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const updateGroup = useUpdateGroup();
 
   const close = () => setIsOpen(false);
 
-  const onPressAsMemberGroup = () => {
-    asMemberGroup?.onPress(group.id, close);
+  const onPressAsMemberGroup = () => asMemberGroup?.onPress(group.id, close);
+
+  const toogleStatus = () => {
+    if (asMemberGroup) return;
+
+    updateGroup.mutate({
+      id: group.id,
+      status: group.status === "active" ? "inactive" : "active",
+    });
   };
+
+  const isDisabled = updateGroup.isPending;
 
   return (
     <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
@@ -43,7 +52,7 @@ export function GroupsOptions({ group, asMemberGroup }: Props) {
           <Popover.Close className="absolute top-3 right-3 z-50" />
           <Popover.Title>Opciones</Popover.Title>
 
-          <Button size="sm" onPress={close}>
+          <Button size="sm" onPress={close} isDisabled={isDisabled}>
             <MaterialIcons
               name="info"
               size={20}
@@ -52,7 +61,7 @@ export function GroupsOptions({ group, asMemberGroup }: Props) {
             <Button.Label>Ver Detalles</Button.Label>
           </Button>
 
-          <Button size="sm" onPress={close}>
+          <Button size="sm" onPress={close} isDisabled={isDisabled}>
             <MaterialIcons
               name="edit"
               size={20}
@@ -61,10 +70,26 @@ export function GroupsOptions({ group, asMemberGroup }: Props) {
             <Button.Label>Editar</Button.Label>
           </Button>
 
+          {asMemberGroup === undefined && (
+            <Button size="sm" onPress={toogleStatus} isDisabled={isDisabled}>
+              <MaterialIcons
+                name="group-off"
+                size={20}
+                className="text-white dark:text-black"
+              />
+              <Button.Label>
+                {group.status === "active" ? "Desactivar" : "Activar"}
+              </Button.Label>
+            </Button>
+          )}
           <Separator />
 
           {asMemberGroup && (
-            <Button size="sm" onPress={onPressAsMemberGroup}>
+            <Button
+              size="sm"
+              onPress={onPressAsMemberGroup}
+              isDisabled={isDisabled}
+            >
               <MaterialIcons
                 name="group-off"
                 size={20}
