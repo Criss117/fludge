@@ -59,7 +59,7 @@ export const groupRouter = {
         ),
       ),
 
-    assingMembers: hasPermissionProcedure({
+    assignMembers: hasPermissionProcedure({
       groupMembers: ["assign", "read"],
     })
       .route({

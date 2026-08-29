@@ -2,18 +2,34 @@ import { useAuth } from "@fludge/client/providers/auth.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-export function useFindAllMembers() {
+type ORPC = ReturnType<typeof useOrpc>;
+
+export function findAllMembersOptions(orpc: ORPC, organizationId: string) {
+  return {
+    ...orpc.organization.queries.findAll.queryOptions(),
+    queryKey: orpc.organization.queries.findAll
+      .queryKey()
+      .concat([organizationId]),
+  };
+}
+
+export function useFindMembersQueryOptions() {
   const orpc = useOrpc();
   const { session } = useAuth();
 
-  const activeOrganizationId = session.data?.activeOrganizationId!;
+  const activeOrganizationId = session.data?.activeOrganizationId;
 
-  const options = orpc.member.queries.findAll.queryOptions();
+  if (!activeOrganizationId) throw new Error("Active organization not found");
 
-  return useSuspenseQuery({
-    ...options,
-    queryKey: options.queryKey.concat([activeOrganizationId]),
-  });
+  const findAllOptions = findAllMembersOptions(orpc, activeOrganizationId);
+
+  return { findAllOptions };
+}
+
+export function useFindAllMembers() {
+  const { findAllOptions } = useFindMembersQueryOptions();
+
+  return useSuspenseQuery(findAllOptions);
 }
 
 export function useFindMember(memberId: string) {

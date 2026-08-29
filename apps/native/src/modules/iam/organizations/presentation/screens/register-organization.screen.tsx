@@ -6,7 +6,7 @@ import { Button } from "heroui-native/button";
 import { Link, useRouter } from "expo-router";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useFindAllOrganizations } from "@fludge/client/application/iam/organization/queries/use-find-organization";
-import { useRegisterOrganization } from "@fludge/client/application/iam/organization/mutations/use-register-organization";
+import { useRegisterOrganization } from "@fludge/client/application/iam/organization/mutations/use-organization.mutations";
 import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gradual-height";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { PressableFeedback } from "heroui-native/pressable-feedback";

@@ -19,6 +19,20 @@ export function useRegisterMember() {
   );
 }
 
+export function useAssignGroupsToMember() {
+  const { findActiveOptions } = useFindOrganizationsQueryOptions();
+  const queryClient = useQueryClient();
+  const orpc = useOrpc();
+
+  return useMutation(
+    orpc.member.commands.assignGroups.mutationOptions({
+      onSuccess: async (organization) => {
+        queryClient.setQueryData(findActiveOptions.queryKey, organization);
+      },
+    }),
+  );
+}
+
 export function useRemoveGroupsFromMember() {
   const { findActiveOptions } = useFindOrganizationsQueryOptions();
   const queryClient = useQueryClient();
