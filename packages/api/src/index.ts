@@ -5,6 +5,7 @@ import { organizationContainer } from "./modules/iam/organization/container";
 import type { AppStatement } from "@fludge/utils/permissions/data";
 import { UUID } from "@fludge/utils/uuid";
 import { env } from "@fludge/env/server";
+import { permissionsFromObject } from "@fludge/utils/permissions/index";
 
 export const o = os.$context<Context>();
 
@@ -97,7 +98,7 @@ function hasPermission(permission: AppStatement) {
     const hasPermissions =
       context.session.activeOrganization.memberHasPermission(
         userMember.id,
-        permission,
+        permissionsFromObject(permission),
       );
 
     if (!hasPermissions)

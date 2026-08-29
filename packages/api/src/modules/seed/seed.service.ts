@@ -19,8 +19,7 @@ import { faker } from "@faker-js/faker/locale/es_MX";
 import { Member } from "../iam/organization/domain/entities/member.entity";
 import { GroupMember } from "../iam/organization/domain/entities/group-member.entity";
 import { Permissions } from "@fludge/utils/permissions/index";
-import { getRandomPermissions } from "@fludge/utils/permissions/helpers";
-import { allPermissions } from "@fludge/utils/permissions/data";
+import { ALL_PERMISSIONS } from "@fludge/utils/permissions/data";
 
 export const seedUsers = z.object({
   totalRoots: z.number().optional().default(2),
@@ -61,7 +60,9 @@ function generateGroups(createdBy: UUID, count: number) {
   return Array.from({ length: count }).map(() =>
     Group.create({
       name: faker.company.name(),
-      permissions: Permissions.create(getRandomPermissions()),
+      permissions: Permissions.create(
+        faker.helpers.arrayElements(ALL_PERMISSIONS),
+      ),
       description: faker.lorem.sentence(),
       createdBy,
     }),
@@ -189,7 +190,7 @@ export class SeedService {
             {
               name: "Administradores",
               description: "Grupo de administradores",
-              permissions: Permissions.create(allPermissions),
+              permissions: Permissions.create(ALL_PERMISSIONS),
             },
           ],
         });

@@ -1,120 +1,132 @@
 import { z } from "zod";
-import { allPermissions, type AppStatement } from "./data";
+import {
+  type AppStatement,
+  type PermissionEnum,
+  type RESOURCES,
+  ALL_PERMISSIONS,
+  PERMISSION_DESCRIPTIONS_ES,
+  PERMISSIONS,
+  RESOURCES_ES,
+} from "./data";
 
-// 3. Generación DINÁMICA del esquema Zod
-const buildSchema = () => {
-  const shape = Object.entries(allPermissions).reduce(
-    (acc, [resource, actions]) => {
-      const [firstAction, ...restActions] = actions;
-      // z.enum requiere al menos un elemento ([string, ...string[]])
-      acc[resource as keyof typeof allPermissions] = z
-        .array(z.enum([firstAction, ...restActions]))
-        .transform((arr) => [...new Set(arr)])
-        .optional();
-      return acc;
-    },
-    {} as Record<keyof typeof allPermissions, z.ZodTypeAny>,
-  );
+export const permissionsSchema = z.enum(ALL_PERMISSIONS).array().min(1, {
+  error: "Debe tener al menos una autorización",
+});
 
-  return z.object(shape).strict();
-};
+function toCamelCase(str: string): string {
+  return str.replace(/[-_]([a-z])/g, (_, letter) => letter.toUpperCase());
+}
 
-export const appStatementSchema = buildSchema() as unknown as z.ZodType<
-  AppStatement,
-  AppStatement
->;
+export function permissionsFromObject(obj: AppStatement) {
+  return Object.entries(obj).flatMap(([resource, actions]) =>
+    actions.map((action) => `${resource as RESOURCES}:${action}`),
+  ) as [PermissionEnum, ...PermissionEnum[]];
+}
+
+export function getPermissionDescription(permission: PermissionEnum) {
+  const [resourse, action] = permission.split(":") as [RESOURCES, string];
+
+  const resDescs = PERMISSION_DESCRIPTIONS_ES[resourse];
+
+  const actionCamelCase = toCamelCase(action) as keyof typeof resDescs;
+
+  const desc = resDescs[actionCamelCase] as {
+    title: string;
+    description: string;
+  };
+
+  if (!desc)
+    return {
+      title: action,
+      description: "Descripción no disponible",
+      target: RESOURCES_ES[resourse] as RESOURCES,
+    };
+
+  return { ...desc, target: RESOURCES_ES[resourse] as RESOURCES };
+}
+
+export function getPermissionByResource(resource: RESOURCES) {
+  const actions = PERMISSIONS[resource];
+
+  return Object.values(actions).map(
+    (action) => `${resource}:${action}`,
+  ) as PermissionEnum[];
+}
 
 export class Permissions {
-  private constructor(private readonly _statements: AppStatement) {
-    Object.values(this._statements).forEach((actions) => {
-      if (actions) Object.freeze(actions);
-    });
-    Object.freeze(this._statements);
-    Object.freeze(this);
+  private constructor(private readonly _statements: PermissionEnum[]) {}
+
+  public static create(statements: PermissionEnum[]): Permissions {
+    const resources = statements.reduce((acc, p) => {
+      const [resource] = p.split(":") as [RESOURCES, string];
+
+      if (!acc.includes(resource)) acc.push(resource);
+
+      return acc;
+    }, [] as RESOURCES[]);
+
+    const complete = [...statements];
+
+    for (const resource of resources) {
+      if (resource === "organizations") continue;
+
+      complete.push(`${resource}:read`);
+    }
+
+    return new Permissions(Array.from(new Set(complete)));
   }
 
-  /**
-   * Factoría fuertemente tipada. Te dará autocompletado y validación en tiempo de compilación.
-   */
-  public static create(statements: AppStatement): Permissions {
-    const validated = appStatementSchema.parse(statements);
-    return new Permissions(validated);
+  public static reconstitute(values: PermissionEnum[]) {
+    return new Permissions(values);
   }
 
-  /**
-   * Para payloads externos o datos sin tipar (ej. req.body de Express/Fastify).
-   */
-  public static fromUntyped(raw: unknown): Permissions {
-    const validated = appStatementSchema.parse(raw);
-    return new Permissions(validated);
-  }
-
-  public static fromJSON(jsonString: string): Permissions {
-    const parsed = JSON.parse(jsonString);
-    return Permissions.fromUntyped(parsed);
-  }
-
-  public static empty(): Permissions {
-    return new Permissions({});
-  }
-
-  public has<K extends keyof typeof allPermissions>(
-    resource: K,
-    action: (typeof allPermissions)[K][number],
-  ): boolean {
-    const actions = this._statements[resource];
-    if (!actions) return false;
-    return (actions as readonly string[]).includes(action);
-  }
-
-  public get value(): AppStatement {
-    return this._statements;
-  }
-
-  public toJSON(): AppStatement {
-    return this._statements;
-  }
-
-  public equals(other: Permissions): boolean {
-    if (!(other instanceof Permissions)) return false;
-    return (
-      JSON.stringify(this._statements) === JSON.stringify(other._statements)
-    );
-  }
-
-  public static merge(permissionsList: readonly Permissions[]): Permissions {
-    const merged = permissionsList.reduce<Record<string, string[]>>(
-      (acc, perm) => {
-        for (const [resource, actions] of Object.entries(perm.value)) {
-          if (!actions) continue;
-          const existing = acc[resource] ?? [];
-          acc[resource] = [...new Set([...existing, ...actions])];
-        }
-        return acc;
-      },
-      {},
+  public static merge(permissionsList: Permissions[]) {
+    const merged = permissionsList.reduce<PermissionEnum[]>(
+      (acc, perm) => [...new Set([...acc, ...perm.values])],
+      [],
     );
 
-    // Revalida para mantener las garantías de tipo/inmutabilidad del constructor
-    return Permissions.create(merged as AppStatement);
+    return new Permissions(merged);
   }
 
-  public satisfies(required: AppStatement): boolean {
-    return (
-      Object.entries(required) as [
-        keyof AppStatement,
-        readonly string[] | undefined,
-      ][]
-    ).every(([resource, actions]) => {
-      if (!actions || actions.length === 0) return true;
-      return actions.every((action) => this.has(resource, action as never));
-    });
+  public static fromJSON(jsonString: string) {
+    const parsed = permissionsSchema.parse(JSON.parse(jsonString));
+
+    return new Permissions(parsed);
   }
 
-  public static hasAll(
-    permissionsList: readonly Permissions[],
-    required: AppStatement,
+  public hasPermission(required: PermissionEnum) {
+    return this._statements.includes(required);
+  }
+
+  public hasAllPermissions(required: PermissionEnum | PermissionEnum[]) {
+    if (!Array.isArray(required)) required = [required];
+
+    return required.every((p) => this.hasPermission(p));
+  }
+
+  public hasAnyPermission(
+    required: PermissionEnum | PermissionEnum[],
   ): boolean {
-    return Permissions.merge(permissionsList).satisfies(required);
+    if (!Array.isArray(required)) required = [required];
+
+    return required.some((p) => this.hasPermission(p));
+  }
+
+  public checkPermissions(
+    required: PermissionEnum | PermissionEnum[],
+    mode: "all" | "any" = "all",
+  ): boolean {
+    return mode === "all"
+      ? this.hasAllPermissions(required)
+      : this.hasAnyPermission(required);
+  }
+
+  public toJSON() {
+    return JSON.stringify(this._statements);
+  }
+
+  public get values() {
+    return this._statements;
   }
 }

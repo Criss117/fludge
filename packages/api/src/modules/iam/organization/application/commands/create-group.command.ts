@@ -5,8 +5,8 @@ import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
 import type { PgGroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
 import {
-  appStatementSchema,
   Permissions,
+  permissionsSchema,
 } from "@fludge/utils/permissions/index";
 
 export const createGroupCommand = z.object({
@@ -16,7 +16,7 @@ export const createGroupCommand = z.object({
   description: z.string({
     error: "La descripción es requerida",
   }),
-  permissions: appStatementSchema,
+  permissions: permissionsSchema,
 });
 
 type CMD = z.infer<typeof createGroupCommand>;

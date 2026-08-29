@@ -7,7 +7,7 @@ import { UUID } from "@fludge/utils/uuid";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import type { OrganizationUniquenessValidator } from "@fludge/api/modules/iam/organization/application/services/organization-uniqueness-validator.service";
 import { OrganizationAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/organization-already-exists.exception";
-import { allPermissions } from "@fludge/utils/permissions/data";
+import { ALL_PERMISSIONS } from "@fludge/utils/permissions/data";
 
 export const registerOrganizationCommand = z.object({
   name: z
@@ -90,7 +90,7 @@ export class RegisterOrganizationCommand {
       Group.create({
         name: "Administradores",
         description: "Grupo de administradores",
-        permissions: Permissions.create(allPermissions),
+        permissions: Permissions.create(ALL_PERMISSIONS),
         createdBy: ownerMember.id,
       }),
     );

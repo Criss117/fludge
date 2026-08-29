@@ -20,8 +20,8 @@ import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
 import { GroupMemberNotFoundException } from "../exceptions/group-member-not-found.exception";
 import { GroupMemberAlreadyExistsException } from "../exceptions/group-member-elready-exists.exception";
 import { MemberIsOwnerException } from "../exceptions/member-is-owner.exception";
-import type { AppStatement } from "@fludge/utils/permissions/data";
 import { Permissions } from "@fludge/utils/permissions/index";
+import type { PermissionEnum } from "@fludge/utils/permissions/data";
 
 type CreateOrganization = {
   name: string;
@@ -238,7 +238,8 @@ export class Organization {
 
   public memberHasPermission(
     memberId: UUID,
-    permission: Partial<AppStatement>,
+    permission: PermissionEnum | PermissionEnum[],
+    mode: "all" | "any" = "all",
   ): boolean {
     const member = this._members.getMember(memberId);
 
@@ -250,11 +251,10 @@ export class Organization {
       onlyActive: true,
     });
 
-    const mergedPermissions = Permissions.merge(
-      groups.map((g) => g.permissions),
+    return Permissions.merge(groups.map((g) => g.permissions)).checkPermissions(
+      permission,
+      mode,
     );
-
-    return mergedPermissions.satisfies(permission);
   }
 
   public get status() {

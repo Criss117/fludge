@@ -9,8 +9,8 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { auditMetadata } from "./shared";
 import { statusEnum, historyActionEnum, roleEnum } from "./enums";
-import type { AppStatement } from "@fludge/utils/permissions/data";
 import { user } from "./auth.schema";
+import type { PermissionEnum } from "@fludge/utils/permissions/data";
 
 export const organization = sqliteTable(
   "organization",
@@ -109,7 +109,7 @@ export const group = sqliteTable(
     description: text("description"),
     permissions: text("permissions", { mode: "json" })
       .notNull()
-      .$type<AppStatement>(),
+      .$type<PermissionEnum[]>(),
 
     status: text("status", { enum: statusEnum }).notNull().default("active"),
 

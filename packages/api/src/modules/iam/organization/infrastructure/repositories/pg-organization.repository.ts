@@ -18,11 +18,11 @@ import {
 } from "@fludge/db/schema/iam.schema";
 import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
-import type { AppStatement } from "@fludge/utils/permissions/data";
 import { alias } from "drizzle-orm/sqlite-core";
 import type { PgGroupRepository } from "./pg-group.repository";
 import type { PgMemberRepository } from "./pg-member.repository";
 import type { PgGroupMemberRepository } from "./pg-group-member.repository";
+import type { PermissionEnum } from "@fludge/utils/permissions/data";
 
 const memberAuth = alias(member, "memberAuth");
 
@@ -91,7 +91,9 @@ export class PgOrganizationRepository {
       ...g,
       createdAt: new Date(g.createdAt),
       updatedAt: new Date(g.updatedAt),
-      permissions: JSON.parse(g.permissions as string) as AppStatement,
+      permissions: JSON.parse(
+        g.permissions as unknown as string,
+      ) as PermissionEnum[],
     }));
 
     const groupMembers = (
