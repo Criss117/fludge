@@ -22,7 +22,10 @@ export function MemberGroupsSection({ memberId }: Props) {
   const [query, setQuery] = useState("");
   const { data: groups } = useFindAllGroups({
     query,
-    byMemberId: memberId,
+    byMember: {
+      memberId,
+      type: "include",
+    },
   });
 
   const onPressRemoveGroup = (groupId: string, close: () => void) => {

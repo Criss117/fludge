@@ -2,8 +2,11 @@ import { useMemo } from "react";
 import { useFindActiveOrganization } from "./use-find-organization";
 
 type Filters = {
-  query: string;
-  byMemberId?: string;
+  query?: string;
+  byMember?: {
+    memberId: string;
+    type: "include" | "exclude";
+  };
 };
 
 export function useFindAllGroups(filters?: Filters) {
@@ -17,21 +20,25 @@ export function useFindAllGroups(filters?: Filters) {
         .map((gm) => gm.memberId),
     }));
 
-    if (!filters?.query && !filters?.byMemberId) return groups;
+    if (!filters?.query && !filters?.byMember) return groups;
 
     const query = filters?.query;
-    const byMemberId = filters?.byMemberId;
+    const byMember = filters?.byMember;
 
     const filterByquery = query
       ? groups.filter((d) => d.name.toLowerCase().includes(query.toLowerCase()))
       : groups;
 
-    const filterByMemberId = byMemberId
-      ? filterByquery.filter((d) => d.members.includes(byMemberId))
+    const filterByMemberId = byMember
+      ? filterByquery.filter((d) => {
+          const include = d.members.includes(byMember.memberId);
+
+          return byMember.type === "include" ? include : !include;
+        })
       : filterByquery;
 
     return filterByMemberId;
-  }, [data.groups, data.groupMembers, filters?.query, filters?.byMemberId]);
+  }, [data.groups, data.groupMembers, filters?.query, filters?.byMember]);
 
   return { data: groups, ...rest };
 }

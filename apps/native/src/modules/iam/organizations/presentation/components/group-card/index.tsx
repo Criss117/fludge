@@ -11,12 +11,14 @@ import { useRouter } from "expo-router";
 import { GroupsOptions } from "./options";
 import type { GroupSummary } from "@fludge/client/application/iam/organization/queries/use-find-groups";
 import { getPermissionDescription } from "@fludge/utils/permissions/index";
+import { cn } from "heroui-native";
 
 interface Props {
   group: GroupSummary;
   asMemberGroup?: {
     onPress: (groupId: string, close: () => void) => void;
   };
+  hideOptions?: boolean;
 }
 
 export function GroupCard(props: Props) {
@@ -29,7 +31,33 @@ export function GroupCard(props: Props) {
   );
 }
 
-export function GroupCardBase({ group, asMemberGroup }: Props) {
+interface SelectableGroupCardProps extends Props {
+  onPress?: (group: GroupSummary) => void;
+  onLongPress?: (group: GroupSummary) => void;
+  isSelected?: boolean;
+}
+
+export function SelectableGroupCard({
+  onLongPress,
+  onPress,
+  isSelected,
+  ...props
+}: SelectableGroupCardProps) {
+  return (
+    <PressableFeedback
+      className={cn(
+        "rounded-3xl border",
+        isSelected ? "border-accent" : "border-transparent"
+      )}
+      onPress={() => onPress?.(props.group)}
+      onLongPress={() => onLongPress?.(props.group)}
+    >
+      <GroupCardBase {...props} hideOptions />
+    </PressableFeedback>
+  );
+}
+
+export function GroupCardBase({ group, asMemberGroup, hideOptions }: Props) {
   const permissions = group.permissions.map((p) => getPermissionDescription(p));
 
   return (
@@ -42,7 +70,9 @@ export function GroupCardBase({ group, asMemberGroup }: Props) {
             </Card.Title>
             <StatusChip status={group.status} />
           </View>
-          <GroupsOptions group={group} asMemberGroup={asMemberGroup} />
+          {!hideOptions && (
+            <GroupsOptions group={group} asMemberGroup={asMemberGroup} />
+          )}
         </View>
 
         <Card.Description className="line-clamp-2">
