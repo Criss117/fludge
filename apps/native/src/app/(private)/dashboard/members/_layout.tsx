@@ -3,7 +3,7 @@ import { Stack } from "expo-router";
 import { useThemeColor } from "heroui-native";
 
 export default function MemberLayout() {
-  const [background, accent] = useThemeColor(["background", "accent"]);
+  const [background, foreground] = useThemeColor(["background", "foreground"]);
 
   return (
     <Stack
@@ -15,7 +15,7 @@ export default function MemberLayout() {
           backgroundColor: background,
         },
         headerTitleStyle: {
-          color: accent,
+          color: foreground,
         },
         headerShadowVisible: false,
         headerLeft: () => <BackButton />,

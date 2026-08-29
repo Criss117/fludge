@@ -122,11 +122,7 @@ export function RegisterMemberScreen() {
 
       <View className="bg-background absolute bottom-0 w-full px-3 py-6">
         <Button onPress={form.handleSubmit} isDisabled={mutation.isPending}>
-          <MaterialIcons
-            name="person-add"
-            size={20}
-            className="text-white dark:text-black"
-          />
+          <MaterialIcons name="person-add" size={20} className="text-eclipse" />
           <Button.Label>Registrar Miembro</Button.Label>
         </Button>
       </View>

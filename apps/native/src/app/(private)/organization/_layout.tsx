@@ -5,7 +5,8 @@ import { useThemeColor } from "heroui-native";
 
 export default function OrganizationLayout() {
   const { session } = useAuth();
-  const background = useThemeColor("background");
+
+  const [background, foreground] = useThemeColor(["background", "foreground"]);
   const { isDark } = useAppTheme();
 
   const userIsRoot = !!session.data?.user.isRoot;
@@ -22,7 +23,7 @@ export default function OrganizationLayout() {
           backgroundColor: background,
         },
         headerTitleStyle: {
-          color: isDark ? "white" : "black",
+          color: foreground,
         },
         animation: "fade",
       }}

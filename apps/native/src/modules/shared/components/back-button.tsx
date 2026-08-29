@@ -9,7 +9,7 @@ export function BackButton() {
 
   return (
     <PressableFeedback onPress={() => router.back()} className="pr-4">
-      <MaterialIcons name="arrow-back" size={20} className="text-accent" />
+      <MaterialIcons name="arrow-back" size={20} className="text-foreground" />
     </PressableFeedback>
   );
 }

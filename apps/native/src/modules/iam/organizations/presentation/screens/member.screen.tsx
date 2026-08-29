@@ -54,7 +54,7 @@ export function MemberScreen({ member }: Props) {
             <MaterialIcons
               name="add-circle-outline"
               size={20}
-              className="text-white dark:text-black"
+              className="text-eclipse"
             />
             <Button.Label>Asignar Grupos</Button.Label>
           </Button>

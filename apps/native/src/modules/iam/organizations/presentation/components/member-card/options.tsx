@@ -19,7 +19,11 @@ export function MemberOptions({ member }: Props) {
     <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
       <Popover.Trigger asChild>
         <Button isIconOnly variant="ghost">
-          <MaterialIcons name="more-vert" size={24} className="text-accent" />
+          <MaterialIcons
+            name="more-vert"
+            size={24}
+            className="text-foreground"
+          />
         </Button>
       </Popover.Trigger>
       <Popover.Portal>
@@ -40,12 +44,8 @@ export function MemberOptions({ member }: Props) {
             push
             asChild
           >
-            <Button size="sm" onPress={close}>
-              <MaterialIcons
-                name="info"
-                size={20}
-                className="text-white dark:text-black"
-              />
+            <Button size="sm" onPress={close} className="flex justify-start">
+              <MaterialIcons name="info" size={20} className="text-eclipse" />
               <Button.Label>Ver Detalles</Button.Label>
             </Button>
           </Link>

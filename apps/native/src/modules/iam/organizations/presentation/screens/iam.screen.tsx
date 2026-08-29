@@ -27,18 +27,14 @@ export function IamScreen() {
         </View>
       </View>
       <Tabs value={tab} onValueChange={setTab} className="flex-1">
-        <Tabs.List className="bg-muted rounded-full">
+        <Tabs.List className="rounded-full">
           <Tabs.ScrollView>
-            <Tabs.Indicator />
+            <Tabs.Indicator className="dark:bg-muted" />
             <Tabs.Trigger value="members" className="w-1/2">
-              <Tabs.Label className="text-black dark:text-white">
-                Miembros
-              </Tabs.Label>
+              <Tabs.Label>Miembros</Tabs.Label>
             </Tabs.Trigger>
             <Tabs.Trigger value="groups" className="w-1/2">
-              <Tabs.Label className="text-black dark:text-white">
-                Grupos
-              </Tabs.Label>
+              <Tabs.Label>Grupos</Tabs.Label>
             </Tabs.Trigger>
           </Tabs.ScrollView>
         </Tabs.List>

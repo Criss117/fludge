@@ -47,16 +47,13 @@ export function MemberCardBase({ member }: Props) {
       <Card.Body>
         <View className="flex flex-row gap-x-2">
           {isOwner ? (
-            <Chip variant="primary">
-              <MaterialIcons
-                name="verified-user"
-                className="text-white dark:text-black"
-              />
+            <Chip>
+              <MaterialIcons name="verified-user" className="text-eclipse" />
               <Chip.Label>Propietario</Chip.Label>
             </Chip>
           ) : (
-            <Chip variant="secondary">
-              <MaterialIcons name="person" className="text-accent" />
+            <Chip>
+              <MaterialIcons name="person" className="text-eclipse" />
               <Chip.Label>Miembro</Chip.Label>
             </Chip>
           )}

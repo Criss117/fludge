@@ -44,7 +44,7 @@ function TabTrigger({
     >
       <MaterialIcons
         name={iconName}
-        className={cn(!isFocused ? "text-muted" : "text-accent")}
+        className={cn("text-muted", isFocused && "text-foreground")}
         size={20}
       />
       <Tabs.Label className="text-[12px] font-bold">{label}</Tabs.Label>
@@ -79,9 +79,9 @@ function BottomTabs({ descriptors, state, navigation }: BottomTabBarProps) {
       onValueChange={onPress}
       className="absolute bottom-0 mx-3 mb-3"
     >
-      <Tabs.List className="bg-accent rounded-full">
+      <Tabs.List className="dark:bg-surface-secondary bg-accent rounded-full">
         <Tabs.ScrollView>
-          <Tabs.Indicator />
+          <Tabs.Indicator className="dark:bg-accent/20" />
           {state.routes.map((route) => (
             <TabTrigger
               key={route.key}
@@ -97,7 +97,7 @@ function BottomTabs({ descriptors, state, navigation }: BottomTabBarProps) {
 }
 
 export default function DashboardTabsLayout() {
-  const [background] = useThemeColor(["background"]);
+  const [background, foreground] = useThemeColor(["background", "foreground"]);
   const { isDark } = useAppTheme();
 
   return (
@@ -112,7 +112,7 @@ export default function DashboardTabsLayout() {
           backgroundColor: background,
         },
         headerTitleStyle: {
-          color: isDark ? "white" : "black",
+          color: foreground,
         },
         headerRight: () => <UserButton />,
         animation: "shift",

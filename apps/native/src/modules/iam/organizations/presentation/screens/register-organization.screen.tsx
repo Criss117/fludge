@@ -160,9 +160,11 @@ export function RegisterOrganizationScreen() {
           <MaterialIcons
             name="add-business"
             size={20}
-            className="text-white dark:text-black"
+            className="text-eclipse"
           />
-          <Button.Label>Registrar Organización</Button.Label>
+          <Button.Label className="text-eclipse">
+            Registrar Organización
+          </Button.Label>
         </Button>
         {hasOrganizations && (
           <Link href="/(private)/organization/select" asChild replace>

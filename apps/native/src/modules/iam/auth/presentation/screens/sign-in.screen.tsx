@@ -95,11 +95,9 @@ export function SignInScreen() {
         <Card.Footer>
           <Link href="/auth/sign-up" replace asChild>
             <PressableFeedback className="w-full py-2">
-              <Typography>
+              <Typography className="text-muted">
                 No tienes cuenta?{" "}
-                <Typography className="text-accent underline">
-                  Regístrate
-                </Typography>
+                <Typography className="underline">Regístrate</Typography>
               </Typography>
             </PressableFeedback>
           </Link>

@@ -7,7 +7,7 @@
   --white: oklch(100% 0 0);
   --black: oklch(0% 0 0);
   --snow: oklch(0.9911 0 0);
-  --eclipse: oklch(0.235 0 0);
+  --eclipse: oklch(0.2103 0.0059 285.89);
 
   /* Border */
   --border-width: 1px;
@@ -19,6 +19,9 @@
 
   /* Opacity */
   --opacity-disabled: 0.5;
+
+  /* Active library theme: 'default' | 'glass' (overridden by Pro theme CSS) */
+  --theme: default;
 
   /* fonts */
   --font-thin: geist-thin;
@@ -38,56 +41,56 @@
   :root {
     @variant light {
       /* Base Colors */
-      --background: oklch(0.9195 0.0169 88.003);
-      --foreground: var(--eclipse);
+      --background: oklch(97.02% 0.0013 87.52);
+      --foreground: oklch(21.03% 0.0013 87.52);
 
       /* Surface: Used for non-overlay components (cards, accordions, disclosure groups) */
-      --surface: oklch(0.953 0.0156 86.4257);
+      --surface: oklch(100% 0.0006 87.52);
       --surface-foreground: var(--foreground);
 
-      --surface-secondary: oklch(0.8647 0.0201 87.5232);
+      --surface-secondary: oklch(95.24% 0.001 87.52);
       --surface-secondary-foreground: var(--foreground);
 
-      --surface-tertiary: oklch(0.834 0.0232 87.163);
+      --surface-tertiary: oklch(93.73% 0.001 87.52);
       --surface-tertiary-foreground: var(--foreground);
 
       /* Overlay: Used for floating/overlay components (dialogs, popovers, modals, menus) */
-      --overlay: oklch(0.953 0.0156 86.4257);
+      --overlay: oklch(100% 0.0004 87.52);
       --overlay-foreground: var(--foreground);
       --backdrop: oklch(0% 0 0 / 20%);
 
-      --muted: oklch(0.595 0.0232 87.16);
+      --muted: oklch(55.17% 0.0026 87.52);
 
-      --default: oklch(0.8647 0.0201 87.5232);
-      --default-foreground: var(--eclipse);
+      --default: oklch(94% 0.0013 87.52);
+      --default-foreground: oklch(21.03% 0.0059 87.52);
 
-      --accent: oklch(0.3012 0 0);
-      --accent-foreground: oklch(0.953 0.0156 86.4257);
+      --accent: oklch(89.85% 0.0199 87.52);
+      --accent-foreground: oklch(15% 0.004 87.52);
 
       /* Form Fields */
-      --field-background: oklch(0.953 0.0156 86.4257);
-      --field-foreground: var(--foreground);
-      --field-placeholder: var(--muted);
+      --field-background: oklch(100% 0.0006 87.52);
+      --field-foreground: oklch(21.03% 0.0013 87.52);
+      --field-placeholder: oklch(55.17% 0.0026 87.52);
       --field-border: transparent; /* no border by default on form fields */
 
       /* Status Colors */
-      --success: oklch(0.7329 0.1935 150.81);
-      --success-foreground: var(--eclipse);
+      --success: oklch(73.29% 0.194 130.85);
+      --success-foreground: oklch(21.03% 0.0059 130.85);
 
-      --warning: oklch(0.7819 0.1585 72.33);
-      --warning-foreground: var(--eclipse);
+      --warning: oklch(78.19% 0.1589 52.37);
+      --warning-foreground: oklch(21.03% 0.0059 52.37);
 
-      --danger: oklch(0.5771 0.2152 27.325);
-      --danger-foreground: var(--snow);
+      --danger: oklch(65.32% 0.2334 5.78);
+      --danger-foreground: oklch(99.11% 0 0);
 
       /* Component Colors */
-      --segment: oklch(0.953 0.0156 86.4257);
-      --segment-foreground: var(--eclipse);
+      --segment: oklch(100% 0.0013 87.52);
+      --segment-foreground: oklch(21.03% 0.0013 87.52);
 
       /* Misc Colors */
-      --border: oklch(0.8434 0.0231 87.1621);
-      --separator: oklch(0.8434 0.0231 87.1621);
-      --focus: var(--accent);
+      --border: oklch(90% 0.0013 87.52);
+      --separator: oklch(92% 0.0013 87.52);
+      --focus: oklch(89.85% 0.0199 87.52);
       --link: var(--foreground);
 
       /* Shadows */
@@ -104,62 +107,62 @@
 
     @variant dark {
       /* Base Colors */
-      --background: oklch(0.1913 0 0);
-      --foreground: oklch(0.9173 0.0133 82.4015);
+      --background: oklch(12% 0.0013 87.52);
+      --foreground: oklch(99.11% 0.0013 87.52);
 
       /* Surface: Used for non-overlay components (cards, accordions, disclosure groups) */
-      --surface: oklch(0.2264 0 0);
+      --surface: oklch(21.03% 0.0026 87.52);
       --surface-foreground: var(--foreground);
 
-      --surface-secondary: oklch(0.26 0 0);
+      --surface-secondary: oklch(25.7% 0.0019 87.52);
       --surface-secondary-foreground: var(--foreground);
 
-      --surface-tertiary: oklch(0.29 0 0);
+      --surface-tertiary: oklch(27.21% 0.0019 87.52);
       --surface-tertiary-foreground: var(--foreground);
 
-      /* Overlay: Used for floating/overlay components (dialogs, popovers, modals, menus) */
-      --overlay: oklch(0.2264 0 0);
+      /* Overlay: Used for floating/overlay components (dialogs, popovers, modals, menus) - lighter for contrast */
+      --overlay: oklch(21.03% 0.0026 87.52);
       --overlay-foreground: var(--foreground);
       --backdrop: oklch(0% 0 0 / 20%);
 
-      --muted: oklch(0.6348 0.0113 81.7875);
+      --muted: oklch(70.5% 0.0026 87.52);
 
-      --default: oklch(0.26 0 0);
-      --default-foreground: var(--foreground);
+      --default: oklch(27.4% 0.0013 87.52);
+      --default-foreground: oklch(99.11% 0 0);
 
-      --accent: oklch(0.852 0.0205 100.6306);
-      --accent-foreground: oklch(0.1913 0 0);
+      --accent: oklch(89.85% 0.0199 87.52);
+      --accent-foreground: oklch(15% 0.004 87.52);
 
-      /* Form Field Defaults */
-      --field-background: oklch(0.2264 0 0);
-      --field-foreground: var(--foreground);
-      --field-placeholder: var(--muted);
+      /* Form Field Defaults - Colors (only the ones that are different from light theme) */
+      --field-background: oklch(21.03% 0.0026 87.52);
+      --field-foreground: oklch(99.11% 0.0013 87.52);
+      --field-placeholder: oklch(70.5% 0.0026 87.52);
       --field-border: transparent; /* no border by default on form fields */
 
       /* Status Colors */
-      --success: oklch(0.7329 0.1935 150.81);
-      --success-foreground: oklch(0.1913 0 0);
+      --success: oklch(73.29% 0.194 130.85);
+      --success-foreground: oklch(21.03% 0.0059 130.85);
 
-      --warning: oklch(0.8203 0.1388 76.34);
-      --warning-foreground: oklch(0.1913 0 0);
+      --warning: oklch(82.03% 0.1392 56.38);
+      --warning-foreground: oklch(21.03% 0.0059 56.38);
 
-      --danger: oklch(0.5771 0.2152 27.325);
-      --danger-foreground: var(--snow);
+      --danger: oklch(59.4% 0.1972 4.67);
+      --danger-foreground: oklch(99.11% 0 0);
 
       /* Component Colors */
-      --segment: oklch(0.26 0 0);
-      --segment-foreground: var(--foreground);
+      --segment: oklch(39.64% 0.0013 87.52);
+      --segment-foreground: oklch(99.11% 0.0013 87.52);
 
       /* Misc Colors */
-      --border: oklch(0.2931 0 0);
-      --separator: oklch(0.2931 0 0);
-      --focus: var(--accent);
+      --border: oklch(28% 0.0013 87.52);
+      --separator: oklch(25% 0.0013 87.52);
+      --focus: oklch(89.85% 0.0199 87.52);
       --link: var(--foreground);
 
       /* Shadows */
-      --surface-shadow: 0 0 0 0 transparent inset;
+      --surface-shadow: 0 0 0 0 transparent inset; /* No shadow on dark mode */
       --overlay-shadow: 0 0 1px 0 rgba(255, 255, 255, 0.2) inset;
-      --field-shadow: 0 0 0 0 transparent inset;
+      --field-shadow: 0 0 0 0 transparent inset; /* Transparent shadow to allow ring utilities to work */
     }
   }
 }

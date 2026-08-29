@@ -36,7 +36,11 @@ export function GroupsOptions({ group, asMemberGroup }: Props) {
     <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
       <Popover.Trigger asChild>
         <Button isIconOnly variant="ghost">
-          <MaterialIcons name="more-vert" size={24} className="text-accent" />
+          <MaterialIcons
+            name="more-vert"
+            size={24}
+            className="text-foreground"
+          />
         </Button>
       </Popover.Trigger>
       <Popover.Portal>
@@ -50,30 +54,37 @@ export function GroupsOptions({ group, asMemberGroup }: Props) {
           <Popover.Close className="absolute top-3 right-3 z-50" />
           <Popover.Title>Opciones</Popover.Title>
 
-          <Button size="sm" onPress={close} isDisabled={isDisabled}>
-            <MaterialIcons
-              name="info"
-              size={20}
-              className="text-white dark:text-black"
-            />
+          <Button
+            size="sm"
+            onPress={close}
+            isDisabled={isDisabled}
+            className="flex justify-start"
+          >
+            <MaterialIcons name="info" size={20} className="text-eclipse" />
             <Button.Label>Ver Detalles</Button.Label>
           </Button>
 
-          <Button size="sm" onPress={close} isDisabled={isDisabled}>
-            <MaterialIcons
-              name="edit"
-              size={20}
-              className="text-white dark:text-black"
-            />
+          <Button
+            size="sm"
+            onPress={close}
+            isDisabled={isDisabled}
+            className="flex justify-start"
+          >
+            <MaterialIcons name="edit" size={20} className="text-eclipse" />
             <Button.Label>Editar</Button.Label>
           </Button>
 
           {asMemberGroup === undefined && (
-            <Button size="sm" onPress={toogleStatus} isDisabled={isDisabled}>
+            <Button
+              size="sm"
+              onPress={toogleStatus}
+              isDisabled={isDisabled}
+              className="flex justify-start"
+            >
               <MaterialIcons
                 name="group-off"
                 size={20}
-                className="text-white dark:text-black"
+                className="text-eclipse"
               />
               <Button.Label>
                 {group.status === "active" ? "Desactivar" : "Activar"}
@@ -91,7 +102,7 @@ export function GroupsOptions({ group, asMemberGroup }: Props) {
               <MaterialIcons
                 name="group-off"
                 size={20}
-                className="text-white dark:text-black"
+                className="text-eclipse"
               />
               <Button.Label>Desasignar Grupo</Button.Label>
             </Button>

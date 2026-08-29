@@ -108,9 +108,11 @@ export function SelectOrganizationScreen() {
               <MaterialIcons
                 name="add-business"
                 size={20}
-                className="text-white dark:text-black"
+                className="text-eclipse"
               />
-              <Button.Label>Registrar Nueva Organización</Button.Label>
+              <Button.Label className="text-eclipse">
+                Registrar Nueva Organización
+              </Button.Label>
             </Button>
           </Link>
           <Typography type="body-sm" color="muted" align="center">

@@ -58,7 +58,7 @@ export function SettingsScreen() {
                   <MaterialIcons
                     name="dark-mode"
                     size={26}
-                    className="text-accent"
+                    className="text-foreground"
                   />
                   <Label>Modo Oscuro</Label>
                 </View>
@@ -79,14 +79,14 @@ export function SettingsScreen() {
                   <MaterialIcons
                     name="lock-outline"
                     size={20}
-                    className="text-accent"
+                    className="text-foreground"
                   />
                   <Typography>Cambiar Contraseña</Typography>
                 </View>
                 <MaterialIcons
                   name="chevron-right"
                   size={20}
-                  className="text-accent"
+                  className="text-foreground"
                 />
               </PressableFeedback>
             </Link>
@@ -96,14 +96,14 @@ export function SettingsScreen() {
                   <MaterialIcons
                     name="business"
                     size={20}
-                    className="text-accent"
+                    className="text-foreground"
                   />
                   <Typography>Gestión de Organizaciones</Typography>
                 </View>
                 <MaterialIcons
                   name="chevron-right"
                   size={20}
-                  className="text-accent"
+                  className="text-foreground"
                 />
               </PressableFeedback>
             </Link>
