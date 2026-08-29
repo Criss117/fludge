@@ -35,6 +35,13 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
         isRoot: boolean;
       };
 
+      console.log({
+        ...sessionData,
+        activeOrganizationId: sessionData.activeOrganizationId as unknown as
+          string | null,
+        user: userData,
+      });
+
       return {
         ...sessionData,
         activeOrganizationId: sessionData.activeOrganizationId as unknown as
@@ -55,9 +62,7 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
 
       if (error) throw new Error(error.message, { cause: error });
 
-      await queryClient.invalidateQueries({ queryKey: session.queryKey });
-
-      return queryClient.ensureQueryData(session);
+      await queryClient.invalidateQueries(session);
     },
   });
 
@@ -71,8 +76,6 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
       if (error) throw new Error(error.message, { cause: error });
 
       await queryClient.invalidateQueries({ queryKey: session.queryKey });
-
-      return queryClient.ensureQueryData(session);
     },
   });
 
@@ -84,8 +87,6 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
       if (error) throw new Error(error.message, { cause: error });
 
       await queryClient.invalidateQueries({ queryKey: session.queryKey });
-
-      return queryClient.ensureQueryData(session);
     },
   });
   return { session, signUpEmail, signInEmail, signOut };

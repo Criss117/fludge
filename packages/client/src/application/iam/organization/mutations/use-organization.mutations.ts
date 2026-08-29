@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   findActiveOrganizationOptions,
   findAllOrganizationsOptions,
-  useFindOrganizationsQueryOptions,
+  useFindActiveOrganizationQueryOptions,
 } from "../queries/use-find-organization";
 
 export function useRegisterOrganization() {
@@ -39,7 +39,7 @@ export function useRegisterOrganization() {
 }
 
 export function useUpdateOrganization() {
-  const { findActiveOptions } = useFindOrganizationsQueryOptions();
+  const findActiveOptions = useFindActiveOrganizationQueryOptions();
   const queryClient = useQueryClient();
   const orpc = useOrpc();
 

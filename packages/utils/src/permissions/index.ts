@@ -6,7 +6,6 @@ import {
   ALL_PERMISSIONS,
   PERMISSION_DESCRIPTIONS_ES,
   PERMISSIONS,
-  RESOURCES_ES,
 } from "./data";
 
 export const permissionsSchema = z.enum(ALL_PERMISSIONS).array().min(1, {
@@ -22,21 +21,25 @@ export function permissionsFromObject(obj: AppStatement) {
 export function getPermissionDescription(permission: PermissionEnum) {
   const [resourse, action] = permission.split(":") as [RESOURCES, string];
 
-  const resDescs = PERMISSION_DESCRIPTIONS_ES[resourse];
+  const { es, ...restDescriptions } = PERMISSION_DESCRIPTIONS_ES[resourse];
 
-  const desc = resDescs[action as keyof typeof resDescs] as {
+  const desc = restDescriptions[action as keyof typeof restDescriptions] as {
+    es: string;
     title: string;
     description: string;
   };
 
   if (!desc)
     return {
-      title: action,
-      description: "Descripción no disponible",
-      target: RESOURCES_ES[resourse] as RESOURCES,
+      es,
+      description: {
+        es: "N/A",
+        title: "N/A",
+        description: "Descripción no disponible",
+      },
     };
 
-  return { ...desc, target: RESOURCES_ES[resourse] as RESOURCES };
+  return { es: es, description: desc };
 }
 
 export function getPermissionByResource(resource: RESOURCES) {

@@ -5,12 +5,12 @@ import { Chip } from "heroui-native/chip";
 import { Separator } from "heroui-native/separator";
 import { Typography } from "heroui-native/text";
 import { View } from "react-native";
-import { formatStatementEs } from "@fludge/utils/permissions/helpers";
 import { StatusChip } from "@/modules/shared/components/status-chip";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { useRouter } from "expo-router";
 import { GroupsOptions } from "./options";
 import type { GroupSummary } from "@fludge/client/application/iam/organization/queries/use-find-groups";
+import { getPermissionDescription } from "@fludge/utils/permissions/index";
 
 interface Props {
   group: GroupSummary;
@@ -30,11 +30,7 @@ export function GroupCard(props: Props) {
 }
 
 export function GroupCardBase({ group, asMemberGroup }: Props) {
-  const permissions = Object.entries(
-    formatStatementEs(group.permissions, {
-      translateKeys: true,
-    })
-  );
+  const permissions = group.permissions.map((p) => getPermissionDescription(p));
 
   return (
     <Card className="gap-y-2">
@@ -54,10 +50,10 @@ export function GroupCardBase({ group, asMemberGroup }: Props) {
         </Card.Description>
       </Card.Header>
       <Card.Body className="flex-row flex-wrap gap-2">
-        {permissions.slice(0, 3).map(([key, value]) => (
-          <Chip key={key} variant="secondary">
+        {permissions.slice(0, 3).map((p) => (
+          <Chip key={p.es + p.description.es} variant="secondary">
             <Chip.Label>
-              {key}: {value}
+              {p.es}: {p.description.es}
             </Chip.Label>
           </Chip>
         ))}

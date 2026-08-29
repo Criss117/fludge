@@ -24,7 +24,18 @@ export function findActiveOrganizationOptions(
   };
 }
 
-export function useFindOrganizationsQueryOptions() {
+export function useFindAllOrganizationsQueryOptions() {
+  const orpc = useOrpc();
+  const { session } = useAuth();
+
+  const userId = session.data?.user.id;
+
+  if (!userId) throw new Error("User or active organization not found");
+
+  return findAllOrganizationsOptions(orpc, userId);
+}
+
+export function useFindActiveOrganizationQueryOptions() {
   const orpc = useOrpc();
   const { session } = useAuth();
 
@@ -34,25 +45,17 @@ export function useFindOrganizationsQueryOptions() {
   if (!userId || !activeOrganizationId)
     throw new Error("User or active organization not found");
 
-  const findAllOptions = findAllOrganizationsOptions(orpc, userId);
-
-  const findActiveOptions = findActiveOrganizationOptions(
-    orpc,
-    userId,
-    activeOrganizationId,
-  );
-
-  return { findAllOptions, findActiveOptions };
+  return findActiveOrganizationOptions(orpc, userId, activeOrganizationId);
 }
 
 export function useFindAllOrganizations() {
-  const { findAllOptions } = useFindOrganizationsQueryOptions();
+  const findAllOptions = useFindAllOrganizationsQueryOptions();
 
   return useSuspenseQuery(findAllOptions);
 }
 
 export function useFindActiveOrganization() {
-  const { findActiveOptions } = useFindOrganizationsQueryOptions();
+  const findActiveOptions = useFindActiveOrganizationQueryOptions();
 
   return useSuspenseQuery(findActiveOptions);
 }

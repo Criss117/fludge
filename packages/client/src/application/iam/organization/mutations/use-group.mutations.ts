@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
-import { useFindOrganizationsQueryOptions } from "../queries/use-find-organization";
+import { useFindActiveOrganizationQueryOptions } from "../queries/use-find-organization";
 
 export function useCreateGroup() {
-  const { findActiveOptions } = useFindOrganizationsQueryOptions();
+  const findActiveOptions = useFindActiveOrganizationQueryOptions();
   const queryClient = useQueryClient();
   const orpc = useOrpc();
 
@@ -17,7 +17,7 @@ export function useCreateGroup() {
 }
 
 export function useUpdateGroup() {
-  const { findActiveOptions } = useFindOrganizationsQueryOptions();
+  const findActiveOptions = useFindActiveOrganizationQueryOptions();
   const queryClient = useQueryClient();
   const orpc = useOrpc();
 
@@ -31,7 +31,7 @@ export function useUpdateGroup() {
 }
 
 export function useDeleteGroup() {
-  const { findActiveOptions } = useFindOrganizationsQueryOptions();
+  const findActiveOptions = useFindActiveOrganizationQueryOptions();
   const queryClient = useQueryClient();
   const orpc = useOrpc();
 
@@ -45,7 +45,7 @@ export function useDeleteGroup() {
 }
 
 export function useAssignMembersToGroup() {
-  const { findActiveOptions } = useFindOrganizationsQueryOptions();
+  const findActiveOptions = useFindActiveOrganizationQueryOptions();
   const queryClient = useQueryClient();
   const orpc = useOrpc();
 
@@ -59,7 +59,7 @@ export function useAssignMembersToGroup() {
 }
 
 export function useRemoveMembersFromGroup() {
-  const { findActiveOptions } = useFindOrganizationsQueryOptions();
+  const findActiveOptions = useFindActiveOrganizationQueryOptions();
   const queryClient = useQueryClient();
   const orpc = useOrpc();
 

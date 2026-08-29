@@ -1,9 +1,9 @@
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useFindOrganizationsQueryOptions } from "../queries/use-find-organization";
+import { useFindActiveOrganizationQueryOptions } from "../queries/use-find-organization";
 
 export function useRegisterMember() {
-  const { findActiveOptions } = useFindOrganizationsQueryOptions();
+  const findActiveOptions = useFindActiveOrganizationQueryOptions();
   const queryClient = useQueryClient();
   const orpc = useOrpc();
 
@@ -20,7 +20,7 @@ export function useRegisterMember() {
 }
 
 export function useAssignGroupsToMember() {
-  const { findActiveOptions } = useFindOrganizationsQueryOptions();
+  const findActiveOptions = useFindActiveOrganizationQueryOptions();
   const queryClient = useQueryClient();
   const orpc = useOrpc();
 
@@ -34,7 +34,7 @@ export function useAssignGroupsToMember() {
 }
 
 export function useRemoveGroupsFromMember() {
-  const { findActiveOptions } = useFindOrganizationsQueryOptions();
+  const findActiveOptions = useFindActiveOrganizationQueryOptions();
   const queryClient = useQueryClient();
   const orpc = useOrpc();
 
