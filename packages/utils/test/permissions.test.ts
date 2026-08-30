@@ -3,11 +3,31 @@ import { ZodError } from "zod";
 import {
   getPermissionByResource,
   getPermissionDescription,
+  appStatementSchema,
   permissionsFromObject,
   Permissions,
 } from "@fludge/utils/permissions/index";
+import type { PermissionEnum } from "@fludge/utils/permissions/data";
 
 describe("Permissions", () => {
+  describe("appStatementSchema", () => {
+    it("accepts a statement with at least one valid action", () => {
+      expect(appStatementSchema.safeParse({ groups: ["read"] }).success).toBe(
+        true,
+      );
+    });
+
+    it("rejects empty statements and invalid resource actions", () => {
+      expect(appStatementSchema.safeParse({}).success).toBe(false);
+      expect(appStatementSchema.safeParse({ groups: ["fly"] }).success).toBe(
+        false,
+      );
+      expect(
+        appStatementSchema.safeParse({ organizations: ["create"] }).success,
+      ).toBe(false);
+    });
+  });
+
   describe("create", () => {
     it("adds the read permission for non-organization resources", () => {
       expect(Permissions.create(["groups:delete"]).values).toEqual([
@@ -53,7 +73,10 @@ describe("Permissions", () => {
   });
 
   describe("query helpers", () => {
-    const permissions = Permissions.reconstitute(["groups:read", "groups:delete"]);
+    const permissions = Permissions.reconstitute([
+      "groups:read",
+      "groups:delete",
+    ]);
 
     it("checks a single permission", () => {
       expect(permissions.hasPermission("groups:read")).toBe(true);
@@ -62,22 +85,22 @@ describe("Permissions", () => {
 
     it("checks all permissions from a string or array", () => {
       expect(permissions.hasAllPermissions("groups:read")).toBe(true);
-      expect(permissions.hasAllPermissions(["groups:read", "groups:delete"])).toBe(
-        true,
-      );
-      expect(permissions.hasAllPermissions(["groups:read", "members:read"])).toBe(
-        false,
-      );
+      expect(
+        permissions.hasAllPermissions(["groups:read", "groups:delete"]),
+      ).toBe(true);
+      expect(
+        permissions.hasAllPermissions(["groups:read", "members:read"]),
+      ).toBe(false);
     });
 
     it("checks whether any permission from a string or array matches", () => {
       expect(permissions.hasAnyPermission("groups:read")).toBe(true);
-      expect(permissions.hasAnyPermission(["members:read", "groups:read"])).toBe(
-        true,
-      );
-      expect(permissions.hasAnyPermission(["members:read", "members:create"])).toBe(
-        false,
-      );
+      expect(
+        permissions.hasAnyPermission(["members:read", "groups:read"]),
+      ).toBe(true);
+      expect(
+        permissions.hasAnyPermission(["members:read", "members:create"]),
+      ).toBe(false);
     });
 
     it("supports all and any check modes", () => {
@@ -90,10 +113,12 @@ describe("Permissions", () => {
 
   describe("JSON serialization", () => {
     it("round-trips values through JSON", () => {
-      const original = ["groups:read", "members:create"] as const;
+      const original = ["groups:read", "members:create"] as PermissionEnum[];
       const permissions = Permissions.reconstitute([...original]);
 
-      expect(Permissions.fromJSON(permissions.toJSON()).values).toEqual(original);
+      expect(Permissions.fromJSON(permissions.toJSON()).values).toEqual(
+        original,
+      );
     });
 
     it("rejects empty and unknown permission arrays", () => {
@@ -107,20 +132,20 @@ describe("Permissions", () => {
   describe("lookup helpers", () => {
     it("returns localized descriptions and falls back for unmapped actions", () => {
       expect(getPermissionDescription("groups:read")).toMatchObject({
-        title: "Ver grupos",
-        target: "Grupos",
+        description: { title: "Ver grupos" },
       });
       expect(getPermissionDescription("groups:assign-member")).toMatchObject({
-        title: "Asignar miembros a grupos",
-        target: "Grupos",
+        description: { title: "Asignar miembros a grupos" },
       });
     });
 
     it("returns a fallback for an unknown runtime permission", () => {
       expect(getPermissionDescription("groups:unknown" as never)).toEqual({
-        title: "unknown",
-        description: "Descripción no disponible",
-        target: "Grupos",
+        es: "Grupos",
+        description: {
+          title: "unknown",
+          description: "Descripción no disponible",
+        },
       });
     });
 
@@ -132,9 +157,10 @@ describe("Permissions", () => {
         "groups:delete",
         "groups:assign-member",
       ]);
-      expect(
-        permissionsFromObject({ groups: ["read", "delete"] }),
-      ).toEqual(["groups:read", "groups:delete"]);
+      expect(permissionsFromObject({ groups: ["read", "delete"] })).toEqual([
+        "groups:read",
+        "groups:delete",
+      ]);
     });
   });
 });

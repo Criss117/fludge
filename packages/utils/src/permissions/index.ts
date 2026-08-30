@@ -7,15 +7,31 @@ import {
   PERMISSION_DESCRIPTIONS_ES,
   PERMISSIONS,
 } from "./data";
+export { appStatementSchema } from "./data";
 
 export const permissionsSchema = z.enum(ALL_PERMISSIONS).array().min(1, {
   error: "Debe tener al menos una autorización",
 });
 
-export function permissionsFromObject(obj: AppStatement) {
-  return Object.entries(obj).flatMap(([resource, actions]) =>
-    actions.map((action) => `${resource as RESOURCES}:${action}`),
-  ) as [PermissionEnum, ...PermissionEnum[]];
+type StatementEntry = [RESOURCES, NonNullable<AppStatement[RESOURCES]>];
+
+export function permissionsFromObject(
+  obj: AppStatement,
+): [PermissionEnum, ...PermissionEnum[]] {
+  const result = (Object.entries(obj) as [RESOURCES, AppStatement[RESOURCES]][])
+    .filter(
+      (entry): entry is StatementEntry =>
+        entry[1] !== undefined && entry[1].length > 0,
+    )
+    .flatMap(([resource, actions]) =>
+      actions.map((action) => `${resource}:${action}` as PermissionEnum),
+    );
+
+  if (result.length === 0) {
+    throw new Error("permissionsFromObject: no hay permisos seleccionados");
+  }
+
+  return result as [PermissionEnum, ...PermissionEnum[]];
 }
 
 export function getPermissionDescription(permission: PermissionEnum) {
@@ -33,8 +49,7 @@ export function getPermissionDescription(permission: PermissionEnum) {
     return {
       es,
       description: {
-        es: "N/A",
-        title: "N/A",
+        title: action,
         description: "Descripción no disponible",
       },
     };

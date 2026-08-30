@@ -1,0 +1,136 @@
+import { permissionsFromObject } from "@fludge/utils/permissions/index";
+import { useCreateGroup } from "@fludge/client/application/iam/organization/mutations/use-group.mutations";
+import { useGroupForm } from "@fludge/client/presentation/iam/organization/group.form";
+import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gradual-height";
+import { CommonInputs } from "@/modules/shared/components/common-input";
+import { MaterialIcons } from "@/modules/shared/components/icons";
+import { Button, Card, useToast } from "heroui-native";
+import { useRouter } from "expo-router";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { ScrollView, View } from "react-native";
+import { GroupFormInputs } from "../components/group-form-inputs";
+
+const PADDING_BOTTOM = 20;
+const TOAST_ID = "create-group-toast";
+
+export function CreateGroupScreen() {
+  const { height } = useKeyboardGradualHeight(PADDING_BOTTOM);
+  const mutation = useCreateGroup();
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const form = useGroupForm({
+    onSubmit: ({ value }) => {
+      toast.show({
+        id: TOAST_ID,
+        isSwipeable: true,
+        label: "Creando Grupo",
+        description: "Por favor, espere...",
+        duration: "persistent",
+      });
+
+      mutation.mutate(
+        {
+          name: value.name,
+          description: value.description,
+          permissions: permissionsFromObject(value.permissions),
+        },
+        {
+          onSuccess: () => {
+            toast.show({
+              id: TOAST_ID,
+              isSwipeable: true,
+              variant: "success",
+              label: "Grupo creado",
+              description: "El grupo se creó correctamente.",
+              actionLabel: "Cerrar",
+              onActionPress: ({ hide }) => hide(),
+            });
+            router.back();
+          },
+          onError: (error) => {
+            toast.show({
+              id: TOAST_ID,
+              isSwipeable: true,
+              variant: "danger",
+              label: "Algo salió mal al crear el grupo",
+              description: error.message,
+              actionLabel: "Cerrar",
+              onActionPress: ({ hide }) => hide(),
+            });
+          },
+        }
+      );
+    },
+  });
+
+  const keyboardSpacer = useAnimatedStyle(() => {
+    const keyboardHeight = height.get();
+    return {
+      height: Math.abs(keyboardHeight),
+      marginBottom: keyboardHeight > 0 ? 0 : PADDING_BOTTOM,
+    };
+  });
+
+  return (
+    <View className="relative flex-1">
+      <ScrollView
+        className="flex-1 px-3"
+        contentContainerClassName="pb-32"
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="gap-y-8">
+          <Card className="gap-y-4">
+            <Card.Header>
+              <Card.Title>Detalles del Grupo</Card.Title>
+            </Card.Header>
+            <Card.Body className="gap-y-3">
+              <form.AppField name="name">
+                {(field) => (
+                  <field.NameField>
+                    {(props) => <GroupFormInputs.GroupNameInput {...props} />}
+                  </field.NameField>
+                )}
+              </form.AppField>
+              <form.AppField name="description">
+                {(field) => (
+                  <field.DescriptionField>
+                    {({ field: state, id, isInvalid }) => (
+                      <CommonInputs.DescriptionInput
+                        isInvalid={isInvalid}
+                        id={id}
+                        value={state.state.value}
+                        onBlur={state.handleBlur}
+                        onChangeText={state.handleChange}
+                        errors={state.state.meta.errors}
+                      />
+                    )}
+                  </field.DescriptionField>
+                )}
+              </form.AppField>
+            </Card.Body>
+          </Card>
+
+          <View>
+            <form.AppField name="permissions">
+              {(field) => (
+                <field.PermissionsField>
+                  {(props) => (
+                    <GroupFormInputs.PermissionsListInput {...props} />
+                  )}
+                </field.PermissionsField>
+              )}
+            </form.AppField>
+          </View>
+        </View>
+        <Animated.View style={keyboardSpacer} />
+      </ScrollView>
+      <View className="bg-background absolute bottom-0 w-full px-3 py-6">
+        <Button onPress={form.handleSubmit} isDisabled={mutation.isPending}>
+          <MaterialIcons name="group-add" size={20} className="text-eclipse" />
+          <Button.Label>Crear Grupo</Button.Label>
+        </Button>
+      </View>
+    </View>
+  );
+}

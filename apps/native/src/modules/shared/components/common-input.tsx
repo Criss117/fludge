@@ -6,6 +6,7 @@ import { MaterialIcons } from "./icons";
 import { FieldError } from "./field-error";
 import { useState, type ComponentProps } from "react";
 import { Button } from "heroui-native/button";
+import { TextArea } from "heroui-native/text-area";
 
 type MaterialIconName = ComponentProps<typeof MaterialIcons>["name"];
 
@@ -44,6 +45,30 @@ export function CommonInput({
           <MaterialIcons size={20} name={icon} className="text-muted" />
         </View>
       </View>
+      {isInvalid && <FieldError errors={errors} />}
+    </TextField>
+  );
+}
+
+export function DescriptionInput({
+  isInvalid,
+  id,
+  value,
+  onBlur,
+  onChangeText,
+  errors,
+}: Props) {
+  return (
+    <TextField isInvalid={isInvalid}>
+      <Label isInvalid={isInvalid}>Descripción (Opcional)</Label>
+      <TextArea
+        id={id}
+        value={value}
+        onBlur={onBlur}
+        onChangeText={onChangeText}
+        placeholder="Describe el propósito de este grupo..."
+        isInvalid={isInvalid}
+      />
       {isInvalid && <FieldError errors={errors} />}
     </TextField>
   );
@@ -94,6 +119,7 @@ function UserNameInput({
 }: Props) {
   return (
     <CommonInput
+      isRequired
       isInvalid={isInvalid}
       errors={errors}
       label="Nombre"
@@ -215,4 +241,5 @@ export const CommonInputs = {
   UserNameInput,
   PhoneInput,
   AddressInput,
+  DescriptionInput,
 };

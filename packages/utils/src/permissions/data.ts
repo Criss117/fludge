@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export const PERMISSIONS = {
   organizations: ["update"],
   groups: ["create", "read", "update", "delete", "assign-member"],
@@ -12,7 +14,9 @@ export type AppStatement = {
 
 export type RESOURCES = keyof typeof PERMISSIONS;
 
-export type ActionOf<R extends RESOURCES> = (typeof PERMISSIONS)[R][number];
+export type ActionOf<K extends keyof AppStatement> = NonNullable<
+  AppStatement[K]
+>[number];
 
 export type PermissionEnum = {
   [R in RESOURCES]: `${R}:${ActionOf<R>}`;
@@ -106,3 +110,22 @@ export const ALL_PERMISSIONS = Object.entries(PERMISSIONS).flatMap(
   ([resource, actions]) =>
     Object.values(actions).map((action) => `${resource}:${action}`),
 ) as [PermissionEnum, ...PermissionEnum[]];
+
+export const appStatementSchema = z
+  .object(
+    Object.fromEntries(
+      Object.entries(PERMISSIONS).map(([resource, actions]) => [
+        resource,
+        z
+          .enum(actions as unknown as [string, ...string[]])
+          .array()
+          .optional()
+          .default([]),
+      ]),
+    ),
+  )
+  .refine(
+    (statement) =>
+      Object.values(statement).some((actions) => actions.length > 0),
+    { error: "Debe tener al menos una autorización" },
+  ) as z.ZodType<AppStatement, AppStatement>;
