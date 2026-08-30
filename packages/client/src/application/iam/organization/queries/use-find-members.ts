@@ -26,38 +26,79 @@ export function useFindMembersQueryOptions() {
   return { findAllOptions };
 }
 
-type Filters = {
-  query: string;
-  byGroupId?: string;
+type MemberFilter = {
+  id: string;
+  role: string;
+  user: {
+    name: string;
+    email: string;
+  };
 };
 
-export function useFindAllMembers(filters?: Filters) {
+export type MemberFilters = {
+  query?: string;
+  byGroupId?: string;
+  excludeByGroupId?: string;
+  excludeOwners?: boolean;
+};
+
+type GroupMemberReference = {
+  groupId: string;
+  memberId: string;
+};
+
+export function filterMembers<T extends MemberFilter>(
+  data: T[],
+  groupMembers: GroupMemberReference[],
+  filters: MemberFilters = {},
+) {
+  if (filters.byGroupId && filters.excludeByGroupId) {
+    throw new Error("byGroupId and excludeByGroupId cannot be used together");
+  }
+
+  const query = filters.query?.toLowerCase();
+  const memberIds = new Set(
+    groupMembers
+      .filter((groupMember) =>
+        filters.byGroupId || filters.excludeByGroupId
+          ? groupMember.groupId ===
+            (filters.byGroupId ?? filters.excludeByGroupId)
+          : false,
+      )
+      .map((groupMember) => groupMember.memberId),
+  );
+
+  return data.filter((member) => {
+    const matchesQuery =
+      !query ||
+      member.user.name.toLowerCase().includes(query) ||
+      member.user.email.toLowerCase().includes(query);
+    const matchesGroup = filters.byGroupId
+      ? memberIds.has(member.id)
+      : !filters.excludeByGroupId || !memberIds.has(member.id);
+    const isAllowedRole = !filters.excludeOwners || member.role !== "owner";
+
+    return matchesQuery && matchesGroup && isAllowedRole;
+  });
+}
+
+export function useFindAllMembers(filters?: MemberFilters) {
   const { findAllOptions } = useFindMembersQueryOptions();
 
   const { data, ...rest } = useSuspenseQuery(findAllOptions);
   const { data: activeOrganization } = useFindActiveOrganization();
 
-  const members = useMemo(() => {
-    if (!filters?.query && !filters?.byGroupId) return data;
-
-    const query = filters?.query;
-
-    const filterByQuery = query
-      ? data.filter(
-          (d) =>
-            d.user.name.toLowerCase().includes(query.toLowerCase()) ||
-            d.user.email.toLowerCase().includes(query.toLowerCase()),
-        )
-      : data;
-
-    if (!filters?.byGroupId) return filterByQuery;
-
-    const gms = activeOrganization.groupMembers.filter(
-      (gm) => gm.groupId === filters.byGroupId,
-    );
-
-    return filterByQuery.filter((d) => gms.some((gm) => gm.memberId === d.id));
-  }, [data, filters?.query, filters?.byGroupId]);
+  const members = useMemo(
+    () => filterMembers(data, activeOrganization.groupMembers, filters),
+    [
+      data,
+      activeOrganization.groupMembers,
+      filters?.query,
+      filters?.byGroupId,
+      filters?.excludeByGroupId,
+      filters?.excludeOwners,
+    ],
+  );
 
   return { data: members, ...rest };
 }
