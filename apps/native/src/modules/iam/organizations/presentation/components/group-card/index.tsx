@@ -25,7 +25,14 @@ export function GroupCard(props: Props) {
   const router = useRouter();
 
   return (
-    <PressableFeedback>
+    <PressableFeedback
+      onPress={() => {
+        router.push({
+          pathname: "/(private)/dashboard/groups/[groupid]",
+          params: { groupid: props.group.id },
+        });
+      }}
+    >
       <GroupCardBase {...props} />
     </PressableFeedback>
   );
