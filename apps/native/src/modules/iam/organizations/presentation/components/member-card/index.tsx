@@ -1,6 +1,7 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useRouter } from "expo-router";
 import { Avatar } from "heroui-native/avatar";
+import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import { Chip } from "heroui-native/chip";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
@@ -14,13 +15,15 @@ import { MemberOptions } from "./options";
 import type { MemberSummary } from "@fludge/client/application/iam/organization/queries/use-find-members";
 import { UserAvatar } from "@/modules/shared/components/user-avatar";
 
-interface Props {
+export interface MemberCardProps {
   member: MemberSummary;
+  hideOptions?: boolean;
+  onRemove?: () => void;
 }
 
 export const CARD_HEIGHT = 152;
 
-export function MemberCard({ member }: Props) {
+export function MemberCard({ member }: MemberCardProps) {
   const isOwner = member.role === "owner";
 
   if (isOwner) return <MemberCardBase member={member} />;
@@ -28,7 +31,11 @@ export function MemberCard({ member }: Props) {
   return <MemberCardRedirect member={member} />;
 }
 
-export function MemberCardBase({ member }: Props) {
+export function MemberCardBase({
+  member,
+  hideOptions,
+  onRemove,
+}: MemberCardProps) {
   const isOwner = member.role === "owner";
 
   return (
@@ -39,7 +46,16 @@ export function MemberCardBase({ member }: Props) {
           <Card.Title className="line-clamp-1">{member.user.name}</Card.Title>
           <Card.Description>{member.user.email}</Card.Description>
         </View>
-        {!isOwner && <MemberOptions member={member} />}
+        {!isOwner && !hideOptions && <MemberOptions member={member} />}
+        {!isOwner && onRemove && (
+          <Button isIconOnly variant="ghost" onPress={onRemove}>
+            <MaterialIcons
+              name="delete-outline"
+              size={22}
+              className="text-danger"
+            />
+          </Button>
+        )}
       </Card.Header>
       <Card.Body>
         <View className="flex flex-row gap-x-2">
@@ -67,7 +83,7 @@ export function MemberCardBase({ member }: Props) {
   );
 }
 
-export function MemberCardRedirect({ member }: Props) {
+export function MemberCardRedirect({ member }: MemberCardProps) {
   const router = useRouter();
 
   return (
