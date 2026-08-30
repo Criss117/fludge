@@ -31,7 +31,11 @@ export function MemberCard({ member }: MemberCardProps) {
   return <MemberCardRedirect member={member} />;
 }
 
-export function MemberCardBase({ member, hideOptions, onRemove }: MemberCardProps) {
+export function MemberCardBase({
+  member,
+  hideOptions,
+  onRemove,
+}: MemberCardProps) {
   const isOwner = member.role === "owner";
 
   return (
@@ -45,7 +49,11 @@ export function MemberCardBase({ member, hideOptions, onRemove }: MemberCardProp
         {!isOwner && !hideOptions && <MemberOptions member={member} />}
         {!isOwner && onRemove && (
           <Button isIconOnly variant="ghost" onPress={onRemove}>
-            <MaterialIcons name="delete-outline" size={22} className="text-danger" />
+            <MaterialIcons
+              name="delete-outline"
+              size={22}
+              className="text-danger"
+            />
           </Button>
         )}
       </Card.Header>

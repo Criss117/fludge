@@ -27,7 +27,7 @@ export function SelectableMemberCard({
       <View
         className={cn(
           "relative rounded-3xl border",
-          isSelected ? "border-foreground" : "border-transparent",
+          isSelected ? "border-foreground" : "border-transparent"
         )}
       >
         <Checkbox
