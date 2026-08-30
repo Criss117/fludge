@@ -6,6 +6,7 @@ import { Card } from "heroui-native/card";
 import { ScrollView, View } from "react-native";
 import { MemberGroupsSection } from "../sections/member-groups.section";
 import type { MemberSummary } from "@fludge/client/application/iam/organization/queries/use-find-members";
+import { UserAvatar } from "@/modules/shared/components/user-avatar";
 
 interface Props {
   member: MemberSummary;
@@ -21,16 +22,13 @@ export function MemberScreen({ member }: Props) {
       >
         <Card>
           <Card.Header className="flex items-center justify-center">
-            <Avatar size="lg">
-              <Avatar.Fallback>{member.user.name.charAt(0)}</Avatar.Fallback>
-              {member.user.image && (
-                <Avatar.Image
-                  source={{
-                    uri: member.user.image,
-                  }}
-                />
-              )}
-            </Avatar>
+            <UserAvatar
+              name={member.user.name}
+              image={member.user.image}
+              avatarProps={{
+                size: "lg",
+              }}
+            />
             <Card.Title className="max-w-2/3 text-center text-2xl font-bold text-balance">
               {member.user.name}
             </Card.Title>

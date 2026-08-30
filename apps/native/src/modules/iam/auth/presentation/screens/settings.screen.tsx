@@ -1,4 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
+import { UserAvatar } from "@/modules/shared/components/user-avatar";
 import { useAppTheme } from "@/modules/shared/context/app-theme-context";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { Link } from "expo-router";
@@ -25,18 +26,13 @@ export function SettingsScreen() {
       >
         <Card>
           <Card.Header className="flex items-center justify-center">
-            <Avatar size="lg">
-              <Avatar.Fallback>
-                {sessionData.user.name.charAt(0)}
-              </Avatar.Fallback>
-              {sessionData.user.image && (
-                <Avatar.Image
-                  source={{
-                    uri: sessionData.user.image,
-                  }}
-                />
-              )}
-            </Avatar>
+            <UserAvatar
+              name={sessionData.user.name}
+              image={sessionData.user.image}
+              avatarProps={{
+                size: "lg",
+              }}
+            />
             <Card.Title className="max-w-2/3 text-center text-2xl font-bold text-balance">
               {sessionData.user.name}
             </Card.Title>

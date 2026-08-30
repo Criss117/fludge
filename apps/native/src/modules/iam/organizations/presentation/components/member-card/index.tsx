@@ -12,6 +12,7 @@ import { View } from "react-native";
 import { StatusChip } from "@/modules/shared/components/status-chip";
 import { MemberOptions } from "./options";
 import type { MemberSummary } from "@fludge/client/application/iam/organization/queries/use-find-members";
+import { UserAvatar } from "@/modules/shared/components/user-avatar";
 
 interface Props {
   member: MemberSummary;
@@ -33,11 +34,7 @@ export function MemberCardBase({ member }: Props) {
   return (
     <Card className="gap-y-2" style={{ height: CARD_HEIGHT }}>
       <Card.Header className="flex flex-row gap-x-2">
-        <Avatar>
-          <Avatar.Fallback>
-            {member.user.name.charAt(0).toUpperCase()}
-          </Avatar.Fallback>
-        </Avatar>
+        <UserAvatar name={member.user.name} image={member.user.image} />
         <View className="flex-1">
           <Card.Title className="line-clamp-1">{member.user.name}</Card.Title>
           <Card.Description>{member.user.email}</Card.Description>
@@ -91,9 +88,7 @@ export function MemberCardSkeleton() {
   return (
     <Card className="gap-y-2" style={{ height: CARD_HEIGHT }}>
       <Card.Header className="flex flex-row gap-x-2">
-        <Avatar>
-          <Avatar.Fallback>FG</Avatar.Fallback>
-        </Avatar>
+        <UserAvatar name="F" />
         <SkeletonGroup className="flex-1 gap-y-0.5">
           <SkeletonGroup.Item className="h-7 w-3/4 rounded-full" />
           <SkeletonGroup.Item className="h-6 w-1/2 rounded-full" />

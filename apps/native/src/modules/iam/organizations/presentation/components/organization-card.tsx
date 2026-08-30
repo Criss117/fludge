@@ -6,6 +6,7 @@ import { Typography } from "heroui-native/text";
 import { View } from "react-native";
 import { Chip } from "heroui-native/chip";
 import type { OrganizationSummary } from "@fludge/client/application/iam/organization/queries/use-find-organization";
+import { UserAvatar } from "@/modules/shared/components/user-avatar";
 
 interface Props {
   onPress: (organizationId: string) => void;
@@ -25,11 +26,7 @@ export function OrganizationCard({ organization, isPending, onPress }: Props) {
         className="flex flex-row items-start gap-x-2"
         style={{ height: CARD_HEIGHT }}
       >
-        <Avatar>
-          <Avatar.Fallback>
-            {organization.name.charAt(0).toUpperCase()}
-          </Avatar.Fallback>
-        </Avatar>
+        <UserAvatar name={organization.name} />
         <View className="flex-1 flex-row items-center gap-x-2">
           <View className="flex-1">
             <Card.Header>
