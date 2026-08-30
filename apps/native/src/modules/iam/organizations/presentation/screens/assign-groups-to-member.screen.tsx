@@ -11,21 +11,31 @@ import { useToast } from "heroui-native";
 import { useAssignGroupsToMember } from "@fludge/client/application/iam/organization/mutations/use-member.mutations";
 import { useRouter } from "expo-router";
 import { Typography } from "heroui-native/text";
+import { SearchInput } from "@/modules/shared/components/search-input";
+import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gradual-height";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
 
 interface Props {
   memberId: string;
 }
 
 const ITEM_SEPARATOR_HEIGHT = 16;
+const PADDING_BOTTOM = 16;
 
 const TOAST_ID = "assign-groups-to-member-toast";
 
 export function AssignGroupsToMember({ memberId }: Props) {
-  const { toast } = useToast();
   const router = useRouter();
   const assignGroupsToMember = useAssignGroupsToMember();
+
+  const { height } = useKeyboardGradualHeight(PADDING_BOTTOM);
+  const { toast } = useToast();
+
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+  const [query, setQuery] = useState("");
+
   const { data: groups } = useFindAllGroups({
+    query,
     byMember: {
       memberId,
       type: "exclude",
@@ -85,8 +95,21 @@ export function AssignGroupsToMember({ memberId }: Props) {
     );
   };
 
+  const fakeView = useAnimatedStyle(() => {
+    const keyboardHeight = height.get();
+
+    return {
+      height: Math.abs(keyboardHeight),
+    };
+  });
+
   return (
-    <View className="flex-1 px-3">
+    <View className="flex-1 gap-y-4 px-3">
+      <SearchInput
+        query={query}
+        setQuery={setQuery}
+        placeholder="Buscar Grupos"
+      />
       <FlatList
         data={groups}
         className="flex-1 pb-1"
@@ -128,8 +151,12 @@ export function AssignGroupsToMember({ memberId }: Props) {
             size={20}
             className="text-eclipse"
           />
-          <Button.Label>Asignar Grupos</Button.Label>
+          <Button.Label>
+            Asignar {selectedGroups.length}{" "}
+            {selectedGroups.length === 1 ? "Grupo" : "Grupos"}
+          </Button.Label>
         </Button>
+        <Animated.View style={fakeView} />
       </View>
     </View>
   );

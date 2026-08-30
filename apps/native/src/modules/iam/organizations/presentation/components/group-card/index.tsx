@@ -11,7 +11,7 @@ import { useRouter } from "expo-router";
 import { GroupsOptions } from "./options";
 import type { GroupSummary } from "@fludge/client/application/iam/organization/queries/use-find-groups";
 import { getPermissionDescription } from "@fludge/utils/permissions/index";
-import { cn } from "heroui-native";
+import { Checkbox, cn } from "heroui-native";
 
 interface Props {
   group: GroupSummary;
@@ -45,14 +45,22 @@ export function SelectableGroupCard({
 }: SelectableGroupCardProps) {
   return (
     <PressableFeedback
-      className={cn(
-        "rounded-3xl border",
-        isSelected ? "border-accent" : "border-transparent"
-      )}
       onPress={() => onPress?.(props.group)}
       onLongPress={() => onLongPress?.(props.group)}
     >
-      <GroupCardBase {...props} hideOptions />
+      <View
+        className={cn(
+          "relative rounded-3xl border",
+          isSelected ? "border-foreground" : "border-transparent"
+        )}
+      >
+        <Checkbox
+          onPress={() => onPress?.(props.group)}
+          className="bg-accent absolute top-4 right-4 z-50"
+          isSelected={isSelected}
+        />
+        <GroupCardBase {...props} hideOptions />
+      </View>
     </PressableFeedback>
   );
 }

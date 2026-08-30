@@ -49,8 +49,9 @@ export function getPermissionDescription(permission: PermissionEnum) {
     return {
       es,
       description: {
+        es: "N/A",
         title: action,
-        description: "Descripción no disponible",
+        description: "N/A",
       },
     };
 

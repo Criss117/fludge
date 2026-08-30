@@ -2,8 +2,6 @@ import { Typography } from "heroui-native/text";
 import { View } from "react-native";
 import { GroupCardBase } from "../components/group-card";
 import { useState } from "react";
-import { Input } from "heroui-native/input";
-import { MaterialIcons } from "@/modules/shared/components/icons";
 import { Dialog } from "heroui-native/dialog";
 import { Button } from "heroui-native/button";
 import { useRemoveGroupsFromMember } from "@fludge/client/application/iam/organization/mutations/use-member.mutations";
@@ -11,6 +9,7 @@ import {
   useFindAllGroups,
   type GroupSummary,
 } from "@fludge/client/application/iam/organization/queries/use-find-groups";
+import { SearchInput } from "@/modules/shared/components/search-input";
 
 interface Props {
   memberId: string;
@@ -61,17 +60,11 @@ export function MemberGroupsSection({ memberId }: Props) {
           Roles y permisos heredados
         </Typography.Paragraph>
       </View>
-      <View className="relative w-full flex-row items-center">
-        <Input
-          value={query}
-          onChangeText={setQuery}
-          className="flex-1 px-10"
-          placeholder="Buscar grupos"
-        />
-        <View className="absolute left-4" pointerEvents="none">
-          <MaterialIcons size={20} name="search" className="text-muted" />
-        </View>
-      </View>
+      <SearchInput
+        query={query}
+        setQuery={setQuery}
+        placeholder="Buscar Grupos"
+      />
 
       {groups.length === 0 && (
         <View className="flex-1 items-center justify-center">
