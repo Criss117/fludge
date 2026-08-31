@@ -6,7 +6,7 @@ import {
 } from "@fludge/db/schema/catalog.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { ORPCError } from "@orpc/server";
-import { eq, getColumns, sql } from "drizzle-orm";
+import { desc, eq, getColumns, sql } from "drizzle-orm";
 
 export class FindAllProductsQuery {
   constructor(private readonly db: DatabaseService) {}
@@ -28,7 +28,7 @@ export class FindAllProductsQuery {
           eq(productPresentation.productId, product.id),
         )
         .where(eq(product.organizationId, organizationId))
-        .orderBy(product.createdAt)
+        .orderBy(desc(product.createdAt))
         .groupBy(product.id),
     );
 

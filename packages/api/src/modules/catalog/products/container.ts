@@ -38,4 +38,11 @@ export const productContainer = {
   queries: {
     findAll: findAllProductsQuery,
   },
+  repositories: {
+    productRepository,
+  },
+  services: {
+    productUniquenessValidator,
+    productRepository,
+  },
 };

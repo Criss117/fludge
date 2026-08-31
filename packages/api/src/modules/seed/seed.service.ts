@@ -20,9 +20,15 @@ import { Member } from "../iam/organization/domain/entities/member.entity";
 import { GroupMember } from "../iam/organization/domain/entities/group-member.entity";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { ALL_PERMISSIONS } from "@fludge/utils/permissions/data";
-import { category } from "@fludge/db/schema/catalog.schema";
+import {
+  category,
+  product,
+  productPresentation,
+} from "@fludge/db/schema/catalog.schema";
 import { Category } from "../catalog/categories/domain/entities/category.entity";
 import { and, eq } from "drizzle-orm";
+import { Product } from "../catalog/products/domain/entities/product.entity";
+import type { ProductRepository } from "../catalog/products/infrastructure/repositories/product.repository";
 
 export const seedUsers = z.object({
   totalRoots: z.number().optional().default(2),
@@ -39,10 +45,16 @@ export const seedCategories = z.object({
   categoriesPerOrganization: z.number().optional().default(10),
 });
 
+export const seedProducts = z.object({
+  productsPerOrganization: z.number().optional().default(10),
+  presentationsPerProduct: z.number().optional().default(2),
+});
+
 export const seedAll = z.object({
   users: seedUsers,
   organizations: seedOrganizations,
   categories: seedCategories,
+  products: seedProducts,
 });
 
 function chunkMembersForOrganizations<T>(
@@ -82,10 +94,13 @@ export class SeedService {
     private readonly db: DatabaseService,
     private readonly authService: AuthService,
     private readonly organizationRepository: OrganizationRepository,
+    private readonly productRepository: ProductRepository,
   ) {}
 
   public async clear() {
     const transaction = this.db.transaction(async (tx) => {
+      await tx.delete(productPresentation);
+      await tx.delete(product);
       await tx.delete(category);
       await tx.delete(groupMember);
       await tx.delete(member);
@@ -325,6 +340,115 @@ export class SeedService {
     return categories.map((c) => c.values);
   }
 
+  public async seedProducts(values: z.infer<typeof seedProducts>) {
+    const [allOrganizations, errFinding] = await tryCatch(
+      this.db
+        .select({
+          id: organization.id,
+          owner: member.id,
+        })
+        .from(organization)
+        .innerJoin(
+          member,
+          and(
+            eq(member.organizationId, organization.id),
+            eq(member.role, "owner"),
+          ),
+        ),
+    );
+
+    if (errFinding)
+      throw new ORPCError("INTERNAL_SERVER_ERROR", {
+        message: "Error al obtener las categorías",
+        cause: errFinding.cause,
+      });
+
+    const [allCategories, errCategories] = await tryCatch(
+      this.db.select().from(category),
+    );
+
+    if (errCategories)
+      throw new ORPCError("INTERNAL_SERVER_ERROR", {
+        message: "Error al obtener las categorías",
+        cause: errCategories.cause,
+      });
+
+    const products = allOrganizations
+      .map((org, index1) => {
+        const categories = allCategories.filter(
+          (c) => c.organizationId === org.id,
+        );
+
+        const products = Array.from({
+          length: values.productsPerOrganization,
+        })
+          .map((_, index2) => {
+            const category = faker.helpers.arrayElement(categories);
+            const productName =
+              faker.commerce.productName() + `${index1}-${index2}`;
+
+            return Product.create({
+              name: productName,
+              description: faker.lorem.sentence(),
+              organizationId: org.id,
+              createdBy: org.owner,
+              allowNegativeStock: false,
+              stock: 10,
+              minStock: 1,
+              categoryId: category.id,
+              presentations: Array.from({
+                length: values.presentationsPerProduct,
+              }).map((_, index3) => {
+                const pricePurchase = faker.number.int({
+                  min: 0,
+                  max: 100000,
+                });
+
+                return {
+                  name:
+                    faker.commerce.productName() +
+                    `${index1}-${index2}-${index3}`,
+                  searchName:
+                    faker.commerce.productName() +
+                    `${index1}-${index2}-${index3}`,
+                  priceSale: Number((pricePurchase * 1.25).toFixed()),
+                  pricePurchase: pricePurchase,
+                  priceWholesale: Number((pricePurchase * 1.18).toFixed()),
+                  conversionFactor: faker.number.int({ min: 1, max: 100 }),
+                  createdBy: org.owner,
+                  barcode:
+                    faker.lorem.word(10) +
+                    "-" +
+                    index1 +
+                    "-" +
+                    index2 +
+                    "-" +
+                    index3,
+                  organizationId: org.id,
+                  productName: productName,
+                };
+              }),
+            });
+          })
+          .filter(Boolean);
+
+        return products;
+      })
+      .flat();
+
+    for (const v of products) {
+      const [, errInsert] = await tryCatch(this.productRepository.save(v));
+
+      if (errInsert)
+        throw new ORPCError("INTERNAL_SERVER_ERROR", {
+          message: "Error al guardar el producto",
+          cause: errInsert.cause,
+        });
+    }
+
+    return products.map((p) => p.values);
+  }
+
   public async seedAll(headers: Headers, values: z.infer<typeof seedAll>) {
     await this.clear();
 
@@ -334,9 +458,12 @@ export class SeedService {
 
     const categories = await this.seedCategories(values.categories);
 
+    const products = await this.seedProducts(values.products);
+
     return {
       organizations,
       categories,
+      products,
     };
   }
 }

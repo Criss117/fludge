@@ -1,6 +1,12 @@
 import { devOnlyProcedure } from "../..";
 import { seedContainer } from "./container";
-import { seedAll, seedOrganizations, seedUsers } from "./seed.service";
+import {
+  seedAll,
+  seedCategories,
+  seedOrganizations,
+  seedProducts,
+  seedUsers,
+} from "./seed.service";
 
 const TAGS = ["Seed"] as const;
 
@@ -34,6 +40,24 @@ export const seedRouter = {
     .handler(({ input }) =>
       seedContainer.services.seed.seedOrganizations(input),
     ),
+
+  seedCategories: devOnlyProcedure
+    .route({
+      method: "POST",
+      path: "/seed/categories",
+      tags: TAGS,
+    })
+    .input(seedCategories)
+    .handler(({ input }) => seedContainer.services.seed.seedCategories(input)),
+
+  seedProducts: devOnlyProcedure
+    .route({
+      method: "POST",
+      path: "/seed/products",
+      tags: TAGS,
+    })
+    .input(seedProducts)
+    .handler(({ input }) => seedContainer.services.seed.seedProducts(input)),
 
   seedAll: devOnlyProcedure
     .route({
