@@ -4,6 +4,7 @@ export const PERMISSIONS = {
   organizations: ["update"],
   groups: ["create", "read", "update", "delete", "assign-member"],
   members: ["create", "read", "delete", "assign-group"],
+  categories: ["create", "read", "update", "delete"],
 } as const;
 
 export type AppStatement = {
@@ -102,6 +103,30 @@ export const PERMISSION_DESCRIPTIONS_ES = {
       title: "Asignar grupos a miembros",
       description:
         "Permite vincular directamente a un miembro con uno o varios grupos disponibles.",
+    },
+  },
+  categories: {
+    es: "Categorías",
+    read: {
+      es: "Ver",
+      title: "Ver categorías",
+      description: "Permite consultar la lista de categorías.",
+    },
+    create: {
+      es: "Crear",
+      title: "Crear categorías",
+      description: "Permite registrar nuevas categorías en la plataforma.",
+    },
+    delete: {
+      es: "Eliminar",
+      title: "Eliminar categorías",
+      description: "Permite borrar categorías permanentemente del sistema.",
+    },
+    update: {
+      es: "Editar",
+      title: "Editar categorías",
+      description:
+        "Permite modificar el nombre, la descripción y los datos generales de las categorías existentes.",
     },
   },
 } as const satisfies PermissionDescriptions;

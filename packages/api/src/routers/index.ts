@@ -6,13 +6,16 @@ import { groupRouter } from "../modules/iam/organization/infrastructure/http/gro
 import { memberRouter } from "../modules/iam/organization/infrastructure/http/member.router";
 import { seedRouter } from "../modules/seed/seed.router";
 import { publicProcedure } from "..";
+import { categoryRouter } from "../modules/catalog/categories/infrastructure/http/category.router";
 
 export const appRouter = {
   organization: organizationRouter,
   group: groupRouter,
   auth: authRouter,
   member: memberRouter,
+  category: categoryRouter,
   seed: seedRouter,
+
   ping: publicProcedure.handler(() => {
     return {
       message: "pong",
