@@ -1,7 +1,7 @@
+import { useMemo } from "react";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
 import { useFindActiveOrganization } from "./use-find-organization";
 
 type ORPC = ReturnType<typeof useOrpc>;
@@ -26,61 +26,13 @@ export function useFindMembersQueryOptions() {
   return { findAllOptions };
 }
 
-type MemberFilter = {
-  id: string;
-  role: string;
-  user: {
-    name: string;
-    email: string;
+type MemberFilters = {
+  query?: string;
+  byGroup?: {
+    groupId: string;
+    type: "include" | "exclude";
   };
 };
-
-export type MemberFilters = {
-  query?: string;
-  byGroupId?: string;
-  excludeByGroupId?: string;
-  excludeOwners?: boolean;
-};
-
-type GroupMemberReference = {
-  groupId: string;
-  memberId: string;
-};
-
-export function filterMembers<T extends MemberFilter>(
-  data: T[],
-  groupMembers: GroupMemberReference[],
-  filters: MemberFilters = {},
-) {
-  if (filters.byGroupId && filters.excludeByGroupId) {
-    throw new Error("byGroupId and excludeByGroupId cannot be used together");
-  }
-
-  const query = filters.query?.toLowerCase();
-  const memberIds = new Set(
-    groupMembers
-      .filter((groupMember) =>
-        filters.byGroupId || filters.excludeByGroupId
-          ? groupMember.groupId ===
-            (filters.byGroupId ?? filters.excludeByGroupId)
-          : false,
-      )
-      .map((groupMember) => groupMember.memberId),
-  );
-
-  return data.filter((member) => {
-    const matchesQuery =
-      !query ||
-      member.user.name.toLowerCase().includes(query) ||
-      member.user.email.toLowerCase().includes(query);
-    const matchesGroup = filters.byGroupId
-      ? memberIds.has(member.id)
-      : !filters.excludeByGroupId || !memberIds.has(member.id);
-    const isAllowedRole = !filters.excludeOwners || member.role !== "owner";
-
-    return matchesQuery && matchesGroup && isAllowedRole;
-  });
-}
 
 export function useFindAllMembers(filters?: MemberFilters) {
   const { findAllOptions } = useFindMembersQueryOptions();
@@ -88,17 +40,40 @@ export function useFindAllMembers(filters?: MemberFilters) {
   const { data, ...rest } = useSuspenseQuery(findAllOptions);
   const { data: activeOrganization } = useFindActiveOrganization();
 
-  const members = useMemo(
-    () => filterMembers(data, activeOrganization.groupMembers, filters),
-    [
-      data,
-      activeOrganization.groupMembers,
-      filters?.query,
-      filters?.byGroupId,
-      filters?.excludeByGroupId,
-      filters?.excludeOwners,
-    ],
-  );
+  const members = useMemo(() => {
+    const membersWithGroups = data.map((m) => ({
+      ...m,
+      groups: activeOrganization.groupMembers
+        .filter((gm) => gm.memberId === m.id)
+        .map((gm) => gm.groupId),
+    }));
+
+    const query = filters?.query;
+    const byGroup = filters?.byGroup;
+
+    if (!query && !byGroup) return membersWithGroups;
+
+    const filterByquery = query
+      ? membersWithGroups.filter(
+          (d) =>
+            d.user.name.toLowerCase().includes(query.toLowerCase()) ||
+            d.user.email.toLowerCase().includes(query.toLowerCase()) ||
+            d.user.phone.toLowerCase().includes(query.toLowerCase()),
+        )
+      : membersWithGroups;
+
+    if (!byGroup) return filterByquery;
+
+    const filterByGroupId = byGroup
+      ? filterByquery.filter((d) => {
+          const include = d.groups.includes(byGroup.groupId);
+
+          return byGroup.type === "include" ? include : !include;
+        })
+      : filterByquery;
+
+    return filterByGroupId;
+  }, [data, activeOrganization.groupMembers, filters?.query, filters?.byGroup]);
 
   return { data: members, ...rest };
 }

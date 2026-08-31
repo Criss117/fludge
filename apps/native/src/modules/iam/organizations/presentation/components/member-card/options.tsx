@@ -8,12 +8,17 @@ import { useState } from "react";
 
 interface Props {
   member: MemberSummary;
+  asGroupMember?: {
+    onPress: (memberId: string, close: () => void) => void;
+  };
 }
 
-export function MemberOptions({ member }: Props) {
+export function MemberOptions({ member, asGroupMember }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const close = () => setIsOpen(false);
+
+  const onPressAsGroupMember = () => asGroupMember?.onPress(member.id, close);
 
   return (
     <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
@@ -51,6 +56,17 @@ export function MemberOptions({ member }: Props) {
           </Link>
 
           <Separator />
+
+          {asGroupMember && (
+            <Button size="sm" onPress={onPressAsGroupMember}>
+              <MaterialIcons
+                name="group-off"
+                size={20}
+                className="text-eclipse"
+              />
+              <Button.Label>Desasignar Grupo</Button.Label>
+            </Button>
+          )}
         </Popover.Content>
       </Popover.Portal>
     </Popover>

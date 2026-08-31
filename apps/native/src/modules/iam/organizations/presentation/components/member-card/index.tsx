@@ -1,7 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useRouter } from "expo-router";
-import { Avatar } from "heroui-native/avatar";
-import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import { Chip } from "heroui-native/chip";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
@@ -14,27 +12,65 @@ import { StatusChip } from "@/modules/shared/components/status-chip";
 import { MemberOptions } from "./options";
 import type { MemberSummary } from "@fludge/client/application/iam/organization/queries/use-find-members";
 import { UserAvatar } from "@/modules/shared/components/user-avatar";
+import { cn } from "heroui-native";
+import { Checkbox } from "heroui-native/checkbox";
 
 export interface MemberCardProps {
   member: MemberSummary;
   hideOptions?: boolean;
-  onRemove?: () => void;
+  asGroupMember?: {
+    onPress: (memberId: string, close: () => void) => void;
+  };
+}
+
+interface SelectableMemberCardProps extends MemberCardProps {
+  onPress?: (group: MemberSummary) => void;
+  onLongPress?: (group: MemberSummary) => void;
+  isSelected?: boolean;
 }
 
 export const CARD_HEIGHT = 152;
 
-export function MemberCard({ member }: MemberCardProps) {
-  const isOwner = member.role === "owner";
+export function MemberCard(props: MemberCardProps) {
+  const isOwner = props.member.role === "owner";
 
-  if (isOwner) return <MemberCardBase member={member} />;
+  if (isOwner) return <MemberCardBase {...props} />;
 
-  return <MemberCardRedirect member={member} />;
+  return <MemberCardRedirect {...props} />;
+}
+
+export function SelectableMemberCard({
+  onLongPress,
+  onPress,
+  isSelected,
+  ...props
+}: SelectableMemberCardProps) {
+  return (
+    <PressableFeedback
+      onPress={() => onPress?.(props.member)}
+      onLongPress={() => onLongPress?.(props.member)}
+    >
+      <View
+        className={cn(
+          "relative rounded-3xl border",
+          isSelected ? "border-foreground" : "border-transparent"
+        )}
+      >
+        <Checkbox
+          onPress={() => onPress?.(props.member)}
+          className="bg-accent absolute top-4 right-4 z-50"
+          isSelected={isSelected}
+        />
+        <MemberCardBase {...props} hideOptions />
+      </View>
+    </PressableFeedback>
+  );
 }
 
 export function MemberCardBase({
   member,
   hideOptions,
-  onRemove,
+  asGroupMember,
 }: MemberCardProps) {
   const isOwner = member.role === "owner";
 
@@ -46,15 +82,8 @@ export function MemberCardBase({
           <Card.Title className="line-clamp-1">{member.user.name}</Card.Title>
           <Card.Description>{member.user.email}</Card.Description>
         </View>
-        {!isOwner && !hideOptions && <MemberOptions member={member} />}
-        {!isOwner && onRemove && (
-          <Button isIconOnly variant="ghost" onPress={onRemove}>
-            <MaterialIcons
-              name="delete-outline"
-              size={22}
-              className="text-danger"
-            />
-          </Button>
+        {!isOwner && !hideOptions && (
+          <MemberOptions member={member} asGroupMember={asGroupMember} />
         )}
       </Card.Header>
       <Card.Body>
