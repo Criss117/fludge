@@ -5,6 +5,7 @@ import {
   getPermissionDescription,
   appStatementSchema,
   permissionsFromObject,
+  permissionsToObject,
   Permissions,
 } from "@fludge/utils/permissions/index";
 import type { PermissionEnum } from "@fludge/utils/permissions/data";
@@ -143,8 +144,9 @@ describe("Permissions", () => {
       expect(getPermissionDescription("groups:unknown" as never)).toEqual({
         es: "Grupos",
         description: {
+          es: "N/A",
           title: "unknown",
-          description: "Descripción no disponible",
+          description: "N/A",
         },
       });
     });
@@ -161,6 +163,43 @@ describe("Permissions", () => {
         "groups:read",
         "groups:delete",
       ]);
+    });
+
+    it("converts stored permissions into a resource statement", () => {
+      expect(
+        permissionsToObject([
+          "groups:create",
+          "groups:read",
+          "members:read",
+        ]),
+      ).toEqual({ groups: ["create", "read"], members: ["read"] });
+    });
+
+    it("preserves injected reads and organization permissions", () => {
+      const stored = Permissions.create([
+        "groups:delete",
+        "organizations:update",
+      ]).values;
+
+      expect(permissionsToObject(stored)).toEqual({
+        groups: ["delete", "read"],
+        organizations: ["update"],
+      });
+    });
+
+    it("returns an empty statement for empty input", () => {
+      expect(permissionsToObject([])).toEqual({});
+    });
+
+    it("round-trips selected actions through the permission converters", () => {
+      const stored = Permissions.create([
+        "groups:update",
+        "members:assign-group",
+      ]).values;
+
+      expect(permissionsFromObject(permissionsToObject(stored)).sort()).toEqual(
+        stored.sort(),
+      );
     });
   });
 });

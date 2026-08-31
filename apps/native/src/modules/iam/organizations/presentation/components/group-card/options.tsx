@@ -1,6 +1,7 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useUpdateGroup } from "@fludge/client/application/iam/organization/mutations/use-group.mutations";
 import type { GroupSummary } from "@fludge/client/application/iam/organization/queries/use-find-groups";
+import { Link } from "expo-router";
 import { Button } from "heroui-native/button";
 import { Popover } from "heroui-native/popover";
 import { Separator } from "heroui-native/separator";
@@ -64,15 +65,24 @@ export function GroupsOptions({ group, asMemberGroup }: Props) {
             <Button.Label>Ver Detalles</Button.Label>
           </Button>
 
-          <Button
-            size="sm"
-            onPress={close}
-            isDisabled={isDisabled}
-            className="flex justify-start"
+          <Link
+            href={{
+              pathname: "/(private)/dashboard/groups/[groupid]/update",
+              params: { groupid: group.id },
+            }}
+            push
+            asChild
           >
-            <MaterialIcons name="edit" size={20} className="text-eclipse" />
-            <Button.Label>Editar</Button.Label>
-          </Button>
+            <Button
+              size="sm"
+              onPress={close}
+              isDisabled={isDisabled}
+              className="flex justify-start"
+            >
+              <MaterialIcons name="edit" size={20} className="text-eclipse" />
+              <Button.Label>Editar</Button.Label>
+            </Button>
+          </Link>
 
           {asMemberGroup === undefined && (
             <Button

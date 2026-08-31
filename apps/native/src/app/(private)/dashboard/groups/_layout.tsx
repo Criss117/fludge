@@ -29,7 +29,12 @@ export default function GroupsLayout() {
         }}
       />
       <Stack.Screen name="[groupid]/index" />
-      <Stack.Screen name="[groupid]/update" />
+      <Stack.Screen
+        name="[groupid]/update"
+        options={{
+          title: "Editar Grupo",
+        }}
+      />
       <Stack.Screen
         name="[groupid]/assign-members"
         options={{

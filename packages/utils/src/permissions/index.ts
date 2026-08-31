@@ -34,6 +34,27 @@ export function permissionsFromObject(
   return result as [PermissionEnum, ...PermissionEnum[]];
 }
 
+export function permissionsToObject(
+  permissions: PermissionEnum[],
+): AppStatement {
+  return permissions.reduce<AppStatement>((statement, permission) => {
+    const [resource, action] = permission.split(":");
+    const actions = PERMISSIONS[resource as RESOURCES];
+
+    if (!actions || !actions.includes(action as never)) return statement;
+
+    const key = resource as RESOURCES;
+    const current = statement[key] ?? [];
+
+    if (current.includes(action as never)) return statement;
+
+    return {
+      ...statement,
+      [key]: [...current, action],
+    } as AppStatement;
+  }, {});
+}
+
 export function getPermissionDescription(permission: PermissionEnum) {
   const [resourse, action] = permission.split(":") as [RESOURCES, string];
 
