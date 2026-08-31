@@ -1,5 +1,5 @@
 import type { AuthService } from "@fludge/auth";
-import type { DatabaseService } from "@fludge/db";
+import { buildConflictUpdateColumn, type DatabaseService } from "@fludge/db";
 import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/organization.repository";
 import {
   group,
@@ -20,6 +20,9 @@ import { Member } from "../iam/organization/domain/entities/member.entity";
 import { GroupMember } from "../iam/organization/domain/entities/group-member.entity";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { ALL_PERMISSIONS } from "@fludge/utils/permissions/data";
+import { category } from "@fludge/db/schema/catalog.schema";
+import { Category } from "../catalog/categories/domain/entities/category.entity";
+import { and, eq } from "drizzle-orm";
 
 export const seedUsers = z.object({
   totalRoots: z.number().optional().default(2),
@@ -32,9 +35,14 @@ export const seedOrganizations = z.object({
   groupsPerOrganization: z.number().optional().default(2),
 });
 
+export const seedCategories = z.object({
+  categoriesPerOrganization: z.number().optional().default(10),
+});
+
 export const seedAll = z.object({
   users: seedUsers,
   organizations: seedOrganizations,
+  categories: seedCategories,
 });
 
 function chunkMembersForOrganizations<T>(
@@ -78,6 +86,7 @@ export class SeedService {
 
   public async clear() {
     const transaction = this.db.transaction(async (tx) => {
+      await tx.delete(category);
       await tx.delete(groupMember);
       await tx.delete(member);
       await tx.delete(group);
@@ -250,11 +259,84 @@ export class SeedService {
     return allOrganizations.map((o) => o.values);
   }
 
+  public async seedCategories(values: z.infer<typeof seedCategories>) {
+    const [allOrganizations, errFinding] = await tryCatch(
+      this.db
+        .select({
+          id: organization.id,
+          owner: member.id,
+        })
+        .from(organization)
+        .innerJoin(
+          member,
+          and(
+            eq(member.organizationId, organization.id),
+            eq(member.role, "owner"),
+          ),
+        ),
+    );
+
+    if (errFinding)
+      throw new ORPCError("INTERNAL_SERVER_ERROR", {
+        message: "Error al obtener las categorías",
+        cause: errFinding.cause,
+      });
+
+    const categories = allOrganizations
+      .map((org, index1) => {
+        const categories = Array.from({
+          length: values.categoriesPerOrganization,
+        })
+          .map((_, index2) =>
+            Category.create({
+              name: faker.commerce.productName() + `${index1}-${index2}`,
+              description: faker.lorem.sentence(),
+              organizationId: UUID.fromString(org.id),
+              createdBy: UUID.fromString(org.owner),
+            }),
+          )
+          .filter(Boolean);
+
+        return categories;
+      })
+      .flat();
+
+    const [, errInsert] = await tryCatch(
+      this.db
+        .insert(category)
+        .values(categories.map((c) => c.values))
+        .onConflictDoUpdate({
+          target: category.id,
+          set: buildConflictUpdateColumn(category, [
+            "name",
+            "slug",
+            "description",
+            "updatedAt",
+          ]),
+        }),
+    );
+
+    if (errInsert)
+      throw new ORPCError("INTERNAL_SERVER_ERROR", {
+        message: "Error al guardar las categorías",
+        cause: errInsert.cause,
+      });
+
+    return categories.map((c) => c.values);
+  }
+
   public async seedAll(headers: Headers, values: z.infer<typeof seedAll>) {
     await this.clear();
 
     await this.seedUsers(headers, values.users);
 
-    return this.seedOrganizations(values.organizations);
+    const organizations = await this.seedOrganizations(values.organizations);
+
+    const categories = await this.seedCategories(values.categories);
+
+    return {
+      organizations,
+      categories,
+    };
   }
 }
