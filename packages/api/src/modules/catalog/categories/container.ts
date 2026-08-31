@@ -5,6 +5,7 @@ import { CreateCategoryCommand } from "./application/commands/create-category.co
 import { DeleteCategoryCommand } from "./application/commands/delete-category.command";
 import { UpdateCategoryCommand } from "./application/commands/update-category.command";
 import { FindAllCategoriesQuery } from "./application/queries/find-all-categories.query";
+import { EnsureCategoryExistsService } from "./application/services/ensure-category-exists.service";
 
 //Repositories
 const categoryRepository = new CategoryRepository(databaseService);
@@ -13,7 +14,9 @@ const categoryRepository = new CategoryRepository(databaseService);
 const categoryUniquenessValidator = new CategoryUniquenessValidator(
   databaseService,
 );
-
+const ensureCategoryExistsService = new EnsureCategoryExistsService(
+  databaseService,
+);
 //Commands
 const createCategoryCommand = new CreateCategoryCommand(
   categoryRepository,
@@ -32,6 +35,7 @@ export const categoryContainer = {
   repositories: { categoryRepository },
   services: {
     categoryUniquenessValidator,
+    ensureCategoryExistsService,
   },
   commands: {
     create: createCategoryCommand,

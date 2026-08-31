@@ -11,7 +11,11 @@ type Values = {
 export class CategoryUniquenessValidator {
   constructor(private readonly db: DatabaseService) {}
 
-  public async validateUniqueFields(value: Values, excludeId?: string) {
+  public async validateUniqueFields(
+    organizationId: string,
+    value: Values,
+    excludeId?: string,
+  ) {
     const { name, slug } = value;
 
     const orConditions = [
@@ -36,7 +40,7 @@ export class CategoryUniquenessValidator {
           slug: category.slug,
         })
         .from(category)
-        .where(and(...conditions)),
+        .where(and(eq(category.organizationId, organizationId), ...conditions)),
     );
 
     if (errFind) return err(errFind);

@@ -7,6 +7,7 @@ import { memberRouter } from "../modules/iam/organization/infrastructure/http/me
 import { seedRouter } from "../modules/seed/seed.router";
 import { publicProcedure } from "..";
 import { categoryRouter } from "../modules/catalog/categories/infrastructure/http/category.router";
+import { productsRouter } from "../modules/catalog/products/infrastructure/http/products.router";
 
 export const appRouter = {
   organization: organizationRouter,
@@ -14,6 +15,7 @@ export const appRouter = {
   auth: authRouter,
   member: memberRouter,
   category: categoryRouter,
+  products: productsRouter,
   seed: seedRouter,
 
   ping: publicProcedure.handler(() => {

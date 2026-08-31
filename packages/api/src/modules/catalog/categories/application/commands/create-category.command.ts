@@ -43,10 +43,13 @@ export class CreateCategoryCommand {
     });
 
     const [uniqueness, errUniqueness] =
-      await this.categoryUniquenessValidator.validateUniqueFields({
-        name: category.values.name,
-        slug: category.values.slug,
-      });
+      await this.categoryUniquenessValidator.validateUniqueFields(
+        activeOrganization.id.toString(),
+        {
+          name: category.values.name,
+          slug: category.values.slug,
+        },
+      );
 
     if (errUniqueness)
       throw new ORPCError("INTERNAL_SERVER_ERROR", {

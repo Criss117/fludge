@@ -42,10 +42,13 @@ export class UpdateCategoryCommand {
 
     if (cmd.name && cmd.name !== existingCategory.values.name) {
       const [uniqueness, errUniqueness] =
-        await this.categoryUniquenessValidator.validateUniqueFields({
-          name: cmd.name,
-          slug: new Slug(cmd.name).toString(),
-        });
+        await this.categoryUniquenessValidator.validateUniqueFields(
+          activeOrganization.id.toString(),
+          {
+            name: cmd.name,
+            slug: new Slug(cmd.name).toString(),
+          },
+        );
 
       if (errUniqueness)
         throw new ORPCError("INTERNAL_SERVER_ERROR", {
