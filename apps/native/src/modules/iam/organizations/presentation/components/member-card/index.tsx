@@ -34,6 +34,8 @@ export const CARD_HEIGHT = 152;
 export function MemberCard(props: MemberCardProps) {
   const isOwner = props.member.role === "owner";
 
+  console.log({ ...props });
+
   if (isOwner) return <MemberCardBase {...props} />;
 
   return <MemberCardRedirect {...props} />;
@@ -74,6 +76,8 @@ export function MemberCardBase({
 }: MemberCardProps) {
   const isOwner = member.role === "owner";
 
+  console.log(asGroupMember);
+
   return (
     <Card className="gap-y-2" style={{ height: CARD_HEIGHT }}>
       <Card.Header className="flex flex-row gap-x-2">
@@ -112,7 +116,7 @@ export function MemberCardBase({
   );
 }
 
-export function MemberCardRedirect({ member }: MemberCardProps) {
+export function MemberCardRedirect(props: MemberCardProps) {
   const router = useRouter();
 
   return (
@@ -120,11 +124,11 @@ export function MemberCardRedirect({ member }: MemberCardProps) {
       onPress={() =>
         router.push({
           pathname: "/(private)/dashboard/members/[memberid]",
-          params: { memberid: member.id },
+          params: { memberid: props.member.id },
         })
       }
     >
-      <MemberCardBase member={member} />
+      <MemberCardBase {...props} />
     </PressableFeedback>
   );
 }

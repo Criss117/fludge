@@ -18,7 +18,7 @@ import {
   assignmentLabel,
   filterAssignableMembers,
   toggleSelection,
-} from "../../../../shared/utils/assign-members-to-group.utils";
+} from "@/modules/shared/utils/assign-members-to-group.utils";
 
 interface Props {
   groupId: string;

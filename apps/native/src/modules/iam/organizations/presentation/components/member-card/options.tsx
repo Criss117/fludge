@@ -64,7 +64,7 @@ export function MemberOptions({ member, asGroupMember }: Props) {
                 size={20}
                 className="text-eclipse"
               />
-              <Button.Label>Desasignar Grupo</Button.Label>
+              <Button.Label>Desasignar Miembro</Button.Label>
             </Button>
           )}
         </Popover.Content>
