@@ -3,9 +3,9 @@ import { AddMemberCommand } from "@fludge/api/modules/iam/organization/applicati
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
-import type { PgMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-member.repository";
+import type { MemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-member.repository";
 
-type SaveReturnType = ReturnType<PgMemberRepository["save"]>;
+type SaveReturnType = ReturnType<MemberRepository["save"]>;
 
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {
   return {

@@ -9,7 +9,7 @@ import type { Member } from "../../domain/entities/member.entity";
 
 type Options = { tx?: TransactionService };
 
-export class PgMemberRepository {
+export class MemberRepository {
   constructor(private readonly db: DatabaseService) {}
 
   public async save(

@@ -4,7 +4,7 @@ import type { Organization } from "@fludge/api/modules/iam/organization/domain/e
 import { Member } from "@fludge/api/modules/iam/organization/domain/entities/member.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
-import type { PgMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-member.repository";
+import type { MemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/member.repository";
 
 export const addMemberCommand = z.object({
   userId: z.uuid({
@@ -15,7 +15,7 @@ export const addMemberCommand = z.object({
 type CMD = z.infer<typeof addMemberCommand>;
 
 export class AddMemberCommand {
-  constructor(private readonly memberRepository: PgMemberRepository) {}
+  constructor(private readonly memberRepository: MemberRepository) {}
 
   public async execute(
     loggedUserId: string,

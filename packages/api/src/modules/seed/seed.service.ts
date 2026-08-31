@@ -1,6 +1,6 @@
 import type { AuthService } from "@fludge/auth";
 import type { DatabaseService } from "@fludge/db";
-import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
+import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/organization.repository";
 import {
   group,
   groupMember,
@@ -73,7 +73,7 @@ export class SeedService {
   constructor(
     private readonly db: DatabaseService,
     private readonly authService: AuthService,
-    private readonly organizationRepository: PgOrganizationRepository,
+    private readonly organizationRepository: OrganizationRepository,
   ) {}
 
   public async clear() {

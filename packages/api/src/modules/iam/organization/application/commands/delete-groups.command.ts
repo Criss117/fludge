@@ -1,6 +1,6 @@
 import { z } from "zod";
-import type { PgGroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
-import type { PgGroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group-member.repository";
+import type { GroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group.repository";
+import type { GroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group-member.repository";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
@@ -15,8 +15,8 @@ type CMD = z.infer<typeof deleteGroupsCommand>;
 
 export class DeleteGroupsCommand {
   constructor(
-    private readonly groupRepository: PgGroupRepository,
-    private readonly groupMemberRepository: PgGroupMemberRepository,
+    private readonly groupRepository: GroupRepository,
+    private readonly groupMemberRepository: GroupMemberRepository,
   ) {}
 
   public async execute(activeOrganization: Organization, cmd: CMD) {

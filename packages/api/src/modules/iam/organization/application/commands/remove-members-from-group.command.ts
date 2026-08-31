@@ -3,7 +3,7 @@ import { ORPCError } from "@orpc/server";
 
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
-import type { PgGroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group-member.repository";
+import type { GroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group-member.repository";
 import { GroupMember } from "@fludge/api/modules/iam/organization/domain/entities/group-member.entity";
 
 export const removeMembersFromGroupCommand = z.object({
@@ -24,9 +24,7 @@ export const removeMembersFromGroupCommand = z.object({
 type CMD = z.infer<typeof removeMembersFromGroupCommand>;
 
 export class RemoveMembersFromGroupCommand {
-  constructor(
-    private readonly groupMemberRepository: PgGroupMemberRepository,
-  ) {}
+  constructor(private readonly groupMemberRepository: GroupMemberRepository) {}
 
   public async execute(activeOrganization: Organization, cmd: CMD) {
     let groupMembersToDelete: GroupMember[] = [];

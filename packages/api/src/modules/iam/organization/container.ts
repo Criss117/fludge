@@ -2,7 +2,7 @@ import { databaseService } from "@fludge/db";
 
 import { RegisterOrganizationCommand } from "./application/commands/register-organization.commad";
 import { OrganizationUniquenessValidator } from "./application/services/organization-uniqueness-validator.service";
-import { PgOrganizationRepository } from "./infrastructure/repositories/pg-organization.repository";
+import { OrganizationRepository } from "./infrastructure/repositories/organization.repository";
 import { FindAllOrganizationsQuery } from "./application/queries/find-all-organizations.query";
 import { EnsureOrganizationExistsService } from "./application/services/ensure-organization-exists.service";
 import { UpdateOrganizationCommand } from "./application/commands/update-organization.command";
@@ -11,19 +11,19 @@ import { UpdateGroupCommand } from "./application/commands/update-group.command"
 import { AddMemberCommand } from "./application/commands/add-member.command";
 import { AssignMembersToGroupCommand } from "./application/commands/assign-members-to-group.command";
 import { AssignGroupsToMemberCommand } from "./application/commands/assign-groups-to-member.command";
-import { PgMemberRepository } from "./infrastructure/repositories/pg-member.repository";
-import { PgGroupRepository } from "./infrastructure/repositories/pg-group.repository";
-import { PgGroupMemberRepository } from "./infrastructure/repositories/pg-group-member.repository";
+import { MemberRepository } from "./infrastructure/repositories/member.repository";
+import { GroupRepository } from "./infrastructure/repositories/group.repository";
+import { GroupMemberRepository } from "./infrastructure/repositories/group-member.repository";
 import { DeleteGroupsCommand } from "./application/commands/delete-groups.command";
 import { RemoveMembersFromGroupCommand } from "./application/commands/remove-members-from-group.command";
 import { RemoveGroupsFromMemberCommand } from "./application/commands/remove-groups-from-member.command";
 import { FindAllMembersQuery } from "./application/queries/find-all-members.query";
 
 //Repositories
-const memberRepository = new PgMemberRepository(databaseService);
-const groupRepository = new PgGroupRepository(databaseService);
-const groupMemberRepository = new PgGroupMemberRepository(databaseService);
-const organizationRepository = new PgOrganizationRepository(
+const memberRepository = new MemberRepository(databaseService);
+const groupRepository = new GroupRepository(databaseService);
+const groupMemberRepository = new GroupMemberRepository(databaseService);
+const organizationRepository = new OrganizationRepository(
   databaseService,
   groupRepository,
   memberRepository,

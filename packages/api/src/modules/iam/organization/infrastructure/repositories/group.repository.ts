@@ -11,7 +11,7 @@ import { and, eq, inArray } from "drizzle-orm";
 
 type Options = { tx?: TransactionService };
 
-export class PgGroupRepository extends TransactionalRepository {
+export class GroupRepository extends TransactionalRepository {
   constructor(private readonly db: DatabaseService) {
     super(db);
   }

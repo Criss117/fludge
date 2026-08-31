@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
-import { integer } from "drizzle-orm/sqlite-core";
+import { integer, text } from "drizzle-orm/sqlite-core";
+import { statusEnum } from "./enums";
 
 export const auditMetadata = {
   createdAt: integer("created_at", { mode: "timestamp_ms" })
@@ -10,3 +11,7 @@ export const auditMetadata = {
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .$onUpdate(() => new Date()),
 };
+
+export const status = text("status", { enum: statusEnum })
+  .notNull()
+  .default("active");

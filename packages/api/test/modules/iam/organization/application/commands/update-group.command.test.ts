@@ -6,9 +6,9 @@ import { GroupNotFoundException } from "@fludge/api/modules/iam/organization/dom
 import { GroupAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/group-already-exists.exception";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
-import type { PgGroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
+import type { GroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
 
-type SaveReturnType = ReturnType<PgGroupRepository["save"]>;
+type SaveReturnType = ReturnType<GroupRepository["save"]>;
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {
   return {
     save: mock((): SaveReturnType => Promise.resolve(saveResult)),

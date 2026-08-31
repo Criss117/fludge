@@ -7,10 +7,10 @@ import { GroupNotFoundException } from "@fludge/api/modules/iam/organization/dom
 import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
-import type { PgGroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group-member.repository";
+import type { GroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group-member.repository";
 import { MemberIsOwnerException } from "@fludge/api/modules/iam/organization/domain/exceptions/member-is-owner.exception";
 
-type SaveReturnType = ReturnType<PgGroupMemberRepository["save"]>;
+type SaveReturnType = ReturnType<GroupMemberRepository["save"]>;
 
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {
   return {
@@ -37,7 +37,7 @@ function makeActiveOrganization() {
     Group.create({
       name,
       description: name,
-       permissions: Permissions.create(["groups:read"]),
+      permissions: Permissions.create(["groups:read"]),
       createdBy: organization.members.owner!.id,
     }),
   );

@@ -3,7 +3,7 @@ import type { Organization } from "@fludge/api/modules/iam/organization/domain/e
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
-import type { PgGroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
+import type { GroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group.repository";
 import {
   Permissions,
   permissionsSchema,
@@ -22,7 +22,7 @@ export const createGroupCommand = z.object({
 type CMD = z.infer<typeof createGroupCommand>;
 
 export class CreateGroupCommand {
-  constructor(private readonly groupRepository: PgGroupRepository) {}
+  constructor(private readonly groupRepository: GroupRepository) {}
 
   public async execute(
     loggedUserId: string,

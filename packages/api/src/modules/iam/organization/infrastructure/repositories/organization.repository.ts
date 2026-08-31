@@ -19,21 +19,21 @@ import {
 import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { alias } from "drizzle-orm/sqlite-core";
-import type { PgGroupRepository } from "./pg-group.repository";
-import type { PgMemberRepository } from "./pg-member.repository";
-import type { PgGroupMemberRepository } from "./pg-group-member.repository";
+import type { GroupRepository } from "./group.repository";
+import type { MemberRepository } from "./member.repository";
+import type { GroupMemberRepository } from "./group-member.repository";
 import type { PermissionEnum } from "@fludge/utils/permissions/data";
 
 const memberAuth = alias(member, "memberAuth");
 
 type Options = { tx?: TransactionService };
 
-export class PgOrganizationRepository {
+export class OrganizationRepository {
   constructor(
     private readonly db: DatabaseService,
-    private readonly groupRepository: PgGroupRepository,
-    private readonly memberRepository: PgMemberRepository,
-    private readonly groupMemberRepository: PgGroupMemberRepository,
+    private readonly groupRepository: GroupRepository,
+    private readonly memberRepository: MemberRepository,
+    private readonly groupMemberRepository: GroupMemberRepository,
   ) {}
 
   public async findOneById(

@@ -1,7 +1,7 @@
 import { describe, expect, it, mock } from "bun:test";
 import { OrganizationUniquenessValidator } from "@fludge/api/modules/iam/organization/application/services/organization-uniqueness-validator.service";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
-import { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
+import { OrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
 import { RegisterOrganizationCommand } from "@fludge/api/modules/iam/organization/application/commands/register-organization.commad";
 import { Slug } from "@fludge/utils/slugify";
 import { OrganizationAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/organization-already-exists.exception";
@@ -10,7 +10,7 @@ type ValidateUniqueFieldsReturnType = ReturnType<
   OrganizationUniquenessValidator["validateUniqueFields"]
 >;
 
-type SaveReturnType = ReturnType<PgOrganizationRepository["save"]>;
+type SaveReturnType = ReturnType<OrganizationRepository["save"]>;
 
 function makeValidator(response?: {
   legalNameTaken?: boolean;
@@ -20,18 +20,17 @@ function makeValidator(response?: {
   slugTaken?: boolean;
 }) {
   return {
-    validateUniqueFields: mock(
-      (): ValidateUniqueFieldsReturnType =>
-        Promise.resolve(
-          ok({
-            legalNameTaken: false,
-            nameTaken: false,
-            phoneTaken: false,
-            taxIdTaken: false,
-            slugTaken: false,
-            ...response,
-          }),
-        ),
+    validateUniqueFields: mock((): ValidateUniqueFieldsReturnType =>
+      Promise.resolve(
+        ok({
+          legalNameTaken: false,
+          nameTaken: false,
+          phoneTaken: false,
+          taxIdTaken: false,
+          slugTaken: false,
+          ...response,
+        }),
+      ),
     ),
   };
 }

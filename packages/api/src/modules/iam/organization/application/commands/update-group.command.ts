@@ -6,7 +6,7 @@ import { ORPCError } from "@orpc/server";
 import { createGroupCommand } from "./create-group.command";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { statusEnum } from "@fludge/db/schema/enums";
-import type { PgGroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
+import type { GroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group.repository";
 
 export const updateGroupCommand = createGroupCommand.partial().extend({
   id: z.uuid({
@@ -18,7 +18,7 @@ export const updateGroupCommand = createGroupCommand.partial().extend({
 type CMD = z.infer<typeof updateGroupCommand>;
 
 export class UpdateGroupCommand {
-  constructor(private readonly groupRepository: PgGroupRepository) {}
+  constructor(private readonly groupRepository: GroupRepository) {}
 
   public async execute(activeOrganization: Organization, cmd: CMD) {
     const updatedGroup = activeOrganization.groups.updateGroup(

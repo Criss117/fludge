@@ -6,7 +6,7 @@ import { and, eq, or } from "drizzle-orm";
 
 type Options = { tx?: TransactionService };
 
-export class PgGroupMemberRepository {
+export class GroupMemberRepository {
   constructor(private readonly db: DatabaseService) {}
 
   public async delete(

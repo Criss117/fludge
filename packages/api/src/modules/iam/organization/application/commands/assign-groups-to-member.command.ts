@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
-import type { PgGroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group-member.repository";
+import type { GroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group-member.repository";
 import { GroupMember } from "../../domain/entities/group-member.entity";
 
 export const assignGroupsToMemberCommand = z.object({
@@ -23,9 +23,7 @@ export const assignGroupsToMemberCommand = z.object({
 type CMD = z.infer<typeof assignGroupsToMemberCommand>;
 
 export class AssignGroupsToMemberCommand {
-  constructor(
-    private readonly groupMemberRepository: PgGroupMemberRepository,
-  ) {}
+  constructor(private readonly groupMemberRepository: GroupMemberRepository) {}
 
   public async execute(
     loggedUserId: string,

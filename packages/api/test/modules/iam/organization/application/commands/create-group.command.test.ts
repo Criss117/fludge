@@ -1,7 +1,7 @@
 import { describe, expect, it, mock } from "bun:test";
 import { CreateGroupCommand } from "@fludge/api/modules/iam/organization/application/commands/create-group.command";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
-import type { PgGroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
+import type { GroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-group.repository";
 import { UUID } from "@fludge/utils/uuid";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 
@@ -10,7 +10,7 @@ import { GroupAlreadyExistsException } from "@fludge/api/modules/iam/organizatio
 import type { PermissionEnum } from "@fludge/utils/permissions/data";
 import { Permissions } from "@fludge/utils/permissions/index";
 
-type SaveReturnType = ReturnType<PgGroupRepository["save"]>;
+type SaveReturnType = ReturnType<GroupRepository["save"]>;
 
 function makeRepository(saveResult: Result<undefined, Error> = ok(undefined)) {
   return {

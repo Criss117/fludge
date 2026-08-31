@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ORPCError } from "@orpc/server";
-import type { PgOrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/pg-organization.repository";
+import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/organization.repository";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
@@ -67,7 +67,7 @@ type CMD = z.infer<typeof registerOrganizationCommand>;
 export class RegisterOrganizationCommand {
   constructor(
     private readonly organizationUniquenessValidator: OrganizationUniquenessValidator,
-    private readonly organizationRepository: PgOrganizationRepository,
+    private readonly organizationRepository: OrganizationRepository,
   ) {}
 
   public async execute(rootUserId: string, cmd: CMD) {
