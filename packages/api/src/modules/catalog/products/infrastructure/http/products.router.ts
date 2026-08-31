@@ -7,7 +7,7 @@ const Tags = ["Products"];
 export const productsRouter = {
   commands: {
     create: hasPermissionProcedure({
-      members: ["create"],
+      products: ["create"],
     })
       .route({
         method: "POST",
@@ -20,6 +20,21 @@ export const productsRouter = {
           context.session.user.id,
           context.session.activeOrganization,
           input,
+        ),
+      ),
+  },
+  queries: {
+    findAll: hasPermissionProcedure({
+      products: ["read"],
+    })
+      .route({
+        method: "GET",
+        path: "/products",
+        tags: Tags,
+      })
+      .handler(({ context }) =>
+        productContainer.queries.findAll.execute(
+          context.session.activeOrganization.id.toString(),
         ),
       ),
   },

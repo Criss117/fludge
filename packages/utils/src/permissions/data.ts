@@ -5,6 +5,7 @@ export const PERMISSIONS = {
   groups: ["create", "read", "update", "delete", "assign-member"],
   members: ["create", "read", "delete", "assign-group"],
   categories: ["create", "read", "update", "delete"],
+  products: ["create", "read", "update", "delete"],
 } as const;
 
 export type AppStatement = {
@@ -127,6 +128,30 @@ export const PERMISSION_DESCRIPTIONS_ES = {
       title: "Editar categorías",
       description:
         "Permite modificar el nombre, la descripción y los datos generales de las categorías existentes.",
+    },
+  },
+  products: {
+    es: "Productos",
+    read: {
+      es: "Ver",
+      title: "Ver productos",
+      description: "Permite consultar la lista de productos.",
+    },
+    create: {
+      es: "Crear",
+      title: "Crear productos",
+      description: "Permite registrar nuevos productos en la plataforma.",
+    },
+    delete: {
+      es: "Eliminar",
+      title: "Eliminar productos",
+      description: "Permite borrar productos permanentemente del sistema.",
+    },
+    update: {
+      es: "Editar",
+      title: "Editar productos",
+      description:
+        "Permite modificar el nombre, la descripción y los datos generales de los productos existentes.",
     },
   },
 } as const satisfies PermissionDescriptions;
