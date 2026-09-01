@@ -1,4 +1,5 @@
 import "../globals.css";
+import "react-native-random-uuid";
 import { Integrations } from "@/integrations";
 import { Stack } from "expo-router";
 import { useThemeColor } from "heroui-native";

@@ -71,5 +71,15 @@ export const productsRouter = {
           context.session.activeOrganization.id.toString(),
         ),
       ),
+
+    findAllPresentations: hasPermissionProcedure({
+      products: ["read"],
+    })
+      .route({ method: "GET", path: "/products/presentations", tags: Tags })
+      .handler(({ context }) =>
+        productContainer.queries.findAllPresentations.execute(
+          context.session.activeOrganization.id.toString(),
+        ),
+      ),
   },
 };

@@ -7,6 +7,7 @@ import { ProductPresentationRepository } from "./infrastructure/repositories/pro
 import { FindAllProductsQuery } from "./application/queries/find-all-products.query";
 import { UpdateProductCommand } from "./application/commands/update-product.command";
 import { DeleteProductCommand } from "./application/commands/delete-product.command";
+import { FindAllProductPresentationQuery } from "./application/queries/find-all-product-presentation.query";
 
 //Repositories
 const productPresentationRepository = new ProductPresentationRepository(
@@ -25,6 +26,9 @@ const productUniquenessValidator = new ProductUniquenessValidator(
 
 //Queries
 const findAllProductsQuery = new FindAllProductsQuery(databaseService);
+const findAllProductPresentationQuery = new FindAllProductPresentationQuery(
+  databaseService,
+);
 
 //Commands
 const createProductCommand = new CreateProductCommand(
@@ -50,6 +54,7 @@ export const productContainer = {
   },
   queries: {
     findAll: findAllProductsQuery,
+    findAllPresentations: findAllProductPresentationQuery,
   },
   repositories: {
     productRepository,

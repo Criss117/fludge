@@ -1,0 +1,78 @@
+import { queryCollectionOptions } from "@tanstack/query-db-collection";
+import { collectionOptions, useDbClient } from "@tanstack/react-db";
+import type { QueryClient } from "@tanstack/react-query";
+import { createResourceCollection } from "@fludge/client/shared/create-resource-collection";
+
+const { useCollection, cache } = createResourceCollection(
+  "categories",
+  ({ id, queryKey }, orpc) => {
+    return collectionOptions(id, (client) =>
+      queryCollectionOptions({
+        id: id,
+        queryKey: queryKey,
+        queryClient: client.requireDependency<QueryClient>("queryClient"),
+        queryFn: async () => {
+          console.log("Ha cambiado");
+
+          const categories = await orpc.category.queries.findAll.call();
+
+          return categories;
+        },
+        getKey: (category) => category.id,
+        onInsert: async ({ transaction, collection }) => {
+          const values = transaction.mutations[0].modified;
+
+          const newCategory = await orpc.category.commands.create.call({
+            name: values.name,
+            description: values.description ?? "",
+          });
+
+          collection.utils.writeInsert(newCategory);
+
+          return {
+            refetch: false,
+          };
+        },
+        onUpdate: async ({ transaction, collection }) => {
+          const original = transaction.mutations[0].original;
+          const values = transaction.mutations[0].changes;
+
+          const updatedCategory = await orpc.category.commands.update.call({
+            id: original.id,
+            name: values.name,
+            description: values.description ?? "",
+          });
+
+          collection.utils.writeUpdate(updatedCategory);
+
+          return {
+            refetch: false,
+          };
+        },
+        onDelete: async ({ transaction, collection }) => {
+          const original = transaction.mutations[0].original;
+
+          await orpc.category.commands.delete.call({
+            id: original.id,
+          });
+
+          collection.utils.writeDelete(original);
+
+          return {
+            refetch: false,
+          };
+        },
+      }),
+    );
+  },
+);
+
+export const categoriesCache = cache;
+
+export function useCategoriesCollection() {
+  const { collection, activeOrganization } = useCollection();
+
+  const categoryCollection = useDbClient().collection(collection);
+
+  return { categoryCollection, activeOrganization };
+}

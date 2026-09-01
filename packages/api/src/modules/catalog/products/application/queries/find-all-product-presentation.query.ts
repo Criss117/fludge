@@ -1,25 +1,24 @@
-import { type DatabaseService } from "@fludge/db";
-import { product } from "@fludge/db/schema/catalog.schema";
+import type { DatabaseService } from "@fludge/db";
+import { productPresentation } from "@fludge/db/schema/catalog.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { ORPCError } from "@orpc/server";
 import { desc, eq } from "drizzle-orm";
 
-export class FindAllProductsQuery {
+export class FindAllProductPresentationQuery {
   constructor(private readonly db: DatabaseService) {}
 
   public async execute(organizationId: string) {
     const [rows, err] = await tryCatch(
       this.db
         .select()
-        .from(product)
-        .where(eq(product.organizationId, organizationId))
-        .orderBy(desc(product.createdAt))
-        .groupBy(product.id),
+        .from(productPresentation)
+        .where(eq(productPresentation.organizationId, organizationId))
+        .orderBy(desc(productPresentation.createdAt)),
     );
 
     if (err)
       throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al consultar los productos",
+        message: "Error al consultar las presentaciones",
         cause: err.cause,
       });
 

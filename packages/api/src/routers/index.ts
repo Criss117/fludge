@@ -15,7 +15,7 @@ export const appRouter = {
   auth: authRouter,
   member: memberRouter,
   category: categoryRouter,
-  products: productsRouter,
+  product: productsRouter,
   seed: seedRouter,
 
   ping: publicProcedure.handler(() => {

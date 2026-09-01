@@ -25,6 +25,8 @@
     "better-auth": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-form": "catalog:",
+    "@tanstack/query-db-collection": "catalog:",
+    "@tanstack/react-db": "catalog:",
     "@orpc/tanstack-query": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

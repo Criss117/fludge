@@ -3,6 +3,7 @@ import {
   QueryClientProvider as Provider,
 } from "@tanstack/react-query";
 import { useTanStackQueryDevTools } from "@rozenite/tanstack-query-plugin";
+import { DbClient, DbProvider } from "@tanstack/react-db";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -13,6 +14,8 @@ export const queryClient = new QueryClient({
   },
 });
 
+const dbClient = new DbClient({ queryClient });
+
 export function QueryClientProvider({
   children,
 }: {
@@ -22,5 +25,9 @@ export function QueryClientProvider({
     useTanStackQueryDevTools(queryClient);
   }
 
-  return <Provider client={queryClient}>{children}</Provider>;
+  return (
+    <Provider client={queryClient}>
+      <DbProvider client={dbClient}>{children}</DbProvider>
+    </Provider>
+  );
 }
