@@ -32,7 +32,7 @@ export function createOrpcProvider(options: RPCLinkOptions<ClientContext>) {
   return OrpcProvider;
 }
 
-type OrpcQueryClient = ReturnType<typeof createOrpcQueryClient>;
+export type OrpcQueryClient = ReturnType<typeof createOrpcQueryClient>;
 
 export function useOrpc() {
   const context = use(OrpcContext);

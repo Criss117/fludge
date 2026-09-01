@@ -2,6 +2,11 @@ import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import { collectionOptions, useDbClient } from "@tanstack/react-db";
 import type { QueryClient } from "@tanstack/react-query";
 import { createResourceCollection } from "@fludge/client/shared/create-resource-collection";
+import type { OrpcQueryClient } from "@fludge/client/providers/orpc.provider";
+
+export type ProductPresentationSummary = Awaited<
+  ReturnType<OrpcQueryClient["category"]["queries"]["findAll"]["call"]>
+>[number];
 
 const { useCollection, cache } = createResourceCollection(
   "categories",
@@ -12,8 +17,6 @@ const { useCollection, cache } = createResourceCollection(
         queryKey: queryKey,
         queryClient: client.requireDependency<QueryClient>("queryClient"),
         queryFn: async () => {
-          console.log("Ha cambiado");
-
           const categories = await orpc.category.queries.findAll.call();
 
           return categories;
