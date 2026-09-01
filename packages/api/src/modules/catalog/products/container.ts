@@ -6,6 +6,7 @@ import { ProductRepository } from "./infrastructure/repositories/product.reposit
 import { ProductPresentationRepository } from "./infrastructure/repositories/product-presentation.repository";
 import { FindAllProductsQuery } from "./application/queries/find-all-products.query";
 import { UpdateProductCommand } from "./application/commands/update-product.command";
+import { DeleteProductCommand } from "./application/commands/delete-product.command";
 
 //Repositories
 const productPresentationRepository = new ProductPresentationRepository(
@@ -39,10 +40,13 @@ const updateProductCommand = new UpdateProductCommand(
   productPresentationRepository,
 );
 
+const deleteProductCommand = new DeleteProductCommand(productRepository);
+
 export const productContainer = {
   commands: {
     create: createProductCommand,
     update: updateProductCommand,
+    delete: deleteProductCommand,
   },
   queries: {
     findAll: findAllProductsQuery,

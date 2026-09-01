@@ -20,6 +20,7 @@ export const updateProductPresentationCommand = createProductPresentationCommand
     id: z.uuid({
       error: "El id del producto es requerido",
     }),
+    delete: z.boolean().optional(),
     status: z.enum(productStatusEnum).optional(),
     barcode: z.string().nullish(),
   });
@@ -124,14 +125,37 @@ export class UpdateProductCommand {
       return existing.values;
     }
 
-    const presentationsToUpdate = existing.presentations.updateMany(
-      cmd.presentations.map(({ id, ...rest }) => ({
-        id,
-        data: rest,
-      })),
-    );
+    const presentations: {
+      toDelete: string[];
+      toUpdate: NonNullable<CMD["presentations"]>;
+    } = {
+      toDelete: [],
+      toUpdate: [],
+    };
 
-    const barcodes = cmd.presentations
+    cmd.presentations.forEach((item) => {
+      if (item.delete) {
+        presentations.toDelete.push(item.id);
+      } else {
+        presentations.toUpdate.push(item);
+      }
+    });
+
+    presentations.toDelete.forEach((id) => {
+      existing.presentations.delete(id);
+    });
+
+    const presentationsToUpdate =
+      presentations.toUpdate.length > 0
+        ? existing.presentations.updateMany(
+            presentations.toUpdate.map(({ id, ...rest }) => ({
+              id,
+              data: rest,
+            })),
+          )
+        : [];
+
+    const barcodes = presentations.toUpdate
       .map((item) => item.barcode)
       .filter((b) => b !== undefined && b !== null);
 
@@ -165,14 +189,27 @@ export class UpdateProductCommand {
 
         if (errSaveProduct) throw errSaveProduct;
 
-        const [, errSavePresentations] =
-          await this.productPresentationRepository.save(
-            existing.id.toString(),
-            presentationsToUpdate,
-            { tx },
-          );
+        if (presentationsToUpdate.length > 0) {
+          const [, errSavePresentations] =
+            await this.productPresentationRepository.save(
+              existing.id.toString(),
+              presentationsToUpdate,
+              { tx },
+            );
 
-        if (errSavePresentations) throw errSavePresentations;
+          if (errSavePresentations) throw errSavePresentations;
+        }
+
+        if (presentationsToUpdate.length > 0) {
+          const [, errSavePresentations] =
+            await this.productPresentationRepository.save(
+              existing.id.toString(),
+              presentationsToUpdate,
+              { tx },
+            );
+
+          if (errSavePresentations) throw errSavePresentations;
+        }
       }),
     );
 

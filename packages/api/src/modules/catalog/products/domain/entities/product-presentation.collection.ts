@@ -109,7 +109,7 @@ export class ProductPresentationCollection {
     return this.items.map((p) => p.barcode).filter((b) => b !== null);
   }
 
-  public remove(id: string) {
+  public delete(id: string) {
     if (!this._items.has(id)) throw new ProductPresentationNotFoundException();
 
     this._items.delete(id);

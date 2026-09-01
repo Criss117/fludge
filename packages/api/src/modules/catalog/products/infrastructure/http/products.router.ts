@@ -2,6 +2,7 @@ import { hasPermissionProcedure } from "@fludge/api/index";
 import { productContainer } from "@fludge/api/modules/catalog/products/container";
 import { createProductCommand } from "@fludge/api/modules/catalog/products/application/commands/create-product.command";
 import { updateProductCommand } from "@fludge/api/modules/catalog/products/application/commands/update-product.command";
+import { deleteProductCommand } from "@fludge/api/modules/catalog/products/application/commands/delete-product.command";
 
 const Tags = ["Products"];
 
@@ -36,6 +37,22 @@ export const productsRouter = {
       .handler(({ context, input }) =>
         productContainer.commands.update.execute(
           context.session.activeOrganization,
+          input,
+        ),
+      ),
+
+    delete: hasPermissionProcedure({
+      products: ["delete"],
+    })
+      .route({
+        method: "DELETE",
+        path: "/products",
+        tags: Tags,
+      })
+      .input(deleteProductCommand)
+      .handler(({ context, input }) =>
+        productContainer.commands.delete.execute(
+          context.session.activeOrganization.id.toString(),
           input,
         ),
       ),
