@@ -5,6 +5,7 @@ import { ProductUniquenessValidator } from "./application/services/product-uniqu
 import { ProductRepository } from "./infrastructure/repositories/product.repository";
 import { ProductPresentationRepository } from "./infrastructure/repositories/product-presentation.repository";
 import { FindAllProductsQuery } from "./application/queries/find-all-products.query";
+import { UpdateProductCommand } from "./application/commands/update-product.command";
 
 //Repositories
 const productPresentationRepository = new ProductPresentationRepository(
@@ -31,9 +32,17 @@ const createProductCommand = new CreateProductCommand(
   productRepository,
 );
 
+const updateProductCommand = new UpdateProductCommand(
+  categoryContainer.services.ensureCategoryExistsService,
+  productUniquenessValidator,
+  productRepository,
+  productPresentationRepository,
+);
+
 export const productContainer = {
   commands: {
     create: createProductCommand,
+    update: updateProductCommand,
   },
   queries: {
     findAll: findAllProductsQuery,

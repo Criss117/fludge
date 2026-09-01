@@ -2,6 +2,7 @@ import { UUID } from "@fludge/utils/uuid";
 import { ProductStatus } from "../value-objects/product-status";
 import { SearchName } from "@fludge/api/modules/shared/domain/value-objects/search-name";
 import type { ProductPresentationSelect } from "@fludge/db/schema/catalog.schema";
+import type { ProductStatusEnum } from "@fludge/db/schema/enums";
 
 export type CreateProductPresentation = {
   name: string;
@@ -13,6 +14,12 @@ export type CreateProductPresentation = {
   pricePurchase: number | null;
   priceSale: number;
   priceWholesale: number | null;
+};
+
+export type UpdateProductPresentation = Partial<
+  Omit<CreateProductPresentation, "createdBy" | "organizationId">
+> & {
+  status?: ProductStatusEnum;
 };
 
 export class ProductPresentation {
@@ -84,6 +91,28 @@ export class ProductPresentation {
     return this._barcode;
   }
 
+  public update(data: UpdateProductPresentation) {
+    if (data.name) {
+      this._name = data.name;
+      this._searchName = new SearchName(data.name);
+    }
+
+    if (data.barcode !== undefined) this._barcode = data.barcode;
+
+    if (data.conversionFactor) this._conversionFactor = data.conversionFactor;
+
+    if (data.pricePurchase) this._pricePurchase = data.pricePurchase;
+
+    if (data.priceSale) this._priceSale = data.priceSale;
+
+    if (data.priceWholesale !== undefined)
+      this._priceWholesale = data.priceWholesale;
+
+    if (data.status) this._status = new ProductStatus(data.status);
+
+    this.touch();
+  }
+
   public valuesWithProductId(productId: UUID): ProductPresentationSelect {
     return {
       ...this.values,
@@ -109,11 +138,34 @@ export class ProductPresentation {
     };
   }
 
+  public previewUniqueFields(
+    data: Pick<UpdateProductPresentation, "name" | "barcode">,
+  ): { name: string; barcode: string | null } {
+    return {
+      name: data.name !== undefined ? data.name : this._name,
+      barcode: data.barcode !== undefined ? data.barcode : this._barcode,
+    };
+  }
+
   public checkUniques(other: ProductPresentation) {
     return (
       (this._barcode !== null && this._barcode === other._barcode) ||
       this._name === other._name ||
       this._searchName.equals(other._searchName)
     );
+  }
+
+  public checkUniquesData(
+    data: Pick<UpdateProductPresentation, "name" | "barcode">,
+  ): boolean {
+    if (data.name !== undefined && this._name === data.name) return true;
+    if (
+      data.barcode !== undefined &&
+      data.barcode !== null &&
+      this._barcode === data.barcode
+    )
+      return true;
+
+    return false;
   }
 }

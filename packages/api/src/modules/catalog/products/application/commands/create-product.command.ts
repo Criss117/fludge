@@ -6,6 +6,7 @@ import type { EnsureCategoryExistsService } from "@fludge/api/modules/catalog/ca
 import { ORPCError } from "@orpc/server";
 import type { ProductUniquenessValidator } from "../services/product-uniqueness-validator.service";
 import type { ProductRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product.repository";
+import { Slug } from "@fludge/utils/slugify";
 
 export const createProductPresentationCommand = z.object({
   name: z.string(),
@@ -90,7 +91,7 @@ export class CreateProductCommand {
         activeOrganization.id.toString(),
         {
           name: cmd.name,
-          slug: cmd.name,
+          slug: new Slug(cmd.name).toString(),
         },
       );
 

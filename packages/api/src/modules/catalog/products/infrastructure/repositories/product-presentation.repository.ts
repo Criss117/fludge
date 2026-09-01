@@ -3,10 +3,11 @@ import {
   type DatabaseService,
   type TransactionService,
 } from "@fludge/db";
-import type { Product } from "@fludge/api/modules/catalog/products/domain/entities/product.entity";
 import { TransactionalRepository } from "@fludge/api/modules/shared/infrastructure/repositories/transactional-repository";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { productPresentation } from "@fludge/db/schema/catalog.schema";
+import type { ProductPresentation } from "@fludge/api/modules/catalog/products/domain/entities/product-presentation.entity";
+import { and, eq } from "drizzle-orm";
 
 type Options = {
   tx?: TransactionService;
@@ -17,15 +18,17 @@ export class ProductPresentationRepository extends TransactionalRepository {
     super(db);
   }
 
-  public async save(productEntity: Product, options?: Options) {
+  public async save(
+    productId: string,
+    presentations: ProductPresentation[],
+    options?: Options,
+  ) {
     const db = options?.tx ?? this.db;
-
-    const values = productEntity.values.presentations;
 
     return tryCatch(
       db
         .insert(productPresentation)
-        .values(values)
+        .values(presentations.map((p) => ({ ...p.values, productId })))
         .onConflictDoUpdate({
           target: productPresentation.id,
           set: buildConflictUpdateColumn(productPresentation, [
@@ -40,6 +43,25 @@ export class ProductPresentationRepository extends TransactionalRepository {
             "updatedAt",
           ]),
         }),
+    );
+  }
+
+  public async delete(
+    organizationId: string,
+    productId: string,
+    options?: Options,
+  ) {
+    const db = options?.tx ?? this.db;
+
+    return tryCatch(
+      db
+        .delete(productPresentation)
+        .where(
+          and(
+            eq(productPresentation.organizationId, organizationId),
+            eq(productPresentation.productId, productId),
+          ),
+        ),
     );
   }
 }

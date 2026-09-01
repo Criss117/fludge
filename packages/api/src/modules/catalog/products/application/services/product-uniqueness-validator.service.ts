@@ -1,6 +1,6 @@
 import type { DatabaseService } from "@fludge/db";
 import { product, productPresentation } from "@fludge/db/schema/catalog.schema";
-import { and, eq, inArray, ne, or, SQL } from "drizzle-orm";
+import { and, eq, inArray, ne, notInArray, or, SQL } from "drizzle-orm";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 
 type Values = {
@@ -57,7 +57,7 @@ export class ProductUniquenessValidator {
   public async validateUniqueBarcode(
     organizationId: string,
     barcodes: string | string[],
-    excludeId?: string,
+    excludeId?: string | string[],
   ) {
     const ids = Array.isArray(barcodes) ? barcodes : [barcodes];
 
@@ -66,7 +66,10 @@ export class ProductUniquenessValidator {
       inArray(productPresentation.barcode, ids),
     ];
 
-    if (excludeId) conditions.push(ne(productPresentation.id, excludeId));
+    if (excludeId) {
+      const excludeIds = Array.isArray(excludeId) ? excludeId : [excludeId];
+      conditions.push(notInArray(productPresentation.id, excludeIds));
+    }
 
     const [rows, errFind] = await tryCatch(
       this.db

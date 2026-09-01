@@ -14,6 +14,7 @@ import { ProductPresentationCollection } from "./product-presentation.collection
 import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-bresentation-barcode-no-has-barcode.exception";
 import { ProductStock } from "../value-objects/product-stock";
 import { DuplicatedBarcodeException } from "../exceptions/duplicated-barcode.exception";
+import type { ProductStatusEnum } from "@fludge/db/schema/enums";
 
 type CreateProduct = {
   name: string;
@@ -26,6 +27,12 @@ type CreateProduct = {
   organizationId: string;
 
   presentations: CreateProductPresentation[];
+};
+
+type UpdateProduct = Partial<
+  Omit<CreateProduct, "presentations" | "createdBy" | "organizationId">
+> & {
+  status?: ProductStatusEnum;
 };
 
 export class Product {
@@ -114,6 +121,33 @@ export class Product {
 
   public touch() {
     this._updatedAt = new Date();
+  }
+
+  public update(data: UpdateProduct) {
+    if (data.name) {
+      this._name = data.name;
+      this._searchName = new SearchName(data.name);
+      this._slug = new Slug(data.name);
+    }
+
+    if (data.description) this._description = data.description;
+
+    if (data.status) this._status = new ProductStatus(data.status);
+
+    if (data.categoryId !== undefined)
+      this._categoryId = data.categoryId
+        ? UUID.fromString(data.categoryId)
+        : null;
+
+    if (data.allowNegativeStock || data.stock || data.minStock) {
+      this._stock = new ProductStock(
+        data.stock ?? this._stock.stock,
+        data.minStock ?? this._stock.minStock,
+        data.allowNegativeStock ?? this._stock.allowNegativeStock,
+      );
+    }
+
+    this.touch();
   }
 
   public get id(): UUID {

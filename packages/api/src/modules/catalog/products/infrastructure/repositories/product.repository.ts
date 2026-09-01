@@ -1,9 +1,18 @@
-import type { DatabaseService, TransactionService } from "@fludge/db";
-import type { Product } from "@fludge/api/modules/catalog/products/domain/entities/product.entity";
+import {
+  jsonObject,
+  type DatabaseService,
+  type TransactionService,
+} from "@fludge/db";
+import { Product } from "@fludge/api/modules/catalog/products/domain/entities/product.entity";
 import { TransactionalRepository } from "@fludge/api/modules/shared/infrastructure/repositories/transactional-repository";
-import { tryCatch } from "@fludge/utils/trycatch";
-import { product } from "@fludge/db/schema/catalog.schema";
+import { err, ok, tryCatch } from "@fludge/utils/trycatch";
+import {
+  product,
+  productPresentation,
+  type ProductPresentationSelect,
+} from "@fludge/db/schema/catalog.schema";
 import type { ProductPresentationRepository } from "./product-presentation.repository";
+import { and, desc, eq, getColumns, sql } from "drizzle-orm";
 
 type Options = {
   tx?: TransactionService;
@@ -15,6 +24,49 @@ export class ProductRepository extends TransactionalRepository {
     private readonly productPresentationRepository: ProductPresentationRepository,
   ) {
     super(db);
+  }
+
+  public async findOneById(organizationId: string, productId: string) {
+    const [productfind, errFinding] = await tryCatch(
+      this.db
+        .select({
+          ...getColumns(product),
+          presentations: sql<string>`
+            json_group_array(
+              DISTINCT ${jsonObject(productPresentation)}
+            ) FILTER (WHERE ${productPresentation.productId} IS NOT NULL)
+          `.as("presentations"),
+        })
+        .from(product)
+        .innerJoin(
+          productPresentation,
+          eq(productPresentation.productId, product.id),
+        )
+        .where(
+          and(
+            eq(product.organizationId, organizationId),
+            eq(product.id, productId),
+          ),
+        )
+        .orderBy(desc(product.createdAt))
+        .groupBy(product.id),
+    );
+
+    if (errFinding) return err(errFinding);
+
+    const p = productfind.at(0);
+
+    if (!p) return ok(null);
+
+    const presentations = (
+      JSON.parse(p.presentations) as ProductPresentationSelect[]
+    ).map((p) => ({
+      ...p,
+      createdAt: new Date(p.createdAt),
+      updatedAt: new Date(p.updatedAt),
+    }));
+
+    return ok(Product.reconstitute({ ...p, presentations }));
   }
 
   public async saveOnlyProduct(productEntity: Product, options?: Options) {
@@ -68,11 +120,41 @@ export class ProductRepository extends TransactionalRepository {
       if (errInsertProduct) throw errInsertProduct;
 
       const [, errInsertPresentations] =
-        await this.productPresentationRepository.save(productEntity, {
-          tx,
-        });
+        await this.productPresentationRepository.save(
+          productEntity.id.toString(),
+          productEntity.presentations.items,
+          {
+            tx,
+          },
+        );
 
       if (errInsertPresentations) throw errInsertPresentations;
+    });
+
+    return tryCatch(transaction);
+  }
+
+  public async delete(organizationId: string, productId: string) {
+    const transaction = this.db.transaction(async (tx) => {
+      const [, errDeletePresentations] =
+        await this.productPresentationRepository.delete(
+          organizationId,
+          productId,
+          {
+            tx,
+          },
+        );
+
+      if (errDeletePresentations) throw errDeletePresentations;
+
+      await tx
+        .delete(product)
+        .where(
+          and(
+            eq(product.organizationId, organizationId),
+            eq(product.id, productId),
+          ),
+        );
     });
 
     return tryCatch(transaction);
