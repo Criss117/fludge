@@ -20,7 +20,7 @@ export class ProductPresentationRepository extends TransactionalRepository {
 
   public async save(
     productId: string,
-    presentations: ProductPresentation[],
+    presentations: readonly ProductPresentation[],
     options?: Options,
   ) {
     const db = options?.tx ?? this.db;
@@ -35,7 +35,7 @@ export class ProductPresentationRepository extends TransactionalRepository {
             "barcode",
             "conversionFactor",
             "name",
-            "searchName",
+            "searchBlob",
             "pricePurchase",
             "priceSale",
             "priceWholesale",

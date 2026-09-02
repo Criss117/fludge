@@ -35,8 +35,6 @@ export class CategoryRepository {
   public async save(categoryEntitie: Category) {
     const values = categoryEntitie.values;
 
-    console.log({ values });
-
     return tryCatch(
       this.db.insert(category).values(values).onConflictDoUpdate({
         target: category.id,

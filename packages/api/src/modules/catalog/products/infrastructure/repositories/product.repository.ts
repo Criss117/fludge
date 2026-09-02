@@ -82,7 +82,7 @@ export class ProductRepository extends TransactionalRepository {
           organizationId: values.organizationId,
           categoryId: values.categoryId,
           name: values.name,
-          searchName: values.searchName,
+          searchBlob: values.searchBlob,
           slug: values.slug,
           description: values.description,
           stock: values.stock,
@@ -97,7 +97,7 @@ export class ProductRepository extends TransactionalRepository {
           target: product.id,
           set: {
             name: values.name,
-            searchName: values.searchName,
+            searchBlob: values.searchBlob,
             slug: values.slug,
             description: values.description,
             stock: values.stock,
@@ -122,7 +122,7 @@ export class ProductRepository extends TransactionalRepository {
       const [, errInsertPresentations] =
         await this.productPresentationRepository.save(
           productEntity.id.toString(),
-          productEntity.presentations.items,
+          productEntity.presentations,
           {
             tx,
           },

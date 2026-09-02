@@ -1,6 +1,6 @@
 import { UUID } from "@fludge/utils/uuid";
 import { ProductStatus } from "../value-objects/product-status";
-import { SearchName } from "@fludge/api/modules/shared/domain/value-objects/search-name";
+import { SearchBlob } from "@fludge/utils/search-blob";
 import type {
   ProductPresentationSelect,
   ProductSelect,
@@ -9,6 +9,7 @@ import { Slug } from "@fludge/utils/slugify";
 import {
   type CreateProductPresentation,
   ProductPresentation,
+  type UpdateProductPresentation,
 } from "./product-presentation.entity";
 import { ProductPresentationCollection } from "./product-presentation.collection";
 import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-bresentation-barcode-no-has-barcode.exception";
@@ -42,7 +43,7 @@ export class Product {
     private _categoryId: UUID | null,
 
     private _name: string,
-    private _searchName: SearchName,
+    private _searchBlob: SearchBlob,
     private _slug: Slug,
     private _description: string | null,
 
@@ -74,12 +75,12 @@ export class Product {
     if (setBarcode.size !== allBarcodes.length)
       throw new DuplicatedBarcodeException("El barcode debe ser único");
 
-    return new Product(
+    const newProduct = new Product(
       UUID.generate(),
       UUID.fromString(data.organizationId),
       data.categoryId ? UUID.fromString(data.categoryId) : null,
       data.name,
-      new SearchName(data.name),
+      new SearchBlob(data.name),
       new Slug(data.name),
       data.description,
       new ProductStock(data.stock, data.minStock, data.allowNegativeStock),
@@ -91,6 +92,10 @@ export class Product {
         data.presentations.map((item) => ProductPresentation.create(item)),
       ),
     );
+
+    newProduct._searchBlob = newProduct.buildSearchBlob();
+
+    return newProduct;
   }
 
   public static reconstitute(
@@ -103,7 +108,7 @@ export class Product {
       UUID.fromString(data.organizationId),
       data.categoryId ? UUID.fromString(data.categoryId) : null,
       data.name,
-      new SearchName(data.searchName),
+      new SearchBlob(data.searchBlob),
       new Slug(data.slug),
       data.description,
       new ProductStock(data.stock, data.minStock, data.allowNegativeStock),
@@ -119,6 +124,12 @@ export class Product {
     );
   }
 
+  private buildSearchBlob(): SearchBlob {
+    return new SearchBlob(
+      `${this._name} ${this._presentations.barcodes.join(" ")}`.trim(),
+    );
+  }
+
   public touch() {
     this._updatedAt = new Date();
   }
@@ -126,7 +137,7 @@ export class Product {
   public update(data: UpdateProduct) {
     if (data.name) {
       this._name = data.name;
-      this._searchName = new SearchName(data.name);
+      this._searchBlob = new SearchBlob(data.name);
       this._slug = new Slug(data.name);
     }
 
@@ -154,8 +165,36 @@ export class Product {
     return this._id;
   }
 
-  public get presentations() {
-    return this._presentations;
+  public get presentations(): readonly ProductPresentation[] {
+    return this._presentations.items;
+  }
+
+  public addPresentation(data: CreateProductPresentation) {
+    this._presentations.add(ProductPresentation.create(data));
+    this._searchBlob = this.buildSearchBlob();
+    this.touch();
+  }
+
+  public updatePresentation(id: string, data: UpdateProductPresentation) {
+    const item = this._presentations.update(id, data);
+    this._searchBlob = this.buildSearchBlob();
+    this.touch();
+    return item;
+  }
+
+  public updatePresentations(
+    updates: { id: string; data: UpdateProductPresentation }[],
+  ) {
+    const items = this._presentations.updateMany(updates);
+    this._searchBlob = this.buildSearchBlob();
+    this.touch();
+    return items;
+  }
+
+  public deletePresentation(id: string) {
+    this._presentations.delete(id);
+    this._searchBlob = this.buildSearchBlob();
+    this.touch();
   }
 
   public get values(): ProductSelect & {
@@ -166,7 +205,7 @@ export class Product {
       organizationId: this._organizationId.toString(),
       categoryId: this._categoryId ? this._categoryId.toString() : null,
       name: this._name,
-      searchName: this._searchName.value,
+      searchBlob: this._searchBlob.value,
       slug: this._slug.toString(),
       description: this._description,
       status: this._status.value,

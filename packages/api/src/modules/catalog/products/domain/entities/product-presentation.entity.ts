@@ -1,8 +1,8 @@
 import { UUID } from "@fludge/utils/uuid";
 import { ProductStatus } from "../value-objects/product-status";
-import { SearchName } from "@fludge/api/modules/shared/domain/value-objects/search-name";
 import type { ProductPresentationSelect } from "@fludge/db/schema/catalog.schema";
 import type { ProductStatusEnum } from "@fludge/db/schema/enums";
+import { SearchBlob } from "@fludge/utils/search-blob";
 
 export type CreateProductPresentation = {
   name: string;
@@ -30,7 +30,7 @@ export class ProductPresentation {
     private _barcode: string | null,
     private _conversionFactor: number,
     private _name: string,
-    private _searchName: SearchName,
+    private _searchBlob: SearchBlob,
 
     private _pricePurchase: number | null,
     private _priceSale: number,
@@ -50,7 +50,7 @@ export class ProductPresentation {
       data.barcode,
       data.conversionFactor,
       data.name,
-      new SearchName(data.productName + " " + data.name),
+      new SearchBlob(data.productName + " " + data.name),
       data.pricePurchase,
       data.priceSale,
       data.priceWholesale,
@@ -68,7 +68,7 @@ export class ProductPresentation {
       data.barcode,
       data.conversionFactor,
       data.name,
-      new SearchName(data.searchName),
+      new SearchBlob(data.searchBlob),
       data.pricePurchase,
       data.priceSale,
       data.priceWholesale,
@@ -94,7 +94,7 @@ export class ProductPresentation {
   public update(data: UpdateProductPresentation) {
     if (data.name) {
       this._name = data.name;
-      this._searchName = new SearchName(data.name);
+      this._searchBlob = new SearchBlob(data.name);
     }
 
     if (data.barcode !== undefined) this._barcode = data.barcode;
@@ -127,7 +127,7 @@ export class ProductPresentation {
       barcode: this._barcode,
       conversionFactor: this._conversionFactor,
       name: this._name,
-      searchName: this._searchName.value,
+      searchBlob: this._searchBlob.value,
       pricePurchase: this._pricePurchase,
       priceSale: this._priceSale,
       priceWholesale: this._priceWholesale,
@@ -151,7 +151,7 @@ export class ProductPresentation {
     return (
       (this._barcode !== null && this._barcode === other._barcode) ||
       this._name === other._name ||
-      this._searchName.equals(other._searchName)
+      this._searchBlob.equals(other._searchBlob)
     );
   }
 

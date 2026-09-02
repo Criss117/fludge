@@ -48,7 +48,7 @@ export const product = sqliteTable(
 
     name: text("name").notNull(),
     slug: text("slug").notNull(),
-    searchName: text("search_name").notNull(),
+    searchBlob: text("search_blob").notNull(),
     description: text("description"),
 
     categoryId: text("category_id").references(() => category.id),
@@ -78,9 +78,9 @@ export const product = sqliteTable(
     // Índices
     index("product_organization_idx").on(t.organizationId),
 
-    index("product_organization_search_name_idx").on(
+    index("product_organization_search_blob_idx").on(
       t.organizationId,
-      t.searchName,
+      t.searchBlob,
     ),
 
     index("product_organization_category_idx").on(
@@ -116,7 +116,7 @@ export const productPresentation = sqliteTable(
       }),
 
     name: text("name").notNull(),
-    searchName: text("search_name").notNull(),
+    searchBlob: text("search_blob").notNull(),
     barcode: text("barcode"),
 
     conversionFactor: integer("conversion_factor").notNull(),

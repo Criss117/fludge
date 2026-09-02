@@ -142,12 +142,12 @@ export class UpdateProductCommand {
     });
 
     presentations.toDelete.forEach((id) => {
-      existing.presentations.delete(id);
+      existing.deletePresentation(id);
     });
 
     const presentationsToUpdate =
       presentations.toUpdate.length > 0
-        ? existing.presentations.updateMany(
+        ? existing.updatePresentations(
             presentations.toUpdate.map(({ id, ...rest }) => ({
               id,
               data: rest,
@@ -164,7 +164,7 @@ export class UpdateProductCommand {
         await this.productUniquenessValidator.validateUniqueBarcode(
           activeOrganization.id.toString(),
           barcodes,
-          existing.presentations.items.map((p) => p.id.toString()),
+          existing.presentations.map((p) => p.id.toString()),
         );
 
       if (errValidate)
