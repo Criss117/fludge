@@ -1,28 +1,21 @@
 import { z } from "zod";
 import { statusEnum } from "../enums/db-enums";
+import { descriptionSchema, nameSchema, uuidSchema } from "./shared";
 
 export const createCategoryValidator = z.object({
-  name: z.string({
-    error: "El nombre es requerido",
-  }),
-  description: z
-    .string({
-      error: "La descripción es requerida",
-    })
-    .optional(),
+  name: nameSchema,
+  description: descriptionSchema,
 });
 
 export const deleteCategoryValidator = z.object({
+  id: uuidSchema("El id del grupo es requerido"),
+});
+
+export const updateCategoryValidator = z.object({
   id: z.uuid({
     error: "El id del grupo es requerido",
   }),
+  name: nameSchema.optional(),
+  description: descriptionSchema.optional(),
+  status: z.enum(statusEnum).optional(),
 });
-
-export const updateCategoryValidator = createCategoryValidator
-  .partial()
-  .extend({
-    id: z.uuid({
-      error: "El id del grupo es requerido",
-    }),
-    status: z.enum(statusEnum).optional(),
-  });

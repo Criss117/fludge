@@ -1,13 +1,14 @@
 import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
-import type { StatusEnum } from "@fludge/db/schema/enums";
+
 import type { GroupSelect } from "@fludge/db/schema/iam.schema";
+import type { StatusEnum } from "@fludge/utils/enums/db-enums";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { Slug } from "@fludge/utils/slugify";
 import { UUID } from "@fludge/utils/uuid";
 
 export type CreateGroup = {
   name: string;
-  description: string | null;
+  description?: string | null;
   permissions: Permissions;
   createdBy: UUID | null;
 };
@@ -36,7 +37,7 @@ export class Group {
       UUID.generate(),
       values.name,
       new Slug(values.name),
-      values.description,
+      values.description ?? null,
       values.permissions,
       values.createdBy,
       now,

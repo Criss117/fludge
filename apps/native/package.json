@@ -76,7 +76,7 @@
   },
   "scripts": {
     "start": "expo start",
-    "dev": "expo start --clear",
+    "dev": "bun run check-types && expo start --clear",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -90,7 +90,8 @@
     "eas-build:dev:local": "TMPDIR=~/eas-temp eas build --platform android --profile development --local",
     "eas-build:prev:local": "TMPDIR=~/eas-temp eas build --platform android --profile preview --local",
     "eas-build:prev": "TMPDIR=~/eas-temp eas build --platform android --profile preview",
-    "eas-build:dev": "TMPDIR=~/eas-temp eas build --platform android --profile development"
+    "eas-build:dev": "TMPDIR=~/eas-temp eas build --platform android --profile development",
+    "check-types": "tsc -b"
   },
   "jest": {
     "preset": "jest-expo",

@@ -10,6 +10,7 @@ import { updateOrganizationValidator } from "@fludge/utils/validators/organizati
 export const updateOrganizationCommand = updateOrganizationValidator;
 
 type CMD = z.infer<typeof updateOrganizationCommand>;
+
 export class UpdateOrganizationCommand {
   constructor(
     private readonly organizationUniquenessValidator: OrganizationUniquenessValidator,
@@ -22,8 +23,6 @@ export class UpdateOrganizationCommand {
         {
           name: cmd.name,
           slug: cmd.name ? new Slug(cmd.name).toString() : undefined,
-          legalName: cmd.legalName,
-          taxId: cmd.taxId,
         },
         activeOrganization.id.toString(),
       );
@@ -43,14 +42,6 @@ export class UpdateOrganizationCommand {
     if (uniqueness.legalNameTaken)
       throw new OrganizationAlreadyExistsException(
         "El nombre legal ya está en uso",
-      );
-
-    if (uniqueness.taxIdTaken)
-      throw new OrganizationAlreadyExistsException("El TAX ID ya está en uso");
-
-    if (uniqueness.phoneTaken)
-      throw new OrganizationAlreadyExistsException(
-        "El teléfono ya está en uso",
       );
 
     activeOrganization.update(cmd);

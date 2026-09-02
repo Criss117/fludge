@@ -1,4 +1,4 @@
-import type { RoleEnum } from "@fludge/db/schema/enums";
+import type { RoleEnum } from "@fludge/utils/enums/db-enums";
 
 export class Role {
   private readonly _value: RoleEnum;

@@ -43,7 +43,8 @@ export function useCreateProductMutation() {
         updatedAt: now,
         createdBy: null,
         organizationId: activeOrganization.id.toString(),
-        searchName: input.name,
+        searchBlob: input.name,
+        totalPresentations: input.presentations.length,
         slug: input.name,
         status: "active",
       });
@@ -62,7 +63,7 @@ export function useCreateProductMutation() {
           createdAt: now,
           updatedAt: now,
           createdBy: null,
-          searchName: item.name,
+          searchBlob: item.name,
           status: "active",
         })),
       );
@@ -72,7 +73,10 @@ export function useCreateProductMutation() {
 
       const { presentations, ...product } = response;
 
-      productCollection.utils.writeInsert(product);
+      productCollection.utils.writeInsert({
+        ...product,
+        totalPresentations: presentations.length,
+      });
       productPresentationsCollection.utils.writeInsert(presentations);
 
       return response;

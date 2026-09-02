@@ -1,8 +1,8 @@
 import { UUID } from "@fludge/utils/uuid";
 import { ProductStatus } from "../value-objects/product-status";
 import type { ProductPresentationSelect } from "@fludge/db/schema/catalog.schema";
-import type { ProductStatusEnum } from "@fludge/db/schema/enums";
 import { SearchBlob } from "@fludge/utils/search-blob";
+import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
 
 export type CreateProductPresentation = {
   name: string;

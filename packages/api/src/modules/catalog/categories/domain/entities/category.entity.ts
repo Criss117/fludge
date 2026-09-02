@@ -7,7 +7,7 @@ export type CreateCategory = {
   name: string;
   organizationId: UUID;
   createdBy: UUID | null;
-  description?: string;
+  description?: string | null;
 };
 
 export type UpdateCategory = {

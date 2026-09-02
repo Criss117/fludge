@@ -1,7 +1,8 @@
 import { Role } from "@fludge/api/modules/shared/domain/value-objects/role";
 import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
-import type { RoleEnum } from "@fludge/db/schema/enums";
+
 import type { MemberSelect } from "@fludge/db/schema/iam.schema";
+import type { RoleEnum } from "@fludge/utils/enums/db-enums";
 import { UUID } from "@fludge/utils/uuid";
 
 export type CreateMember = {

@@ -1,4 +1,4 @@
-import type { ProductStatusEnum } from "@fludge/db/schema/enums";
+import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
 
 export class ProductStatus {
   private readonly _value: ProductStatusEnum;
