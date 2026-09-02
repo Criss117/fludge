@@ -7,9 +7,8 @@ import {
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 import { createdByMetadata, organizationMetadata } from "./iam.schema";
-import { auditMetadata, status } from "./shared";
+import { auditMetadata, productStatus, status } from "./shared";
 import { sql } from "drizzle-orm";
-import { productStatusEnum } from "./enums";
 
 export const category = sqliteTable(
   "category",
@@ -61,9 +60,7 @@ export const product = sqliteTable(
     })
       .notNull()
       .default(false),
-    status: text("status", {
-      enum: productStatusEnum,
-    }).notNull(),
+    status: productStatus,
 
     ...createdByMetadata,
     ...organizationMetadata,
@@ -125,9 +122,7 @@ export const productPresentation = sqliteTable(
     pricePurchase: integer("price_purchase"),
     priceWholesale: integer("price_wholesale"),
 
-    status: text("status", {
-      enum: productStatusEnum,
-    }).notNull(),
+    status: productStatus,
 
     ...createdByMetadata,
     ...organizationMetadata,

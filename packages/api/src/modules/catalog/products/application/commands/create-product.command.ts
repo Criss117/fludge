@@ -7,25 +7,9 @@ import { ORPCError } from "@orpc/server";
 import type { ProductUniquenessValidator } from "../services/product-uniqueness-validator.service";
 import type { ProductRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product.repository";
 import { Slug } from "@fludge/utils/slugify";
+import { createProductValidator } from "@fludge/utils/validators/product.validators";
 
-export const createProductPresentationCommand = z.object({
-  name: z.string(),
-  barcode: z.string().optional(),
-  conversionFactor: z.number().positive(),
-  pricePurchase: z.number().optional(),
-  priceSale: z.number(),
-  priceWholesale: z.number().optional(),
-});
-
-export const createProductCommand = z.object({
-  name: z.string(),
-  categoryId: z.uuid().optional(),
-  description: z.string().optional(),
-  stock: z.number(),
-  allowNegativeStock: z.boolean(),
-  minStock: z.number(),
-  presentations: z.array(createProductPresentationCommand).min(1),
-});
+export const createProductCommand = createProductValidator;
 
 type CMD = z.infer<typeof createProductCommand>;
 

@@ -7,7 +7,7 @@ import { TransactionalRepository } from "@fludge/api/modules/shared/infrastructu
 import { tryCatch } from "@fludge/utils/trycatch";
 import { productPresentation } from "@fludge/db/schema/catalog.schema";
 import type { ProductPresentation } from "@fludge/api/modules/catalog/products/domain/entities/product-presentation.entity";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 type Options = {
   tx?: TransactionService;
@@ -46,7 +46,28 @@ export class ProductPresentationRepository extends TransactionalRepository {
     );
   }
 
-  public async delete(
+  public async deleteMany(
+    organizationId: string,
+    productId: string,
+    presentationIds: string[],
+    options?: Options,
+  ) {
+    const db = options?.tx ?? this.db;
+
+    return tryCatch(
+      db
+        .delete(productPresentation)
+        .where(
+          and(
+            eq(productPresentation.organizationId, organizationId),
+            eq(productPresentation.productId, productId),
+            inArray(productPresentation.id, presentationIds),
+          ),
+        ),
+    );
+  }
+
+  public async deleteAll(
     organizationId: string,
     productId: string,
     options?: Options,

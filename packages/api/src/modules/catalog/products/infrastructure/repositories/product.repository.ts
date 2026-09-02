@@ -137,7 +137,7 @@ export class ProductRepository extends TransactionalRepository {
   public async delete(organizationId: string, productId: string) {
     const transaction = this.db.transaction(async (tx) => {
       const [, errDeletePresentations] =
-        await this.productPresentationRepository.delete(
+        await this.productPresentationRepository.deleteAll(
           organizationId,
           productId,
           {

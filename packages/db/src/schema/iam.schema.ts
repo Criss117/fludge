@@ -8,7 +8,11 @@ import {
   type AnySQLiteColumn,
 } from "drizzle-orm/sqlite-core";
 import { auditMetadata } from "./shared";
-import { statusEnum, historyActionEnum, roleEnum } from "./enums";
+import {
+  statusEnum,
+  historyActionEnum,
+  roleEnum,
+} from "@fludge/utils/enums/db-enums";
 import { user } from "./auth.schema";
 import type { PermissionEnum } from "@fludge/utils/permissions/data";
 

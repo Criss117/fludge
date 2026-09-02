@@ -1,14 +1,11 @@
-import { z } from "zod";
+import type { z } from "zod";
 import type { CategoryRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/category.repository";
 import { ORPCError } from "@orpc/server";
 import { CategoryNotFoundException } from "@fludge/api/modules/catalog/categories//domain/exceptions/category-not-found.exception copy";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
+import { deleteCategoryValidator } from "@fludge/utils/validators/category.validators";
 
-export const deleteCategoryCommand = z.object({
-  id: z.uuid({
-    error: "El id del grupo es requerido",
-  }),
-});
+export const deleteCategoryCommand = deleteCategoryValidator;
 
 type CMD = z.infer<typeof deleteCategoryCommand>;
 

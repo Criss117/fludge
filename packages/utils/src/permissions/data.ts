@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export const PERMISSIONS = {
   organizations: ["update"],
   groups: ["create", "read", "update", "delete", "assign-member"],
@@ -160,22 +158,3 @@ export const ALL_PERMISSIONS = Object.entries(PERMISSIONS).flatMap(
   ([resource, actions]) =>
     Object.values(actions).map((action) => `${resource}:${action}`),
 ) as [PermissionEnum, ...PermissionEnum[]];
-
-export const appStatementSchema = z
-  .object(
-    Object.fromEntries(
-      Object.entries(PERMISSIONS).map(([resource, actions]) => [
-        resource,
-        z
-          .enum(actions as unknown as [string, ...string[]])
-          .array()
-          .optional()
-          .default([]),
-      ]),
-    ),
-  )
-  .refine(
-    (statement) =>
-      Object.values(statement).some((actions) => actions.length > 0),
-    { error: "Debe tener al menos una autorización" },
-  ) as z.ZodType<AppStatement, AppStatement>;

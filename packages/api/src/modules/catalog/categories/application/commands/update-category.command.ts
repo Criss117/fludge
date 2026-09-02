@@ -1,21 +1,15 @@
 import type { CategoryRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/category.repository";
 import type { CategoryUniquenessValidator } from "@fludge/api/modules/catalog/categories/application/services/category-uniqueness-validator.service";
-import { z } from "zod";
+import type { z } from "zod";
+import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { ORPCError } from "@orpc/server";
 import { CategoryAlreadyExistsException } from "@fludge/api/modules/catalog/categories/domain/exceptions/category-already-exists.exception";
-import { createCategoryCommand } from "./create-category.command";
-import { statusEnum } from "@fludge/db/schema/enums";
+import { updateCategoryValidator } from "@fludge/utils/validators/category.validators";
 import { CategoryNotFoundException } from "@fludge/api/modules/catalog/categories//domain/exceptions/category-not-found.exception copy";
 import { Slug } from "@fludge/utils/slugify";
 import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
-import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 
-export const updateCategoryCommand = createCategoryCommand.partial().extend({
-  id: z.uuid({
-    error: "El id del grupo es requerido",
-  }),
-  status: z.enum(statusEnum).optional(),
-});
+export const updateCategoryCommand = updateCategoryValidator;
 
 type CMD = z.infer<typeof updateCategoryCommand>;
 

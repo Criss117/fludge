@@ -1,6 +1,6 @@
+import { productStatusEnum, statusEnum } from "@fludge/utils/enums/db-enums";
 import { sql } from "drizzle-orm";
 import { integer, text } from "drizzle-orm/sqlite-core";
-import { statusEnum } from "./enums";
 
 export const auditMetadata = {
   createdAt: integer("created_at", { mode: "timestamp_ms" })
@@ -13,5 +13,9 @@ export const auditMetadata = {
 };
 
 export const status = text("status", { enum: statusEnum })
+  .notNull()
+  .default("active");
+
+export const productStatus = text("status", { enum: productStatusEnum })
   .notNull()
   .default("active");

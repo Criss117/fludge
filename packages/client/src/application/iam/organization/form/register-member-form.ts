@@ -1,24 +1,8 @@
+import { signUpValidator } from "@fludge/utils/validators/auth.validators";
 import { formOptions } from "@tanstack/react-form";
-import { z } from "zod";
+import type { z } from "zod";
 
-export const registerMemberSchema = z.object({
-  email: z
-    .string({ error: "El email es requerido" })
-    .email("Ingresa un email válido"),
-  password: z
-    .string({ error: "La contraseña es requerida" })
-    .min(6, "La contraseña debe tener al menos 6 caracteres"),
-  phone: z
-    .string({ error: "El teléfono es requerido" })
-    .min(9, "El teléfono es muy corto")
-    .max(15, "El teléfono es muy largo"),
-  name: z
-    .string({ error: "El nombre es requerido" })
-    .min(2, "El nombre es muy corto")
-    .max(50, "El nombre es muy largo"),
-});
-
-export type RegisterMemberSchema = z.infer<typeof registerMemberSchema>;
+export type RegisterMemberSchema = z.infer<typeof signUpValidator>;
 
 export type OnRegisterMemberSubmit = {
   onSubmit: (options: {
@@ -36,7 +20,7 @@ export function registerFormOptions(options: OnRegisterMemberSubmit) {
       name: "",
     },
     validators: {
-      onChange: registerMemberSchema,
+      onChange: signUpValidator,
     },
     onSubmit: ({ value, formApi }) => {
       options.onSubmit({ value, resetForm: formApi.reset });

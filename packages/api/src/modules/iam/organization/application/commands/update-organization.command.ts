@@ -1,13 +1,13 @@
-import { z } from "zod";
-import { registerOrganizationCommand } from "./register-organization.commad";
-import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/organization.repository";
 import { ORPCError } from "@orpc/server";
+import type { z } from "zod";
+import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/organization.repository";
 import type { OrganizationUniquenessValidator } from "../services/organization-uniqueness-validator.service";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Slug } from "@fludge/utils/slugify";
-import { OrganizationAlreadyExistsException } from "../../domain/exceptions/organization-already-exists.exception";
+import { OrganizationAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/organization-already-exists.exception";
+import { updateOrganizationValidator } from "@fludge/utils/validators/organization.validators";
 
-export const updateOrganizationCommand = registerOrganizationCommand.partial();
+export const updateOrganizationCommand = updateOrganizationValidator;
 
 type CMD = z.infer<typeof updateOrganizationCommand>;
 export class UpdateOrganizationCommand {

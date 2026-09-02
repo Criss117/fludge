@@ -1,37 +1,16 @@
-import { z } from "zod";
 import { ORPCError } from "@orpc/server";
 
+import type { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import type { EnsureCategoryExistsService } from "@fludge/api/modules/catalog/categories/application/services/ensure-category-exists.service";
 import type { ProductUniquenessValidator } from "@fludge/api/modules/catalog/products/application/services/product-uniqueness-validator.service";
 import type { ProductRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product.repository";
 import type { ProductPresentationRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product-presentation.repository";
-import {
-  createProductCommand,
-  createProductPresentationCommand,
-} from "./create-product.command";
-import { productStatusEnum } from "@fludge/db/schema/enums";
 import { Slug } from "@fludge/utils/slugify";
 import { tryCatch } from "@fludge/utils/trycatch";
+import { updateProductValidator } from "@fludge/utils/validators/product.validators";
 
-export const updateProductPresentationCommand = createProductPresentationCommand
-  .partial()
-  .extend({
-    id: z.uuid({
-      error: "El id del producto es requerido",
-    }),
-    delete: z.boolean().optional(),
-    status: z.enum(productStatusEnum).optional(),
-    barcode: z.string().nullish(),
-  });
-
-export const updateProductCommand = createProductCommand.partial().extend({
-  id: z.uuid({
-    error: "El id del producto es requerido",
-  }),
-  status: z.enum(productStatusEnum).optional(),
-  presentations: z.array(updateProductPresentationCommand).optional(),
-});
+export const updateProductCommand = updateProductValidator;
 
 type CMD = z.infer<typeof updateProductCommand>;
 
@@ -200,11 +179,12 @@ export class UpdateProductCommand {
           if (errSavePresentations) throw errSavePresentations;
         }
 
-        if (presentationsToUpdate.length > 0) {
+        if (presentations.toDelete.length > 0) {
           const [, errSavePresentations] =
-            await this.productPresentationRepository.save(
+            await this.productPresentationRepository.deleteMany(
+              activeOrganization.id.toString(),
               existing.id.toString(),
-              presentationsToUpdate,
+              presentations.toDelete,
               { tx },
             );
 

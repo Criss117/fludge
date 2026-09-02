@@ -1,24 +1,12 @@
-import { z } from "zod";
+import type { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
 import type { GroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group-member.repository";
-import { GroupMember } from "../../domain/entities/group-member.entity";
+import { GroupMember } from "@fludge/api/modules/iam/organization/domain/entities/group-member.entity";
+import { assignGroupsToMemberValidator } from "@fludge/utils/validators/member.validators";
 
-export const assignGroupsToMemberCommand = z.object({
-  memberId: z.uuid({
-    error: "El id del grupo es requerido",
-  }),
-  groupIds: z
-    .array(
-      z.uuid({
-        error: "El id del miembro es requerido",
-      }),
-    )
-    .min(1, {
-      error: "Debe especificar al menos un miembro",
-    }),
-});
+export const assignGroupsToMemberCommand = assignGroupsToMemberValidator;
 
 type CMD = z.infer<typeof assignGroupsToMemberCommand>;
 

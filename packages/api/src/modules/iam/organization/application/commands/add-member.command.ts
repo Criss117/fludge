@@ -1,16 +1,13 @@
-import { z } from "zod";
+import type { z } from "zod";
 
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Member } from "@fludge/api/modules/iam/organization/domain/entities/member.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
 import type { MemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/member.repository";
+import { addMemberValidator } from "@fludge/utils/validators/organization.validators";
 
-export const addMemberCommand = z.object({
-  userId: z.uuid({
-    error: "El id del usuario es requerido",
-  }),
-});
+export const addMemberCommand = addMemberValidator;
 
 type CMD = z.infer<typeof addMemberCommand>;
 

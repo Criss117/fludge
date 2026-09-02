@@ -1,66 +1,16 @@
-import { z } from "zod";
-import { ORPCError } from "@orpc/server";
+import type { z } from "zod";
+import type { OrganizationUniquenessValidator } from "@fludge/api/modules/iam/organization/application/services/organization-uniqueness-validator.service";
 import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/organization.repository";
+import { ORPCError } from "@orpc/server";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
-import type { OrganizationUniquenessValidator } from "@fludge/api/modules/iam/organization/application/services/organization-uniqueness-validator.service";
 import { OrganizationAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/organization-already-exists.exception";
 import { ALL_PERMISSIONS } from "@fludge/utils/permissions/data";
+import { registerOrganizationValidator } from "@fludge/utils/validators/organization.validators";
 
-export const registerOrganizationCommand = z.object({
-  name: z
-    .string({
-      error: "El nombre es requerido",
-    })
-    .min(3, {
-      error: "El nombre es muy corto",
-    })
-    .max(50, {
-      error: "El nombre es muy largo",
-    }),
-  phone: z
-    .string({
-      error: "El teléfono es requerido",
-    })
-    .min(9, {
-      error: "El teléfono es muy corto",
-    })
-    .max(15, {
-      error: "El teléfono es muy largo",
-    }),
-  legalName: z
-    .string({
-      error: "La razón social es requerida",
-    })
-    .min(3, {
-      error: "La razón social es muy corta",
-    })
-    .max(50, {
-      error: "La razón social es muy larga",
-    }),
-  taxId: z
-    .string({
-      error: "El NIT es requerido",
-    })
-    .min(9, {
-      error: "El NIT es muy corto",
-    })
-    .max(15, {
-      error: "El NIT es muy largo",
-    }),
-  address: z
-    .string({
-      error: "La dirección es requerida",
-    })
-    .min(5, {
-      error: "La dirección es muy corta",
-    })
-    .max(50, {
-      error: "La dirección es muy larga",
-    }),
-});
+export const registerOrganizationCommand = registerOrganizationValidator;
 
 type CMD = z.infer<typeof registerOrganizationCommand>;
 

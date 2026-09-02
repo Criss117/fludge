@@ -1,23 +1,13 @@
-import { z } from "zod";
+import type { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
 import type { GroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group.repository";
-import {
-  Permissions,
-  permissionsSchema,
-} from "@fludge/utils/permissions/index";
+import { Permissions } from "@fludge/utils/permissions/index";
+import { createGroupValidator } from "@fludge/utils/validators/group.validators";
 
-export const createGroupCommand = z.object({
-  name: z.string({
-    error: "El nombre es requerido",
-  }),
-  description: z.string({
-    error: "La descripción es requerida",
-  }),
-  permissions: permissionsSchema,
-});
+export const createGroupCommand = createGroupValidator;
 
 type CMD = z.infer<typeof createGroupCommand>;
 

@@ -7,7 +7,6 @@ import {
   PERMISSION_DESCRIPTIONS_ES,
   PERMISSIONS,
 } from "./data";
-export { appStatementSchema } from "./data";
 
 export const permissionsSchema = z.enum(ALL_PERMISSIONS).array().min(1, {
   error: "Debe tener al menos una autorización",

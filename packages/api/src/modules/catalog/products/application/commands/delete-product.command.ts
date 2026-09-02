@@ -1,12 +1,9 @@
 import type { ProductRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product.repository";
+import type { z } from "zod";
+import { deleteProductValidator } from "@fludge/utils/validators/product.validators";
 import { ORPCError } from "@orpc/server";
-import { z } from "zod";
 
-export const deleteProductCommand = z.object({
-  id: z.uuid({
-    error: "El id del producto debe ser un UUID válido",
-  }),
-});
+export const deleteProductCommand = deleteProductValidator;
 
 type CMD = z.infer<typeof deleteProductCommand>;
 

@@ -1,15 +1,10 @@
-import { z } from "zod";
-import { signUpMemberCommand } from "./sign-up-member.command";
+import type { z } from "zod";
 import type { AuthService } from "@fludge/auth";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { ORPCError } from "@orpc/server";
+import { updateUserInfoValidator } from "@fludge/utils/validators/auth.validators";
 
-export const updateUserInfoCommand = signUpMemberCommand
-  .pick({
-    name: true,
-    phone: true,
-  })
-  .partial();
+export const updateUserInfoCommand = updateUserInfoValidator;
 
 type CMD = z.infer<typeof updateUserInfoCommand>;
 

@@ -1,22 +1,14 @@
 import type { CategoryRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/category.repository";
 import type { CategoryUniquenessValidator } from "@fludge/api/modules/catalog/categories/application/services/category-uniqueness-validator.service";
-import { z } from "zod";
+import type { z } from "zod";
+import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Category } from "@fludge/api/modules/catalog/categories/domain/entities/category.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
 import { CategoryAlreadyExistsException } from "@fludge/api/modules/catalog/categories/domain/exceptions/category-already-exists.exception";
-import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
+import { createCategoryValidator } from "@fludge/utils/validators/category.validators";
 
-export const createCategoryCommand = z.object({
-  name: z.string({
-    error: "El nombre es requerido",
-  }),
-  description: z
-    .string({
-      error: "La descripción es requerida",
-    })
-    .optional(),
-});
+export const createCategoryCommand = createCategoryValidator;
 
 type CMD = z.infer<typeof createCategoryCommand>;
 

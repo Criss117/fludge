@@ -1,19 +1,12 @@
 import { Permissions } from "@fludge/utils/permissions/index";
-import { z } from "zod";
-
+import type { z } from "zod";
+import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
+import type { GroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group.repository";
 import { UUID } from "@fludge/utils/uuid";
 import { ORPCError } from "@orpc/server";
-import { createGroupCommand } from "./create-group.command";
-import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
-import { statusEnum } from "@fludge/db/schema/enums";
-import type { GroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group.repository";
+import { updateGroupValidator } from "@fludge/utils/validators/group.validators";
 
-export const updateGroupCommand = createGroupCommand.partial().extend({
-  id: z.uuid({
-    error: "El id del grupo es requerido",
-  }),
-  status: z.enum(statusEnum).optional(),
-});
+export const updateGroupCommand = updateGroupValidator;
 
 type CMD = z.infer<typeof updateGroupCommand>;
 

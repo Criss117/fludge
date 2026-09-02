@@ -1,17 +1,8 @@
-import { appStatementSchema } from "@fludge/utils/permissions/index";
+import { createGroupValidator } from "@fludge/utils/validators/group.validators";
 import { formOptions } from "@tanstack/react-form";
-import { z } from "zod";
+import type { z } from "zod";
 
-export const groupSchema = z.object({
-  name: z
-    .string({ error: "El nombre es requerido" })
-    .min(3, { error: "El nombre debe tener al menos 3 caracteres" })
-    .max(50, { error: "El nombre no puede exceder 50 caracteres" }),
-  description: z.string({ error: "La descripción es requerida" }),
-  permissions: appStatementSchema,
-});
-
-export type GroupSchema = z.infer<typeof groupSchema>;
+export type GroupSchema = z.infer<typeof createGroupValidator>;
 
 export type OnGroupSubmit = {
   onSubmit: (options: { value: GroupSchema; resetForm: () => void }) => void;
@@ -29,7 +20,7 @@ export function groupFormOptions(
         defaultValues?.permissions ?? ({} as GroupSchema["permissions"]),
     },
     validators: {
-      onChange: groupSchema,
+      onChange: createGroupValidator,
     },
     onSubmit: ({ value, formApi }) => {
       options.onSubmit({ value, resetForm: formApi.reset });

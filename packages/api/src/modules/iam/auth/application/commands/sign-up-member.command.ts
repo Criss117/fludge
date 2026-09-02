@@ -1,25 +1,13 @@
-import { z } from "zod";
+import { ORPCError } from "@orpc/server";
 
 import { tryCatch } from "@fludge/utils/trycatch";
-import { ORPCError } from "@orpc/server";
+import type { z } from "zod";
 import type { AuthService } from "@fludge/auth";
 import type { AddMemberCommand } from "@fludge/api/modules/iam/organization/application/commands/add-member.command";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
+import { signUpValidator } from "@fludge/utils/validators/auth.validators";
 
-export const signUpMemberCommand = z.object({
-  email: z.string({
-    error: "El email es requerido",
-  }),
-  password: z.string({
-    error: "La contraseña es requerida",
-  }),
-  phone: z.string({
-    error: "El teléfono es requerido",
-  }),
-  name: z.string({
-    error: "El nombre es requerido",
-  }),
-});
+export const signUpMemberCommand = signUpValidator;
 
 type CMD = z.infer<typeof signUpMemberCommand>;
 

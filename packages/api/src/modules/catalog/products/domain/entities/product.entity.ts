@@ -15,7 +15,7 @@ import { ProductPresentationCollection } from "./product-presentation.collection
 import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-bresentation-barcode-no-has-barcode.exception";
 import { ProductStock } from "../value-objects/product-stock";
 import { DuplicatedBarcodeException } from "../exceptions/duplicated-barcode.exception";
-import type { ProductStatusEnum } from "@fludge/db/schema/enums";
+import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
 
 type CreateProduct = {
   name: string;

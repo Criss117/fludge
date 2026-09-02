@@ -1,16 +1,13 @@
-import { z } from "zod";
+import type { z } from "zod";
 import type { EnsureOrganizationExistsService } from "@fludge/api/modules/iam/organization/application/services/ensure-organization-exists.service";
-import { ORPCError } from "@orpc/server";
 import type { DatabaseService } from "@fludge/db";
+import { ORPCError } from "@orpc/server";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { session } from "@fludge/db/schema/auth.schema";
 import { eq, and } from "drizzle-orm";
+import { setActiveOrganizationValidator } from "@fludge/utils/validators/auth.validators";
 
-export const setActiveOrganizationCommand = z.object({
-  organizationId: z.uuid({
-    error: "La organización no es válida",
-  }),
-});
+export const setActiveOrganizationCommand = setActiveOrganizationValidator;
 
 type CMD = z.infer<typeof setActiveOrganizationCommand> & {
   loggedUserId: string;
