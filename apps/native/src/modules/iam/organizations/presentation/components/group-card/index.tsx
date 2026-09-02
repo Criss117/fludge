@@ -32,6 +32,7 @@ export function GroupCard(props: Props) {
           params: { groupid: props.group.id },
         });
       }}
+      className="rounded-3xl shadow"
     >
       <GroupCardBase {...props} />
     </PressableFeedback>

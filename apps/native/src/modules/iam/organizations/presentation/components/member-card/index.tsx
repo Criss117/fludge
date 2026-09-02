@@ -49,6 +49,7 @@ export function SelectableMemberCard({
     <PressableFeedback
       onPress={() => onPress?.(props.member)}
       onLongPress={() => onLongPress?.(props.member)}
+      className="rounded-3xl shadow"
     >
       <View
         className={cn(
@@ -123,6 +124,7 @@ export function MemberCardRedirect(props: MemberCardProps) {
           params: { memberid: props.member.id },
         })
       }
+      className="rounded-3xl shadow"
     >
       <MemberCardBase {...props} />
     </PressableFeedback>

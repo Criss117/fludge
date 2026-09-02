@@ -21,6 +21,7 @@ export function OrganizationCard({ organization, isPending, onPress }: Props) {
     <PressableFeedback
       onPress={() => onPress(organization.id)}
       isDisabled={isPending}
+      className="rounded-3xl shadow"
     >
       <Card
         className="flex flex-row items-start gap-x-2"
