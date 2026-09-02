@@ -5,6 +5,7 @@ import { SearchInput } from "@/modules/shared/components/search-input";
 import { FadeContentContainer } from "@/modules/shared/components/fade-container";
 import { ProductsSection } from "../sections/products.section";
 import { CategoriesSection } from "../sections/categories.section";
+import { CameraDialog } from "@/modules/shared/components/camera-dialog";
 
 const items = [
   {
@@ -41,13 +42,19 @@ export function CatalogScreen() {
 
   return (
     <View className="flex-1 gap-y-4 px-3">
-      <SearchInput
-        query={query}
-        setQuery={setQuery}
-        placeholder={
-          items.find((item) => item.id === tab)?.searchPlaceholder ?? "Buscar"
-        }
-      />
+      <View className="flex-row items-center gap-x-2">
+        <View className="flex-1">
+          <SearchInput
+            query={query}
+            setQuery={setQuery}
+            placeholder={
+              items.find((item) => item.id === tab)?.searchPlaceholder ??
+              "Buscar"
+            }
+          />
+        </View>
+        {tab === "products" && <CameraDialog setBarcode={(b) => setQuery(b)} />}
+      </View>
       <Tabs
         value={tab}
         onValueChange={(v) => setTab(v as Id)}
