@@ -1,16 +1,10 @@
 import { Tabs } from "heroui-native/tabs";
-import { Suspense, useState } from "react";
+import { Activity, Suspense, useState } from "react";
 import { View } from "react-native";
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { FadeContentContainer } from "@/modules/shared/components/fade-container";
-import {
-  ProductsSection,
-  ProductsSectionSkeleton,
-} from "../sections/products.section";
-import {
-  CategoriesSection,
-  CategoriesSectionSkeleton,
-} from "../sections/categories.section";
+import { ProductsSection } from "../sections/products.section";
+import { CategoriesSection } from "../sections/categories.section";
 
 const items = [
   {
@@ -18,28 +12,24 @@ const items = [
     title: "Productos",
     searchPlaceholder: "Buscar productos por nombre, codigo, descripción...",
     CMP: ProductsSection,
-    Skeleton: ProductsSectionSkeleton,
   },
   {
     id: "categories",
     title: "Categorias",
     searchPlaceholder: "Buscar categorias por nombre, descripción...",
     CMP: CategoriesSection,
-    Skeleton: CategoriesSectionSkeleton,
   },
   {
     id: "movements",
     title: "Movimientos",
     searchPlaceholder: "Buscar movimientos por nombre, descripción...",
     CMP: CategoriesSection,
-    Skeleton: CategoriesSectionSkeleton,
   },
   {
     id: "suppliers",
     title: "Proveedores",
     searchPlaceholder: "Buscar proveedores por nombre, descripción...",
     CMP: CategoriesSection,
-    Skeleton: CategoriesSectionSkeleton,
   },
 ] as const;
 
@@ -74,13 +64,11 @@ export function CatalogScreen() {
           </Tabs.ScrollView>
         </Tabs.List>
         {items.map((item) => (
-          <Tabs.Content value={item.id} key={item.id} className="flex-1">
+          <Activity mode={tab === item.id ? "visible" : "hidden"} key={item.id}>
             <FadeContentContainer>
-              <Suspense fallback={<item.Skeleton />}>
-                <item.CMP query={query.trim()} />
-              </Suspense>
+              <item.CMP query={query.trim()} />
             </FadeContentContainer>
-          </Tabs.Content>
+          </Activity>
         ))}
       </Tabs>
     </View>

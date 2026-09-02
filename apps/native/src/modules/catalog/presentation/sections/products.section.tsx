@@ -1,6 +1,10 @@
 import { useFindProducts } from "@fludge/client/application/catalog/queries/use-find-products";
 import { FlatList, View } from "react-native";
-import { CARD_HEIGHT, ProductCard } from "../components/product-card";
+import {
+  CARD_HEIGHT,
+  ProductCard,
+  ProductCardSkeleton,
+} from "../components/product-card";
 import { FloatingLink } from "@/modules/shared/components/floating-link";
 import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 import { Typography } from "heroui-native/text";
@@ -9,12 +13,30 @@ interface Props {
   query: string;
 }
 
+interface ListFooterProps {
+  hasNextPage: boolean;
+}
+
 const ITEM_SEPARATOR_HEIGHT = 16;
 
+function ListFooterComponent({ hasNextPage }: ListFooterProps) {
+  if (!hasNextPage)
+    return (
+      <View>
+        <Typography>No hay más productos</Typography>
+      </View>
+    );
+
+  return <ProductsSectionSkeleton />;
+}
+
 export function ProductsSection({ query }: Props) {
-  const { data, fetchNextPage, hasNextPage } = useFindProducts({
-    query,
-  });
+  const { data, fetchNextPage, hasNextPage, isLoading, isReady } =
+    useFindProducts({
+      query,
+    });
+
+  if (isLoading && !isReady) return <ProductsSectionSkeleton length={10} />;
 
   return (
     <View className="relative flex-1">
@@ -37,6 +59,8 @@ export function ProductsSection({ query }: Props) {
         onEndReached={() => {
           if (hasNextPage) fetchNextPage();
         }}
+        ListFooterComponentClassName="py-4"
+        ListFooterComponent={<ListFooterComponent hasNextPage={hasNextPage} />}
       />
       <View className="absolute right-0 bottom-20">
         <FloatingLink
@@ -49,6 +73,12 @@ export function ProductsSection({ query }: Props) {
   );
 }
 
-export function ProductsSectionSkeleton() {
-  return <Typography>Loading...</Typography>;
+export function ProductsSectionSkeleton({ length = 3 }: { length?: number }) {
+  return (
+    <View className="gap-y-4">
+      {Array.from({ length }).map((_, i) => (
+        <ProductCardSkeleton key={i} />
+      ))}
+    </View>
+  );
 }
