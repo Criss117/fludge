@@ -3,6 +3,7 @@ import { useOrpc } from "@fludge/client/providers/orpc.provider";
 
 type Orpc = ReturnType<typeof useOrpc>;
 type ResourceName = "categories" | "products" | "products-presentations";
+export const indexedCollections = new Set<string>();
 
 const isDev = process.env.NODE_ENV !== "production";
 let version = 0;

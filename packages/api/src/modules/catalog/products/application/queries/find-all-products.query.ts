@@ -1,8 +1,8 @@
 import { type DatabaseService } from "@fludge/db";
-import { product } from "@fludge/db/schema/catalog.schema";
+import { product, productPresentation } from "@fludge/db/schema/catalog.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { ORPCError } from "@orpc/server";
-import { desc, eq } from "drizzle-orm";
+import { count, desc, eq, getColumns } from "drizzle-orm";
 
 export class FindAllProductsQuery {
   constructor(private readonly db: DatabaseService) {}
@@ -10,8 +10,15 @@ export class FindAllProductsQuery {
   public async execute(organizationId: string) {
     const [rows, err] = await tryCatch(
       this.db
-        .select()
+        .select({
+          ...getColumns(product),
+          totalPresentations: count(productPresentation.id),
+        })
         .from(product)
+        .innerJoin(
+          productPresentation,
+          eq(productPresentation.productId, product.id),
+        )
         .where(eq(product.organizationId, organizationId))
         .orderBy(desc(product.createdAt))
         .groupBy(product.id),

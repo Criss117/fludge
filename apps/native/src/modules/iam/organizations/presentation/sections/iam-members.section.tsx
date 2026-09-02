@@ -6,6 +6,7 @@ import {
 } from "@/modules/iam/organizations/presentation/components/member-card";
 import { useFindAllMembers } from "@fludge/client/application/iam/organization/queries/use-find-members";
 import { FloatingLink } from "@/modules/shared/components/floating-link";
+import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 
 const ITEM_SEPARATOR_HEIGHT = 16;
 
@@ -31,7 +32,7 @@ export function IamMembersSection({ query }: Props) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 124 }}
         getItemLayout={(_, index) => ({
-          length: CARD_HEIGHT,
+          length: CARD_HEIGHT + DEFAULT_CARD_PADDING * 2,
           offset: (CARD_HEIGHT + ITEM_SEPARATOR_HEIGHT) * index,
           index,
         })}
@@ -60,7 +61,7 @@ export function IamMembersSectionSkeleton() {
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 96 }}
       getItemLayout={(_, index) => ({
-        length: CARD_HEIGHT,
+        length: CARD_HEIGHT + DEFAULT_CARD_PADDING * 2,
         offset: (CARD_HEIGHT + ITEM_SEPARATOR_HEIGHT) * index,
         index,
       })}

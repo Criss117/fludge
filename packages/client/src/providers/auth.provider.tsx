@@ -35,13 +35,6 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
         isRoot: boolean;
       };
 
-      console.log({
-        ...sessionData,
-        activeOrganizationId: sessionData.activeOrganizationId as unknown as
-          string | null,
-        user: userData,
-      });
-
       return {
         ...sessionData,
         activeOrganizationId: sessionData.activeOrganizationId as unknown as

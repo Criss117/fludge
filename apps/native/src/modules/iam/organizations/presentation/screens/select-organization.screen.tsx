@@ -8,6 +8,7 @@ import { MaterialIcons } from "@/modules/shared/components/icons";
 import { Link, useRouter } from "expo-router";
 import { Button } from "heroui-native/button";
 import { Typography } from "heroui-native/text";
+import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 
 const ITEM_SEPARATOR_HEIGHT = 16;
 
@@ -90,7 +91,7 @@ export function SelectOrganizationScreen() {
           />
         )}
         getItemLayout={(_, index) => ({
-          length: CARD_HEIGHT,
+          length: CARD_HEIGHT + DEFAULT_CARD_PADDING * 2,
           offset: (CARD_HEIGHT + ITEM_SEPARATOR_HEIGHT) * index,
           index,
         })}

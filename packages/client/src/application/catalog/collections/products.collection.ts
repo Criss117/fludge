@@ -1,12 +1,11 @@
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import { collectionOptions, useDbClient } from "@tanstack/react-db";
 import type { QueryClient } from "@tanstack/react-query";
-import { createResourceCollection } from "@fludge/client/shared/create-resource-collection";
-import type { OrpcQueryClient } from "@fludge/client/providers/orpc.provider";
-
-export type ProductSummary = Awaited<
-  ReturnType<OrpcQueryClient["product"]["queries"]["findAll"]["call"]>
->[number];
+import {
+  createResourceCollection,
+  indexedCollections,
+} from "@fludge/client/shared/create-resource-collection";
+import { BasicIndex } from "@tanstack/db";
 
 const { useCollection, cache } = createResourceCollection(
   "products",
@@ -22,6 +21,8 @@ const { useCollection, cache } = createResourceCollection(
           return products;
         },
         getKey: (r) => r.id,
+        defaultIndexType: BasicIndex,
+        autoIndex: "eager",
       }),
     );
   },
@@ -33,6 +34,14 @@ export function useProductsCollection() {
   const { collection, activeOrganization } = useCollection();
 
   const productCollection = useDbClient().collection(collection);
+
+  if (!indexedCollections.has(collection.id)) {
+    productCollection.createIndex((row) => row.createdAt);
+    productCollection.createIndex((row) => row.name);
+    productCollection.createIndex((row) => row.searchBlob);
+    productCollection.createIndex((row) => row.categoryId);
+    indexedCollections.add(collection.id);
+  }
 
   return { productCollection, activeOrganization };
 }

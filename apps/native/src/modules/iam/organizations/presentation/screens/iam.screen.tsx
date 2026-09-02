@@ -7,6 +7,7 @@ import {
 } from "../sections/iam-members.section";
 import { IamGroupsSection } from "../sections/iam-groups.section";
 import { SearchInput } from "@/modules/shared/components/search-input";
+import { FadeContentContainer } from "@/modules/shared/components/fade-container";
 
 export function IamScreen() {
   const [query, setQuery] = useState("");
@@ -21,23 +22,25 @@ export function IamScreen() {
       />
       <Tabs value={tab} onValueChange={setTab} className="flex-1">
         <Tabs.List className="rounded-full">
-          <Tabs.ScrollView>
-            <Tabs.Indicator className="dark:bg-muted" />
-            <Tabs.Trigger value="members" className="w-1/2">
-              <Tabs.Label>Miembros</Tabs.Label>
-            </Tabs.Trigger>
-            <Tabs.Trigger value="groups" className="w-1/2">
-              <Tabs.Label>Grupos</Tabs.Label>
-            </Tabs.Trigger>
-          </Tabs.ScrollView>
+          <Tabs.Indicator className="dark:bg-muted" />
+          <Tabs.Trigger value="members" className="w-1/2">
+            <Tabs.Label>Miembros</Tabs.Label>
+          </Tabs.Trigger>
+          <Tabs.Trigger value="groups" className="w-1/2">
+            <Tabs.Label>Grupos</Tabs.Label>
+          </Tabs.Trigger>
         </Tabs.List>
         <Tabs.Content value="members" className="flex-1">
-          <Suspense fallback={<IamMembersSectionSkeleton />}>
-            <IamMembersSection query={query.trim()} />
-          </Suspense>
+          <FadeContentContainer>
+            <Suspense fallback={<IamMembersSectionSkeleton />}>
+              <IamMembersSection query={query.trim()} />
+            </Suspense>
+          </FadeContentContainer>
         </Tabs.Content>
         <Tabs.Content value="groups" className="flex-1">
-          <IamGroupsSection query={query.trim()} />
+          <FadeContentContainer>
+            <IamGroupsSection query={query.trim()} />
+          </FadeContentContainer>
         </Tabs.Content>
       </Tabs>
     </View>

@@ -1,7 +1,10 @@
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
-import { collectionOptions, useDbClient } from "@tanstack/react-db";
+import { BasicIndex, collectionOptions, useDbClient } from "@tanstack/react-db";
 import type { QueryClient } from "@tanstack/react-query";
-import { createResourceCollection } from "@fludge/client/shared/create-resource-collection";
+import {
+  createResourceCollection,
+  indexedCollections,
+} from "@fludge/client/shared/create-resource-collection";
 import type { OrpcQueryClient } from "@fludge/client/providers/orpc.provider";
 
 export type ProductPresentationSummary = Awaited<
@@ -16,6 +19,8 @@ const { useCollection, cache } = createResourceCollection(
         id: id,
         queryKey: queryKey,
         queryClient: client.requireDependency<QueryClient>("queryClient"),
+        defaultIndexType: BasicIndex,
+        autoIndex: "eager",
         queryFn: async () => {
           const categories = await orpc.category.queries.findAll.call();
 
@@ -76,6 +81,12 @@ export function useCategoriesCollection() {
   const { collection, activeOrganization } = useCollection();
 
   const categoryCollection = useDbClient().collection(collection);
+
+  if (!indexedCollections.has(collection.id)) {
+    categoryCollection.createIndex((row) => row.createdAt);
+    categoryCollection.createIndex((row) => row.name);
+    indexedCollections.add(collection.id);
+  }
 
   return { categoryCollection, activeOrganization };
 }

@@ -34,8 +34,6 @@ export const CARD_HEIGHT = 152;
 export function MemberCard(props: MemberCardProps) {
   const isOwner = props.member.role === "owner";
 
-  console.log({ ...props });
-
   if (isOwner) return <MemberCardBase {...props} />;
 
   return <MemberCardRedirect {...props} />;
@@ -75,8 +73,6 @@ export function MemberCardBase({
   asGroupMember,
 }: MemberCardProps) {
   const isOwner = member.role === "owner";
-
-  console.log(asGroupMember);
 
   return (
     <Card className="gap-y-2" style={{ height: CARD_HEIGHT }}>

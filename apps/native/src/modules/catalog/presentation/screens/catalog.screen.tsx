@@ -1,0 +1,113 @@
+import { Tabs } from "heroui-native/tabs";
+import { Suspense, useState } from "react";
+import { View } from "react-native";
+import { SearchInput } from "@/modules/shared/components/search-input";
+import { FadeContentContainer } from "@/modules/shared/components/fade-container";
+import {
+  ProductsSection,
+  ProductsSectionSkeleton,
+} from "../sections/products.section";
+import {
+  CategoriesSection,
+  CategoriesSectionSkeleton,
+} from "../sections/categories.section";
+
+const items = [
+  {
+    id: "products",
+    title: "Productos",
+    searchPlaceholder: "Buscar productos por nombre, codigo, descripción...",
+    CMP: ProductsSection,
+    Skeleton: ProductsSectionSkeleton,
+  },
+  {
+    id: "categories",
+    title: "Categorias",
+    searchPlaceholder: "Buscar categorias por nombre, descripción...",
+    CMP: CategoriesSection,
+    Skeleton: CategoriesSectionSkeleton,
+  },
+  {
+    id: "movements",
+    title: "Movimientos",
+    searchPlaceholder: "Buscar movimientos por nombre, descripción...",
+    CMP: CategoriesSection,
+    Skeleton: CategoriesSectionSkeleton,
+  },
+  {
+    id: "suppliers",
+    title: "Proveedores",
+    searchPlaceholder: "Buscar proveedores por nombre, descripción...",
+    CMP: CategoriesSection,
+    Skeleton: CategoriesSectionSkeleton,
+  },
+] as const;
+
+type Id = (typeof items)[number]["id"];
+
+export function CatalogScreen() {
+  const [query, setQuery] = useState("");
+  const [tab, setTab] = useState<Id>("products");
+
+  return (
+    <View className="flex-1 gap-y-4 px-3">
+      <SearchInput
+        query={query}
+        setQuery={setQuery}
+        placeholder={
+          items.find((item) => item.id === tab)?.searchPlaceholder ?? "Buscar"
+        }
+      />
+      <Tabs
+        value={tab}
+        onValueChange={(v) => setTab(v as Id)}
+        className="flex-1"
+      >
+        <Tabs.List className="rounded-full">
+          <Tabs.ScrollView>
+            <Tabs.Indicator className="dark:bg-muted" />
+            {items.map((item) => (
+              <Tabs.Trigger value={item.id} key={item.id} className="px-4">
+                <Tabs.Label>{item.title}</Tabs.Label>
+              </Tabs.Trigger>
+            ))}
+          </Tabs.ScrollView>
+        </Tabs.List>
+        {items.map((item) => (
+          <Tabs.Content value={item.id} key={item.id} className="flex-1">
+            <FadeContentContainer>
+              <Suspense fallback={<item.Skeleton />}>
+                <item.CMP query={query.trim()} />
+              </Suspense>
+            </FadeContentContainer>
+          </Tabs.Content>
+        ))}
+      </Tabs>
+    </View>
+  );
+}
+
+export function CatalogScreenSkeleton() {
+  return (
+    <View className="flex-1 px-3">
+      <Tabs value="members" onValueChange={() => {}} className="flex-1">
+        <Tabs.List className="bg-muted rounded-full">
+          <Tabs.ScrollView>
+            <Tabs.Indicator />
+            <Tabs.Trigger value="members" className="w-1/2" isDisabled>
+              <Tabs.Label className="text-black dark:text-white">
+                Miembros
+              </Tabs.Label>
+            </Tabs.Trigger>
+            <Tabs.Trigger value="groups" className="w-1/2" isDisabled>
+              <Tabs.Label className="text-black dark:text-white">
+                Grupos
+              </Tabs.Label>
+            </Tabs.Trigger>
+          </Tabs.ScrollView>
+        </Tabs.List>
+        <Tabs.Content value="members" className="flex-1"></Tabs.Content>
+      </Tabs>
+    </View>
+  );
+}
