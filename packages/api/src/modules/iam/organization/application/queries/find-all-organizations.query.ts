@@ -3,7 +3,7 @@ import { desc, eq, getColumns } from "drizzle-orm";
 import type { DatabaseService } from "@fludge/db";
 import { member, organization } from "@fludge/db/schema/iam.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
-import { ORPCError } from "@orpc/server";
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 
 export class FindAllOrganizationsQuery {
   constructor(private readonly db: DatabaseService) {}
@@ -20,10 +20,10 @@ export class FindAllOrganizationsQuery {
     );
 
     if (errorFindingOrganizations)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al obtener organizaciones",
-        cause: errorFindingOrganizations.cause,
-      });
+      throw new InternalServerError(
+        errorFindingOrganizations,
+        "iam.organizations.errors.isr_on_find",
+      );
 
     return allOrganizations;
   }

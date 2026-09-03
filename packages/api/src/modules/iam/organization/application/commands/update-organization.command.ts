@@ -1,4 +1,3 @@
-import { ORPCError } from "@orpc/server";
 import type { z } from "zod";
 import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/organization.repository";
 import type { OrganizationUniquenessValidator } from "../services/organization-uniqueness-validator.service";
@@ -6,6 +5,7 @@ import type { Organization } from "@fludge/api/modules/iam/organization/domain/e
 import { Slug } from "@fludge/utils/slugify";
 import { OrganizationAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/organization-already-exists.exception";
 import { updateOrganizationValidator } from "@fludge/utils/validators/organization.validators";
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 
 export const updateOrganizationCommand = updateOrganizationValidator;
 
@@ -28,20 +28,19 @@ export class UpdateOrganizationCommand {
       );
 
     if (errUniqueness)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al validar la unicidad de la organización",
-        cause: errUniqueness.cause,
-      });
+      throw new InternalServerError(
+        errUniqueness,
+        "iam.organizations.errors.isr_on_find",
+      );
 
-    if (uniqueness.nameTaken)
-      throw new OrganizationAlreadyExistsException("El nombre ya está en uso");
-
-    if (uniqueness.slugTaken)
-      throw new OrganizationAlreadyExistsException("El slug ya está en uso");
+    if (uniqueness.nameTaken || uniqueness.slugTaken)
+      throw new OrganizationAlreadyExistsException(
+        "iam.organizations.errors.name_taken",
+      );
 
     if (uniqueness.legalNameTaken)
       throw new OrganizationAlreadyExistsException(
-        "El nombre legal ya está en uso",
+        "iam.organizations.errors.legal_name_taken",
       );
 
     activeOrganization.update(cmd);
@@ -52,10 +51,10 @@ export class UpdateOrganizationCommand {
       );
 
     if (errSaving)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al guardar la organización",
-        cause: errSaving.cause,
-      });
+      throw new InternalServerError(
+        errSaving,
+        "iam.organizations.errors.isr_on_save",
+      );
 
     return activeOrganization.values;
   }

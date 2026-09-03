@@ -1,4 +1,4 @@
-import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-bresentation-barcode-no-has-barcode.exception";
+import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-bresentation-no-has-barcode.exception";
 import { ProductPresentationAlreadyExistsException } from "../exceptions/product-presentation-already-exists.exception";
 import { ProductPresentationNotFoundException } from "../exceptions/product-presentation-not-found.exception";
 import type {
@@ -61,9 +61,7 @@ export class ProductPresentationCollection {
     this._items.set(item.id.toString(), item);
 
     if (this.barcodes.length === 0)
-      throw new ProductPresentationNoHasBarcodeException(
-        "Debe tener al menos una presentación con barcode",
-      );
+      throw new ProductPresentationNoHasBarcodeException();
 
     return item;
   }

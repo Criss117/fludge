@@ -1,11 +1,12 @@
 import type { z } from "zod";
 import type { EnsureOrganizationExistsService } from "@fludge/api/modules/iam/organization/application/services/ensure-organization-exists.service";
 import type { DatabaseService } from "@fludge/db";
-import { ORPCError } from "@orpc/server";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { session } from "@fludge/db/schema/auth.schema";
 import { eq, and } from "drizzle-orm";
 import { setActiveOrganizationValidator } from "@fludge/utils/validators/auth.validators";
+import { OrganizationNotFoundException } from "@fludge/api/modules/iam/organization/domain/exceptions/organization-not-found.exception";
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 
 export const setActiveOrganizationCommand = setActiveOrganizationValidator;
 
@@ -28,15 +29,12 @@ export class SetActiveOrganizationCommand {
       );
 
     if (errExists)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al obtener la organización",
-        cause: errExists.cause,
-      });
+      throw new InternalServerError(
+        errExists,
+        "iam.organizations.errors.isr_on_find",
+      );
 
-    if (!exists)
-      throw new ORPCError("NOT_FOUND", {
-        message: "No se encontró la organización",
-      });
+    if (!exists) throw new OrganizationNotFoundException();
 
     const [, errSession] = await tryCatch(
       this.db
@@ -54,9 +52,9 @@ export class SetActiveOrganizationCommand {
     );
 
     if (errSession)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al actualizar la sesión",
-        cause: errSession.cause,
-      });
+      throw new InternalServerError(
+        errSession,
+        "auth.sessions.errors.isr_on_update",
+      );
   }
 }

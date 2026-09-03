@@ -21,6 +21,7 @@
     "@fludge/i18n": "workspace:*",
     "@orpc/openapi": "catalog:",
     "@orpc/server": "catalog:",
+    "@orpc/client": "catalog:",
     "@orpc/zod": "catalog:",
     "dotenv": "catalog:",
     "drizzle-orm": "catalog:",

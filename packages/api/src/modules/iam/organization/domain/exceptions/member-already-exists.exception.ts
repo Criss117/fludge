@@ -1,7 +1,8 @@
-import { ORPCError } from "@orpc/server";
+import { ConflictError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
+import type { TranslationKey } from "@fludge/i18n/index";
 
-export class MemberAlreadyExistsException extends ORPCError<"CONFLICT", void> {
-  constructor(message = "El miembro ya existe") {
-    super("CONFLICT", { message });
+export class MemberAlreadyExistsException extends ConflictError {
+  constructor(message?: TranslationKey) {
+    super(message ?? "iam.members.errors.already_exists");
   }
 }

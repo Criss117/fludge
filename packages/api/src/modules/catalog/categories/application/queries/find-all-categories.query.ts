@@ -1,8 +1,8 @@
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 import type { DatabaseService } from "@fludge/db";
 import { category } from "@fludge/db/schema/catalog.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 import type { UUID } from "@fludge/utils/uuid";
-import { ORPCError } from "@orpc/server";
 import { eq, desc } from "drizzle-orm";
 
 export class FindAllCategoriesQuery {
@@ -18,10 +18,10 @@ export class FindAllCategoriesQuery {
     );
 
     if (errFinding)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al obtener las categorías",
-        cause: errFinding.cause,
-      });
+      throw new InternalServerError(
+        errFinding,
+        "catalog.categories.errors.isr_on_find",
+      );
 
     return rows;
   }

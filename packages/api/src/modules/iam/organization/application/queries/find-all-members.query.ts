@@ -1,8 +1,8 @@
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 import type { DatabaseService } from "@fludge/db";
 import { user } from "@fludge/db/schema/auth.schema";
 import { member } from "@fludge/db/schema/iam.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
-import { ORPCError } from "@orpc/server";
 import { eq, getColumns } from "drizzle-orm";
 
 export class FindAllMembersQuery {
@@ -21,10 +21,10 @@ export class FindAllMembersQuery {
     );
 
     if (errorFindingMembers)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al obtener miembros",
-        cause: errorFindingMembers.cause,
-      });
+      throw new InternalServerError(
+        errorFindingMembers,
+        "iam.members.errors.isr_on_find",
+      );
 
     return members;
   }

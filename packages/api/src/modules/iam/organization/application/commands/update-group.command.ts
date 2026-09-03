@@ -3,8 +3,8 @@ import type { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import type { GroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group.repository";
 import { UUID } from "@fludge/utils/uuid";
-import { ORPCError } from "@orpc/server";
 import { updateGroupValidator } from "@fludge/utils/validators/group.validators";
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 
 export const updateGroupCommand = updateGroupValidator;
 
@@ -32,10 +32,10 @@ export class UpdateGroupCommand {
     );
 
     if (errSaving)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al guardar la organización",
-        cause: errSaving.cause,
-      });
+      throw new InternalServerError(
+        errSaving,
+        "iam.organizations.errors.isr_on_save",
+      );
 
     return activeOrganization.values;
   }

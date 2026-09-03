@@ -1,9 +1,8 @@
-import { ORPCError } from "@orpc/server";
+import { NotFoundError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
+import type { TranslationKey } from "@fludge/i18n/index";
 
-export class GroupMemberNotFoundException extends ORPCError<"NOT_FOUND", void> {
-  constructor(message = "El grupo no tiene miembros asignados") {
-    super("NOT_FOUND", {
-      message,
-    });
+export class GroupMemberNotFoundException extends NotFoundError {
+  constructor(message?: TranslationKey) {
+    super(message ?? "iam.group_members.errors.not_found");
   }
 }

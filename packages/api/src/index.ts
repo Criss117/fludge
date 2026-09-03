@@ -1,10 +1,16 @@
-import { ORPCError, os } from "@orpc/server";
+import { os } from "@orpc/server";
 
 import type { Context } from "./context";
 import { organizationContainer } from "./modules/iam/organization/container";
 import { UUID } from "@fludge/utils/uuid";
 import { env } from "@fludge/env/server";
 import type { PermissionsRecord } from "@fludge/utils/permissions/data";
+import {
+  ForbiddenError,
+  InternalServerError,
+  UnauthorizedError,
+} from "./modules/shared/domain/exceptions/base-exception";
+import { OrganizationNotFoundException } from "./modules/iam/organization/domain/exceptions/organization-not-found.exception";
 
 export const o = os.$context<Context>();
 
@@ -12,9 +18,7 @@ export const publicProcedure = o;
 
 const requireAuth = o.middleware(async ({ context, next }) => {
   if (!context.session)
-    throw new ORPCError("UNAUTHORIZED", {
-      message: "No ha iniciado sesión",
-    });
+    throw new UnauthorizedError("auth.sessions.errors.unauthorized");
 
   return next({
     context: {
@@ -25,9 +29,7 @@ const requireAuth = o.middleware(async ({ context, next }) => {
 
 const rootOnly = requireAuth.concat(({ context, next }) => {
   if (!context.session.user.isRoot)
-    throw new ORPCError("FORBIDDEN", {
-      message: "Solo el usuario root puede acceder a este recurso.",
-    });
+    throw new ForbiddenError("auth.users.errors.not_root");
 
   return next({
     context: {
@@ -40,9 +42,7 @@ const requireOrganization = requireAuth.concat(async ({ context, next }) => {
   const activeOrganizationId = context.session.activeOrganizationId;
 
   if (!activeOrganizationId)
-    throw new ORPCError("FORBIDDEN", {
-      message: "No hay una organización activa",
-    });
+    throw new ForbiddenError("auth.sessions.errors.no_active_organization");
 
   const [organization, errOrganization] =
     await organizationContainer.repositories.organizationRepository.findOneById(
@@ -51,29 +51,22 @@ const requireOrganization = requireAuth.concat(async ({ context, next }) => {
     );
 
   if (errOrganization)
-    throw new ORPCError("INTERNAL_SERVER_ERROR", {
-      message: "Error al recuperar la organización",
-      cause: errOrganization.cause,
-    });
+    throw new InternalServerError(
+      errOrganization,
+      "iam.organizations.errors.isr_on_find",
+    );
 
-  if (!organization)
-    throw new ORPCError("NOT_FOUND", {
-      message: "No se encontró la organización",
-    });
+  if (!organization) throw new OrganizationNotFoundException();
 
   const loggedUserIsMember = organization.members.getMemberByUserId(
     UUID.fromString(context.session.user.id),
   );
 
   if (!loggedUserIsMember)
-    throw new ORPCError("FORBIDDEN", {
-      message: "El usuario no es miembro de la organización",
-    });
+    throw new ForbiddenError("iam.members.errors.not_member");
 
   if (loggedUserIsMember.status.isInactive())
-    throw new ORPCError("FORBIDDEN", {
-      message: "El usuario no tiene permisos para acceder a esta organización",
-    });
+    throw new ForbiddenError("iam.members.errors.without_permissions");
 
   return next({
     context: {
@@ -89,10 +82,7 @@ function hasPermission(required: PermissionsRecord) {
         UUID.fromString(context.session.user.id),
       );
 
-    if (!userMember)
-      throw new ORPCError("FORBIDDEN", {
-        message: "El usuario no es miembro de la organización",
-      });
+    if (!userMember) throw new ForbiddenError("iam.members.errors.not_member");
 
     const hasPermissions =
       context.session.activeOrganization.memberHasPermission(
@@ -101,9 +91,7 @@ function hasPermission(required: PermissionsRecord) {
       );
 
     if (!hasPermissions)
-      throw new ORPCError("FORBIDDEN", {
-        message: "No tiene permisos para realizar esta operación",
-      });
+      throw new ForbiddenError("iam.members.errors.without_permissions");
 
     return next({
       context,
@@ -113,9 +101,7 @@ function hasPermission(required: PermissionsRecord) {
 
 const devOnly = o.middleware(({ context, next }) => {
   if (env.NODE_ENV !== "development")
-    throw new ORPCError("FORBIDDEN", {
-      message: "Solo para desarrollo",
-    });
+    throw new ForbiddenError("auth.users.errors.only_dev");
 
   return next({
     context,

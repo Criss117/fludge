@@ -1,9 +1,8 @@
-import { ORPCError } from "@orpc/server";
+import { BadRequestError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
+import type { TranslationKey } from "@fludge/i18n/index";
 
-export class MemberIsOwnerException extends ORPCError<"BAD_REQUEST", void> {
-  constructor(message = "El miembro es el propietario de la organización") {
-    super("BAD_REQUEST", {
-      message,
-    });
+export class MemberIsOwnerException extends BadRequestError {
+  constructor(message?: TranslationKey) {
+    super(message ?? "iam.members.errors.is_owner");
   }
 }

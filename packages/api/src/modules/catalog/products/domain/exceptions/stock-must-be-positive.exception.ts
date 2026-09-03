@@ -1,10 +1,8 @@
-import { ORPCError } from "@orpc/server";
+import { BadRequestError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
+import type { TranslationKey } from "@fludge/i18n/index";
 
-export class StockMustBePositiveException extends ORPCError<
-  "BAD_REQUEST",
-  void
-> {
-  constructor(message = "El stock debe ser positivo") {
-    super("BAD_REQUEST", { message });
+export class StockMustBePositiveException extends BadRequestError {
+  constructor(message?: TranslationKey) {
+    super(message ?? "catalog.products.errors.stock_must_be_positive");
   }
 }

@@ -4,9 +4,9 @@ import type { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Category } from "@fludge/api/modules/catalog/categories/domain/entities/category.entity";
 import { UUID } from "@fludge/utils/uuid";
-import { ORPCError } from "@orpc/server";
 import { CategoryAlreadyExistsException } from "@fludge/api/modules/catalog/categories/domain/exceptions/category-already-exists.exception";
 import { createCategoryValidator } from "@fludge/utils/validators/category.validators";
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 
 export const createCategoryCommand = createCategoryValidator;
 
@@ -44,24 +44,23 @@ export class CreateCategoryCommand {
       );
 
     if (errUniqueness)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al validar la unicidad de la categoría",
-        cause: errUniqueness.cause,
-      });
+      throw new InternalServerError(
+        errUniqueness,
+        "catalog.categories.errors.isr_on_find",
+      );
 
-    if (uniqueness.nameTaken)
-      throw new CategoryAlreadyExistsException("El nombre ya está en uso");
-
-    if (uniqueness.slugTaken)
-      throw new CategoryAlreadyExistsException("El slug ya está en uso");
+    if (uniqueness.nameTaken || uniqueness.slugTaken)
+      throw new CategoryAlreadyExistsException(
+        "catalog.categories.errors.name_taken",
+      );
 
     const [, errSaving] = await this.categoryRepository.save(category);
 
     if (errSaving)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al guardar la categoría",
-        cause: errSaving.cause,
-      });
+      throw new InternalServerError(
+        errSaving,
+        "catalog.categories.errors.isr_on_save",
+      );
 
     return category.values;
   }

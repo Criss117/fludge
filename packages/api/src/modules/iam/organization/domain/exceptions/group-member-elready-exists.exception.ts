@@ -1,12 +1,8 @@
-import { ORPCError } from "@orpc/server";
+import { ConflictError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
+import type { TranslationKey } from "@fludge/i18n/index";
 
-export class GroupMemberAlreadyExistsException extends ORPCError<
-  "CONFLICT",
-  void
-> {
-  constructor() {
-    super("CONFLICT", {
-      message: "El miembro ya existe en el grupo",
-    });
+export class GroupMemberAlreadyExistsException extends ConflictError {
+  constructor(message?: TranslationKey) {
+    super(message ?? "iam.group_members.errors.already_exists");
   }
 }

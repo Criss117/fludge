@@ -1,5 +1,3 @@
-import { ORPCError } from "@orpc/server";
-
 import type { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import type { EnsureCategoryExistsService } from "@fludge/api/modules/catalog/categories/application/services/ensure-category-exists.service";
@@ -9,6 +7,11 @@ import type { ProductPresentationRepository } from "@fludge/api/modules/catalog/
 import { Slug } from "@fludge/utils/slugify";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { updateProductValidator } from "@fludge/utils/validators/product.validators";
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
+import { ProductNotFoundException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-not-found.exception";
+import { CategoryNotFoundException } from "@fludge/api/modules/catalog/categories/domain/exceptions/category-not-found.exception";
+import { ProductAlreadyExistsException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-already-exists.exception";
+import { ProductPresentationAlreadyExistsException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-presentation-already-exists.exception";
 
 export const updateProductCommand = updateProductValidator;
 
@@ -29,15 +32,12 @@ export class UpdateProductCommand {
     );
 
     if (errFinding)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al obtener el producto",
-        cause: errFinding.cause,
-      });
+      throw new InternalServerError(
+        errFinding,
+        "catalog.products.errors.isr_on_find",
+      );
 
-    if (!existing)
-      throw new ORPCError("NOT_FOUND", {
-        message: "El producto no existe",
-      });
+    if (!existing) throw new ProductNotFoundException();
 
     if (cmd.categoryId && cmd.categoryId !== existing.values.categoryId) {
       const [exists, errEnsure] =
@@ -47,15 +47,12 @@ export class UpdateProductCommand {
         );
 
       if (errEnsure)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", {
-          message: "Error al consultar la categoría",
-          cause: errEnsure.cause,
-        });
+        throw new InternalServerError(
+          errEnsure,
+          "catalog.categories.errors.isr_on_find",
+        );
 
-      if (!exists)
-        throw new ORPCError("BAD_REQUEST", {
-          message: "La categoría no existe",
-        });
+      if (!exists) throw new CategoryNotFoundException();
     }
 
     if (cmd.name && cmd.name !== existing.values.name) {
@@ -69,15 +66,15 @@ export class UpdateProductCommand {
         );
 
       if (errUnique)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", {
-          message: "Error al validar el producto",
-          cause: errUnique.cause,
-        });
+        throw new InternalServerError(
+          errUnique,
+          "catalog.products.errors.isr_on_find",
+        );
 
       if (isTaken.nameTaken || isTaken.slugTaken) {
-        throw new ORPCError("BAD_REQUEST", {
-          message: "El nombre del producto ya existe",
-        });
+        throw new ProductAlreadyExistsException(
+          "catalog.products.errors.name_taken",
+        );
       }
     }
 
@@ -96,10 +93,10 @@ export class UpdateProductCommand {
         await this.productRepository.saveOnlyProduct(existing);
 
       if (errSaveProduct)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", {
-          message: "Error al guardar el producto",
-          cause: errSaveProduct.cause,
-        });
+        throw new InternalServerError(
+          errSaveProduct,
+          "catalog.products.errors.isr_on_save",
+        );
 
       return existing.values;
     }
@@ -139,7 +136,7 @@ export class UpdateProductCommand {
       .filter((b) => b !== undefined && b !== null);
 
     if (barcodes.length > 0) {
-      const [isTaken, errValidate] =
+      const [barcodeIsTaken, errValidate] =
         await this.productUniquenessValidator.validateUniqueBarcode(
           activeOrganization.id.toString(),
           barcodes,
@@ -147,15 +144,15 @@ export class UpdateProductCommand {
         );
 
       if (errValidate)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", {
-          message: "Error al validar el producto",
-          cause: errValidate.cause,
-        });
+        throw new InternalServerError(
+          errValidate,
+          "catalog.products_presentations.errors.isr_on_find",
+        );
 
-      if (isTaken.barcodesTaken) {
-        throw new ORPCError("BAD_REQUEST", {
-          message: "Alguno de los barcodes ya está en uso",
-        });
+      if (barcodeIsTaken.barcodesTaken) {
+        throw new ProductPresentationAlreadyExistsException(
+          "catalog.products_presentations.errors.barcodes_taken",
+        );
       }
     }
 
@@ -194,10 +191,10 @@ export class UpdateProductCommand {
     );
 
     if (errInsert)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al guardar el producto",
-        cause: errInsert.cause,
-      });
+      throw new InternalServerError(
+        errInsert,
+        "catalog.products.errors.isr_on_save",
+      );
 
     return existing.values;
   }

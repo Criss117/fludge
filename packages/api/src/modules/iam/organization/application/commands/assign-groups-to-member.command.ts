@@ -1,10 +1,10 @@
 import type { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
-import { ORPCError } from "@orpc/server";
 import type { GroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group-member.repository";
 import { GroupMember } from "@fludge/api/modules/iam/organization/domain/entities/group-member.entity";
 import { assignGroupsToMemberValidator } from "@fludge/utils/validators/member.validators";
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 
 export const assignGroupsToMemberCommand = assignGroupsToMemberValidator;
 
@@ -42,10 +42,10 @@ export class AssignGroupsToMemberCommand {
     );
 
     if (errSaving)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al guardar los cambios",
-        cause: errSaving.cause,
-      });
+      throw new InternalServerError(
+        errSaving,
+        "iam.members.errors.isr_on_assign_group",
+      );
 
     return activeOrganization.values;
   }

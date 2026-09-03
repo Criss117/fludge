@@ -3,9 +3,9 @@ import type { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Member } from "@fludge/api/modules/iam/organization/domain/entities/member.entity";
 import { UUID } from "@fludge/utils/uuid";
-import { ORPCError } from "@orpc/server";
 import type { MemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/member.repository";
 import { addMemberValidator } from "@fludge/utils/validators/organization.validators";
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 
 export const addMemberCommand = addMemberValidator;
 
@@ -37,10 +37,10 @@ export class AddMemberCommand {
     );
 
     if (errSaving)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al guardar la organización",
-        cause: errSaving.cause,
-      });
+      throw new InternalServerError(
+        errSaving,
+        "iam.organizations.errors.isr_on_save",
+      );
 
     return activeOrganization.values;
   }

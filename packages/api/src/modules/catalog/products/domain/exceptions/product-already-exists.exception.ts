@@ -1,8 +1,8 @@
 import { ConflictError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 import type { TranslationKey } from "@fludge/i18n/index";
 
-export class ProductPresentationAlreadyExistsException extends ConflictError {
+export class ProductAlreadyExistsException extends ConflictError {
   constructor(message?: TranslationKey) {
-    super(message ?? "catalog.products_presentations.errors.already_exists");
+    super(message ?? "catalog.products.errors.already_exists");
   }
 }

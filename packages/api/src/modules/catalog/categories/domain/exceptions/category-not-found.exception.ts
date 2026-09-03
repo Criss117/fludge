@@ -1,8 +1,8 @@
 import { NotFoundError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 import type { TranslationKey } from "@fludge/i18n/index";
 
-export class OwnerNotFoundException extends NotFoundError {
+export class CategoryNotFoundException extends NotFoundError {
   constructor(message?: TranslationKey) {
-    super(message ?? "iam.organizations.errors.owner_not_found");
+    super(message ?? "catalog.categories.errors.not_found");
   }
 }

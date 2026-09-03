@@ -2,10 +2,10 @@ import type { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { UUID } from "@fludge/utils/uuid";
-import { ORPCError } from "@orpc/server";
 import type { GroupRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group.repository";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { createGroupValidator } from "@fludge/utils/validators/group.validators";
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 
 export const createGroupCommand = createGroupValidator;
 
@@ -38,10 +38,10 @@ export class CreateGroupCommand {
     );
 
     if (errSaving)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al guardar la organización",
-        cause: errSaving.cause,
-      });
+      throw new InternalServerError(
+        errSaving,
+        "iam.organizations.errors.isr_on_save",
+      );
 
     return activeOrganization.values;
   }

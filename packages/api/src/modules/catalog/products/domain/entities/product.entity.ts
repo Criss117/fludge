@@ -12,7 +12,7 @@ import {
   type UpdateProductPresentation,
 } from "./product-presentation.entity";
 import { ProductPresentationCollection } from "./product-presentation.collection";
-import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-bresentation-barcode-no-has-barcode.exception";
+import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-bresentation-no-has-barcode.exception";
 import { ProductStock } from "../value-objects/product-stock";
 import { DuplicatedBarcodeException } from "../exceptions/duplicated-barcode.exception";
 import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
@@ -73,7 +73,7 @@ export class Product {
     const setBarcode = new Set(allBarcodes);
 
     if (setBarcode.size !== allBarcodes.length)
-      throw new DuplicatedBarcodeException("El barcode debe ser único");
+      throw new DuplicatedBarcodeException();
 
     const newProduct = new Product(
       UUID.generate(),

@@ -1,8 +1,8 @@
 import type { z } from "zod";
 import type { AuthService } from "@fludge/auth";
 import { tryCatch } from "@fludge/utils/trycatch";
-import { ORPCError } from "@orpc/server";
 import { updateUserInfoValidator } from "@fludge/utils/validators/auth.validators";
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 
 export const updateUserInfoCommand = updateUserInfoValidator;
 
@@ -23,9 +23,6 @@ export class UpdateUserInfoCommand {
     );
 
     if (err)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al actualizar la información del usuario",
-        cause: err.cause,
-      });
+      throw new InternalServerError(err, "auth.users.errors.isr_on_update");
   }
 }

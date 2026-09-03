@@ -1,7 +1,7 @@
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 import { type DatabaseService } from "@fludge/db";
 import { product, productPresentation } from "@fludge/db/schema/catalog.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
-import { ORPCError } from "@orpc/server";
 import { count, desc, eq, getColumns } from "drizzle-orm";
 
 export class FindAllProductsQuery {
@@ -25,10 +25,7 @@ export class FindAllProductsQuery {
     );
 
     if (err)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al consultar los productos",
-        cause: err.cause,
-      });
+      throw new InternalServerError(err, "catalog.products.errors.isr_on_find");
 
     return rows;
   }

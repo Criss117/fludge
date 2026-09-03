@@ -1,7 +1,6 @@
 import type { z } from "zod";
 import type { OrganizationUniquenessValidator } from "@fludge/api/modules/iam/organization/application/services/organization-uniqueness-validator.service";
 import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/organization.repository";
-import { ORPCError } from "@orpc/server";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
@@ -9,6 +8,7 @@ import { Organization } from "@fludge/api/modules/iam/organization/domain/entiti
 import { OrganizationAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/organization-already-exists.exception";
 import { registerOrganizationValidator } from "@fludge/utils/validators/organization.validators";
 import { PERMISSIONS } from "@fludge/utils/permissions/data";
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 
 export const registerOrganizationCommand = registerOrganizationValidator;
 
@@ -55,36 +55,38 @@ export class RegisterOrganizationCommand {
       });
 
     if (errUniqueness)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al validar la unicidad de la organización",
-        cause: errUniqueness.cause,
-      });
+      throw new InternalServerError(
+        errUniqueness,
+        "iam.organizations.errors.isr_on_find",
+      );
 
     if (uniqueness.nameTaken || uniqueness.slugTaken)
       throw new OrganizationAlreadyExistsException(
-        "El nombre o el slug ya está en uso",
+        "iam.organizations.errors.name_taken",
       );
 
     if (uniqueness.legalNameTaken)
       throw new OrganizationAlreadyExistsException(
-        "El nombre legal ya está en uso",
+        "iam.organizations.errors.legal_name_taken",
       );
 
     if (uniqueness.taxIdTaken)
-      throw new OrganizationAlreadyExistsException("El TAX ID ya está en uso");
+      throw new OrganizationAlreadyExistsException(
+        "iam.organizations.errors.tax_id_taken",
+      );
 
     if (uniqueness.phoneTaken)
       throw new OrganizationAlreadyExistsException(
-        "El teléfono ya está en uso",
+        "iam.organizations.errors.phone_taken",
       );
 
     const [, errSaving] = await this.organizationRepository.save(organization);
 
     if (errSaving)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al guardar la organización",
-        cause: errSaving.cause,
-      });
+      throw new InternalServerError(
+        errSaving,
+        "iam.organizations.errors.isr_on_save",
+      );
 
     return organization.values;
   }

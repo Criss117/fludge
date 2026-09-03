@@ -33,7 +33,7 @@ export class ProductStock {
   public increaseStock(amount: number) {
     if (amount < 0)
       throw new InvalidAmountException(
-        "La cantidad a incrementar debe ser mayor a 0",
+        "catalog.products.errors.amount_must_be_positive",
       );
 
     return new ProductStock(
@@ -46,13 +46,11 @@ export class ProductStock {
   public decreaseStock(amount: number) {
     if (amount < 0)
       throw new InvalidAmountException(
-        "La cantidad a reducir debe ser mayor a 0",
+        "catalog.products.errors.amount_must_be_positive",
       );
 
     if (!this._allowNegativeStock && this._stock - amount < 0)
-      throw new InsufficientStockException(
-        `Stock insuficiente. Actual: ${this._stock}, requerido: ${amount}`,
-      );
+      throw new InsufficientStockException();
 
     return new ProductStock(
       this._stock - amount,

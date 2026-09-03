@@ -44,7 +44,7 @@ export class MemberCollection {
   public addMember(member: Member) {
     if (member.role.isOwner() && this.owner)
       throw new MemberAlreadyExistsException(
-        "La organizacion ya tiene un propietario",
+        "iam.organizations.errors.has_owner",
       );
 
     if (this._members.has(member.id.toString()))

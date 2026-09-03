@@ -1,11 +1,10 @@
-import { ORPCError } from "@orpc/server";
-
 import { tryCatch } from "@fludge/utils/trycatch";
 import type { z } from "zod";
 import type { AuthService } from "@fludge/auth";
 import type { AddMemberCommand } from "@fludge/api/modules/iam/organization/application/commands/add-member.command";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { signUpValidator } from "@fludge/utils/validators/auth.validators";
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 
 export const signUpMemberCommand = signUpValidator;
 
@@ -37,22 +36,18 @@ export class SignUpMemberCommand {
     );
 
     if (errNewUser)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al crear el usuario",
-        cause: errNewUser.cause,
-      });
+      throw new InternalServerError(
+        errNewUser,
+        "auth.users.errors.isr_on_find",
+      );
 
-    const [org, errAddMember] = await tryCatch(
-      this.addMemberCommand.execute(loggedUserId, activeOrganization, {
+    const org = await this.addMemberCommand.execute(
+      loggedUserId,
+      activeOrganization,
+      {
         userId: newUser.user.id,
-      }),
+      },
     );
-
-    if (errAddMember)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al agregar el miembro",
-        cause: errAddMember.cause,
-      });
 
     return org;
   }

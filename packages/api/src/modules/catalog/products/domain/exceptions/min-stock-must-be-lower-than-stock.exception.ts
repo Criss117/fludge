@@ -1,9 +1,10 @@
-import { ORPCError } from "@orpc/server";
-export class MinStockMustBeLowerThanStockException extends ORPCError<
-  "BAD_REQUEST",
-  void
-> {
-  constructor(message = "Product min stock must be lower than stock") {
-    super("BAD_REQUEST", { message });
+import { BadRequestError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
+import type { TranslationKey } from "@fludge/i18n/index";
+
+export class MinStockMustBeLowerThanStockException extends BadRequestError {
+  constructor(message?: TranslationKey) {
+    super(
+      message ?? "catalog.products.errors.min_stock_must_be_lower_than_stock",
+    );
   }
 }

@@ -2,12 +2,12 @@ import type { CategoryRepository } from "@fludge/api/modules/catalog/categories/
 import type { CategoryUniquenessValidator } from "@fludge/api/modules/catalog/categories/application/services/category-uniqueness-validator.service";
 import type { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
-import { ORPCError } from "@orpc/server";
 import { CategoryAlreadyExistsException } from "@fludge/api/modules/catalog/categories/domain/exceptions/category-already-exists.exception";
 import { updateCategoryValidator } from "@fludge/utils/validators/category.validators";
-import { CategoryNotFoundException } from "@fludge/api/modules/catalog/categories//domain/exceptions/category-not-found.exception copy";
 import { Slug } from "@fludge/utils/slugify";
 import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
+import { CategoryNotFoundException } from "@fludge/api/modules/catalog/categories/domain/exceptions/category-not-found.exception";
 
 export const updateCategoryCommand = updateCategoryValidator;
 
@@ -27,10 +27,10 @@ export class UpdateCategoryCommand {
       );
 
     if (errFinding)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al obtener la categoría",
-        cause: errFinding.cause,
-      });
+      throw new InternalServerError(
+        errFinding,
+        "catalog.categories.errors.isr_on_find",
+      );
 
     if (!existingCategory) throw new CategoryNotFoundException();
 
@@ -45,16 +45,15 @@ export class UpdateCategoryCommand {
         );
 
       if (errUniqueness)
-        throw new ORPCError("INTERNAL_SERVER_ERROR", {
-          message: "Error al validar la unicidad de la categoría",
-          cause: errUniqueness.cause,
-        });
+        throw new InternalServerError(
+          errUniqueness,
+          "catalog.categories.errors.isr_on_find",
+        );
 
-      if (uniqueness.nameTaken)
-        throw new CategoryAlreadyExistsException("El nombre ya está en uso");
-
-      if (uniqueness.slugTaken)
-        throw new CategoryAlreadyExistsException("El slug ya está en uso");
+      if (uniqueness.nameTaken || uniqueness.slugTaken)
+        throw new CategoryAlreadyExistsException(
+          "catalog.categories.errors.name_taken",
+        );
     }
 
     existingCategory.update({
@@ -66,10 +65,10 @@ export class UpdateCategoryCommand {
     const [, errSaving] = await this.categoryRepository.save(existingCategory);
 
     if (errSaving)
-      throw new ORPCError("INTERNAL_SERVER_ERROR", {
-        message: "Error al guardar la categoría",
-        cause: errSaving.cause,
-      });
+      throw new InternalServerError(
+        errSaving,
+        "catalog.categories.errors.isr_on_save",
+      );
 
     return existingCategory.values;
   }
