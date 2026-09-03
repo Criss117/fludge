@@ -22,7 +22,7 @@ import { alias } from "drizzle-orm/sqlite-core";
 import type { GroupRepository } from "./group.repository";
 import type { MemberRepository } from "./member.repository";
 import type { GroupMemberRepository } from "./group-member.repository";
-import type { PermissionEnum } from "@fludge/utils/permissions/data";
+import type { Permission } from "@fludge/utils/permissions/data";
 
 const memberAuth = alias(member, "memberAuth");
 
@@ -93,7 +93,7 @@ export class OrganizationRepository {
       updatedAt: new Date(g.updatedAt),
       permissions: JSON.parse(
         g.permissions as unknown as string,
-      ) as PermissionEnum[],
+      ) as Permission[],
     }));
 
     const groupMembers = (

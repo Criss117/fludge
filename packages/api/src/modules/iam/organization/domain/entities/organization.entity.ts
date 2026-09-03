@@ -21,7 +21,7 @@ import { GroupMemberNotFoundException } from "../exceptions/group-member-not-fou
 import { GroupMemberAlreadyExistsException } from "../exceptions/group-member-elready-exists.exception";
 import { MemberIsOwnerException } from "../exceptions/member-is-owner.exception";
 import { Permissions } from "@fludge/utils/permissions/index";
-import type { PermissionEnum } from "@fludge/utils/permissions/data";
+import type { PermissionsRecord } from "@fludge/utils/permissions/data";
 
 type CreateOrganization = {
   name: string;
@@ -238,7 +238,7 @@ export class Organization {
 
   public memberHasPermission(
     memberId: UUID,
-    permission: PermissionEnum | PermissionEnum[],
+    required: PermissionsRecord,
     mode: "all" | "any" = "all",
   ): boolean {
     const member = this._members.getMember(memberId);
@@ -252,7 +252,7 @@ export class Organization {
     });
 
     return Permissions.merge(groups.map((g) => g.permissions)).checkPermissions(
-      permission,
+      required,
       mode,
     );
   }

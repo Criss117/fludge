@@ -26,7 +26,7 @@ export class CreateGroupCommand {
     const newGroup = Group.create({
       name: cmd.name,
       description: cmd.description,
-      permissions: Permissions.create(cmd.permissions),
+      permissions: Permissions.fromList(cmd.permissions),
       createdBy: loggedMember.id,
     });
 

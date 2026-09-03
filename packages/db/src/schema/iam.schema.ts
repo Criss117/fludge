@@ -14,7 +14,7 @@ import {
   roleEnum,
 } from "@fludge/utils/enums/db-enums";
 import { user } from "./auth.schema";
-import type { PermissionEnum } from "@fludge/utils/permissions/data";
+import type { Permission } from "@fludge/utils/permissions/data";
 
 export const organization = sqliteTable(
   "organization",
@@ -113,7 +113,7 @@ export const group = sqliteTable(
     description: text("description"),
     permissions: text("permissions", { mode: "json" })
       .notNull()
-      .$type<PermissionEnum[]>(),
+      .$type<Permission[]>(),
 
     status: text("status", { enum: statusEnum }).notNull().default("active"),
 

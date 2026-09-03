@@ -52,7 +52,7 @@ export class Group {
       values.name,
       new Slug(values.name),
       values.description,
-      Permissions.reconstitute(values.permissions),
+      Permissions.fromList(values.permissions),
       values.createdBy ? UUID.fromString(values.createdBy) : null,
       new Date(values.createdAt),
       values.updatedAt,

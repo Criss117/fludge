@@ -2,10 +2,9 @@ import { ORPCError, os } from "@orpc/server";
 
 import type { Context } from "./context";
 import { organizationContainer } from "./modules/iam/organization/container";
-import type { AppStatement } from "@fludge/utils/permissions/data";
 import { UUID } from "@fludge/utils/uuid";
 import { env } from "@fludge/env/server";
-import { permissionsFromObject } from "@fludge/utils/permissions/index";
+import type { PermissionsRecord } from "@fludge/utils/permissions/data";
 
 export const o = os.$context<Context>();
 
@@ -83,7 +82,7 @@ const requireOrganization = requireAuth.concat(async ({ context, next }) => {
   });
 });
 
-function hasPermission(permission: AppStatement) {
+function hasPermission(required: PermissionsRecord) {
   return requireOrganization.concat(({ context, next }) => {
     const userMember =
       context.session.activeOrganization.members.getMemberByUserId(
@@ -98,7 +97,7 @@ function hasPermission(permission: AppStatement) {
     const hasPermissions =
       context.session.activeOrganization.memberHasPermission(
         userMember.id,
-        permissionsFromObject(permission),
+        required,
       );
 
     if (!hasPermissions)
@@ -128,6 +127,6 @@ export const rootOnlyProcedure = publicProcedure.use(rootOnly);
 export const requireOrganizationProcedure =
   publicProcedure.use(requireOrganization);
 export const devOnlyProcedure = publicProcedure.use(devOnly);
-export function hasPermissionProcedure(permission: AppStatement) {
+export function hasPermissionProcedure(permission: PermissionsRecord) {
   return publicProcedure.use(hasPermission(permission));
 }

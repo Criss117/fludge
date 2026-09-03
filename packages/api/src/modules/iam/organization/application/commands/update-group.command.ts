@@ -19,7 +19,7 @@ export class UpdateGroupCommand {
       {
         description: cmd.description,
         permissions: cmd.permissions
-          ? Permissions.create(cmd.permissions)
+          ? Permissions.fromList(cmd.permissions)
           : undefined,
         name: cmd.name,
         status: cmd.status,

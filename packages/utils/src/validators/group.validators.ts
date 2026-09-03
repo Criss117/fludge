@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { permissionsSchema } from "../permissions";
+import { permissionsValidator } from "../permissions";
 import {
   descriptionSchema,
   nameSchema,
@@ -10,14 +10,14 @@ import {
 export const createGroupValidator = z.object({
   name: nameSchema,
   description: descriptionSchema,
-  permissions: permissionsSchema,
+  permissions: permissionsValidator,
 });
 
 export const updateGroupValidator = z.object({
   id: uuidSchema("El id del grupo es requerido"),
   name: nameSchema.optional(),
   description: descriptionSchema.optional(),
-  permissions: permissionsSchema.optional(),
+  permissions: permissionsValidator.optional(),
   status: statusSchema.optional(),
 });
 

@@ -19,7 +19,6 @@ import { faker } from "@faker-js/faker/locale/es_MX";
 import { Member } from "../iam/organization/domain/entities/member.entity";
 import { GroupMember } from "../iam/organization/domain/entities/group-member.entity";
 import { Permissions } from "@fludge/utils/permissions/index";
-import { ALL_PERMISSIONS } from "@fludge/utils/permissions/data";
 import {
   category,
   product,
@@ -29,6 +28,7 @@ import { Category } from "../catalog/categories/domain/entities/category.entity"
 import { and, eq } from "drizzle-orm";
 import { Product } from "../catalog/products/domain/entities/product.entity";
 import type { ProductRepository } from "../catalog/products/infrastructure/repositories/product.repository";
+import { PERMISSIONS } from "@fludge/utils/permissions/data";
 
 export const seedUsers = z.object({
   totalRoots: z.number().optional().default(2),
@@ -57,6 +57,8 @@ export const seedAll = z.object({
   products: seedProducts,
 });
 
+const ALL_PERMISSIONS = Permissions.fromRecord(PERMISSIONS).values;
+
 function chunkMembersForOrganizations<T>(
   members: T[],
   totalChunks: number,
@@ -80,7 +82,7 @@ function generateGroups(createdBy: UUID, count: number) {
   return Array.from({ length: count }).map(() =>
     Group.create({
       name: faker.company.name(),
-      permissions: Permissions.create(
+      permissions: Permissions.fromList(
         faker.helpers.arrayElements(ALL_PERMISSIONS),
       ),
       description: faker.lorem.sentence(),
@@ -214,7 +216,7 @@ export class SeedService {
             {
               name: "Administradores",
               description: "Grupo de administradores",
-              permissions: Permissions.create(ALL_PERMISSIONS),
+              permissions: Permissions.fromList(ALL_PERMISSIONS),
             },
           ],
         });

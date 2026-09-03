@@ -7,8 +7,8 @@ import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { OrganizationAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/organization-already-exists.exception";
-import { ALL_PERMISSIONS } from "@fludge/utils/permissions/data";
 import { registerOrganizationValidator } from "@fludge/utils/validators/organization.validators";
+import { PERMISSIONS } from "@fludge/utils/permissions/data";
 
 export const registerOrganizationCommand = registerOrganizationValidator;
 
@@ -40,7 +40,7 @@ export class RegisterOrganizationCommand {
       Group.create({
         name: "Administradores",
         description: "Grupo de administradores",
-        permissions: Permissions.create(ALL_PERMISSIONS),
+        permissions: Permissions.fromRecord(PERMISSIONS),
         createdBy: ownerMember.id,
       }),
     );

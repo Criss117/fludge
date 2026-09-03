@@ -1,165 +1,128 @@
 import { z } from "zod";
 import {
-  type AppStatement,
-  type PermissionEnum,
-  type RESOURCES,
-  ALL_PERMISSIONS,
-  PERMISSION_DESCRIPTIONS_ES,
   PERMISSIONS,
+  type ActionFor,
+  type Permission,
+  type PermissionsRecord,
+  type Resource,
 } from "./data";
 
-export const permissionsSchema = z.enum(ALL_PERMISSIONS).array().min(1, {
-  error: "Debe tener al menos una autorización",
-});
+export class Permissions {
+  private readonly permissions: Set<Permission>;
 
-type StatementEntry = [RESOURCES, NonNullable<AppStatement[RESOURCES]>];
-
-export function permissionsFromObject(
-  obj: AppStatement,
-): [PermissionEnum, ...PermissionEnum[]] {
-  const result = (Object.entries(obj) as [RESOURCES, AppStatement[RESOURCES]][])
-    .filter(
-      (entry): entry is StatementEntry =>
-        entry[1] !== undefined && entry[1].length > 0,
-    )
-    .flatMap(([resource, actions]) =>
-      actions.map((action) => `${resource}:${action}` as PermissionEnum),
-    );
-
-  if (result.length === 0) {
-    throw new Error("permissionsFromObject: no hay permisos seleccionados");
+  private constructor(permissions: Permission[] = []) {
+    this.permissions = new Set(permissions);
   }
 
-  return result as [PermissionEnum, ...PermissionEnum[]];
-}
+  private static recordToList(permissions: PermissionsRecord): Permission[] {
+    return (Object.keys(permissions) as Resource[]).flatMap((resource) => {
+      const actions = permissions[resource] ?? [];
+      return actions.map((action) => `${resource}:${action}` as Permission);
+    });
+  }
 
-export function permissionsToObject(
-  permissions: PermissionEnum[],
-): AppStatement {
-  return permissions.reduce<AppStatement>((statement, permission) => {
-    const [resource, action] = permission.split(":");
-    const actions = PERMISSIONS[resource as RESOURCES];
+  private static normalize(list: Permission[]): Permission[] {
+    const result = new Set(list);
+    const actionsByResource = new Map<Resource, Set<string>>();
 
-    if (!actions || !actions.includes(action as never)) return statement;
-
-    const key = resource as RESOURCES;
-    const current = statement[key] ?? [];
-
-    if (current.includes(action as never)) return statement;
-
-    return {
-      ...statement,
-      [key]: [...current, action],
-    } as AppStatement;
-  }, {});
-}
-
-export function getPermissionDescription(permission: PermissionEnum) {
-  const [resourse, action] = permission.split(":") as [RESOURCES, string];
-
-  const { es, ...restDescriptions } = PERMISSION_DESCRIPTIONS_ES[resourse];
-
-  const desc = restDescriptions[action as keyof typeof restDescriptions] as {
-    es: string;
-    title: string;
-    description: string;
-  };
-
-  if (!desc)
-    return {
-      es,
-      description: {
-        es: "N/A",
-        title: action,
-        description: "N/A",
-      },
-    };
-
-  return { es: es, description: desc };
-}
-
-export function getPermissionByResource(resource: RESOURCES) {
-  const actions = PERMISSIONS[resource];
-
-  return Object.values(actions).map(
-    (action) => `${resource}:${action}`,
-  ) as PermissionEnum[];
-}
-
-export class Permissions {
-  private constructor(private readonly _statements: PermissionEnum[]) {}
-
-  public static create(statements: PermissionEnum[]): Permissions {
-    const resources = statements.reduce((acc, p) => {
-      const [resource] = p.split(":") as [RESOURCES, string];
-
-      if (!acc.includes(resource)) acc.push(resource);
-
-      return acc;
-    }, [] as RESOURCES[]);
-
-    const complete = [...statements];
-
-    for (const resource of resources) {
-      if (resource === "organizations") continue;
-
-      complete.push(`${resource}:read`);
+    for (const permission of result) {
+      const [resource, action] = permission.split(":") as [Resource, string];
+      if (!actionsByResource.has(resource)) {
+        actionsByResource.set(resource, new Set());
+      }
+      actionsByResource.get(resource)!.add(action);
     }
 
-    return new Permissions(Array.from(new Set(complete)));
+    for (const [resource, actions] of actionsByResource) {
+      const resourceHasReadAction = (
+        PERMISSIONS[resource] as readonly string[]
+      ).includes("read");
+
+      if (resourceHasReadAction && !actions.has("read")) {
+        result.add(`${resource}:read` as Permission);
+      }
+    }
+
+    return [...result];
   }
 
-  public static reconstitute(values: PermissionEnum[]) {
-    return new Permissions(values);
+  public static fromList(list: Permission[]): Permissions {
+    return new Permissions(Permissions.normalize(list));
   }
 
-  public static merge(permissionsList: Permissions[]) {
-    const merged = permissionsList.reduce<PermissionEnum[]>(
-      (acc, perm) => [...new Set([...acc, ...perm.values])],
-      [],
-    );
-
-    return new Permissions(merged);
+  public static fromRecord(permissions: PermissionsRecord): Permissions {
+    const list = Permissions.recordToList(permissions);
+    return new Permissions(Permissions.normalize(list));
   }
 
-  public static fromJSON(jsonString: string) {
-    const parsed = permissionsSchema.parse(JSON.parse(jsonString));
+  public toRecord(): PermissionsRecord {
+    const result: PermissionsRecord = {};
 
-    return new Permissions(parsed);
+    for (const permission of this.permissions) {
+      const [resource, action] = permission.split(":") as [
+        Resource,
+        ActionFor<Resource>,
+      ];
+
+      if (!result[resource]) {
+        result[resource] = [];
+      }
+      (result[resource] as ActionFor<typeof resource>[]).push(action);
+    }
+
+    return result;
   }
 
-  public hasPermission(required: PermissionEnum) {
-    return this._statements.includes(required);
+  public get values(): Permission[] {
+    return [...this.permissions];
   }
 
-  public hasAllPermissions(required: PermissionEnum | PermissionEnum[]) {
-    if (!Array.isArray(required)) required = [required];
+  public static merge(permissionsList: Permissions[]): Permissions {
+    const merged = new Set<Permission>();
 
-    return required.every((p) => this.hasPermission(p));
+    for (const permissions of permissionsList) {
+      for (const permission of permissions.values) {
+        merged.add(permission);
+      }
+    }
+
+    return new Permissions([...merged]);
   }
 
-  public hasAnyPermission(
-    required: PermissionEnum | PermissionEnum[],
-  ): boolean {
-    if (!Array.isArray(required)) required = [required];
+  private static assertNonEmptyRequired(
+    required: PermissionsRecord,
+  ): Permission[] {
+    const requiredList = Permissions.recordToList(required);
 
-    return required.some((p) => this.hasPermission(p));
+    if (requiredList.length === 0) {
+      throw new Error(
+        "Permissions: se llamó a hasAll/hasAny con un objeto de permisos requeridos vacío.",
+      );
+    }
+
+    return requiredList;
+  }
+
+  public hasAll(required: PermissionsRecord): boolean {
+    const requiredList = Permissions.assertNonEmptyRequired(required);
+    return requiredList.every((permission) => this.permissions.has(permission));
+  }
+
+  public hasAny(required: PermissionsRecord): boolean {
+    const requiredList = Permissions.assertNonEmptyRequired(required);
+    return requiredList.some((permission) => this.permissions.has(permission));
   }
 
   public checkPermissions(
-    required: PermissionEnum | PermissionEnum[],
+    required: PermissionsRecord,
     mode: "all" | "any" = "all",
   ): boolean {
-    return mode === "all"
-      ? this.hasAllPermissions(required)
-      : this.hasAnyPermission(required);
-  }
+    if (mode === "all") return this.hasAll(required);
 
-  public toJSON() {
-    return JSON.stringify(this._statements);
-  }
-
-  public get values() {
-    return this._statements;
+    return this.hasAny(required);
   }
 }
+
+const allListPermissions = Permissions.fromRecord(PERMISSIONS).values;
+
+export const permissionsValidator = z.array(z.enum(allListPermissions));

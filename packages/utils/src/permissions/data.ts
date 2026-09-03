@@ -6,155 +6,41 @@ export const PERMISSIONS = {
   products: ["create", "read", "update", "delete"],
 } as const;
 
-export type AppStatement = {
-  -readonly [
-    K in keyof typeof PERMISSIONS
-  ]?: readonly (typeof PERMISSIONS)[K][number][];
+export type PermissionsMap = typeof PERMISSIONS;
+export type Resource = keyof PermissionsMap;
+export type ActionFor<R extends Resource> = PermissionsMap[R][number];
+
+export type Permission = {
+  [R in Resource]: `${R}:${ActionFor<R>}`;
+}[Resource];
+
+export type PermissionsRecord = {
+  [R in Resource]?: readonly ActionFor<R>[];
 };
 
-export type RESOURCES = keyof typeof PERMISSIONS;
+export function permissionsToList(
+  permissions: PermissionsRecord,
+): Permission[] {
+  return (Object.keys(permissions) as Resource[]).flatMap((resource) => {
+    const actions = permissions[resource] ?? [];
+    return actions.map((action) => `${resource}:${action}` as Permission);
+  });
+}
 
-export type ActionOf<K extends keyof AppStatement> = NonNullable<
-  AppStatement[K]
->[number];
+export function listToPermissions(list: Permission[]): PermissionsRecord {
+  const result: PermissionsRecord = {};
 
-export type PermissionEnum = {
-  [R in RESOURCES]: `${R}:${ActionOf<R>}`;
-}[RESOURCES];
+  for (const permission of list) {
+    const [resource, action] = permission.split(":") as [
+      Resource,
+      ActionFor<Resource>,
+    ];
 
-export type PermissionDescriptions = {
-  [R in RESOURCES]: {
-    [A in (typeof PERMISSIONS)[R][number]]: {
-      es: string;
-      title: string;
-      description: string;
-    };
-  } & {
-    es: string;
-  };
-};
+    if (!result[resource]) {
+      result[resource] = [];
+    }
+    (result[resource] as ActionFor<typeof resource>[]).push(action);
+  }
 
-export const PERMISSION_DESCRIPTIONS_ES = {
-  organizations: {
-    es: "Organizaciones",
-    update: {
-      es: "Editar",
-      title: "Editar organizaciones",
-      description:
-        "Permite modificar el nombre, la descripción y los datos generales de las organizaciones existentes.",
-    },
-  },
-  groups: {
-    es: "Grupos",
-    read: {
-      es: "Ver",
-      title: "Ver grupos",
-      description:
-        "Permite visualizar el listado de grupos y acceder a sus detalles básicos.",
-    },
-    create: {
-      es: "Crear",
-      title: "Crear grupos",
-      description:
-        "Permite registrar nuevos grupos en el sistema y definir su configuración inicial.",
-    },
-    delete: {
-      es: "Eliminar",
-      title: "Eliminar grupos",
-      description:
-        "Permite borrar grupos permanentemente del sistema. Esta acción puede ser irreversible.",
-    },
-    "assign-member": {
-      es: "Asignar miembros",
-      title: "Asignar miembros a grupos",
-      description:
-        "Permite añadir o remover usuarios dentro de un grupo específico.",
-    },
-    update: {
-      es: "Editar",
-      title: "Editar grupos",
-      description:
-        "Permite modificar el nombre, la configuración y los datos generales de los grupos existentes.",
-    },
-  },
-  members: {
-    es: "Miembros",
-    read: {
-      es: "Ver",
-      title: "Ver miembros",
-      description:
-        "Permite consultar la lista de miembros, sus perfiles y su estado actual.",
-    },
-    create: {
-      es: "Crear",
-      title: "Crear miembros",
-      description:
-        "Permite registrar nuevos miembros en la plataforma e invitarlos a participar.",
-    },
-    delete: {
-      es: "Eliminar",
-      title: "Eliminar miembros",
-      description:
-        "Permite borrar miembros permanentemente del sistema. Esta acción puede ser irreversible.",
-    },
-    "assign-group": {
-      es: "Asignar grupos",
-      title: "Asignar grupos a miembros",
-      description:
-        "Permite vincular directamente a un miembro con uno o varios grupos disponibles.",
-    },
-  },
-  categories: {
-    es: "Categorías",
-    read: {
-      es: "Ver",
-      title: "Ver categorías",
-      description: "Permite consultar la lista de categorías.",
-    },
-    create: {
-      es: "Crear",
-      title: "Crear categorías",
-      description: "Permite registrar nuevas categorías en la plataforma.",
-    },
-    delete: {
-      es: "Eliminar",
-      title: "Eliminar categorías",
-      description: "Permite borrar categorías permanentemente del sistema.",
-    },
-    update: {
-      es: "Editar",
-      title: "Editar categorías",
-      description:
-        "Permite modificar el nombre, la descripción y los datos generales de las categorías existentes.",
-    },
-  },
-  products: {
-    es: "Productos",
-    read: {
-      es: "Ver",
-      title: "Ver productos",
-      description: "Permite consultar la lista de productos.",
-    },
-    create: {
-      es: "Crear",
-      title: "Crear productos",
-      description: "Permite registrar nuevos productos en la plataforma.",
-    },
-    delete: {
-      es: "Eliminar",
-      title: "Eliminar productos",
-      description: "Permite borrar productos permanentemente del sistema.",
-    },
-    update: {
-      es: "Editar",
-      title: "Editar productos",
-      description:
-        "Permite modificar el nombre, la descripción y los datos generales de los productos existentes.",
-    },
-  },
-} as const satisfies PermissionDescriptions;
-
-export const ALL_PERMISSIONS = Object.entries(PERMISSIONS).flatMap(
-  ([resource, actions]) =>
-    Object.values(actions).map((action) => `${resource}:${action}`),
-) as [PermissionEnum, ...PermissionEnum[]];
+  return result;
+}
