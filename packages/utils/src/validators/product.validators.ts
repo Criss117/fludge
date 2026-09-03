@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { productStatusEnum } from "../enums/db-enums";
+import { uuidSchema } from "./shared";
 
 export const createProductPresentationValidator = z.object({
   name: z.string(),
@@ -21,25 +22,19 @@ export const createProductValidator = z.object({
 });
 
 export const deleteProductValidator = z.object({
-  id: z.uuid({
-    error: "El id del producto debe ser un UUID válido",
-  }),
+  id: uuidSchema(),
 });
 
 export const updateProductPresentationValidator =
   createProductPresentationValidator.partial().extend({
-    id: z.uuid({
-      error: "El id del producto es requerido",
-    }),
+    id: uuidSchema(),
     delete: z.boolean().optional(),
     status: z.enum(productStatusEnum).optional(),
     barcode: z.string().nullish(),
   });
 
 export const updateProductValidator = createProductValidator.partial().extend({
-  id: z.uuid({
-    error: "El id del producto es requerido",
-  }),
+  id: uuidSchema(),
   status: z.enum(productStatusEnum).optional(),
   presentations: z.array(updateProductPresentationValidator).optional(),
 });

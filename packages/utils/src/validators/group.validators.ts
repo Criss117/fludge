@@ -2,6 +2,7 @@ import { z } from "zod";
 import { permissionsValidator } from "../permissions";
 import {
   descriptionSchema,
+  getI18nKey,
   nameSchema,
   statusSchema,
   uuidSchema,
@@ -14,7 +15,7 @@ export const createGroupValidator = z.object({
 });
 
 export const updateGroupValidator = z.object({
-  id: uuidSchema("El id del grupo es requerido"),
+  id: uuidSchema(),
   name: nameSchema.optional(),
   description: descriptionSchema.optional(),
   permissions: permissionsValidator.optional(),
@@ -22,14 +23,14 @@ export const updateGroupValidator = z.object({
 });
 
 export const assignMembersToGroupValidator = z.object({
-  groupId: uuidSchema("El id del grupo es requerido"),
-  memberIds: z.array(uuidSchema("El id del miembro es requerido")).min(1, {
-    error: "Debe especificar al menos un miembro",
+  groupId: uuidSchema(),
+  memberIds: z.array(uuidSchema()).min(1, {
+    error: getI18nKey("validators.groups.member_ids.required"),
   }),
 });
 
 export const deleteGroupsValidator = z.object({
-  groupIds: z.array(uuidSchema("El id del grupo es requerido")).min(1, {
-    error: "Debe especificar al menos un grupo",
+  groupIds: z.array(uuidSchema()).min(1, {
+    error: getI18nKey("validators.groups.member_ids.required"),
   }),
 });

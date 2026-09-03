@@ -1,53 +1,41 @@
 import { z } from "zod";
+import { getI18nKey, phoneSchema } from "./shared";
 
 const userNameSchema = z
   .string({
-    error: "El nombre es requerido",
+    error: getI18nKey("validators.auth.name.required"),
   })
   .trim()
   .min(2, {
-    error: "Ingresa un nombre válido",
+    error: getI18nKey("validators.auth.name.min_length"),
   });
 
 const userEmailSchema = z.email({
-  error: "Ingresa un email válido",
+  error: getI18nKey("validators.auth.email.invalid"),
 });
-
-const userPhoneSchema = z
-  .string({
-    error: "El teléfono es requerido",
-  })
-  .trim()
-  .min(10, {
-    error: "Ingresa un número de teléfono válido",
-  });
 
 const passwordSchema = z
   .string({
-    error: "La contraseña es requerida",
+    error: getI18nKey("validators.auth.password.required"),
   })
   .min(6, {
-    error: "La contraseña debe tener al menos 6 caracteres",
+    error: getI18nKey("validators.auth.password.min_length"),
   });
 
 export const signUpValidator = z.object({
   name: userNameSchema,
-
   email: userEmailSchema,
-
   password: passwordSchema,
-
-  phone: userPhoneSchema,
+  phone: phoneSchema,
 });
 
 export const updateUserInfoValidator = z.object({
   name: userNameSchema.optional(),
-
-  phone: userPhoneSchema.optional(),
+  phone: phoneSchema.optional(),
 });
 
 export const setActiveOrganizationValidator = z.object({
   organizationId: z.uuid({
-    error: "La organización no es válida",
+    error: getI18nKey("validators.shared.uuid.invalid"),
   }),
 });

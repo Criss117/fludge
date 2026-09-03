@@ -8,13 +8,11 @@ export const createCategoryValidator = z.object({
 });
 
 export const deleteCategoryValidator = z.object({
-  id: uuidSchema("El id del grupo es requerido"),
+  id: uuidSchema(),
 });
 
 export const updateCategoryValidator = z.object({
-  id: z.uuid({
-    error: "El id del grupo es requerido",
-  }),
+  id: uuidSchema(),
   name: nameSchema.optional(),
   description: descriptionSchema.optional(),
   status: z.enum(statusEnum).optional(),

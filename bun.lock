@@ -244,6 +244,7 @@
       },
       "devDependencies": {
         "@fludge/config": "workspace:*",
+        "@fludge/i18n": "workspace:*",
         "@types/bun": "catalog:",
         "typescript": "7.0.2",
       },
