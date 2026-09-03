@@ -7,7 +7,6 @@ export default function OrganizationLayout() {
   const { session } = useAuth();
 
   const [background, foreground] = useThemeColor(["background", "foreground"]);
-  const { isDark } = useAppTheme();
 
   const userIsRoot = !!session.data?.user.isRoot;
 

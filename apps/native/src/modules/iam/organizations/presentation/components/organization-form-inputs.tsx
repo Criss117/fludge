@@ -22,14 +22,14 @@ function NameInput({
     <CommonInput
       isInvalid={isInvalid}
       errors={errors}
-      label="Nombre Comercial"
+      label="inputs.organization.name.label"
       icon="add-business"
       inputProps={{
         id,
         value,
         onBlur,
         onChangeText,
-        placeholder: "Ej. Tienda Andres",
+        placeholder: "inputs.organization.name.placeholder",
       }}
     />
   );
@@ -47,14 +47,14 @@ function LegalNameInput({
     <CommonInput
       isInvalid={isInvalid}
       errors={errors}
-      label="Razón Social"
+      label="inputs.organization.legal_name.label"
       icon="apartment"
       inputProps={{
         id,
         value,
         onBlur,
         onChangeText,
-        placeholder: "Ej. Tienda Andres S.A.S.",
+        placeholder: "inputs.organization.legal_name.placeholder",
       }}
     />
   );
@@ -72,14 +72,14 @@ function TaxIdInput({
     <CommonInput
       isInvalid={isInvalid}
       errors={errors}
-      label="Identificación Fiscal (Tax ID / NIT / RFC)"
+      label="inputs.organization.tax_id.label"
       icon="badge"
       inputProps={{
         id,
         value,
         onBlur,
         onChangeText,
-        placeholder: "Ingresa el código único",
+        placeholder: "inputs.organization.tax_id.placeholder",
       }}
     />
   );

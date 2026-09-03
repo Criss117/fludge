@@ -4,7 +4,11 @@ import type {
   PermissionsFieldChildrenProps,
   ChildrenProps,
 } from "@fludge/client/presentation/iam/organization/group.form";
-import { PERMISSIONS, type Resource } from "@fludge/utils/permissions/data";
+import {
+  PERMISSIONS,
+  type Permission,
+  type Resource,
+} from "@fludge/utils/permissions/data";
 import { Accordion } from "heroui-native/accordion";
 import { Card } from "heroui-native/card";
 import { Checkbox } from "heroui-native/checkbox";
@@ -13,6 +17,7 @@ import { ControlField } from "heroui-native/control-field";
 import { Label } from "heroui-native/label";
 import { Separator } from "heroui-native/separator";
 import { Typography } from "heroui-native/text";
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 
 function GroupNameInput({ isInvalid, id, field }: ChildrenProps<string>) {
@@ -21,31 +26,35 @@ function GroupNameInput({ isInvalid, id, field }: ChildrenProps<string>) {
       isRequired
       isInvalid={isInvalid}
       errors={field.state.meta.errors}
-      label="Nombre"
+      label="inputs.group.name.label"
       icon="security"
       inputProps={{
         id,
         value: field.state.value,
         onBlur: field.handleBlur,
         onChangeText: field.handleChange,
-        placeholder: "Ej. Bodega",
+        placeholder: "inputs.group.name.placeholder",
       }}
     />
   );
 }
 
 function PermissionsListInput({
-  toggle,
-  check,
-  toggleAll,
-  counts,
+  isSelected,
+  toggleAllFromResource,
+  togglePermission,
   isInvalid,
   field,
+  counts,
 }: PermissionsFieldChildrenProps) {
+  const { t } = useTranslation();
+
   return (
     <View>
       <View>
-        <Typography.Heading type="h4">Matriz de permisos</Typography.Heading>
+        <Typography.Heading type="h4">
+          {t("inputs.group.permissions.label")}
+        </Typography.Heading>
         {isInvalid && <FieldError errors={field.state.meta.errors} />}
       </View>
       <Accordion variant="surface">
@@ -67,7 +76,7 @@ function PermissionsListInput({
               </Accordion.Trigger>
               <Accordion.Content className="gap-y-2">
                 <ControlField
-                  onPress={() => toggleAll(resource as Resource)}
+                  onPress={() => toggleAllFromResource(resource as Resource)}
                   isSelected={count.selected === count.total}
                 >
                   <View className="flex-1 flex-row justify-between p-4">
@@ -75,29 +84,35 @@ function PermissionsListInput({
                     <ControlField.Indicator>
                       <Checkbox
                         className="bg-accent"
-                        onPress={() => toggleAll(resource as Resource)}
+                        onPress={() =>
+                          toggleAllFromResource(resource as Resource)
+                        }
                       />
                     </ControlField.Indicator>
                   </View>
                 </ControlField>
                 <Separator />
-                {PERMISSIONS[resource as Resource].map((action) => (
-                  <ControlField
-                    key={`${resource}:${action}`}
-                    onPress={() => toggle(resource as Resource, action)}
-                    isSelected={check(resource as Resource, action)}
-                  >
-                    <Card className="bg-surface-tertiary flex-1 flex-row justify-between">
-                      <Label>{action}</Label>
-                      <ControlField.Indicator>
-                        <Checkbox
-                          className="bg-accent"
-                          onPress={() => toggle(resource as Resource, action)}
-                        />
-                      </ControlField.Indicator>
-                    </Card>
-                  </ControlField>
-                ))}
+                {PERMISSIONS[resource as Resource].map((action) => {
+                  const permission = `${resource}:${action}` as Permission;
+
+                  return (
+                    <ControlField
+                      key={`${resource}:${action}`}
+                      onPress={() => togglePermission(permission)}
+                      isSelected={isSelected(permission)}
+                    >
+                      <Card className="bg-surface-tertiary flex-1 flex-row justify-between">
+                        <Label>{action}</Label>
+                        <ControlField.Indicator>
+                          <Checkbox
+                            className="bg-accent"
+                            onPress={() => togglePermission(permission)}
+                          />
+                        </ControlField.Indicator>
+                      </Card>
+                    </ControlField>
+                  );
+                })}
               </Accordion.Content>
             </Accordion.Item>
           );

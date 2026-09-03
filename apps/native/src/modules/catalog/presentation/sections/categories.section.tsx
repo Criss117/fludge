@@ -8,6 +8,7 @@ import {
 import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 import { Typography } from "heroui-native/text";
 import type { CategorySummary } from "@fludge/client/application/catalog/queries/use-find-categories";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   query: string;
@@ -20,18 +21,22 @@ function renderCategoryItem({ item }: { item: CategorySummary }) {
 }
 
 function ListEmptyComponent() {
+  const { t } = useTranslation();
+
   return (
     <View className="items-center py-8">
-      <Typography>No se encontraron categorías</Typography>
+      <Typography>{t("screens.categories.not_found")}</Typography>
     </View>
   );
 }
 
 function ListFooterComponent({ hasNextPage }: { hasNextPage: boolean }) {
+  const { t } = useTranslation();
+
   if (!hasNextPage) {
     return (
       <View className="items-center py-4">
-        <Typography>No hay más categorías</Typography>
+        <Typography>{t("screens.categories.no_more")}</Typography>
       </View>
     );
   }

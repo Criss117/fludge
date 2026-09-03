@@ -12,6 +12,9 @@ import { GroupsOptions } from "./options";
 import type { GroupSummary } from "@fludge/client/application/iam/organization/queries/use-find-groups";
 
 import { Checkbox, cn } from "heroui-native";
+import { useTranslation } from "react-i18next";
+import type { ActionFor, Resource } from "@fludge/utils/permissions/data";
+import type { TranslationKey } from "@fludge/i18n/index";
 
 interface Props {
   group: GroupSummary;
@@ -74,6 +77,8 @@ export function SelectableGroupCard({
 }
 
 export function GroupCardBase({ group, asMemberGroup, hideOptions }: Props) {
+  const { t } = useTranslation();
+
   return (
     <Card className="gap-y-2">
       <Card.Header className="gap-y-2">
@@ -94,18 +99,30 @@ export function GroupCardBase({ group, asMemberGroup, hideOptions }: Props) {
         </Card.Description>
       </Card.Header>
       <Card.Body className="flex-row flex-wrap gap-2">
-        {/* {permissions.slice(0, 3).map((p) => (
-          <Chip key={p.es + p.description.es} variant="secondary">
-            <Chip.Label>
-              {p.es}: {p.description.es}
-            </Chip.Label>
-          </Chip>
-        ))}
-        {permissions.length > 3 && (
+        {group.permissions.slice(0, 3).map((p) => {
+          const [resource, action] = p.split(":") as [
+            Resource,
+            ActionFor<Resource>,
+          ];
+
+          const nameKey =
+            `permissions.${resource}.${action}.name` as TranslationKey;
+          const descriptionKey =
+            `permissions.${resource}.${action}.description` as TranslationKey;
+
+          return (
+            <Chip key={p} variant="secondary">
+              <Chip.Label>
+                {t(nameKey)}: {t(descriptionKey)}
+              </Chip.Label>
+            </Chip>
+          );
+        })}
+        {group.permissions.length > 3 && (
           <Chip variant="secondary">
-            <Chip.Label>{permissions.length - 3} más</Chip.Label>
+            <Chip.Label>{group.permissions.length - 3} más</Chip.Label>
           </Chip>
-        )} */}
+        )}
       </Card.Body>
 
       <Separator />

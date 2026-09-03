@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AProvider
       authClient={authAdapter}
-      fallback={<LoadingScreen message="Consultando Sesion ..." />}
+      fallback={<LoadingScreen message={"app.loading_session"} />}
     >
       {children}
     </AProvider>

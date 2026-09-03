@@ -41,7 +41,9 @@ export function SignInScreen() {
       <Card>
         <Card.Header className="pb-4">
           <View className="flex w-full items-center justify-center">
-            <Card.Title className="text-3xl font-bold">Fludge</Card.Title>
+            <Card.Title className="text-3xl font-bold">
+              {t("app.title")}
+            </Card.Title>
           </View>
           <Card.Description>
             {t("screens.sign_in.description")}
@@ -64,6 +66,8 @@ export function SignInScreen() {
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
                     errors={field.state.meta.errors}
+                    label="inputs.user.email.label"
+                    placeholder="inputs.user.email.placeholder"
                   />
                 )}
               />
@@ -81,6 +85,8 @@ export function SignInScreen() {
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
                     errors={field.state.meta.errors}
+                    label="inputs.user.password.label"
+                    placeholder="inputs.user.password.label"
                   />
                 )}
               />

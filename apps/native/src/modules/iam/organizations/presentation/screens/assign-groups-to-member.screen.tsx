@@ -14,6 +14,8 @@ import { Typography } from "heroui-native/text";
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gradual-height";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
+import type { TranslationKey } from "@fludge/i18n/index";
 
 interface Props {
   memberId: string;
@@ -25,6 +27,7 @@ const PADDING_BOTTOM = 16;
 const TOAST_ID = "assign-groups-to-member-toast";
 
 export function AssignGroupsToMember({ memberId }: Props) {
+  const { t } = useTranslation();
   const router = useRouter();
   const assignGroupsToMember = useAssignGroupsToMember();
 
@@ -57,8 +60,8 @@ export function AssignGroupsToMember({ memberId }: Props) {
     toast.show({
       id: TOAST_ID,
       isSwipeable: true,
-      label: "Asignando Grupos",
-      description: "Por favor, espere...",
+      label: t("mutations.members.assign_groups.is_pending"),
+      description: t("helpers.please_wait"),
       duration: "persistent",
     });
 
@@ -73,9 +76,11 @@ export function AssignGroupsToMember({ memberId }: Props) {
             id: TOAST_ID,
             isSwipeable: true,
             variant: "success",
-            label: "Grupos Asignados",
-            description: "Los grupos se han asignado correctamente.",
-            actionLabel: "Cerrar",
+            label: t("mutations.members.assign_groups.success.title"),
+            description: t(
+              "mutations.members.assign_groups.success.description"
+            ),
+            actionLabel: t("helpers.close"),
             onActionPress: ({ hide }) => hide(),
           });
           router.back();
@@ -85,9 +90,9 @@ export function AssignGroupsToMember({ memberId }: Props) {
             id: TOAST_ID,
             isSwipeable: true,
             variant: "danger",
-            label: "Algo salió mal al asignar grupos",
-            description: error.message,
-            actionLabel: "Cerrar",
+            label: t("mutations.members.assign_groups.error"),
+            description: t(error.message as TranslationKey),
+            actionLabel: t("helpers.close"),
             onActionPress: ({ hide }) => hide(),
           });
         },
@@ -108,7 +113,7 @@ export function AssignGroupsToMember({ memberId }: Props) {
       <SearchInput
         query={query}
         setQuery={setQuery}
-        placeholder="Buscar Grupos"
+        placeholder="helpers.placeholder.search_groups"
       />
       <FlatList
         data={groups}
@@ -135,7 +140,7 @@ export function AssignGroupsToMember({ memberId }: Props) {
               style={{ marginBottom: 16 }}
             />
             <Typography.Paragraph color="muted">
-              No hay grupos disponibles
+              {t("screens.groups.no_available")}
             </Typography.Paragraph>
           </View>
         }
@@ -152,8 +157,8 @@ export function AssignGroupsToMember({ memberId }: Props) {
             className="text-eclipse"
           />
           <Button.Label>
-            Asignar {selectedGroups.length}{" "}
-            {selectedGroups.length === 1 ? "Grupo" : "Grupos"}
+            {t("helpers.assign")} {selectedGroups.length}{" "}
+            {t("screens.groups.title")}
           </Button.Label>
         </Button>
         <Animated.View style={fakeView} />

@@ -8,11 +8,14 @@ import { useRouter } from "expo-router";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { ScrollView, View } from "react-native";
 import { GroupFormInputs } from "../components/group-form-inputs";
+import { useTranslation } from "react-i18next";
+import type { TranslationKey } from "@fludge/i18n/index";
 
 const PADDING_BOTTOM = 20;
 const TOAST_ID = "create-group-toast";
 
 export function CreateGroupScreen() {
+  const { t } = useTranslation();
   const { height } = useKeyboardGradualHeight(PADDING_BOTTOM);
   const mutation = useCreateGroup();
   const { toast } = useToast();
@@ -23,8 +26,8 @@ export function CreateGroupScreen() {
       toast.show({
         id: TOAST_ID,
         isSwipeable: true,
-        label: "Creando Grupo",
-        description: "Por favor, espere...",
+        label: t("mutations.groups.create.is_pending"),
+        description: t("helpers.please_wait"),
         duration: "persistent",
       });
 
@@ -40,9 +43,9 @@ export function CreateGroupScreen() {
               id: TOAST_ID,
               isSwipeable: true,
               variant: "success",
-              label: "Grupo creado",
-              description: "El grupo se creó correctamente.",
-              actionLabel: "Cerrar",
+              label: t("mutations.groups.create.success.title"),
+              description: t("mutations.groups.create.success.description"),
+              actionLabel: t("helpers.close"),
               onActionPress: ({ hide }) => hide(),
             });
             router.back();
@@ -52,9 +55,9 @@ export function CreateGroupScreen() {
               id: TOAST_ID,
               isSwipeable: true,
               variant: "danger",
-              label: "Algo salió mal al crear el grupo",
-              description: error.message,
-              actionLabel: "Cerrar",
+              label: t("mutations.groups.create.error"),
+              description: t(error.message as TranslationKey),
+              actionLabel: t("helpers.close"),
               onActionPress: ({ hide }) => hide(),
             });
           },
@@ -81,7 +84,9 @@ export function CreateGroupScreen() {
         <View className="gap-y-8">
           <Card className="gap-y-4">
             <Card.Header>
-              <Card.Title>Detalles del Grupo</Card.Title>
+              <Card.Title>
+                {t("screens.groups.create_group.sections.details")}
+              </Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
               <form.AppField name="name">
@@ -102,6 +107,8 @@ export function CreateGroupScreen() {
                         onBlur={state.handleBlur}
                         onChangeText={state.handleChange}
                         errors={state.state.meta.errors}
+                        label="inputs.group.description.label"
+                        placeholder="inputs.group.description.placeholder"
                       />
                     )}
                   </field.DescriptionField>
@@ -127,7 +134,7 @@ export function CreateGroupScreen() {
       <View className="bg-background absolute bottom-0 w-full px-3 py-6">
         <Button onPress={form.handleSubmit} isDisabled={mutation.isPending}>
           <MaterialIcons name="group-add" size={20} className="text-eclipse" />
-          <Button.Label>Crear Grupo</Button.Label>
+          <Button.Label>{t("inputs.group.submit")}</Button.Label>
         </Button>
       </View>
     </View>

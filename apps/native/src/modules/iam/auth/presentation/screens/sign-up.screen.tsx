@@ -40,7 +40,9 @@ export function SignUpScreen() {
       <Card>
         <Card.Header className="pb-4">
           <View className="flex w-full items-center justify-center">
-            <Card.Title className="text-3xl font-bold">Fludge</Card.Title>
+            <Card.Title className="text-3xl font-bold">
+              {t("app.title")}
+            </Card.Title>
           </View>
           <Card.Description>
             {t("screens.sign_up.description")}
@@ -56,13 +58,15 @@ export function SignUpScreen() {
             children={(field) => (
               <field.NameField
                 children={({ field, id, isInvalid }) => (
-                  <CommonInputs.UserNameInput
+                  <CommonInputs.NameInput
                     isInvalid={isInvalid}
                     id={id}
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
                     errors={field.state.meta.errors}
+                    label="inputs.user.name.label"
+                    placeholder="inputs.user.name.placeholder"
                   />
                 )}
               />
@@ -80,6 +84,8 @@ export function SignUpScreen() {
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
                     errors={field.state.meta.errors}
+                    label="inputs.user.phone.label"
+                    placeholder="inputs.user.phone.label"
                   />
                 )}
               />
@@ -97,6 +103,8 @@ export function SignUpScreen() {
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
                     errors={field.state.meta.errors}
+                    label="inputs.user.email.label"
+                    placeholder="inputs.user.email.label"
                   />
                 )}
               />
@@ -114,6 +122,8 @@ export function SignUpScreen() {
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
                     errors={field.state.meta.errors}
+                    label="inputs.user.password.label"
+                    placeholder="inputs.user.password.label"
                   />
                 )}
               />

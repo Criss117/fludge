@@ -1,8 +1,10 @@
 import { BackButton } from "@/modules/shared/components/back-button";
 import { Stack } from "expo-router";
 import { useThemeColor } from "heroui-native";
+import { useTranslation } from "react-i18next";
 
 export default function MemberLayout() {
+  const { t } = useTranslation();
   const [background, foreground] = useThemeColor(["background", "foreground"]);
 
   return (
@@ -25,7 +27,7 @@ export default function MemberLayout() {
       <Stack.Screen
         name="register"
         options={{
-          title: "Registrar un nuevo miembro",
+          title: t("screens.members.register_member.title"),
         }}
       />
       <Stack.Screen name="[memberid]/update" />
@@ -33,7 +35,7 @@ export default function MemberLayout() {
       <Stack.Screen
         name="[memberid]/assign-groups"
         options={{
-          title: "Asignar Grupos",
+          title: t("screens.members.assign_groups.title"),
         }}
       />
     </Stack>

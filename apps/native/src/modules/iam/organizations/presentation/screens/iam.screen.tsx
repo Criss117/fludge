@@ -8,8 +8,10 @@ import {
 import { IamGroupsSection } from "../sections/iam-groups.section";
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { FadeContentContainer } from "@/modules/shared/components/fade-container";
+import { useTranslation } from "react-i18next";
 
 export function IamScreen() {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [tab, setTab] = useState("members");
 
@@ -18,16 +20,20 @@ export function IamScreen() {
       <SearchInput
         query={query}
         setQuery={setQuery}
-        placeholder={tab === "groups" ? "Buscar Grupos" : "Buscar Miembros"}
+        placeholder={
+          tab === "groups"
+            ? "helpers.placeholder.search_groups"
+            : "helpers.placeholder.search_members"
+        }
       />
       <Tabs value={tab} onValueChange={setTab} className="flex-1">
         <Tabs.List className="rounded-full">
           <Tabs.Indicator className="dark:bg-muted" />
           <Tabs.Trigger value="members" className="w-1/2">
-            <Tabs.Label>Miembros</Tabs.Label>
+            <Tabs.Label>{t("resources.members.name")}</Tabs.Label>
           </Tabs.Trigger>
           <Tabs.Trigger value="groups" className="w-1/2">
-            <Tabs.Label>Grupos</Tabs.Label>
+            <Tabs.Label>{t("resources.groups.name")}</Tabs.Label>
           </Tabs.Trigger>
         </Tabs.List>
         <Tabs.Content value="members" className="flex-1">
@@ -48,6 +54,8 @@ export function IamScreen() {
 }
 
 export function IamScreenSkeleton() {
+  const { t } = useTranslation();
+
   return (
     <View className="flex-1 px-3">
       <Tabs value="members" onValueChange={() => {}} className="flex-1">
@@ -56,12 +64,12 @@ export function IamScreenSkeleton() {
             <Tabs.Indicator />
             <Tabs.Trigger value="members" className="w-1/2" isDisabled>
               <Tabs.Label className="text-black dark:text-white">
-                Miembros
+                {t("resources.members.name")}
               </Tabs.Label>
             </Tabs.Trigger>
             <Tabs.Trigger value="groups" className="w-1/2" isDisabled>
               <Tabs.Label className="text-black dark:text-white">
-                Grupos
+                {t("resources.groups.name")}
               </Tabs.Label>
             </Tabs.Trigger>
           </Tabs.ScrollView>

@@ -1,6 +1,8 @@
+import type { TranslationKey } from "@fludge/i18n/index";
 import { useThemeColor } from "heroui-native";
 import { Typography } from "heroui-native/text";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { ActivityIndicator, View } from "react-native";
 import Animated, {
   Easing,
@@ -13,16 +15,11 @@ import Animated, {
 } from "react-native-reanimated";
 
 type LoadingScreenProps = {
-  /** Texto principal (título/logo). Por defecto: "Fludge" */
-  title?: string;
-  /** Mensaje secundario debajo del título */
-  message?: string;
+  message: TranslationKey;
 };
 
-export function LoadingScreen({
-  title = "Fludge",
-  message = "Preparando todo para ti...",
-}: LoadingScreenProps) {
+export function LoadingScreen({ message }: LoadingScreenProps) {
+  const { t } = useTranslation();
   const accent = useThemeColor("accent");
 
   const opacity = useSharedValue(0);
@@ -63,7 +60,7 @@ export function LoadingScreen({
     <View className="bg-background flex-1 items-center justify-center gap-6 px-6">
       <Animated.View style={logoStyle} className="items-center gap-2">
         <Typography className="text-accent text-5xl font-bold">
-          {title}
+          {t("app.title")}
         </Typography>
         {message ? (
           <Typography className="text-muted-foreground text-center text-sm">

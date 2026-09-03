@@ -37,6 +37,10 @@ function StackConfig() {
   );
 }
 
+function LoadingData() {
+  return <LoadingScreen message={"app.loading_data"} />;
+}
+
 export default function RootLayout() {
   if (__DEV__) {
     useNetworkActivityDevTools();
@@ -44,7 +48,7 @@ export default function RootLayout() {
 
   return (
     <Integrations>
-      <Suspense fallback={<LoadingScreen message="Cargando datos..." />}>
+      <Suspense fallback={<LoadingData />}>
         <StackConfig />
       </Suspense>
     </Integrations>

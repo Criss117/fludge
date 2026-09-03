@@ -5,12 +5,14 @@ import { MaterialIcons } from "./icons";
 import { Typography } from "heroui-native/text";
 import { StyleSheet } from "react-native";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   setBarcode: (barcode: string) => void;
 }
 
 export function CameraDialog({ setBarcode }: Props) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isBarcodeScanned, setIsBarcodeScanned] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
@@ -42,9 +44,9 @@ export function CameraDialog({ setBarcode }: Props) {
         <Dialog.Portal>
           <Dialog.Overlay />
           <Dialog.Content>
-            <Typography>Necesitamos permisos para usar la cámara</Typography>
+            <Typography>{t("app.permissions.camera.required")}</Typography>
             <Button onPress={requestPermission}>
-              Permitir acceso a la cámara
+              {t("app.permissions.camera.request")}
             </Button>
           </Dialog.Content>
         </Dialog.Portal>

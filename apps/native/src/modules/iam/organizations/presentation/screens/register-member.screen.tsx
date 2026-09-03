@@ -50,6 +50,8 @@ export function RegisterMemberScreen() {
                         onBlur={state.handleBlur}
                         onChangeText={state.handleChange}
                         errors={state.state.meta.errors}
+                        label="inputs.user.name.label"
+                        placeholder="inputs.user.name.placeholder"
                       />
                     )}
                   />
@@ -67,6 +69,8 @@ export function RegisterMemberScreen() {
                         onBlur={state.handleBlur}
                         onChangeText={state.handleChange}
                         errors={state.state.meta.errors}
+                        label="inputs.user.password.label"
+                        placeholder="inputs.user.password.label"
                       />
                     )}
                   />
@@ -92,6 +96,8 @@ export function RegisterMemberScreen() {
                         onBlur={state.handleBlur}
                         onChangeText={state.handleChange}
                         errors={state.state.meta.errors}
+                        label="inputs.user.phone.label"
+                        placeholder="inputs.user.phone.label"
                       />
                     )}
                   />
@@ -102,13 +108,15 @@ export function RegisterMemberScreen() {
                 children={(field) => (
                   <field.NameField
                     children={({ field: state, id, isInvalid }) => (
-                      <CommonInputs.UserNameInput
+                      <CommonInputs.NameInput
                         isInvalid={isInvalid}
                         id={id}
                         value={state.state.value}
                         onBlur={state.handleBlur}
                         onChangeText={state.handleChange}
                         errors={state.state.meta.errors}
+                        label="inputs.user.name.label"
+                        placeholder="inputs.user.name.placeholder"
                       />
                     )}
                   />

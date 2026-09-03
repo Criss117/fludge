@@ -18,16 +18,20 @@ interface CommonInputProps {
   errors?: Array<{ message?: string } | undefined>;
   label: TranslationKey;
   icon: MaterialIconName;
-  inputProps: ComponentProps<typeof Input>;
+  inputProps: Omit<ComponentProps<typeof Input>, "placeholder"> & {
+    placeholder: TranslationKey;
+  };
 }
 
 interface Props {
   isInvalid: boolean;
   id: string;
   value: string;
+  errors?: Array<{ message?: string } | undefined>;
+  placeholder: TranslationKey;
+  label: TranslationKey;
   onBlur: (e: BlurEvent) => void;
   onChangeText: (text: string) => void;
-  errors?: Array<{ message?: string } | undefined>;
 }
 
 export function CommonInput({
@@ -44,7 +48,12 @@ export function CommonInput({
     <TextField isInvalid={isInvalid} isRequired={isRequired}>
       <Label isInvalid={isInvalid}>{t(label)}</Label>
       <View className="w-full flex-row items-center">
-        <Input {...inputProps} className="flex-1 px-10" isInvalid={isInvalid} />
+        <Input
+          {...inputProps}
+          placeholder={t(inputProps.placeholder)}
+          className="flex-1 px-10"
+          isInvalid={isInvalid}
+        />
         <View className="absolute inset-s-3.5" pointerEvents="none">
           <MaterialIcons size={20} name={icon} className="text-muted" />
         </View>
@@ -58,19 +67,23 @@ export function DescriptionInput({
   isInvalid,
   id,
   value,
+  placeholder,
+  label,
   onBlur,
   onChangeText,
   errors,
 }: Props) {
+  const { t } = useTranslation();
+
   return (
     <TextField isInvalid={isInvalid}>
-      <Label isInvalid={isInvalid}>Descripción (Opcional)</Label>
+      <Label isInvalid={isInvalid}>{t(label)}</Label>
       <TextArea
         id={id}
         value={value}
         onBlur={onBlur}
         onChangeText={onChangeText}
-        placeholder="Describe el propósito de este grupo..."
+        placeholder={t(placeholder)}
         isInvalid={isInvalid}
       />
       {isInvalid && <FieldError errors={errors} />}
@@ -94,46 +107,50 @@ function EmailInput({
   onBlur,
   onChangeText,
   errors,
+  label,
+  placeholder,
 }: Props) {
   return (
     <CommonInput
       isInvalid={isInvalid}
       errors={errors}
-      label="inputs.labels.user_email"
+      label={label}
       icon="mail-outline"
       inputProps={{
         id,
         value,
         onBlur,
         onChangeText,
-        placeholder: "natalia@fludge.dev",
+        placeholder,
         keyboardType: "email-address",
       }}
     />
   );
 }
 
-function UserNameInput({
+function NameInput({
   isInvalid,
   id,
   value,
   onBlur,
   onChangeText,
   errors,
+  label,
+  placeholder,
 }: Props) {
   return (
     <CommonInput
       isRequired
       isInvalid={isInvalid}
       errors={errors}
-      label="inputs.labels.user_name"
+      label={label}
       icon="person"
       inputProps={{
         id,
         value,
         onBlur,
         onChangeText,
-        placeholder: "Natalia Arturo",
+        placeholder,
       }}
     />
   );
@@ -146,19 +163,21 @@ function PhoneInput({
   onBlur,
   onChangeText,
   errors,
+  label,
+  placeholder,
 }: Props) {
   return (
     <CommonInput
       isInvalid={isInvalid}
       errors={errors}
-      label="inputs.labels.phone"
+      label={label}
       icon="phone"
       inputProps={{
         id,
         value,
         onBlur,
         onChangeText,
-        placeholder: "3212345678",
+        placeholder,
         keyboardType: "phone-pad",
       }}
     />
@@ -172,13 +191,15 @@ function PasswordInput({
   onBlur,
   onChangeText,
   errors,
+  label,
+  placeholder,
 }: Props) {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <TextField isInvalid={isInvalid} isRequired>
-      <Label isInvalid={isInvalid}>{t("inputs.labels.password")}</Label>
+      <Label isInvalid={isInvalid}>{t(label)}</Label>
       <View className="w-full flex-row items-center">
         <Input
           className="flex-1 px-10"
@@ -188,7 +209,7 @@ function PasswordInput({
           onChangeText={onChangeText}
           secureTextEntry={!showPassword}
           aria-invalid={isInvalid}
-          placeholder="*********"
+          placeholder={t(placeholder)}
         />
         <View className="absolute inset-s-3.5" pointerEvents="none">
           <MaterialIcons size={20} name="lock-outline" className="text-muted" />
@@ -222,19 +243,21 @@ function AddressInput({
   onBlur,
   onChangeText,
   errors,
+  label,
+  placeholder,
 }: Props) {
   return (
     <CommonInput
       isInvalid={isInvalid}
       errors={errors}
-      label="inputs.labels.address"
+      label={label}
       icon="location-on"
       inputProps={{
         id,
         value,
         onBlur,
         onChangeText,
-        placeholder: "Ej. Calle de la casa, 123",
+        placeholder,
       }}
     />
   );
@@ -243,7 +266,7 @@ function AddressInput({
 export const CommonInputs = {
   EmailInput,
   PasswordInput,
-  UserNameInput,
+  NameInput,
   PhoneInput,
   AddressInput,
   DescriptionInput,

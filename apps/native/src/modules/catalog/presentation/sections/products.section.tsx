@@ -8,6 +8,7 @@ import {
 import { FloatingLink } from "@/modules/shared/components/floating-link";
 import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 import { Typography } from "heroui-native/text";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   query: string;
@@ -20,10 +21,11 @@ interface ListFooterProps {
 const ITEM_SEPARATOR_HEIGHT = 16;
 
 function ListFooterComponent({ hasNextPage }: ListFooterProps) {
+  const { t } = useTranslation();
   if (!hasNextPage)
     return (
       <View>
-        <Typography>No hay más productos</Typography>
+        <Typography>{t("screens.products.no_more")}</Typography>
       </View>
     );
 

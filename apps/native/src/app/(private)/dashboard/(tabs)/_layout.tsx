@@ -11,6 +11,7 @@ import type { BottomTabBarProps } from "expo-router/tabs";
 import { cn, useThemeColor } from "heroui-native";
 import { Tabs } from "heroui-native/tabs";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 const TabsIcons = {
   catalog: "inventory-2",
@@ -98,7 +99,7 @@ function BottomTabs({ descriptors, state, navigation }: BottomTabBarProps) {
 
 export default function DashboardTabsLayout() {
   const [background, foreground] = useThemeColor(["background", "foreground"]);
-  const { isDark } = useAppTheme();
+  const { t } = useTranslation();
 
   return (
     <ExpoTabs
@@ -121,25 +122,25 @@ export default function DashboardTabsLayout() {
       <ExpoTabs.Screen
         name="index"
         options={{
-          title: "Ventas",
+          title: t("screens.sales.title"),
         }}
       />
       <ExpoTabs.Screen
         name="catalog"
         options={{
-          title: "Inventario",
+          title: t("screens.catalog.title"),
         }}
       />
       <ExpoTabs.Screen
         name="clients"
         options={{
-          title: "Clientes",
+          title: t("screens.clients.title"),
         }}
       />
       <ExpoTabs.Screen
         name="iam"
         options={{
-          title: "IAM",
+          title: t("screens.iam.title"),
         }}
       />
     </ExpoTabs>

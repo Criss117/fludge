@@ -15,10 +15,11 @@ import { SearchInput } from "@/modules/shared/components/search-input";
 import { Typography } from "heroui-native/text";
 import { SelectableMemberCard } from "../components/member-card";
 import {
-  assignmentLabel,
   filterAssignableMembers,
   toggleSelection,
 } from "@/modules/shared/utils/assign-members-to-group.utils";
+import { useTranslation } from "react-i18next";
+import type { TranslationKey } from "@fludge/i18n/index";
 
 interface Props {
   groupId: string;
@@ -29,6 +30,7 @@ const PADDING_BOTTOM = 16;
 const TOAST_ID = "assign-members-to-group-toast";
 
 export function AssignMembersToGroup({ groupId }: Props) {
+  const { t } = useTranslation();
   const router = useRouter();
   const assignMembersToGroup = useAssignMembersToGroup();
   const { height } = useKeyboardGradualHeight(PADDING_BOTTOM);
@@ -52,8 +54,8 @@ export function AssignMembersToGroup({ groupId }: Props) {
     toast.show({
       id: TOAST_ID,
       isSwipeable: true,
-      label: "Asignando Miembros",
-      description: "Por favor, espere...",
+      label: t("mutations.groups.assign_members.is_pending"),
+      description: t("helpers.please_wait"),
       duration: "persistent",
     });
 
@@ -65,9 +67,11 @@ export function AssignMembersToGroup({ groupId }: Props) {
             id: TOAST_ID,
             isSwipeable: true,
             variant: "success",
-            label: "Miembros Asignados",
-            description: "Los miembros se han asignado correctamente.",
-            actionLabel: "Cerrar",
+            label: t("mutations.groups.assign_members.success.title"),
+            description: t(
+              "mutations.groups.assign_members.success.description"
+            ),
+            actionLabel: t("helpers.close"),
             onActionPress: ({ hide }) => hide(),
           });
           router.back();
@@ -77,9 +81,9 @@ export function AssignMembersToGroup({ groupId }: Props) {
             id: TOAST_ID,
             isSwipeable: true,
             variant: "danger",
-            label: "Algo salió mal al asignar miembros",
-            description: error.message,
-            actionLabel: "Cerrar",
+            label: t("mutations.groups.assign_members.error"),
+            description: t(error.message as TranslationKey),
+            actionLabel: t("helpers.close"),
             onActionPress: ({ hide }) => hide(),
           });
         },
@@ -98,7 +102,7 @@ export function AssignMembersToGroup({ groupId }: Props) {
       <SearchInput
         query={query}
         setQuery={setQuery}
-        placeholder="Buscar Miembros"
+        placeholder="helpers.placeholder.search_members"
       />
       <FlatList
         data={assignableMembers}
@@ -125,7 +129,7 @@ export function AssignMembersToGroup({ groupId }: Props) {
               style={{ marginBottom: 16 }}
             />
             <Typography.Paragraph color="muted">
-              No hay miembros disponibles
+              {t("screens.members.no_available")}
             </Typography.Paragraph>
           </View>
         }
@@ -141,7 +145,8 @@ export function AssignMembersToGroup({ groupId }: Props) {
             className="text-eclipse"
           />
           <Button.Label>
-            {assignmentLabel(selectedMemberIds.length)}
+            {t("helpers.assign")} {selectedMemberIds.length}{" "}
+            {t("screens.members.title")}
           </Button.Label>
         </Button>
         <Animated.View style={keyboardSpacer} />

@@ -7,6 +7,7 @@ import { Chip } from "heroui-native/chip";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Skeleton } from "heroui-native/skeleton";
 import { SkeletonGroup } from "heroui-native/skeleton-group";
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
 export const CARD_HEIGHT = 152;
 
 export function ProductCard({ product }: Props) {
+  const { t } = useTranslation();
   const router = useRouter();
 
   return (
@@ -31,7 +33,7 @@ export function ProductCard({ product }: Props) {
                 className="text-muted"
               />
               <Card.Description>
-                {product.totalPresentations} Presentaciones
+                {product.totalPresentations} {t("resources.presentations.name")}
               </Card.Description>
             </View>
           </View>
@@ -46,7 +48,7 @@ export function ProductCard({ product }: Props) {
             {product.allowNegativeStock && (
               <Chip className="bg-foreground">
                 <Chip.Label className="text-accent">
-                  Permite Stock Negativo
+                  {t("resources.products.allow_negative_stock")}
                 </Chip.Label>
               </Chip>
             )}

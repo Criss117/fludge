@@ -1,8 +1,10 @@
 import { BackButton } from "@/modules/shared/components/back-button";
 import { Stack } from "expo-router";
 import { useThemeColor } from "heroui-native";
+import { useTranslation } from "react-i18next";
 
 export default function GroupsLayout() {
+  const { t } = useTranslation();
   const [background, foreground] = useThemeColor(["background", "foreground"]);
 
   return (
@@ -25,20 +27,20 @@ export default function GroupsLayout() {
       <Stack.Screen
         name="create"
         options={{
-          title: "Crear Grupo",
+          title: t("screens.groups.create_group.title"),
         }}
       />
       <Stack.Screen name="[groupid]/index" />
       <Stack.Screen
         name="[groupid]/update"
         options={{
-          title: "Editar Grupo",
+          title: t("screens.groups.update_group.title"),
         }}
       />
       <Stack.Screen
         name="[groupid]/assign-members"
         options={{
-          title: "Asignar Miembros",
+          title: t("screens.groups.assign_members.title"),
         }}
       />
     </Stack>

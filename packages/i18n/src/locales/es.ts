@@ -1,4 +1,15 @@
 export const es = {
+  app: {
+    title: "Fludge",
+    loading_data: "Cargando datos...",
+    loading_session: "Cargando sesión...",
+    permissions: {
+      camera: {
+        required: "Necesitamos permisos para usar la cámara",
+        request: "Permitir acceso a la cámara",
+      },
+    },
+  },
   shared: {
     errors: {
       internal_server_error: "Error interno del servidor",
@@ -193,12 +204,59 @@ export const es = {
   },
 
   inputs: {
-    labels: {
-      user_name: "Nombre",
-      user_email: "Correo Electrónico",
-      password: "Contraseña",
-      phone: "Número de Teléfono",
-      address: "Dirección Comercial",
+    user: {
+      name: {
+        label: "Nombre Completo",
+        placeholder: "Natalia Arturo",
+      },
+      email: {
+        label: "Correo Electrónico",
+        placeholder: "natalia@fludge.dev",
+      },
+      password: {
+        label: "Contraseña",
+        placeholder: "*********",
+      },
+      phone: {
+        label: "Número de Teléfono",
+        placeholder: "3212345678",
+      },
+    },
+    organization: {
+      address: {
+        label: "Dirección Comercial",
+        placeholder: "Ej. Calle de la casa, 123",
+      },
+      name: {
+        label: "Nombre de la organización",
+        placeholder: "Ej. Tienda Andres",
+      },
+      legal_name: {
+        label: "Nombre legal",
+        placeholder: "Ej. Tienda Andres S.A.S.",
+      },
+      tax_id: {
+        label: "Identificación Fiscal (Tax ID / NIT / RFC)",
+        placeholder: "Ingresa el código único",
+      },
+    },
+    group: {
+      name: {
+        label: "Nombre del grupo",
+        placeholder: "Ej. Tienda Andres",
+      },
+      description: {
+        label: "Descripción del grupo",
+        placeholder: "Ej. Tienda Andres S.A.S.",
+      },
+      permissions: {
+        label: "Matriz de permisos",
+      },
+      create: "Crear Grupo",
+    },
+    member: {
+      create: "Crear Miembro",
+      assign_groups: "Asignar Grupos",
     },
   },
 
@@ -216,12 +274,229 @@ export const es = {
       sign_in: "Iniciar sesión",
     },
     settings: {
+      title: "Mi Cuenta",
       preferences: "Preferencias",
       dark_mode: "Modo oscuro",
       security_and_access: "Seguridad y Accesos",
       change_password: "Cambiar contraseña",
       organizational_management: "Gestión de Organizaciones",
       sign_out: "Cerrar Sesión",
+    },
+    members: {
+      title: "Miembros",
+      not_found: "No se encontraron miembros",
+      no_available: "No hay miembros disponibles",
+      register_member: {
+        title: "Registrar un nuevo miembro",
+      },
+      assign_groups: {
+        title: "Asignar grupo",
+      },
+    },
+    groups: {
+      title: "Grupos",
+      not_found: "No se encontró el grupo",
+      no_available: "No hay grupos disponibles",
+      create_group: {
+        title: "Crear grupo",
+        sections: {
+          details: "Detalles del Grupo",
+        },
+      },
+      update_group: {
+        title: "Editar grupo",
+      },
+      assign_members: {
+        title: "Asignar miembros",
+      },
+    },
+    sales: {
+      title: "Ventas",
+    },
+    catalog: {
+      title: "Inventario",
+    },
+    clients: {
+      title: "Clientes",
+    },
+    iam: {
+      title: "IAM",
+    },
+    categories: {
+      title: "Categorías",
+      not_found: "No se encontraron categorías",
+      no_more: "No hay más categorías",
+    },
+    products: {
+      title: "Productos",
+      not_found: "No se encontraron productos",
+      no_more: "No hay más productos",
+    },
+  },
+
+  permissions: {
+    organizations: {
+      update: {
+        name: "Actualizar organización",
+        description: "Puede actualizar la organización",
+      },
+    },
+    groups: {
+      create: {
+        name: "Crear grupo",
+        description: "Puede crear grupos",
+      },
+      read: {
+        name: "Leer grupo",
+        description: "Puede leer grupos",
+      },
+      update: {
+        name: "Actualizar grupo",
+        description: "Puede actualizar grupos",
+      },
+      delete: {
+        name: "Eliminar grupo",
+        description: "Puede eliminar grupos",
+      },
+      assign_member: {
+        name: "Asignar miembro",
+        description: "Puede asignar miembros a grupos",
+      },
+    },
+    members: {
+      create: {
+        name: "Crear miembro",
+        description: "Puede crear miembros",
+      },
+      read: {
+        name: "Leer miembro",
+        description: "Puede leer miembros",
+      },
+      delete: {
+        name: "Eliminar miembro",
+        description: "Puede eliminar miembros",
+      },
+      assign_group: {
+        name: "Asignar grupo",
+        description: "Puede asignar grupos a miembros",
+      },
+    },
+    categories: {
+      create: {
+        name: "Crear categoría",
+        description: "Puede crear categorías",
+      },
+      read: {
+        name: "Leer categoría",
+        description: "Puede leer categorías",
+      },
+      update: {
+        name: "Actualizar categoría",
+        description: "Puede actualizar categorías",
+      },
+      delete: {
+        name: "Eliminar categoría",
+        description: "Puede eliminar categorías",
+      },
+    },
+    products: {
+      create: {
+        name: "Crear producto",
+        description: "Puede crear productos",
+      },
+      read: {
+        name: "Leer producto",
+        description: "Puede leer productos",
+      },
+      update: {
+        name: "Actualizar producto",
+        description: "Puede actualizar productos",
+      },
+      delete: {
+        name: "Eliminar producto",
+        description: "Puede eliminar productos",
+      },
+    },
+  },
+
+  resources: {
+    products: {
+      name: "Productos",
+      allow_negative_stock: "Permite Stock Negativo",
+    },
+    presentations: {
+      name: "Presentaciones",
+    },
+    categories: {
+      name: "Categorías",
+    },
+    suppliers: {
+      name: "Proveedores",
+    },
+    movements: {
+      name: "Movimientos",
+    },
+    members: {
+      name: "Miembros",
+    },
+    permissions: {
+      name: "Permisos",
+    },
+    groups: {
+      name: "Grupos",
+    },
+  },
+
+  helpers: {
+    status: {
+      active: "Activo",
+      inactive: "Inactivo",
+      discontinued: "Descontinuado",
+    },
+
+    placeholder: {
+      search_products: "Buscar productos por nombre, codigo, descripción...",
+      search_categories: "Buscar categorias por nombre, descripción...",
+      search_movements: "Buscar movimientos por nombre, descripción...",
+      search_suppliers: "Buscar proveedores por nombre, descripción...",
+      search_members: "Buscar miembros por nombre, descripción...",
+      search_groups: "Buscar grupos por nombre, descripción...",
+    },
+
+    assign: "Asignar",
+    please_wait: "Por favor, espere...",
+    close: "Cerrar",
+    created_at: "Creado el:",
+  },
+
+  mutations: {
+    members: {
+      assign_groups: {
+        is_pending: "Asignando grupos",
+        success: {
+          title: "Grupos Asignados",
+          description: "Los grupos se han asignado correctamente.",
+        },
+        error: "Algo salió mal al asignar grupos",
+      },
+    },
+    groups: {
+      create: {
+        is_pending: "Creando grupo",
+        success: {
+          title: "Grupo Creado",
+          description: "El grupo se ha creado correctamente.",
+        },
+        error: "Algo salió mal al crear el grupo",
+      },
+      assign_members: {
+        is_pending: "Asignando miembros",
+        success: {
+          title: "Miembros Asignados",
+          description: "Los miembros se han asignado correctamente.",
+        },
+        error: "Algo salió mal al asignar miembros",
+      },
     },
   },
 } as const;

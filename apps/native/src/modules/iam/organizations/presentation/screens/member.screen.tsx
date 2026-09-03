@@ -7,12 +7,15 @@ import { ScrollView, View } from "react-native";
 import { MemberGroupsSection } from "../sections/member-groups.section";
 import type { MemberSummary } from "@fludge/client/application/iam/organization/queries/use-find-members";
 import { UserAvatar } from "@/modules/shared/components/user-avatar";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   member: MemberSummary;
 }
 
 export function MemberScreen({ member }: Props) {
+  const { t } = useTranslation();
+
   return (
     <View className="mt-2 flex-1 px-3">
       <ScrollView
@@ -54,7 +57,7 @@ export function MemberScreen({ member }: Props) {
               size={20}
               className="text-eclipse"
             />
-            <Button.Label>Asignar Grupos</Button.Label>
+            <Button.Label>{t("inputs.member.assign_groups")}</Button.Label>
           </Button>
         </Link>
       </View>

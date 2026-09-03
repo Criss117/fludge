@@ -6,30 +6,38 @@ import { FadeContentContainer } from "@/modules/shared/components/fade-container
 import { ProductsSection } from "../sections/products.section";
 import { CategoriesSection } from "../sections/categories.section";
 import { CameraDialog } from "@/modules/shared/components/camera-dialog";
+import { getTranslationKey } from "@/modules/shared/utils/translation";
+import { useTranslation } from "react-i18next";
 
 const items = [
   {
     id: "products",
-    title: "Productos",
-    searchPlaceholder: "Buscar productos por nombre, codigo, descripción...",
+    title: getTranslationKey("resources.products.name"),
+    searchPlaceholder: getTranslationKey("helpers.placeholder.search_products"),
     CMP: ProductsSection,
   },
   {
     id: "categories",
-    title: "Categorias",
-    searchPlaceholder: "Buscar categorias por nombre, descripción...",
+    title: getTranslationKey("resources.categories.name"),
+    searchPlaceholder: getTranslationKey(
+      "helpers.placeholder.search_categories"
+    ),
     CMP: CategoriesSection,
   },
   {
     id: "movements",
-    title: "Movimientos",
-    searchPlaceholder: "Buscar movimientos por nombre, descripción...",
+    title: getTranslationKey("resources.movements.name"),
+    searchPlaceholder: getTranslationKey(
+      "helpers.placeholder.search_movements"
+    ),
     CMP: CategoriesSection,
   },
   {
     id: "suppliers",
-    title: "Proveedores",
-    searchPlaceholder: "Buscar proveedores por nombre, descripción...",
+    title: getTranslationKey("resources.suppliers.name"),
+    searchPlaceholder: getTranslationKey(
+      "helpers.placeholder.search_suppliers"
+    ),
     CMP: CategoriesSection,
   },
 ] as const;
@@ -37,6 +45,7 @@ const items = [
 type Id = (typeof items)[number]["id"];
 
 export function CatalogScreen() {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [tab, setTab] = useState<Id>("products");
 
@@ -48,8 +57,7 @@ export function CatalogScreen() {
             query={query}
             setQuery={setQuery}
             placeholder={
-              items.find((item) => item.id === tab)?.searchPlaceholder ??
-              "Buscar"
+              items.find((item) => item.id === tab)?.searchPlaceholder!
             }
           />
         </View>
@@ -65,7 +73,7 @@ export function CatalogScreen() {
             <Tabs.Indicator className="dark:bg-muted" />
             {items.map((item) => (
               <Tabs.Trigger value={item.id} key={item.id} className="px-4">
-                <Tabs.Label>{item.title}</Tabs.Label>
+                <Tabs.Label>{t(item.title)}</Tabs.Label>
               </Tabs.Trigger>
             ))}
           </Tabs.ScrollView>

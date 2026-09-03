@@ -60,7 +60,7 @@ export const groupRouter = {
       ),
 
     assignMembers: hasPermissionProcedure({
-      groups: ["assign-member"],
+      groups: ["assign_member"],
     })
       .route({
         method: "PUT",
@@ -77,7 +77,7 @@ export const groupRouter = {
       ),
 
     removeMembers: hasPermissionProcedure({
-      groups: ["assign-member"],
+      groups: ["assign_member"],
     })
       .route({
         method: "DELETE",
