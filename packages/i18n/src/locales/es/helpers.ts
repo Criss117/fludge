@@ -1,0 +1,42 @@
+export const helpers = {
+  status: {
+    active: "Activo",
+    inactive: "Inactivo",
+    discontinued: "Descontinuado",
+    activate: "Activar",
+    deactivate: "Desactivar",
+  },
+
+  placeholder: {
+    search_products: "Buscar productos por nombre, codigo, descripción...",
+    search_categories: "Buscar categorias por nombre, descripción...",
+    search_movements: "Buscar movimientos por nombre, descripción...",
+    search_suppliers: "Buscar proveedores por nombre, descripción...",
+    search_members: "Buscar miembros por nombre, descripción...",
+    search_groups: "Buscar grupos por nombre, descripción...",
+  },
+
+  assign: "Asignar",
+  please_wait: "Por favor, espere...",
+  close: "Cerrar",
+  created_at: "Creado el:",
+  joined_at: "Unido el:",
+  view_details: "Ver Detalles",
+  edit: "Editar",
+  unassign_group: "Desasignar Grupo",
+  unassign_member: "Desasignar Miembro",
+  owner: "Propietario",
+  member: "Miembro",
+  cancel: "Cancelar",
+  continue: "Continuar",
+  all_of: "Todos de {{resource}}",
+  search_organizations: "Buscar por nombre o Tax ID / NIT",
+  register_organization: "Registrar Nueva Organización",
+  switch_organization_hint:
+    "Puedes cambiar de organización en cualquier momento desde los ajustes",
+  no_groups: "No hay grupos",
+  no_members: "No hay miembros",
+  inherited_roles_permissions: "Roles y permisos heredados",
+  more: "más",
+  options: "Opciones",
+};
