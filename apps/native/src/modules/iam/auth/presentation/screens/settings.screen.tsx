@@ -10,9 +10,11 @@ import { ControlField } from "heroui-native/control-field";
 import { Label } from "heroui-native/label";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
+import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
 
 export function SettingsScreen() {
+  const { t } = useTranslation();
   const { session, signOut } = useAuth();
   const { isDark, toggleTheme } = useAppTheme();
   const sessionData = session.data!;
@@ -42,7 +44,7 @@ export function SettingsScreen() {
 
         <Card className="gap-y-4">
           <Card.Header>
-            <Card.Title>Preferencias</Card.Title>
+            <Card.Title>{t("screens.settings.preferences")}</Card.Title>
           </Card.Header>
           <Card.Body>
             <ControlField
@@ -56,7 +58,7 @@ export function SettingsScreen() {
                     size={26}
                     className="text-foreground"
                   />
-                  <Label>Modo Oscuro</Label>
+                  <Label>{t("screens.settings.dark_mode")}</Label>
                 </View>
                 <ControlField.Indicator />
               </View>
@@ -66,7 +68,7 @@ export function SettingsScreen() {
 
         <Card className="gap-y-4">
           <Card.Header>
-            <Card.Title>Seguridad y Accesos</Card.Title>
+            <Card.Title>{t("screens.settings.security_and_access")}</Card.Title>
           </Card.Header>
           <Card.Body className="gap-y-4">
             <Link href="/(private)/dashboard/settings" asChild push>
@@ -77,7 +79,9 @@ export function SettingsScreen() {
                     size={20}
                     className="text-foreground"
                   />
-                  <Typography>Cambiar Contraseña</Typography>
+                  <Typography>
+                    {t("screens.settings.change_password")}a
+                  </Typography>
                 </View>
                 <MaterialIcons
                   name="chevron-right"
@@ -94,7 +98,9 @@ export function SettingsScreen() {
                     size={20}
                     className="text-foreground"
                   />
-                  <Typography>Gestión de Organizaciones</Typography>
+                  <Typography>
+                    {t("screens.settings.organizational_management")}
+                  </Typography>
                 </View>
                 <MaterialIcons
                   name="chevron-right"
@@ -114,7 +120,7 @@ export function SettingsScreen() {
           onPress={() => signOut.mutate()}
         >
           <MaterialIcons name="logout" size={20} className="text-danger" />
-          <Button.Label>Cerrar Sesión</Button.Label>
+          <Button.Label>{t("screens.settings.sign_out")}</Button.Label>
         </Button>
       </View>
     </View>

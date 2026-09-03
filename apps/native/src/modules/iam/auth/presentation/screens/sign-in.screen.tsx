@@ -11,8 +11,10 @@ import { Typography } from "heroui-native/text";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { FieldError } from "heroui-native/field-error";
 import { CommonInputs } from "@/modules/shared/components/common-input";
+import { useTranslation } from "react-i18next";
 
 export function SignInScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { signInEmail } = useAuth();
   const [rootError, setRootError] = useState<string | null>(null);
@@ -42,7 +44,7 @@ export function SignInScreen() {
             <Card.Title className="text-3xl font-bold">Fludge</Card.Title>
           </View>
           <Card.Description>
-            Completa tus datos para iniciar sesión
+            {t("screens.sign_in.description")}
           </Card.Description>
         </Card.Header>
         <Separator />
@@ -88,7 +90,7 @@ export function SignInScreen() {
             onPress={form.handleSubmit}
             isDisabled={signInEmail.isPending}
           >
-            Iniciar sesión
+            {t("screens.sign_in.button")}
           </Button>
         </Card.Body>
         <Separator />
@@ -96,8 +98,10 @@ export function SignInScreen() {
           <Link href="/auth/sign-up" replace asChild>
             <PressableFeedback className="w-full py-2">
               <Typography className="text-muted">
-                No tienes cuenta?{" "}
-                <Typography className="underline">Regístrate</Typography>
+                {t("screens.sign_in.no_account")}{" "}
+                <Typography className="underline">
+                  {t("screens.sign_in.sign_up")}
+                </Typography>
               </Typography>
             </PressableFeedback>
           </Link>

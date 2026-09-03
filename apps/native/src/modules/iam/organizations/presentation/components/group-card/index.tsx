@@ -10,7 +10,7 @@ import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { useRouter } from "expo-router";
 import { GroupsOptions } from "./options";
 import type { GroupSummary } from "@fludge/client/application/iam/organization/queries/use-find-groups";
-import { getPermissionDescription } from "@fludge/utils/permissions/index";
+
 import { Checkbox, cn } from "heroui-native";
 
 interface Props {
@@ -74,8 +74,6 @@ export function SelectableGroupCard({
 }
 
 export function GroupCardBase({ group, asMemberGroup, hideOptions }: Props) {
-  const permissions = group.permissions.map((p) => getPermissionDescription(p));
-
   return (
     <Card className="gap-y-2">
       <Card.Header className="gap-y-2">
@@ -96,7 +94,7 @@ export function GroupCardBase({ group, asMemberGroup, hideOptions }: Props) {
         </Card.Description>
       </Card.Header>
       <Card.Body className="flex-row flex-wrap gap-2">
-        {permissions.slice(0, 3).map((p) => (
+        {/* {permissions.slice(0, 3).map((p) => (
           <Chip key={p.es + p.description.es} variant="secondary">
             <Chip.Label>
               {p.es}: {p.description.es}
@@ -107,7 +105,7 @@ export function GroupCardBase({ group, asMemberGroup, hideOptions }: Props) {
           <Chip variant="secondary">
             <Chip.Label>{permissions.length - 3} más</Chip.Label>
           </Chip>
-        )}
+        )} */}
       </Card.Body>
 
       <Separator />

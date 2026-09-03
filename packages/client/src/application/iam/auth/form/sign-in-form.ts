@@ -1,15 +1,11 @@
-import { signUpValidator } from "@fludge/utils/validators/auth.validators";
+import {
+  signInValidator,
+  signUpValidator,
+} from "@fludge/utils/validators/auth.validators";
 import { formOptions } from "@tanstack/react-form";
 import { z } from "zod";
 
-export const signInSchema = z.object({
-  email: z.email({ error: "Ingresa un email válido" }),
-  password: z.string().min(6, {
-    error: "La contraseña debe tener al menos 6 caracteres",
-  }),
-});
-
-export type SignInSchema = z.infer<typeof signInSchema>;
+export type SignInSchema = z.infer<typeof signInValidator>;
 export type SignUpSchema = z.infer<typeof signUpValidator>;
 
 export type OnSignUpSubmit = {
@@ -44,7 +40,7 @@ export function signInFormOptions(options: OnSignInSubmit) {
       password: "",
     },
     validators: {
-      onChange: signInSchema,
+      onChange: signInValidator,
     },
     onSubmit: ({ value, formApi }) => {
       options.onSubmit({ value, resetForm: formApi.reset });

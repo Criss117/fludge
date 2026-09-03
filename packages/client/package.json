@@ -21,6 +21,8 @@
     "@fludge/db": "workspace:*",
     "@fludge/utils": "workspace:*",
     "@fludge/api": "workspace:*",
+    "i18next": "catalog:",
+    "react-i18next": "catalog:",
     "@orpc/client": "catalog:",
     "better-auth": "catalog:",
     "@tanstack/react-query": "catalog:",

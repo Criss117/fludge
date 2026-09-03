@@ -191,4 +191,37 @@ export const es = {
       },
     },
   },
+
+  inputs: {
+    labels: {
+      user_name: "Nombre",
+      user_email: "Correo Electrónico",
+      password: "Contraseña",
+      phone: "Número de Teléfono",
+      address: "Dirección Comercial",
+    },
+  },
+
+  screens: {
+    sign_in: {
+      description: "Completa tus datos para iniciar sesión",
+      button: "Iniciar sesión",
+      no_account: "No tienes cuenta?",
+      sign_up: "Regístrate",
+    },
+    sign_up: {
+      description: "Completa tus datos para registrarte",
+      button: "Registrarse",
+      already_account: "¿Ya tienes una cuenta?",
+      sign_in: "Iniciar sesión",
+    },
+    settings: {
+      preferences: "Preferencias",
+      dark_mode: "Modo oscuro",
+      security_and_access: "Seguridad y Accesos",
+      change_password: "Cambiar contraseña",
+      organizational_management: "Gestión de Organizaciones",
+      sign_out: "Cerrar Sesión",
+    },
+  },
 } as const;

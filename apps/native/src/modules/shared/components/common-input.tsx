@@ -7,6 +7,8 @@ import { FieldError } from "./field-error";
 import { useState, type ComponentProps } from "react";
 import { Button } from "heroui-native/button";
 import { TextArea } from "heroui-native/text-area";
+import { useTranslation } from "react-i18next";
+import { TranslationKey } from "@fludge/i18n/index";
 
 type MaterialIconName = ComponentProps<typeof MaterialIcons>["name"];
 
@@ -14,7 +16,7 @@ interface CommonInputProps {
   isRequired?: boolean;
   isInvalid: boolean;
   errors?: Array<{ message?: string } | undefined>;
-  label: string;
+  label: TranslationKey;
   icon: MaterialIconName;
   inputProps: ComponentProps<typeof Input>;
 }
@@ -36,9 +38,11 @@ export function CommonInput({
   errors,
   inputProps,
 }: CommonInputProps) {
+  const { t } = useTranslation();
+
   return (
     <TextField isInvalid={isInvalid} isRequired={isRequired}>
-      <Label isInvalid={isInvalid}>{label}</Label>
+      <Label isInvalid={isInvalid}>{t(label)}</Label>
       <View className="w-full flex-row items-center">
         <Input {...inputProps} className="flex-1 px-10" isInvalid={isInvalid} />
         <View className="absolute inset-s-3.5" pointerEvents="none">
@@ -95,7 +99,7 @@ function EmailInput({
     <CommonInput
       isInvalid={isInvalid}
       errors={errors}
-      label="Correo Electrónico"
+      label="inputs.labels.user_email"
       icon="mail-outline"
       inputProps={{
         id,
@@ -122,7 +126,7 @@ function UserNameInput({
       isRequired
       isInvalid={isInvalid}
       errors={errors}
-      label="Nombre"
+      label="inputs.labels.user_name"
       icon="person"
       inputProps={{
         id,
@@ -147,7 +151,7 @@ function PhoneInput({
     <CommonInput
       isInvalid={isInvalid}
       errors={errors}
-      label="Número de Teléfono"
+      label="inputs.labels.phone"
       icon="phone"
       inputProps={{
         id,
@@ -169,11 +173,12 @@ function PasswordInput({
   onChangeText,
   errors,
 }: Props) {
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <TextField isInvalid={isInvalid} isRequired>
-      <Label isInvalid={isInvalid}>Contraseña</Label>
+      <Label isInvalid={isInvalid}>{t("inputs.labels.password")}</Label>
       <View className="w-full flex-row items-center">
         <Input
           className="flex-1 px-10"
@@ -222,7 +227,7 @@ function AddressInput({
     <CommonInput
       isInvalid={isInvalid}
       errors={errors}
-      label="Dirección Comercial"
+      label="inputs.labels.address"
       icon="location-on"
       inputProps={{
         id,

@@ -1,4 +1,3 @@
-import { permissionsFromObject } from "@fludge/utils/permissions/index";
 import { useCreateGroup } from "@fludge/client/application/iam/organization/mutations/use-group.mutations";
 import { useGroupForm } from "@fludge/client/presentation/iam/organization/group.form";
 import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gradual-height";
@@ -33,7 +32,7 @@ export function CreateGroupScreen() {
         {
           name: value.name,
           description: value.description,
-          permissions: permissionsFromObject(value.permissions),
+          permissions: value.permissions,
         },
         {
           onSuccess: () => {

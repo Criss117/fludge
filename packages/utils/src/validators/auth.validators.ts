@@ -22,6 +22,11 @@ const passwordSchema = z
     error: getI18nKey("validators.auth.password.min_length"),
   });
 
+export const signInValidator = z.object({
+  email: userEmailSchema,
+  password: passwordSchema,
+});
+
 export const signUpValidator = z.object({
   name: userNameSchema,
   email: userEmailSchema,

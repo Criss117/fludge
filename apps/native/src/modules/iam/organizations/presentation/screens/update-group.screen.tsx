@@ -1,7 +1,3 @@
-import {
-  permissionsFromObject,
-  permissionsToObject,
-} from "@fludge/utils/permissions/index";
 import { useFindGroup } from "@fludge/client/application/iam/organization/queries/use-find-groups";
 import { useUpdateGroup } from "@fludge/client/application/iam/organization/mutations/use-group.mutations";
 import { useGroupForm } from "@fludge/client/presentation/iam/organization/group.form";
@@ -46,7 +42,7 @@ export function UpdateGroupScreen({ groupid }: { groupid: string }) {
             id: group.id,
             name: value.name,
             description: value.description,
-            permissions: permissionsFromObject(value.permissions),
+            permissions: value.permissions,
           },
           {
             onSuccess: () => {
@@ -79,7 +75,7 @@ export function UpdateGroupScreen({ groupid }: { groupid: string }) {
     {
       name: group.name,
       description: group.description ?? "",
-      permissions: permissionsToObject(group.permissions),
+      permissions: group.permissions,
     }
   );
 

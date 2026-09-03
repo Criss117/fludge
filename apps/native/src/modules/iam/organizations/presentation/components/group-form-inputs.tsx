@@ -4,7 +4,7 @@ import type {
   PermissionsFieldChildrenProps,
   ChildrenProps,
 } from "@fludge/client/presentation/iam/organization/group.form";
-import { PERMISSIONS, type RESOURCES } from "@fludge/utils/permissions/data";
+import { PERMISSIONS, type Resource } from "@fludge/utils/permissions/data";
 import { Accordion } from "heroui-native/accordion";
 import { Card } from "heroui-native/card";
 import { Checkbox } from "heroui-native/checkbox";
@@ -50,7 +50,7 @@ function PermissionsListInput({
       </View>
       <Accordion variant="surface">
         {Object.keys(PERMISSIONS).map((resource) => {
-          const count = counts[resource as RESOURCES];
+          const count = counts[resource as Resource];
 
           return (
             <Accordion.Item key={resource} value={resource}>
@@ -67,7 +67,7 @@ function PermissionsListInput({
               </Accordion.Trigger>
               <Accordion.Content className="gap-y-2">
                 <ControlField
-                  onPress={() => toggleAll(resource as RESOURCES)}
+                  onPress={() => toggleAll(resource as Resource)}
                   isSelected={count.selected === count.total}
                 >
                   <View className="flex-1 flex-row justify-between p-4">
@@ -75,24 +75,24 @@ function PermissionsListInput({
                     <ControlField.Indicator>
                       <Checkbox
                         className="bg-accent"
-                        onPress={() => toggleAll(resource as RESOURCES)}
+                        onPress={() => toggleAll(resource as Resource)}
                       />
                     </ControlField.Indicator>
                   </View>
                 </ControlField>
                 <Separator />
-                {PERMISSIONS[resource as RESOURCES].map((action) => (
+                {PERMISSIONS[resource as Resource].map((action) => (
                   <ControlField
                     key={`${resource}:${action}`}
-                    onPress={() => toggle(resource as RESOURCES, action)}
-                    isSelected={check(resource as RESOURCES, action)}
+                    onPress={() => toggle(resource as Resource, action)}
+                    isSelected={check(resource as Resource, action)}
                   >
                     <Card className="bg-surface-tertiary flex-1 flex-row justify-between">
                       <Label>{action}</Label>
                       <ControlField.Indicator>
                         <Checkbox
                           className="bg-accent"
-                          onPress={() => toggle(resource as RESOURCES, action)}
+                          onPress={() => toggle(resource as Resource, action)}
                         />
                       </ControlField.Indicator>
                     </Card>
