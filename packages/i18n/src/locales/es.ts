@@ -10,8 +10,9 @@ export const es = {
       },
     },
   },
-  shared: {
-    errors: {
+
+  api_errors: {
+    shared: {
       internal_server_error: "Error interno del servidor",
       not_found: "No se encontró",
       unauthorized: "No estás autorizado",
@@ -22,28 +23,22 @@ export const es = {
       internal_error: "Error interno del servidor",
       timeout_error: "La petición ha tardado demasiado en responderse",
     },
-  },
-  auth: {
-    sessions: {
-      errors: {
+    auth: {
+      sessions: {
         isr_on_update: "Error al actualizar la sesión",
         invalid_credentials: "Credenciales inválidas",
         unauthorized: "No estás autorizado",
         no_active_organization: "No tienes una organización activa",
       },
-    },
-    users: {
-      errors: {
+      users: {
         isr_on_find: "Error al obtener el usuario",
         isr_on_update: "Error al actualizar la información del usuario",
         not_root: "Solo el usuario root puede acceder a este recurso.",
         only_dev: "Solo para desarrollo",
       },
     },
-  },
-  catalog: {
-    products: {
-      errors: {
+    catalog: {
+      products: {
         isr_on_find: "Error al obtener el producto",
         isr_on_save: "Error al guardar el producto",
         isr_on_delete: "Error al eliminar el producto",
@@ -59,18 +54,14 @@ export const es = {
         stock_must_be_positive: "El stock debe ser positivo",
         amount_must_be_positive: "La cantidad debe ser positiva",
       },
-    },
-    products_presentations: {
-      errors: {
+      products_presentations: {
         isr_on_find: "Error al obtener la presentación",
         already_exists: "La presentación ya existe",
         not_found: "No se encontró la presentación",
         barcodes_taken: "Alguno de los barcodes ya está en uso",
         duplicated_barcode: "El barcode ya existe",
       },
-    },
-    categories: {
-      errors: {
+      categories: {
         isr_on_find: "Error al obtener la categoría",
         isr_on_update: "Error al actualizar la categoría",
         isr_on_save: "Error al guardar la categoría",
@@ -80,10 +71,8 @@ export const es = {
         name_taken: "El nombre de la categoría ya está en uso",
       },
     },
-  },
-  iam: {
-    organizations: {
-      errors: {
+    iam: {
+      organizations: {
         isr_on_find: "Error al obtener la organización",
         isr_on_update: "Error al actualizar la organización",
         isr_on_save: "Error al guardar la organización",
@@ -98,15 +87,11 @@ export const es = {
         owner_not_found: "No se encontró el propietario de la organización",
         has_owner: "La organización ya tiene un propietario",
       },
-    },
-    group_members: {
-      errors: {
+      group_members: {
         already_exists: "El miembro ya está en el grupo",
         not_found: "El grupo no tiene miembros asignados",
       },
-    },
-    members: {
-      errors: {
+      members: {
         isr_on_find: "Error al obtener el miembro",
         isr_on_update: "Error al actualizar el miembro",
         isr_on_save: "Error al guardar el miembro",
@@ -119,9 +104,7 @@ export const es = {
         not_member: "El usuario no es miembro de la organización",
         without_permissions: "No tiene permisos para realizar esta operación",
       },
-    },
-    groups: {
-      errors: {
+      groups: {
         isr_on_find: "Error al obtener el grupo",
         isr_on_update: "Error al actualizar el grupo",
         isr_on_save: "Error al guardar el grupo",
@@ -134,6 +117,7 @@ export const es = {
       },
     },
   },
+
   validators: {
     shared: {
       uuid: {
@@ -203,7 +187,7 @@ export const es = {
     },
   },
 
-  inputs: {
+  forms: {
     user: {
       name: {
         label: "Nombre Completo",
