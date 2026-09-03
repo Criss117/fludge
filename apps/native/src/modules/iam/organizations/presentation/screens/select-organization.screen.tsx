@@ -9,11 +9,13 @@ import { Link, useRouter } from "expo-router";
 import { Button } from "heroui-native/button";
 import { Typography } from "heroui-native/text";
 import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
+import { useTranslation } from "react-i18next";
 
 const ITEM_SEPARATOR_HEIGHT = 16;
 
 export function SelectOrganizationScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const { setActiveOrganization, session } = useAuth();
   const { data } = useFindAllOrganizations();
@@ -66,7 +68,7 @@ export function SelectOrganizationScreen() {
           value={query}
           onChangeText={onChangeText}
           className="flex-1 px-10"
-          placeholder="Buscar por nombre o Tax ID / NIT"
+           placeholder={t("helpers.search_organizations")}
         />
         <View className="absolute left-6" pointerEvents="none">
           <MaterialIcons size={20} name="search" className="text-muted" />
@@ -112,13 +114,12 @@ export function SelectOrganizationScreen() {
                 className="text-eclipse"
               />
               <Button.Label className="text-eclipse">
-                Registrar Nueva Organización
+                 {t("helpers.register_organization")}
               </Button.Label>
             </Button>
           </Link>
           <Typography type="body-sm" color="muted" align="center">
-            Puedes cambiar de organización en cualquier momento desde los
-            ajustes
+             {t("helpers.switch_organization_hint")}
           </Typography>
         </View>
       )}

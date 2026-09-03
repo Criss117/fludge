@@ -10,6 +10,7 @@ import {
   type GroupSummary,
 } from "@fludge/client/application/iam/organization/queries/use-find-groups";
 import { SearchInput } from "@/modules/shared/components/search-input";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   memberId: string;
@@ -17,6 +18,7 @@ interface Props {
 
 export function MemberGroupsSection({ memberId }: Props) {
   const removeGroupsFromMember = useRemoveGroupsFromMember();
+  const { t } = useTranslation();
   const [groupToRemove, setGroupToRemove] = useState<GroupSummary | null>(null);
   const [query, setQuery] = useState("");
   const { data: groups } = useFindAllGroups({
@@ -55,21 +57,21 @@ export function MemberGroupsSection({ memberId }: Props) {
   return (
     <View className="gap-y-2">
       <View>
-        <Typography.Heading type="h2">Grupos</Typography.Heading>
+        <Typography.Heading type="h2">{t("screens.groups.title")}</Typography.Heading>
         <Typography.Paragraph color="muted">
-          Roles y permisos heredados
+          {t("helpers.inherited_roles_permissions")}
         </Typography.Paragraph>
       </View>
       <SearchInput
         query={query}
         setQuery={setQuery}
-        placeholder="Buscar Grupos"
+         placeholder="helpers.placeholder.search_groups"
       />
 
       {groups.length === 0 && (
         <View className="flex-1 items-center justify-center">
           <Typography.Paragraph color="muted">
-            No hay grupos
+             {t("helpers.no_groups")}
           </Typography.Paragraph>
         </View>
       )}
@@ -93,7 +95,7 @@ export function MemberGroupsSection({ memberId }: Props) {
           <Dialog.Content>
             <Dialog.Close className="absolute top-3 right-3 z-50" />
             <View>
-              <Dialog.Title>Desasignar Grupo</Dialog.Title>
+               <Dialog.Title>{t("helpers.unassign_group")}</Dialog.Title>
               <Dialog.Description>
                 ¿Estás seguro de que deseas desasignar {groupToRemove?.name}?
               </Dialog.Description>
@@ -109,7 +111,7 @@ export function MemberGroupsSection({ memberId }: Props) {
                 onPress={() => setGroupToRemove(null)}
                 isDisabled={removeGroupsFromMember.isPending}
               >
-                Cancelar
+                 {t("helpers.cancel")}
               </Button>
               <Button
                 className="flex-1"
@@ -117,7 +119,7 @@ export function MemberGroupsSection({ memberId }: Props) {
                 variant="danger-soft"
                 onPress={onRemoveGroup}
               >
-                Continuar
+                 {t("helpers.continue")}
               </Button>
             </View>
           </Dialog.Content>

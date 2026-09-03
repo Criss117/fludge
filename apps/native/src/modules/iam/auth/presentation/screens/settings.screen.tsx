@@ -80,7 +80,7 @@ export function SettingsScreen() {
                     className="text-foreground"
                   />
                   <Typography>
-                    {t("screens.settings.change_password")}a
+                    {t("screens.settings.change_password")}
                   </Typography>
                 </View>
                 <MaterialIcons

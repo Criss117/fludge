@@ -237,6 +237,7 @@ export const es = {
         label: "Matriz de permisos",
       },
       create: "Crear Grupo",
+      submit: "Crear",
     },
     member: {
       create: "Crear Miembro",
@@ -272,6 +273,9 @@ export const es = {
       no_available: "No hay miembros disponibles",
       register_member: {
         title: "Registrar un nuevo miembro",
+        credentials: "Credenciales",
+        personal_info: "Información Personal",
+        submit: "Registrar Miembro",
       },
       assign_groups: {
         title: "Asignar grupo",
@@ -289,9 +293,18 @@ export const es = {
       },
       update_group: {
         title: "Editar grupo",
+        submit: "Guardar Cambios",
       },
       assign_members: {
         title: "Asignar miembros",
+      },
+    },
+    organizations: {
+      register_organization: {
+        commercial_data: "Datos Comerciales",
+        location_contact: "Ubicación y Contacto",
+        submit: "Registrar Organización",
+        cancel: "Cancelar e ir a la Selección de Organizaciones",
       },
     },
     sales: {
@@ -436,6 +449,8 @@ export const es = {
       active: "Activo",
       inactive: "Inactivo",
       discontinued: "Descontinuado",
+      activate: "Activar",
+      deactivate: "Desactivar",
     },
 
     placeholder: {
@@ -451,6 +466,25 @@ export const es = {
     please_wait: "Por favor, espere...",
     close: "Cerrar",
     created_at: "Creado el:",
+    joined_at: "Unido el:",
+    view_details: "Ver Detalles",
+    edit: "Editar",
+    unassign_group: "Desasignar Grupo",
+    unassign_member: "Desasignar Miembro",
+    owner: "Propietario",
+    member: "Miembro",
+    cancel: "Cancelar",
+    continue: "Continuar",
+    all_of: "Todos de {{resource}}",
+    search_organizations: "Buscar por nombre o Tax ID / NIT",
+    register_organization: "Registrar Nueva Organización",
+    switch_organization_hint:
+      "Puedes cambiar de organización en cualquier momento desde los ajustes",
+    no_groups: "No hay grupos",
+    no_members: "No hay miembros",
+    inherited_roles_permissions: "Roles y permisos heredados",
+    more: "más",
+    options: "Opciones",
   },
 
   mutations: {
@@ -472,6 +506,14 @@ export const es = {
           description: "El grupo se ha creado correctamente.",
         },
         error: "Algo salió mal al crear el grupo",
+      },
+      update: {
+        is_pending: "Actualizando Grupo",
+        success: {
+          title: "Grupo actualizado",
+          description: "El grupo se actualizó correctamente.",
+        },
+        error: "Algo salió mal al actualizar el grupo",
       },
       assign_members: {
         is_pending: "Asignando miembros",

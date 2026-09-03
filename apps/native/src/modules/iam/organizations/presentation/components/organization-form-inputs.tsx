@@ -22,14 +22,14 @@ function NameInput({
     <CommonInput
       isInvalid={isInvalid}
       errors={errors}
-      label="inputs.organization.name.label"
+       label="forms.organization.name.label"
       icon="add-business"
       inputProps={{
         id,
         value,
         onBlur,
         onChangeText,
-        placeholder: "inputs.organization.name.placeholder",
+         placeholder: "forms.organization.name.placeholder",
       }}
     />
   );
@@ -47,14 +47,14 @@ function LegalNameInput({
     <CommonInput
       isInvalid={isInvalid}
       errors={errors}
-      label="inputs.organization.legal_name.label"
+       label="forms.organization.legal_name.label"
       icon="apartment"
       inputProps={{
         id,
         value,
         onBlur,
         onChangeText,
-        placeholder: "inputs.organization.legal_name.placeholder",
+         placeholder: "forms.organization.legal_name.placeholder",
       }}
     />
   );
@@ -72,14 +72,14 @@ function TaxIdInput({
     <CommonInput
       isInvalid={isInvalid}
       errors={errors}
-      label="inputs.organization.tax_id.label"
+       label="forms.organization.tax_id.label"
       icon="badge"
       inputProps={{
         id,
         value,
         onBlur,
         onChangeText,
-        placeholder: "inputs.organization.tax_id.placeholder",
+         placeholder: "forms.organization.tax_id.placeholder",
       }}
     />
   );

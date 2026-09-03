@@ -107,8 +107,8 @@ export function CreateGroupScreen() {
                         onBlur={state.handleBlur}
                         onChangeText={state.handleChange}
                         errors={state.state.meta.errors}
-                        label="inputs.group.description.label"
-                        placeholder="inputs.group.description.placeholder"
+                        label="forms.group.description.label"
+                        placeholder="forms.group.description.placeholder"
                       />
                     )}
                   </field.DescriptionField>
@@ -134,7 +134,7 @@ export function CreateGroupScreen() {
       <View className="bg-background absolute bottom-0 w-full px-3 py-6">
         <Button onPress={form.handleSubmit} isDisabled={mutation.isPending}>
           <MaterialIcons name="group-add" size={20} className="text-eclipse" />
-          <Button.Label>{t("inputs.group.submit")}</Button.Label>
+          <Button.Label>{t("forms.group.submit")}</Button.Label>
         </Button>
       </View>
     </View>

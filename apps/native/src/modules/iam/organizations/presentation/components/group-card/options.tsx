@@ -6,6 +6,7 @@ import { Button } from "heroui-native/button";
 import { Popover } from "heroui-native/popover";
 import { Separator } from "heroui-native/separator";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   group: GroupSummary;
@@ -16,6 +17,7 @@ interface Props {
 
 export function GroupsOptions({ group, asMemberGroup }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation();
   const updateGroup = useUpdateGroup();
 
   const close = () => setIsOpen(false);
@@ -53,7 +55,7 @@ export function GroupsOptions({ group, asMemberGroup }: Props) {
         >
           <Popover.Arrow />
           <Popover.Close className="absolute top-3 right-3 z-50" />
-          <Popover.Title>Opciones</Popover.Title>
+          <Popover.Title>{t("helpers.options")}</Popover.Title>
 
           <Button
             size="sm"
@@ -62,7 +64,7 @@ export function GroupsOptions({ group, asMemberGroup }: Props) {
             className="flex justify-start"
           >
             <MaterialIcons name="info" size={20} className="text-eclipse" />
-            <Button.Label>Ver Detalles</Button.Label>
+            <Button.Label>{t("helpers.view_details")}</Button.Label>
           </Button>
 
           <Link
@@ -80,7 +82,7 @@ export function GroupsOptions({ group, asMemberGroup }: Props) {
               className="flex justify-start"
             >
               <MaterialIcons name="edit" size={20} className="text-eclipse" />
-              <Button.Label>Editar</Button.Label>
+              <Button.Label>{t("helpers.edit")}</Button.Label>
             </Button>
           </Link>
 
@@ -97,7 +99,11 @@ export function GroupsOptions({ group, asMemberGroup }: Props) {
                 className="text-eclipse"
               />
               <Button.Label>
-                {group.status === "active" ? "Desactivar" : "Activar"}
+                 {t(
+                   group.status === "active"
+                     ? "helpers.status.deactivate"
+                     : "helpers.status.activate"
+                 )}
               </Button.Label>
             </Button>
           )}
@@ -114,7 +120,7 @@ export function GroupsOptions({ group, asMemberGroup }: Props) {
                 size={20}
                 className="text-eclipse"
               />
-              <Button.Label>Desasignar Grupo</Button.Label>
+               <Button.Label>{t("helpers.unassign_group")}</Button.Label>
             </Button>
           )}
         </Popover.Content>

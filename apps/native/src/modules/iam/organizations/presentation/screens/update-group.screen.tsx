@@ -9,11 +9,13 @@ import { useRouter } from "expo-router";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { ScrollView, View } from "react-native";
 import { GroupFormInputs } from "../components/group-form-inputs";
+import { useTranslation } from "react-i18next";
 
 const PADDING_BOTTOM = 20;
 const TOAST_ID = "update-group-toast";
 
 export function UpdateGroupScreen({ groupid }: { groupid: string }) {
+  const { t } = useTranslation();
   const { height } = useKeyboardGradualHeight(PADDING_BOTTOM);
   const { data: group } = useFindGroup(groupid);
   const mutation = useUpdateGroup();
@@ -32,8 +34,8 @@ export function UpdateGroupScreen({ groupid }: { groupid: string }) {
         toast.show({
           id: TOAST_ID,
           isSwipeable: true,
-          label: "Actualizando Grupo",
-          description: "Por favor, espere...",
+          label: t("mutations.groups.update.is_pending"),
+          description: t("helpers.please_wait"),
           duration: "persistent",
         });
 
@@ -50,9 +52,9 @@ export function UpdateGroupScreen({ groupid }: { groupid: string }) {
                 id: TOAST_ID,
                 isSwipeable: true,
                 variant: "success",
-                label: "Grupo actualizado",
-                description: "El grupo se actualizó correctamente.",
-                actionLabel: "Cerrar",
+                label: t("mutations.groups.update.success.title"),
+                description: t("mutations.groups.update.success.description"),
+                actionLabel: t("helpers.close"),
                 onActionPress: ({ hide }) => hide(),
               });
               router.back();
@@ -62,9 +64,9 @@ export function UpdateGroupScreen({ groupid }: { groupid: string }) {
                 id: TOAST_ID,
                 isSwipeable: true,
                 variant: "danger",
-                label: "Algo salió mal al actualizar el grupo",
+                label: t("mutations.groups.update.error"),
                 description: error.message,
-                actionLabel: "Cerrar",
+                actionLabel: t("helpers.close"),
                 onActionPress: ({ hide }) => hide(),
               });
             },
@@ -97,7 +99,7 @@ export function UpdateGroupScreen({ groupid }: { groupid: string }) {
         <View className="gap-y-8">
           <Card className="gap-y-4">
             <Card.Header>
-              <Card.Title>Detalles del Grupo</Card.Title>
+              <Card.Title>{t("screens.groups.create_group.sections.details")}</Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
               <form.AppField name="name">
@@ -118,6 +120,8 @@ export function UpdateGroupScreen({ groupid }: { groupid: string }) {
                         onBlur={state.handleBlur}
                         onChangeText={state.handleChange}
                         errors={state.state.meta.errors}
+                        label="forms.group.description.label"
+                        placeholder="forms.group.description.placeholder"
                       />
                     )}
                   </field.DescriptionField>
@@ -143,7 +147,7 @@ export function UpdateGroupScreen({ groupid }: { groupid: string }) {
       <View className="bg-background absolute bottom-0 w-full px-3 py-6">
         <Button onPress={form.handleSubmit} isDisabled={mutation.isPending}>
           <MaterialIcons name="save" size={20} className="text-eclipse" />
-          <Button.Label>Guardar Cambios</Button.Label>
+          <Button.Label>{t("screens.groups.update_group.submit")}</Button.Label>
         </Button>
       </View>
     </View>

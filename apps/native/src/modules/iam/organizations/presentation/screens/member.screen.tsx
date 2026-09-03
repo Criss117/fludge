@@ -57,7 +57,7 @@ export function MemberScreen({ member }: Props) {
               size={20}
               className="text-eclipse"
             />
-            <Button.Label>{t("inputs.member.assign_groups")}</Button.Label>
+            <Button.Label>{t("forms.member.assign_groups")}</Button.Label>
           </Button>
         </Link>
       </View>

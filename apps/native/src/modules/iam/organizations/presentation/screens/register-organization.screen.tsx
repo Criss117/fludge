@@ -12,10 +12,12 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
 import { CommonInputs } from "@/modules/shared/components/common-input";
+import { useTranslation } from "react-i18next";
 
 const PADDING_BOTTOM = 20;
 
 export function RegisterOrganizationScreen() {
+  const { t } = useTranslation();
   const { height } = useKeyboardGradualHeight(PADDING_BOTTOM);
   const router = useRouter();
   const { data } = useFindAllOrganizations();
@@ -51,7 +53,7 @@ export function RegisterOrganizationScreen() {
         <View className="gap-y-8">
           <Card className="gap-y-4">
             <Card.Header>
-              <Card.Title>Datos Comerciales</Card.Title>
+              <Card.Title>{t("screens.organizations.register_organization.commercial_data")}</Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
               <form.AppField
@@ -109,7 +111,7 @@ export function RegisterOrganizationScreen() {
           </Card>
           <Card className="gap-y-4">
             <Card.Header>
-              <Card.Title>Ubicación y Contacto</Card.Title>
+              <Card.Title>{t("screens.organizations.register_organization.location_contact")}</Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
               <form.AppField
@@ -124,6 +126,8 @@ export function RegisterOrganizationScreen() {
                         onBlur={field.handleBlur}
                         onChangeText={(e) => field.handleChange(e)}
                         errors={field.state.meta.errors}
+                        label="forms.user.phone.label"
+                        placeholder="forms.user.phone.placeholder"
                       />
                     )}
                   />
@@ -141,6 +145,8 @@ export function RegisterOrganizationScreen() {
                         onBlur={field.handleBlur}
                         onChangeText={(e) => field.handleChange(e)}
                         errors={field.state.meta.errors}
+                        label="forms.organization.address.label"
+                        placeholder="forms.organization.address.placeholder"
                       />
                     )}
                   />
@@ -163,7 +169,7 @@ export function RegisterOrganizationScreen() {
             className="text-eclipse"
           />
           <Button.Label className="text-eclipse">
-            Registrar Organización
+             {t("screens.organizations.register_organization.submit")}
           </Button.Label>
         </Button>
         {hasOrganizations && (
@@ -173,7 +179,7 @@ export function RegisterOrganizationScreen() {
                 className="text-muted text-center underline"
                 type="body-sm"
               >
-                Cancelar e ir a la Selección de Organizaciones
+                 {t("screens.organizations.register_organization.cancel")}
               </Typography>
             </PressableFeedback>
           </Link>

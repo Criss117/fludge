@@ -26,14 +26,14 @@ function GroupNameInput({ isInvalid, id, field }: ChildrenProps<string>) {
       isRequired
       isInvalid={isInvalid}
       errors={field.state.meta.errors}
-      label="inputs.group.name.label"
+       label="forms.group.name.label"
       icon="security"
       inputProps={{
         id,
         value: field.state.value,
         onBlur: field.handleBlur,
         onChangeText: field.handleChange,
-        placeholder: "inputs.group.name.placeholder",
+         placeholder: "forms.group.name.placeholder",
       }}
     />
   );
@@ -53,7 +53,7 @@ function PermissionsListInput({
     <View>
       <View>
         <Typography.Heading type="h4">
-          {t("inputs.group.permissions.label")}
+          {t("forms.group.permissions.label")}
         </Typography.Heading>
         {isInvalid && <FieldError errors={field.state.meta.errors} />}
       </View>
@@ -80,7 +80,7 @@ function PermissionsListInput({
                   isSelected={count.selected === count.total}
                 >
                   <View className="flex-1 flex-row justify-between p-4">
-                    <Label>Todos de {resource}</Label>
+                    <Label>{t("helpers.all_of", { resource })}</Label>
                     <ControlField.Indicator>
                       <Checkbox
                         className="bg-accent"

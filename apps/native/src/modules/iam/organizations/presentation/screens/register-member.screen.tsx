@@ -7,10 +7,12 @@ import { Card } from "heroui-native/card";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { ScrollView, View } from "react-native";
 import { CommonInputs } from "@/modules/shared/components/common-input";
+import { useTranslation } from "react-i18next";
 
 const PADDING_BOTTOM = 20;
 
 export function RegisterMemberScreen() {
+  const { t } = useTranslation();
   const { height } = useKeyboardGradualHeight(PADDING_BOTTOM);
   const mutation = useRegisterMember();
 
@@ -35,7 +37,7 @@ export function RegisterMemberScreen() {
         <View className="gap-y-8">
           <Card className="gap-y-4">
             <Card.Header>
-              <Card.Title>Credenciales</Card.Title>
+              <Card.Title>{t("screens.members.register_member.credentials")}</Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
               <form.AppField
@@ -50,8 +52,8 @@ export function RegisterMemberScreen() {
                         onBlur={state.handleBlur}
                         onChangeText={state.handleChange}
                         errors={state.state.meta.errors}
-                        label="inputs.user.name.label"
-                        placeholder="inputs.user.name.placeholder"
+                        label="forms.user.email.label"
+                        placeholder="forms.user.email.placeholder"
                       />
                     )}
                   />
@@ -69,8 +71,8 @@ export function RegisterMemberScreen() {
                         onBlur={state.handleBlur}
                         onChangeText={state.handleChange}
                         errors={state.state.meta.errors}
-                        label="inputs.user.password.label"
-                        placeholder="inputs.user.password.label"
+                        label="forms.user.password.label"
+                        placeholder="forms.user.password.placeholder"
                       />
                     )}
                   />
@@ -81,7 +83,7 @@ export function RegisterMemberScreen() {
 
           <Card className="gap-y-4">
             <Card.Header>
-              <Card.Title>Información Personal</Card.Title>
+              <Card.Title>{t("screens.members.register_member.personal_info")}</Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
               <form.AppField
@@ -96,8 +98,8 @@ export function RegisterMemberScreen() {
                         onBlur={state.handleBlur}
                         onChangeText={state.handleChange}
                         errors={state.state.meta.errors}
-                        label="inputs.user.phone.label"
-                        placeholder="inputs.user.phone.label"
+                        label="forms.user.phone.label"
+                        placeholder="forms.user.phone.placeholder"
                       />
                     )}
                   />
@@ -115,8 +117,8 @@ export function RegisterMemberScreen() {
                         onBlur={state.handleBlur}
                         onChangeText={state.handleChange}
                         errors={state.state.meta.errors}
-                        label="inputs.user.name.label"
-                        placeholder="inputs.user.name.placeholder"
+                        label="forms.user.name.label"
+                        placeholder="forms.user.name.placeholder"
                       />
                     )}
                   />
@@ -131,7 +133,7 @@ export function RegisterMemberScreen() {
       <View className="bg-background absolute bottom-0 w-full px-3 py-6">
         <Button onPress={form.handleSubmit} isDisabled={mutation.isPending}>
           <MaterialIcons name="person-add" size={20} className="text-eclipse" />
-          <Button.Label>Registrar Miembro</Button.Label>
+          <Button.Label>{t("screens.members.register_member.submit")}</Button.Label>
         </Button>
       </View>
     </View>

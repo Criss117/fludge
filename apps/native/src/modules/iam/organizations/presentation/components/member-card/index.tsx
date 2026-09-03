@@ -14,6 +14,7 @@ import type { MemberSummary } from "@fludge/client/application/iam/organization/
 import { UserAvatar } from "@/modules/shared/components/user-avatar";
 import { cn } from "heroui-native";
 import { Checkbox } from "heroui-native/checkbox";
+import { useTranslation } from "react-i18next";
 
 export interface MemberCardProps {
   member: MemberSummary;
@@ -74,6 +75,7 @@ export function MemberCardBase({
   asGroupMember,
 }: MemberCardProps) {
   const isOwner = member.role === "owner";
+  const { t } = useTranslation();
 
   return (
     <Card className="gap-y-2" style={{ height: CARD_HEIGHT }}>
@@ -92,12 +94,12 @@ export function MemberCardBase({
           {isOwner ? (
             <Chip>
               <MaterialIcons name="verified-user" className="text-eclipse" />
-              <Chip.Label>Propietario</Chip.Label>
+               <Chip.Label>{t("helpers.owner")}</Chip.Label>
             </Chip>
           ) : (
             <Chip>
               <MaterialIcons name="person" className="text-eclipse" />
-              <Chip.Label>Miembro</Chip.Label>
+               <Chip.Label>{t("helpers.member")}</Chip.Label>
             </Chip>
           )}
           <StatusChip status={member.status} />
@@ -105,7 +107,7 @@ export function MemberCardBase({
 
         <View className="pt-2">
           <Typography color="muted">
-            Unido el: {member.createdAt.toLocaleDateString()}
+             {t("helpers.joined_at")} {member.createdAt.toLocaleDateString()}
           </Typography>
         </View>
       </Card.Body>
@@ -132,6 +134,7 @@ export function MemberCardRedirect(props: MemberCardProps) {
 }
 
 export function MemberCardSkeleton() {
+  const { t } = useTranslation();
   return (
     <Card className="gap-y-2" style={{ height: CARD_HEIGHT }}>
       <Card.Header className="flex flex-row gap-x-2">
@@ -148,7 +151,7 @@ export function MemberCardSkeleton() {
         </SkeletonGroup>
 
         <View className="flex-row items-center gap-x-1 pt-2">
-          <Typography color="muted">Unido el: </Typography>
+          <Typography color="muted">{t("helpers.joined_at")} </Typography>
           <Skeleton className="h-6 w-1/2 rounded-full" variant="shimmer" />
         </View>
       </Card.Body>

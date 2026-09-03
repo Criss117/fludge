@@ -65,8 +65,8 @@ export function SignUpScreen() {
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
                     errors={field.state.meta.errors}
-                    label="inputs.user.name.label"
-                    placeholder="inputs.user.name.placeholder"
+                    label="forms.user.name.label"
+                    placeholder="forms.user.name.placeholder"
                   />
                 )}
               />
@@ -84,8 +84,8 @@ export function SignUpScreen() {
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
                     errors={field.state.meta.errors}
-                    label="inputs.user.phone.label"
-                    placeholder="inputs.user.phone.label"
+                    label="forms.user.phone.label"
+                    placeholder="forms.user.phone.placeholder"
                   />
                 )}
               />
@@ -103,8 +103,8 @@ export function SignUpScreen() {
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
                     errors={field.state.meta.errors}
-                    label="inputs.user.email.label"
-                    placeholder="inputs.user.email.label"
+                    label="forms.user.email.label"
+                    placeholder="forms.user.email.placeholder"
                   />
                 )}
               />
@@ -122,8 +122,8 @@ export function SignUpScreen() {
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
                     errors={field.state.meta.errors}
-                    label="inputs.user.password.label"
-                    placeholder="inputs.user.password.label"
+                    label="forms.user.password.label"
+                    placeholder="forms.user.password.placeholder"
                   />
                 )}
               />

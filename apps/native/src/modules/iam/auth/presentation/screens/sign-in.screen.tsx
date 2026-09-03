@@ -66,8 +66,8 @@ export function SignInScreen() {
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
                     errors={field.state.meta.errors}
-                    label="inputs.user.email.label"
-                    placeholder="inputs.user.email.placeholder"
+                    label="forms.user.email.label"
+                    placeholder="forms.user.email.placeholder"
                   />
                 )}
               />
@@ -85,8 +85,8 @@ export function SignInScreen() {
                     onBlur={field.handleBlur}
                     onChangeText={(e) => field.handleChange(e)}
                     errors={field.state.meta.errors}
-                    label="inputs.user.password.label"
-                    placeholder="inputs.user.password.label"
+                    label="forms.user.password.label"
+                    placeholder="forms.user.password.placeholder"
                   />
                 )}
               />
