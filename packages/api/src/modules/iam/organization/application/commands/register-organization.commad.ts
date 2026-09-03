@@ -57,27 +57,27 @@ export class RegisterOrganizationCommand {
     if (errUniqueness)
       throw new InternalServerError(
         errUniqueness,
-        "iam.organizations.errors.isr_on_find",
+        "api_errors.iam.organizations.isr_on_find",
       );
 
     if (uniqueness.nameTaken || uniqueness.slugTaken)
       throw new OrganizationAlreadyExistsException(
-        "iam.organizations.errors.name_taken",
+        "api_errors.iam.organizations.name_taken",
       );
 
     if (uniqueness.legalNameTaken)
       throw new OrganizationAlreadyExistsException(
-        "iam.organizations.errors.legal_name_taken",
+        "api_errors.iam.organizations.legal_name_taken",
       );
 
     if (uniqueness.taxIdTaken)
       throw new OrganizationAlreadyExistsException(
-        "iam.organizations.errors.tax_id_taken",
+        "api_errors.iam.organizations.tax_id_taken",
       );
 
     if (uniqueness.phoneTaken)
       throw new OrganizationAlreadyExistsException(
-        "iam.organizations.errors.phone_taken",
+        "api_errors.iam.organizations.phone_taken",
       );
 
     const [, errSaving] = await this.organizationRepository.save(organization);
@@ -85,7 +85,7 @@ export class RegisterOrganizationCommand {
     if (errSaving)
       throw new InternalServerError(
         errSaving,
-        "iam.organizations.errors.isr_on_save",
+        "api_errors.iam.organizations.isr_on_save",
       );
 
     return organization.values;

@@ -46,12 +46,12 @@ export class CreateCategoryCommand {
     if (errUniqueness)
       throw new InternalServerError(
         errUniqueness,
-        "catalog.categories.errors.isr_on_find",
+        "api_errors.catalog.categories.isr_on_find",
       );
 
     if (uniqueness.nameTaken || uniqueness.slugTaken)
       throw new CategoryAlreadyExistsException(
-        "catalog.categories.errors.name_taken",
+        "api_errors.catalog.categories.name_taken",
       );
 
     const [, errSaving] = await this.categoryRepository.save(category);
@@ -59,7 +59,7 @@ export class CreateCategoryCommand {
     if (errSaving)
       throw new InternalServerError(
         errSaving,
-        "catalog.categories.errors.isr_on_save",
+        "api_errors.catalog.categories.isr_on_save",
       );
 
     return category.values;

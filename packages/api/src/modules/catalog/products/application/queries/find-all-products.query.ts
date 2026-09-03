@@ -25,7 +25,7 @@ export class FindAllProductsQuery {
     );
 
     if (err)
-      throw new InternalServerError(err, "catalog.products.errors.isr_on_find");
+      throw new InternalServerError(err, "api_errors.catalog.products.isr_on_find");
 
     return rows;
   }

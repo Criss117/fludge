@@ -34,7 +34,7 @@ export class UpdateProductCommand {
     if (errFinding)
       throw new InternalServerError(
         errFinding,
-        "catalog.products.errors.isr_on_find",
+        "api_errors.catalog.products.isr_on_find",
       );
 
     if (!existing) throw new ProductNotFoundException();
@@ -49,7 +49,7 @@ export class UpdateProductCommand {
       if (errEnsure)
         throw new InternalServerError(
           errEnsure,
-          "catalog.categories.errors.isr_on_find",
+          "api_errors.catalog.categories.isr_on_find",
         );
 
       if (!exists) throw new CategoryNotFoundException();
@@ -68,12 +68,12 @@ export class UpdateProductCommand {
       if (errUnique)
         throw new InternalServerError(
           errUnique,
-          "catalog.products.errors.isr_on_find",
+          "api_errors.catalog.products.isr_on_find",
         );
 
       if (isTaken.nameTaken || isTaken.slugTaken) {
         throw new ProductAlreadyExistsException(
-          "catalog.products.errors.name_taken",
+          "api_errors.catalog.products.name_taken",
         );
       }
     }
@@ -95,7 +95,7 @@ export class UpdateProductCommand {
       if (errSaveProduct)
         throw new InternalServerError(
           errSaveProduct,
-          "catalog.products.errors.isr_on_save",
+          "api_errors.catalog.products.isr_on_save",
         );
 
       return existing.values;
@@ -146,12 +146,12 @@ export class UpdateProductCommand {
       if (errValidate)
         throw new InternalServerError(
           errValidate,
-          "catalog.products_presentations.errors.isr_on_find",
+          "api_errors.catalog.products_presentations.isr_on_find",
         );
 
       if (barcodeIsTaken.barcodesTaken) {
         throw new ProductPresentationAlreadyExistsException(
-          "catalog.products_presentations.errors.barcodes_taken",
+          "api_errors.catalog.products_presentations.barcodes_taken",
         );
       }
     }
@@ -193,7 +193,7 @@ export class UpdateProductCommand {
     if (errInsert)
       throw new InternalServerError(
         errInsert,
-        "catalog.products.errors.isr_on_save",
+        "api_errors.catalog.products.isr_on_save",
       );
 
     return existing.values;

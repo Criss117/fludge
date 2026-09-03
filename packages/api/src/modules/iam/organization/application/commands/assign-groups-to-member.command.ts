@@ -44,7 +44,7 @@ export class AssignGroupsToMemberCommand {
     if (errSaving)
       throw new InternalServerError(
         errSaving,
-        "iam.members.errors.isr_on_assign_group",
+        "api_errors.iam.members.isr_on_assign_group",
       );
 
     return activeOrganization.values;

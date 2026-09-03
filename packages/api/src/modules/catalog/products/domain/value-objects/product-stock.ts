@@ -33,7 +33,7 @@ export class ProductStock {
   public increaseStock(amount: number) {
     if (amount < 0)
       throw new InvalidAmountException(
-        "catalog.products.errors.amount_must_be_positive",
+        "api_errors.catalog.products.amount_must_be_positive",
       );
 
     return new ProductStock(
@@ -46,7 +46,7 @@ export class ProductStock {
   public decreaseStock(amount: number) {
     if (amount < 0)
       throw new InvalidAmountException(
-        "catalog.products.errors.amount_must_be_positive",
+        "api_errors.catalog.products.amount_must_be_positive",
       );
 
     if (!this._allowNegativeStock && this._stock - amount < 0)

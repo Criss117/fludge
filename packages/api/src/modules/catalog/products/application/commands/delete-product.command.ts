@@ -20,7 +20,7 @@ export class DeleteProductCommand {
     if (error)
       throw new InternalServerError(
         error,
-        "catalog.products.errors.isr_on_find",
+        "api_errors.catalog.products.isr_on_find",
       );
 
     if (!existing) throw new ProductNotFoundException();
@@ -33,7 +33,7 @@ export class DeleteProductCommand {
     if (errDeleting)
       throw new InternalServerError(
         errDeleting,
-        "catalog.products.errors.isr_on_delete",
+        "api_errors.catalog.products.isr_on_delete",
       );
   }
 }

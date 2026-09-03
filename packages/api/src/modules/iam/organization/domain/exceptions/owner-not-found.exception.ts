@@ -3,6 +3,6 @@ import type { TranslationKey } from "@fludge/i18n/index";
 
 export class OwnerNotFoundException extends NotFoundError {
   constructor(message?: TranslationKey) {
-    super(message ?? "iam.organizations.errors.owner_not_found");
+    super(message ?? "api_errors.iam.organizations.owner_not_found");
   }
 }

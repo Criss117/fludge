@@ -23,7 +23,7 @@ export class FindAllMembersQuery {
     if (errorFindingMembers)
       throw new InternalServerError(
         errorFindingMembers,
-        "iam.members.errors.isr_on_find",
+      "api_errors.iam.members.isr_on_find",
       );
 
     return members;

@@ -29,7 +29,7 @@ export class UpdateCategoryCommand {
     if (errFinding)
       throw new InternalServerError(
         errFinding,
-        "catalog.categories.errors.isr_on_find",
+        "api_errors.catalog.categories.isr_on_find",
       );
 
     if (!existingCategory) throw new CategoryNotFoundException();
@@ -47,12 +47,12 @@ export class UpdateCategoryCommand {
       if (errUniqueness)
         throw new InternalServerError(
           errUniqueness,
-          "catalog.categories.errors.isr_on_find",
+          "api_errors.catalog.categories.isr_on_find",
         );
 
       if (uniqueness.nameTaken || uniqueness.slugTaken)
         throw new CategoryAlreadyExistsException(
-          "catalog.categories.errors.name_taken",
+          "api_errors.catalog.categories.name_taken",
         );
     }
 
@@ -67,7 +67,7 @@ export class UpdateCategoryCommand {
     if (errSaving)
       throw new InternalServerError(
         errSaving,
-        "catalog.categories.errors.isr_on_save",
+        "api_errors.catalog.categories.isr_on_save",
       );
 
     return existingCategory.values;

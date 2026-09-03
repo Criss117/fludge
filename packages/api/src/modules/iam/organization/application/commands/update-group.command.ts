@@ -34,7 +34,7 @@ export class UpdateGroupCommand {
     if (errSaving)
       throw new InternalServerError(
         errSaving,
-        "iam.organizations.errors.isr_on_save",
+        "api_errors.iam.organizations.isr_on_save",
       );
 
     return activeOrganization.values;

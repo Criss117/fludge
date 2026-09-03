@@ -23,6 +23,6 @@ export class UpdateUserInfoCommand {
     );
 
     if (err)
-      throw new InternalServerError(err, "auth.users.errors.isr_on_update");
+      throw new InternalServerError(err, "api_errors.auth.users.isr_on_update");
   }
 }

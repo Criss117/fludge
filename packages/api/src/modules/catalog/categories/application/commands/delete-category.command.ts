@@ -22,7 +22,7 @@ export class DeleteCategoryCommand {
     if (errFinding)
       throw new InternalServerError(
         errFinding,
-        "catalog.categories.errors.isr_on_find",
+        "api_errors.catalog.categories.isr_on_find",
       );
 
     if (!existingCategory) throw new CategoryNotFoundException();
@@ -35,7 +35,7 @@ export class DeleteCategoryCommand {
     if (errDeleting)
       throw new InternalServerError(
         errDeleting,
-        "catalog.categories.errors.isr_on_delete",
+        "api_errors.catalog.categories.isr_on_delete",
       );
   }
 }

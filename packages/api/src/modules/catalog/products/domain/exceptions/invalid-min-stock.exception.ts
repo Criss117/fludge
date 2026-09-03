@@ -3,6 +3,6 @@ import type { TranslationKey } from "@fludge/i18n/index";
 
 export class InvalidMinStockException extends BadRequestError {
   constructor(message?: TranslationKey) {
-    super(message ?? "catalog.products.errors.invalid_min_stock");
+    super(message ?? "api_errors.catalog.products.invalid_min_stock");
   }
 }

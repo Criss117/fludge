@@ -3,6 +3,6 @@ import type { TranslationKey } from "@fludge/i18n/index";
 
 export class MemberAlreadyExistsException extends ConflictError {
   constructor(message?: TranslationKey) {
-    super(message ?? "iam.members.errors.already_exists");
+    super(message ?? "api_errors.iam.members.already_exists");
   }
 }

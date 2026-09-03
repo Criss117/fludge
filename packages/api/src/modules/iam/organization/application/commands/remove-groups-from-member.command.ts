@@ -33,7 +33,7 @@ export class RemoveGroupsFromMemberCommand {
     if (errSaving)
       throw new InternalServerError(
         errSaving,
-        "iam.members.errors.isr_on_unassign_group",
+        "api_errors.iam.members.isr_on_unassign_group",
       );
 
     return activeOrganization.values;

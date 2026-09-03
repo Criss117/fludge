@@ -3,6 +3,6 @@ import type { TranslationKey } from "@fludge/i18n/index";
 
 export class StockMustBePositiveException extends BadRequestError {
   constructor(message?: TranslationKey) {
-    super(message ?? "catalog.products.errors.stock_must_be_positive");
+    super(message ?? "api_errors.catalog.products.stock_must_be_positive");
   }
 }

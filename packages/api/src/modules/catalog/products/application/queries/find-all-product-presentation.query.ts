@@ -19,7 +19,7 @@ export class FindAllProductPresentationQuery {
     if (err)
       throw new InternalServerError(
         err,
-        "catalog.products_presentations.errors.isr_on_find",
+        "api_errors.catalog.products_presentations.isr_on_find",
       );
 
     return rows;

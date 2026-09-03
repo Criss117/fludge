@@ -4,7 +4,7 @@ import type { TranslationKey } from "@fludge/i18n/index";
 export class DuplicatedBarcodeException extends BadRequestError {
   constructor(message?: TranslationKey) {
     super(
-      message ?? "catalog.products_presentations.errors.duplicated_barcode",
+      message ?? "api_errors.catalog.products_presentations.duplicated_barcode",
     );
   }
 }

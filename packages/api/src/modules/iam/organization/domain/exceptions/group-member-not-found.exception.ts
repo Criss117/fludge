@@ -3,6 +3,6 @@ import type { TranslationKey } from "@fludge/i18n/index";
 
 export class GroupMemberNotFoundException extends NotFoundError {
   constructor(message?: TranslationKey) {
-    super(message ?? "iam.group_members.errors.not_found");
+    super(message ?? "api_errors.iam.group_members.not_found");
   }
 }

@@ -64,7 +64,7 @@ export class CreateProductCommand {
       if (errEnsure)
         throw new InternalServerError(
           errEnsure,
-          "catalog.categories.errors.isr_on_find",
+          "api_errors.catalog.categories.isr_on_find",
         );
 
       if (!exists) throw new CategoryNotFoundException();
@@ -82,12 +82,12 @@ export class CreateProductCommand {
     if (errUnique)
       throw new InternalServerError(
         errUnique,
-        "catalog.products.errors.isr_on_find",
+        "api_errors.catalog.products.isr_on_find",
       );
 
     if (isTaken.nameTaken || isTaken.slugTaken) {
       throw new ProductAlreadyExistsException(
-        "catalog.products.errors.name_taken",
+        "api_errors.catalog.products.name_taken",
       );
     }
 
@@ -102,12 +102,12 @@ export class CreateProductCommand {
     if (errValidate)
       throw new InternalServerError(
         errValidate,
-        "catalog.products_presentations.errors.isr_on_find",
+        "api_errors.catalog.products_presentations.isr_on_find",
       );
 
     if (barcodeIsTaken.barcodesTaken) {
       throw new ProductPresentationAlreadyExistsException(
-        "catalog.products_presentations.errors.barcodes_taken",
+        "api_errors.catalog.products_presentations.barcodes_taken",
       );
     }
 
@@ -116,7 +116,7 @@ export class CreateProductCommand {
     if (errInsert)
       throw new InternalServerError(
         errInsert,
-        "catalog.products.errors.isr_on_save",
+        "api_errors.catalog.products.isr_on_save",
       );
 
     return product.values;

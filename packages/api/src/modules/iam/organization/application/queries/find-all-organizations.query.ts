@@ -22,7 +22,7 @@ export class FindAllOrganizationsQuery {
     if (errorFindingOrganizations)
       throw new InternalServerError(
         errorFindingOrganizations,
-        "iam.organizations.errors.isr_on_find",
+      "api_errors.iam.organizations.isr_on_find",
       );
 
     return allOrganizations;

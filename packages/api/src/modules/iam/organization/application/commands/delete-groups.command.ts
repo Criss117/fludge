@@ -34,7 +34,7 @@ export class DeleteGroupsCommand {
       );
 
       if (errGM)
-        throw new InternalServerError(errGM, "iam.groups.errors.isr_on_delete");
+      throw new InternalServerError(errGM, "api_errors.iam.groups.isr_on_delete");
 
       const [, errDelete] = await this.groupRepository.delete(
         activeOrganization.id.toString(),
@@ -47,7 +47,7 @@ export class DeleteGroupsCommand {
       if (errDelete)
         throw new InternalServerError(
           errDelete,
-          "iam.groups.errors.isr_on_delete",
+          "api_errors.iam.groups.isr_on_delete",
         );
     });
 

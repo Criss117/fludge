@@ -20,7 +20,7 @@ export class FindAllCategoriesQuery {
     if (errFinding)
       throw new InternalServerError(
         errFinding,
-        "catalog.categories.errors.isr_on_find",
+      "api_errors.catalog.categories.isr_on_find",
       );
 
     return rows;

@@ -31,7 +31,7 @@ export class SetActiveOrganizationCommand {
     if (errExists)
       throw new InternalServerError(
         errExists,
-        "iam.organizations.errors.isr_on_find",
+        "api_errors.iam.organizations.isr_on_find",
       );
 
     if (!exists) throw new OrganizationNotFoundException();
@@ -54,7 +54,7 @@ export class SetActiveOrganizationCommand {
     if (errSession)
       throw new InternalServerError(
         errSession,
-        "auth.sessions.errors.isr_on_update",
+        "api_errors.auth.sessions.isr_on_update",
       );
   }
 }

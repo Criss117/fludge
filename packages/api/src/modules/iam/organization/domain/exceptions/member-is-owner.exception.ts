@@ -3,6 +3,6 @@ import type { TranslationKey } from "@fludge/i18n/index";
 
 export class MemberIsOwnerException extends BadRequestError {
   constructor(message?: TranslationKey) {
-    super(message ?? "iam.members.errors.is_owner");
+    super(message ?? "api_errors.iam.members.is_owner");
   }
 }

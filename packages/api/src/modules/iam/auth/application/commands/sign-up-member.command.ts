@@ -38,7 +38,7 @@ export class SignUpMemberCommand {
     if (errNewUser)
       throw new InternalServerError(
         errNewUser,
-        "auth.users.errors.isr_on_find",
+        "api_errors.auth.users.isr_on_find",
       );
 
     const org = await this.addMemberCommand.execute(

@@ -4,6 +4,6 @@ import type { TranslationKey } from "@fludge/i18n/index";
 
 export class OrganizationNotFoundException extends NotFoundError {
   constructor(key?: TranslationKey) {
-    super(getI18nKey(key ?? "iam.organizations.errors.not_found"));
+    super(getI18nKey(key ?? "api_errors.iam.organizations.not_found"));
   }
 }

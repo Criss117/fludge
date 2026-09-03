@@ -30,17 +30,17 @@ export class UpdateOrganizationCommand {
     if (errUniqueness)
       throw new InternalServerError(
         errUniqueness,
-        "iam.organizations.errors.isr_on_find",
+        "api_errors.iam.organizations.isr_on_find",
       );
 
     if (uniqueness.nameTaken || uniqueness.slugTaken)
       throw new OrganizationAlreadyExistsException(
-        "iam.organizations.errors.name_taken",
+        "api_errors.iam.organizations.name_taken",
       );
 
     if (uniqueness.legalNameTaken)
       throw new OrganizationAlreadyExistsException(
-        "iam.organizations.errors.legal_name_taken",
+        "api_errors.iam.organizations.legal_name_taken",
       );
 
     activeOrganization.update(cmd);
@@ -53,7 +53,7 @@ export class UpdateOrganizationCommand {
     if (errSaving)
       throw new InternalServerError(
         errSaving,
-        "iam.organizations.errors.isr_on_save",
+        "api_errors.iam.organizations.isr_on_save",
       );
 
     return activeOrganization.values;
