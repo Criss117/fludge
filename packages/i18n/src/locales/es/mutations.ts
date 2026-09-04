@@ -52,5 +52,18 @@ export const mutations = {
       },
       error: "Algo salió mal al actualizar la categoría",
     },
+    delete: {
+      is_pending: "Eliminando Categoría",
+      success: {
+        title: "Categoría Eliminada",
+        description: "La categoría se eliminó correctamente.",
+      },
+      error: "Algo salió mal al eliminar la categoría",
+      dialog: {
+        title: "Eliminar Categoría",
+        description:
+          "¿Estás seguro de que deseas eliminar la categoría {{name}}?",
+      },
+    },
   },
 };

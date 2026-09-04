@@ -64,7 +64,7 @@ const { useCollection, cache } = createResourceCollection(
             id: original.id,
           });
 
-          collection.utils.writeDelete(original);
+          collection.utils.writeDelete(original.id);
 
           return {
             refetch: false,

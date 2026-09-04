@@ -10,8 +10,9 @@ import { CategoryFormInputs } from "./category-form-input";
 import { useCreateCategoryMutation } from "@fludge/client/application/catalog/mutations/use-category.mutations";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import type { TranslationKey } from "@fludge/i18n/index";
+import { KeyboardController } from "react-native-keyboard-controller";
 
-export function CategoryFormDialog() {
+export function CreateCategoryForm() {
   const [open, isOpen] = useState(false);
   const mutationToast = useMutationToast("category-form-toast");
   const snapPoints = useMemo(() => ["50%", "90%"], []);
@@ -30,6 +31,7 @@ export function CategoryFormDialog() {
             "mutations.categories.create.success.title",
             "mutations.categories.create.success.description"
           );
+          KeyboardController.dismiss();
           isOpen(false);
           resetForm();
         },

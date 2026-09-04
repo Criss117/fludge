@@ -1,5 +1,6 @@
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useToast } from "heroui-native";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 export function useMutationToast(toastId: string) {
@@ -12,7 +13,6 @@ export function useMutationToast(toastId: string) {
       isSwipeable: true,
       label: t(label),
       description: t("helpers.please_wait"),
-      duration: "persistent",
     });
   }
 
@@ -42,6 +42,12 @@ export function useMutationToast(toastId: string) {
       onActionPress: ({ hide }) => hide(),
     });
   }
+
+  useEffect(() => {
+    return () => {
+      toast.hide(toastId);
+    };
+  }, []);
 
   return {
     showIsPendingToast,

@@ -1,6 +1,4 @@
 import type { TranslationKey } from "@fludge/i18n/index";
-import { useThemeColor } from "heroui-native";
-import { Typography } from "heroui-native/text";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, View } from "react-native";
@@ -13,6 +11,8 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { useCSSVariable } from "uniwind";
+import { Text } from "./app-text";
 
 type LoadingScreenProps = {
   message: TranslationKey;
@@ -20,7 +20,7 @@ type LoadingScreenProps = {
 
 export function LoadingScreen({ message }: LoadingScreenProps) {
   const { t } = useTranslation();
-  const accent = useThemeColor("accent");
+  const accent = useCSSVariable("accent");
 
   const opacity = useSharedValue(0);
   const entryScale = useSharedValue(0.92);
@@ -59,17 +59,15 @@ export function LoadingScreen({ message }: LoadingScreenProps) {
   return (
     <View className="bg-background flex-1 items-center justify-center gap-6 px-6">
       <Animated.View style={logoStyle} className="items-center gap-2">
-        <Typography className="text-accent text-5xl font-bold">
-          {t("app.title")}
-        </Typography>
+        <Text className="text-accent text-5xl font-bold">{t("app.title")}</Text>
         {message ? (
-          <Typography className="text-muted-foreground text-center text-sm">
+          <Text className="text-muted-foreground text-center text-sm">
             {message}
-          </Typography>
+          </Text>
         ) : null}
       </Animated.View>
 
-      <ActivityIndicator color={accent} size="small" />
+      <ActivityIndicator color={accent?.toString()} size="small" />
     </View>
   );
 }

@@ -50,7 +50,9 @@ export const product = sqliteTable(
     searchBlob: text("search_blob").notNull(),
     description: text("description"),
 
-    categoryId: text("category_id").references(() => category.id),
+    categoryId: text("category_id").references(() => category.id, {
+      onDelete: "set null",
+    }),
 
     stock: integer("stock").notNull(),
     minStock: integer("min_stock").notNull(),

@@ -1,5 +1,5 @@
 import { useFindCategories } from "@fludge/client/application/catalog/queries/use-find-categories";
-import { FlatList, View } from "react-native";
+import { FlatList, Keyboard, View } from "react-native";
 import {
   CARD_HEIGHT,
   CategoryCard,
@@ -9,18 +9,15 @@ import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 import { Typography } from "heroui-native/text";
 import type { CategorySummary } from "@fludge/client/application/catalog/queries/use-find-categories";
 import { useTranslation } from "react-i18next";
-import { FloatingLink } from "@/modules/shared/components/floating-link";
-import { CategoryFormDialog } from "../components/category-form-dialog";
+import { CreateCategoryForm } from "../components/create-category-form";
+import { useState } from "react";
+import { DeleteCategoryDialog } from "../components/delete-category-dialog";
 
 interface Props {
   query: string;
 }
 
 const ITEM_SEPARATOR_HEIGHT = 16;
-
-function renderCategoryItem({ item }: { item: CategorySummary }) {
-  return <CategoryCard category={item} />;
-}
 
 function ListEmptyComponent() {
   const { t } = useTranslation();
@@ -46,9 +43,16 @@ function ListFooterComponent({ hasNextPage }: { hasNextPage: boolean }) {
   return <CategoriesSectionSkeleton />;
 }
 
+type SelectedCategory = {
+  category: CategorySummary;
+  action: "edit" | "delete";
+};
+
 export function CategoriesSection({ query }: Props) {
   const { data, fetchNextPage, hasNextPage, isLoading, isReady } =
     useFindCategories({ query });
+  const [selectedCategory, setSelectedCategory] =
+    useState<SelectedCategory | null>(null);
 
   if (isLoading && !isReady) return <CategoriesSectionSkeleton length={10} />;
 
@@ -60,7 +64,12 @@ export function CategoriesSection({ query }: Props) {
         contentContainerStyle={{ paddingBottom: 124 }}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
-        renderItem={renderCategoryItem}
+        renderItem={({ item }) => (
+          <CategoryCard
+            category={item}
+            setSelectedCategory={setSelectedCategory}
+          />
+        )}
         ItemSeparatorComponent={
           <View style={{ height: ITEM_SEPARATOR_HEIGHT }} />
         }
@@ -78,8 +87,12 @@ export function CategoriesSection({ query }: Props) {
         ListEmptyComponent={<ListEmptyComponent />}
       />
       <View className="absolute right-0 bottom-20">
-        <CategoryFormDialog />
+        <CreateCategoryForm />
       </View>
+      <DeleteCategoryDialog
+        category={selectedCategory?.category ?? null}
+        onClose={() => setSelectedCategory(null)}
+      />
     </View>
   );
 }

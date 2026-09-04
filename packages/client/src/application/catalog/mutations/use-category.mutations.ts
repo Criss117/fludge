@@ -26,3 +26,16 @@ export function useCreateCategoryMutation() {
     },
   });
 }
+
+export function useDeleteCategory() {
+  const { categoryCollection } = useCategoriesCollection();
+
+  return useMutation({
+    mutationKey: ["catalog", "category", "delete"],
+    mutationFn: async (categoryId: string) => {
+      const tx = categoryCollection.delete(categoryId);
+
+      await tx.isPersisted.promise;
+    },
+  });
+}

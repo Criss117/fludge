@@ -23,6 +23,7 @@ export const helpers = {
   joined_at: "Unido el:",
   view_details: "Ver Detalles",
   edit: "Editar",
+  delete: "Eliminar",
   unassign_group: "Desasignar Grupo",
   unassign_member: "Desasignar Miembro",
   owner: "Propietario",
