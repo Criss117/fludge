@@ -2,7 +2,7 @@ import {
   groupFormOptions,
   type GroupSchema,
   type OnGroupSubmit,
-} from "@fludge/client/application/iam/organization/form/group-form";
+} from "@fludge/client/application/iam/form/group-form";
 import {
   getPermissionsByResource,
   PERMISSIONS,
@@ -18,32 +18,10 @@ const { fieldContext, formContext, useFieldContext } = createFormHookContexts();
 
 export interface ChildrenProps<T> {
   field: ReturnType<typeof useFieldContext<T>>;
-  id: string;
-  isInvalid: boolean;
 }
 
 export interface FieldProps<T> {
   children: (props: ChildrenProps<T>) => React.ReactNode;
-}
-
-export function NameField({ children }: FieldProps<string>) {
-  const field = useFieldContext<string>();
-
-  return children({
-    field,
-    id: "group-form-name",
-    isInvalid: field.state.meta.isTouched && !field.state.meta.isValid,
-  });
-}
-
-export function DescriptionField({ children }: FieldProps<string>) {
-  const field = useFieldContext<string>();
-
-  return children({
-    field,
-    id: "group-form-description",
-    isInvalid: field.state.meta.isTouched && !field.state.meta.isValid,
-  });
 }
 
 export type PermissionsFieldChildrenProps = ChildrenProps<Permission[]> & {
@@ -75,6 +53,8 @@ export function PermissionsField({ children }: PermissionsFieldProps) {
   const field = useFieldContext<Permission[]>();
 
   const statement = field.store.get().value;
+
+  console.log(initialCounts);
 
   function isSelected(permission: Permission) {
     return statement.includes(permission);
@@ -128,13 +108,11 @@ export function PermissionsField({ children }: PermissionsFieldProps) {
       acc[resource as Resource].selected++;
 
       return acc;
-    }, initialCounts);
+    }, structuredClone(initialCounts));
   }, [statement]);
 
   return children({
     field,
-    id: "group-form-permissions",
-    isInvalid: field.state.meta.isTouched && !field.state.meta.isValid,
     isSelected,
     togglePermission,
     toggleAllFromResource,
@@ -146,7 +124,7 @@ export function PermissionsField({ children }: PermissionsFieldProps) {
 const { useAppForm } = createFormHook({
   fieldContext,
   formContext,
-  fieldComponents: { NameField, DescriptionField, PermissionsField },
+  fieldComponents: { PermissionsField },
   formComponents: {},
 });
 

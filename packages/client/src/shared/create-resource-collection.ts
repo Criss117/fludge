@@ -1,5 +1,5 @@
-import { useFindActiveOrganization } from "@fludge/client/application/iam/organization/queries/use-find-organization";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import { useFindActiveOrganization } from "../application/iam/queries/use-find-organization";
 
 type Orpc = ReturnType<typeof useOrpc>;
 type ResourceName = "categories" | "products" | "products-presentations";

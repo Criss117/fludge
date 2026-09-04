@@ -76,6 +76,9 @@ export const screens = {
     title: "Categorías",
     not_found: "No se encontraron categorías",
     no_more: "No hay más categorías",
+    create: {
+      title: "Crear categoría",
+    },
   },
   products: {
     title: "Productos",

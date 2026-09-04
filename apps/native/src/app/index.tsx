@@ -1,4 +1,4 @@
-import { useFindAllOrganizations } from "@fludge/client/application/iam/organization/queries/use-find-organization";
+import { useFindAllOrganizations } from "@fludge/client/application/iam/queries/use-find-organization";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { Redirect } from "expo-router";
 import { Typography } from "heroui-native/text";

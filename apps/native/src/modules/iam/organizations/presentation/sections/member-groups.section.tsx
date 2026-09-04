@@ -4,11 +4,11 @@ import { GroupCardBase } from "../components/group-card";
 import { useState } from "react";
 import { Dialog } from "heroui-native/dialog";
 import { Button } from "heroui-native/button";
-import { useRemoveGroupsFromMember } from "@fludge/client/application/iam/organization/mutations/use-member.mutations";
+import { useRemoveGroupsFromMember } from "@fludge/client/application/iam/mutations/use-member.mutations";
 import {
   useFindAllGroups,
   type GroupSummary,
-} from "@fludge/client/application/iam/organization/queries/use-find-groups";
+} from "@fludge/client/application/iam/queries/use-find-groups";
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { useTranslation } from "react-i18next";
 
@@ -57,7 +57,9 @@ export function MemberGroupsSection({ memberId }: Props) {
   return (
     <View className="gap-y-2">
       <View>
-        <Typography.Heading type="h2">{t("screens.groups.title")}</Typography.Heading>
+        <Typography.Heading type="h2">
+          {t("screens.groups.title")}
+        </Typography.Heading>
         <Typography.Paragraph color="muted">
           {t("helpers.inherited_roles_permissions")}
         </Typography.Paragraph>
@@ -65,13 +67,13 @@ export function MemberGroupsSection({ memberId }: Props) {
       <SearchInput
         query={query}
         setQuery={setQuery}
-         placeholder="helpers.placeholder.search_groups"
+        placeholder="helpers.placeholder.search_groups"
       />
 
       {groups.length === 0 && (
         <View className="flex-1 items-center justify-center">
           <Typography.Paragraph color="muted">
-             {t("helpers.no_groups")}
+            {t("helpers.no_groups")}
           </Typography.Paragraph>
         </View>
       )}
@@ -95,7 +97,7 @@ export function MemberGroupsSection({ memberId }: Props) {
           <Dialog.Content>
             <Dialog.Close className="absolute top-3 right-3 z-50" />
             <View>
-               <Dialog.Title>{t("helpers.unassign_group")}</Dialog.Title>
+              <Dialog.Title>{t("helpers.unassign_group")}</Dialog.Title>
               <Dialog.Description>
                 ¿Estás seguro de que deseas desasignar {groupToRemove?.name}?
               </Dialog.Description>
@@ -111,7 +113,7 @@ export function MemberGroupsSection({ memberId }: Props) {
                 onPress={() => setGroupToRemove(null)}
                 isDisabled={removeGroupsFromMember.isPending}
               >
-                 {t("helpers.cancel")}
+                {t("helpers.cancel")}
               </Button>
               <Button
                 className="flex-1"
@@ -119,7 +121,7 @@ export function MemberGroupsSection({ memberId }: Props) {
                 variant="danger-soft"
                 onPress={onRemoveGroup}
               >
-                 {t("helpers.continue")}
+                {t("helpers.continue")}
               </Button>
             </View>
           </Dialog.Content>

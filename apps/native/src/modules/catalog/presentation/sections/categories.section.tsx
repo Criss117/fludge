@@ -9,6 +9,8 @@ import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 import { Typography } from "heroui-native/text";
 import type { CategorySummary } from "@fludge/client/application/catalog/queries/use-find-categories";
 import { useTranslation } from "react-i18next";
+import { FloatingLink } from "@/modules/shared/components/floating-link";
+import { CategoryFormDialog } from "../components/category-form-dialog";
 
 interface Props {
   query: string;
@@ -75,6 +77,9 @@ export function CategoriesSection({ query }: Props) {
         ListFooterComponent={<ListFooterComponent hasNextPage={hasNextPage} />}
         ListEmptyComponent={<ListEmptyComponent />}
       />
+      <View className="absolute right-0 bottom-20">
+        <CategoryFormDialog />
+      </View>
     </View>
   );
 }

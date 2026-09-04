@@ -2,7 +2,6 @@ import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 
-import { useSignInForm } from "@fludge/client/presentation/iam/auth/auth-form";
 import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import { Separator } from "heroui-native/separator";
@@ -10,8 +9,9 @@ import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { FieldError } from "heroui-native/field-error";
-import { CommonInputs } from "@/modules/shared/components/common-input";
 import { useTranslation } from "react-i18next";
+import { useSignInForm } from "@fludge/client/application/iam/form/sign-in-form";
+import { AuthFormInputs } from "../components/auth-form-inputs";
 
 export function SignInScreen() {
   const { t } = useTranslation();
@@ -54,43 +54,13 @@ export function SignInScreen() {
           {rootError && (
             <FieldError isInvalid={!!rootError}>{rootError}</FieldError>
           )}
-          <form.AppField
+          <form.Field
             name="email"
-            children={(field) => (
-              <field.EmailField
-                children={({ field, id, isInvalid }) => (
-                  <CommonInputs.EmailInput
-                    isInvalid={isInvalid}
-                    id={id}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChangeText={(e) => field.handleChange(e)}
-                    errors={field.state.meta.errors}
-                    label="forms.user.email.label"
-                    placeholder="forms.user.email.placeholder"
-                  />
-                )}
-              />
-            )}
+            children={(field) => <AuthFormInputs.EmailInput field={field} />}
           />
-          <form.AppField
+          <form.Field
             name="password"
-            children={(field) => (
-              <field.PasswordField
-                children={({ field, id, isInvalid }) => (
-                  <CommonInputs.PasswordInput
-                    isInvalid={isInvalid}
-                    id={id}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChangeText={(e) => field.handleChange(e)}
-                    errors={field.state.meta.errors}
-                    label="forms.user.password.label"
-                    placeholder="forms.user.password.placeholder"
-                  />
-                )}
-              />
-            )}
+            children={(field) => <AuthFormInputs.PasswordInput field={field} />}
           />
           <Button
             onPress={form.handleSubmit}

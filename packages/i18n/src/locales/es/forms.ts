@@ -34,6 +34,10 @@ export const forms = {
       label: "Identificación Fiscal (Tax ID / NIT / RFC)",
       placeholder: "Ingresa el código único",
     },
+    phone: {
+      label: "Número de Teléfono de la Organización",
+      placeholder: "3212345678",
+    },
   },
   group: {
     name: {
@@ -53,5 +57,17 @@ export const forms = {
   member: {
     create: "Crear Miembro",
     assign_groups: "Asignar Grupos",
+  },
+  category: {
+    name: {
+      label: "Nombre de la categoría",
+      placeholder: "Ej. Lacteos",
+    },
+    description: {
+      label: "Descripción de la categoría",
+      placeholder: "Ej. Lacteos de la mano",
+    },
+    create: "Crear Categoría",
+    update: "Actualizar Categoría",
   },
 };

@@ -4,7 +4,7 @@ import {
   CARD_HEIGHT,
   MemberCardSkeleton,
 } from "@/modules/iam/organizations/presentation/components/member-card";
-import { useFindAllMembers } from "@fludge/client/application/iam/organization/queries/use-find-members";
+import { useFindAllMembers } from "@fludge/client/application/iam/queries/use-find-members";
 import { FloatingLink } from "@/modules/shared/components/floating-link";
 import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 

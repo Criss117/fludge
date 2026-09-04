@@ -1,11 +1,13 @@
 export const permissions = {
   organizations: {
+    name: "Organizaciones",
     update: {
       name: "Actualizar organización",
       description: "Puede actualizar la organización",
     },
   },
   groups: {
+    name: "Grupos",
     create: {
       name: "Crear grupo",
       description: "Puede crear grupos",
@@ -28,6 +30,7 @@ export const permissions = {
     },
   },
   members: {
+    name: "Miembros",
     create: {
       name: "Crear miembro",
       description: "Puede crear miembros",
@@ -46,6 +49,7 @@ export const permissions = {
     },
   },
   categories: {
+    name: "Categorías",
     create: {
       name: "Crear categoría",
       description: "Puede crear categorías",
@@ -64,6 +68,7 @@ export const permissions = {
     },
   },
   products: {
+    name: "Productos",
     create: {
       name: "Crear producto",
       description: "Puede crear productos",

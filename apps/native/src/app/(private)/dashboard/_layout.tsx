@@ -1,4 +1,3 @@
-import { useFindActiveOrganization } from "@fludge/client/application/iam/organization/queries/use-find-organization";
 import { Stack } from "expo-router";
 import { useThemeColor } from "heroui-native";
 import { ExpoDevMenuItem, registerDevMenuItems } from "expo-dev-menu";
@@ -9,7 +8,8 @@ import {
 } from "@fludge/client/shared/create-resource-collection";
 import { useEffect } from "react";
 import { RemountBoundary } from "@fludge/client/presentation/shared/remount-boundary";
-import { bumpRemount } from "@fludge/client//shared/use-remount-epoch";
+import { bumpRemount } from "@fludge/client/shared/use-remount-epoch";
+import { useFindActiveOrganization } from "@fludge/client/application/iam/queries/use-find-organization";
 
 export default function DashboardLayout() {
   const backgroundColor = useThemeColor("background");
@@ -54,6 +54,7 @@ export default function DashboardLayout() {
         <Stack.Screen name="settings" />
         <Stack.Screen name="members" />
         <Stack.Screen name="groups" />
+        <Stack.Screen name="categories" />
       </Stack>
     </RemountBoundary>
   );

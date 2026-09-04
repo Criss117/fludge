@@ -16,8 +16,7 @@ export function groupFormOptions(
     defaultValues: {
       name: defaultValues?.name ?? "",
       description: defaultValues?.description ?? "",
-      permissions:
-        defaultValues?.permissions ?? ({} as GroupSchema["permissions"]),
+      permissions: defaultValues?.permissions ?? [],
     },
     validators: {
       onChange: createGroupValidator,

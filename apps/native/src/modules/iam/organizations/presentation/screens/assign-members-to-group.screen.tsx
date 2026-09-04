@@ -1,8 +1,8 @@
 import {
   type MemberSummary,
   useFindAllMembers,
-} from "@fludge/client/application/iam/organization/queries/use-find-members";
-import { useAssignMembersToGroup } from "@fludge/client/application/iam/organization/mutations/use-group.mutations";
+} from "@fludge/client/application/iam/queries/use-find-members";
+import { useAssignMembersToGroup } from "@fludge/client/application/iam/mutations/use-group.mutations";
 import { useRouter } from "expo-router";
 import { Button, useToast } from "heroui-native";
 import { useState } from "react";

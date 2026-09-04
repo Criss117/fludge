@@ -1,4 +1,3 @@
-import { useFindAllOrganizations } from "@fludge/client/application/iam/organization/queries/use-find-organization";
 import { FlatList, View } from "react-native";
 import { CARD_HEIGHT, OrganizationCard } from "../components/organization-card";
 import { useEffect, useMemo, useState } from "react";
@@ -10,6 +9,7 @@ import { Button } from "heroui-native/button";
 import { Typography } from "heroui-native/text";
 import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 import { useTranslation } from "react-i18next";
+import { useFindAllOrganizations } from "@fludge/client/application/iam/queries/use-find-organization";
 
 const ITEM_SEPARATOR_HEIGHT = 16;
 
@@ -68,7 +68,7 @@ export function SelectOrganizationScreen() {
           value={query}
           onChangeText={onChangeText}
           className="flex-1 px-10"
-           placeholder={t("helpers.search_organizations")}
+          placeholder={t("helpers.search_organizations")}
         />
         <View className="absolute left-6" pointerEvents="none">
           <MaterialIcons size={20} name="search" className="text-muted" />
@@ -114,12 +114,12 @@ export function SelectOrganizationScreen() {
                 className="text-eclipse"
               />
               <Button.Label className="text-eclipse">
-                 {t("helpers.register_organization")}
+                {t("helpers.register_organization")}
               </Button.Label>
             </Button>
           </Link>
           <Typography type="body-sm" color="muted" align="center">
-             {t("helpers.switch_organization_hint")}
+            {t("helpers.switch_organization_hint")}
           </Typography>
         </View>
       )}

@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { useUpdateGroup } from "@fludge/client/application/iam/organization/mutations/use-group.mutations";
-import type { GroupSummary } from "@fludge/client/application/iam/organization/queries/use-find-groups";
+import { useUpdateGroup } from "@fludge/client/application/iam/mutations/use-group.mutations";
+import type { GroupSummary } from "@fludge/client/application/iam/queries/use-find-groups";
 import { Link } from "expo-router";
 import { Button } from "heroui-native/button";
 import { Popover } from "heroui-native/popover";
@@ -99,11 +99,11 @@ export function GroupsOptions({ group, asMemberGroup }: Props) {
                 className="text-eclipse"
               />
               <Button.Label>
-                 {t(
-                   group.status === "active"
-                     ? "helpers.status.deactivate"
-                     : "helpers.status.activate"
-                 )}
+                {t(
+                  group.status === "active"
+                    ? "helpers.status.deactivate"
+                    : "helpers.status.activate"
+                )}
               </Button.Label>
             </Button>
           )}
@@ -120,7 +120,7 @@ export function GroupsOptions({ group, asMemberGroup }: Props) {
                 size={20}
                 className="text-eclipse"
               />
-               <Button.Label>{t("helpers.unassign_group")}</Button.Label>
+              <Button.Label>{t("helpers.unassign_group")}</Button.Label>
             </Button>
           )}
         </Popover.Content>

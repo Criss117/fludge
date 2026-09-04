@@ -9,7 +9,7 @@ import { StatusChip } from "@/modules/shared/components/status-chip";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { useRouter } from "expo-router";
 import { GroupsOptions } from "./options";
-import type { GroupSummary } from "@fludge/client/application/iam/organization/queries/use-find-groups";
+import type { GroupSummary } from "@fludge/client/application/iam/queries/use-find-groups";
 
 import { Checkbox, cn } from "heroui-native";
 import { useTranslation } from "react-i18next";

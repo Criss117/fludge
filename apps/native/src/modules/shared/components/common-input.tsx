@@ -12,7 +12,7 @@ import { TranslationKey } from "@fludge/i18n/index";
 
 type MaterialIconName = ComponentProps<typeof MaterialIcons>["name"];
 
-interface CommonInputProps {
+interface TextInputProps {
   isRequired?: boolean;
   isInvalid: boolean;
   errors?: Array<{ message?: string } | undefined>;
@@ -23,25 +23,25 @@ interface CommonInputProps {
   };
 }
 
-interface Props {
+interface TextAreaInputProps {
+  isRequired?: boolean;
   isInvalid: boolean;
-  id: string;
-  value: string;
   errors?: Array<{ message?: string } | undefined>;
-  placeholder: TranslationKey;
   label: TranslationKey;
-  onBlur: (e: BlurEvent) => void;
-  onChangeText: (text: string) => void;
+  icon: MaterialIconName;
+  inputProps: Omit<ComponentProps<typeof TextArea>, "placeholder"> & {
+    placeholder: TranslationKey;
+  };
 }
 
-export function CommonInput({
+export function TextInput({
   isRequired,
   isInvalid,
   label,
   icon,
   errors,
   inputProps,
-}: CommonInputProps) {
+}: TextInputProps) {
   const { t } = useTranslation();
 
   return (
@@ -63,27 +63,23 @@ export function CommonInput({
   );
 }
 
-export function DescriptionInput({
+export function TextAreaInput({
+  isRequired,
   isInvalid,
-  id,
-  value,
-  placeholder,
   label,
-  onBlur,
-  onChangeText,
+  icon,
   errors,
-}: Props) {
+  inputProps,
+}: TextAreaInputProps) {
   const { t } = useTranslation();
 
   return (
-    <TextField isInvalid={isInvalid}>
+    <TextField isInvalid={isInvalid} isRequired={isRequired}>
       <Label isInvalid={isInvalid}>{t(label)}</Label>
       <TextArea
-        id={id}
-        value={value}
-        onBlur={onBlur}
-        onChangeText={onChangeText}
-        placeholder={t(placeholder)}
+        {...inputProps}
+        placeholder={t(inputProps.placeholder)}
+        className="flex-1 px-10"
         isInvalid={isInvalid}
       />
       {isInvalid && <FieldError errors={errors} />}
@@ -91,109 +87,12 @@ export function DescriptionInput({
   );
 }
 
-interface Props {
-  isInvalid: boolean;
-  id: string;
-  value: string;
-  onBlur: (e: BlurEvent) => void;
-  onChangeText: (text: string) => void;
-  errors?: Array<{ message?: string } | undefined>;
-}
-
-function EmailInput({
-  isInvalid,
-  id,
-  value,
-  onBlur,
-  onChangeText,
-  errors,
-  label,
-  placeholder,
-}: Props) {
-  return (
-    <CommonInput
-      isInvalid={isInvalid}
-      errors={errors}
-      label={label}
-      icon="mail-outline"
-      inputProps={{
-        id,
-        value,
-        onBlur,
-        onChangeText,
-        placeholder,
-        keyboardType: "email-address",
-      }}
-    />
-  );
-}
-
-function NameInput({
-  isInvalid,
-  id,
-  value,
-  onBlur,
-  onChangeText,
-  errors,
-  label,
-  placeholder,
-}: Props) {
-  return (
-    <CommonInput
-      isRequired
-      isInvalid={isInvalid}
-      errors={errors}
-      label={label}
-      icon="person"
-      inputProps={{
-        id,
-        value,
-        onBlur,
-        onChangeText,
-        placeholder,
-      }}
-    />
-  );
-}
-
-function PhoneInput({
-  isInvalid,
-  id,
-  value,
-  onBlur,
-  onChangeText,
-  errors,
-  label,
-  placeholder,
-}: Props) {
-  return (
-    <CommonInput
-      isInvalid={isInvalid}
-      errors={errors}
-      label={label}
-      icon="phone"
-      inputProps={{
-        id,
-        value,
-        onBlur,
-        onChangeText,
-        placeholder,
-        keyboardType: "phone-pad",
-      }}
-    />
-  );
-}
-
 function PasswordInput({
   isInvalid,
-  id,
-  value,
-  onBlur,
-  onChangeText,
   errors,
   label,
-  placeholder,
-}: Props) {
+  inputProps,
+}: Omit<TextInputProps, "icon" | "isRequired">) {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -203,13 +102,10 @@ function PasswordInput({
       <View className="w-full flex-row items-center">
         <Input
           className="flex-1 px-10"
-          id={id}
-          value={value}
-          onBlur={onBlur}
-          onChangeText={onChangeText}
+          {...inputProps}
+          placeholder={t(inputProps.placeholder)}
           secureTextEntry={!showPassword}
           aria-invalid={isInvalid}
-          placeholder={t(placeholder)}
         />
         <View className="absolute inset-s-3.5" pointerEvents="none">
           <MaterialIcons size={20} name="lock-outline" className="text-muted" />
@@ -236,38 +132,8 @@ function PasswordInput({
   );
 }
 
-function AddressInput({
-  isInvalid,
-  id,
-  value,
-  onBlur,
-  onChangeText,
-  errors,
-  label,
-  placeholder,
-}: Props) {
-  return (
-    <CommonInput
-      isInvalid={isInvalid}
-      errors={errors}
-      label={label}
-      icon="location-on"
-      inputProps={{
-        id,
-        value,
-        onBlur,
-        onChangeText,
-        placeholder,
-      }}
-    />
-  );
-}
-
 export const CommonInputs = {
-  EmailInput,
+  TextInput,
+  TextAreaInput,
   PasswordInput,
-  NameInput,
-  PhoneInput,
-  AddressInput,
-  DescriptionInput,
 };

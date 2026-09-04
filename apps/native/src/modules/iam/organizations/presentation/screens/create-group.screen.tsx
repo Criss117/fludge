@@ -1,7 +1,4 @@
-import { useCreateGroup } from "@fludge/client/application/iam/organization/mutations/use-group.mutations";
-import { useGroupForm } from "@fludge/client/presentation/iam/organization/group.form";
 import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gradual-height";
-import { CommonInputs } from "@/modules/shared/components/common-input";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { Button, Card, useToast } from "heroui-native";
 import { useRouter } from "expo-router";
@@ -10,6 +7,8 @@ import { ScrollView, View } from "react-native";
 import { GroupFormInputs } from "../components/group-form-inputs";
 import { useTranslation } from "react-i18next";
 import type { TranslationKey } from "@fludge/i18n/index";
+import { useCreateGroup } from "@fludge/client/application/iam/mutations/use-group.mutations";
+import { useGroupForm } from "@fludge/client/presentation/iam/group.form";
 
 const PADDING_BOTTOM = 20;
 const TOAST_ID = "create-group-toast";
@@ -89,31 +88,18 @@ export function CreateGroupScreen() {
               </Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
-              <form.AppField name="name">
-                {(field) => (
-                  <field.NameField>
-                    {(props) => <GroupFormInputs.GroupNameInput {...props} />}
-                  </field.NameField>
+              <form.Field
+                name="name"
+                children={(field) => (
+                  <GroupFormInputs.NameInput field={field} />
                 )}
-              </form.AppField>
-              <form.AppField name="description">
-                {(field) => (
-                  <field.DescriptionField>
-                    {({ field: state, id, isInvalid }) => (
-                      <CommonInputs.DescriptionInput
-                        isInvalid={isInvalid}
-                        id={id}
-                        value={state.state.value}
-                        onBlur={state.handleBlur}
-                        onChangeText={state.handleChange}
-                        errors={state.state.meta.errors}
-                        label="forms.group.description.label"
-                        placeholder="forms.group.description.placeholder"
-                      />
-                    )}
-                  </field.DescriptionField>
+              />
+              <form.Field
+                name="description"
+                children={(field) => (
+                  <GroupFormInputs.DescriptionInput field={field} />
                 )}
-              </form.AppField>
+              />
             </Card.Body>
           </Card>
 

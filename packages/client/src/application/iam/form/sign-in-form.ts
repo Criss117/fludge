@@ -2,7 +2,7 @@ import {
   signInValidator,
   signUpValidator,
 } from "@fludge/utils/validators/auth.validators";
-import { formOptions } from "@tanstack/react-form";
+import { formOptions, useForm } from "@tanstack/react-form";
 import { z } from "zod";
 
 export type SignInSchema = z.infer<typeof signInValidator>;
@@ -46,4 +46,12 @@ export function signInFormOptions(options: OnSignInSubmit) {
       options.onSubmit({ value, resetForm: formApi.reset });
     },
   });
+}
+
+export function useSignUpForm(options: OnSignUpSubmit) {
+  return useForm(signUpFormOptions(options));
+}
+
+export function useSignInForm(options: OnSignInSubmit) {
+  return useForm(signInFormOptions(options));
 }

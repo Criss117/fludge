@@ -1,4 +1,4 @@
-import type { GroupSummary } from "@fludge/client/application/iam/organization/queries/use-find-groups";
+import type { GroupSummary } from "@fludge/client/application/iam/queries/use-find-groups";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { StatusChip } from "@/modules/shared/components/status-chip";
 import { Link } from "expo-router";
@@ -86,7 +86,7 @@ export function GroupScreen({ group }: { group: GroupSummary }) {
               size={20}
               className="text-eclipse"
             />
-              <Button.Label>{t("forms.member.assign_groups")}</Button.Label>
+            <Button.Label>{t("forms.member.assign_groups")}</Button.Label>
           </Button>
         </Link>
       </View>

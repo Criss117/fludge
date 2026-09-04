@@ -1,5 +1,5 @@
 import { MemberScreen } from "@/modules/iam/organizations/presentation/screens/member.screen";
-import { useFindMember } from "@fludge/client/application/iam/organization/queries/use-find-members";
+import { useFindMember } from "@fludge/client/application/iam/queries/use-find-members";
 import { Stack, useLocalSearchParams } from "expo-router";
 
 export default function Member() {

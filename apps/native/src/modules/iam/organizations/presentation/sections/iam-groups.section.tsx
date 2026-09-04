@@ -1,6 +1,6 @@
 import { FlatList, View } from "react-native";
 import { GroupCard } from "@/modules/iam/organizations/presentation/components/group-card";
-import { useFindAllGroups } from "@fludge/client/application/iam/organization/queries/use-find-groups";
+import { useFindAllGroups } from "@fludge/client/application/iam/queries/use-find-groups";
 import { FloatingLink } from "@/modules/shared/components/floating-link";
 
 const ITEM_SEPARATOR_HEIGHT = 16;

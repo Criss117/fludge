@@ -1,10 +1,7 @@
-import { CommonInput } from "@/modules/shared/components/common-input";
 import { FieldError } from "@/modules/shared/components/field-error";
-import type {
-  PermissionsFieldChildrenProps,
-  ChildrenProps,
-} from "@fludge/client/presentation/iam/organization/group.form";
+
 import {
+  ActionFor,
   PERMISSIONS,
   type Permission,
   type Resource,
@@ -19,21 +16,50 @@ import { Separator } from "heroui-native/separator";
 import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
+import { MinimalField } from "@fludge/client/shared/field-api";
+import { CommonInputs } from "@/modules/shared/components/common-input";
+import { PermissionsFieldChildrenProps } from "@fludge/client/presentation/iam/group.form";
+import type { TranslationKey } from "@fludge/i18n/index";
 
-function GroupNameInput({ isInvalid, id, field }: ChildrenProps<string>) {
+interface InputProps<T> {
+  field: MinimalField<T>;
+}
+
+function NameInput({ field }: InputProps<string>) {
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+  const errors = field.state.meta.errors;
+
   return (
-    <CommonInput
-      isRequired
+    <CommonInputs.TextInput
       isInvalid={isInvalid}
-      errors={field.state.meta.errors}
-       label="forms.group.name.label"
-      icon="security"
+      icon="add-business"
+      errors={errors}
+      label="forms.group.name.label"
       inputProps={{
-        id,
         value: field.state.value,
         onBlur: field.handleBlur,
         onChangeText: field.handleChange,
-         placeholder: "forms.group.name.placeholder",
+        placeholder: "forms.group.name.placeholder",
+      }}
+    />
+  );
+}
+
+function DescriptionInput({ field }: InputProps<string>) {
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+  const errors = field.state.meta.errors;
+
+  return (
+    <CommonInputs.TextAreaInput
+      isInvalid={isInvalid}
+      icon="description"
+      errors={errors}
+      label="forms.group.description.label"
+      inputProps={{
+        value: field.state.value,
+        onBlur: field.handleBlur,
+        onChangeText: field.handleChange,
+        placeholder: "forms.group.description.placeholder",
       }}
     />
   );
@@ -43,11 +69,12 @@ function PermissionsListInput({
   isSelected,
   toggleAllFromResource,
   togglePermission,
-  isInvalid,
   field,
   counts,
 }: PermissionsFieldChildrenProps) {
   const { t } = useTranslation();
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+  const errors = field.state.meta.errors;
 
   return (
     <View>
@@ -55,16 +82,19 @@ function PermissionsListInput({
         <Typography.Heading type="h4">
           {t("forms.group.permissions.label")}
         </Typography.Heading>
-        {isInvalid && <FieldError errors={field.state.meta.errors} />}
+        {isInvalid && <FieldError errors={errors} />}
       </View>
       <Accordion variant="surface">
         {Object.keys(PERMISSIONS).map((resource) => {
           const count = counts[resource as Resource];
 
+          const nameKey = `permissions.${resource as Resource}.name` as const;
+          const name = t(nameKey);
+
           return (
             <Accordion.Item key={resource} value={resource}>
               <Accordion.Trigger>
-                <Typography>{resource}</Typography>
+                <Typography>{name}</Typography>
                 <View className="flex-row items-center gap-x-1">
                   <Chip size="sm">
                     <Chip.Label>
@@ -80,7 +110,7 @@ function PermissionsListInput({
                   isSelected={count.selected === count.total}
                 >
                   <View className="flex-1 flex-row justify-between p-4">
-                    <Label>{t("helpers.all_of", { resource })}</Label>
+                    <Label>{t("helpers.all_of", { resource: name })}</Label>
                     <ControlField.Indicator>
                       <Checkbox
                         className="bg-accent"
@@ -95,6 +125,11 @@ function PermissionsListInput({
                 {PERMISSIONS[resource as Resource].map((action) => {
                   const permission = `${resource}:${action}` as Permission;
 
+                  const actionKey =
+                    `permissions.${resource}.${action}.name` as TranslationKey;
+                  const actionDescriptionKey =
+                    `permissions.${resource}.${action}.description` as TranslationKey;
+
                   return (
                     <ControlField
                       key={`${resource}:${action}`}
@@ -102,7 +137,14 @@ function PermissionsListInput({
                       isSelected={isSelected(permission)}
                     >
                       <Card className="bg-surface-tertiary flex-1 flex-row justify-between">
-                        <Label>{action}</Label>
+                        <Card.Header className="flex-1">
+                          <Card.Title className="line-clamp-1">
+                            {t(actionKey)}
+                          </Card.Title>
+                          <Card.Description className="line-clamp-1">
+                            {t(actionDescriptionKey)}
+                          </Card.Description>
+                        </Card.Header>
                         <ControlField.Indicator>
                           <Checkbox
                             className="bg-accent"
@@ -123,6 +165,7 @@ function PermissionsListInput({
 }
 
 export const GroupFormInputs = {
-  GroupNameInput,
+  NameInput,
   PermissionsListInput,
+  DescriptionInput,
 };

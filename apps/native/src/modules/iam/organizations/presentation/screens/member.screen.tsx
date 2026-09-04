@@ -5,7 +5,7 @@ import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import { ScrollView, View } from "react-native";
 import { MemberGroupsSection } from "../sections/member-groups.section";
-import type { MemberSummary } from "@fludge/client/application/iam/organization/queries/use-find-members";
+import type { MemberSummary } from "@fludge/client/application/iam/queries/use-find-members";
 import { UserAvatar } from "@/modules/shared/components/user-avatar";
 import { useTranslation } from "react-i18next";
 

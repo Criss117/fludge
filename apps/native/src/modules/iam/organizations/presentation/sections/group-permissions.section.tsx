@@ -1,4 +1,4 @@
-import type { GroupSummary } from "@fludge/client/application/iam/organization/queries/use-find-groups";
+import type { GroupSummary } from "@fludge/client/application/iam/queries/use-find-groups";
 import { Chip } from "heroui-native/chip";
 import { Typography } from "heroui-native/text";
 import { View } from "react-native";

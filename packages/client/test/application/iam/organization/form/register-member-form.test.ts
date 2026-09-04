@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { registerMemberSchema } from "@fludge/client/application/iam/organization/form/register-member-form";
+import { registerMemberSchema } from "@fludge/client/application/iam/form/register-member-form";
 
 const validMember = {
   email: "member@example.com",

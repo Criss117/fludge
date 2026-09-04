@@ -1,5 +1,5 @@
 import { signUpValidator } from "@fludge/utils/validators/auth.validators";
-import { formOptions } from "@tanstack/react-form";
+import { formOptions, useForm } from "@tanstack/react-form";
 import type { z } from "zod";
 
 export type RegisterMemberSchema = z.infer<typeof signUpValidator>;
@@ -26,4 +26,8 @@ export function registerFormOptions(options: OnRegisterMemberSubmit) {
       options.onSubmit({ value, resetForm: formApi.reset });
     },
   });
+}
+
+export function useRegisterMemberForm(options: OnRegisterMemberSubmit) {
+  return useForm(registerFormOptions(options));
 }

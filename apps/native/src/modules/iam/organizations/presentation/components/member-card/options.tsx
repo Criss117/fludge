@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { MemberSummary } from "@fludge/client/application/iam/organization/queries/use-find-members";
+import type { MemberSummary } from "@fludge/client/application/iam/queries/use-find-members";
 import { Link } from "expo-router";
 import { Button } from "heroui-native/button";
 import { Popover } from "heroui-native/popover";
@@ -42,7 +42,7 @@ export function MemberOptions({ member, asGroupMember }: Props) {
         >
           <Popover.Arrow />
           <Popover.Close className="absolute top-3 right-3 z-50" />
-           <Popover.Title>{t("helpers.options")}</Popover.Title>
+          <Popover.Title>{t("helpers.options")}</Popover.Title>
           <Link
             href={{
               pathname: "/(private)/dashboard/members/[memberid]",
@@ -53,7 +53,7 @@ export function MemberOptions({ member, asGroupMember }: Props) {
           >
             <Button size="sm" onPress={close} className="flex justify-start">
               <MaterialIcons name="info" size={20} className="text-eclipse" />
-               <Button.Label>{t("helpers.view_details")}</Button.Label>
+              <Button.Label>{t("helpers.view_details")}</Button.Label>
             </Button>
           </Link>
 
@@ -66,7 +66,7 @@ export function MemberOptions({ member, asGroupMember }: Props) {
                 size={20}
                 className="text-eclipse"
               />
-               <Button.Label>{t("helpers.unassign_member")}</Button.Label>
+              <Button.Label>{t("helpers.unassign_member")}</Button.Label>
             </Button>
           )}
         </Popover.Content>

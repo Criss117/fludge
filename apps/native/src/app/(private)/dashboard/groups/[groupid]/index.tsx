@@ -2,7 +2,7 @@ import {
   GroupScreen,
   GroupScreenSkeleton,
 } from "@/modules/iam/organizations/presentation/screens/group.screen";
-import { useFindGroup } from "@fludge/client/application/iam/organization/queries/use-find-groups";
+import { useFindGroup } from "@fludge/client/application/iam/queries/use-find-groups";
 import {
   type ErrorBoundaryProps,
   Stack,

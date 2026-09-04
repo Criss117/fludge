@@ -5,7 +5,7 @@ import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
 import { View } from "react-native";
 import { Chip } from "heroui-native/chip";
-import type { OrganizationSummary } from "@fludge/client/application/iam/organization/queries/use-find-organization";
+import type { OrganizationSummary } from "@fludge/client/application/iam/queries/use-find-organization";
 import { UserAvatar } from "@/modules/shared/components/user-avatar";
 
 interface Props {

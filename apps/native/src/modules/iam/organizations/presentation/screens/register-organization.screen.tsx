@@ -1,20 +1,23 @@
-import { useRegisterOrganizationForm } from "@fludge/client/presentation/iam/organization/register-organization.form";
 import { Card } from "heroui-native/card";
 import { ScrollView, View } from "react-native";
 import { OrganizationFormInputs } from "@/modules/iam/organizations/presentation/components/organization-form-inputs";
 import { Button } from "heroui-native/button";
 import { Link, useRouter } from "expo-router";
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { useFindAllOrganizations } from "@fludge/client/application/iam/organization/queries/use-find-organization";
-import { useRegisterOrganization } from "@fludge/client/application/iam/organization/mutations/use-organization.mutations";
+import { useFindAllOrganizations } from "@fludge/client/application/iam/queries/use-find-organization";
+import { useRegisterOrganization } from "@fludge/client/application/iam/mutations/use-organization.mutations";
 import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gradual-height";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
-import { CommonInputs } from "@/modules/shared/components/common-input";
 import { useTranslation } from "react-i18next";
+import { useRegisterOrganizationForm } from "@fludge/client/application/iam/form/organization-form";
 
 const PADDING_BOTTOM = 20;
+
+function formId(name: string) {
+  return `register-organization-form-${name}`;
+}
 
 export function RegisterOrganizationScreen() {
   const { t } = useTranslation();
@@ -53,103 +56,52 @@ export function RegisterOrganizationScreen() {
         <View className="gap-y-8">
           <Card className="gap-y-4">
             <Card.Header>
-              <Card.Title>{t("screens.organizations.register_organization.commercial_data")}</Card.Title>
+              <Card.Title>
+                {t(
+                  "screens.organizations.register_organization.commercial_data"
+                )}
+              </Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
-              <form.AppField
+              <form.Field
                 name="name"
                 children={(field) => (
-                  <field.NameField
-                    children={({ field, id, isInvalid }) => (
-                      <OrganizationFormInputs.NameInput
-                        isInvalid={isInvalid}
-                        id={id}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChangeText={(e) => field.handleChange(e)}
-                        errors={field.state.meta.errors}
-                      />
-                    )}
-                  />
+                  <OrganizationFormInputs.NameInput field={field} />
                 )}
               />
-              <form.AppField
+              <form.Field
                 name="legalName"
                 children={(field) => (
-                  <field.NameField
-                    children={({ field, id, isInvalid }) => (
-                      <OrganizationFormInputs.LegalNameInput
-                        isInvalid={isInvalid}
-                        id={id}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChangeText={(e) => field.handleChange(e)}
-                        errors={field.state.meta.errors}
-                      />
-                    )}
-                  />
+                  <OrganizationFormInputs.LegalNameInput field={field} />
                 )}
               />
-              <form.AppField
+              <form.Field
                 name="taxId"
                 children={(field) => (
-                  <field.NameField
-                    children={({ field, id, isInvalid }) => (
-                      <OrganizationFormInputs.TaxIdInput
-                        isInvalid={isInvalid}
-                        id={id}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChangeText={(e) => field.handleChange(e)}
-                        errors={field.state.meta.errors}
-                      />
-                    )}
-                  />
+                  <OrganizationFormInputs.TaxIdInput field={field} />
                 )}
               />
             </Card.Body>
           </Card>
           <Card className="gap-y-4">
             <Card.Header>
-              <Card.Title>{t("screens.organizations.register_organization.location_contact")}</Card.Title>
+              <Card.Title>
+                {t(
+                  "screens.organizations.register_organization.location_contact"
+                )}
+              </Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
-              <form.AppField
+              <form.Field
                 name="phone"
                 children={(field) => (
-                  <field.NameField
-                    children={({ field, id, isInvalid }) => (
-                      <CommonInputs.PhoneInput
-                        isInvalid={isInvalid}
-                        id={id}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChangeText={(e) => field.handleChange(e)}
-                        errors={field.state.meta.errors}
-                        label="forms.user.phone.label"
-                        placeholder="forms.user.phone.placeholder"
-                      />
-                    )}
-                  />
+                  <OrganizationFormInputs.PhoneInput field={field} />
                 )}
               />
-              <form.AppField
+              <form.Field
                 name="address"
                 children={(field) => (
-                  <field.NameField
-                    children={({ field, id, isInvalid }) => (
-                      <CommonInputs.AddressInput
-                        isInvalid={isInvalid}
-                        id={id}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChangeText={(e) => field.handleChange(e)}
-                        errors={field.state.meta.errors}
-                        label="forms.organization.address.label"
-                        placeholder="forms.organization.address.placeholder"
-                      />
-                    )}
-                  />
+                  <OrganizationFormInputs.AddressInput field={field} />
                 )}
               />
             </Card.Body>
@@ -169,7 +121,7 @@ export function RegisterOrganizationScreen() {
             className="text-eclipse"
           />
           <Button.Label className="text-eclipse">
-             {t("screens.organizations.register_organization.submit")}
+            {t("screens.organizations.register_organization.submit")}
           </Button.Label>
         </Button>
         {hasOrganizations && (
@@ -179,7 +131,7 @@ export function RegisterOrganizationScreen() {
                 className="text-muted text-center underline"
                 type="body-sm"
               >
-                 {t("screens.organizations.register_organization.cancel")}
+                {t("screens.organizations.register_organization.cancel")}
               </Typography>
             </PressableFeedback>
           </Link>

@@ -1,5 +1,4 @@
 import { Link, useRouter } from "expo-router";
-import { useSignUpForm } from "@fludge/client/presentation/iam/auth/auth-form";
 import { View } from "react-native";
 import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
@@ -9,8 +8,9 @@ import { Typography } from "heroui-native/text";
 import { useState } from "react";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { FieldError } from "heroui-native/field-error";
-import { CommonInputs } from "@/modules/shared/components/common-input";
 import { useTranslation } from "react-i18next";
+import { useSignUpForm } from "@fludge/client/application/iam/form/sign-in-form";
+import { AuthFormInputs } from "../components/auth-form-inputs";
 
 export function SignUpScreen() {
   const { t } = useTranslation();
@@ -53,81 +53,22 @@ export function SignUpScreen() {
           {rootError && (
             <FieldError isInvalid={!!rootError}>{rootError}</FieldError>
           )}
-          <form.AppField
+          <form.Field
             name="name"
-            children={(field) => (
-              <field.NameField
-                children={({ field, id, isInvalid }) => (
-                  <CommonInputs.NameInput
-                    isInvalid={isInvalid}
-                    id={id}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChangeText={(e) => field.handleChange(e)}
-                    errors={field.state.meta.errors}
-                    label="forms.user.name.label"
-                    placeholder="forms.user.name.placeholder"
-                  />
-                )}
-              />
-            )}
+            children={(field) => <AuthFormInputs.NameInput field={field} />}
           />
-          <form.AppField
+
+          <form.Field
             name="phone"
-            children={(field) => (
-              <field.PhoneField
-                children={({ field, id, isInvalid }) => (
-                  <CommonInputs.PhoneInput
-                    isInvalid={isInvalid}
-                    id={id}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChangeText={(e) => field.handleChange(e)}
-                    errors={field.state.meta.errors}
-                    label="forms.user.phone.label"
-                    placeholder="forms.user.phone.placeholder"
-                  />
-                )}
-              />
-            )}
+            children={(field) => <AuthFormInputs.PhoneInput field={field} />}
           />
-          <form.AppField
+          <form.Field
             name="email"
-            children={(field) => (
-              <field.EmailField
-                children={({ field, id, isInvalid }) => (
-                  <CommonInputs.EmailInput
-                    isInvalid={isInvalid}
-                    id={id}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChangeText={(e) => field.handleChange(e)}
-                    errors={field.state.meta.errors}
-                    label="forms.user.email.label"
-                    placeholder="forms.user.email.placeholder"
-                  />
-                )}
-              />
-            )}
+            children={(field) => <AuthFormInputs.EmailInput field={field} />}
           />
-          <form.AppField
+          <form.Field
             name="password"
-            children={(field) => (
-              <field.PasswordField
-                children={({ field, id, isInvalid }) => (
-                  <CommonInputs.PasswordInput
-                    isInvalid={isInvalid}
-                    id={id}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChangeText={(e) => field.handleChange(e)}
-                    errors={field.state.meta.errors}
-                    label="forms.user.password.label"
-                    placeholder="forms.user.password.placeholder"
-                  />
-                )}
-              />
-            )}
+            children={(field) => <AuthFormInputs.PasswordInput field={field} />}
           />
           <Button onPress={form.handleSubmit}>
             {t("screens.sign_up.button")}

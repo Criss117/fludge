@@ -1,6 +1,5 @@
 import { CommonInputs } from "@/modules/shared/components/common-input";
 import type { MinimalField } from "@fludge/client/shared/field-api";
-
 interface FieldProps<T> {
   field: MinimalField<T>;
 }
@@ -12,54 +11,15 @@ function NameInput({ field }: FieldProps<string>) {
   return (
     <CommonInputs.TextInput
       isInvalid={isInvalid}
+      icon="person-outline"
       errors={errors}
-      label="forms.organization.name.label"
-      icon="add-business"
+      label="forms.user.name.label"
       inputProps={{
+        id: "sign-up-form-name",
         value: field.state.value,
         onBlur: field.handleBlur,
         onChangeText: field.handleChange,
-        placeholder: "forms.organization.name.placeholder",
-      }}
-    />
-  );
-}
-
-function LegalNameInput({ field }: FieldProps<string>) {
-  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-  const errors = field.state.meta.errors;
-
-  return (
-    <CommonInputs.TextInput
-      isInvalid={isInvalid}
-      errors={errors}
-      label="forms.organization.legal_name.label"
-      icon="apartment"
-      inputProps={{
-        value: field.state.value,
-        onBlur: field.handleBlur,
-        onChangeText: field.handleChange,
-        placeholder: "forms.organization.legal_name.placeholder",
-      }}
-    />
-  );
-}
-
-function TaxIdInput({ field }: FieldProps<string>) {
-  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-  const errors = field.state.meta.errors;
-
-  return (
-    <CommonInputs.TextInput
-      isInvalid={isInvalid}
-      errors={errors}
-      label="forms.organization.tax_id.label"
-      icon="badge"
-      inputProps={{
-        value: field.state.value,
-        onBlur: field.handleBlur,
-        onChangeText: field.handleChange,
-        placeholder: "forms.organization.tax_id.placeholder",
+        placeholder: "forms.user.name.placeholder",
       }}
     />
   );
@@ -72,43 +32,65 @@ function PhoneInput({ field }: FieldProps<string>) {
   return (
     <CommonInputs.TextInput
       isInvalid={isInvalid}
-      errors={errors}
-      label="forms.organization.phone.label"
       icon="phone"
+      errors={errors}
+      label="forms.user.phone.label"
       inputProps={{
+        id: "sign-up-form-phone",
         value: field.state.value,
         onBlur: field.handleBlur,
         onChangeText: field.handleChange,
-        placeholder: "forms.organization.phone.placeholder",
+        placeholder: "forms.user.phone.placeholder",
+        keyboardType: "phone-pad",
       }}
     />
   );
 }
 
-function AddressInput({ field }: FieldProps<string>) {
+function EmailInput({ field }: FieldProps<string>) {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
   const errors = field.state.meta.errors;
 
   return (
     <CommonInputs.TextInput
       isInvalid={isInvalid}
+      icon="mail-outline"
       errors={errors}
-      label="forms.organization.address.label"
-      icon="apartment"
+      label="forms.user.email.label"
       inputProps={{
+        id: "sign-up-form-email",
         value: field.state.value,
         onBlur: field.handleBlur,
         onChangeText: field.handleChange,
-        placeholder: "forms.organization.address.placeholder",
+        placeholder: "forms.user.email.placeholder",
       }}
     />
   );
 }
 
-export const OrganizationFormInputs = {
+function PasswordInput({ field }: FieldProps<string>) {
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+  const errors = field.state.meta.errors;
+
+  return (
+    <CommonInputs.PasswordInput
+      isInvalid={isInvalid}
+      errors={errors}
+      label="forms.user.password.label"
+      inputProps={{
+        id: "sign-up-form-password",
+        value: field.state.value,
+        onBlur: field.handleBlur,
+        onChangeText: field.handleChange,
+        placeholder: "forms.user.password.placeholder",
+      }}
+    />
+  );
+}
+
+export const AuthFormInputs = {
   NameInput,
-  LegalNameInput,
-  TaxIdInput,
   PhoneInput,
-  AddressInput,
+  EmailInput,
+  PasswordInput,
 };

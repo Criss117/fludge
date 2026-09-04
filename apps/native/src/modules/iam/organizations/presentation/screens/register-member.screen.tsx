@@ -1,13 +1,13 @@
-import { useRegisterMember } from "@fludge/client/application/iam/organization/mutations/use-member.mutations";
-import { useRegisterMemberForm } from "@fludge/client/presentation/iam/organization/register-member.form";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gradual-height";
 import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { ScrollView, View } from "react-native";
-import { CommonInputs } from "@/modules/shared/components/common-input";
 import { useTranslation } from "react-i18next";
+import { useRegisterMember } from "@fludge/client/application/iam/mutations/use-member.mutations";
+import { useRegisterMemberForm } from "@fludge/client/application/iam/form/member-form";
+import { AuthFormInputs } from "@/modules/iam/auth/presentation/components/auth-form-inputs";
 
 const PADDING_BOTTOM = 20;
 
@@ -37,45 +37,21 @@ export function RegisterMemberScreen() {
         <View className="gap-y-8">
           <Card className="gap-y-4">
             <Card.Header>
-              <Card.Title>{t("screens.members.register_member.credentials")}</Card.Title>
+              <Card.Title>
+                {t("screens.members.register_member.credentials")}
+              </Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
-              <form.AppField
+              <form.Field
                 name="email"
                 children={(field) => (
-                  <field.EmailField
-                    children={({ field: state, id, isInvalid }) => (
-                      <CommonInputs.EmailInput
-                        isInvalid={isInvalid}
-                        id={id}
-                        value={state.state.value}
-                        onBlur={state.handleBlur}
-                        onChangeText={state.handleChange}
-                        errors={state.state.meta.errors}
-                        label="forms.user.email.label"
-                        placeholder="forms.user.email.placeholder"
-                      />
-                    )}
-                  />
+                  <AuthFormInputs.EmailInput field={field} />
                 )}
               />
-              <form.AppField
+              <form.Field
                 name="password"
                 children={(field) => (
-                  <field.PasswordField
-                    children={({ field: state, id, isInvalid }) => (
-                      <CommonInputs.PasswordInput
-                        isInvalid={isInvalid}
-                        id={id}
-                        value={state.state.value}
-                        onBlur={state.handleBlur}
-                        onChangeText={state.handleChange}
-                        errors={state.state.meta.errors}
-                        label="forms.user.password.label"
-                        placeholder="forms.user.password.placeholder"
-                      />
-                    )}
-                  />
+                  <AuthFormInputs.PasswordInput field={field} />
                 )}
               />
             </Card.Body>
@@ -83,45 +59,20 @@ export function RegisterMemberScreen() {
 
           <Card className="gap-y-4">
             <Card.Header>
-              <Card.Title>{t("screens.members.register_member.personal_info")}</Card.Title>
+              <Card.Title>
+                {t("screens.members.register_member.personal_info")}
+              </Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
-              <form.AppField
+              <form.Field
+                name="name"
+                children={(field) => <AuthFormInputs.NameInput field={field} />}
+              />
+
+              <form.Field
                 name="phone"
                 children={(field) => (
-                  <field.PhoneField
-                    children={({ field: state, id, isInvalid }) => (
-                      <CommonInputs.PhoneInput
-                        isInvalid={isInvalid}
-                        id={id}
-                        value={state.state.value}
-                        onBlur={state.handleBlur}
-                        onChangeText={state.handleChange}
-                        errors={state.state.meta.errors}
-                        label="forms.user.phone.label"
-                        placeholder="forms.user.phone.placeholder"
-                      />
-                    )}
-                  />
-                )}
-              />
-              <form.AppField
-                name="name"
-                children={(field) => (
-                  <field.NameField
-                    children={({ field: state, id, isInvalid }) => (
-                      <CommonInputs.NameInput
-                        isInvalid={isInvalid}
-                        id={id}
-                        value={state.state.value}
-                        onBlur={state.handleBlur}
-                        onChangeText={state.handleChange}
-                        errors={state.state.meta.errors}
-                        label="forms.user.name.label"
-                        placeholder="forms.user.name.placeholder"
-                      />
-                    )}
-                  />
+                  <AuthFormInputs.PhoneInput field={field} />
                 )}
               />
             </Card.Body>
@@ -133,7 +84,9 @@ export function RegisterMemberScreen() {
       <View className="bg-background absolute bottom-0 w-full px-3 py-6">
         <Button onPress={form.handleSubmit} isDisabled={mutation.isPending}>
           <MaterialIcons name="person-add" size={20} className="text-eclipse" />
-          <Button.Label>{t("screens.members.register_member.submit")}</Button.Label>
+          <Button.Label>
+            {t("screens.members.register_member.submit")}
+          </Button.Label>
         </Button>
       </View>
     </View>

@@ -10,7 +10,7 @@ import { View } from "react-native";
 
 import { StatusChip } from "@/modules/shared/components/status-chip";
 import { MemberOptions } from "./options";
-import type { MemberSummary } from "@fludge/client/application/iam/organization/queries/use-find-members";
+import type { MemberSummary } from "@fludge/client/application/iam/queries/use-find-members";
 import { UserAvatar } from "@/modules/shared/components/user-avatar";
 import { cn } from "heroui-native";
 import { Checkbox } from "heroui-native/checkbox";
@@ -94,12 +94,12 @@ export function MemberCardBase({
           {isOwner ? (
             <Chip>
               <MaterialIcons name="verified-user" className="text-eclipse" />
-               <Chip.Label>{t("helpers.owner")}</Chip.Label>
+              <Chip.Label>{t("helpers.owner")}</Chip.Label>
             </Chip>
           ) : (
             <Chip>
               <MaterialIcons name="person" className="text-eclipse" />
-               <Chip.Label>{t("helpers.member")}</Chip.Label>
+              <Chip.Label>{t("helpers.member")}</Chip.Label>
             </Chip>
           )}
           <StatusChip status={member.status} />
@@ -107,7 +107,7 @@ export function MemberCardBase({
 
         <View className="pt-2">
           <Typography color="muted">
-             {t("helpers.joined_at")} {member.createdAt.toLocaleDateString()}
+            {t("helpers.joined_at")} {member.createdAt.toLocaleDateString()}
           </Typography>
         </View>
       </Card.Body>

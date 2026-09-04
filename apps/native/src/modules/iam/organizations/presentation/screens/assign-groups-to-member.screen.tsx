@@ -1,14 +1,14 @@
 import {
   type GroupSummary,
   useFindAllGroups,
-} from "@fludge/client/application/iam/organization/queries/use-find-groups";
+} from "@fludge/client/application/iam/queries/use-find-groups";
 import { FlatList, View } from "react-native";
 import { SelectableGroupCard } from "../components/group-card";
 import { useState } from "react";
 import { Button } from "heroui-native/button";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useToast } from "heroui-native";
-import { useAssignGroupsToMember } from "@fludge/client/application/iam/organization/mutations/use-member.mutations";
+import { useAssignGroupsToMember } from "@fludge/client/application/iam/mutations/use-member.mutations";
 import { useRouter } from "expo-router";
 import { Typography } from "heroui-native/text";
 import { SearchInput } from "@/modules/shared/components/search-input";
