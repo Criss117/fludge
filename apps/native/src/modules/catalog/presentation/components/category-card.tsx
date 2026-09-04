@@ -24,8 +24,10 @@ function Options({ category, setSelectedCategory }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const closeMenu = () => setIsOpen(false);
 
-  const selectToUpdate = () =>
+  const selectToUpdate = () => {
+    closeMenu();
     setSelectedCategory({ category, action: "edit" });
+  };
   const selectToDelete = () =>
     setSelectedCategory({ category, action: "delete" });
 
@@ -51,7 +53,11 @@ function Options({ category, setSelectedCategory }: Props) {
           <Popover.Close className="absolute top-3 right-3 z-50" />
           <Popover.Title>{t("helpers.options")}</Popover.Title>
 
-          <Button size="sm" onPress={closeMenu} className="flex justify-start">
+          <Button
+            size="sm"
+            onPress={selectToUpdate}
+            className="flex justify-start"
+          >
             <MaterialIcons name="edit" size={20} className="text-eclipse" />
             <Button.Label>{t("helpers.edit")}</Button.Label>
           </Button>

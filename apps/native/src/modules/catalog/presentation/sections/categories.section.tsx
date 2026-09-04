@@ -1,5 +1,5 @@
 import { useFindCategories } from "@fludge/client/application/catalog/queries/use-find-categories";
-import { FlatList, Keyboard, View } from "react-native";
+import { FlatList, View } from "react-native";
 import {
   CARD_HEIGHT,
   CategoryCard,
@@ -9,7 +9,10 @@ import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 import { Typography } from "heroui-native/text";
 import type { CategorySummary } from "@fludge/client/application/catalog/queries/use-find-categories";
 import { useTranslation } from "react-i18next";
-import { CreateCategoryForm } from "../components/create-category-form";
+import {
+  CreateCategoryForm,
+  UpdateCategoryForm,
+} from "../components/category-form";
 import { useState } from "react";
 import { DeleteCategoryDialog } from "../components/delete-category-dialog";
 
@@ -90,7 +93,17 @@ export function CategoriesSection({ query }: Props) {
         <CreateCategoryForm />
       </View>
       <DeleteCategoryDialog
-        category={selectedCategory?.category ?? null}
+        category={
+          selectedCategory?.action === "delete"
+            ? selectedCategory.category
+            : null
+        }
+        onClose={() => setSelectedCategory(null)}
+      />
+      <UpdateCategoryForm
+        category={
+          selectedCategory?.action === "edit" ? selectedCategory.category : null
+        }
         onClose={() => setSelectedCategory(null)}
       />
     </View>

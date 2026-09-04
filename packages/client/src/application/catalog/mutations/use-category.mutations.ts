@@ -27,7 +27,26 @@ export function useCreateCategoryMutation() {
   });
 }
 
-export function useDeleteCategory() {
+export function useUpdateCategoryMutation() {
+  const { categoryCollection } = useCategoriesCollection();
+
+  return useMutation({
+    mutationKey: ["catalog", "category", "update"],
+    mutationFn: async (values: CategorySchema & { id: string }) => {
+      const now = new Date();
+
+      const tx = categoryCollection.update(values.id, (draft) => {
+        draft.name = values.name;
+        draft.description = values.description;
+        draft.updatedAt = now;
+      });
+
+      await tx.isPersisted.promise;
+    },
+  });
+}
+
+export function useDeleteCategoryMutation() {
   const { categoryCollection } = useCategoriesCollection();
 
   return useMutation({

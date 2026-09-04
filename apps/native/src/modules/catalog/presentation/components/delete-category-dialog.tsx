@@ -1,5 +1,5 @@
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
-import { useDeleteCategory } from "@fludge/client/application/catalog/mutations/use-category.mutations";
+import { useDeleteCategoryMutation } from "@fludge/client/application/catalog/mutations/use-category.mutations";
 import type { CategorySummary } from "@fludge/client/application/catalog/queries/use-find-categories";
 import { TranslationKey } from "@fludge/i18n/index";
 import { Button } from "heroui-native/button";
@@ -14,7 +14,7 @@ interface Props {
 
 export function DeleteCategoryDialog({ category, onClose }: Props) {
   const { t } = useTranslation();
-  const deleteCategory = useDeleteCategory();
+  const deleteCategory = useDeleteCategoryMutation();
   const mutationToast = useMutationToast("delete-category-toast");
 
   const onRemoveCategory = () => {

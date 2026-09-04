@@ -8,11 +8,14 @@ export type OnCategorySubmit = {
   onSubmit: (options: { value: CategorySchema; resetForm: () => void }) => void;
 };
 
-export function categoryFormOptions(options: OnCategorySubmit) {
+export function categoryFormOptions(
+  options: OnCategorySubmit,
+  defaultValues?: CategorySchema,
+) {
   return formOptions({
     defaultValues: {
-      name: "",
-      description: "",
+      name: defaultValues?.name ?? "",
+      description: defaultValues?.description ?? "",
     },
     validators: {
       onChange: createCategoryValidator,
@@ -23,6 +26,13 @@ export function categoryFormOptions(options: OnCategorySubmit) {
   });
 }
 
-export function useCategoryForm(options: OnCategorySubmit) {
+export function useCreateCategoryForm(options: OnCategorySubmit) {
   return useForm(categoryFormOptions(options));
+}
+
+export function useUpdateCategoryForm(
+  defaultValues: CategorySchema,
+  options: OnCategorySubmit,
+) {
+  return useForm(categoryFormOptions(options, defaultValues));
 }
