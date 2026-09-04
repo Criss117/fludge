@@ -2,23 +2,25 @@ import { useFindGroup } from "@fludge/client/application/iam/queries/use-find-gr
 import { useUpdateGroup } from "@fludge/client/application/iam/mutations/use-group.mutations";
 import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gradual-height";
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { Button, Card, useToast } from "heroui-native";
 import { useRouter } from "expo-router";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { ScrollView, View } from "react-native";
 import { GroupFormInputs } from "../components/group-form-inputs";
 import { useTranslation } from "react-i18next";
 import { useGroupForm } from "@fludge/client/presentation/iam/group.form";
+import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
+import type { TranslationKey } from "@fludge/i18n/index";
+import { Card } from "heroui-native/card";
+import { Button } from "heroui-native/button";
 
 const PADDING_BOTTOM = 20;
-const TOAST_ID = "update-group-toast";
 
 export function UpdateGroupScreen({ groupid }: { groupid: string }) {
   const { t } = useTranslation();
   const { height } = useKeyboardGradualHeight(PADDING_BOTTOM);
   const { data: group } = useFindGroup(groupid);
   const mutation = useUpdateGroup();
-  const { toast } = useToast();
+  const mutationToast = useMutationToast("update-group-toast");
   const router = useRouter();
 
   const form = useGroupForm(
@@ -30,13 +32,7 @@ export function UpdateGroupScreen({ groupid }: { groupid: string }) {
 
         if (!hasPermissions) return;
 
-        toast.show({
-          id: TOAST_ID,
-          isSwipeable: true,
-          label: t("mutations.groups.update.is_pending"),
-          description: t("helpers.please_wait"),
-          duration: "persistent",
-        });
+        mutationToast.showIsPendingToast("mutations.groups.update.is_pending");
 
         mutation.mutate(
           {
@@ -47,27 +43,17 @@ export function UpdateGroupScreen({ groupid }: { groupid: string }) {
           },
           {
             onSuccess: () => {
-              toast.show({
-                id: TOAST_ID,
-                isSwipeable: true,
-                variant: "success",
-                label: t("mutations.groups.update.success.title"),
-                description: t("mutations.groups.update.success.description"),
-                actionLabel: t("helpers.close"),
-                onActionPress: ({ hide }) => hide(),
-              });
+              mutationToast.showSuccessToast(
+                "mutations.groups.update.success.title",
+                "mutations.groups.update.success.description"
+              );
               router.back();
             },
             onError: (error) => {
-              toast.show({
-                id: TOAST_ID,
-                isSwipeable: true,
-                variant: "danger",
-                label: t("mutations.groups.update.error"),
-                description: error.message,
-                actionLabel: t("helpers.close"),
-                onActionPress: ({ hide }) => hide(),
-              });
+              mutationToast.showErrorToast(
+                "mutations.groups.update.error",
+                error.message as TranslationKey
+              );
             },
           }
         );

@@ -1,0 +1,28 @@
+import { useMutation } from "@tanstack/react-query";
+import { useCategoriesCollection } from "../collections/categories.collection";
+import type { CategorySchema } from "../form/category-form";
+
+export function useCreateCategoryMutation() {
+  const { categoryCollection, activeOrganization } = useCategoriesCollection();
+
+  return useMutation({
+    mutationKey: ["catalog", "category", "create"],
+    mutationFn: async (values: CategorySchema) => {
+      const now = new Date();
+
+      const tx = categoryCollection.insert({
+        name: values.name,
+        description: values.description,
+        createdAt: now,
+        updatedAt: now,
+        createdBy: null,
+        id: crypto.randomUUID(),
+        organizationId: activeOrganization.id,
+        slug: values.name,
+        status: "active",
+      });
+
+      await tx.isPersisted.promise;
+    },
+  });
+}

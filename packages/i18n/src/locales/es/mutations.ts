@@ -35,4 +35,22 @@ export const mutations = {
       error: "Algo salió mal al asignar miembros",
     },
   },
+  categories: {
+    create: {
+      is_pending: "Creando categoría",
+      success: {
+        title: "Categoría Creada",
+        description: "La categoría se ha creado correctamente.",
+      },
+      error: "Algo salió mal al crear la categoría",
+    },
+    update: {
+      is_pending: "Actualizando Categoría",
+      success: {
+        title: "Categoría actualizada",
+        description: "La categoría se actualizó correctamente.",
+      },
+      error: "Algo salió mal al actualizar la categoría",
+    },
+  },
 };

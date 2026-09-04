@@ -4,7 +4,7 @@ import {
 } from "@fludge/client/application/iam/queries/use-find-members";
 import { useAssignMembersToGroup } from "@fludge/client/application/iam/mutations/use-group.mutations";
 import { useRouter } from "expo-router";
-import { Button, useToast } from "heroui-native";
+import { Button } from "heroui-native/button";
 import { useState } from "react";
 import { FlatList, View } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
@@ -20,6 +20,7 @@ import {
 } from "@/modules/shared/utils/assign-members-to-group.utils";
 import { useTranslation } from "react-i18next";
 import type { TranslationKey } from "@fludge/i18n/index";
+import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 
 interface Props {
   groupId: string;
@@ -27,14 +28,13 @@ interface Props {
 
 const ITEM_SEPARATOR_HEIGHT = 16;
 const PADDING_BOTTOM = 16;
-const TOAST_ID = "assign-members-to-group-toast";
 
 export function AssignMembersToGroup({ groupId }: Props) {
   const { t } = useTranslation();
+  const mutationToast = useMutationToast("assign-members-to-group-toast");
   const router = useRouter();
   const assignMembersToGroup = useAssignMembersToGroup();
   const { height } = useKeyboardGradualHeight(PADDING_BOTTOM);
-  const { toast } = useToast();
   const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([]);
   const [query, setQuery] = useState("");
 
@@ -51,41 +51,25 @@ export function AssignMembersToGroup({ groupId }: Props) {
   const onAssignMembers = () => {
     if (selectedMemberIds.length === 0) return;
 
-    toast.show({
-      id: TOAST_ID,
-      isSwipeable: true,
-      label: t("mutations.groups.assign_members.is_pending"),
-      description: t("helpers.please_wait"),
-      duration: "persistent",
-    });
+    mutationToast.showIsPendingToast(
+      "mutations.groups.assign_members.is_pending"
+    );
 
     assignMembersToGroup.mutate(
       { groupId, memberIds: selectedMemberIds },
       {
         onSuccess: () => {
-          toast.show({
-            id: TOAST_ID,
-            isSwipeable: true,
-            variant: "success",
-            label: t("mutations.groups.assign_members.success.title"),
-            description: t(
-              "mutations.groups.assign_members.success.description"
-            ),
-            actionLabel: t("helpers.close"),
-            onActionPress: ({ hide }) => hide(),
-          });
+          mutationToast.showSuccessToast(
+            "mutations.groups.assign_members.success.title",
+            "mutations.groups.assign_members.success.description"
+          );
           router.back();
         },
         onError: (error) => {
-          toast.show({
-            id: TOAST_ID,
-            isSwipeable: true,
-            variant: "danger",
-            label: t("mutations.groups.assign_members.error"),
-            description: t(error.message as TranslationKey),
-            actionLabel: t("helpers.close"),
-            onActionPress: ({ hide }) => hide(),
-          });
+          mutationToast.showErrorToast(
+            "mutations.groups.assign_members.error",
+            error.message as TranslationKey
+          );
         },
       }
     );

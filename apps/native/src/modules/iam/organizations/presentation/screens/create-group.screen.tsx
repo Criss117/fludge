@@ -1,6 +1,5 @@
 import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gradual-height";
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { Button, Card, useToast } from "heroui-native";
 import { useRouter } from "expo-router";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { ScrollView, View } from "react-native";
@@ -9,26 +8,23 @@ import { useTranslation } from "react-i18next";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useCreateGroup } from "@fludge/client/application/iam/mutations/use-group.mutations";
 import { useGroupForm } from "@fludge/client/presentation/iam/group.form";
+import { Card } from "heroui-native/card";
+import { Button } from "heroui-native/button";
+import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 
 const PADDING_BOTTOM = 20;
-const TOAST_ID = "create-group-toast";
 
 export function CreateGroupScreen() {
   const { t } = useTranslation();
   const { height } = useKeyboardGradualHeight(PADDING_BOTTOM);
   const mutation = useCreateGroup();
-  const { toast } = useToast();
+
+  const mutationToast = useMutationToast("create-group-toast");
   const router = useRouter();
 
   const form = useGroupForm({
     onSubmit: ({ value }) => {
-      toast.show({
-        id: TOAST_ID,
-        isSwipeable: true,
-        label: t("mutations.groups.create.is_pending"),
-        description: t("helpers.please_wait"),
-        duration: "persistent",
-      });
+      mutationToast.showIsPendingToast("mutations.groups.create.is_pending");
 
       mutation.mutate(
         {
@@ -38,27 +34,17 @@ export function CreateGroupScreen() {
         },
         {
           onSuccess: () => {
-            toast.show({
-              id: TOAST_ID,
-              isSwipeable: true,
-              variant: "success",
-              label: t("mutations.groups.create.success.title"),
-              description: t("mutations.groups.create.success.description"),
-              actionLabel: t("helpers.close"),
-              onActionPress: ({ hide }) => hide(),
-            });
+            mutationToast.showSuccessToast(
+              "mutations.groups.create.success.title",
+              "mutations.groups.create.success.description"
+            );
             router.back();
           },
           onError: (error) => {
-            toast.show({
-              id: TOAST_ID,
-              isSwipeable: true,
-              variant: "danger",
-              label: t("mutations.groups.create.error"),
-              description: t(error.message as TranslationKey),
-              actionLabel: t("helpers.close"),
-              onActionPress: ({ hide }) => hide(),
-            });
+            mutationToast.showErrorToast(
+              "mutations.groups.create.error",
+              error.message as TranslationKey
+            );
           },
         }
       );

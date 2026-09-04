@@ -17,7 +17,7 @@ export function CategoryCard({ category }: Props) {
         <View className="flex-1">
           <Card.Title className="line-clamp-2">{category.name}</Card.Title>
           {category.description && (
-            <Card.Description className="line-clamp-2">
+            <Card.Description className="line-clamp-1">
               {category.description}
             </Card.Description>
           )}
