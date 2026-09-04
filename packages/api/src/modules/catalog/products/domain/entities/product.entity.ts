@@ -20,7 +20,7 @@ import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
 type CreateProduct = {
   name: string;
   categoryId: string | null;
-  description: string | null;
+  description: string;
   stock: number;
   allowNegativeStock: boolean;
   minStock: number;
@@ -45,7 +45,7 @@ export class Product {
     private _name: string,
     private _searchBlob: SearchBlob,
     private _slug: Slug,
-    private _description: string | null,
+    private _description: string,
 
     private _stock: ProductStock,
 
@@ -141,7 +141,7 @@ export class Product {
       this._slug = new Slug(data.name);
     }
 
-    if (data.description) this._description = data.description;
+    if (data.description !== undefined) this._description = data.description;
 
     if (data.status) this._status = new ProductStatus(data.status);
 

@@ -7,12 +7,12 @@ export type CreateCategory = {
   name: string;
   organizationId: UUID;
   createdBy: UUID | null;
-  description?: string | null;
+  description?: string;
 };
 
 export type UpdateCategory = {
   name?: string;
-  description?: string | null;
+  description?: string;
   status?: Status;
 };
 
@@ -21,7 +21,7 @@ export class Category {
     private readonly _id: UUID,
     private _name: string,
     private _slug: Slug,
-    private _description: string | null,
+    private _description: string,
     private _status: Status,
     private readonly _organizationId: UUID,
     private readonly _createdBy: UUID | null,
@@ -36,7 +36,7 @@ export class Category {
       UUID.generate(),
       data.name,
       new Slug(data.name),
-      data.description ?? null,
+      data.description ?? "",
       new Status("active"),
       data.organizationId,
       data.createdBy,

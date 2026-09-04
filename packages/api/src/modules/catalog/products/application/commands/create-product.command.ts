@@ -35,7 +35,7 @@ export class CreateProductCommand {
     const product = Product.create({
       allowNegativeStock: cmd.allowNegativeStock,
       categoryId: cmd.categoryId ?? null,
-      description: cmd.description ?? null,
+      description: cmd.description ?? "",
       minStock: cmd.minStock,
       name: cmd.name,
       organizationId: activeOrganization.id.toString(),

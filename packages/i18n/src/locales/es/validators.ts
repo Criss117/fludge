@@ -9,6 +9,7 @@ export const validators = {
     },
     description: {
       invalid: "La descripción debe ser un texto",
+      min_length: "La descripción es demasiado corta",
     },
     phone: {
       invalid: "El teléfono es inválido",

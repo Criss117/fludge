@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { productStatusEnum } from "../enums/db-enums";
-import { uuidSchema } from "./shared";
+import { descriptionSchema, uuidSchema } from "./shared";
 
 export const createProductPresentationValidator = z.object({
   name: z.string(),
@@ -14,7 +14,7 @@ export const createProductPresentationValidator = z.object({
 export const createProductValidator = z.object({
   name: z.string(),
   categoryId: z.uuid().optional(),
-  description: z.string().optional(),
+  description: descriptionSchema.optional(),
   stock: z.number(),
   allowNegativeStock: z.boolean(),
   minStock: z.number(),

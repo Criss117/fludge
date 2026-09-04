@@ -110,7 +110,7 @@ export const group = sqliteTable(
     id: text("id").primaryKey(),
     name: text("name").notNull(),
     slug: text("slug").notNull(),
-    description: text("description"),
+    description: text("description").notNull(),
     permissions: text("permissions", { mode: "json" })
       .notNull()
       .$type<Permission[]>(),
@@ -141,7 +141,7 @@ export const groupHistory = sqliteTable(
       }),
 
     action: text("action", { enum: historyActionEnum }).notNull(),
-    description: text("description"),
+    description: text("description").notNull(),
 
     before: text("before", { mode: "json" }).$type<GroupSelect>(),
     after: text("after", { mode: "json" }).$type<GroupSelect>(),

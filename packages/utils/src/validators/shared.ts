@@ -28,7 +28,10 @@ export const descriptionSchema = z
   .string({
     error: getI18nKey("validators.shared.description.invalid"),
   })
-  .trim();
+  .trim()
+  .refine((v) => v.length === 0 || v.length >= 15, {
+    error: getI18nKey("validators.shared.description.min_length"),
+  });
 
 export const statusSchema = z.enum(statusEnum);
 

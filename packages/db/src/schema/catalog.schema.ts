@@ -17,7 +17,7 @@ export const category = sqliteTable(
     name: text("name").notNull(),
     slug: text("slug").notNull(),
 
-    description: text("description"),
+    description: text("description").notNull(),
 
     status: status,
 
@@ -48,7 +48,7 @@ export const product = sqliteTable(
     name: text("name").notNull(),
     slug: text("slug").notNull(),
     searchBlob: text("search_blob").notNull(),
-    description: text("description"),
+    description: text("description").notNull(),
 
     categoryId: text("category_id").references(() => category.id, {
       onDelete: "set null",

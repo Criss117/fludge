@@ -29,7 +29,7 @@ export class CreateCategoryCommand {
 
     const category = Category.create({
       name: cmd.name,
-      description: cmd.description ?? null,
+      description: cmd.description ?? "",
       organizationId: activeOrganization.id,
       createdBy: loggedMember.id,
     });

@@ -8,7 +8,7 @@ import { UUID } from "@fludge/utils/uuid";
 
 export type CreateGroup = {
   name: string;
-  description?: string | null;
+  description?: string;
   permissions: Permissions;
   createdBy: UUID | null;
 };
@@ -22,7 +22,7 @@ export class Group {
     private readonly _id: UUID,
     private _name: string,
     private _slug: Slug,
-    private _description: string | null,
+    private _description: string,
     private _permissions: Permissions,
     private readonly _createdBy: UUID | null,
 
@@ -37,7 +37,7 @@ export class Group {
       UUID.generate(),
       values.name,
       new Slug(values.name),
-      values.description ?? null,
+      values.description ?? "",
       values.permissions,
       values.createdBy,
       now,
