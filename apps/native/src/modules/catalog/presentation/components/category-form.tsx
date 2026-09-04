@@ -140,6 +140,24 @@ export function UpdateCategoryForm({
   category,
   onClose,
 }: UpdateCategoryFormProps) {
+  return (
+    <FormBottomSheet
+      isOpen={category !== null}
+      onOpenChange={(v) => {
+        if (!v) onClose();
+      }}
+    >
+      {category === null ? null : (
+        <UpdateCategoryFormBody category={category} onClose={onClose} />
+      )}
+    </FormBottomSheet>
+  );
+}
+
+function UpdateCategoryFormBody({
+  category,
+  onClose,
+}: UpdateCategoryFormProps) {
   const mutationToast = useMutationToast("category-form-toast");
   const createCategory = useUpdateCategoryMutation();
 
@@ -169,6 +187,7 @@ export function UpdateCategoryForm({
                 "mutations.categories.update.success.description"
               );
               KeyboardController.dismiss();
+              resetForm();
               onClose();
             },
             onError: (error) => {
@@ -184,17 +203,10 @@ export function UpdateCategoryForm({
   );
 
   return (
-    <FormBottomSheet
-      isOpen={category !== null}
-      onOpenChange={(v) => {
-        if (!v) onClose();
-      }}
-    >
-      <CategoryForm
-        form={form}
-        isPending={createCategory.isPending}
-        label="forms.category.create"
-      />
-    </FormBottomSheet>
+    <CategoryForm
+      form={form}
+      isPending={createCategory.isPending}
+      label="forms.category.create"
+    />
   );
 }
