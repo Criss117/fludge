@@ -15,6 +15,7 @@ import {
 } from "../components/category-form";
 import { useState } from "react";
 import { DeleteCategoryDialog } from "../components/delete-category-dialog";
+import { SearchInput } from "@/modules/shared/components/search-input";
 
 interface Props {
   query: string;
@@ -43,7 +44,7 @@ function ListFooterComponent({ hasNextPage }: { hasNextPage: boolean }) {
     );
   }
 
-  return <CategoriesSectionSkeleton />;
+  return <CategoriesScreenSkeleton />;
 }
 
 type SelectedCategory = {
@@ -51,20 +52,26 @@ type SelectedCategory = {
   action: "edit" | "delete";
 };
 
-export function CategoriesSection({ query }: Props) {
+export function CategoriesScreen() {
+  const [query, setQuery] = useState("");
   const { data, fetchNextPage, hasNextPage, isLoading, isReady } =
-    useFindCategories({ query });
+    useFindCategories();
   const [selectedCategory, setSelectedCategory] =
     useState<SelectedCategory | null>(null);
 
-  if (isLoading && !isReady) return <CategoriesSectionSkeleton length={10} />;
+  if (isLoading && !isReady) return <CategoriesScreenSkeleton length={10} />;
 
   return (
-    <View className="flex-1">
+    <View className="relative flex-1 gap-y-3 px-3 pt-2">
+      <SearchInput
+        query={query}
+        setQuery={setQuery}
+        placeholder="helpers.placeholder.search_categories"
+      />
       <FlatList
-        className="flex-1 pb-1"
+        className="flex-1"
+        contentContainerClassName="pb-40"
         data={data}
-        contentContainerStyle={{ paddingBottom: 124 }}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
@@ -89,7 +96,7 @@ export function CategoriesSection({ query }: Props) {
         ListFooterComponent={<ListFooterComponent hasNextPage={hasNextPage} />}
         ListEmptyComponent={<ListEmptyComponent />}
       />
-      <View className="absolute right-0 bottom-20">
+      <View className="absolute right-0 bottom-20 px-3">
         <CreateCategoryForm />
       </View>
       <DeleteCategoryDialog
@@ -110,9 +117,9 @@ export function CategoriesSection({ query }: Props) {
   );
 }
 
-export function CategoriesSectionSkeleton({ length = 3 }: { length?: number }) {
+export function CategoriesScreenSkeleton({ length = 3 }: { length?: number }) {
   return (
-    <View className="gap-y-4">
+    <View className="relative flex-1 gap-y-3 px-3 pt-2">
       {Array.from({ length }).map((_, i) => (
         <CategoryCardSkeleton key={i} />
       ))}

@@ -71,25 +71,27 @@ export function GroupScreen({ group }: { group: GroupSummary }) {
         </Tabs>
       </ScrollView>
 
-      <View className="pt-2 pb-4">
-        <Link
-          href={{
-            pathname: "/(private)/dashboard/groups/[groupid]/assign-members",
-            params: { groupid: group.id },
-          }}
-          push
-          asChild
-        >
-          <Button>
-            <MaterialIcons
-              name="add-circle-outline"
-              size={20}
-              className="text-eclipse"
-            />
-            <Button.Label>{t("forms.member.assign_groups")}</Button.Label>
-          </Button>
-        </Link>
-      </View>
+      {tab === "members" && (
+        <View className="pt-2 pb-4">
+          <Link
+            href={{
+              pathname: "/(private)/dashboard/groups/[groupid]/assign-members",
+              params: { groupid: group.id },
+            }}
+            push
+            asChild
+          >
+            <Button>
+              <MaterialIcons
+                name="add-circle-outline"
+                size={20}
+                className="text-eclipse"
+              />
+              <Button.Label>{t("forms.member.assign_groups")}</Button.Label>
+            </Button>
+          </Link>
+        </View>
+      )}
     </View>
   );
 }

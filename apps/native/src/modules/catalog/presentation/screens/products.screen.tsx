@@ -9,10 +9,9 @@ import { FloatingLink } from "@/modules/shared/components/floating-link";
 import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
-
-interface Props {
-  query: string;
-}
+import { SearchInput } from "@/modules/shared/components/search-input";
+import { useState } from "react";
+import { CameraDialog } from "@/modules/shared/components/camera-dialog";
 
 interface ListFooterProps {
   hasNextPage: boolean;
@@ -29,23 +28,34 @@ function ListFooterComponent({ hasNextPage }: ListFooterProps) {
       </View>
     );
 
-  return <ProductsSectionSkeleton />;
+  return <ProductsScreenSkeleton />;
 }
 
-export function ProductsSection({ query }: Props) {
+export function ProductsScreen() {
+  const [query, setQuery] = useState("");
   const { data, fetchNextPage, hasNextPage, isLoading, isReady } =
     useFindProducts({
       query,
     });
 
-  if (isLoading && !isReady) return <ProductsSectionSkeleton length={10} />;
+  if (isLoading) return <ProductsScreenSkeleton length={10} />;
 
   return (
-    <View className="relative flex-1">
+    <View className="relative flex-1 gap-y-3 px-3 pt-2">
+      <View className="flex-row items-center">
+        <View className="flex-1">
+          <SearchInput
+            query={query}
+            setQuery={setQuery}
+            placeholder="helpers.placeholder.search_products"
+          />
+        </View>
+        <CameraDialog setBarcode={setQuery} />
+      </View>
       <FlatList
-        className="flex-1 pb-1"
+        className="flex-1"
+        contentContainerClassName="pb-40"
         data={data}
-        contentContainerStyle={{ paddingBottom: 124 }}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => <ProductCard product={item} />}
@@ -64,7 +74,7 @@ export function ProductsSection({ query }: Props) {
         ListFooterComponentClassName="py-4"
         ListFooterComponent={<ListFooterComponent hasNextPage={hasNextPage} />}
       />
-      <View className="absolute right-0 bottom-20">
+      <View className="absolute right-0 bottom-20 px-3">
         <FloatingLink
           href={{
             pathname: "/(private)/dashboard/products/create",
@@ -75,9 +85,9 @@ export function ProductsSection({ query }: Props) {
   );
 }
 
-export function ProductsSectionSkeleton({ length = 3 }: { length?: number }) {
+export function ProductsScreenSkeleton({ length = 3 }: { length?: number }) {
   return (
-    <View className="gap-y-4">
+    <View className="relative flex-1 gap-y-3 px-3 pt-2">
       {Array.from({ length }).map((_, i) => (
         <ProductCardSkeleton key={i} />
       ))}

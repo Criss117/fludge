@@ -6,10 +6,10 @@ interface Filters {
   query: string;
 }
 
-export function useFindProducts(filters: Filters) {
+export function useFindProducts(filters?: Filters) {
   const { productCollection } = useProductsCollection();
 
-  const normalizedQuery = SearchBlob.normalize(filters.query);
+  const normalizedQuery = SearchBlob.normalize(filters?.query ?? "");
 
   return useLiveInfiniteQuery(
     (q) => {

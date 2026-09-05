@@ -36,6 +36,7 @@ interface DialogProps {
   isOpen: boolean;
   onOpenChange: (v: boolean) => void;
   children: React.ReactNode;
+  hideTrigger?: boolean;
 }
 
 function CategoryForm({ form, isPending, label }: FormProps) {
@@ -61,16 +62,23 @@ function CategoryForm({ form, isPending, label }: FormProps) {
   );
 }
 
-function FormBottomSheet({ isOpen, onOpenChange, children }: DialogProps) {
+function FormBottomSheet({
+  isOpen,
+  onOpenChange,
+  children,
+  hideTrigger,
+}: DialogProps) {
   const snapPoints = useMemo(() => ["50%", "90%"], []);
 
   return (
     <BottomSheet isOpen={isOpen} onOpenChange={onOpenChange}>
-      <BottomSheet.Trigger asChild>
-        <Button isIconOnly size="lg">
-          <MaterialIcons name="add" size={26} className="text-muted" />
-        </Button>
-      </BottomSheet.Trigger>
+      {!hideTrigger && (
+        <BottomSheet.Trigger asChild>
+          <Button isIconOnly size="lg">
+            <MaterialIcons name="add" size={26} className="text-muted" />
+          </Button>
+        </BottomSheet.Trigger>
+      )}
       <BottomSheet.Portal>
         <BottomSheet.Overlay />
         <BottomSheet.Content
@@ -146,6 +154,7 @@ export function UpdateCategoryForm({
       onOpenChange={(v) => {
         if (!v) onClose();
       }}
+      hideTrigger
     >
       {category === null ? null : (
         <UpdateCategoryFormBody category={category} onClose={onClose} />
