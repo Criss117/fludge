@@ -1,3 +1,4 @@
+import { GeistFonts } from "@/integrations/fonts";
 import { BackButton } from "@/modules/shared/components/back-button";
 import { Stack } from "expo-router";
 import { useThemeColor } from "heroui-native";
@@ -18,6 +19,7 @@ export default function GroupsLayout() {
         },
         headerTitleStyle: {
           color: foreground,
+          fontFamily: GeistFonts.SemiBold,
         },
         headerShadowVisible: false,
         headerLeft: () => <BackButton />,

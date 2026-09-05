@@ -27,3 +27,21 @@ export function SearchInput({
     </SearchField>
   );
 }
+
+export function SearchInputSkeleton({
+  placeholder,
+}: {
+  placeholder: TranslationKey;
+}) {
+  const { t } = useTranslation();
+
+  return (
+    <SearchField value="" onChange={() => {}}>
+      <SearchField.Group>
+        <SearchField.SearchIcon />
+        <SearchField.Input placeholder={t(placeholder)} isDisabled />
+        <SearchField.ClearButton />
+      </SearchField.Group>
+    </SearchField>
+  );
+}

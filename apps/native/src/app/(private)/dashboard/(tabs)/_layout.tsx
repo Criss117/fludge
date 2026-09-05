@@ -1,3 +1,4 @@
+import { GeistFonts } from "@/integrations/fonts";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { UserButton } from "@/modules/shared/components/user-button";
 import { useAppTheme } from "@/modules/shared/context/app-theme-context";
@@ -114,6 +115,7 @@ export default function DashboardTabsLayout() {
         },
         headerTitleStyle: {
           color: foreground,
+          fontFamily: GeistFonts.SemiBold,
         },
         headerRight: () => <UserButton />,
         animation: "shift",
