@@ -19,12 +19,12 @@ import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
 
 type CreateProduct = {
   name: string;
-  categoryId: string | null;
+  categoryId?: string;
   description: string;
   stock: number;
   allowNegativeStock: boolean;
   minStock: number;
-  createdBy: string | null;
+  createdBy?: string;
   organizationId: string;
 
   presentations: CreateProductPresentation[];
@@ -60,7 +60,7 @@ export class Product {
 
   public static create(data: CreateProduct) {
     const somePresentationHasBarcode = data.presentations.some(
-      (item) => item.barcode !== null && item.barcode.length > 0,
+      (item) => item.barcode && item.barcode.length > 0,
     );
 
     if (!somePresentationHasBarcode)

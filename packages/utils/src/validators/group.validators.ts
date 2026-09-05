@@ -15,7 +15,7 @@ export const createGroupValidator = z.object({
 });
 
 export const updateGroupValidator = z.object({
-  id: uuidSchema(),
+  id: uuidSchema,
   name: nameSchema.optional(),
   description: descriptionSchema.optional(),
   permissions: permissionsValidator.optional(),
@@ -23,14 +23,14 @@ export const updateGroupValidator = z.object({
 });
 
 export const assignMembersToGroupValidator = z.object({
-  groupId: uuidSchema(),
-  memberIds: z.array(uuidSchema()).min(1, {
-    error: getI18nKey("validators.groups.member_ids.required"),
+  groupId: uuidSchema,
+  memberIds: z.array(uuidSchema).min(1, {
+    error: getI18nKey("validators.array.at_least_one"),
   }),
 });
 
 export const deleteGroupsValidator = z.object({
-  groupIds: z.array(uuidSchema()).min(1, {
-    error: getI18nKey("validators.groups.member_ids.required"),
+  groupIds: z.array(uuidSchema).min(1, {
+    error: getI18nKey("validators.array.at_least_one"),
   }),
 });

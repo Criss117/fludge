@@ -8,11 +8,11 @@ export const createCategoryValidator = z.object({
 });
 
 export const deleteCategoryValidator = z.object({
-  id: uuidSchema(),
+  id: uuidSchema,
 });
 
 export const updateCategoryValidator = z.object({
-  id: uuidSchema(),
+  id: uuidSchema,
   name: nameSchema.optional(),
   description: descriptionSchema.optional(),
   status: z.enum(statusEnum).optional(),

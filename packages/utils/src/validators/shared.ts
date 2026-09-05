@@ -7,46 +7,76 @@ export function getI18nKey(key: TranslationKey) {
   return key;
 }
 
-export function uuidSchema(
-  message = getI18nKey("validators.shared.uuid.invalid"),
-) {
-  return z.uuid({
-    error: message,
-  });
-}
+export const uuidSchema = z.uuid({
+  error: getI18nKey("validators.uuid.invalid"),
+});
 
 export const nameSchema = z
   .string({
-    error: getI18nKey("validators.shared.name.required"),
+    error: getI18nKey("validators.name.required"),
   })
   .trim()
-  .min(1, {
-    error: getI18nKey("validators.shared.name.min_length"),
-  });
-
-export const descriptionSchema = z
-  .string({
-    error: getI18nKey("validators.shared.description.invalid"),
+  .min(5, {
+    error: getI18nKey("validators.name.min_length"),
   })
-  .trim()
-  .refine((v) => v.length === 0 || v.length >= 15, {
-    error: getI18nKey("validators.shared.description.min_length"),
+  .max(50, {
+    error: getI18nKey("validators.name.max_length"),
   });
 
-export const statusSchema = z.enum(statusEnum);
+export const descriptionSchema = z.literal("").or(
+  z
+    .string({
+      error: getI18nKey("validators.description.invalid"),
+    })
+    .trim()
+    .min(15, {
+      error: getI18nKey("validators.description.min_length"),
+    })
+    .max(100, {
+      error: getI18nKey("validators.description.max_length"),
+    }),
+);
+
+export const statusSchema = z.enum(statusEnum, {
+  error: getI18nKey("validators.status.invalid"),
+});
 
 export const phoneSchema = z
   .string({
-    error: getI18nKey("validators.shared.phone.invalid"),
+    error: getI18nKey("validators.phone.invalid"),
   })
   .trim()
   .min(9, {
-    error: getI18nKey("validators.shared.phone.min_length"),
+    error: getI18nKey("validators.phone.min_length"),
   })
   .max(15, {
-    error: getI18nKey("validators.shared.phone.max_length"),
-  });
+    error: getI18nKey("validators.phone.max_length"),
+  })
+  .refine(
+    (v) => {
+      const n = Number(v);
+
+      if (isNaN(n)) return false;
+
+      return n.toString().length === v.length;
+    },
+    {
+      error: getI18nKey("validators.phone.invalid"),
+    },
+  );
 
 export const emailSchema = z.email({
-  error: "Ingresa un email válido",
+  error: getI18nKey("validators.email.invalid"),
 });
+
+export const passwordSchema = z
+  .string({
+    error: getI18nKey("validators.password.invalid"),
+  })
+  .trim()
+  .min(8, {
+    error: getI18nKey("validators.password.min_length"),
+  })
+  .max(50, {
+    error: getI18nKey("validators.password.max_length"),
+  });

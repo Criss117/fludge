@@ -34,7 +34,7 @@ export class CreateProductCommand {
 
     const product = Product.create({
       allowNegativeStock: cmd.allowNegativeStock,
-      categoryId: cmd.categoryId ?? null,
+      categoryId: cmd.categoryId,
       description: cmd.description ?? "",
       minStock: cmd.minStock,
       name: cmd.name,
@@ -42,13 +42,13 @@ export class CreateProductCommand {
       createdBy: loggedMember.id.toString(),
       stock: cmd.stock,
       presentations: cmd.presentations.map((item) => ({
-        barcode: item.barcode ?? null,
+        barcode: item.barcode,
         conversionFactor: item.conversionFactor,
         name: item.name,
         productName: cmd.name,
-        pricePurchase: item.pricePurchase ?? null,
+        pricePurchase: item.pricePurchase,
         priceSale: item.priceSale,
-        priceWholesale: item.priceWholesale ?? null,
+        priceWholesale: item.priceWholesale,
         organizationId: activeOrganization.id.toString(),
         createdBy: loggedMember.id.toString(),
       })),

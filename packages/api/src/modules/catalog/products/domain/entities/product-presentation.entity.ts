@@ -7,13 +7,13 @@ import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
 export type CreateProductPresentation = {
   name: string;
   productName: string;
-  barcode: string | null;
+  barcode?: string;
   conversionFactor: number;
-  createdBy: string | null;
+  createdBy?: string;
   organizationId: string;
-  pricePurchase: number | null;
+  pricePurchase?: number;
   priceSale: number;
-  priceWholesale: number | null;
+  priceWholesale?: number;
 };
 
 export type UpdateProductPresentation = Partial<
@@ -47,13 +47,13 @@ export class ProductPresentation {
     return new ProductPresentation(
       UUID.generate(),
       UUID.fromString(data.organizationId),
-      data.barcode,
+      data.barcode ?? null,
       data.conversionFactor,
       data.name,
       new SearchBlob(data.productName + " " + data.name),
-      data.pricePurchase,
+      data.pricePurchase ?? null,
       data.priceSale,
-      data.priceWholesale,
+      data.priceWholesale ?? null,
       new ProductStatus("active"),
       data.createdBy ? UUID.fromString(data.createdBy) : null,
       new Date(),

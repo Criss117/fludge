@@ -84,5 +84,8 @@ export const screens = {
     title: "Productos",
     not_found: "No se encontraron productos",
     no_more: "No hay más productos",
+    create: {
+      title: "Crear producto",
+    },
   },
 };
