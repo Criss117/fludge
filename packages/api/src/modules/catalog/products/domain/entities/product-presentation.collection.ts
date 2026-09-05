@@ -1,3 +1,5 @@
+import type { UUID } from "@fludge/utils/uuid";
+import { DuplicatedBarcodeException } from "../exceptions/duplicated-barcode.exception";
 import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-bresentation-no-has-barcode.exception";
 import { ProductPresentationAlreadyExistsException } from "../exceptions/product-presentation-already-exists.exception";
 import { ProductPresentationNotFoundException } from "../exceptions/product-presentation-not-found.exception";
@@ -21,8 +23,15 @@ export class ProductPresentationCollection {
     return Array.from(this._items.values());
   }
 
-  public checkEquals(other: ProductPresentation) {
-    return this.items.some((item) => item.checkUniques(other));
+  public checkEquals(other: ProductPresentation, excludeId?: UUID) {
+    const exists = this.items.some((item) => {
+      if (excludeId && excludeId.toString() === item.id.toString())
+        return false;
+
+      return item.checkUniques(other);
+    });
+
+    if (exists) throw new ProductPresentationAlreadyExistsException();
   }
 
   public get(id: string) {
@@ -33,74 +42,45 @@ export class ProductPresentationCollection {
     if (this._items.has(item.id.toString()))
       throw new ProductPresentationAlreadyExistsException();
 
-    if (this.checkEquals(item))
-      throw new ProductPresentationAlreadyExistsException();
-
-    this._items.set(item.id.toString(), item);
-  }
-
-  public checkUniquesForUpdate(
-    id: string,
-    data: Pick<UpdateProductPresentation, "name" | "barcode">,
-  ) {
-    return this.items.some(
-      (item) => item.id.toString() !== id && item.checkUniquesData(data),
-    );
-  }
-
-  public update(id: string, data: UpdateProductPresentation) {
-    const item = this.get(id);
-
-    if (!item) throw new ProductPresentationNotFoundException();
-
-    if (this.checkUniquesForUpdate(id, data))
-      throw new ProductPresentationAlreadyExistsException();
-
-    item.update(data);
+    this.checkEquals(item);
 
     this._items.set(item.id.toString(), item);
 
-    if (this.barcodes.length === 0)
-      throw new ProductPresentationNoHasBarcodeException();
+    this.checkBarcodes();
 
     return item;
   }
 
-  public updateMany(
-    updates: { id: string; data: UpdateProductPresentation }[],
-  ): ProductPresentation[] {
-    const updatesById = new Map(updates.map((u) => [u.id, u.data]));
+  public addMany(items: ProductPresentation[]) {
+    return items.map((item) => this.add(item));
+  }
 
-    for (const { id } of updates) {
-      if (!this._items.has(id))
-        throw new ProductPresentationNotFoundException();
-    }
+  public update(id: string, data: UpdateProductPresentation) {
+    const item = this._items.get(id);
 
-    const projected = this.items.map((item) => {
-      const data = updatesById.get(item.id.toString());
-      const unique = data
-        ? item.previewUniqueFields(data)
-        : { name: item.values.name, barcode: item.barcode };
+    if (!item) throw new ProductPresentationNotFoundException();
 
-      return { id: item.id.toString(), ...unique };
-    });
+    item.update(data);
 
-    for (const [i, a] of projected.entries()) {
-      for (const b of projected.slice(i + 1)) {
-        if (a.name === b.name)
-          throw new ProductPresentationAlreadyExistsException();
+    this._items.set(id, item);
 
-        if (a.barcode !== null && a.barcode === b.barcode)
-          throw new ProductPresentationAlreadyExistsException();
-      }
-    }
+    this.checkBarcodes();
 
-    return updates.map(({ id, data }) => {
-      const item = this.get(id)!;
-      item.update(data);
-      this._items.set(id, item);
-      return item;
-    });
+    return item;
+  }
+
+  public updateMany(updates: (UpdateProductPresentation & { id: string })[]) {
+    return updates.map((data) => this.update(data.id, data));
+  }
+
+  public checkBarcodes() {
+    if (this.barcodes.length === 0)
+      throw new ProductPresentationNoHasBarcodeException();
+
+    const setBarcode = new Set(this.barcodes);
+
+    if (setBarcode.size !== this.barcodes.length)
+      throw new DuplicatedBarcodeException();
   }
 
   public get barcodes() {
@@ -111,5 +91,9 @@ export class ProductPresentationCollection {
     if (!this._items.has(id)) throw new ProductPresentationNotFoundException();
 
     this._items.delete(id);
+  }
+
+  public deleteMany(ids: string[]) {
+    ids.forEach((id) => this.delete(id));
   }
 }

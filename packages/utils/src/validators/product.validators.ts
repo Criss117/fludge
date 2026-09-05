@@ -75,21 +75,16 @@ export const createProductPresentationValidator = z.object({
   priceWholesale: priceSchema.optional(),
 });
 
-export const updateProductPresentationValidator = z.object({
-  id: uuidSchema,
-  delete: z.boolean().optional(),
-  status: productStatusSchema.optional(),
-  name: nameSchema.optional(),
-  barcode: barcodeSchema.optional(),
-  conversionFactor: conversionFactorSchema.optional(),
-  pricePurchase: priceSchema.optional(),
-  priceSale: priceSchema.optional(),
-  priceWholesale: priceSchema.optional(),
-});
+export const upsertProductPresentationValidator =
+  createProductPresentationValidator.extend({
+    id: uuidSchema.optional(),
+    status: productStatusSchema,
+    delete: z.boolean().optional(),
+  });
 
 export const createProductValidator = z.object({
   name: nameSchema,
-  categoryId: uuidSchema.optional(),
+  categoryId: uuidSchema.or(z.literal("")),
   description: descriptionSchema,
   stock: stockSchema,
   minStock: minStockSchema,
@@ -105,12 +100,14 @@ export const deleteProductValidator = z.object({
 
 export const updateProductValidator = z.object({
   id: uuidSchema,
-  status: productStatusSchema.optional(),
+  status: productStatusSchema,
   name: nameSchema,
-  categoryId: uuidSchema.optional(),
+  categoryId: uuidSchema.or(z.literal("")),
   description: descriptionSchema,
   stock: stockSchema,
   minStock: minStockSchema,
   allowNegativeStock: z.boolean(),
-  presentations: z.array(updateProductPresentationValidator).optional(),
+  presentations: z.array(upsertProductPresentationValidator).min(1, {
+    error: getI18nKey("validators.array.at_least_one"),
+  }),
 });

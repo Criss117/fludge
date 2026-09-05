@@ -150,8 +150,7 @@ export class ProductPresentation {
   public checkUniques(other: ProductPresentation) {
     return (
       (this._barcode !== null && this._barcode === other._barcode) ||
-      this._name === other._name ||
-      this._searchBlob.equals(other._searchBlob)
+      this._name === other._name
     );
   }
 

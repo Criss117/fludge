@@ -12,6 +12,7 @@ import { ProductNotFoundException } from "@fludge/api/modules/catalog/products/d
 import { CategoryNotFoundException } from "@fludge/api/modules/catalog/categories/domain/exceptions/category-not-found.exception";
 import { ProductAlreadyExistsException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-already-exists.exception";
 import { ProductPresentationAlreadyExistsException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-presentation-already-exists.exception";
+import { UUID } from "@fludge/utils/uuid";
 
 export const updateProductCommand = updateProductValidator;
 
@@ -25,7 +26,15 @@ export class UpdateProductCommand {
     private readonly productPresentationRepository: ProductPresentationRepository,
   ) {}
 
-  public async execute(activeOrganization: Organization, cmd: CMD) {
+  public async execute(
+    loggedUserId: string,
+    activeOrganization: Organization,
+    cmd: CMD,
+  ) {
+    const loggedMember = activeOrganization.members.getMemberByUserId(
+      UUID.fromString(loggedUserId),
+    )!;
+
     const [existing, errFinding] = await this.productRepository.findOneById(
       activeOrganization.id.toString(),
       cmd.id,
@@ -39,6 +48,8 @@ export class UpdateProductCommand {
 
     if (!existing) throw new ProductNotFoundException();
 
+    // if categoryId is not empty and it is different from the existing one
+    // then we need to ensure that the category exists
     if (cmd.categoryId && cmd.categoryId !== existing.values.categoryId) {
       const [exists, errEnsure] =
         await this.ensureCategoryExistsService.validate(
@@ -55,6 +66,8 @@ export class UpdateProductCommand {
       if (!exists) throw new CategoryNotFoundException();
     }
 
+    // if name is not empty and it is different from the existing one
+    // then we need to ensure that the name is unique
     if (cmd.name && cmd.name !== existing.values.name) {
       const [isTaken, errUnique] =
         await this.productUniquenessValidator.validateUniqueFields(
@@ -88,50 +101,61 @@ export class UpdateProductCommand {
       categoryId: cmd.categoryId,
     });
 
-    if (!cmd.presentations || cmd.presentations.length === 0) {
-      const [, errSaveProduct] =
-        await this.productRepository.saveOnlyProduct(existing);
-
-      if (errSaveProduct)
-        throw new InternalServerError(
-          errSaveProduct,
-          "api_errors.catalog.products.isr_on_save",
-        );
-
-      return existing.values;
-    }
-
     const presentations: {
       toDelete: string[];
-      toUpdate: NonNullable<CMD["presentations"]>;
+      toUpdate: CMD["presentations"];
+      toCreate: CMD["presentations"];
     } = {
       toDelete: [],
       toUpdate: [],
+      toCreate: [],
     };
 
-    cmd.presentations.forEach((item) => {
-      if (item.delete) {
-        presentations.toDelete.push(item.id);
-      } else {
-        presentations.toUpdate.push(item);
-      }
-    });
+    for (const item of cmd.presentations) {
+      if (item.id && item.delete) presentations.toDelete.push(item.id);
 
-    presentations.toDelete.forEach((id) => {
-      existing.deletePresentation(id);
-    });
+      if (item.id) {
+        presentations.toUpdate.push(item);
+      } else {
+        presentations.toCreate.push(item);
+      }
+    }
+
+    existing.deletePresentations(presentations.toDelete);
 
     const presentationsToUpdate =
       presentations.toUpdate.length > 0
         ? existing.updatePresentations(
             presentations.toUpdate.map(({ id, ...rest }) => ({
-              id,
+              id: id!,
               data: rest,
             })),
           )
         : [];
 
-    const barcodes = presentations.toUpdate
+    const presentationsToCreate =
+      presentations.toCreate.length > 0
+        ? existing.addPresentations(
+            presentations.toCreate.map((item) => ({
+              barcode: item.barcode,
+              conversionFactor: item.conversionFactor,
+              name: item.name,
+              productName: cmd.name,
+              pricePurchase: item.pricePurchase,
+              priceSale: item.priceSale,
+              priceWholesale: item.priceWholesale,
+              organizationId: activeOrganization.id.toString(),
+              createdBy: loggedMember.id.toString(),
+            })),
+          )
+        : [];
+
+    const presentationsToSave = [
+      ...presentationsToCreate,
+      ...presentationsToUpdate,
+    ];
+
+    const barcodes = presentationsToSave
       .map((item) => item.barcode)
       .filter((b) => b !== undefined && b !== null);
 
@@ -165,7 +189,7 @@ export class UpdateProductCommand {
 
         if (errSaveProduct) throw errSaveProduct;
 
-        if (presentationsToUpdate.length > 0) {
+        if (presentationsToSave.length > 0) {
           const [, errSavePresentations] =
             await this.productPresentationRepository.save(
               existing.id.toString(),

@@ -78,7 +78,9 @@ export class Product {
     const newProduct = new Product(
       UUID.generate(),
       UUID.fromString(data.organizationId),
-      data.categoryId ? UUID.fromString(data.categoryId) : null,
+      data.categoryId && data.categoryId.length > 0
+        ? UUID.fromString(data.categoryId)
+        : null,
       data.name,
       new SearchBlob(data.name),
       new Slug(data.name),
@@ -145,7 +147,7 @@ export class Product {
 
     if (data.status) this._status = new ProductStatus(data.status);
 
-    if (data.categoryId !== undefined)
+    if (data.categoryId !== undefined && data.categoryId !== "")
       this._categoryId = data.categoryId
         ? UUID.fromString(data.categoryId)
         : null;
@@ -170,9 +172,21 @@ export class Product {
   }
 
   public addPresentation(data: CreateProductPresentation) {
-    this._presentations.add(ProductPresentation.create(data));
+    const item = this._presentations.add(ProductPresentation.create(data));
     this._searchBlob = this.buildSearchBlob();
     this.touch();
+
+    return item;
+  }
+
+  public addPresentations(data: CreateProductPresentation[]) {
+    const items = this._presentations.addMany(
+      data.map(ProductPresentation.create),
+    );
+    this._searchBlob = this.buildSearchBlob();
+    this.touch();
+
+    return items;
   }
 
   public updatePresentation(id: string, data: UpdateProductPresentation) {
@@ -193,6 +207,12 @@ export class Product {
 
   public deletePresentation(id: string) {
     this._presentations.delete(id);
+    this._searchBlob = this.buildSearchBlob();
+    this.touch();
+  }
+
+  public deletePresentations(ids: string[]) {
+    this._presentations.deleteMany(ids);
     this._searchBlob = this.buildSearchBlob();
     this.touch();
   }
