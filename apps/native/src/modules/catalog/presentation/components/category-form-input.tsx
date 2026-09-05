@@ -32,7 +32,6 @@ function DescriptionInput({ field }: FieldProps<string>) {
   return (
     <CommonInputs.TextAreaInput
       isInvalid={isInvalid}
-      icon="description"
       errors={errors}
       label="forms.category.description.label"
       inputProps={{

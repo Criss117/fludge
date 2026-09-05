@@ -15,10 +15,6 @@ import { useRegisterOrganizationForm } from "@fludge/client/application/iam/form
 
 const PADDING_BOTTOM = 20;
 
-function formId(name: string) {
-  return `register-organization-form-${name}`;
-}
-
 export function RegisterOrganizationScreen() {
   const { t } = useTranslation();
   const { height } = useKeyboardGradualHeight(PADDING_BOTTOM);

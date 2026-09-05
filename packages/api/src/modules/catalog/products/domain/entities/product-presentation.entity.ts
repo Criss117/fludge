@@ -7,13 +7,13 @@ import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
 export type CreateProductPresentation = {
   name: string;
   productName: string;
-  barcode?: string;
+  barcode?: string | null;
   conversionFactor: number;
-  createdBy?: string;
+  createdBy?: string | null;
   organizationId: string;
-  pricePurchase?: number;
+  pricePurchase?: number | null;
   priceSale: number;
-  priceWholesale?: number;
+  priceWholesale?: number | null;
 };
 
 export type UpdateProductPresentation = Partial<

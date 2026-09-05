@@ -5,6 +5,8 @@ export const resources = {
   },
   presentations: {
     name: "Presentaciones",
+    single: "Presentación",
+    plural: "Presentaciones",
   },
   categories: {
     name: "Categorías",

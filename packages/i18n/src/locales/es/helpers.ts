@@ -17,6 +17,7 @@ export const helpers = {
   },
 
   assign: "Asignar",
+  add: "Agregar",
   please_wait: "Por favor, espere...",
   close: "Cerrar",
   created_at: "Creado el:",

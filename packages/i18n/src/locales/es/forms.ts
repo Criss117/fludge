@@ -70,4 +70,70 @@ export const forms = {
     create: "Crear Categoría",
     update: "Actualizar Categoría",
   },
+  product: {
+    name: {
+      label: "Nombre del producto",
+      placeholder: "Ej. Tequila",
+    },
+    description: {
+      label: "Descripción del producto",
+      placeholder: "Ej. Tequila de la mano",
+    },
+    stock: {
+      label: "Stock Inicial",
+      placeholder: "stock",
+    },
+    min_stock: {
+      label: "Stock mínimo",
+      placeholder: "Stock mínimo",
+    },
+    allow_negative_stock: {
+      label: "Permitir Stock Negativo",
+      description: "Permite que el stock sea negativo",
+    },
+    sections: {
+      basic: "Información básica",
+      stock: "Reglas de inventario y stock",
+      presentations: {
+        title: "Presentaciones y Precios",
+        description: "Configuara unidades, paquetes o cajas con sus tarifas",
+        add: "Añadir Presentación",
+      },
+    },
+    categories: {
+      label: "Categorías",
+      placeholder: "Selecciona una o más categorías",
+      description: "Selecciona las categorías que pertenecen al producto",
+      add: "Añadir Categoría",
+    },
+    create: "Crear Producto",
+    update: "Actualizar Producto",
+  },
+  product_presentation: {
+    name: {
+      label: "Nombre de la presentación",
+      placeholder: "Ej. Paquete de Tequila",
+    },
+    conversion_factor: {
+      label: "Factor conversión",
+      placeholder: "Ej. 1",
+    },
+    price_sale: {
+      label: "Venta",
+      placeholder: "Precio de venta",
+    },
+    price_wholesale: {
+      label: "Mayorista",
+      placeholder: "Precio de al por mayor",
+    },
+    price_purchase: {
+      label: "Compra",
+      placeholder: "Precio de compra",
+    },
+    barcode: {
+      label: "Código de barras",
+      placeholder: "Código de barras",
+    },
+    add_variant: "Añadir otra Variante o Presentación",
+  },
 };

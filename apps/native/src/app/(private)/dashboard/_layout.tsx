@@ -10,9 +10,15 @@ import { useEffect } from "react";
 import { RemountBoundary } from "@fludge/client/presentation/shared/remount-boundary";
 import { bumpRemount } from "@fludge/client/shared/use-remount-epoch";
 import { useFindActiveOrganization } from "@fludge/client/application/iam/queries/use-find-organization";
+import { useProductsCollection } from "@fludge/client/application/catalog/collections/products.collection";
+import { useProductsPresentationsCollection } from "@fludge/client/application/catalog/collections/product-presentations.container";
 
 export default function DashboardLayout() {
   const backgroundColor = useThemeColor("background");
+  const { productCollection } = useProductsCollection();
+  const { productPresentationsCollection } =
+    useProductsPresentationsCollection();
+
   useFindActiveOrganization();
 
   useEffect(() => {
@@ -39,6 +45,15 @@ export default function DashboardLayout() {
     registerDevMenuItems(items);
   }, []);
 
+  useEffect(() => {
+    productCollection.preload().then(() => {
+      console.log("productCollection.preload");
+    });
+    productPresentationsCollection.preload().then(() => {
+      console.log("productPresentationsCollection.preload");
+    });
+  }, []);
+
   return (
     <RemountBoundary>
       <Stack
@@ -54,7 +69,7 @@ export default function DashboardLayout() {
         <Stack.Screen name="settings" />
         <Stack.Screen name="members" />
         <Stack.Screen name="groups" />
-        <Stack.Screen name="categories" />
+        <Stack.Screen name="products" />
       </Stack>
     </RemountBoundary>
   );

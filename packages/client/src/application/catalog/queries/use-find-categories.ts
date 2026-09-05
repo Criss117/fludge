@@ -6,9 +6,9 @@ interface Filters {
   query: string;
 }
 
-export function useFindCategories(filters: Filters) {
+export function useFindCategories(filters?: Filters) {
   const { categoryCollection } = useCategoriesCollection();
-  const normalizedQuery = SearchBlob.normalize(filters.query);
+  const normalizedQuery = SearchBlob.normalize(filters?.query ?? "");
 
   return useLiveInfiniteQuery(
     (q) => {

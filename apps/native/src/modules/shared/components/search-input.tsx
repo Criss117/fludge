@@ -6,16 +6,22 @@ interface Props {
   query: string;
   setQuery: (query: string) => void;
   placeholder: TranslationKey;
+  autoFocus?: boolean;
 }
 
-export function SearchInput({ query, setQuery, placeholder }: Props) {
+export function SearchInput({
+  query,
+  setQuery,
+  placeholder,
+  autoFocus,
+}: Props) {
   const { t } = useTranslation();
 
   return (
     <SearchField value={query} onChange={setQuery}>
       <SearchField.Group>
         <SearchField.SearchIcon />
-        <SearchField.Input placeholder={t(placeholder)} />
+        <SearchField.Input placeholder={t(placeholder)} autoFocus={autoFocus} />
         <SearchField.ClearButton />
       </SearchField.Group>
     </SearchField>

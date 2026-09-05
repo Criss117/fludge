@@ -58,10 +58,20 @@ export const validators = {
     positive: "El factor de conversión debe ser positivo",
     integer: "El factor de conversión debe ser un número entero",
   },
-  price: {
+  price_sale: {
     invalid: "El precio de venta es inválido",
     integer: "El precio de venta debe ser un número entero",
     positive: "El precio de venta debe ser positivo",
+  },
+  price_purchase: {
+    invalid: "El precio de compra es inválido",
+    integer: "El precio de compra debe ser un número entero",
+    positive: "El precio de compra debe ser positivo",
+  },
+  price_wholesale: {
+    invalid: "El precio de venta completa es inválido",
+    integer: "El precio de venta completa debe ser un número entero",
+    positive: "El precio de venta completa debe ser positivo",
   },
   product_status: {
     invalid: "El estado del producto es inválido",

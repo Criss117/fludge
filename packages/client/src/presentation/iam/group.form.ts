@@ -16,12 +16,8 @@ import { useMemo } from "react";
 
 const { fieldContext, formContext, useFieldContext } = createFormHookContexts();
 
-export interface ChildrenProps<T> {
+interface ChildrenProps<T> {
   field: ReturnType<typeof useFieldContext<T>>;
-}
-
-export interface FieldProps<T> {
-  children: (props: ChildrenProps<T>) => React.ReactNode;
 }
 
 export type PermissionsFieldChildrenProps = ChildrenProps<Permission[]> & {
@@ -53,8 +49,6 @@ export function PermissionsField({ children }: PermissionsFieldProps) {
   const field = useFieldContext<Permission[]>();
 
   const statement = field.store.get().value;
-
-  console.log(initialCounts);
 
   function isSelected(permission: Permission) {
     return statement.includes(permission);

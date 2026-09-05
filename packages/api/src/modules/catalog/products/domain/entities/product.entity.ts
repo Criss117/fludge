@@ -19,12 +19,12 @@ import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
 
 type CreateProduct = {
   name: string;
-  categoryId?: string;
+  categoryId?: string | null;
   description: string;
   stock: number;
   allowNegativeStock: boolean;
   minStock: number;
-  createdBy?: string;
+  createdBy?: string | null;
   organizationId: string;
 
   presentations: CreateProductPresentation[];

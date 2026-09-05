@@ -7,19 +7,21 @@ import {
   uuidSchema,
 } from "./shared";
 
-const barcodeSchema = z
-  .string({
-    error: getI18nKey("validators.barcode.invalid"),
-  })
-  .min(6, {
-    error: getI18nKey("validators.barcode.min_length"),
-  })
-  .max(100, {
-    error: getI18nKey("validators.barcode.max_length"),
-  });
+const barcodeSchema = z.literal("").or(
+  z
+    .string({
+      error: getI18nKey("validators.barcode.invalid"),
+    })
+    .min(6, {
+      error: getI18nKey("validators.barcode.min_length"),
+    })
+    .max(100, {
+      error: getI18nKey("validators.barcode.max_length"),
+    }),
+);
 
-const conversionFactorSchema = z
-  .number({
+const conversionFactorSchema = z.coerce
+  .number<number>({
     error: getI18nKey("validators.conversion_factor.invalid"),
   })
   .int({
@@ -29,17 +31,42 @@ const conversionFactorSchema = z
     error: getI18nKey("validators.conversion_factor.positive"),
   });
 
-const priceSchema = z
-  .number({
-    error: getI18nKey("validators.price.invalid"),
+const priceSaleSchema = z.coerce
+  .number<number>({
+    error: getI18nKey("validators.price_sale.invalid"),
   })
   .int({
-    error: getI18nKey("validators.price.integer"),
+    error: getI18nKey("validators.price_sale.integer"),
   })
   .positive({
-    error: getI18nKey("validators.price.positive"),
+    error: getI18nKey("validators.price_sale.positive"),
   });
 
+const pricePurchaseSchema = z.literal(0).or(
+  z.coerce
+    .number<number>({
+      error: getI18nKey("validators.price_purchase.invalid"),
+    })
+    .int({
+      error: getI18nKey("validators.price_purchase.integer"),
+    })
+    .positive({
+      error: getI18nKey("validators.price_purchase.positive"),
+    }),
+);
+
+const priceWholesaleSchema = z.literal(0).or(
+  z.coerce
+    .number<number>({
+      error: getI18nKey("validators.price_wholesale.invalid"),
+    })
+    .int({
+      error: getI18nKey("validators.price_wholesale.integer"),
+    })
+    .positive({
+      error: getI18nKey("validators.price_wholesale.positive"),
+    }),
+);
 const productStatusSchema = z.enum(productStatusEnum, {
   error: getI18nKey("validators.product_status.invalid"),
 });
@@ -62,7 +89,7 @@ const minStockSchema = z.coerce
   .int({
     error: getI18nKey("validators.min_stock.integer"),
   })
-  .min(0, {
+  .positive({
     error: getI18nKey("validators.min_stock.positive"),
   });
 
@@ -70,9 +97,9 @@ export const createProductPresentationValidator = z.object({
   name: nameSchema,
   barcode: barcodeSchema,
   conversionFactor: conversionFactorSchema,
-  pricePurchase: priceSchema.optional(),
-  priceSale: priceSchema,
-  priceWholesale: priceSchema.optional(),
+  priceSale: priceSaleSchema,
+  pricePurchase: pricePurchaseSchema,
+  priceWholesale: priceWholesaleSchema,
 });
 
 export const upsertProductPresentationValidator =

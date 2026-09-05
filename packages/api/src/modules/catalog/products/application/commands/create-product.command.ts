@@ -3,14 +3,14 @@ import { Product } from "@fludge/api/modules/catalog/products/domain/entities/pr
 import { UUID } from "@fludge/utils/uuid";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import type { EnsureCategoryExistsService } from "@fludge/api/modules/catalog/categories/application/services/ensure-category-exists.service";
-import type { ProductUniquenessValidator } from "../services/product-uniqueness-validator.service";
+import type { ProductUniquenessValidator } from "@fludge/api/modules/catalog/products/application/services/product-uniqueness-validator.service";
 import type { ProductRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product.repository";
 import { Slug } from "@fludge/utils/slugify";
 import { createProductValidator } from "@fludge/utils/validators/product.validators";
 import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 import { CategoryNotFoundException } from "@fludge/api/modules/catalog/categories/domain/exceptions/category-not-found.exception";
-import { ProductAlreadyExistsException } from "../../domain/exceptions/product-already-exists.exception";
-import { ProductPresentationAlreadyExistsException } from "../../domain/exceptions/product-presentation-already-exists.exception";
+import { ProductAlreadyExistsException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-already-exists.exception";
+import { ProductPresentationAlreadyExistsException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-presentation-already-exists.exception";
 
 export const createProductCommand = createProductValidator;
 
@@ -94,9 +94,7 @@ export class CreateProductCommand {
     const [barcodeIsTaken, errValidate] =
       await this.productUniquenessValidator.validateUniqueBarcode(
         activeOrganization.id.toString(),
-        cmd.presentations
-          .map((item) => item.barcode)
-          .filter((b) => b !== undefined),
+        cmd.presentations.map((item) => item.barcode).filter((b) => b !== null),
       );
 
     if (errValidate)

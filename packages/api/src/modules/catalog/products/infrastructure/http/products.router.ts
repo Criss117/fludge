@@ -36,6 +36,7 @@ export const productsRouter = {
       .input(updateProductCommand)
       .handler(({ context, input }) =>
         productContainer.commands.update.execute(
+          context.session.user.id,
           context.session.activeOrganization,
           input,
         ),

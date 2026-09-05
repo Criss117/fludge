@@ -67,7 +67,7 @@ export function ProductsSection({ query }: Props) {
       <View className="absolute right-0 bottom-20">
         <FloatingLink
           href={{
-            pathname: "/(private)/dashboard/members/register",
+            pathname: "/(private)/dashboard/products/create",
           }}
         />
       </View>

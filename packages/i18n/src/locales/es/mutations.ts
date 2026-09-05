@@ -66,4 +66,35 @@ export const mutations = {
       },
     },
   },
+  products: {
+    create: {
+      is_pending: "Creando Producto",
+      success: {
+        title: "Producto Creado",
+        description: "El producto se ha creado correctamente.",
+      },
+      error: "Algo salió mal al crear el producto",
+    },
+    update: {
+      is_pending: "Actualizando Producto",
+      success: {
+        title: "Producto Actualizado",
+        description: "El producto se actualizó correctamente.",
+      },
+      error: "Algo salió mal al actualizar el producto",
+    },
+    delete: {
+      is_pending: "Eliminando Producto",
+      success: {
+        title: "Producto Eliminado",
+        description: "El producto se eliminó correctamente.",
+      },
+      error: "Algo salió mal al eliminar el producto",
+      dialog: {
+        title: "Eliminar Producto",
+        description:
+          "¿Estás seguro de que deseas eliminar el producto {{name}}?",
+      },
+    },
+  },
 };

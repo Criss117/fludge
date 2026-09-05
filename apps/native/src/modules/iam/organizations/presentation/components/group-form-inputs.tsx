@@ -52,7 +52,6 @@ function DescriptionInput({ field }: InputProps<string>) {
   return (
     <CommonInputs.TextAreaInput
       isInvalid={isInvalid}
-      icon="description"
       errors={errors}
       label="forms.group.description.label"
       inputProps={{

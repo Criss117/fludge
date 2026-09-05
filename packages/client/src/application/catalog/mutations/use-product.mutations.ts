@@ -2,23 +2,10 @@ import { createOptimisticAction } from "@tanstack/react-db";
 import { useProductsCollection } from "../collections/products.collection";
 import { useProductsPresentationsCollection } from "../collections/product-presentations.container";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import type { z } from "zod";
+import { createProductValidator } from "@fludge/utils/validators/product.validators";
 
-type CreateProductInput = {
-  name: string;
-  categoryId?: string | undefined;
-  description?: string | undefined;
-  stock: number;
-  allowNegativeStock: boolean;
-  minStock: number;
-  presentations: {
-    name: string;
-    barcode?: string | undefined;
-    conversionFactor: number;
-    pricePurchase?: number | undefined;
-    priceSale: number;
-    priceWholesale?: number | undefined;
-  }[];
-};
+type CreateProductInput = z.infer<typeof createProductValidator>;
 
 export function useCreateProductMutation() {
   const { productCollection, activeOrganization } = useProductsCollection();
@@ -34,11 +21,11 @@ export function useCreateProductMutation() {
       productCollection.insert({
         id: productId,
         name: input.name,
-        description: input.description ?? "",
+        description: input.description,
         stock: input.stock,
         allowNegativeStock: input.allowNegativeStock,
         minStock: input.minStock,
-        categoryId: input.categoryId ?? null,
+        categoryId: input.categoryId,
         createdAt: now,
         updatedAt: now,
         createdBy: null,
@@ -53,11 +40,11 @@ export function useCreateProductMutation() {
         input.presentations.map((item) => ({
           id: crypto.randomUUID(),
           name: item.name,
-          barcode: item.barcode ?? null,
+          barcode: item.barcode,
           conversionFactor: item.conversionFactor,
-          pricePurchase: item.pricePurchase ?? null,
+          pricePurchase: item.pricePurchase,
           priceSale: item.priceSale,
-          priceWholesale: item.priceWholesale ?? null,
+          priceWholesale: item.priceWholesale,
           productId: productId,
           organizationId: activeOrganization.id.toString(),
           createdAt: now,
