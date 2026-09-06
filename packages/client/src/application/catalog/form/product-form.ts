@@ -1,45 +1,49 @@
+import { getI18nKey } from "@fludge/api/modules/shared/i18n/utils";
 import {
   barcodeSchema,
   createProductPresentationValidator,
   createProductValidator,
-  pricePurchaseSchema,
-  priceWholesaleSchema,
   productStatusSchema,
+  updateProductValidator,
 } from "@fludge/utils/validators/product.validators";
-import { getI18nKey, uuidSchema } from "@fludge/utils/validators/shared";
-import { formOptions } from "@tanstack/react-form";
+import { uuidSchema } from "@fludge/utils/validators/shared";
+import { formOptions, useForm } from "@tanstack/react-form";
 import { z } from "zod";
 
 export const createProductPresentationSchema =
   createProductPresentationValidator
     .omit({
       barcode: true,
-      priceWholesale: true,
       pricePurchase: true,
+      priceWholesale: true,
     })
     .extend({
-      barcode: z
-        .literal("")
-        .or(barcodeSchema)
+      barcode: barcodeSchema
+        .or(z.literal(""))
         .transform((v) => (v === "" ? undefined : v)),
-
-      priceWholesale: z
-        .literal(0)
-        .or(priceWholesaleSchema)
-        .transform((v) => (v === 0 ? undefined : v)),
-
       pricePurchase: z
-        .literal(0)
-        .or(pricePurchaseSchema)
+        .number()
+        .or(z.literal(0))
+        .transform((v) => (v === 0 ? undefined : v)),
+      priceWholesale: z
+        .number()
+        .or(z.literal(0))
         .transform((v) => (v === 0 ? undefined : v)),
     });
 
 export const updateProductPresentationSchema =
   createProductPresentationSchema.extend({
     id: uuidSchema,
+    delete: z.boolean().optional(),
     status: productStatusSchema,
-    delete: z.boolean(),
   });
+
+export type CreateProductPresentationSchema = z.input<
+  typeof createProductPresentationSchema
+>;
+export type UpdateProductPresentationSchema = z.input<
+  typeof updateProductPresentationSchema
+>;
 
 export const createProductSchema = createProductValidator
   .omit({
@@ -47,13 +51,18 @@ export const createProductSchema = createProductValidator
     presentations: true,
   })
   .extend({
-    categoryId: z
-      .literal("")
-      .or(uuidSchema)
+    categoryId: uuidSchema
+      .or(z.literal(""))
       .transform((v) => (v === "" ? undefined : v)),
-    presentations: z.array(createProductPresentationSchema).min(1, {
-      error: getI18nKey("validators.array.at_least_one"),
-    }),
+    presentations: z
+      .array(
+        createProductPresentationSchema.extend({
+          id: uuidSchema,
+        }),
+      )
+      .min(1, {
+        message: getI18nKey("validators.array.at_least_one"),
+      }),
   });
 
 export const updateProductSchema = createProductSchema
@@ -61,26 +70,25 @@ export const updateProductSchema = createProductSchema
     presentations: true,
   })
   .extend({
-    presentationsToUpdate: z.array(updateProductPresentationSchema),
-    presentations: z.array(createProductPresentationSchema),
+    id: uuidSchema,
+    presentations: z.array(updateProductPresentationSchema).min(1, {
+      message: getI18nKey("validators.array.at_least_one"),
+    }),
   });
 
 export type CreateProductSchema = z.input<typeof createProductSchema>;
-export type CreateProductOutputSchema = z.output<typeof createProductSchema>;
-
-export type UpdateProductSchema = z.input<typeof updateProductSchema>;
-export type UpdateProductOutputSchema = z.output<typeof updateProductSchema>;
+export type UpdateProductSchema = z.infer<typeof updateProductValidator>;
 
 export type OnProductSubmit = {
   onSubmit: (options: {
-    value: CreateProductOutputSchema;
+    value: CreateProductSchema;
     resetForm: () => void;
   }) => void;
 };
 
-export type OnProductUpdateSubmit = {
+export type OnProductPresentationSubmit = {
   onSubmit: (options: {
-    value: z.output<typeof updateProductSchema>;
+    value: CreateProductPresentationSchema;
     resetForm: () => void;
   }) => void;
 };
@@ -94,16 +102,7 @@ export function createProductFormOptions(options: OnProductSubmit) {
       stock: 0,
       allowNegativeStock: false,
       minStock: 0,
-      presentations: [
-        {
-          barcode: "",
-          conversionFactor: 1,
-          name: "",
-          pricePurchase: 0,
-          priceSale: 0,
-          priceWholesale: 0,
-        },
-      ],
+      presentations: [] as CreateProductSchema["presentations"],
     },
     validators: {
       onChange: createProductSchema,
@@ -114,17 +113,29 @@ export function createProductFormOptions(options: OnProductSubmit) {
   });
 }
 
-export function updateProductFormOptions(
-  defaultValues: UpdateProductSchema,
-  options: OnProductUpdateSubmit,
+export function createProductPresentationFormOptions(
+  options: OnProductPresentationSubmit,
 ) {
   return formOptions({
-    defaultValues,
+    defaultValues: {
+      name: "",
+      barcode: "",
+      conversionFactor: 1,
+      priceSale: 0,
+      pricePurchase: 0,
+      priceWholesale: 0,
+    },
     validators: {
-      onChange: updateProductSchema,
+      onChange: createProductPresentationSchema,
     },
     onSubmit: ({ value, formApi }) => {
       options.onSubmit({ value, resetForm: formApi.reset });
     },
   });
+}
+
+export function useCreateProductPresentationForm(
+  options: OnProductPresentationSubmit,
+) {
+  return useForm(createProductPresentationFormOptions(options));
 }

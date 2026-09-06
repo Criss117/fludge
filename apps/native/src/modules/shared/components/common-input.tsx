@@ -21,6 +21,7 @@ import {
 import { Easing, FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { SearchInput } from "./search-input";
 import { ScrollView } from "react-native-gesture-handler";
+import { cn } from "heroui-native";
 
 type MaterialIconName = ComponentProps<typeof MaterialIcons>["name"];
 
@@ -88,7 +89,7 @@ function TextInput({
         <Input
           {...inputProps}
           placeholder={t(inputProps.placeholder)}
-          className="flex-1 px-10"
+          className={cn("flex-1 px-10", inputProps.className)}
           isInvalid={isInvalid}
         />
         {icon && (
@@ -134,7 +135,7 @@ function NumberInput({
           onChangeText={onChangeText}
           keyboardType="phone-pad"
           placeholder={t(inputProps.placeholder)}
-          className="flex-1 px-10"
+          className={cn("flex-1 px-10", inputProps.className)}
           isInvalid={isInvalid}
         />
         {icon && (
@@ -163,7 +164,7 @@ function TextAreaInput({
       <TextArea
         {...inputProps}
         placeholder={t(inputProps.placeholder)}
-        className="flex-1"
+        className={cn("flex-1", inputProps.className)}
         isInvalid={isInvalid}
       />
       {isInvalid && <FieldError errors={errors} />}
@@ -185,8 +186,8 @@ function PasswordInput({
       <Label isInvalid={isInvalid}>{t(label)}</Label>
       <View className="w-full flex-row items-center">
         <Input
-          className="flex-1 px-10"
           {...inputProps}
+          className={cn("flex-1 px-10", inputProps.className)}
           placeholder={t(inputProps.placeholder)}
           secureTextEntry={!showPassword}
           aria-invalid={isInvalid}

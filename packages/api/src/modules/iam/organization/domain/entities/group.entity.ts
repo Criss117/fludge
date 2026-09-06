@@ -10,7 +10,7 @@ export type CreateGroup = {
   name: string;
   description?: string;
   permissions: Permissions;
-  createdBy: UUID | null;
+  createdBy: UUID;
 };
 
 export type UpdateGroup = Partial<Omit<CreateGroup, "createdBy">> & {
@@ -24,7 +24,7 @@ export class Group {
     private _slug: Slug,
     private _description: string,
     private _permissions: Permissions,
-    private readonly _createdBy: UUID | null,
+    private readonly _createdBy: UUID,
 
     private readonly _createdAt: Date,
     private _updatedAt: Date,
@@ -53,7 +53,7 @@ export class Group {
       new Slug(values.name),
       values.description,
       Permissions.fromList(values.permissions),
-      values.createdBy ? UUID.fromString(values.createdBy) : null,
+      UUID.fromString(values.createdBy),
       new Date(values.createdAt),
       values.updatedAt,
       new Status(values.status),

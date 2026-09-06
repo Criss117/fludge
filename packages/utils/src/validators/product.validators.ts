@@ -102,7 +102,7 @@ export const createProductPresentationValidator = z.object({
 });
 
 export const updateProductPresentationValidator =
-  createProductPresentationValidator.partial().extend({
+  createProductPresentationValidator.extend({
     id: uuidSchema,
     status: productStatusSchema,
     delete: z.boolean().optional(),
@@ -124,16 +124,10 @@ export const deleteProductValidator = z.object({
   id: uuidSchema,
 });
 
-export const updateProductValidator = z.object({
+export const updateProductValidator = createProductValidator.extend({
   id: uuidSchema,
-  status: productStatusSchema.optional(),
-  name: nameSchema.optional(),
-  categoryId: uuidSchema.optional(),
-  description: descriptionSchema.optional(),
-  stock: stockSchema.optional(),
-  minStock: minStockSchema.optional(),
-  allowNegativeStock: z.boolean().optional(),
-  presentationsToUpdate: z.array(updateProductPresentationValidator),
-  presentationsToDelete: z.array(uuidSchema),
-  presentations: z.array(createProductPresentationValidator),
+  status: productStatusSchema,
+  presentations: z.array(updateProductPresentationValidator).min(1, {
+    error: getI18nKey("validators.array.at_least_one"),
+  }),
 });

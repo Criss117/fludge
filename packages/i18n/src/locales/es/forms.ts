@@ -96,7 +96,7 @@ export const forms = {
       stock: "Reglas de inventario y stock",
       presentations: {
         title: "Presentaciones y Precios",
-        description: "Configuara unidades, paquetes o cajas con sus tarifas",
+        description: "Configura unidades, paquetes o cajas con sus tarifas",
         add: "Añadir Presentación",
       },
       update_presentations: {

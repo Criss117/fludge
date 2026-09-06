@@ -1,60 +1,11 @@
 import {
+  createProductFormOptions,
   type CreateProductSchema,
   type OnProductSubmit,
-  type OnProductUpdateSubmit,
-  type UpdateProductSchema,
-  createProductFormOptions,
-  updateProductFormOptions,
 } from "@fludge/client/application/catalog/form/product-form";
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 
 const { fieldContext, formContext, useFieldContext } = createFormHookContexts();
-
-interface ChildrenProps<T> {
-  field: ReturnType<typeof useFieldContext<T>>;
-}
-
-export type PresentationsFieldChildrenProps = ChildrenProps<
-  CreateProductSchema["presentations"]
-> & {
-  addPresentation(): void;
-  removePresentation(index: number): void;
-  canRemovePresentation: boolean;
-};
-
-type PresentationsFieldProps = {
-  children: (props: PresentationsFieldChildrenProps) => React.ReactNode;
-};
-
-function Presentations({ children }: PresentationsFieldProps) {
-  const field = useFieldContext<CreateProductSchema["presentations"]>();
-
-  function addPresentation() {
-    field.pushValue({
-      barcode: "",
-      conversionFactor: 1,
-      name: "",
-      pricePurchase: 0,
-      priceSale: 0,
-      priceWholesale: 0,
-    });
-  }
-
-  function removePresentation(index: number) {
-    if (field.state.value.length === 1) return;
-
-    field.removeValue(index);
-  }
-
-  const canRemovePresentation = field.state.value.length > 1;
-
-  return children({
-    field,
-    canRemovePresentation,
-    addPresentation,
-    removePresentation,
-  });
-}
 
 const { useAppForm } = createFormHook({
   fieldContext,
@@ -67,9 +18,51 @@ export function useCreateProductForm(options: OnProductSubmit) {
   return useAppForm(createProductFormOptions(options));
 }
 
-export function useUpdateProductForm(
-  defaultValues: UpdateProductSchema,
-  options: OnProductUpdateSubmit,
-) {
-  return useAppForm(updateProductFormOptions(defaultValues, options));
+type Presentation = CreateProductSchema["presentations"][number];
+interface ChildrenProps<T> {
+  field: ReturnType<typeof useFieldContext<T>>;
+  add(presentation: Presentation): void;
+  remove(id: string): void;
+  update(id: string, presentation: Presentation): void;
+  get(id: string): Presentation | undefined;
+}
+
+interface PresentationsChildrenProps {
+  children: (props: ChildrenProps<Presentation[]>) => React.ReactNode;
+}
+
+function Presentations({ children }: PresentationsChildrenProps) {
+  const field = useFieldContext<Presentation[]>();
+
+  function add(presentation: Omit<Presentation, "id">) {
+    field.handleChange((prev) => [
+      ...prev,
+      {
+        ...presentation,
+        id: crypto.randomUUID(),
+      },
+    ]);
+  }
+
+  function remove(id: string) {
+    field.handleChange((prev) => prev.filter((p) => p.id !== id));
+  }
+
+  function update(id: string, presentation: Presentation) {
+    field.handleChange((prev) =>
+      prev.map((p) => (p.id === id ? presentation : p)),
+    );
+  }
+
+  function get(id: string) {
+    return field.state.value.find((p) => p.id === id);
+  }
+
+  return children({
+    field,
+    add,
+    remove,
+    update,
+    get,
+  });
 }

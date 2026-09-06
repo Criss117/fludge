@@ -15,7 +15,7 @@ export function useCreateCategoryMutation() {
         description: values.description,
         createdAt: now,
         updatedAt: now,
-        createdBy: null,
+        createdBy: "",
         id: crypto.randomUUID(),
         organizationId: activeOrganization.id,
         slug: values.name,

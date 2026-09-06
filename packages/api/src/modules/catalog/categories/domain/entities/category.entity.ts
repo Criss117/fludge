@@ -6,7 +6,7 @@ import type { CategorySelect } from "@fludge/db/schema/catalog.schema";
 export type CreateCategory = {
   name: string;
   organizationId: UUID;
-  createdBy: UUID | null;
+  createdBy: UUID;
   description?: string;
 };
 
@@ -24,7 +24,7 @@ export class Category {
     private _description: string,
     private _status: Status,
     private readonly _organizationId: UUID,
-    private readonly _createdBy: UUID | null,
+    private readonly _createdBy: UUID,
     private readonly _createdAt: Date,
     private _updatedAt: Date,
   ) {}
@@ -53,7 +53,7 @@ export class Category {
       data.description,
       new Status(data.status),
       UUID.fromString(data.organizationId),
-      data.createdBy ? UUID.fromString(data.createdBy) : null,
+      UUID.fromString(data.createdBy),
       data.createdAt,
       data.updatedAt,
     );

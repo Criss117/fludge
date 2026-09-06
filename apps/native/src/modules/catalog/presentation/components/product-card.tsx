@@ -21,7 +21,15 @@ export function ProductCard({ product }: Props) {
   const router = useRouter();
 
   return (
-    <PressableFeedback className="rounded-3xl shadow">
+    <PressableFeedback
+      className="rounded-3xl shadow"
+      onPress={() =>
+        router.push({
+          pathname: "/dashboard/products/[productid]/update",
+          params: { productid: product.id },
+        })
+      }
+    >
       <Card className="justify-between gap-y-3" style={{ height: CARD_HEIGHT }}>
         <Card.Header className="flex-row items-start">
           <View className="flex-1">

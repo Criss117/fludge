@@ -2,7 +2,7 @@ import { createOptimisticAction } from "@tanstack/react-db";
 import { useProductsCollection } from "../collections/products.collection";
 import { useProductsPresentationsCollection } from "../collections/product-presentations.container";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
-import type { CreateProductOutputSchema } from "../form/product-form";
+import type { CreateProductSchema } from "../form/product-form";
 
 export function useCreateProductMutation() {
   const { productCollection, activeOrganization } = useProductsCollection();
@@ -10,7 +10,7 @@ export function useCreateProductMutation() {
     useProductsPresentationsCollection();
   const orpc = useOrpc();
 
-  return createOptimisticAction<CreateProductOutputSchema>({
+  return createOptimisticAction<CreateProductSchema>({
     onMutate: (input) => {
       const productId = crypto.randomUUID();
       const now = new Date();
@@ -22,13 +22,13 @@ export function useCreateProductMutation() {
         stock: input.stock,
         allowNegativeStock: input.allowNegativeStock,
         minStock: input.minStock,
-        categoryId: input.categoryId ?? null,
-        createdAt: now,
-        updatedAt: now,
-        createdBy: null,
-        organizationId: activeOrganization.id.toString(),
+        categoryId: input.categoryId,
         searchBlob: input.name,
         totalPresentations: input.presentations.length,
+        createdAt: now,
+        updatedAt: now,
+        createdBy: "",
+        organizationId: activeOrganization.id.toString(),
         slug: input.name,
         status: "active",
       });
@@ -37,17 +37,17 @@ export function useCreateProductMutation() {
         input.presentations.map((item) => ({
           id: crypto.randomUUID(),
           name: item.name,
-          barcode: item.barcode ?? null,
+          barcode: item.barcode,
           conversionFactor: item.conversionFactor,
           priceSale: item.priceSale,
-          pricePurchase: item.pricePurchase ?? null,
-          priceWholesale: item.priceWholesale ?? null,
+          pricePurchase: item.pricePurchase,
+          priceWholesale: item.priceWholesale,
+          searchBlob: item.name,
           productId: productId,
           organizationId: activeOrganization.id.toString(),
           createdAt: now,
           updatedAt: now,
-          createdBy: null,
-          searchBlob: item.name,
+          createdBy: "",
           status: "active",
         })),
       );

@@ -4,7 +4,7 @@ import { UUID } from "@fludge/utils/uuid";
 export type CreateGroupMember = {
   groupId: string;
   memberId: string;
-  createdBy: string | null;
+  createdBy: string;
 };
 
 export class GroupMember {
@@ -12,7 +12,7 @@ export class GroupMember {
     private readonly _groupId: UUID,
     private readonly _memberId: UUID,
     private readonly _createdAt: Date,
-    private readonly _createdBy: UUID | null,
+    private readonly _createdBy: UUID,
   ) {}
 
   public static create(values: CreateGroupMember) {
@@ -21,7 +21,7 @@ export class GroupMember {
       UUID.fromString(values.groupId),
       UUID.fromString(values.memberId),
       now,
-      values.createdBy ? UUID.fromString(values.createdBy) : null,
+      UUID.fromString(values.createdBy),
     );
   }
 
@@ -30,7 +30,7 @@ export class GroupMember {
       UUID.fromString(values.groupId),
       UUID.fromString(values.memberId),
       new Date(values.createdAt),
-      values.createdBy ? UUID.fromString(values.createdBy) : null,
+      UUID.fromString(values.createdBy),
     );
   }
 

@@ -6,18 +6,14 @@ import { Link, useRouter } from "expo-router";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useFindAllOrganizations } from "@fludge/client/application/iam/queries/use-find-organization";
 import { useRegisterOrganization } from "@fludge/client/application/iam/mutations/use-organization.mutations";
-import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gradual-height";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { useRegisterOrganizationForm } from "@fludge/client/application/iam/form/organization-form";
-
-const PADDING_BOTTOM = 20;
+import { KeyboardScrollView } from "@/modules/shared/components/keyboard-scroll-view";
 
 export function RegisterOrganizationScreen() {
   const { t } = useTranslation();
-  const { height } = useKeyboardGradualHeight(PADDING_BOTTOM);
   const router = useRouter();
   const { data } = useFindAllOrganizations();
   const registerOrganization = useRegisterOrganization();
@@ -35,20 +31,15 @@ export function RegisterOrganizationScreen() {
     },
   });
 
-  const fakeView = useAnimatedStyle(() => {
-    const h = height.get();
-
-    return {
-      height: Math.abs(h),
-      marginBottom: h > 0 ? 0 : PADDING_BOTTOM,
-    };
-  });
-
   const hasOrganizations = data.length > 0;
 
   return (
     <View className="relative flex-1">
-      <ScrollView className="flex-1 px-3" contentContainerClassName="pb-32">
+      <KeyboardScrollView
+        className="flex-1 px-3"
+        contentContainerClassName="pb-32"
+        showsVerticalScrollIndicator={false}
+      >
         <View className="gap-y-8">
           <Card className="gap-y-4">
             <Card.Header>
@@ -103,9 +94,7 @@ export function RegisterOrganizationScreen() {
             </Card.Body>
           </Card>
         </View>
-
-        <Animated.View style={fakeView} />
-      </ScrollView>
+      </KeyboardScrollView>
       <View className="bg-background absolute bottom-0 w-full gap-y-4 px-3 py-6">
         <Button
           onPress={form.handleSubmit}
