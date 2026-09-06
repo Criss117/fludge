@@ -87,5 +87,8 @@ export const screens = {
     create: {
       title: "Crear producto",
     },
+    update: {
+      title: "Editar producto",
+    },
   },
 };

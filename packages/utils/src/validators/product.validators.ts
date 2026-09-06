@@ -7,20 +7,18 @@ import {
   uuidSchema,
 } from "./shared";
 
-const barcodeSchema = z.literal("").or(
-  z
-    .string({
-      error: getI18nKey("validators.barcode.invalid"),
-    })
-    .min(6, {
-      error: getI18nKey("validators.barcode.min_length"),
-    })
-    .max(100, {
-      error: getI18nKey("validators.barcode.max_length"),
-    }),
-);
+export const barcodeSchema = z
+  .string({
+    error: getI18nKey("validators.barcode.invalid"),
+  })
+  .min(6, {
+    error: getI18nKey("validators.barcode.min_length"),
+  })
+  .max(100, {
+    error: getI18nKey("validators.barcode.max_length"),
+  });
 
-const conversionFactorSchema = z.coerce
+export const conversionFactorSchema = z.coerce
   .number<number>({
     error: getI18nKey("validators.conversion_factor.invalid"),
   })
@@ -31,7 +29,7 @@ const conversionFactorSchema = z.coerce
     error: getI18nKey("validators.conversion_factor.positive"),
   });
 
-const priceSaleSchema = z.coerce
+export const priceSaleSchema = z.coerce
   .number<number>({
     error: getI18nKey("validators.price_sale.invalid"),
   })
@@ -42,7 +40,7 @@ const priceSaleSchema = z.coerce
     error: getI18nKey("validators.price_sale.positive"),
   });
 
-const pricePurchaseSchema = z.literal(0).or(
+export const pricePurchaseSchema = z.literal(0).or(
   z.coerce
     .number<number>({
       error: getI18nKey("validators.price_purchase.invalid"),
@@ -55,7 +53,7 @@ const pricePurchaseSchema = z.literal(0).or(
     }),
 );
 
-const priceWholesaleSchema = z.literal(0).or(
+export const priceWholesaleSchema = z.literal(0).or(
   z.coerce
     .number<number>({
       error: getI18nKey("validators.price_wholesale.invalid"),
@@ -67,11 +65,12 @@ const priceWholesaleSchema = z.literal(0).or(
       error: getI18nKey("validators.price_wholesale.positive"),
     }),
 );
-const productStatusSchema = z.enum(productStatusEnum, {
+
+export const productStatusSchema = z.enum(productStatusEnum, {
   error: getI18nKey("validators.product_status.invalid"),
 });
 
-const stockSchema = z.coerce
+export const stockSchema = z.coerce
   .number<number>({
     error: getI18nKey("validators.stock.invalid"),
   })
@@ -82,7 +81,7 @@ const stockSchema = z.coerce
     error: getI18nKey("validators.stock.positive"),
   });
 
-const minStockSchema = z.coerce
+export const minStockSchema = z.coerce
   .number<number>({
     error: getI18nKey("validators.min_stock.invalid"),
   })
@@ -95,23 +94,23 @@ const minStockSchema = z.coerce
 
 export const createProductPresentationValidator = z.object({
   name: nameSchema,
-  barcode: barcodeSchema,
+  barcode: barcodeSchema.optional(),
   conversionFactor: conversionFactorSchema,
   priceSale: priceSaleSchema,
-  pricePurchase: pricePurchaseSchema,
-  priceWholesale: priceWholesaleSchema,
+  pricePurchase: pricePurchaseSchema.optional(),
+  priceWholesale: priceWholesaleSchema.optional(),
 });
 
-export const upsertProductPresentationValidator =
-  createProductPresentationValidator.extend({
-    id: uuidSchema.optional(),
+export const updateProductPresentationValidator =
+  createProductPresentationValidator.partial().extend({
+    id: uuidSchema,
     status: productStatusSchema,
     delete: z.boolean().optional(),
   });
 
 export const createProductValidator = z.object({
   name: nameSchema,
-  categoryId: uuidSchema.or(z.literal("")),
+  categoryId: uuidSchema.optional(),
   description: descriptionSchema,
   stock: stockSchema,
   minStock: minStockSchema,
@@ -127,14 +126,14 @@ export const deleteProductValidator = z.object({
 
 export const updateProductValidator = z.object({
   id: uuidSchema,
-  status: productStatusSchema,
-  name: nameSchema,
-  categoryId: uuidSchema.or(z.literal("")),
-  description: descriptionSchema,
-  stock: stockSchema,
-  minStock: minStockSchema,
-  allowNegativeStock: z.boolean(),
-  presentations: z.array(upsertProductPresentationValidator).min(1, {
-    error: getI18nKey("validators.array.at_least_one"),
-  }),
+  status: productStatusSchema.optional(),
+  name: nameSchema.optional(),
+  categoryId: uuidSchema.optional(),
+  description: descriptionSchema.optional(),
+  stock: stockSchema.optional(),
+  minStock: minStockSchema.optional(),
+  allowNegativeStock: z.boolean().optional(),
+  presentationsToUpdate: z.array(updateProductPresentationValidator),
+  presentationsToDelete: z.array(uuidSchema),
+  presentations: z.array(createProductPresentationValidator),
 });

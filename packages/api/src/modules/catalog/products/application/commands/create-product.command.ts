@@ -94,7 +94,9 @@ export class CreateProductCommand {
     const [barcodeIsTaken, errValidate] =
       await this.productUniquenessValidator.validateUniqueBarcode(
         activeOrganization.id.toString(),
-        cmd.presentations.map((item) => item.barcode).filter((b) => b !== null),
+        cmd.presentations
+          .map((item) => item.barcode)
+          .filter((b) => b !== undefined),
       );
 
     if (errValidate)

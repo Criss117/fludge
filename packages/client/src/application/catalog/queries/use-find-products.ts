@@ -1,6 +1,13 @@
-import { ilike, useLiveInfiniteQuery } from "@tanstack/react-db";
+import {
+  eq,
+  ilike,
+  toArray,
+  useLiveInfiniteQuery,
+  useLiveSuspenseQuery,
+} from "@tanstack/react-db";
 import { useProductsCollection } from "@fludge/client/application/catalog/collections/products.collection";
 import { SearchBlob } from "@fludge/utils/search-blob";
+import { useProductsPresentationsCollection } from "../collections/product-presentations.container";
 
 interface Filters {
   query: string;
@@ -39,4 +46,36 @@ export function useFindProducts(filters?: Filters) {
   );
 }
 
+export function useFindOneProduct(productId: string) {
+  const { productCollection } = useProductsCollection();
+  const { productPresentationsCollection } =
+    useProductsPresentationsCollection();
+
+  return useLiveSuspenseQuery((q) =>
+    q
+      .from({
+        pc: productCollection,
+      })
+      .select(({ pc }) => ({
+        ...pc,
+        presentations: toArray(
+          q
+            .from({
+              ppc: productPresentationsCollection,
+            })
+            .select(({ ppc }) => ({
+              ...ppc,
+            }))
+            .where(({ ppc }) => eq(ppc.productId, pc.id))
+            .orderBy(({ ppc }) => ppc.createdAt, "desc"),
+        ),
+      }))
+      .where(({ pc }) => eq(pc.id, productId))
+      .findOne(),
+  );
+}
+
 export type ProductSummary = ReturnType<typeof useFindProducts>["data"][number];
+export type ProductDetail = NonNullable<
+  ReturnType<typeof useFindOneProduct>["data"]
+>;

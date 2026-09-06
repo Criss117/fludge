@@ -1,7 +1,10 @@
 import {
   type CreateProductSchema,
   type OnProductSubmit,
+  type OnProductUpdateSubmit,
+  type UpdateProductSchema,
   createProductFormOptions,
+  updateProductFormOptions,
 } from "@fludge/client/application/catalog/form/product-form";
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 
@@ -62,4 +65,11 @@ const { useAppForm } = createFormHook({
 
 export function useCreateProductForm(options: OnProductSubmit) {
   return useAppForm(createProductFormOptions(options));
+}
+
+export function useUpdateProductForm(
+  defaultValues: UpdateProductSchema,
+  options: OnProductUpdateSubmit,
+) {
+  return useAppForm(updateProductFormOptions(defaultValues, options));
 }

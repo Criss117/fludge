@@ -217,6 +217,10 @@ export class Product {
     this.touch();
   }
 
+  public checkPresentationBarcodes() {
+    this._presentations.checkBarcodes();
+  }
+
   public get values(): ProductSelect & {
     presentations: ProductPresentationSelect[];
   } {

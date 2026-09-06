@@ -2,10 +2,7 @@ import { createOptimisticAction } from "@tanstack/react-db";
 import { useProductsCollection } from "../collections/products.collection";
 import { useProductsPresentationsCollection } from "../collections/product-presentations.container";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
-import type { z } from "zod";
-import { createProductValidator } from "@fludge/utils/validators/product.validators";
-
-type CreateProductInput = z.infer<typeof createProductValidator>;
+import type { CreateProductOutputSchema } from "../form/product-form";
 
 export function useCreateProductMutation() {
   const { productCollection, activeOrganization } = useProductsCollection();
@@ -13,7 +10,7 @@ export function useCreateProductMutation() {
     useProductsPresentationsCollection();
   const orpc = useOrpc();
 
-  return createOptimisticAction<CreateProductInput>({
+  return createOptimisticAction<CreateProductOutputSchema>({
     onMutate: (input) => {
       const productId = crypto.randomUUID();
       const now = new Date();
@@ -25,7 +22,7 @@ export function useCreateProductMutation() {
         stock: input.stock,
         allowNegativeStock: input.allowNegativeStock,
         minStock: input.minStock,
-        categoryId: input.categoryId,
+        categoryId: input.categoryId ?? null,
         createdAt: now,
         updatedAt: now,
         createdBy: null,
@@ -40,11 +37,11 @@ export function useCreateProductMutation() {
         input.presentations.map((item) => ({
           id: crypto.randomUUID(),
           name: item.name,
-          barcode: item.barcode,
+          barcode: item.barcode ?? null,
           conversionFactor: item.conversionFactor,
-          pricePurchase: item.pricePurchase,
           priceSale: item.priceSale,
-          priceWholesale: item.priceWholesale,
+          pricePurchase: item.pricePurchase ?? null,
+          priceWholesale: item.priceWholesale ?? null,
           productId: productId,
           organizationId: activeOrganization.id.toString(),
           createdAt: now,

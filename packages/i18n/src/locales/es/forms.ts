@@ -99,6 +99,11 @@ export const forms = {
         description: "Configuara unidades, paquetes o cajas con sus tarifas",
         add: "Añadir Presentación",
       },
+      update_presentations: {
+        title: "Actualizar Presentaciones",
+        description: "Actualizar las presentaciones existentes",
+        add: "Añadir Presentación",
+      },
     },
     categories: {
       label: "Categorías",

@@ -13,6 +13,8 @@ import { CategoryNotFoundException } from "@fludge/api/modules/catalog/categorie
 import { ProductAlreadyExistsException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-already-exists.exception";
 import { ProductPresentationAlreadyExistsException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-presentation-already-exists.exception";
 import { UUID } from "@fludge/utils/uuid";
+import type { Product } from "@fludge/api/modules/catalog/products/domain/entities/product.entity";
+import type { Member } from "@fludge/api/modules/iam/organization/domain/entities/member.entity";
 
 export const updateProductCommand = updateProductValidator;
 
@@ -26,18 +28,10 @@ export class UpdateProductCommand {
     private readonly productPresentationRepository: ProductPresentationRepository,
   ) {}
 
-  public async execute(
-    loggedUserId: string,
-    activeOrganization: Organization,
-    cmd: CMD,
-  ) {
-    const loggedMember = activeOrganization.members.getMemberByUserId(
-      UUID.fromString(loggedUserId),
-    )!;
-
+  private async findProduct(activeOrganizationId: string, productId: string) {
     const [existing, errFinding] = await this.productRepository.findOneById(
-      activeOrganization.id.toString(),
-      cmd.id,
+      activeOrganizationId,
+      productId,
     );
 
     if (errFinding)
@@ -48,12 +42,20 @@ export class UpdateProductCommand {
 
     if (!existing) throw new ProductNotFoundException();
 
+    return existing;
+  }
+
+  private async validateExternals(
+    activeOrganizationId: string,
+    existing: Product,
+    cmd: CMD,
+  ) {
     // if categoryId is not empty and it is different from the existing one
     // then we need to ensure that the category exists
     if (cmd.categoryId && cmd.categoryId !== existing.values.categoryId) {
       const [exists, errEnsure] =
         await this.ensureCategoryExistsService.validate(
-          activeOrganization.id.toString(),
+          activeOrganizationId,
           cmd.categoryId,
         );
 
@@ -71,7 +73,7 @@ export class UpdateProductCommand {
     if (cmd.name && cmd.name !== existing.values.name) {
       const [isTaken, errUnique] =
         await this.productUniquenessValidator.validateUniqueFields(
-          activeOrganization.id.toString(),
+          activeOrganizationId,
           {
             name: cmd.name,
             slug: new Slug(cmd.name).toString(),
@@ -90,57 +92,34 @@ export class UpdateProductCommand {
         );
       }
     }
+  }
 
-    existing.update({
-      name: cmd.name,
-      description: cmd.description,
-      status: cmd.status,
-      allowNegativeStock: cmd.allowNegativeStock,
-      minStock: cmd.minStock,
-      stock: cmd.stock,
-      categoryId: cmd.categoryId,
-    });
-
-    const presentations: {
-      toDelete: string[];
-      toUpdate: CMD["presentations"];
-      toCreate: CMD["presentations"];
-    } = {
-      toDelete: [],
-      toUpdate: [],
-      toCreate: [],
-    };
-
-    for (const item of cmd.presentations) {
-      if (item.id && item.delete) presentations.toDelete.push(item.id);
-
-      if (item.id) {
-        presentations.toUpdate.push(item);
-      } else {
-        presentations.toCreate.push(item);
-      }
-    }
-
-    existing.deletePresentations(presentations.toDelete);
+  private async upsertPresentations(
+    existing: Product,
+    cmd: CMD,
+    activeOrganization: Organization,
+    loggedMember: Member,
+  ) {
+    existing.deletePresentations(cmd.presentationsToDelete);
 
     const presentationsToUpdate =
-      presentations.toUpdate.length > 0
+      cmd.presentationsToUpdate.length > 0
         ? existing.updatePresentations(
-            presentations.toUpdate.map(({ id, ...rest }) => ({
-              id: id!,
+            cmd.presentationsToUpdate.map(({ id, ...rest }) => ({
+              id: id,
               data: rest,
             })),
           )
         : [];
 
     const presentationsToCreate =
-      presentations.toCreate.length > 0
+      cmd.presentations.length > 0
         ? existing.addPresentations(
-            presentations.toCreate.map((item) => ({
+            cmd.presentations.map((item) => ({
               barcode: item.barcode,
               conversionFactor: item.conversionFactor,
               name: item.name,
-              productName: cmd.name,
+              productName: existing.values.name,
               pricePurchase: item.pricePurchase,
               priceSale: item.priceSale,
               priceWholesale: item.priceWholesale,
@@ -150,15 +129,19 @@ export class UpdateProductCommand {
           )
         : [];
 
-    const presentationsToSave = [
-      ...presentationsToCreate,
-      ...presentationsToUpdate,
-    ];
+    existing.checkPresentationBarcodes();
 
-    const barcodes = presentationsToSave
-      .map((item) => item.barcode)
-      .filter((b) => b !== undefined && b !== null);
+    return {
+      toDelete: cmd.presentationsToDelete,
+      toSave: [...presentationsToCreate, ...presentationsToUpdate],
+    };
+  }
 
+  private async checkExternalBarcodes(
+    existing: Product,
+    activeOrganization: Organization,
+    barcodes: string[],
+  ) {
     if (barcodes.length > 0) {
       const [barcodeIsTaken, errValidate] =
         await this.productUniquenessValidator.validateUniqueBarcode(
@@ -179,6 +162,45 @@ export class UpdateProductCommand {
         );
       }
     }
+  }
+
+  public async execute(
+    loggedUserId: string,
+    activeOrganization: Organization,
+    cmd: CMD,
+  ) {
+    const loggedMember = activeOrganization.members.getMemberByUserId(
+      UUID.fromString(loggedUserId),
+    )!;
+
+    const activeOrganizationId = activeOrganization.id.toString();
+
+    const existing = await this.findProduct(activeOrganizationId, cmd.id);
+
+    await this.validateExternals(activeOrganizationId, existing, cmd);
+
+    existing.update({
+      name: cmd.name,
+      description: cmd.description,
+      status: cmd.status,
+      allowNegativeStock: cmd.allowNegativeStock,
+      minStock: cmd.minStock,
+      stock: cmd.stock,
+      categoryId: cmd.categoryId,
+    });
+
+    const presentations = await this.upsertPresentations(
+      existing,
+      cmd,
+      activeOrganization,
+      loggedMember,
+    );
+
+    const barcodes = presentations.toSave
+      .map((item) => item.barcode)
+      .filter((b) => b !== undefined && b !== null);
+
+    await this.checkExternalBarcodes(existing, activeOrganization, barcodes);
 
     const [, errInsert] = await tryCatch(
       this.productRepository.transaction(async (tx) => {
@@ -189,11 +211,11 @@ export class UpdateProductCommand {
 
         if (errSaveProduct) throw errSaveProduct;
 
-        if (presentationsToSave.length > 0) {
+        if (presentations.toSave.length > 0) {
           const [, errSavePresentations] =
             await this.productPresentationRepository.save(
               existing.id.toString(),
-              presentationsToUpdate,
+              presentations.toSave,
               { tx },
             );
 
