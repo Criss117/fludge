@@ -1,12 +1,12 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { CreateProductSchema } from "@fludge/client/application/catalog/form/product-form";
+import type { ProductFormSchema } from "@fludge/client/application/catalog/form/product-form";
 import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import { Chip } from "heroui-native/chip";
 import { Typography } from "heroui-native/text";
 import { View } from "react-native";
 
-type Presentation = CreateProductSchema["presentations"][number];
+type Presentation = ProductFormSchema["presentations"][number];
 
 interface Props {
   presentation: Presentation;
@@ -36,7 +36,13 @@ export function PresentationCard({
         </View>
       </Card.Header>
       <Card.Body className="flex-row">
-        <Button variant="ghost" isIconOnly>
+        <Button
+          variant="ghost"
+          isIconOnly
+          onPress={() => {
+            setSelectedPresentation(presentation);
+          }}
+        >
           <MaterialIcons name="edit" size={20} className="text-foreground" />
         </Button>
 
@@ -47,14 +53,7 @@ export function PresentationCard({
             remove(presentation.id);
           }}
         >
-          <MaterialIcons
-            name="delete"
-            size={20}
-            className="text-danger"
-            onPress={() => {
-              setSelectedPresentation(presentation);
-            }}
-          />
+          <MaterialIcons name="delete" size={20} className="text-danger" />
         </Button>
       </Card.Body>
     </Card>

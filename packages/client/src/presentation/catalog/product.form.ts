@@ -1,7 +1,7 @@
 import {
-  createProductFormOptions,
-  type CreateProductSchema,
+  productFormOptions,
   type OnProductSubmit,
+  type ProductFormSchema,
 } from "@fludge/client/application/catalog/form/product-form";
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 
@@ -14,11 +14,12 @@ const { useAppForm } = createFormHook({
   formComponents: {},
 });
 
-export function useCreateProductForm(options: OnProductSubmit) {
-  return useAppForm(createProductFormOptions(options));
+export function useProductForm(options: OnProductSubmit) {
+  return useAppForm(productFormOptions(options));
 }
 
-type Presentation = CreateProductSchema["presentations"][number];
+type Presentation = ProductFormSchema["presentations"][number];
+
 interface ChildrenProps<T> {
   field: ReturnType<typeof useFieldContext<T>>;
   add(presentation: Presentation): void;
@@ -35,7 +36,7 @@ function Presentations({ children }: PresentationsChildrenProps) {
   const field = useFieldContext<Presentation[]>();
 
   function add(presentation: Omit<Presentation, "id">) {
-    field.handleChange((prev) => [
+    field.setValue((prev) => [
       ...prev,
       {
         ...presentation,
@@ -45,13 +46,11 @@ function Presentations({ children }: PresentationsChildrenProps) {
   }
 
   function remove(id: string) {
-    field.handleChange((prev) => prev.filter((p) => p.id !== id));
+    field.setValue((prev) => prev.filter((p) => p.id !== id));
   }
 
   function update(id: string, presentation: Presentation) {
-    field.handleChange((prev) =>
-      prev.map((p) => (p.id === id ? presentation : p)),
-    );
+    field.setValue((prev) => prev.map((p) => (p.id === id ? presentation : p)));
   }
 
   function get(id: string) {

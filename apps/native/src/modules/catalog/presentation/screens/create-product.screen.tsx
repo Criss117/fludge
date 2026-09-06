@@ -1,5 +1,4 @@
 import { KeyboardScrollView } from "@/modules/shared/components/keyboard-scroll-view";
-import { useCreateProductForm } from "@fludge/client/presentation/iam/product.form";
 import { Card } from "heroui-native/card";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
@@ -9,20 +8,21 @@ import { MaterialIcons } from "@/modules/shared/components/icons";
 import { Separator } from "heroui-native/separator";
 import { useState } from "react";
 import { PresentationCard } from "../components/product-form/presentation-card";
-import type { CreateProductSchema } from "@fludge/client/application/catalog/form/product-form";
 import {
   CreatePresentationForm,
   UpdatePresentationForm,
 } from "../components/product-form/presentation-form";
+import { useProductForm } from "@fludge/client/presentation/catalog/product.form";
+import type { ProductFormSchema } from "@fludge/client/application/catalog/form/product-form";
 
-type Presentation = CreateProductSchema["presentations"][number];
+type Presentation = ProductFormSchema["presentations"][number];
 
 export function CreateProductScreen() {
   const [selectedPresentation, setSelectedPresentation] =
     useState<Presentation | null>(null);
   const [isPresentationFormOpen, setIsPresentationFormOpen] = useState(false);
   const { t } = useTranslation();
-  const form = useCreateProductForm({
+  const form = useProductForm({
     onSubmit: ({ value }) => {
       console.log(value);
     },
@@ -162,12 +162,7 @@ export function CreateProductScreen() {
                 onOpenChange={setIsPresentationFormOpen}
                 onSubmit={(value) => {
                   add({
-                    name: value.name,
-                    barcode: value.barcode,
-                    conversionFactor: value.conversionFactor,
-                    priceSale: value.priceSale,
-                    pricePurchase: value.pricePurchase,
-                    priceWholesale: value.priceWholesale,
+                    ...value,
                     id: crypto.randomUUID(),
                   });
                 }}
@@ -184,15 +179,7 @@ export function CreateProductScreen() {
                 selectedPresentation={selectedPresentation}
                 clearSelectedPresentation={() => setSelectedPresentation(null)}
                 onSubmit={(value) => {
-                  update(value.id, {
-                    name: value.name,
-                    barcode: value.barcode,
-                    conversionFactor: value.conversionFactor,
-                    priceSale: value.priceSale,
-                    pricePurchase: value.pricePurchase,
-                    priceWholesale: value.priceWholesale,
-                    id: crypto.randomUUID(),
-                  });
+                  update(value.id, value);
                 }}
               />
             )}
