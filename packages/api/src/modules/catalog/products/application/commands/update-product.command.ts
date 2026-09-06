@@ -14,7 +14,6 @@ import { ProductAlreadyExistsException } from "@fludge/api/modules/catalog/produ
 import { ProductPresentationAlreadyExistsException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-presentation-already-exists.exception";
 import { UUID } from "@fludge/utils/uuid";
 import type { Product } from "@fludge/api/modules/catalog/products/domain/entities/product.entity";
-import type { Member } from "@fludge/api/modules/iam/organization/domain/entities/member.entity";
 
 export const updateProductCommand = updateProductValidator;
 
@@ -45,7 +44,7 @@ export class UpdateProductCommand {
     return existing;
   }
 
-  private async validateExternals(
+  private async checkExternals(
     activeOrganizationId: string,
     existing: Product,
     cmd: CMD,
@@ -94,49 +93,6 @@ export class UpdateProductCommand {
     }
   }
 
-  private async upsertPresentations(
-    existing: Product,
-    cmd: CMD,
-    activeOrganization: Organization,
-    loggedMember: Member,
-  ) {
-    existing.deletePresentations(cmd.presentationsToDelete);
-
-    const presentationsToUpdate =
-      cmd.presentationsToUpdate.length > 0
-        ? existing.updatePresentations(
-            cmd.presentationsToUpdate.map(({ id, ...rest }) => ({
-              id: id,
-              data: rest,
-            })),
-          )
-        : [];
-
-    const presentationsToCreate =
-      cmd.presentations.length > 0
-        ? existing.addPresentations(
-            cmd.presentations.map((item) => ({
-              barcode: item.barcode,
-              conversionFactor: item.conversionFactor,
-              name: item.name,
-              productName: existing.values.name,
-              pricePurchase: item.pricePurchase,
-              priceSale: item.priceSale,
-              priceWholesale: item.priceWholesale,
-              organizationId: activeOrganization.id.toString(),
-              createdBy: loggedMember.id.toString(),
-            })),
-          )
-        : [];
-
-    existing.checkPresentationBarcodes();
-
-    return {
-      toDelete: cmd.presentationsToDelete,
-      toSave: [...presentationsToCreate, ...presentationsToUpdate],
-    };
-  }
-
   private async checkExternalBarcodes(
     existing: Product,
     activeOrganization: Organization,
@@ -177,7 +133,7 @@ export class UpdateProductCommand {
 
     const existing = await this.findProduct(activeOrganizationId, cmd.id);
 
-    await this.validateExternals(activeOrganizationId, existing, cmd);
+    await this.checkExternals(activeOrganizationId, existing, cmd);
 
     existing.update({
       name: cmd.name,
@@ -189,18 +145,29 @@ export class UpdateProductCommand {
       categoryId: cmd.categoryId,
     });
 
-    const presentations = await this.upsertPresentations(
-      existing,
-      cmd,
-      activeOrganization,
-      loggedMember,
+    const presentations = existing.savePresentations(
+      cmd.presentations.map((p) => ({
+        conversionFactor: p.conversionFactor,
+        name: p.name,
+        productName: existing.values.name,
+        pricePurchase: p.pricePurchase,
+        priceSale: p.priceSale,
+        priceWholesale: p.priceWholesale,
+        status: p.status,
+        barcode: p.barcode,
+        id: p.id,
+        delete: p.delete,
+        createdBy: loggedMember.id.toString(),
+      })),
     );
 
-    const barcodes = presentations.toSave
+    const barcodes = presentations
       .map((item) => item.barcode)
       .filter((b) => b !== undefined && b !== null);
 
     await this.checkExternalBarcodes(existing, activeOrganization, barcodes);
+
+    const toDelete = cmd.presentations.filter((p) => p.delete).map((p) => p.id);
 
     const [, errInsert] = await tryCatch(
       this.productRepository.transaction(async (tx) => {
@@ -211,23 +178,23 @@ export class UpdateProductCommand {
 
         if (errSaveProduct) throw errSaveProduct;
 
-        if (presentations.toSave.length > 0) {
+        if (presentations.length > 0) {
           const [, errSavePresentations] =
             await this.productPresentationRepository.save(
               existing.id.toString(),
-              presentations.toSave,
+              presentations,
               { tx },
             );
 
           if (errSavePresentations) throw errSavePresentations;
         }
 
-        if (presentations.toDelete.length > 0) {
+        if (toDelete.length > 0) {
           const [, errSavePresentations] =
             await this.productPresentationRepository.deleteMany(
               activeOrganization.id.toString(),
               existing.id.toString(),
-              presentations.toDelete,
+              toDelete,
               { tx },
             );
 

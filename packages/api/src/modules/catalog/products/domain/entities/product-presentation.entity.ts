@@ -9,17 +9,20 @@ export type CreateProductPresentation = {
   productName: string;
   barcode?: string | null;
   conversionFactor: number;
-  createdBy?: string | null;
+  createdBy: string;
   organizationId: string;
   pricePurchase?: number | null;
   priceSale: number;
   priceWholesale?: number | null;
 };
 
-export type UpdateProductPresentation = Partial<
-  Omit<CreateProductPresentation, "createdBy" | "organizationId">
+export type UpdateProductPresentation = Omit<
+  CreateProductPresentation,
+  "organizationId" | "createdBy"
 > & {
-  status?: ProductStatusEnum;
+  id: string;
+  status: ProductStatusEnum;
+  createdBy?: string;
 };
 
 export class ProductPresentation {
@@ -38,7 +41,7 @@ export class ProductPresentation {
 
     private _status: ProductStatus,
 
-    private _createdBy: UUID | null,
+    private _createdBy: UUID,
     private _createdAt: Date,
     private _updatedAt: Date,
   ) {}
@@ -55,7 +58,7 @@ export class ProductPresentation {
       data.priceSale,
       data.priceWholesale ?? null,
       new ProductStatus("active"),
-      data.createdBy ? UUID.fromString(data.createdBy) : null,
+      UUID.fromString(data.createdBy),
       new Date(),
       new Date(),
     );
@@ -73,7 +76,7 @@ export class ProductPresentation {
       data.priceSale,
       data.priceWholesale,
       new ProductStatus(data.status),
-      data.createdBy ? UUID.fromString(data.createdBy) : null,
+      UUID.fromString(data.createdBy),
       new Date(data.createdAt),
       new Date(data.updatedAt),
     );
@@ -132,7 +135,7 @@ export class ProductPresentation {
       priceSale: this._priceSale,
       priceWholesale: this._priceWholesale,
       status: this._status.value,
-      createdBy: this._createdBy ? this._createdBy.toString() : null,
+      createdBy: this._createdBy.toString(),
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
     };

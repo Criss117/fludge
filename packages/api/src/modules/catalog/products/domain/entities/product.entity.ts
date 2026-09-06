@@ -24,7 +24,7 @@ type CreateProduct = {
   stock: number;
   allowNegativeStock: boolean;
   minStock: number;
-  createdBy?: string | null;
+  createdBy: string;
   organizationId: string;
 
   presentations: CreateProductPresentation[];
@@ -51,7 +51,7 @@ export class Product {
 
     private _status: ProductStatus,
 
-    private _createdBy: UUID | null,
+    private _createdBy: UUID,
     private _createdAt: Date,
     private _updatedAt: Date,
 
@@ -87,7 +87,7 @@ export class Product {
       data.description,
       new ProductStock(data.stock, data.minStock, data.allowNegativeStock),
       new ProductStatus("active"),
-      data.createdBy ? UUID.fromString(data.createdBy) : null,
+      UUID.fromString(data.createdBy),
       new Date(),
       new Date(),
       ProductPresentationCollection.create(
@@ -96,6 +96,8 @@ export class Product {
     );
 
     newProduct._searchBlob = newProduct.buildSearchBlob();
+
+    newProduct.presentationsCollection.checkBarcodes();
 
     return newProduct;
   }
@@ -115,7 +117,7 @@ export class Product {
       data.description,
       new ProductStock(data.stock, data.minStock, data.allowNegativeStock),
       new ProductStatus(data.status),
-      data.createdBy ? UUID.fromString(data.createdBy) : null,
+      UUID.fromString(data.createdBy),
       new Date(data.createdAt),
       new Date(data.updatedAt),
       ProductPresentationCollection.create(
@@ -171,44 +173,61 @@ export class Product {
     return this._presentations.items;
   }
 
-  public addPresentation(data: CreateProductPresentation) {
-    const item = this._presentations.add(ProductPresentation.create(data));
-    this._searchBlob = this.buildSearchBlob();
-    this.touch();
-
-    return item;
-  }
-
-  public addPresentations(data: CreateProductPresentation[]) {
-    const items = this._presentations.addMany(
-      data.map(ProductPresentation.create),
-    );
-    this._searchBlob = this.buildSearchBlob();
-    this.touch();
-
-    return items;
-  }
-
-  public updatePresentation(id: string, data: UpdateProductPresentation) {
-    const item = this._presentations.update(id, data);
-    this._searchBlob = this.buildSearchBlob();
-    this.touch();
-    return item;
-  }
-
-  public updatePresentations(
-    updates: { id: string; data: UpdateProductPresentation }[],
+  public savePresentations(
+    data: Array<
+      UpdateProductPresentation & {
+        delete?: boolean;
+      }
+    >,
   ) {
-    const items = this._presentations.updateMany(updates);
-    this._searchBlob = this.buildSearchBlob();
-    this.touch();
-    return items;
-  }
+    const toDelete = data.filter((item) => item.delete).map((item) => item.id);
+    this.deletePresentations(toDelete);
 
-  public deletePresentation(id: string) {
-    this._presentations.delete(id);
+    const toSave = data.filter((item) => !item.delete);
+
+    const saved: ProductPresentation[] = [];
+
+    for (const item of toSave) {
+      const existing = this._presentations.get(item.id);
+
+      if (!existing) {
+        const newItem = this._presentations.add(
+          ProductPresentation.create({
+            conversionFactor: item.conversionFactor,
+            name: item.name,
+            productName: this._name,
+            pricePurchase: item.pricePurchase,
+            priceSale: item.priceSale,
+            priceWholesale: item.priceWholesale,
+            organizationId: this._organizationId.toString(),
+            createdBy: item.createdBy ?? this._createdBy.toString(),
+            barcode: item.barcode,
+          }),
+        );
+
+        saved.push(newItem);
+      } else {
+        const updated = this._presentations.update({
+          id: item.id,
+          conversionFactor: item.conversionFactor,
+          name: item.name,
+          productName: this._name,
+          pricePurchase: item.pricePurchase,
+          priceSale: item.priceSale,
+          priceWholesale: item.priceWholesale,
+          status: item.status,
+          barcode: item.barcode,
+        });
+
+        saved.push(updated);
+      }
+    }
+
+    this._presentations.checkBarcodes();
     this._searchBlob = this.buildSearchBlob();
     this.touch();
+
+    return saved;
   }
 
   public deletePresentations(ids: string[]) {
@@ -217,8 +236,12 @@ export class Product {
     this.touch();
   }
 
-  public checkPresentationBarcodes() {
-    this._presentations.checkBarcodes();
+  public get presentationsCollection() {
+    return this._presentations;
+  }
+
+  public get barcodes() {
+    return this._presentations.barcodes;
   }
 
   public get values(): ProductSelect & {
@@ -233,7 +256,7 @@ export class Product {
       slug: this._slug.toString(),
       description: this._description,
       status: this._status.value,
-      createdBy: this._createdBy ? this._createdBy.toString() : null,
+      createdBy: this._createdBy.toString(),
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
       presentations: this._presentations.items.map((item) =>

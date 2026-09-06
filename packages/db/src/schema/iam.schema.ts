@@ -82,9 +82,9 @@ export const member = sqliteTable(
 );
 
 export const createdByMetadata = {
-  createdBy: text("created_by").references(() => member.id, {
-    onDelete: "set null",
-  }),
+  createdBy: text("created_by")
+    .references(() => member.id)
+    .notNull(),
 };
 
 export const organizationHistory = sqliteTable("organization_history", {

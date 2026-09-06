@@ -46,31 +46,19 @@ export class ProductPresentationCollection {
 
     this._items.set(item.id.toString(), item);
 
-    this.checkBarcodes();
-
     return item;
   }
 
-  public addMany(items: ProductPresentation[]) {
-    return items.map((item) => this.add(item));
-  }
-
-  public update(id: string, data: UpdateProductPresentation) {
-    const item = this._items.get(id);
+  public update(values: UpdateProductPresentation) {
+    const item = this._items.get(values.id);
 
     if (!item) throw new ProductPresentationNotFoundException();
 
-    item.update(data);
+    item.update(values);
 
-    this._items.set(id, item);
-
-    this.checkBarcodes();
+    this._items.set(values.id, item);
 
     return item;
-  }
-
-  public updateMany(updates: (UpdateProductPresentation & { id: string })[]) {
-    return updates.map((data) => this.update(data.id, data));
   }
 
   public checkBarcodes() {
