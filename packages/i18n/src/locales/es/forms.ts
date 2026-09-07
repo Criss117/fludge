@@ -67,8 +67,16 @@ export const forms = {
       label: "Descripción de la categoría",
       placeholder: "Ej. Lacteos de la mano",
     },
-    create: "Crear Categoría",
-    update: "Actualizar Categoría",
+    create: {
+      title: "Crear Categoría",
+      description: "Llena los campos para crear una nueva categoría",
+      submit: "Crear",
+    },
+    update: {
+      title: "Actualizar Categoría",
+      description: "Actualiza la categoría seleccionada",
+      submit: "Actualizar",
+    },
   },
   product: {
     name: {
