@@ -16,7 +16,9 @@ export const barcodeSchema = z
   })
   .max(100, {
     error: getI18nKey("validators.barcode.max_length"),
-  });
+  })
+  .or(z.literal(""))
+  .transform((v) => (v === "" ? undefined : v));
 
 export const conversionFactorSchema = z.coerce
   .number<number>({
@@ -40,31 +42,34 @@ export const priceSaleSchema = z.coerce
     error: getI18nKey("validators.price_sale.positive"),
   });
 
-export const pricePurchaseSchema = z.literal(0).or(
-  z.coerce
-    .number<number>({
-      error: getI18nKey("validators.price_purchase.invalid"),
-    })
-    .int({
-      error: getI18nKey("validators.price_purchase.integer"),
-    })
-    .positive({
-      error: getI18nKey("validators.price_purchase.positive"),
-    }),
-);
+export const pricePurchaseSchema = z
+  .literal(0)
+  .or(
+    z.coerce
+      .number<number>({
+        error: getI18nKey("validators.price_purchase.invalid"),
+      })
+      .int({
+        error: getI18nKey("validators.price_purchase.integer"),
+      })
+      .positive({
+        error: getI18nKey("validators.price_purchase.positive"),
+      }),
+  )
+  .transform((v) => (v === 0 ? undefined : v));
 
-export const priceWholesaleSchema = z.literal(0).or(
-  z.coerce
-    .number<number>({
-      error: getI18nKey("validators.price_wholesale.invalid"),
-    })
-    .int({
-      error: getI18nKey("validators.price_wholesale.integer"),
-    })
-    .positive({
-      error: getI18nKey("validators.price_wholesale.positive"),
-    }),
-);
+export const priceWholesaleSchema = z.coerce
+  .number<number>({
+    error: getI18nKey("validators.price_wholesale.invalid"),
+  })
+  .int({
+    error: getI18nKey("validators.price_wholesale.integer"),
+  })
+  .positive({
+    error: getI18nKey("validators.price_wholesale.positive"),
+  })
+  .or(z.literal(0))
+  .transform((v) => (v === 0 ? undefined : v));
 
 export const productStatusSchema = z.enum(productStatusEnum, {
   error: getI18nKey("validators.product_status.invalid"),
@@ -92,31 +97,34 @@ export const minStockSchema = z.coerce
     error: getI18nKey("validators.min_stock.positive"),
   });
 
+export const categoryIdSchema = uuidSchema
+  .or(z.literal(""))
+  .transform((v) => (v === "" ? undefined : v));
+
 export const createProductPresentationValidator = z.object({
   name: nameSchema,
-  barcode: barcodeSchema.optional(),
+  barcode: barcodeSchema,
   conversionFactor: conversionFactorSchema,
   priceSale: priceSaleSchema,
-  pricePurchase: pricePurchaseSchema.optional(),
-  priceWholesale: priceWholesaleSchema.optional(),
+  pricePurchase: pricePurchaseSchema,
+  priceWholesale: priceWholesaleSchema,
 });
 
 export const updateProductPresentationValidator =
   createProductPresentationValidator.extend({
     id: uuidSchema,
     status: productStatusSchema,
-    delete: z.boolean(),
   });
 
 export const createProductValidator = z.object({
   name: nameSchema,
-  categoryId: uuidSchema.optional(),
+  categoryId: categoryIdSchema,
   description: descriptionSchema,
   stock: stockSchema,
   minStock: minStockSchema,
   allowNegativeStock: z.boolean(),
   presentations: z.array(createProductPresentationValidator).min(1, {
-    error: getI18nKey("validators.array.at_least_one"),
+    error: getI18nKey("validators.array.presentations.at_least_one"),
   }),
 });
 
@@ -124,7 +132,7 @@ export const updateProductValidator = createProductValidator.extend({
   id: uuidSchema,
   status: productStatusSchema,
   presentations: z.array(updateProductPresentationValidator).min(1, {
-    error: getI18nKey("validators.array.at_least_one"),
+    error: getI18nKey("validators.array.presentations.at_least_one"),
   }),
 });
 

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { Button } from "heroui-native/button";
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useProductForm } from "@fludge/client/presentation/catalog/product.form";
 import { useUpdateProductMutation } from "@fludge/client/application/catalog/mutations/use-product.mutations";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
@@ -17,6 +17,7 @@ import {
   PresentationsSection,
   StockSection,
 } from "../components/product-form/sections";
+import { ORPCError } from "@orpc/client";
 
 interface Props {
   product: ProductDetail;
@@ -30,7 +31,6 @@ export function UpdateProductScreen({ product }: Props) {
     useState<Presentation | null>(null);
   const [isPresentationFormOpen, setIsPresentationFormOpen] = useState(false);
   const { t } = useTranslation();
-  const [isPending, startTransition] = useTransition();
 
   const updateProduct = useUpdateProductMutation();
   const mutationToast = useMutationToast("update-product-form");
@@ -41,27 +41,28 @@ export function UpdateProductScreen({ product }: Props) {
           "mutations.products.update.is_pending"
         );
 
-        // console.log(value);
-        // return;
-
-        startTransition(async () => {
-          const tx = updateProduct(value);
-
-          await tx.isPersisted.promise
-            .then(() => {
+        updateProduct.mutate(
+          { ...value, id: product.id },
+          {
+            onSuccess: () => {
               mutationToast.showSuccessToast(
                 "mutations.products.update.success.title",
                 "mutations.products.update.success.description"
               );
               router.back();
-            })
-            .catch((error) => {
+            },
+            onError: (error) => {
+              if (error instanceof ORPCError) {
+                console.log(JSON.stringify(error, null, 2));
+              }
+
               mutationToast.showErrorToast(
                 "mutations.products.update.error",
                 error.message as TranslationKey
               );
-            });
-        });
+            },
+          }
+        );
       },
     },
     {
@@ -72,7 +73,6 @@ export function UpdateProductScreen({ product }: Props) {
       allowNegativeStock: product.allowNegativeStock,
       minStock: product.minStock,
       status: product.status,
-      id: product.id,
       presentations: product.presentations.map((p) => ({
         barcode: p.barcode ?? "",
         conversionFactor: p.conversionFactor,
@@ -107,7 +107,10 @@ export function UpdateProductScreen({ product }: Props) {
         />
       </KeyboardScrollView>
       <View className="bg-background absolute bottom-0 w-full gap-y-4 px-3 py-6">
-        <Button onPress={form.handleSubmit} isDisabled={isPending}>
+        <Button
+          onPress={form.handleSubmit}
+          isDisabled={updateProduct.isPending}
+        >
           <MaterialIcons name="add-box" size={20} className="text-eclipse" />
           <Button.Label className="text-eclipse">
             {t("forms.product.update")}

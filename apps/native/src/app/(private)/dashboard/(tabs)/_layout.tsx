@@ -1,7 +1,6 @@
 import { GeistFonts } from "@/integrations/fonts";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { UserButton } from "@/modules/shared/components/user-button";
-import { useAppTheme } from "@/modules/shared/context/app-theme-context";
 import { Tabs as ExpoTabs } from "expo-router";
 import type { BottomTabDescriptorMap } from "expo-router/build/react-navigation/bottom-tabs/types";
 import type {

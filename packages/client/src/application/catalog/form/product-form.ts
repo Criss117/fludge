@@ -1,45 +1,30 @@
 import { getI18nKey } from "@fludge/api/modules/shared/i18n/utils";
 import {
-  barcodeSchema,
-  pricePurchaseSchema,
-  priceWholesaleSchema,
   updateProductPresentationValidator,
   updateProductValidator,
 } from "@fludge/utils/validators/product.validators";
-import { uuidSchema } from "@fludge/utils/validators/shared";
 import { formOptions, useForm } from "@tanstack/react-form";
 import { z } from "zod";
 
-const productPresentationFormSchema = updateProductPresentationValidator
-  .omit({
-    barcode: true,
-    pricePurchase: true,
-    priceWholesale: true,
-  })
-  .extend({
-    barcode: barcodeSchema
-      .or(z.literal(""))
-      .transform((v) => (v === "" ? undefined : v)),
-    pricePurchase: pricePurchaseSchema
-      .or(z.literal(0))
-      .transform((v) => (v === 0 ? undefined : v)),
-    priceWholesale: priceWholesaleSchema
-      .or(z.literal(0))
-      .transform((v) => (v === 0 ? undefined : v)),
-  });
+const productPresentationFormSchema = updateProductPresentationValidator.extend(
+  {
+    isDeleted: z.boolean().optional(),
+  },
+);
 
 const productFormSchema = updateProductValidator
   .omit({
-    categoryId: true,
     presentations: true,
+    id: true,
   })
   .extend({
-    categoryId: uuidSchema
-      .or(z.literal(""))
-      .transform((v) => (v === "" ? undefined : v)),
     presentations: z.array(productPresentationFormSchema).min(1, {
       message: getI18nKey("validators.array.at_least_one"),
     }),
+  })
+  .refine((data) => data.presentations.filter((p) => !p.isDeleted).length > 0, {
+    path: ["presentations"],
+    message: getI18nKey("validators.array.presentations.at_least_one"),
   });
 
 export type ProductPresentationFormSchema = z.input<
@@ -55,7 +40,6 @@ export interface OnProductSubmit {
 }
 
 const defaultProductValues: ProductFormSchema = {
-  id: crypto.randomUUID(),
   status: "active",
   name: "",
   categoryId: "",
@@ -97,7 +81,7 @@ const defaultProductPresentationValues: ProductPresentationFormSchema = {
   pricePurchase: 0,
   priceWholesale: 0,
   status: "active",
-  delete: false,
+  isDeleted: false,
 };
 
 export function productPresentationFormOptions(

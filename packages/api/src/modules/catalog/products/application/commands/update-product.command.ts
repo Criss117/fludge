@@ -156,18 +156,15 @@ export class UpdateProductCommand {
         status: p.status,
         barcode: p.barcode,
         id: p.id,
-        delete: p.delete,
         createdBy: loggedMember.id.toString(),
       })),
     );
 
-    const barcodes = presentations
+    const barcodes = presentations.toSave
       .map((item) => item.barcode)
       .filter((b) => b !== undefined && b !== null);
 
     await this.checkExternalBarcodes(existing, activeOrganization, barcodes);
-
-    const toDelete = cmd.presentations.filter((p) => p.delete).map((p) => p.id);
 
     const [, errInsert] = await tryCatch(
       this.productRepository.transaction(async (tx) => {
@@ -178,23 +175,23 @@ export class UpdateProductCommand {
 
         if (errSaveProduct) throw errSaveProduct;
 
-        if (presentations.length > 0) {
+        if (presentations.toSave.length > 0) {
           const [, errSavePresentations] =
             await this.productPresentationRepository.save(
               existing.id.toString(),
-              presentations,
+              presentations.toSave,
               { tx },
             );
 
           if (errSavePresentations) throw errSavePresentations;
         }
 
-        if (toDelete.length > 0) {
+        if (presentations.toDelete.length > 0) {
           const [, errSavePresentations] =
             await this.productPresentationRepository.deleteMany(
               activeOrganization.id.toString(),
               existing.id.toString(),
-              toDelete,
+              presentations.toDelete,
               { tx },
             );
 

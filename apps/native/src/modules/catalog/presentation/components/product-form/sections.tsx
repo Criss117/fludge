@@ -12,6 +12,7 @@ import { View } from "react-native";
 import { Button } from "heroui-native/button";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { PresentationFormCard } from "./presentation-card";
+import { FieldError } from "@/modules/shared/components/field-error";
 
 type Form = ReturnType<typeof useProductForm>;
 type Presentation = ProductFormSchema["presentations"][number];
@@ -148,6 +149,7 @@ export function PresentationsSection({
   setSelectedPresentation,
 }: PresentationsSectionProps) {
   const { t } = useTranslation();
+
   return (
     <Card className="gap-y-2">
       <Card.Header className="flex-row items-start">
@@ -158,6 +160,17 @@ export function PresentationsSection({
           <Card.Description>
             {t("forms.product.sections.presentations.description")}
           </Card.Description>
+          <form.AppField name="presentations">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              const errors = field.state.meta.errors;
+
+              if (!isInvalid) return null;
+
+              return <FieldError errors={errors} />;
+            }}
+          </form.AppField>
         </View>
 
         <Button size="sm" onPressIn={() => onOpenChange(true)}>

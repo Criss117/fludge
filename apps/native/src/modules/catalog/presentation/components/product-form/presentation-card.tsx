@@ -31,15 +31,15 @@ export function PresentationFormCard({
 }: Props) {
   const { t } = useTranslation();
 
-  if (presentation.delete && action === "create") return null;
+  if (presentation.isDeleted && action === "create") return null;
 
   const onSelect = () => {
-    if (presentation.delete) return;
+    if (presentation.isDeleted) return;
     setSelectedPresentation(presentation);
   };
 
   const onDelete = () => {
-    if (presentation.delete) return;
+    if (presentation.isDeleted) return;
 
     if (action === "create") remove(presentation.id);
 
@@ -47,13 +47,16 @@ export function PresentationFormCard({
   };
 
   const onRestore = () => {
-    if (!presentation.delete) return;
+    if (!presentation.isDeleted) return;
     restore(presentation.id);
   };
 
   return (
     <Card
-      className={cn("bg-default gap-y-2", presentation.delete && "opacity-50")}
+      className={cn(
+        "bg-default gap-y-2",
+        presentation.isDeleted && "opacity-50"
+      )}
     >
       <Card.Header className="flex-1 flex-row items-start">
         <View className="flex-1">
@@ -62,16 +65,16 @@ export function PresentationFormCard({
             <Chip.Label>Factor: x{presentation.conversionFactor}</Chip.Label>
           </Chip>
           <Card.Description className="line-clamp-2">
-            {t("resources.presentations.barcode")}: {presentation.id}
+            {t("resources.presentations.barcode")}: {presentation.barcode}
           </Card.Description>
         </View>
         <View className="flex-row items-center">
-          {!presentation.delete && (
+          {!presentation.isDeleted && (
             <Button
               size="sm"
               variant="ghost"
               isIconOnly
-              isDisabled={presentation.delete}
+              isDisabled={presentation.isDeleted}
               onPress={onSelect}
             >
               <MaterialIcons
@@ -82,18 +85,18 @@ export function PresentationFormCard({
             </Button>
           )}
 
-          {!presentation.delete && (
+          {!presentation.isDeleted && (
             <Button
               size="sm"
               variant="ghost"
               isIconOnly
-              isDisabled={presentation.delete}
+              isDisabled={presentation.isDeleted}
               onPress={onDelete}
             >
               <MaterialIcons name="delete" size={20} className="text-danger" />
             </Button>
           )}
-          {presentation.delete && (
+          {presentation.isDeleted && (
             <Button size="sm" isIconOnly onPress={onRestore}>
               <MaterialIcons
                 name="undo"

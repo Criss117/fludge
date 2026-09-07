@@ -351,6 +351,7 @@ function SearchableSelect({
           </Select.Content>
         </KeyboardAvoidingView>
       </Select.Portal>
+      {errors && <FieldError errors={errors} />}
     </Select>
   );
 }

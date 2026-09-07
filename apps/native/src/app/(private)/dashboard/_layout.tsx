@@ -11,13 +11,10 @@ import { RemountBoundary } from "@fludge/client/presentation/shared/remount-boun
 import { bumpRemount } from "@fludge/client/shared/use-remount-epoch";
 import { useFindActiveOrganization } from "@fludge/client/application/iam/queries/use-find-organization";
 import { useProductsCollection } from "@fludge/client/application/catalog/collections/products.collection";
-import { useProductsPresentationsCollection } from "@fludge/client/application/catalog/collections/product-presentations.container";
 
 export default function DashboardLayout() {
   const backgroundColor = useThemeColor("background");
   const { productCollection } = useProductsCollection();
-  const { productPresentationsCollection } =
-    useProductsPresentationsCollection();
 
   useFindActiveOrganization();
 
@@ -48,9 +45,6 @@ export default function DashboardLayout() {
   useEffect(() => {
     productCollection.preload().then(() => {
       console.log("productCollection.preload");
-    });
-    productPresentationsCollection.preload().then(() => {
-      console.log("productPresentationsCollection.preload");
     });
   }, []);
 

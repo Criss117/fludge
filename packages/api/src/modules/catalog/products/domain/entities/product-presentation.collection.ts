@@ -49,7 +49,7 @@ export class ProductPresentationCollection {
     return item;
   }
 
-  public update(values: UpdateProductPresentation) {
+  public update(values: UpdateProductPresentation & { id: string }) {
     const item = this._items.get(values.id);
 
     if (!item) throw new ProductPresentationNotFoundException();

@@ -1,11 +1,12 @@
 import { cors } from "@elysiajs/cors";
 import { createContext } from "@fludge/api/context";
+import { ValidationDomainException } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 import { appRouter } from "@fludge/api/routers/index";
 import { auth, isAvailableEndpoint } from "@fludge/auth";
 import { env } from "@fludge/env/server";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
-import { onError } from "@orpc/server";
+import { onError, ORPCError, ValidationError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { Elysia } from "elysia";
@@ -13,7 +14,13 @@ import { Elysia } from "elysia";
 const rpcHandler = new RPCHandler(appRouter, {
   interceptors: [
     onError((error) => {
-      console.error(error);
+      if (
+        error instanceof ORPCError &&
+        error.code === "BAD_REQUEST" &&
+        error.cause instanceof ValidationError
+      ) {
+        throw new ValidationDomainException(error.cause.issues);
+      }
     }),
   ],
 });

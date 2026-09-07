@@ -174,60 +174,56 @@ export class Product {
   }
 
   public savePresentations(
-    data: Array<
-      UpdateProductPresentation & {
-        delete?: boolean;
-      }
-    >,
+    data: Array<UpdateProductPresentation & { id: string }>,
   ) {
-    const toDelete = data.filter((item) => item.delete).map((item) => item.id);
-    this.deletePresentations(toDelete);
+    const newPresentations: ProductPresentation[] = [];
+    const oldIds = this._presentations.items.map((item) => item.id.toString());
 
-    const toSave = data.filter((item) => !item.delete);
-
-    const saved: ProductPresentation[] = [];
-
-    for (const item of toSave) {
+    for (const item of data) {
       const existing = this._presentations.get(item.id);
 
       if (!existing) {
-        const newItem = this._presentations.add(
-          ProductPresentation.create({
-            conversionFactor: item.conversionFactor,
-            name: item.name,
-            productName: this._name,
-            pricePurchase: item.pricePurchase,
-            priceSale: item.priceSale,
-            priceWholesale: item.priceWholesale,
-            organizationId: this._organizationId.toString(),
-            createdBy: item.createdBy ?? this._createdBy.toString(),
-            barcode: item.barcode,
-          }),
-        );
-
-        saved.push(newItem);
-      } else {
-        const updated = this._presentations.update({
-          id: item.id,
+        const newItem = ProductPresentation.create({
           conversionFactor: item.conversionFactor,
           name: item.name,
           productName: this._name,
           pricePurchase: item.pricePurchase,
           priceSale: item.priceSale,
           priceWholesale: item.priceWholesale,
-          status: item.status,
+          organizationId: this._organizationId.toString(),
+          createdBy: item.createdBy ?? this._createdBy.toString(),
           barcode: item.barcode,
         });
 
-        saved.push(updated);
+        newPresentations.push(newItem);
+        continue;
       }
+
+      existing.update({
+        conversionFactor: item.conversionFactor,
+        name: item.name,
+        productName: this._name,
+        pricePurchase: item.pricePurchase,
+        priceSale: item.priceSale,
+        priceWholesale: item.priceWholesale,
+        status: item.status,
+        barcode: item.barcode,
+      });
+
+      newPresentations.push(existing);
     }
 
+    this._presentations =
+      ProductPresentationCollection.create(newPresentations);
     this._presentations.checkBarcodes();
     this._searchBlob = this.buildSearchBlob();
     this.touch();
 
-    return saved;
+    const newIds = this._presentations.items.map((item) => item.id.toString());
+
+    const toDelete = oldIds.filter((id) => !newIds.includes(id));
+
+    return { toSave: newPresentations, toDelete };
   }
 
   public deletePresentations(ids: string[]) {

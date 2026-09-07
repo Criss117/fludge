@@ -29,7 +29,7 @@ export const productsRouter = {
       products: ["update"],
     })
       .route({
-        method: "PATCH",
+        method: "PUT",
         path: "/products",
         tags: Tags,
       })

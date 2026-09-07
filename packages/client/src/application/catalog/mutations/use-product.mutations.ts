@@ -1,90 +1,131 @@
-import { createOptimisticAction } from "@tanstack/react-db";
-import { useProductsCollection } from "../collections/products.collection";
-import { useProductsPresentationsCollection } from "../collections/product-presentations.container";
-import { useOrpc } from "@fludge/client/providers/orpc.provider";
-import type { ProductFormSchema } from "../form/product-form";
+import { useProductsCollection } from "@fludge/client/application/catalog/collections/products.collection";
+import { getI18nKey } from "@fludge/api/modules/shared/i18n/utils";
+import { useMutation } from "@tanstack/react-query";
+import type { ProductDetail } from "@fludge/client/application/catalog/queries/use-find-products";
+import type { ProductFormSchema } from "@fludge/client/application/catalog/form/product-form";
+
+function generateNewPresentation(
+  activeOrganizationId: string,
+  productId: string,
+  values: ProductFormSchema["presentations"][number],
+): ProductDetail["presentations"][number] {
+  const now = new Date();
+  return {
+    id: values.id,
+    barcode: values.barcode,
+    name: values.name,
+    searchBlob: values.name,
+    conversionFactor: values.conversionFactor,
+    pricePurchase: values.pricePurchase,
+    priceSale: values.priceSale,
+    priceWholesale: values.priceWholesale,
+    organizationId: activeOrganizationId,
+    createdBy: "",
+    createdAt: now,
+    updatedAt: now,
+    status: "active",
+    productId: productId,
+  };
+}
 
 export function useCreateProductMutation() {
   const { productCollection, activeOrganization } = useProductsCollection();
-  const { productPresentationsCollection } =
-    useProductsPresentationsCollection();
-  const orpc = useOrpc();
 
-  return createOptimisticAction<ProductFormSchema>({
-    onMutate: (input) => {
+  return useMutation({
+    mutationKey: ["create-product"],
+    mutationFn: async (input: ProductFormSchema) => {
       const productId = crypto.randomUUID();
       const now = new Date();
 
-      productCollection.insert({
+      const { presentations, ...product } = input;
+
+      const correctedPresentations = presentations.filter((p) => !p.isDeleted);
+
+      if (correctedPresentations.length === 0)
+        throw new Error(
+          getI18nKey("api_errors.catalog.products.no_has_barcode"),
+        );
+
+      const tx = productCollection.insert({
         id: productId,
-        name: input.name,
-        description: input.description,
-        stock: input.stock,
-        allowNegativeStock: input.allowNegativeStock,
-        minStock: input.minStock,
-        categoryId: input.categoryId,
-        searchBlob: input.name,
-        totalPresentations: input.presentations.length,
+
+        name: product.name,
+        searchBlob: product.name,
+        slug: product.name,
+        description: product.description,
+        categoryId: product.categoryId,
+
+        stock: product.stock,
+        allowNegativeStock: product.allowNegativeStock,
+        minStock: product.minStock,
+
+        organizationId: activeOrganization.id,
+        createdBy: "",
         createdAt: now,
         updatedAt: now,
-        createdBy: "",
-        organizationId: activeOrganization.id.toString(),
-        slug: input.name,
         status: "active",
+
+        presentations: correctedPresentations.map((p) =>
+          generateNewPresentation(activeOrganization.id, productId, p),
+        ),
       });
 
-      productPresentationsCollection.insert(
-        input.presentations.map((item) => ({
-          id: crypto.randomUUID(),
-          name: item.name,
-          barcode: item.barcode,
-          conversionFactor: item.conversionFactor,
-          priceSale: item.priceSale,
-          pricePurchase: item.pricePurchase,
-          priceWholesale: item.priceWholesale,
-          searchBlob: item.name,
-          productId: productId,
-          organizationId: activeOrganization.id.toString(),
-          createdAt: now,
-          updatedAt: now,
-          createdBy: "",
-          status: "active",
-        })),
-      );
-    },
-    mutationFn: async (input) => {
-      const response = await orpc.product.commands.create.call(input);
-
-      const { presentations, ...product } = response;
-
-      productCollection.utils.writeInsert({
-        ...product,
-        totalPresentations: presentations.length,
-      });
-      productPresentationsCollection.utils.writeInsert(presentations);
-
-      return response;
+      await tx.isPersisted.promise;
     },
   });
 }
 
 export function useUpdateProductMutation() {
   const { productCollection, activeOrganization } = useProductsCollection();
-  const { productPresentationsCollection } =
-    useProductsPresentationsCollection();
-  const orpc = useOrpc();
 
-  return createOptimisticAction<ProductFormSchema>({
-    onMutate: (input) => {
+  return useMutation({
+    mutationKey: ["update-product"],
+    mutationFn: async (input: ProductFormSchema & { id: string }) => {
+      console.log("UPDATE: init");
       const now = new Date();
 
-      productCollection.update(input.id, (draft) => {
+      const exisiting = productCollection.get(input.id);
+
+      if (!exisiting)
+        throw new Error(getI18nKey("api_errors.catalog.products.not_found"));
+
+      const newPresentations: ProductDetail["presentations"] = [];
+
+      for (const pres of input.presentations) {
+        if (pres.isDeleted) continue;
+
+        const existingPresentation = exisiting.presentations.find(
+          (p) => p.id === pres.id,
+        );
+
+        if (!existingPresentation) {
+          newPresentations.push(
+            generateNewPresentation(activeOrganization.id, input.id, pres),
+          );
+
+          continue;
+        }
+
+        newPresentations.push({
+          ...existingPresentation,
+          name: pres.name,
+          searchBlob: pres.name,
+          barcode: pres.barcode,
+          conversionFactor: pres.conversionFactor,
+          pricePurchase: pres.pricePurchase,
+          priceSale: pres.priceSale,
+          priceWholesale: pres.priceWholesale,
+          status: pres.status,
+          updatedAt: now,
+        });
+      }
+
+      const tx = productCollection.update(input.id, (draft) => {
         draft.name = input.name;
         draft.description = input.description;
         draft.searchBlob = input.name;
         draft.slug = input.name;
         draft.categoryId = input.categoryId;
-        draft.totalPresentations = input.presentations.length;
 
         draft.stock = input.stock;
         draft.minStock = input.minStock;
@@ -92,81 +133,11 @@ export function useUpdateProductMutation() {
 
         draft.updatedAt = now;
         draft.status = input.status;
+
+        draft.presentations = newPresentations;
       });
 
-      for (const presentation of input.presentations) {
-        if (presentation.delete) {
-          productPresentationsCollection.delete(presentation.id);
-
-          continue;
-        }
-
-        const existing = productPresentationsCollection.get(presentation.id);
-
-        if (existing) {
-          productPresentationsCollection.update(presentation.id, (draft) => {
-            draft.barcode = presentation.barcode;
-            draft.conversionFactor = presentation.conversionFactor;
-            draft.name = presentation.name;
-            draft.priceSale = presentation.priceSale;
-            draft.pricePurchase = presentation.pricePurchase;
-            draft.priceWholesale = presentation.priceWholesale;
-            draft.status = presentation.status;
-
-            draft.searchBlob = presentation.name;
-            draft.updatedAt = now;
-          });
-
-          continue;
-        }
-
-        productPresentationsCollection.insert({
-          id: presentation.id,
-          name: presentation.name,
-          barcode: presentation.barcode,
-          conversionFactor: presentation.conversionFactor,
-          priceSale: presentation.priceSale,
-          pricePurchase: presentation.pricePurchase,
-          priceWholesale: presentation.priceWholesale,
-          searchBlob: presentation.name,
-          productId: input.id,
-          organizationId: activeOrganization.id,
-          createdAt: now,
-          updatedAt: now,
-          createdBy: "",
-          status: "active",
-        });
-      }
-    },
-    mutationFn: async (input) => {
-      const response = await orpc.product.commands.update.call(input);
-
-      const { presentations, ...product } = response;
-
-      productCollection.utils.writeUpdate({
-        ...product,
-        totalPresentations: presentations.length,
-      });
-
-      productPresentationsCollection.utils.writeDelete(
-        input.presentations.filter((p) => p.delete).map((p) => p.id),
-      );
-
-      for (const presentation of presentations) {
-        const existing = productPresentationsCollection.get(presentation.id);
-
-        if (existing) {
-          productPresentationsCollection.utils.writeUpdate(presentation);
-
-          continue;
-        }
-
-        productPresentationsCollection.utils.writeInsert(presentation);
-
-        await Promise.resolve();
-      }
-
-      return response;
+      await tx.isPersisted.promise;
     },
   });
 }

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { Button } from "heroui-native/button";
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useProductForm } from "@fludge/client/presentation/catalog/product.form";
 import { useCreateProductMutation } from "@fludge/client/application/catalog/mutations/use-product.mutations";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
@@ -25,30 +25,27 @@ export function CreateProductScreen() {
     useState<Presentation | null>(null);
   const [isPresentationFormOpen, setIsPresentationFormOpen] = useState(false);
   const { t } = useTranslation();
-  const [isPending, startTransition] = useTransition();
 
   const createProduct = useCreateProductMutation();
   const mutationToast = useMutationToast("create-product-form");
   const form = useProductForm({
     onSubmit: ({ value }) => {
       mutationToast.showIsPendingToast("mutations.products.create.is_pending");
-      startTransition(async () => {
-        const tx = createProduct(value);
 
-        await tx.isPersisted.promise
-          .then(() => {
-            mutationToast.showSuccessToast(
-              "mutations.products.create.success.title",
-              "mutations.products.create.success.description"
-            );
-            router.back();
-          })
-          .catch((error) => {
-            mutationToast.showErrorToast(
-              "mutations.products.create.error",
-              error.message as TranslationKey
-            );
-          });
+      createProduct.mutate(value, {
+        onSuccess: () => {
+          mutationToast.showSuccessToast(
+            "mutations.products.create.success.title",
+            "mutations.products.create.success.description"
+          );
+          router.back();
+        },
+        onError: (error) => {
+          mutationToast.showErrorToast(
+            "mutations.products.create.error",
+            error.message as TranslationKey
+          );
+        },
       });
     },
   });
@@ -72,7 +69,10 @@ export function CreateProductScreen() {
         />
       </KeyboardScrollView>
       <View className="bg-background absolute bottom-0 w-full gap-y-4 px-3 py-6">
-        <Button onPress={form.handleSubmit} isDisabled={isPending}>
+        <Button
+          onPress={form.handleSubmit}
+          isDisabled={createProduct.isPending}
+        >
           <MaterialIcons name="add-box" size={20} className="text-eclipse" />
           <Button.Label className="text-eclipse">
             {t("forms.product.update")}

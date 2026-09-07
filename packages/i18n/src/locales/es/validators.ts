@@ -32,6 +32,11 @@ export const validators = {
     at_least_one: "Debes seleccionar al menos una opción",
     min_length: "La lista es muy corta",
     max_length: "La lista es muy larga",
+    presentations: {
+      at_least_one: "Debes tener al menos una presentación",
+      min_length: "La lista de presentaciones es muy corta",
+      max_length: "La lista de presentaciones es muy larga",
+    },
   },
   legal_name: {
     required: "El nombre legal es requerido",

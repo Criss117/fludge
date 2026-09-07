@@ -20,7 +20,6 @@ export type UpdateProductPresentation = Omit<
   CreateProductPresentation,
   "organizationId" | "createdBy"
 > & {
-  id: string;
   status: ProductStatusEnum;
   createdBy?: string;
 };

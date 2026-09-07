@@ -41,7 +41,8 @@ export function ProductCard({ product }: Props) {
                 className="text-muted"
               />
               <Card.Description>
-                {product.totalPresentations} {t("resources.presentations.name")}
+                {product.presentations.length}{" "}
+                {t("resources.presentations.name")}
               </Card.Description>
             </View>
           </View>
