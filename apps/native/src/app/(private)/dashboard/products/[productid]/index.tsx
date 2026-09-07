@@ -1,3 +1,42 @@
-export default function ProductScreen() {
-  return <></>;
+import { ProductScreen } from "@/modules/catalog/presentation/screens/product.screen";
+import { useFindOneProduct } from "@fludge/client/application/catalog/queries/use-find-products";
+import { Redirect, Stack, useLocalSearchParams } from "expo-router";
+import { Suspense } from "react";
+
+function ScreenSuspense({ productId }: { productId: string }) {
+  const { data } = useFindOneProduct(productId);
+
+  if (!data)
+    return (
+      <Redirect
+        href={{
+          pathname: "/(private)/dashboard/(tabs)/catalog",
+        }}
+      />
+    );
+
+  return (
+    <>
+      <Stack.Screen
+        options={{
+          title: data.name,
+        }}
+      />
+      <ProductScreen product={data} />
+    </>
+  );
+}
+
+export default function Product() {
+  const { productid } = useLocalSearchParams<{
+    productid?: string;
+  }>();
+
+  if (!productid) return null;
+
+  return (
+    <Suspense>
+      <ScreenSuspense productId={productid} />
+    </Suspense>
+  );
 }

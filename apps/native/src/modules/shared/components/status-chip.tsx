@@ -21,9 +21,11 @@ function ActiveStatusChip() {
   const { t } = useTranslation();
 
   return (
-    <Chip className="bg-green-500">
-      <MaterialIcons name="check-circle" className="text-eclipse" />
-      <Chip.Label>{t("helpers.status.active")}</Chip.Label>
+    <Chip className="bg-success/20 border-success border">
+      <MaterialIcons name="check-circle" className="text-success" />
+      <Chip.Label className="text-success">
+        {t("helpers.status.active")}
+      </Chip.Label>
     </Chip>
   );
 }
@@ -32,9 +34,11 @@ function DiscontinuedStatusChip() {
   const { t } = useTranslation();
 
   return (
-    <Chip variant="secondary">
-      <MaterialIcons name="cancel" />
-      <Chip.Label>{t("helpers.status.discontinued")}</Chip.Label>
+    <Chip className="border border-amber-400 bg-amber-100">
+      <MaterialIcons name="cancel" className="text-amber-600" />
+      <Chip.Label className="text-amber-600">
+        {t("helpers.status.discontinued")}
+      </Chip.Label>
     </Chip>
   );
 }
@@ -44,7 +48,7 @@ function InactiveStatusChip() {
 
   return (
     <Chip variant="secondary">
-      <MaterialIcons name="cancel" />
+      <MaterialIcons name="cancel" className="text-muted" />
       <Chip.Label>{t("helpers.status.inactive")}</Chip.Label>
     </Chip>
   );

@@ -32,13 +32,13 @@ export default function ProductsLayout() {
           title: t("screens.products.create.title"),
         }}
       />
+      <Stack.Screen name="[productid]/index" />
       <Stack.Screen
-        name="[productid]/index"
+        name="[productid]/update"
         options={{
           title: t("screens.products.update.title"),
         }}
       />
-      <Stack.Screen name="[productid]/update" />
     </Stack>
   );
 }

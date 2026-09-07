@@ -14,6 +14,8 @@ export const helpers = {
     search_suppliers: "Buscar proveedores por nombre, descripción...",
     search_members: "Buscar miembros por nombre, descripción...",
     search_groups: "Buscar grupos por nombre, descripción...",
+    search_organizations: "Buscar organizaciones por nombre, descripción...",
+    search_presentations: "Buscar presentaciones",
   },
 
   assign: "Asignar",
@@ -38,7 +40,11 @@ export const helpers = {
     "Puedes cambiar de organización en cualquier momento desde los ajustes",
   no_groups: "No hay grupos",
   no_members: "No hay miembros",
+  no_presentations: "No hay presentaciones",
   inherited_roles_permissions: "Roles y permisos heredados",
   more: "más",
   options: "Opciones",
+  units: "Unidades",
+  allowed: "Permitido",
+  not_allowed: "No Permitido",
 };

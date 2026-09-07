@@ -10,7 +10,7 @@ interface Props {
 export function FloatingLink({ href }: Props) {
   return (
     <Link href={href} push asChild>
-      <Button isIconOnly size="lg">
+      <Button isIconOnly size="lg" className="dark:bg-surface-secondary">
         <MaterialIcons name="add" size={26} className="text-muted" />
       </Button>
     </Link>

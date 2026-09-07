@@ -9,12 +9,13 @@ import { Skeleton } from "heroui-native/skeleton";
 import { SkeletonGroup } from "heroui-native/skeleton-group";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
+import { IsCriticalStock } from "./is-cristical-stock";
 
 interface Props {
   product: ProductSummary;
 }
 
-export const CARD_HEIGHT = 152;
+export const CARD_HEIGHT = 180;
 
 export function ProductCard({ product }: Props) {
   const { t } = useTranslation();
@@ -25,7 +26,7 @@ export function ProductCard({ product }: Props) {
       className="rounded-3xl shadow"
       onPress={() =>
         router.push({
-          pathname: "/dashboard/products/[productid]/update",
+          pathname: "/(private)/dashboard/products/[productid]",
           params: { productid: product.id },
         })
       }
@@ -46,21 +47,55 @@ export function ProductCard({ product }: Props) {
               </Card.Description>
             </View>
           </View>
-          <StatusChip status={product.status} />
+          <View className="flex-col items-end gap-y-1">
+            <View>
+              <StatusChip status={product.status} />
+            </View>
+            <IsCriticalStock
+              stock={product.stock}
+              minStock={product.minStock}
+              allowNegativeStock={product.allowNegativeStock}
+            />
+          </View>
         </Card.Header>
         <Card.Body>
           <View className="flex flex-row items-center gap-x-2">
-            <Chip>
-              <Chip.Label>Stock: {product.stock}</Chip.Label>
-            </Chip>
-
-            {product.allowNegativeStock && (
-              <Chip className="bg-foreground">
-                <Chip.Label className="text-accent">
-                  {t("resources.products.allow_negative_stock")}
+            <View className="gap-y-2">
+              <Chip size="sm">
+                <MaterialIcons
+                  name="conveyor-belt"
+                  size={14}
+                  className="text-muted"
+                />
+                <Chip.Label>
+                  {t("screens.products.product.sections.details.stock")}:{" "}
+                  {product.stock}
                 </Chip.Label>
               </Chip>
-            )}
+              <Chip size="sm">
+                <MaterialIcons
+                  name="conveyor-belt"
+                  size={14}
+                  className="text-muted"
+                />
+                <Chip.Label>
+                  {t("screens.products.product.sections.details.min_stock")}:{" "}
+                  {product.minStock}
+                </Chip.Label>
+              </Chip>
+              <Chip size="sm">
+                <MaterialIcons name="block" size={14} className="text-muted" />
+                <Chip.Label>
+                  {t(
+                    "screens.products.product.sections.details.negative_stock"
+                  )}
+                  :{" "}
+                  {product.allowNegativeStock
+                    ? t("helpers.allowed")
+                    : t("helpers.not_allowed")}
+                </Chip.Label>
+              </Chip>
+            </View>
           </View>
         </Card.Body>
       </Card>

@@ -1,7 +1,8 @@
 import { UpdateProductScreen } from "@/modules/catalog/presentation/screens/update-product.screen";
 import { useFindOneProduct } from "@fludge/client/application/catalog/queries/use-find-products";
-import { Link, Redirect, Stack, useLocalSearchParams } from "expo-router";
+import { Link, Redirect, useLocalSearchParams } from "expo-router";
 import { Button } from "heroui-native/button";
+import { Suspense } from "react";
 import { View } from "react-native";
 
 export function ErrorBoundary() {
@@ -20,14 +21,8 @@ export function ErrorBoundary() {
   );
 }
 
-export default function ProductScreen() {
-  const { productid } = useLocalSearchParams<{
-    productid?: string;
-  }>();
-
-  if (!productid) return null;
-
-  const { data } = useFindOneProduct(productid);
+function Screen({ productId }: { productId: string }) {
+  const { data } = useFindOneProduct(productId);
 
   if (!data)
     return (
@@ -38,14 +33,19 @@ export default function ProductScreen() {
       />
     );
 
+  return <UpdateProductScreen product={data} />;
+}
+
+export default function UpdateProduct() {
+  const { productid } = useLocalSearchParams<{
+    productid?: string;
+  }>();
+
+  if (!productid) return null;
+
   return (
-    <>
-      <Stack.Screen
-        options={{
-          title: data.name,
-        }}
-      />
-      <UpdateProductScreen product={data} />
-    </>
+    <Suspense>
+      <Screen productId={productid} />
+    </Suspense>
   );
 }

@@ -90,5 +90,16 @@ export const screens = {
     update: {
       title: "Editar producto",
     },
+    product: {
+      sections: {
+        details: {
+          stock: "Stock total disponible",
+          critical_stock: "Stock crítico",
+          low_stock: "Stock bajo",
+          negative_stock: "Stock negativo",
+          min_stock: "Stock mínimo",
+        },
+      },
+    },
   },
 };
