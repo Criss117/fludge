@@ -59,12 +59,9 @@ export class ProductUniquenessValidator {
     barcodes: string | string[],
     excludeId?: string | string[],
   ) {
-    const ids = Array.isArray(barcodes) ? barcodes : [barcodes];
+    const barcodesArray = Array.isArray(barcodes) ? barcodes : [barcodes];
 
-    const conditions = [
-      eq(productPresentation.organizationId, organizationId),
-      inArray(productPresentation.barcode, ids),
-    ];
+    const conditions = [inArray(productPresentation.barcode, barcodesArray)];
 
     if (excludeId) {
       const excludeIds = Array.isArray(excludeId) ? excludeId : [excludeId];
@@ -78,10 +75,17 @@ export class ProductUniquenessValidator {
           barcode: productPresentation.barcode,
         })
         .from(productPresentation)
-        .where(and(...conditions)),
+        .where(
+          and(
+            eq(productPresentation.organizationId, organizationId),
+            ...conditions,
+          ),
+        ),
     );
 
     if (errFind) return err(errFind);
+
+    console.log(JSON.stringify(rows, null, 2));
 
     const barcodesTaken = rows.length > 0;
 

@@ -46,6 +46,7 @@ export const api_errors = {
       already_exists: "La presentación ya existe",
       not_found: "No se encontró la presentación",
       barcodes_taken: "Alguno de los barcodes ya está en uso",
+      barcodes_taken2: "Alguno de los barcodes ya está en uso x2",
       duplicated_barcode: "El barcode ya existe",
     },
     categories: {

@@ -52,30 +52,6 @@ const { useCollection, cache } = createResourceCollection(
         onUpdate: async ({ transaction, collection }) => {
           const modified = transaction.mutations[0].modified;
 
-          try {
-            await orpc.product.commands.update.call({
-              id: modified.id,
-              name: modified.name,
-              description: modified.description,
-              categoryId: modified.categoryId ?? "",
-              stock: modified.stock,
-              allowNegativeStock: modified.allowNegativeStock,
-              minStock: modified.minStock,
-              status: modified.status,
-              presentations: modified.presentations.map((p) => ({
-                id: p.id,
-                barcode: p.barcode ?? "",
-                conversionFactor: p.conversionFactor,
-                name: p.name,
-                priceSale: p.priceSale,
-                pricePurchase: p.pricePurchase ?? 0,
-                priceWholesale: p.priceWholesale ?? 0,
-                status: p.status,
-              })),
-            });
-          } catch (error) {
-            console.log({ errorxd: error });
-          }
           const updatedCategory = await orpc.product.commands.update.call({
             id: modified.id,
             name: modified.name,

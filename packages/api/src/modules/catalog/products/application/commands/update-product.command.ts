@@ -98,25 +98,31 @@ export class UpdateProductCommand {
     activeOrganization: Organization,
     barcodes: string[],
   ) {
-    if (barcodes.length > 0) {
-      const [barcodeIsTaken, errValidate] =
-        await this.productUniquenessValidator.validateUniqueBarcode(
-          activeOrganization.id.toString(),
-          barcodes,
-          existing.presentations.map((p) => p.id.toString()),
-        );
+    if (barcodes.length === 0) return;
 
-      if (errValidate)
-        throw new InternalServerError(
-          errValidate,
-          "api_errors.catalog.products_presentations.isr_on_find",
-        );
+    console.log("barcodes", barcodes);
+    console.log(
+      "existing.presentations",
+      existing.presentations.map((p) => p.id.toString()),
+    );
 
-      if (barcodeIsTaken.barcodesTaken) {
-        throw new ProductPresentationAlreadyExistsException(
-          "api_errors.catalog.products_presentations.barcodes_taken",
-        );
-      }
+    const [barcodeIsTaken, errValidate] =
+      await this.productUniquenessValidator.validateUniqueBarcode(
+        activeOrganization.id.toString(),
+        barcodes,
+        existing.presentations.map((p) => p.id.toString()),
+      );
+
+    if (errValidate)
+      throw new InternalServerError(
+        errValidate,
+        "api_errors.catalog.products_presentations.isr_on_find",
+      );
+
+    if (barcodeIsTaken.barcodesTaken) {
+      throw new ProductPresentationAlreadyExistsException(
+        "api_errors.catalog.products_presentations.barcodes_taken",
+      );
     }
   }
 
