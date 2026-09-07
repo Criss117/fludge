@@ -14,8 +14,11 @@ const { useAppForm } = createFormHook({
   formComponents: {},
 });
 
-export function useProductForm(options: OnProductSubmit) {
-  return useAppForm(productFormOptions(options));
+export function useProductForm(
+  options: OnProductSubmit,
+  initialValues?: ProductFormSchema,
+) {
+  return useAppForm(productFormOptions(options, initialValues));
 }
 
 type Presentation = ProductFormSchema["presentations"][number];
@@ -24,6 +27,8 @@ interface ChildrenProps<T> {
   field: ReturnType<typeof useFieldContext<T>>;
   add(presentation: Presentation): void;
   remove(id: string): void;
+  markAsDeleted(id: string): void;
+  restore(id: string): void;
   update(id: string, presentation: Presentation): void;
   get(id: string): Presentation | undefined;
 }
@@ -49,6 +54,18 @@ function Presentations({ children }: PresentationsChildrenProps) {
     field.setValue((prev) => prev.filter((p) => p.id !== id));
   }
 
+  function markAsDeleted(id: string) {
+    field.setValue((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, delete: true } : p)),
+    );
+  }
+
+  function restore(id: string) {
+    field.setValue((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, delete: false } : p)),
+    );
+  }
+
   function update(id: string, presentation: Presentation) {
     field.setValue((prev) => prev.map((p) => (p.id === id ? presentation : p)));
   }
@@ -61,7 +78,9 @@ function Presentations({ children }: PresentationsChildrenProps) {
     field,
     add,
     remove,
+    restore,
     update,
     get,
+    markAsDeleted,
   });
 }

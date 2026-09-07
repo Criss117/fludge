@@ -1,30 +1,55 @@
 import { KeyboardScrollView } from "@/modules/shared/components/keyboard-scroll-view";
-import { Card } from "heroui-native/card";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { ProductFormInputs } from "../components/product-form/shared";
 import { Button } from "heroui-native/button";
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { Separator } from "heroui-native/separator";
-import { useState } from "react";
-import { PresentationCard } from "../components/product-form/presentation-card";
-import {
-  CreatePresentationForm,
-  UpdatePresentationForm,
-} from "../components/product-form/presentation-form";
+import { useState, useTransition } from "react";
 import { useProductForm } from "@fludge/client/presentation/catalog/product.form";
+import { useCreateProductMutation } from "@fludge/client/application/catalog/mutations/use-product.mutations";
+import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import type { ProductFormSchema } from "@fludge/client/application/catalog/form/product-form";
+import type { TranslationKey } from "@fludge/i18n/index";
+import { useRouter } from "expo-router";
+import {
+  BasicInformationSection,
+  PresentationFormsSection,
+  PresentationsSection,
+  StockSection,
+} from "../components/product-form/sections";
 
 type Presentation = ProductFormSchema["presentations"][number];
 
 export function CreateProductScreen() {
+  const router = useRouter();
   const [selectedPresentation, setSelectedPresentation] =
     useState<Presentation | null>(null);
   const [isPresentationFormOpen, setIsPresentationFormOpen] = useState(false);
   const { t } = useTranslation();
+  const [isPending, startTransition] = useTransition();
+
+  const createProduct = useCreateProductMutation();
+  const mutationToast = useMutationToast("create-product-form");
   const form = useProductForm({
     onSubmit: ({ value }) => {
-      console.log(value);
+      mutationToast.showIsPendingToast("mutations.products.create.is_pending");
+      startTransition(async () => {
+        const tx = createProduct(value);
+
+        await tx.isPersisted.promise
+          .then(() => {
+            mutationToast.showSuccessToast(
+              "mutations.products.create.success.title",
+              "mutations.products.create.success.description"
+            );
+            router.back();
+          })
+          .catch((error) => {
+            mutationToast.showErrorToast(
+              "mutations.products.create.error",
+              error.message as TranslationKey
+            );
+          });
+      });
     },
   });
 
@@ -36,156 +61,31 @@ export function CreateProductScreen() {
         paddingBottom={128}
         showsVerticalScrollIndicator={false}
       >
-        <Card className="gap-y-2">
-          <Card.Header>
-            <Card.Title>{t("forms.product.sections.basic")}</Card.Title>
-          </Card.Header>
-          <Separator />
-          <Card.Body className="gap-y-2">
-            <form.Field
-              name="name"
-              children={(field) => <ProductFormInputs.Name field={field} />}
-            />
-            <form.Field
-              name="description"
-              children={(field) => (
-                <ProductFormInputs.Description field={field} />
-              )}
-            />
-            <form.Field
-              name="categoryId"
-              children={(field) => (
-                <ProductFormInputs.CategorySelect field={field} />
-              )}
-            />
-          </Card.Body>
-        </Card>
+        <BasicInformationSection form={form} />
 
-        <Card className="gap-y-2">
-          <Card.Header>
-            <Card.Title>{t("forms.product.sections.stock")}</Card.Title>
-          </Card.Header>
-          <Separator />
+        <StockSection form={form} />
 
-          <Card.Body className="gap-y-2">
-            <View className="flex-row items-start gap-x-2">
-              <View className="flex-1">
-                <form.Field
-                  name="stock"
-                  children={(field) => (
-                    <ProductFormInputs.Stock field={field} />
-                  )}
-                />
-              </View>
-              <View className="flex-1">
-                <form.Field
-                  name="minStock"
-                  children={(field) => (
-                    <ProductFormInputs.MinStock field={field} />
-                  )}
-                />
-              </View>
-            </View>
-            <form.Field
-              name="allowNegativeStock"
-              children={(field) => (
-                <ProductFormInputs.AllowNegativeStock field={field} />
-              )}
-            />
-          </Card.Body>
-        </Card>
-
-        <Card className="gap-y-2">
-          <Card.Header className="flex-row items-start">
-            <View className="flex-1">
-              <Card.Title>
-                {t("forms.product.sections.presentations.title")}
-              </Card.Title>
-              <Card.Description>
-                {t("forms.product.sections.presentations.description")}
-              </Card.Description>
-            </View>
-
-            <Button size="sm" onPressIn={() => setIsPresentationFormOpen(true)}>
-              <MaterialIcons name="add" size={20} className="text-background" />
-              <Button.Label className="text-background">
-                {t("helpers.add")}
-              </Button.Label>
-            </Button>
-          </Card.Header>
-          <Card.Body className="gap-y-2">
-            <form.AppField name="presentations">
-              {(field) => (
-                <field.Presentations>
-                  {({ field, remove }) => {
-                    return field.state.value.map((presentation) => (
-                      <PresentationCard
-                        key={presentation.id}
-                        presentation={presentation}
-                        remove={remove}
-                        setSelectedPresentation={setSelectedPresentation}
-                      />
-                    ));
-                  }}
-                </field.Presentations>
-              )}
-            </form.AppField>
-          </Card.Body>
-          <Card.Footer className="mt-5">
-            <Button
-              variant="outline"
-              className="border-muted border-dashed"
-              onPressIn={() => setIsPresentationFormOpen(true)}
-            >
-              <MaterialIcons name="add" size={20} className="text-muted" />
-              <Button.Label className="text-muted">
-                {t("forms.product.sections.presentations.add")}
-              </Button.Label>
-            </Button>
-          </Card.Footer>
-        </Card>
+        <PresentationsSection
+          form={form}
+          onOpenChange={setIsPresentationFormOpen}
+          setSelectedPresentation={setSelectedPresentation}
+        />
       </KeyboardScrollView>
       <View className="bg-background absolute bottom-0 w-full gap-y-4 px-3 py-6">
-        <Button onPress={form.handleSubmit}>
+        <Button onPress={form.handleSubmit} isDisabled={isPending}>
           <MaterialIcons name="add-box" size={20} className="text-background" />
           <Button.Label className="text-background">
-            {t("forms.product.create")}
+            {t("forms.product.update")}
           </Button.Label>
         </Button>
       </View>
-      <form.AppField name="presentations">
-        {(field) => (
-          <field.Presentations>
-            {({ add }) => (
-              <CreatePresentationForm
-                isOpen={isPresentationFormOpen}
-                onOpenChange={setIsPresentationFormOpen}
-                onSubmit={(value) => {
-                  add({
-                    ...value,
-                    id: crypto.randomUUID(),
-                  });
-                }}
-              />
-            )}
-          </field.Presentations>
-        )}
-      </form.AppField>
-      <form.AppField name="presentations">
-        {(field) => (
-          <field.Presentations>
-            {({ update }) => (
-              <UpdatePresentationForm
-                selectedPresentation={selectedPresentation}
-                clearSelectedPresentation={() => setSelectedPresentation(null)}
-                onSubmit={(value) => {
-                  update(value.id, value);
-                }}
-              />
-            )}
-          </field.Presentations>
-        )}
-      </form.AppField>
+      <PresentationFormsSection
+        form={form}
+        isOpen={isPresentationFormOpen}
+        onOpenChange={setIsPresentationFormOpen}
+        selectedPresentation={selectedPresentation}
+        setSelectedPresentation={setSelectedPresentation}
+      />
     </View>
   );
 }

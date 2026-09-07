@@ -33,10 +33,9 @@ function ListFooterComponent({ hasNextPage }: ListFooterProps) {
 
 export function ProductsScreen() {
   const [query, setQuery] = useState("");
-  const { data, fetchNextPage, hasNextPage, isLoading, isReady } =
-    useFindProducts({
-      query,
-    });
+  const { data, fetchNextPage, hasNextPage, isLoading } = useFindProducts({
+    query,
+  });
 
   if (isLoading) return <ProductsScreenSkeleton length={10} />;
 

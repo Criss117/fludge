@@ -14,7 +14,7 @@ interface Filters {
 }
 
 export function useFindProducts(filters?: Filters) {
-  const { productCollection } = useProductsCollection();
+  const { productCollection, activeOrganization } = useProductsCollection();
 
   const normalizedQuery = SearchBlob.normalize(filters?.query ?? "");
 
@@ -41,38 +41,45 @@ export function useFindProducts(filters?: Filters) {
     {
       initialPageParam: 0,
       pageSize: 10,
-      queryKey: ["findProducts", normalizedQuery],
+      queryKey: [
+        "organization",
+        activeOrganization.id,
+        "products",
+        normalizedQuery,
+      ],
     },
   );
 }
 
 export function useFindOneProduct(productId: string) {
-  const { productCollection } = useProductsCollection();
+  const { productCollection, activeOrganization } = useProductsCollection();
   const { productPresentationsCollection } =
     useProductsPresentationsCollection();
 
-  return useLiveSuspenseQuery((q) =>
-    q
-      .from({
-        pc: productCollection,
-      })
-      .select(({ pc }) => ({
-        ...pc,
-        presentations: toArray(
-          q
-            .from({
-              ppc: productPresentationsCollection,
-            })
-            .select(({ ppc }) => ({
-              ...ppc,
-            }))
-            .where(({ ppc }) => eq(ppc.productId, pc.id))
-            .orderBy(({ ppc }) => ppc.createdAt, "desc"),
-        ),
-      }))
-      .where(({ pc }) => eq(pc.id, productId))
-      .findOne(),
-  );
+  return useLiveSuspenseQuery({
+    queryKey: ["organization", activeOrganization.id, "products", productId],
+    query: (q) =>
+      q
+        .from({
+          pc: productCollection,
+        })
+        .select(({ pc }) => ({
+          ...pc,
+          presentations: toArray(
+            q
+              .from({
+                ppc: productPresentationsCollection,
+              })
+              .select(({ ppc }) => ({
+                ...ppc,
+              }))
+              .where(({ ppc }) => eq(ppc.productId, pc.id))
+              .orderBy(({ ppc }) => ppc.createdAt, "desc"),
+          ),
+        }))
+        .where(({ pc }) => eq(pc.id, productId))
+        .findOne(),
+  });
 }
 
 export type ProductSummary = ReturnType<typeof useFindProducts>["data"][number];
