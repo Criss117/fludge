@@ -35,13 +35,11 @@ export function useUpdateCategoryMutation() {
     mutationFn: async (values: CategorySchema & { id: string }) => {
       const now = new Date();
 
-      const tx = categoryCollection.update(values.id, (draft) => {
+      categoryCollection.update(values.id, (draft) => {
         draft.name = values.name;
         draft.description = values.description;
         draft.updatedAt = now;
       });
-
-      await tx.isPersisted.promise;
     },
   });
 }

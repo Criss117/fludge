@@ -108,8 +108,8 @@ export function UpdateProductScreen({ product }: Props) {
       </KeyboardScrollView>
       <View className="bg-background absolute bottom-0 w-full gap-y-4 px-3 py-6">
         <Button onPress={form.handleSubmit} isDisabled={isPending}>
-          <MaterialIcons name="add-box" size={20} className="text-background" />
-          <Button.Label className="text-background">
+          <MaterialIcons name="add-box" size={20} className="text-eclipse" />
+          <Button.Label className="text-eclipse">
             {t("forms.product.update")}
           </Button.Label>
         </Button>

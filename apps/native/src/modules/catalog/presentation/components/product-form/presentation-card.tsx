@@ -1,10 +1,13 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import type { ProductFormSchema } from "@fludge/client/application/catalog/form/product-form";
+import { formatCurrency } from "@fludge/utils/format-currency";
 import { cn } from "heroui-native";
 import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import { Chip } from "heroui-native/chip";
+import { Separator } from "heroui-native/separator";
 import { Typography } from "heroui-native/text";
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 
 type Presentation = ProductFormSchema["presentations"][number];
@@ -14,17 +17,21 @@ interface Props {
   remove: (id: string) => void;
   restore: (id: string) => void;
   setSelectedPresentation: (presentation: Presentation) => void;
-  showDelete?: boolean;
+  markAsDeleted: (id: string) => void;
+  action?: "create" | "update";
 }
 
 export function PresentationFormCard({
   presentation,
-  showDelete,
   remove,
   restore,
   setSelectedPresentation,
+  markAsDeleted,
+  action = "create",
 }: Props) {
-  if (presentation.delete && !showDelete) return null;
+  const { t } = useTranslation();
+
+  if (presentation.delete && action === "create") return null;
 
   const onSelect = () => {
     if (presentation.delete) return;
@@ -33,48 +40,98 @@ export function PresentationFormCard({
 
   const onDelete = () => {
     if (presentation.delete) return;
-    remove(presentation.id);
+
+    if (action === "create") remove(presentation.id);
+
+    markAsDeleted(presentation.id);
+  };
+
+  const onRestore = () => {
+    if (!presentation.delete) return;
+    restore(presentation.id);
   };
 
   return (
     <Card
-      className={cn(
-        "bg-default flex-row items-start gap-y-2",
-        presentation.delete && "opacity-50"
-      )}
+      className={cn("bg-default gap-y-2", presentation.delete && "opacity-50")}
     >
-      <Card.Header className="flex-1">
-        <View className="flex flex-row items-center gap-x-2">
+      <Card.Header className="flex-1 flex-row items-start">
+        <View className="flex-1">
           <Card.Title className="line-clamp-1">{presentation.name}</Card.Title>
           <Chip size="sm">
-            <Chip.Label>x{presentation.conversionFactor}</Chip.Label>
+            <Chip.Label>Factor: x{presentation.conversionFactor}</Chip.Label>
           </Chip>
+          <Card.Description className="line-clamp-2">
+            {t("resources.presentations.barcode")}: {presentation.id}
+          </Card.Description>
         </View>
-        <View className="flex-row items-center gap-x-2">
-          <Typography type="body-sm" color="muted">
-            ${presentation.priceSale}
-          </Typography>
-          <Card.Description>{presentation.barcode}</Card.Description>
+        <View className="flex-row items-center">
+          {!presentation.delete && (
+            <Button
+              size="sm"
+              variant="ghost"
+              isIconOnly
+              isDisabled={presentation.delete}
+              onPress={onSelect}
+            >
+              <MaterialIcons
+                name="edit"
+                size={20}
+                className="text-foreground"
+              />
+            </Button>
+          )}
+
+          {!presentation.delete && (
+            <Button
+              size="sm"
+              variant="ghost"
+              isIconOnly
+              isDisabled={presentation.delete}
+              onPress={onDelete}
+            >
+              <MaterialIcons name="delete" size={20} className="text-danger" />
+            </Button>
+          )}
+          {presentation.delete && (
+            <Button size="sm" isIconOnly onPress={onRestore}>
+              <MaterialIcons
+                name="undo"
+                size={20}
+                className="text-foreground"
+              />
+            </Button>
+          )}
         </View>
       </Card.Header>
-      <Card.Body className="flex-row">
-        <Button
-          variant="ghost"
-          isIconOnly
-          isDisabled={presentation.delete}
-          onPress={onSelect}
-        >
-          <MaterialIcons name="edit" size={20} className="text-foreground" />
-        </Button>
-
-        <Button
-          variant="ghost"
-          isIconOnly
-          isDisabled={presentation.delete}
-          onPress={onDelete}
-        >
-          <MaterialIcons name="delete" size={20} className="text-danger" />
-        </Button>
+      <Separator />
+      <Card.Body>
+        <View className="flex-1">
+          <Typography type="body-sm" color="muted">
+            {t("resources.presentations.price_sale")}
+          </Typography>
+          <Typography className="text-success font-semibold">
+            {formatCurrency(presentation.priceSale)}
+          </Typography>
+        </View>
+        <View className="flex-row">
+          <View className="flex-1">
+            <Typography type="body-sm" color="muted">
+              {t("resources.presentations.price_purchase")}
+            </Typography>
+            <Typography>
+              {formatCurrency(presentation.pricePurchase)}
+            </Typography>
+          </View>
+          <View className="flex-1">
+            <Typography type="body-sm" color="muted">
+              {t("resources.presentations.price_wholesale")}
+            </Typography>
+            <Typography>
+              {formatCurrency(presentation.priceWholesale)}
+            </Typography>
+          </View>
+        </View>
       </Card.Body>
     </Card>
   );

@@ -105,8 +105,8 @@ export class SeedService {
       await tx.delete(product);
       await tx.delete(category);
       await tx.delete(groupMember);
-      await tx.delete(member);
       await tx.delete(group);
+      await tx.delete(member);
       await tx.delete(organization);
 
       await tx.delete(session);

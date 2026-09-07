@@ -161,8 +161,8 @@ export function PresentationsSection({
         </View>
 
         <Button size="sm" onPressIn={() => onOpenChange(true)}>
-          <MaterialIcons name="add" size={20} className="text-background" />
-          <Button.Label className="text-background">
+          <MaterialIcons name="add" size={20} className="text-eclipse" />
+          <Button.Label className="text-eclipse">
             {t("helpers.add")}
           </Button.Label>
         </Button>
@@ -176,11 +176,10 @@ export function PresentationsSection({
                   <PresentationFormCard
                     key={presentation.id}
                     presentation={presentation}
-                    remove={(id) =>
-                      action === "create" ? remove(id) : markAsDeleted(id)
-                    }
-                    showDelete={action === "update"}
+                    action={action}
+                    remove={remove}
                     restore={restore}
+                    markAsDeleted={markAsDeleted}
                     setSelectedPresentation={setSelectedPresentation}
                   />
                 ));

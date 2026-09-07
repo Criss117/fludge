@@ -105,18 +105,16 @@ export function useUpdateProductMutation() {
 
         if (existing) {
           productPresentationsCollection.update(presentation.id, (draft) => {
-            draft.name = presentation.name;
-            draft.searchBlob = presentation.name;
             draft.barcode = presentation.barcode;
-
             draft.conversionFactor = presentation.conversionFactor;
-
+            draft.name = presentation.name;
             draft.priceSale = presentation.priceSale;
             draft.pricePurchase = presentation.pricePurchase;
             draft.priceWholesale = presentation.priceWholesale;
-
-            draft.updatedAt = now;
             draft.status = presentation.status;
+
+            draft.searchBlob = presentation.name;
+            draft.updatedAt = now;
           });
 
           continue;
@@ -164,6 +162,8 @@ export function useUpdateProductMutation() {
         }
 
         productPresentationsCollection.utils.writeInsert(presentation);
+
+        await Promise.resolve();
       }
 
       return response;

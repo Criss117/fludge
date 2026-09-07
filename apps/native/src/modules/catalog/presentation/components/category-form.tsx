@@ -215,7 +215,7 @@ function UpdateCategoryFormBody({
     <CategoryForm
       form={form}
       isPending={createCategory.isPending}
-      label="forms.category.create"
+      label="forms.category.update"
     />
   );
 }

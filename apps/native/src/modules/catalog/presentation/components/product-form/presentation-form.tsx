@@ -141,8 +141,8 @@ function SheetForm({
               </Button.Label>
             </Button>
             <Button className="flex-1" onPress={handleSubmit}>
-              <MaterialIcons name="add" size={20} className="text-background" />
-              <Button.Label className="text-background">
+              <MaterialIcons name="add" size={20} className="text-eclipse" />
+              <Button.Label className="text-eclipse">
                 {t("helpers.add")}
               </Button.Label>
             </Button>
