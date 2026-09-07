@@ -141,3 +141,16 @@ export function useUpdateProductMutation() {
     },
   });
 }
+
+export function useDeleteProductMutation() {
+  const { productCollection } = useProductsCollection();
+
+  return useMutation({
+    mutationKey: ["delete-product"],
+    mutationFn: async (input: { id: string }) => {
+      const tx = productCollection.delete(input.id);
+
+      await tx.isPersisted.promise;
+    },
+  });
+}

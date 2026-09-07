@@ -93,7 +93,10 @@ export function ProductScreen({ product }: Props) {
         </Card.Body>
       </Card>
 
-      <ProductPresentationSection presentations={product.presentations} />
+      <ProductPresentationSection
+        presentations={product.presentations}
+        productId={product.id}
+      />
     </ScrollView>
   );
 }

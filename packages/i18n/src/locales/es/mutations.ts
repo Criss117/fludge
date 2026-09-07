@@ -84,6 +84,8 @@ export const mutations = {
       error: "Algo salió mal al actualizar el producto",
     },
     delete: {
+      ask: "¿Estás seguro de que deseas eliminar {{name}}?",
+      description: "El producto se eliminará de forma permanente.",
       is_pending: "Eliminando Producto",
       success: {
         title: "Producto Eliminado",

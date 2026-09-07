@@ -1,3 +1,4 @@
+import { ProductMenuOptions } from "@/modules/catalog/presentation/components/product-menu-options";
 import { ProductScreen } from "@/modules/catalog/presentation/screens/product.screen";
 import { useFindOneProduct } from "@fludge/client/application/catalog/queries/use-find-products";
 import { Redirect, Stack, useLocalSearchParams } from "expo-router";
@@ -20,6 +21,7 @@ function ScreenSuspense({ productId }: { productId: string }) {
       <Stack.Screen
         options={{
           title: data.name,
+          headerRight: () => <ProductMenuOptions product={data} />,
         }}
       />
       <ProductScreen product={data} />

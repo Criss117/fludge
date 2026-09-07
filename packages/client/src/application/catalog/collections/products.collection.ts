@@ -79,6 +79,20 @@ const { useCollection, cache } = createResourceCollection(
             refetch: false,
           };
         },
+
+        onDelete: async ({ collection, transaction }) => {
+          const original = transaction.mutations[0].original;
+
+          await orpc.product.commands.delete.call({
+            id: original.id,
+          });
+
+          collection.utils.writeDelete(original.id);
+
+          return {
+            refetch: false,
+          };
+        },
       }),
     );
   },

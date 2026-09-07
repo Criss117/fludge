@@ -7,14 +7,21 @@ import { Typography } from "heroui-native/text";
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { formatCurrency } from "../../../../../../../packages/utils/src/format-currency";
 import { StatusChip } from "@/modules/shared/components/status-chip";
+import { Button } from "heroui-native/button";
+import { MaterialIcons } from "@/modules/shared/components/icons";
+import { Link } from "expo-router";
+import { formatCurrency } from "@fludge/utils/format-currency";
 
 interface Props {
+  productId: string;
   presentations: ProductDetail["presentations"];
 }
 
-export function ProductPresentationSection({ presentations }: Props) {
+export function ProductPresentationSection({
+  presentations,
+  productId,
+}: Props) {
   const [search, setSearch] = useState("");
   const { t } = useTranslation();
 
@@ -89,6 +96,21 @@ export function ProductPresentationSection({ presentations }: Props) {
           <Typography>{t("helpers.no_presentations")}</Typography>
         </View>
       )}
+      <Link
+        href={{
+          pathname: "/dashboard/products/[productid]/update",
+          params: { productid: productId, openPresentationForm: "true" },
+        }}
+        asChild
+        push
+      >
+        <Button variant="outline" className="border-muted border-dashed">
+          <MaterialIcons name="add" size={20} className="text-muted" />
+          <Button.Label className="text-muted">
+            {t("forms.product.sections.presentations.add")}
+          </Button.Label>
+        </Button>
+      </Link>
     </View>
   );
 }
