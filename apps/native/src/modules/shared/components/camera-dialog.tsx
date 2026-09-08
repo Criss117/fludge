@@ -100,6 +100,18 @@ export function CameraDialog({ setBarcode }: Props) {
   );
 }
 
+export function CameraDialogSkeleton() {
+  return (
+    <Button isIconOnly variant="outline" isDisabled>
+      <MaterialIcons
+        name="photo-camera"
+        size={20}
+        className="text-foreground"
+      />
+    </Button>
+  );
+}
+
 const styles = StyleSheet.create({
   camera: {
     flex: 1,

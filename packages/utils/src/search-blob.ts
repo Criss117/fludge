@@ -1,10 +1,10 @@
 export class SearchBlob {
   private readonly _value: string;
 
-  constructor(text: string) {
-    if (!text) throw new Error("SearchName must be defined");
+  constructor(...texts: string[]) {
+    if (!texts) throw new Error("SearchName must be defined");
 
-    this._value = SearchBlob.normalize(text);
+    this._value = SearchBlob.normalize(texts.join(" "));
   }
 
   public static normalize(text: string) {

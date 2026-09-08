@@ -34,7 +34,7 @@ export function ProductCard({ product }: Props) {
       <Card className="justify-between gap-y-3" style={{ height: CARD_HEIGHT }}>
         <Card.Header className="flex-row items-start">
           <View className="flex-1">
-            <Card.Title className="line-clamp-2">{product.name}</Card.Title>
+            <Card.Title className="line-clamp-1">{product.name}</Card.Title>
             <View className="flex flex-row items-center gap-x-1">
               <MaterialIcons
                 name="conveyor-belt"

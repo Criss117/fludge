@@ -52,7 +52,7 @@ export class ProductPresentation {
       data.barcode ?? null,
       data.conversionFactor,
       data.name,
-      new SearchBlob(data.productName + " " + data.name),
+      new SearchBlob(data.productName, data.name, data.barcode ?? ""),
       data.pricePurchase ?? null,
       data.priceSale,
       data.priceWholesale ?? null,
@@ -96,7 +96,6 @@ export class ProductPresentation {
   public update(data: UpdateProductPresentation) {
     if (data.name) {
       this._name = data.name;
-      this._searchBlob = new SearchBlob(data.name);
     }
 
     if (data.barcode !== undefined) this._barcode = data.barcode;
@@ -111,6 +110,12 @@ export class ProductPresentation {
       this._priceWholesale = data.priceWholesale;
 
     if (data.status) this._status = new ProductStatus(data.status);
+
+    this._searchBlob = new SearchBlob(
+      data.productName,
+      this._name,
+      this._barcode ?? "",
+    );
 
     this.touch();
   }

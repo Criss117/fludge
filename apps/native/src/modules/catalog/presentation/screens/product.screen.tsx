@@ -19,7 +19,11 @@ export function ProductScreen({ product }: Props) {
   const { t } = useTranslation();
 
   return (
-    <ScrollView className="px-3" contentContainerClassName="gap-y-4 pb-20">
+    <ScrollView
+      className="px-3"
+      contentContainerClassName="gap-y-4 pb-20"
+      showsVerticalScrollIndicator={false}
+    >
       <Card>
         <Card.Header className="flex-row items-start">
           <View className="flex-1">

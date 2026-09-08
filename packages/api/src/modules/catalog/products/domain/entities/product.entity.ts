@@ -129,9 +129,7 @@ export class Product {
   }
 
   private buildSearchBlob(): SearchBlob {
-    return new SearchBlob(
-      `${this._name} ${this._presentations.barcodes.join(" ")}`.trim(),
-    );
+    return new SearchBlob(this._name, ...this.barcodes);
   }
 
   public touch() {
