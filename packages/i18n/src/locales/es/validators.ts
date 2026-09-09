@@ -12,6 +12,11 @@ export const validators = {
     min_length: "La descripción es demasiado corta",
     max_length: "La descripción es muy larga",
   },
+  notes: {
+    invalid: "La nota debe ser un texto",
+    min_length: "La nota es demasiado corta",
+    max_length: "La nota es muy larga",
+  },
   phone: {
     invalid: "El teléfono es inválido",
     min_length: "Ingresa un número de teléfono válido",
@@ -36,6 +41,11 @@ export const validators = {
       at_least_one: "Debes tener al menos una presentación",
       min_length: "La lista de presentaciones es muy corta",
       max_length: "La lista de presentaciones es muy larga",
+    },
+    sale_items: {
+      at_least_one: "Debes tener al menos un producto",
+      min_length: "La lista de productos es muy corta",
+      max_length: "La lista de productos es muy larga",
     },
   },
   legal_name: {
@@ -90,5 +100,12 @@ export const validators = {
     invalid: "El stock mínimo es inválido",
     integer: "El stock mínimo debe ser un número entero",
     positive: "El stock mínimo debe ser positivo",
+  },
+  payment_type: {
+    invalid: "El tipo de pago es inválido",
+  },
+  quantity: {
+    invalid: "La cantidad es inválida",
+    positive: "La cantidad debe ser mayor a 0",
   },
 };

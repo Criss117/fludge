@@ -80,3 +80,17 @@ export const passwordSchema = z
   .max(50, {
     error: getI18nKey("validators.password.max_length"),
   });
+
+export const notesSchema = z.literal("").or(
+  z
+    .string({
+      error: getI18nKey("validators.notes.invalid"),
+    })
+    .trim()
+    .min(15, {
+      error: getI18nKey("validators.notes.min_length"),
+    })
+    .max(100, {
+      error: getI18nKey("validators.notes.max_length"),
+    }),
+);

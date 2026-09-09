@@ -104,4 +104,10 @@ export const api_errors = {
       not_found: "No se encontró el grupo",
     },
   },
+  sales: {
+    sale_items: {
+      duplicated: "El producto ya está en el pedido",
+      not_found: "No se encontró el item",
+    },
+  },
 };
