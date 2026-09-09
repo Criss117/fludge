@@ -40,6 +40,7 @@ export const api_errors = {
       no_has_barcode: "Debe tener al menos una presentación con barcode",
       stock_must_be_positive: "El stock debe ser positivo",
       amount_must_be_positive: "La cantidad debe ser positiva",
+      exceeds_stock: "La cantidad excede el stock disponible",
     },
     products_presentations: {
       isr_on_find: "Error al obtener la presentación",
@@ -105,6 +106,9 @@ export const api_errors = {
     },
   },
   sales: {
+    isr_on_find: "Error al obtener la venta",
+    isr_on_save: "Error al guardar la venta",
+    isr_on_delete: "Error al eliminar la venta",
     sale_items: {
       duplicated: "El producto ya está en el pedido",
       not_found: "No se encontró el item",

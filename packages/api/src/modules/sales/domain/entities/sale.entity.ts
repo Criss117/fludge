@@ -105,7 +105,7 @@ export class Sale {
   }
 
   public get values(): SaleSelect & {
-    items: Omit<SaleItemSelect, "saleId">[];
+    items: SaleItemSelect[];
   } {
     const cancellation = this._cancellation?.value;
 
@@ -125,7 +125,10 @@ export class Sale {
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
 
-      items: this._items.values.map((item) => item.values),
+      items: this._items.values.map((item) => ({
+        ...item.values,
+        saleId: this._id.toString(),
+      })),
     };
   }
 }

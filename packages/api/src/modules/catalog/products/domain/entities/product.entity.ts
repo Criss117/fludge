@@ -230,6 +230,21 @@ export class Product {
     this.touch();
   }
 
+  public sale(presentations: { id: string; quantity: number }[]) {
+    const totalQuantity = presentations.reduce((acc, sale) => {
+      const existing = this._presentations.get(sale.id);
+
+      if (!existing) return acc;
+
+      const conversionFactor = existing.values.conversionFactor;
+
+      return acc + sale.quantity * conversionFactor;
+    }, 0);
+
+    this._stock = this._stock.decreaseStock(totalQuantity);
+    this.touch();
+  }
+
   public get presentationsCollection() {
     return this._presentations;
   }

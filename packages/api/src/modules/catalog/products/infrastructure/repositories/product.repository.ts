@@ -1,4 +1,5 @@
 import {
+  buildConflictUpdateColumn,
   jsonObject,
   type DatabaseService,
   type TransactionService,
@@ -12,7 +13,7 @@ import {
   type ProductPresentationSelect,
 } from "@fludge/db/schema/catalog.schema";
 import type { ProductPresentationRepository } from "./product-presentation.repository";
-import { and, desc, eq, getColumns, sql } from "drizzle-orm";
+import { and, desc, eq, getColumns, inArray, sql } from "drizzle-orm";
 
 type Options = {
   tx?: TransactionService;
@@ -24,6 +25,49 @@ export class ProductRepository extends TransactionalRepository {
     private readonly productPresentationRepository: ProductPresentationRepository,
   ) {
     super(db);
+  }
+
+  public async findManyByIds(organizationId: string, productIds: string[]) {
+    const [rows, errFinding] = await tryCatch(
+      this.db
+        .select({
+          ...getColumns(product),
+          presentations: sql<string>`
+            json_group_array(
+              DISTINCT ${jsonObject(productPresentation)}
+            ) FILTER (WHERE ${productPresentation.productId} IS NOT NULL)
+          `.as("presentations"),
+        })
+        .from(product)
+        .innerJoin(
+          productPresentation,
+          eq(productPresentation.productId, product.id),
+        )
+        .where(
+          and(
+            eq(product.organizationId, organizationId),
+            inArray(product.id, productIds),
+          ),
+        )
+        .orderBy(desc(product.createdAt))
+        .groupBy(product.id),
+    );
+
+    if (errFinding) return err(errFinding);
+
+    return ok(
+      rows.map((p) => {
+        const presentations = (
+          JSON.parse(p.presentations) as ProductPresentationSelect[]
+        ).map((p) => ({
+          ...p,
+          createdAt: new Date(p.createdAt),
+          updatedAt: new Date(p.updatedAt),
+        }));
+
+        return Product.reconstitute({ ...p, presentations });
+      }),
+    );
   }
 
   public async findOneById(organizationId: string, productId: string) {
@@ -107,6 +151,33 @@ export class ProductRepository extends TransactionalRepository {
             updatedAt: values.updatedAt,
             categoryId: values.categoryId,
           },
+        }),
+    );
+  }
+
+  public async saveOnlyProducts(productEntity: Product[], options?: Options) {
+    const db = options?.tx ?? this.db;
+
+    const values = productEntity.map((p) => p.values);
+
+    return tryCatch(
+      db
+        .insert(product)
+        .values(values)
+        .onConflictDoUpdate({
+          target: product.id,
+          set: buildConflictUpdateColumn(product, [
+            "name",
+            "searchBlob",
+            "slug",
+            "description",
+            "stock",
+            "minStock",
+            "allowNegativeStock",
+            "status",
+            "updatedAt",
+            "categoryId",
+          ]),
         }),
     );
   }

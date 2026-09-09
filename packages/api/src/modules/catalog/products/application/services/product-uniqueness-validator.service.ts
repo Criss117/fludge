@@ -85,8 +85,6 @@ export class ProductUniquenessValidator {
 
     if (errFind) return err(errFind);
 
-    console.log(JSON.stringify(rows, null, 2));
-
     const barcodesTaken = rows.length > 0;
 
     return ok({
