@@ -86,4 +86,23 @@ export const permissions = {
       description: "Puede eliminar productos",
     },
   },
+  sales: {
+    name: "Ventas",
+    create: {
+      name: "Crear venta",
+      description: "Puede crear ventas",
+    },
+    read: {
+      name: "Leer venta",
+      description: "Puede leer ventas",
+    },
+    update: {
+      name: "Actualizar venta",
+      description: "Puede actualizar ventas",
+    },
+    delete: {
+      name: "Eliminar venta",
+      description: "Puede eliminar ventas",
+    },
+  },
 };

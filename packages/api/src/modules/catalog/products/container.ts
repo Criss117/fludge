@@ -8,6 +8,7 @@ import { FindAllProductsQuery } from "./application/queries/find-all-products.qu
 import { UpdateProductCommand } from "./application/commands/update-product.command";
 import { DeleteProductCommand } from "./application/commands/delete-product.command";
 import { EnsurePresentationsExistsService } from "./application/services/ensure-presentations-exists.service";
+import { SaleProductService } from "./application/services/sale-product.service";
 
 //Repositories
 const productPresentationRepository = new ProductPresentationRepository(
@@ -25,6 +26,10 @@ const productUniquenessValidator = new ProductUniquenessValidator(
 );
 const ensurePresentationsExistsService = new EnsurePresentationsExistsService(
   databaseService,
+);
+const saleProductService = new SaleProductService(
+  productRepository,
+  ensurePresentationsExistsService,
 );
 
 //Queries
@@ -61,5 +66,6 @@ export const productContainer = {
   services: {
     productUniquenessValidator,
     ensurePresentationsExistsService,
+    saleProductService,
   },
 };

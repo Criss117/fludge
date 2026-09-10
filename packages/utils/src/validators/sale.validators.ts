@@ -22,16 +22,13 @@ export const priceSchema = z
     error: getI18nKey("validators.price_sale.positive"),
   });
 
-const presentationSchema = z.object({
-  id: uuidSchema.or(z.literal("")).transform((v) => (v === "" ? undefined : v)),
-
-  name: nameSchema,
-  price: priceSchema,
-});
-
 export const createSaleItemValidator = z.object({
   quantity: quantitySchema,
-  presentation: presentationSchema,
+  name: nameSchema,
+  price: priceSchema,
+  presentationId: uuidSchema
+    .or(z.literal(""))
+    .transform((v) => (v === "" ? undefined : v)),
 });
 
 export const createSaleValidator = z.object({

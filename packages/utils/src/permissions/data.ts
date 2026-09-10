@@ -4,6 +4,7 @@ export const PERMISSIONS = {
   members: ["create", "read", "delete", "assign_group"],
   categories: ["create", "read", "update", "delete"],
   products: ["create", "read", "update", "delete"],
+  sales: ["create", "read", "update", "delete"],
 } as const;
 
 export type PermissionsMap = typeof PERMISSIONS;

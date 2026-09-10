@@ -6,11 +6,8 @@ import { UUID } from "@fludge/utils/uuid";
 import type { SaleSequenceRepository } from "@fludge/api/modules/sales/infrastructure/repositories/sale-sequense.repository";
 import { Sale } from "@fludge/api/modules/sales/domain/entities/sale.entity";
 import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
-import type { EnsurePresentationsExistsService } from "@fludge/api/modules/catalog/products/application/services/ensure-presentations-exists.service";
-import { ProductPresentationNotFoundException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-presentation-not-found.exception";
-import type { Product } from "@fludge/api/modules/catalog/products/domain/entities/product.entity";
 import type { ProductRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product.repository";
-import { ProductNotFoundException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-not-found.exception";
+import type { SaleProductService } from "@fludge/api/modules/catalog/products/application/services/sale-product.service";
 
 export const createSaleCommand = createSaleValidator;
 
@@ -20,72 +17,9 @@ export class CreateSaleCommand {
   constructor(
     private readonly saleRepository: SaleRepository,
     private readonly saleSequenceRepository: SaleSequenceRepository,
-    private readonly ensurePresentationsExistsService: EnsurePresentationsExistsService,
     private readonly productRepository: ProductRepository,
+    private readonly saleProductService: SaleProductService,
   ) {}
-
-  private async checkProducts(
-    activeOrganization: Organization,
-    items: CMD["items"],
-  ) {
-    const productsToSave: Product[] = [];
-
-    const presentationsIds = items
-      .filter((item) => item.presentation.id !== undefined)
-      .map((item) => ({
-        id: item.presentation.id!,
-        quantity: item.quantity,
-      }));
-
-    if (presentationsIds.length === 0) return productsToSave;
-
-    const [exists, errExists] =
-      await this.ensurePresentationsExistsService.execute(
-        activeOrganization.id.toString(),
-        presentationsIds.map((p) => p.id),
-      );
-
-    if (errExists)
-      throw new InternalServerError(
-        errExists,
-        "api_errors.catalog.products_presentations.isr_on_find",
-      );
-
-    if (exists.size === 0) throw new ProductPresentationNotFoundException();
-
-    const productsIds = Array.from(exists.keys());
-
-    const [productsFind, errFinding] =
-      await this.productRepository.findManyByIds(
-        activeOrganization.id.toString(),
-        productsIds,
-      );
-
-    if (errFinding)
-      throw new InternalServerError(
-        errFinding,
-        "api_errors.catalog.products.isr_on_find",
-      );
-
-    if (productsFind.length !== productsIds.length)
-      throw new ProductNotFoundException();
-
-    for (const [productId, presentationIds] of exists) {
-      const presentations = presentationsIds.filter((p) =>
-        presentationIds.includes(p.id),
-      );
-
-      const product = productsFind.find((p) =>
-        p.id.equals(UUID.fromString(productId)),
-      )!;
-
-      product.sale(presentations);
-
-      productsToSave.push(product);
-    }
-
-    return productsToSave;
-  }
 
   public async execute(
     activeOrganization: Organization,
@@ -96,9 +30,20 @@ export class CreateSaleCommand {
       UUID.fromString(loggedUserId),
     )!;
 
-    const productsToSave = await this.checkProducts(
+    const items: { presentationId: string; quantity: number }[] = [];
+
+    for (const item of cmd.items) {
+      if (item.presentationId === undefined) continue;
+
+      items.push({
+        presentationId: item.presentationId,
+        quantity: item.quantity,
+      });
+    }
+
+    const productsToSave = await this.saleProductService.execute(
       activeOrganization,
-      cmd.items,
+      items,
     );
 
     const [newSale, errTransaction] = await this.saleRepository.transaction(
@@ -121,11 +66,11 @@ export class CreateSaleCommand {
           items: cmd.items.map((item) => ({
             organizationId: activeOrganization.id,
             productPresentation: {
-              id: item.presentation.id
-                ? UUID.fromString(item.presentation.id)
+              id: item.presentationId
+                ? UUID.fromString(item.presentationId)
                 : null,
-              name: item.presentation.name,
-              price: item.presentation.price,
+              name: item.name,
+              price: item.price,
             },
             quantity: item.quantity,
           })),
