@@ -33,6 +33,6 @@
     "@fludge/config": "workspace:*",
     "@types/pg": "8.23.1",
     "drizzle-kit": "catalog:",
-    "typescript": "7.0.2"
+    "typescript": "~6.0.3"
   }
 }

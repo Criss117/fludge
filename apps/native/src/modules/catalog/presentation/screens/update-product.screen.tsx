@@ -17,7 +17,6 @@ import {
   PresentationsSection,
   StockSection,
 } from "../components/product-form/sections";
-import { ORPCError } from "@orpc/client";
 
 interface Props {
   product: ProductDetail;
@@ -52,10 +51,6 @@ export function UpdateProductScreen({ product }: Props) {
               router.back();
             },
             onError: (error) => {
-              if (error instanceof ORPCError) {
-                console.log(JSON.stringify(error, null, 2));
-              }
-
               mutationToast.showErrorToast(
                 "mutations.products.update.error",
                 error.message as TranslationKey

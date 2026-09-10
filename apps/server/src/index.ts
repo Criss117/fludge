@@ -19,7 +19,7 @@ const rpcHandler = new RPCHandler(appRouter, {
         error.code === "BAD_REQUEST" &&
         error.cause instanceof ValidationError
       ) {
-        throw new ValidationDomainException(error.cause.issues);
+        throw new ValidationDomainException(error.cause);
       }
     }),
   ],

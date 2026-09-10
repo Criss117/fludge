@@ -1,8 +1,7 @@
 import type { TranslationKey } from "@fludge/i18n/index";
 import type { ORPCErrorCode } from "@orpc/client";
-import { ORPCError } from "@orpc/server";
-import { getI18nKey } from "../../i18n/utils";
-import type { StandardSchemaV1 } from "@standard-schema/spec";
+import { ORPCError, ValidationError as VE } from "@orpc/server";
+import { getI18nKey } from "@fludge/api/modules/shared/i18n/utils";
 
 export class DomainException<T extends ORPCErrorCode> extends ORPCError<
   T,
@@ -52,11 +51,11 @@ export class BadRequestError extends DomainException<"BAD_REQUEST"> {
   }
 }
 
-export class ValidationError extends DomainException<"VALIDATION_ERROR"> {
-  constructor(message: TranslationKey) {
-    super("VALIDATION_ERROR", { message });
-  }
-}
+// export class ValidationError extends DomainException<"VALIDATION_ERROR"> {
+//   constructor(message: TranslationKey) {
+//     super("VALIDATION_ERROR", { message });
+//   }
+// }
 
 export class InternalError extends DomainException<"INTERNAL_ERROR"> {
   constructor(message: TranslationKey) {
@@ -71,14 +70,18 @@ export class TimeoutError extends DomainException<"TIMEOUT_ERROR"> {
 }
 
 export class ValidationDomainException extends DomainException<"BAD_REQUEST"> {
-  issues: readonly StandardSchemaV1.Issue[];
+  private issues: VE;
 
-  constructor(issues: readonly StandardSchemaV1.Issue[]) {
+  constructor(error: VE) {
     // cada issue.message ya es una key (porque tus schemas usan getI18nKey en cada validator)
-    const firstMessage = (issues[0]?.message ??
+    const firstMessage = (error.issues[0]?.message ??
       "api_errors.shared.validation_failed") as TranslationKey;
 
     super("BAD_REQUEST", { message: firstMessage });
-    this.issues = issues;
+    this.issues = error;
+  }
+
+  public get errors() {
+    return this.issues.issues;
   }
 }

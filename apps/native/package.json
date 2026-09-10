@@ -39,6 +39,8 @@
     "heroui-native": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "i18next": "catalog:",
+    "react-i18next": "catalog:",
     "react-native": "0.86.3",
     "react-native-gesture-handler": "~2.32.0",
     "react-native-keyboard-controller": "1.21.9",

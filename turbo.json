@@ -11,7 +11,8 @@
       "dependsOn": ["^lint"]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": ["^check-types"],
+      "outputs": ["dist/**", "*.tsbuildinfo"]
     },
     "test": {
       "dependsOn": ["^build"],
@@ -20,6 +21,7 @@
       "cache": false
     },
     "dev": {
+      "dependsOn": ["^check-types"],
       "cache": false,
       "persistent": true,
       "with": ["//#db:init"]
