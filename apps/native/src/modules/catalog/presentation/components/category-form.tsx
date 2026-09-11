@@ -83,22 +83,20 @@ function CategoryForm({ form }: FormProps) {
   const { onFocus } = useBottomSheetAwareHandlers();
   return (
     <View className="mb-4 gap-y-2 px-3">
-      <form.Field
-        name="name"
-        children={(field) => (
+      <form.Field name="name">
+        {(field) => (
           <CategoryFormInputs.NameInput field={field} onFocus={onFocus} />
         )}
-      />
+      </form.Field>
 
-      <form.Field
-        name="description"
-        children={(field) => (
+      <form.Field name="description">
+        {(field) => (
           <CategoryFormInputs.DescriptionInput
             field={field}
             onFocus={onFocus}
           />
         )}
-      />
+      </form.Field>
     </View>
   );
 }
@@ -266,7 +264,7 @@ export function UpdateCategoryForm({
 
     form.setFieldValue("name", category.name);
     form.setFieldValue("description", category.description);
-  }, [category]);
+  }, [category, form.setFieldValue]);
 
   return (
     <FormBottomSheet

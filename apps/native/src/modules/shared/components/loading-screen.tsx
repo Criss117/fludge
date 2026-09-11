@@ -15,7 +15,7 @@ import { useCSSVariable } from "uniwind";
 import { Text } from "./app-text";
 
 type LoadingScreenProps = {
-  message: TranslationKey;
+  message?: TranslationKey;
 };
 
 export function LoadingScreen({ message }: LoadingScreenProps) {
@@ -28,32 +28,36 @@ export function LoadingScreen({ message }: LoadingScreenProps) {
 
   useEffect(() => {
     // Entrada: fade + scale
-    opacity.value = withTiming(1, {
-      duration: 500,
-      easing: Easing.out(Easing.ease),
-    });
-    entryScale.value = withSpring(1, { damping: 8, stiffness: 90 });
+    opacity.set(
+      withTiming(1, {
+        duration: 500,
+        easing: Easing.out(Easing.ease),
+      })
+    );
+    entryScale.set(withSpring(1, { damping: 8, stiffness: 90 }));
 
     // Pulso continuo del logo (empieza tras la entrada)
-    pulse.value = withSequence(
-      withTiming(1, { duration: 500 }),
-      withRepeat(
-        withSequence(
-          withTiming(1.04, {
-            duration: 900,
-            easing: Easing.inOut(Easing.ease),
-          }),
-          withTiming(1, { duration: 900, easing: Easing.inOut(Easing.ease) })
-        ),
-        -1,
-        false
+    pulse.set(
+      withSequence(
+        withTiming(1, { duration: 500 }),
+        withRepeat(
+          withSequence(
+            withTiming(1.04, {
+              duration: 900,
+              easing: Easing.inOut(Easing.ease),
+            }),
+            withTiming(1, { duration: 900, easing: Easing.inOut(Easing.ease) })
+          ),
+          -1,
+          false
+        )
       )
     );
-  }, []);
+  }, [entryScale, opacity, pulse]);
 
   const logoStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ scale: entryScale.value * pulse.value }],
+    opacity: opacity.get(),
+    transform: [{ scale: entryScale.get() * pulse.get() }],
   }));
 
   return (

@@ -21,10 +21,14 @@ export function SearchInput({
   const { t } = useTranslation();
   const [localQuery, setLocalQuery] = useState(query);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastQueryRef = useRef(query);
 
-  // Si el query externo cambia (ej. se limpia desde afuera), sincroniza el input
+  // Sincroniza el estado local únicamente si 'query' cambia desde el exterior
   useEffect(() => {
-    setLocalQuery(query);
+    if (query !== lastQueryRef.current) {
+      lastQueryRef.current = query;
+      setLocalQuery(query);
+    }
   }, [query]);
 
   const handleChange = (value: string) => {
@@ -35,6 +39,7 @@ export function SearchInput({
     }
 
     timeoutRef.current = setTimeout(() => {
+      lastQueryRef.current = value;
       setQuery(value);
     }, debounceMs);
   };

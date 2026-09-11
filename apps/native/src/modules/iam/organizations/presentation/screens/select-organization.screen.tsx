@@ -61,6 +61,8 @@ export function SelectOrganizationScreen() {
     router,
   ]);
 
+  const containerPaddingBottom = userIsRoot ? 8 : 32;
+
   return (
     <View className="flex-1 gap-y-5">
       <View className="relative w-full flex-row items-center px-3">
@@ -78,7 +80,7 @@ export function SelectOrganizationScreen() {
       <FlatList
         data={allOrganizations}
         className="flex-1 px-3"
-        contentContainerStyle={{ paddingBottom: userIsRoot ? 8 : 32 }}
+        contentContainerStyle={{ paddingBottom: containerPaddingBottom }}
         style={{ paddingBottom: 0 }}
         keyExtractor={(d) => d.id}
         ItemSeparatorComponent={

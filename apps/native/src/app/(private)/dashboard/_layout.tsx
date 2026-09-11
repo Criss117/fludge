@@ -46,7 +46,7 @@ export default function DashboardLayout() {
     productCollection.preload().then(() => {
       console.log("productCollection.preload");
     });
-  }, []);
+  }, [productCollection]);
 
   return (
     <RemountBoundary>
