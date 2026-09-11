@@ -84,6 +84,15 @@ export const screens = {
           stock: "Stock disponible",
         },
       },
+      presentations: {
+        title: "Seleccionar presentación",
+        description: "Elegí una presentación para {{product}}",
+        empty: "No hay presentaciones disponibles",
+        errors: {
+          insufficient_stock_label: "Stock insuficiente",
+          try_again: "Intentá con otra presentación",
+        },
+      },
     },
   },
   catalog: {

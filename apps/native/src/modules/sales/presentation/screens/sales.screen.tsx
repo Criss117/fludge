@@ -10,7 +10,8 @@ import { useFindProducts } from "@fludge/client/application/catalog/queries/use-
 import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { FlatList, StyleSheet, View } from "react-native";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import type { ProductSummary } from "@fludge/client/application/catalog/queries/use-find-products";
 import {
   SALES_CARD_HEIGHT,
   SalesProductCard,
@@ -19,12 +20,24 @@ import { SalesProductCardSkeleton } from "../components/sales-product-card-skele
 import { TicketSelector } from "../components/ticket-selector";
 import { SalesFooter } from "../components/sales-footer";
 import { SalesSummaryBottomSheet } from "../components/sales-summary-bottom-sheet";
+import { ProductPresentationsDialog } from "../components/product-presentations-dialog";
 
 const ROW_HEIGHT = SALES_CARD_HEIGHT + 8;
 
 export function SalesScreen() {
   const [query, setQuery] = useState("");
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<ProductSummary | null>(
+    null,
+  );
+  const handleProductPress = useCallback(
+    (product: ProductSummary) => setSelectedProduct(product),
+    [],
+  );
+  const closeProductPresentations = useCallback(
+    () => setSelectedProduct(null),
+    [],
+  );
   const { t } = useTranslation();
   const { data, fetchNextPage, hasNextPage, isReady, isLoading } =
     useFindProducts({ query });
@@ -58,7 +71,9 @@ export function SalesScreen() {
             { gap: 8 },
           ]}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <SalesProductCard product={item} />}
+          renderItem={({ item }) => (
+            <SalesProductCard product={item} onPress={handleProductPress} />
+          )}
           getItemLayout={(_, index) => ({
             length: ROW_HEIGHT,
             offset: ROW_HEIGHT * Math.floor(index / 2),
@@ -86,6 +101,10 @@ export function SalesScreen() {
       <SalesSummaryBottomSheet
         isOpen={isSummaryOpen}
         onOpenChange={setIsSummaryOpen}
+      />
+      <ProductPresentationsDialog
+        product={selectedProduct}
+        onClose={closeProductPresentations}
       />
     </View>
   );

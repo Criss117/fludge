@@ -4,9 +4,9 @@ import { formatPrice } from "@fludge/utils/currency";
 import { Card } from "heroui-native/card";
 import { Chip } from "heroui-native/chip";
 import { Typography } from "heroui-native/text";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 
 // react-doctor-disable-next-line only-export-components -- Layout constant is part of this component's public rendering contract.
 export const SALES_CARD_HEIGHT = 180;
@@ -29,10 +29,12 @@ export function getSalesProductPrice(
 
 interface Props {
   product: ProductSummary;
+  onPress?: (product: ProductSummary) => void;
 }
 
 export const SalesProductCard = React.memo(function SalesProductCard({
   product,
+  onPress,
 }: Props) {
   const { t } = useTranslation();
   const price = useMemo(
@@ -43,9 +45,10 @@ export const SalesProductCard = React.memo(function SalesProductCard({
       ),
     [product.presentations, t]
   );
+  const handlePress = useCallback(() => onPress?.(product), [onPress, product]);
 
   return (
-    <View className="flex-1 rounded-3xl">
+    <Pressable className="flex-1 rounded-3xl" onPress={handlePress}>
       <Card
         className="h-full justify-between gap-y-3"
         style={{ height: SALES_CARD_HEIGHT }}
@@ -70,6 +73,6 @@ export const SalesProductCard = React.memo(function SalesProductCard({
           <Typography className="font-semibold">{price}</Typography>
         </Card.Body>
       </Card>
-    </View>
+    </Pressable>
   );
 });

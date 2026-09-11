@@ -1,6 +1,6 @@
 import { getI18nKey } from "@fludge/api/modules/shared/i18n/utils";
 
-type CatalogPresentation = {
+export type CatalogPresentation = {
   readonly kind: "catalog";
   readonly id: string;
   readonly productId: string;
@@ -40,7 +40,7 @@ export type Ticket = {
   products: Map<string, ProductStock>;
 };
 
-type NewCatalogTicketItem = {
+export type NewCatalogTicketItem = {
   kind: "catalog";
   quantity: number;
   presentation: CatalogPresentation;
