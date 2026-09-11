@@ -7,6 +7,8 @@ type CatalogPresentation = {
   readonly name: string;
   readonly conversionFactor: number;
   price: number;
+  priceWholesale?: number;
+  originalPrice: number;
 };
 
 type AdHocPresentation = {
@@ -169,16 +171,73 @@ function addItem(ticket: Ticket, newItem: NewTicketItem): Ticket {
   };
 }
 
+function removeItem(ticket: Ticket, itemId: string): Ticket {
+  const newItems = ticket.items.filter((item) => item.id !== itemId);
+
+  const total = newItems.reduce((sum, item) => sum + item.subtotal, 0);
+
+  return { ...ticket, items: newItems, total };
+}
+
+function updateItem(ticket: Ticket, item: TicketItem): Ticket {
+  const newItems = ticket.items.map((itemToUpdate) =>
+    itemToUpdate.id === item.id ? item : itemToUpdate,
+  );
+
+  const total = newItems.reduce((sum, item) => sum + item.subtotal, 0);
+
+  return { ...ticket, items: newItems, total };
+}
+
+function clearTicket(ticket: Ticket): Ticket {
+  return { ...ticket, items: [], products: new Map(), total: 0 };
+}
+
+function changeAllToWholesale(ticket: Ticket): Ticket {
+  const newItems = ticket.items.map((item) => {
+    if (item.presentation.kind === "adhoc") return item;
+
+    if (!item.presentation.priceWholesale) return item;
+
+    return {
+      ...item,
+      presentation: {
+        ...item.presentation,
+        price: item.presentation.priceWholesale,
+      },
+    };
+  });
+
+  const total = newItems.reduce((sum, item) => sum + item.subtotal, 0);
+
+  return { ...ticket, items: newItems, total };
+}
+
 export type TicketAction =
+  | { type: "hydrate"; payload: TicketMap }
   | { type: "create-ticket" }
-  | { type: "delete-ticket"; payload: string }
+  | {
+      type: "delete-ticket";
+      payload: {
+        ticketId: string;
+      };
+    }
+  | {
+      type: "clear-ticket";
+      payload: {
+        ticketId: string;
+      };
+    }
   | {
       type: "add-item";
       payload: {
         ticketId: string;
         item: NewTicketItem;
       };
-    };
+    }
+  | { type: "remove-item"; payload: { ticketId: string; itemId: string } }
+  | { type: "update-item"; payload: { ticketId: string; item: TicketItem } }
+  | { type: "change-all-to-wholesale"; payload: { ticketId: string } };
 
 export function ticketsReducer(
   state: TicketMap,
@@ -186,6 +245,10 @@ export function ticketsReducer(
 ): TicketMap {
   const newState = new Map(state);
   switch (action.type) {
+    case "hydrate": {
+      return action.payload;
+    }
+
     case "create-ticket": {
       const newTicket = createTicket(state);
       newState.set(newTicket.key, newTicket.value);
@@ -193,7 +256,20 @@ export function ticketsReducer(
     }
 
     case "delete-ticket": {
-      newState.delete(action.payload);
+      newState.delete(action.payload.ticketId);
+      return newState;
+    }
+
+    case "clear-ticket": {
+      const { payload } = action;
+      const ticket = state.get(payload.ticketId);
+
+      if (!ticket) return state;
+
+      const newTicket = clearTicket(ticket);
+
+      newState.set(payload.ticketId, newTicket);
+
       return newState;
     }
 
@@ -204,6 +280,45 @@ export function ticketsReducer(
       if (!ticket) return state;
 
       const newTicket = addItem(ticket, payload.item);
+
+      newState.set(payload.ticketId, newTicket);
+
+      return newState;
+    }
+
+    case "remove-item": {
+      const { payload } = action;
+      const ticket = state.get(payload.ticketId);
+
+      if (!ticket) return state;
+
+      const newTicket = removeItem(ticket, payload.itemId);
+
+      newState.set(payload.ticketId, newTicket);
+
+      return newState;
+    }
+
+    case "update-item": {
+      const { payload } = action;
+      const ticket = state.get(payload.ticketId);
+
+      if (!ticket) return state;
+
+      const newTicket = updateItem(ticket, payload.item);
+
+      newState.set(payload.ticketId, newTicket);
+
+      return newState;
+    }
+
+    case "change-all-to-wholesale": {
+      const { payload } = action;
+      const ticket = state.get(payload.ticketId);
+
+      if (!ticket) return state;
+
+      const newTicket = changeAllToWholesale(ticket);
 
       newState.set(payload.ticketId, newTicket);
 

@@ -129,8 +129,10 @@ export default function DashboardTabsLayout() {
           headerTitle: () => (
             <Link
               href={{
-                pathname: "/sales",
+                pathname: "/(private)/sales",
               }}
+              asChild
+              push
             >
               <Typography.Heading type="h4">
                 {t("screens.sales.title")}

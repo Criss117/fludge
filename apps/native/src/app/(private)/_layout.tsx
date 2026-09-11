@@ -19,6 +19,8 @@ export default function PrivateLayout() {
     >
       <Stack.Protected guard={hasActiveOrganization}>
         <Stack.Screen name="dashboard" />
+      </Stack.Protected>
+      <Stack.Protected guard={hasActiveOrganization}>
         <Stack.Screen name="sales" />
       </Stack.Protected>
       <Stack.Screen name="organization" />
