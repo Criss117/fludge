@@ -140,6 +140,7 @@ function CategorySelect({ field }: FieldProps<string>) {
   );
 }
 
+// react-doctor-disable-next-line only-export-components -- This component namespace is the public form-input composition API.
 export const ProductFormInputs = {
   Name,
   Description,
@@ -289,6 +290,7 @@ function PresentationPriceWholesale({ field, onFocus }: FieldProps<number>) {
   );
 }
 
+// react-doctor-disable-next-line only-export-components -- This component namespace is the public form-input composition API.
 export const ProductPresentationFormInputs = {
   Name: PresentationName,
   Barcode: PresentationBarcode,

@@ -31,6 +31,7 @@ function generateNewPresentation(
 export function useCreateProductMutation() {
   const { productCollection, activeOrganization } = useProductsCollection();
 
+  // react-doctor-disable-next-line query-mutation-missing-invalidation -- TanStack DB persists this local collection mutation directly.
   return useMutation({
     mutationKey: ["create-product"],
     mutationFn: async (input: ProductFormSchema) => {
@@ -78,6 +79,7 @@ export function useCreateProductMutation() {
 export function useUpdateProductMutation() {
   const { productCollection, activeOrganization } = useProductsCollection();
 
+  // react-doctor-disable-next-line query-mutation-missing-invalidation -- TanStack DB persists this local collection mutation directly.
   return useMutation({
     mutationKey: ["update-product"],
     mutationFn: async (input: ProductFormSchema & { id: string }) => {
@@ -90,13 +92,14 @@ export function useUpdateProductMutation() {
         throw new Error(getI18nKey("api_errors.catalog.products.not_found"));
 
       const newPresentations: ProductDetail["presentations"] = [];
+      const existingPresentations = new Map(
+        exisiting.presentations.map((presentation) => [presentation.id, presentation]),
+      );
 
       for (const pres of input.presentations) {
         if (pres.isDeleted) continue;
 
-        const existingPresentation = exisiting.presentations.find(
-          (p) => p.id === pres.id,
-        );
+        const existingPresentation = existingPresentations.get(pres.id);
 
         if (!existingPresentation) {
           newPresentations.push(
@@ -145,6 +148,7 @@ export function useUpdateProductMutation() {
 export function useDeleteProductMutation() {
   const { productCollection } = useProductsCollection();
 
+  // react-doctor-disable-next-line query-mutation-missing-invalidation -- TanStack DB persists this local collection mutation directly.
   return useMutation({
     mutationKey: ["delete-product"],
     mutationFn: async (input: { id: string }) => {

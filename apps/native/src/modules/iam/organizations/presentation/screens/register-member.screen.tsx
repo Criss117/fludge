@@ -42,13 +42,15 @@ export function RegisterMemberScreen() {
               </Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
-              <form.Field
+          {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
+          <form.Field
                 name="email"
                 children={(field) => (
                   <AuthFormInputs.EmailInput field={field} />
                 )}
               />
-              <form.Field
+          {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
+          <form.Field
                 name="password"
                 children={(field) => (
                   <AuthFormInputs.PasswordInput field={field} />
@@ -64,12 +66,14 @@ export function RegisterMemberScreen() {
               </Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
-              <form.Field
+          {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
+          <form.Field
                 name="name"
                 children={(field) => <AuthFormInputs.NameInput field={field} />}
               />
 
-              <form.Field
+          {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
+          <form.Field
                 name="phone"
                 children={(field) => (
                   <AuthFormInputs.PhoneInput field={field} />

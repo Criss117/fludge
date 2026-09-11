@@ -46,10 +46,10 @@ export const AppThemeProvider = ({
         }
       } catch (error) {
         console.warn("Error al cargar el tema guardado:", error);
-      } finally {
-        if (isMounted) {
-          setIsThemeLoaded(true);
-        }
+      }
+
+      if (isMounted) {
+        setIsThemeLoaded(true);
       }
     };
 
@@ -68,13 +68,8 @@ export const AppThemeProvider = ({
     }
   }, []);
 
-  const isLight = useMemo(() => {
-    return theme === "light";
-  }, [theme]);
-
-  const isDark = useMemo(() => {
-    return theme === "dark";
-  }, [theme]);
+  const isLight = theme === "light";
+  const isDark = theme === "dark";
 
   const setTheme = useCallback(
     (newTheme: ThemeName) => {

@@ -1,7 +1,7 @@
 import { Input } from "heroui-native/input";
 import { Label } from "heroui-native/label";
 import { TextField } from "heroui-native/text-field";
-import { useWindowDimensions, View } from "react-native";
+import { FlatList, useWindowDimensions, View } from "react-native";
 import { MaterialIcons } from "./icons";
 import { FieldError } from "./field-error";
 import { useState, type ComponentProps } from "react";
@@ -20,7 +20,6 @@ import {
 } from "react-native-keyboard-controller";
 import { Easing, FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { SearchInput } from "./search-input";
-import { ScrollView } from "react-native-gesture-handler";
 import { cn } from "heroui-native";
 
 type MaterialIconName = ComponentProps<typeof MaterialIcons>["name"];
@@ -317,10 +316,13 @@ function SearchableSelect({
                 placeholder={"api_errors.auth.sessions.invalid_credentials"}
               />
             </View>
-            <ScrollView keyboardShouldPersistTaps="handled" className="flex-1">
-              {filteredOptions.map((option) => (
+            <FlatList
+              data={filteredOptions}
+              className="flex-1"
+              keyboardShouldPersistTaps="handled"
+              keyExtractor={(option) => option.value}
+              renderItem={({ item: option }) => (
                 <Select.Item
-                  key={option.value}
                   value={option.value}
                   label={option.label}
                   onPress={() => {
@@ -338,16 +340,16 @@ function SearchableSelect({
                   </View>
                   <Select.ItemIndicator />
                 </Select.Item>
-              ))}
-              {filteredOptions.length === 0 && (
+              )}
+              ListEmptyComponent={
                 <Typography
                   className="text-muted mt-8 text-center"
                   maxFontSizeMultiplier={1}
                 >
                   {t("screens.categories.not_found")}
                 </Typography>
-              )}
-            </ScrollView>
+              }
+            />
           </Select.Content>
         </KeyboardAvoidingView>
       </Select.Portal>
@@ -356,6 +358,7 @@ function SearchableSelect({
   );
 }
 
+// react-doctor-disable-next-line only-export-components -- This component namespace is the public shared-input composition API.
 export const CommonInputs = {
   TextInput,
   TextAreaInput,

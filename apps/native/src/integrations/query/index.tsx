@@ -5,6 +5,7 @@ import {
 import { useTanStackQueryDevTools } from "@rozenite/tanstack-query-plugin";
 import { DbClient, DbProvider } from "@tanstack/react-db";
 
+// react-doctor-disable-next-line only-export-components -- React Query client is an integration singleton shared by the provider.
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -19,17 +20,19 @@ export const queryClient = new QueryClient({
 
 const dbClient = new DbClient({ queryClient });
 
+function QueryDevTools() {
+  useTanStackQueryDevTools(queryClient);
+  return null;
+}
+
 export function QueryClientProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  if (__DEV__) {
-    useTanStackQueryDevTools(queryClient);
-  }
-
   return (
     <Provider client={queryClient}>
+      {__DEV__ && <QueryDevTools />}
       <DbProvider client={dbClient}>{children}</DbProvider>
     </Provider>
   );

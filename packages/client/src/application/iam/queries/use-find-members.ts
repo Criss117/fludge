@@ -41,11 +41,16 @@ export function useFindAllMembers(filters?: MemberFilters) {
   const { data: activeOrganization } = useFindActiveOrganization();
 
   const members = useMemo(() => {
+    const groupsByMember = new Map<string, string[]>();
+    for (const groupMember of activeOrganization.groupMembers) {
+      const groups = groupsByMember.get(groupMember.memberId) ?? [];
+      groups.push(groupMember.groupId);
+      groupsByMember.set(groupMember.memberId, groups);
+    }
+
     const membersWithGroups = data.map((m) => ({
       ...m,
-      groups: activeOrganization.groupMembers
-        .filter((gm) => gm.memberId === m.id)
-        .map((gm) => gm.groupId),
+      groups: groupsByMember.get(m.id) ?? [],
     }));
 
     const query = filters?.query;

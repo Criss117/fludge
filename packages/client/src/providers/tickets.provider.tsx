@@ -2,6 +2,7 @@ import {
   createContext,
   use,
   useEffect,
+  useMemo,
   useReducer,
   useState,
   type ActionDispatch,
@@ -9,8 +10,9 @@ import {
 import {
   initialState,
   ticketsReducer,
+  type Ticket,
   type TicketAction,
-  type TicketMap,
+  type TicketsState,
 } from "../application/sales/store/tickets.store";
 
 function mapReplacer(_key: string, value: unknown) {
@@ -27,17 +29,19 @@ function mapReviver(_key: string, value: any) {
   return value;
 }
 
-export function serializeTicketMap(tickets: TicketMap): string {
-  return JSON.stringify(tickets, mapReplacer);
+// react-doctor-disable-next-line only-export-components -- Serialization helper is colocated with its provider storage contract.
+export function serializeTicketsState(state: TicketsState): string {
+  return JSON.stringify(state, mapReplacer);
 }
 
-export function deserializeTicketMap(raw: string): TicketMap {
+// react-doctor-disable-next-line only-export-components -- Deserialization helper belongs to the provider storage contract.
+export function deserializeTicketsState(raw: string): TicketsState {
   return JSON.parse(raw, mapReviver);
 }
 
 export interface SyncStore {
-  save: (tickets: TicketMap) => Promise<void>;
-  load: () => Promise<TicketMap>;
+  save: (state: TicketsState) => Promise<void>;
+  load: () => Promise<TicketsState>;
 }
 
 interface Root {
@@ -46,7 +50,9 @@ interface Root {
 }
 
 interface Context {
-  tickets: TicketMap;
+  tickets: TicketsState["tickets"];
+  selectedTicketId: string;
+  selectedTicket: Ticket | undefined;
   dispatch: ActionDispatch<[action: TicketAction]>;
   isHydrated: boolean;
 }
@@ -63,7 +69,7 @@ export function useTickets() {
 }
 
 export function TicketsProvider({ children, sync }: Root) {
-  const [tickets, dispatch] = useReducer(ticketsReducer, initialState);
+  const [state, dispatch] = useReducer(ticketsReducer, initialState);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
@@ -84,11 +90,33 @@ export function TicketsProvider({ children, sync }: Root) {
   useEffect(() => {
     if (!isHydrated) return;
 
-    sync.save(tickets);
-  }, [tickets, isHydrated, sync]);
+    sync.save(state);
+  }, [state, isHydrated, sync]);
+
+  const selectedTicket = useMemo(
+    () => state.tickets.get(state.selectedTicketId),
+    [state.tickets, state.selectedTicketId],
+  );
+
+  const contextValue = useMemo(
+    () => ({
+      tickets: state.tickets,
+      selectedTicketId: state.selectedTicketId,
+      selectedTicket,
+      dispatch,
+      isHydrated,
+    }),
+    [
+      state.tickets,
+      state.selectedTicketId,
+      selectedTicket,
+      dispatch,
+      isHydrated,
+    ],
+  );
 
   return (
-    <TicketsContext.Provider value={{ tickets, dispatch, isHydrated }}>
+    <TicketsContext.Provider value={contextValue}>
       {children}
     </TicketsContext.Provider>
   );

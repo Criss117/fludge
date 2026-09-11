@@ -20,10 +20,11 @@ function createOrpcQueryClient(options: RPCLinkOptions<ClientContext>) {
 
 export function createOrpcProvider(options: RPCLinkOptions<ClientContext>) {
   const client = createOrpcQueryClient(options);
+  const contextValue = { orpc: client };
 
   function OrpcProvider({ children }: { children: React.ReactNode }) {
     return (
-      <OrpcContext.Provider value={{ orpc: client }}>
+      <OrpcContext.Provider value={contextValue}>
         {children}
       </OrpcContext.Provider>
     );

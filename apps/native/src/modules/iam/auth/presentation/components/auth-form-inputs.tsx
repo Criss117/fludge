@@ -89,6 +89,7 @@ function PasswordInput({ field }: FieldProps<string>) {
   );
 }
 
+// react-doctor-disable-next-line only-export-components -- This component namespace is the public form-input composition API.
 export const AuthFormInputs = {
   NameInput,
   PhoneInput,

@@ -8,8 +8,10 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 
+// react-doctor-disable-next-line only-export-components -- Layout constant is part of this component's public rendering contract.
 export const SALES_CARD_HEIGHT = 180;
 
+// react-doctor-disable-next-line only-export-components -- Pure pricing helper is intentionally colocated with its presentation component.
 export function getSalesProductPrice(
   presentations: ReadonlyArray<{ priceSale: number }>,
   noPriceLabel: string

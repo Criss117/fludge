@@ -89,12 +89,14 @@ export function UpdateGroupScreen({ groupid }: { groupid: string }) {
               </Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
+              {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
               <form.Field
                 name="name"
                 children={(field) => (
                   <GroupFormInputs.NameInput field={field} />
                 )}
               />
+              {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
               <form.Field
                 name="description"
                 children={(field) => (

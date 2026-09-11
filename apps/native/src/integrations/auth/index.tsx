@@ -9,6 +9,7 @@ import {
 } from "@fludge/client/providers/auth.provider";
 import { LoadingScreen } from "@/modules/shared/components/loading-screen";
 
+// react-doctor-disable-next-line only-export-components -- Better Auth client is an integration singleton shared by the provider.
 export const authClient = createAuthClient({
   baseURL: env.EXPO_PUBLIC_SERVER_URL,
   plugins: [

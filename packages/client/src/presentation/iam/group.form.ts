@@ -66,6 +66,7 @@ export function PermissionsField({ children }: PermissionsFieldProps) {
 
   function toggleAllFromResource(resource: Resource) {
     const permissions = getPermissionsByResource(resource);
+    const permissionSet = new Set(permissions);
 
     field.setValue((prev) => {
       const exisiting = prev.filter((p) => {
@@ -75,7 +76,7 @@ export function PermissionsField({ children }: PermissionsFieldProps) {
       });
 
       if (exisiting.length === permissions.length) {
-        return prev.filter((p) => !permissions.includes(p));
+        return prev.filter((p) => !permissionSet.has(p));
       }
 
       return [...new Set([...prev, ...permissions])];

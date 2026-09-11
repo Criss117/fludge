@@ -74,13 +74,15 @@ export function CreateGroupScreen() {
               </Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
-              <form.Field
+            {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
+            <form.Field
                 name="name"
                 children={(field) => (
                   <GroupFormInputs.NameInput field={field} />
                 )}
               />
-              <form.Field
+            {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
+            <form.Field
                 name="description"
                 children={(field) => (
                   <GroupFormInputs.DescriptionInput field={field} />

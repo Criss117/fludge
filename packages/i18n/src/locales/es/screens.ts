@@ -64,6 +64,12 @@ export const screens = {
     title: "Ventas",
     no_more: "No hay más productos",
     not_found: "No se encontraron productos",
+    ticket: {
+      select_label: "Seleccionar ticket",
+      create: "Nuevo ticket",
+      delete: "Eliminar ticket",
+      empty: "No hay tickets",
+    },
     product: {
       no_price: "Sin precio",
       sections: {

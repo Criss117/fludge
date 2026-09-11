@@ -105,6 +105,7 @@ function AddressInput({ field }: FieldProps<string>) {
   );
 }
 
+// react-doctor-disable-next-line only-export-components -- This component namespace is the public form-input composition API.
 export const OrganizationFormInputs = {
   NameInput,
   LegalNameInput,

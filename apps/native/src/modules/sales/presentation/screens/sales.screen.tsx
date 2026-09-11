@@ -16,6 +16,7 @@ import {
   SalesProductCard,
 } from "../components/sales-product-card";
 import { SalesProductCardSkeleton } from "../components/sales-product-card-skeleton";
+import { TicketSelector } from "../components/ticket-selector";
 
 const ROW_HEIGHT = SALES_CARD_HEIGHT + 8;
 
@@ -31,6 +32,7 @@ export function SalesScreen() {
 
   return (
     <View style={styles.screen}>
+      <TicketSelector />
       <View style={styles.toolbar}>
         <View style={styles.search}>
           <SearchInput
@@ -84,6 +86,7 @@ export function SalesScreen() {
 function SalesScreenSkeleton() {
   return (
     <View style={styles.screen}>
+      <TicketSelector />
       <View style={styles.toolbar}>
         <View style={styles.search}>
           <SearchInputSkeleton placeholder="helpers.placeholder.search_products" />

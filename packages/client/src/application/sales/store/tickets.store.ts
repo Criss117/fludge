@@ -62,22 +62,30 @@ type NewTicketItem = NewCatalogTicketItem | NewAdHocTicketItem;
 
 export type TicketMap = Map<string, Ticket>;
 
-export const initialState = new Map<string, Ticket>([
-  [
-    "Ticket 1",
-    {
-      items: [],
-      products: new Map<string, ProductStock>(),
-      total: 0,
-    },
-  ],
-]);
+export type TicketsState = {
+  selectedTicketId: string;
+  tickets: TicketMap;
+};
 
-function createTicket(state: TicketMap) {
-  let stateIndex = state.size + 1;
+export const initialState: TicketsState = {
+  selectedTicketId: "Ticket 1",
+  tickets: new Map<string, Ticket>([
+    [
+      "Ticket 1",
+      {
+        items: [],
+        products: new Map<string, ProductStock>(),
+        total: 0,
+      },
+    ],
+  ]),
+};
+
+function createTicket(tickets: TicketMap) {
+  let stateIndex = tickets.size + 1;
   let newName = "Ticket " + stateIndex;
 
-  while (state.has(newName)) {
+  while (tickets.has(newName)) {
     stateIndex++;
     newName = "Ticket " + stateIndex;
   }
@@ -214,7 +222,8 @@ function changeAllToWholesale(ticket: Ticket): Ticket {
 }
 
 export type TicketAction =
-  | { type: "hydrate"; payload: TicketMap }
+  | { type: "hydrate"; payload: TicketsState }
+  | { type: "select-ticket"; payload: { ticketId: string } }
   | { type: "create-ticket" }
   | {
       type: "delete-ticket";
@@ -240,89 +249,110 @@ export type TicketAction =
   | { type: "change-all-to-wholesale"; payload: { ticketId: string } };
 
 export function ticketsReducer(
-  state: TicketMap,
+  state: TicketsState,
   action: TicketAction,
-): TicketMap {
-  const newState = new Map(state);
+): TicketsState {
   switch (action.type) {
     case "hydrate": {
       return action.payload;
     }
 
+    case "select-ticket": {
+      const { ticketId } = action.payload;
+
+      if (!state.tickets.has(ticketId)) return state;
+
+      return { ...state, selectedTicketId: ticketId };
+    }
+
     case "create-ticket": {
-      const newTicket = createTicket(state);
-      newState.set(newTicket.key, newTicket.value);
-      return newState;
+      const newTicket = createTicket(state.tickets);
+      const newTickets = new Map(state.tickets);
+      newTickets.set(newTicket.key, newTicket.value);
+
+      return {
+        ...state,
+        tickets: newTickets,
+        selectedTicketId: newTicket.key,
+      };
     }
 
     case "delete-ticket": {
-      newState.delete(action.payload.ticketId);
-      return newState;
+      const { ticketId } = action.payload;
+      const newTickets = new Map(state.tickets);
+      newTickets.delete(ticketId);
+
+      let selectedTicketId = state.selectedTicketId;
+      if (selectedTicketId === ticketId) {
+        selectedTicketId = newTickets.keys().next().value ?? "";
+      }
+
+      return { ...state, tickets: newTickets, selectedTicketId };
     }
 
     case "clear-ticket": {
       const { payload } = action;
-      const ticket = state.get(payload.ticketId);
+      const ticket = state.tickets.get(payload.ticketId);
 
       if (!ticket) return state;
 
       const newTicket = clearTicket(ticket);
+      const newTickets = new Map(state.tickets);
+      newTickets.set(payload.ticketId, newTicket);
 
-      newState.set(payload.ticketId, newTicket);
-
-      return newState;
+      return { ...state, tickets: newTickets };
     }
 
     case "add-item": {
       const { payload } = action;
-      const ticket = state.get(payload.ticketId);
+      const ticket = state.tickets.get(payload.ticketId);
 
       if (!ticket) return state;
 
       const newTicket = addItem(ticket, payload.item);
+      const newTickets = new Map(state.tickets);
+      newTickets.set(payload.ticketId, newTicket);
 
-      newState.set(payload.ticketId, newTicket);
-
-      return newState;
+      return { ...state, tickets: newTickets };
     }
 
     case "remove-item": {
       const { payload } = action;
-      const ticket = state.get(payload.ticketId);
+      const ticket = state.tickets.get(payload.ticketId);
 
       if (!ticket) return state;
 
       const newTicket = removeItem(ticket, payload.itemId);
+      const newTickets = new Map(state.tickets);
+      newTickets.set(payload.ticketId, newTicket);
 
-      newState.set(payload.ticketId, newTicket);
-
-      return newState;
+      return { ...state, tickets: newTickets };
     }
 
     case "update-item": {
       const { payload } = action;
-      const ticket = state.get(payload.ticketId);
+      const ticket = state.tickets.get(payload.ticketId);
 
       if (!ticket) return state;
 
       const newTicket = updateItem(ticket, payload.item);
+      const newTickets = new Map(state.tickets);
+      newTickets.set(payload.ticketId, newTicket);
 
-      newState.set(payload.ticketId, newTicket);
-
-      return newState;
+      return { ...state, tickets: newTickets };
     }
 
     case "change-all-to-wholesale": {
       const { payload } = action;
-      const ticket = state.get(payload.ticketId);
+      const ticket = state.tickets.get(payload.ticketId);
 
       if (!ticket) return state;
 
       const newTicket = changeAllToWholesale(ticket);
+      const newTickets = new Map(state.tickets);
+      newTickets.set(payload.ticketId, newTicket);
 
-      newState.set(payload.ticketId, newTicket);
-
-      return newState;
+      return { ...state, tickets: newTickets };
     }
 
     default:

@@ -88,14 +88,18 @@ export function BasicInformationSection({ form }: { form: Form }) {
       </Card.Header>
       <Separator />
       <Card.Body className="gap-y-2">
+        {/* TanStack Form render-prop API requires explicit children callbacks. */}
+        {/* react-doctor-disable-next-line no-children-prop */}
         <form.Field
           name="name"
           children={(field) => <ProductFormInputs.Name field={field} />}
         />
+        {/* react-doctor-disable-next-line no-children-prop */}
         <form.Field
           name="description"
           children={(field) => <ProductFormInputs.Description field={field} />}
         />
+        {/* react-doctor-disable-next-line no-children-prop */}
         <form.Field
           name="categoryId"
           children={(field) => (
@@ -119,18 +123,21 @@ export function StockSection({ form }: { form: Form }) {
       <Card.Body className="gap-y-2">
         <View className="flex-row items-start gap-x-2">
           <View className="flex-1">
+            {/* react-doctor-disable-next-line no-children-prop */}
             <form.Field
               name="stock"
               children={(field) => <ProductFormInputs.Stock field={field} />}
             />
           </View>
           <View className="flex-1">
+            {/* react-doctor-disable-next-line no-children-prop */}
             <form.Field
               name="minStock"
               children={(field) => <ProductFormInputs.MinStock field={field} />}
             />
           </View>
         </View>
+        {/* react-doctor-disable-next-line no-children-prop */}
         <form.Field
           name="allowNegativeStock"
           children={(field) => (

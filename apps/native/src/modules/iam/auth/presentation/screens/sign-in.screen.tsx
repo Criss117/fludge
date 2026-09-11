@@ -54,11 +54,13 @@ export function SignInScreen() {
           {rootError && (
             <FieldError isInvalid={!!rootError}>{rootError}</FieldError>
           )}
-          <form.Field
+              {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
+              <form.Field
             name="email"
             children={(field) => <AuthFormInputs.EmailInput field={field} />}
           />
-          <form.Field
+              {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
+              <form.Field
             name="password"
             children={(field) => <AuthFormInputs.PasswordInput field={field} />}
           />

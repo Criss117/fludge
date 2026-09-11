@@ -163,6 +163,7 @@ function PermissionsListInput({
   );
 }
 
+// react-doctor-disable-next-line only-export-components -- This component namespace is the public form-input composition API.
 export const GroupFormInputs = {
   NameInput,
   PermissionsListInput,

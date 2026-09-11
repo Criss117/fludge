@@ -41,13 +41,15 @@ function LoadingData() {
   return <LoadingScreen message={"app.loading_data"} />;
 }
 
-export default function RootLayout() {
-  if (__DEV__) {
-    useNetworkActivityDevTools();
-  }
+function NetworkDevTools() {
+  useNetworkActivityDevTools();
+  return null;
+}
 
+export default function RootLayout() {
   return (
     <Integrations>
+      {__DEV__ && <NetworkDevTools />}
       <Suspense fallback={<LoadingData />}>
         <StackConfig />
       </Suspense>

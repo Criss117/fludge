@@ -2,8 +2,8 @@ import { GeistFonts } from "@/integrations/fonts";
 import { Stack } from "expo-router";
 import { useThemeColor } from "heroui-native";
 import {
-  deserializeTicketMap,
-  serializeTicketMap,
+  deserializeTicketsState,
+  serializeTicketsState,
   SyncStore,
   TicketsProvider,
 } from "@fludge/client/providers/tickets.provider";
@@ -15,12 +15,12 @@ export const asyncStorageSync: SyncStore = {
   save: async (tickets) => {
     await AsyncStorage.setItem(
       TICKETS_LOCAL_STORAGE_KEY,
-      serializeTicketMap(tickets)
+      serializeTicketsState(tickets)
     );
   },
   load: async () => {
     const raw = await AsyncStorage.getItem(TICKETS_LOCAL_STORAGE_KEY);
-    return raw ? deserializeTicketMap(raw) : initialState;
+    return raw ? deserializeTicketsState(raw) : initialState;
   },
 };
 export default function SaleLayout() {
