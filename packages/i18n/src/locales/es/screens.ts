@@ -62,6 +62,16 @@ export const screens = {
   },
   sales: {
     title: "Ventas",
+    no_more: "No hay más productos",
+    not_found: "No se encontraron productos",
+    product: {
+      no_price: "Sin precio",
+      sections: {
+        details: {
+          stock: "Stock disponible",
+        },
+      },
+    },
   },
   catalog: {
     title: "Inventario",
