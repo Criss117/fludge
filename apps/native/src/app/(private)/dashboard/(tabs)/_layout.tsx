@@ -1,7 +1,7 @@
 import { GeistFonts } from "@/integrations/fonts";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { UserButton } from "@/modules/shared/components/user-button";
-import { Tabs as ExpoTabs } from "expo-router";
+import { Tabs as ExpoTabs, Link } from "expo-router";
 import type { BottomTabDescriptorMap } from "expo-router/build/react-navigation/bottom-tabs/types";
 import type {
   NavigationRoute,
@@ -9,6 +9,8 @@ import type {
 } from "expo-router/react-navigation";
 import type { BottomTabBarProps } from "expo-router/tabs";
 import { cn, useThemeColor } from "heroui-native";
+import { Typography } from "heroui-native/text";
+
 import { Tabs } from "heroui-native/tabs";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -124,6 +126,17 @@ export default function DashboardTabsLayout() {
         name="index"
         options={{
           title: t("screens.sales.title"),
+          headerTitle: () => (
+            <Link
+              href={{
+                pathname: "/sales",
+              }}
+            >
+              <Typography.Heading type="h4">
+                {t("screens.sales.title")}
+              </Typography.Heading>
+            </Link>
+          ),
         }}
       />
       <ExpoTabs.Screen
