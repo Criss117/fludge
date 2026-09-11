@@ -70,6 +70,13 @@ export const screens = {
       delete: "Eliminar ticket",
       empty: "No hay tickets",
     },
+    summary: {
+      title: "Resumen de venta",
+      total: "Total a cobrar",
+      empty: "No hay productos en este ticket",
+      clear: "Limpiar listado",
+      charge: "Cobrar",
+    },
     product: {
       no_price: "Sin precio",
       sections: {

@@ -17,11 +17,14 @@ import {
 } from "../components/sales-product-card";
 import { SalesProductCardSkeleton } from "../components/sales-product-card-skeleton";
 import { TicketSelector } from "../components/ticket-selector";
+import { SalesFooter } from "../components/sales-footer";
+import { SalesSummaryBottomSheet } from "../components/sales-summary-bottom-sheet";
 
 const ROW_HEIGHT = SALES_CARD_HEIGHT + 8;
 
 export function SalesScreen() {
   const [query, setQuery] = useState("");
+  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const { t } = useTranslation();
   const { data, fetchNextPage, hasNextPage, isReady, isLoading } =
     useFindProducts({ query });
@@ -52,7 +55,7 @@ export function SalesScreen() {
           columnWrapperStyle={{ gap: 8, paddingHorizontal: 12 }}
           contentContainerStyle={[
             styles.listContent,
-            { gap: 8, paddingBottom: 160 },
+            { gap: 8 },
           ]}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <SalesProductCard product={item} />}
@@ -79,6 +82,11 @@ export function SalesScreen() {
           }
         />
       )}
+      <SalesFooter onOpenSummary={() => setIsSummaryOpen(true)} />
+      <SalesSummaryBottomSheet
+        isOpen={isSummaryOpen}
+        onOpenChange={setIsSummaryOpen}
+      />
     </View>
   );
 }
