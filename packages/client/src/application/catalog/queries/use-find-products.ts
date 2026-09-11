@@ -9,21 +9,29 @@ import { SearchBlob } from "@fludge/utils/search-blob";
 
 interface Filters {
   query: string;
+  onlyActive?: boolean;
 }
 
 export function useFindProducts(filters?: Filters) {
   const { productCollection, activeOrganization } = useProductsCollection();
 
   const normalizedQuery = SearchBlob.normalize(filters?.query ?? "");
+  const onlyActive = filters?.onlyActive ?? false;
 
   return useLiveInfiniteQuery(
     (q) => {
-      return q
+      const query = q
         .from({
           pc: productCollection,
         })
         .where(({ pc }) => ilike(pc.searchBlob, "%" + normalizedQuery + "%"))
         .orderBy(({ pc }) => pc.createdAt, "desc");
+
+      if (onlyActive) {
+        query.where(({ pc }) => eq(pc.status, "active"));
+      }
+
+      return query;
     },
     {
       initialPageParam: 0,
@@ -33,6 +41,7 @@ export function useFindProducts(filters?: Filters) {
         activeOrganization.id,
         "products",
         normalizedQuery,
+        onlyActive ? "all" : "only-active",
       ],
     },
   );

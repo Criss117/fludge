@@ -13,15 +13,12 @@ import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 
-interface SalesSummaryBottomSheetProps {
+interface Props {
   isOpen: boolean;
   onOpenChange: (value: boolean) => void;
 }
 
-export function SalesSummaryBottomSheet({
-  isOpen,
-  onOpenChange,
-}: SalesSummaryBottomSheetProps) {
+export function SalesSummaryContent({ isOpen, onOpenChange }: Props) {
   const { t } = useTranslation();
   const { selectedTicket } = useTickets();
   const items = selectedTicket?.items ?? [];
@@ -29,29 +26,33 @@ export function SalesSummaryBottomSheet({
   const snapPoints = ["90%"];
 
   const renderFooter = (props: BottomSheetFooterProps) => (
-      <BottomSheetFooter {...props}>
-        <View className="bg-overlay px-4 pb-safe-offset-8">
-          <Separator className="-mx-4 mb-3" />
-          <View className="mb-3 flex-row items-center justify-between">
-            <Typography>{t("screens.sales.summary.total")}</Typography>
-            <Typography className="font-bold">{formatPrice(total)}</Typography>
-          </View>
-          <View className="flex-row gap-x-2">
-            <Button variant="outline" className="flex-1">
-              <MaterialIcons name="delete-outline" size={20} className="text-foreground" />
-              <Button.Label className="text-foreground">
-                {t("screens.sales.summary.clear")}
-              </Button.Label>
-            </Button>
-            <Button className="flex-1">
-              <MaterialIcons name="payments" size={20} className="text-eclipse" />
-              <Button.Label className="text-eclipse">
-                {t("screens.sales.summary.charge")}
-              </Button.Label>
-            </Button>
-          </View>
+    <BottomSheetFooter {...props}>
+      <View className="bg-overlay pb-safe-offset-8 px-4">
+        <Separator className="-mx-4 mb-3" />
+        <View className="mb-3 flex-row items-center justify-between">
+          <Typography>{t("screens.sales.summary.total")}</Typography>
+          <Typography className="font-bold">{formatPrice(total)}</Typography>
         </View>
-      </BottomSheetFooter>
+        <View className="flex-row gap-x-2">
+          <Button variant="outline" className="flex-1">
+            <MaterialIcons
+              name="delete-outline"
+              size={20}
+              className="text-foreground"
+            />
+            <Button.Label className="text-foreground">
+              {t("screens.sales.summary.clear")}
+            </Button.Label>
+          </Button>
+          <Button className="flex-1">
+            <MaterialIcons name="payments" size={20} className="text-eclipse" />
+            <Button.Label className="text-eclipse">
+              {t("screens.sales.summary.charge")}
+            </Button.Label>
+          </Button>
+        </View>
+      </View>
+    </BottomSheetFooter>
   );
 
   return (
@@ -67,7 +68,11 @@ export function SalesSummaryBottomSheet({
         >
           <View className="flex-row items-center justify-between gap-4 px-3 pb-3">
             <View className="flex-row items-center gap-x-2">
-              <MaterialIcons name="shopping-cart" size={24} className="text-foreground" />
+              <MaterialIcons
+                name="shopping-cart"
+                size={24}
+                className="text-foreground"
+              />
               <BottomSheet.Title maxFontSizeMultiplier={1.2} numberOfLines={1}>
                 {t("screens.sales.summary.title")}
               </BottomSheet.Title>
@@ -88,7 +93,7 @@ export function SalesSummaryBottomSheet({
               items.map((item) => (
                 <View
                   key={item.id}
-                  className="flex-row items-center justify-between rounded-xl bg-surface px-3 py-3"
+                  className="bg-surface flex-row items-center justify-between rounded-xl px-3 py-3"
                 >
                   <View className="flex-1 gap-y-1">
                     <Typography className="font-semibold">

@@ -5,7 +5,17 @@ import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { getTicketOptions } from "./ticket-selector.utils";
+
+type TicketOption = { label: string; value: string };
+
+export function getTicketOptions(
+  tickets: ReadonlyMap<string, unknown>
+): TicketOption[] {
+  return Array.from(tickets.keys()).map((ticketId) => ({
+    label: ticketId,
+    value: ticketId,
+  }));
+}
 
 export function TicketSelector() {
   const { t } = useTranslation();

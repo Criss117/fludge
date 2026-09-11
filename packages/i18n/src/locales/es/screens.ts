@@ -71,7 +71,7 @@ export const screens = {
       empty: "No hay tickets",
     },
     summary: {
-      title: "Resumen de venta",
+      title: "Venta en curso",
       total: "Total a cobrar",
       empty: "No hay productos en este ticket",
       clear: "Limpiar listado",
@@ -81,7 +81,7 @@ export const screens = {
       no_price: "Sin precio",
       sections: {
         details: {
-          stock: "Stock disponible",
+          stock: "Stock general: {{stock}}",
         },
       },
       presentations: {
