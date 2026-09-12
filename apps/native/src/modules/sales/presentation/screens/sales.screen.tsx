@@ -1,21 +1,24 @@
 import { CameraDialog } from "@/modules/shared/components/camera-dialog";
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { View } from "react-native";
-import { useCallback, useState } from "react";
+import { useRef, useState } from "react";
 import type { ProductSummary } from "@fludge/client/application/catalog/queries/use-find-products";
 import { TicketSelector } from "../components/ticket-selector";
 import { SalesSummary } from "../components/sale-summary";
 import { SaleProductsListSection } from "../sections/sale-products-list.section";
+import {
+  type TicketItemSelectorRef,
+  TicketItemSelectorProvider,
+} from "@fludge/client/presentation/sales/sale-ticket-item-selector.provider";
 import { ProductPresentationSelector } from "../components/product-presentation-selector";
 
 export function SalesScreen() {
   const [query, setQuery] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState<ProductSummary | null>(
-    null
-  );
+  const ticketItemRef = useRef<TicketItemSelectorRef>(null);
 
-  const handleProductPress = (product: ProductSummary) =>
-    setSelectedProduct(product);
+  const handleProductPress = (product: ProductSummary) => {
+    ticketItemRef.current?.open(product);
+  };
 
   return (
     <View className="flex-1 pt-2">
@@ -37,10 +40,9 @@ export function SalesScreen() {
         />
       </View>
       <SalesSummary />
-      <ProductPresentationSelector
-        product={selectedProduct}
-        setSelectedProduct={setSelectedProduct}
-      />
+      <TicketItemSelectorProvider ref={ticketItemRef}>
+        <ProductPresentationSelector />
+      </TicketItemSelectorProvider>
     </View>
   );
 }

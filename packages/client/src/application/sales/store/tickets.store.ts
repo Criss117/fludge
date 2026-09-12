@@ -20,7 +20,7 @@ type AdHocPresentation = {
 
 type Presentation = CatalogPresentation | AdHocPresentation;
 
-type TicketItem = {
+export type TicketItem = {
   readonly id: string;
   quantity: number;
   subtotal: number;
@@ -187,9 +187,14 @@ function removeItem(ticket: Ticket, itemId: string): Ticket {
   return { ...ticket, items: newItems, total };
 }
 
-function updateItem(ticket: Ticket, item: TicketItem): Ticket {
-  const newItems = ticket.items.map((itemToUpdate) =>
-    itemToUpdate.id === item.id ? item : itemToUpdate,
+function updateItem(ticket: Ticket, itemToUpdate: TicketItem): Ticket {
+  const newItems = ticket.items.map((item) =>
+    itemToUpdate.id === item.id
+      ? {
+          ...itemToUpdate,
+          subtotal: itemToUpdate.presentation.price * itemToUpdate.quantity,
+        }
+      : item,
   );
 
   const total = newItems.reduce((sum, item) => sum + item.subtotal, 0);

@@ -20,7 +20,7 @@ interface Props {
 
 export function SalesSummaryContent({ isOpen, onOpenChange }: Props) {
   const { t } = useTranslation();
-  const { selectedTicket } = useTickets();
+  const { selectedTicket, dispatch, selectedTicketId } = useTickets();
   const items = selectedTicket?.items ?? [];
   const total = selectedTicket?.total ?? 0;
   const snapPoints = ["90%"];
@@ -34,7 +34,18 @@ export function SalesSummaryContent({ isOpen, onOpenChange }: Props) {
           <Typography className="font-bold">{formatPrice(total)}</Typography>
         </View>
         <View className="flex-row gap-x-2">
-          <Button variant="outline" className="flex-1">
+          <Button
+            variant="outline"
+            className="flex-1"
+            onPress={() =>
+              dispatch({
+                type: "clear-ticket",
+                payload: {
+                  ticketId: selectedTicketId,
+                },
+              })
+            }
+          >
             <MaterialIcons
               name="delete-outline"
               size={20}
