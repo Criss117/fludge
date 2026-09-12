@@ -4,11 +4,11 @@ import { Card } from "heroui-native/card";
 import { Checkbox } from "heroui-native/checkbox";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
-import { useTicketItemSelector } from "@fludge/client/presentation/sales/sale-ticket-item-selector.provider";
+import { useProductPresentationSelector } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
 
 interface Props {
   presentation: ProductSummary["presentations"][number];
-  context: ReturnType<typeof useTicketItemSelector>;
+  context: ReturnType<typeof useProductPresentationSelector>;
 }
 
 export function SalePresentationCard({ presentation, context }: Props) {
@@ -19,9 +19,10 @@ export function SalePresentationCard({ presentation, context }: Props) {
       onPress={() => context.selectPresentation(presentation)}
       className="rounded-3xl shadow"
     >
-      <Card className="flex-row items-center gap-x-1">
+      <Card className="bg-default flex-row items-center gap-x-2">
         <Card.Header>
           <Checkbox
+            className="bg-background"
             isSelected={isSelected}
             onPress={() => context.selectPresentation(presentation)}
           />

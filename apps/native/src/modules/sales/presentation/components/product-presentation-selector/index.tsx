@@ -9,35 +9,25 @@ import {
 } from "@gorhom/bottom-sheet";
 import { Typography } from "heroui-native/text";
 import { SalePresentationCard } from "./presentation-card";
-import { useTicketItemSelector } from "@fludge/client/presentation/sales/sale-ticket-item-selector.provider";
+import { useProductPresentationSelector } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
 import { useCallback } from "react";
 import { Button } from "heroui-native/button";
-import { useTickets } from "@fludge/client/providers/tickets.provider";
 import { tryCatch } from "@fludge/utils/trycatch";
 
 const SNAP_POINTS = ["70%"];
 
 export function ProductPresentationSelector() {
-  const { dispatch, selectedTicketId } = useTickets();
-  const productPresentation = useTicketItemSelector();
+  const productPresentation = useProductPresentationSelector();
   const { t } = useTranslation();
 
   const presentations =
     productPresentation.selectedProduct?.presentations ?? [];
 
-  const isDisabled = productPresentation.selectedTicketItem === null;
-
   const handleAddTicketItem = () => {
     const [, error] = tryCatch(() => {
-      console.log(productPresentation.selectedTicketItem);
-      if (!productPresentation.selectedTicketItem) return;
-      dispatch({
-        type: "add-item",
-        payload: {
-          ticketId: selectedTicketId,
-          item: productPresentation.selectedTicketItem,
-        },
-      });
+      console.log(productPresentation.selectedPresentation);
+      if (!productPresentation.selectedPresentation) return;
+
       productPresentation.closeSheet();
     });
 
@@ -57,17 +47,13 @@ export function ProductPresentationSelector() {
           >
             {t("helpers.cancel")}
           </Button>
-          <Button
-            isDisabled={isDisabled}
-            className="flex-1"
-            onPress={handleAddTicketItem}
-          >
+          <Button className="flex-1" onPress={handleAddTicketItem}>
             {t("helpers.continue")}
           </Button>
         </View>
       </BottomSheetFooter>
     ),
-    [isDisabled, t, productPresentation.closeSheet, handleAddTicketItem]
+    [t, productPresentation.closeSheet, handleAddTicketItem]
   );
 
   return (
@@ -79,8 +65,8 @@ export function ProductPresentationSelector() {
             snapPoints={SNAP_POINTS}
             enableOverDrag={false}
             enableDynamicSizing={false}
+            enablePanDownToClose={false}
             contentContainerClassName="h-full px-3"
-            onClose={productPresentation.closeSheet}
             footerComponent={sheetFooter}
           >
             <View className="flex-row items-start justify-between gap-4 px-3 pb-3">

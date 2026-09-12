@@ -7,14 +7,14 @@ import { TicketSelector } from "../components/ticket-selector";
 import { SalesSummary } from "../components/sale-summary";
 import { SaleProductsListSection } from "../sections/sale-products-list.section";
 import {
-  type TicketItemSelectorRef,
-  TicketItemSelectorProvider,
-} from "@fludge/client/presentation/sales/sale-ticket-item-selector.provider";
+  type ProductPresentationSelectorRef,
+  ProductPresentationSelectorProvider,
+} from "@fludge/client/presentation/sales/product-presentation-selector.provider";
 import { ProductPresentationSelector } from "../components/product-presentation-selector";
 
 export function SalesScreen() {
   const [query, setQuery] = useState("");
-  const ticketItemRef = useRef<TicketItemSelectorRef>(null);
+  const ticketItemRef = useRef<ProductPresentationSelectorRef>(null);
 
   const handleProductPress = (product: ProductSummary) => {
     ticketItemRef.current?.open(product);
@@ -40,9 +40,9 @@ export function SalesScreen() {
         />
       </View>
       <SalesSummary />
-      <TicketItemSelectorProvider ref={ticketItemRef}>
+      <ProductPresentationSelectorProvider ref={ticketItemRef}>
         <ProductPresentationSelector />
-      </TicketItemSelectorProvider>
+      </ProductPresentationSelectorProvider>
     </View>
   );
 }
