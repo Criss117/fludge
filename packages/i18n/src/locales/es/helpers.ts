@@ -16,6 +16,7 @@ export const helpers = {
     search_groups: "Buscar grupos por nombre, descripción...",
     search_organizations: "Buscar organizaciones por nombre, descripción...",
     search_presentations: "Buscar presentaciones",
+    cero: "0",
   },
 
   assign: "Asignar",
@@ -47,4 +48,8 @@ export const helpers = {
   units: "Unidades",
   allowed: "Permitido",
   not_allowed: "No Permitido",
+  restart: "Reestablecer",
+  quantity: "Cantidad",
+  subtotal: "Subtotal",
+  total: "Total",
 };

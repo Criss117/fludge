@@ -21,7 +21,6 @@
       "cache": false
     },
     "dev": {
-      "dependsOn": ["^check-types"],
       "cache": false,
       "persistent": true,
       "with": ["//#db:init"]

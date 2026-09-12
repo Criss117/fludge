@@ -4,23 +4,18 @@ import { View } from "react-native";
 import { useCallback, useState } from "react";
 import type { ProductSummary } from "@fludge/client/application/catalog/queries/use-find-products";
 import { TicketSelector } from "../components/ticket-selector";
-import { ProductPresentationsDialog } from "../components/product-presentations-dialog";
 import { SalesSummary } from "../components/sale-summary";
 import { SaleProductsListSection } from "../sections/sale-products-list.section";
+import { ProductPresentationSelector } from "../components/product-presentation-selector";
 
 export function SalesScreen() {
   const [query, setQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<ProductSummary | null>(
     null
   );
-  const handleProductPress = useCallback(
-    (product: ProductSummary) => setSelectedProduct(product),
-    []
-  );
-  const closeProductPresentations = useCallback(
-    () => setSelectedProduct(null),
-    []
-  );
+
+  const handleProductPress = (product: ProductSummary) =>
+    setSelectedProduct(product);
 
   return (
     <View className="flex-1 pt-2">
@@ -42,9 +37,9 @@ export function SalesScreen() {
         />
       </View>
       <SalesSummary />
-      <ProductPresentationsDialog
+      <ProductPresentationSelector
         product={selectedProduct}
-        onClose={closeProductPresentations}
+        setSelectedProduct={setSelectedProduct}
       />
     </View>
   );

@@ -58,8 +58,9 @@ export const SalesProductCard = React.memo(function SalesProductCard({
             <Card.Title className="line-clamp-1">{product.name}</Card.Title>
             <Chip size="sm" className="self-start">
               <Chip.Label>
-                {t("screens.sales.product.sections.details.stock")}:{" "}
-                {product.stock}
+                {t("screens.sales.product.sections.details.stock", {
+                  stock: product.stock,
+                })}
               </Chip.Label>
             </Chip>
           </View>

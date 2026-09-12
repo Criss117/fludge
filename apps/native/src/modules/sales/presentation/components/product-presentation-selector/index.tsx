@@ -1,77 +1,87 @@
 import { useTickets } from "@fludge/client/providers/tickets.provider";
 import type { ProductSummary } from "@fludge/client/application/catalog/queries/use-find-products";
 
-import { formatPrice } from "@fludge/utils/currency";
-import { Button } from "heroui-native/button";
 import { useTranslation } from "react-i18next";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { BottomSheet } from "heroui-native/bottom-sheet";
-import { filterProductPresentations } from "./product-presentations-dialog.utils";
 import { useState } from "react";
 import { Separator } from "heroui-native/separator";
-import {
-  BottomSheetFooter,
-  type BottomSheetFooterProps,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Typography } from "heroui-native/text";
 import { Card } from "heroui-native/card";
 import { Checkbox } from "heroui-native/checkbox";
 import { formatCurrency } from "@fludge/utils/format-currency";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
-
-interface Props {
-  product: ProductSummary | null;
-  onClose: () => void;
-  filterInactive?: boolean;
-}
+import type { NewCatalogTicketItem } from "@fludge/client/application/sales/store/tickets.store";
+import { ProductPresentationSelectorFooterComponent } from "./footer";
 
 type Presentation = ProductSummary["presentations"][number];
 
-interface FooterProps {
-  bottomSheetFooterProps: BottomSheetFooterProps;
-  selectedPresentation: Presentation | null;
+interface Props {
+  product: ProductSummary | null;
+  setSelectedProduct: (product: ProductSummary | null) => void;
 }
 
-function FooterComponent({
-  bottomSheetFooterProps,
-  selectedPresentation,
-}: FooterProps) {
-  return <BottomSheetFooter {...bottomSheetFooterProps}></BottomSheetFooter>;
-}
+const SNAP_POINTS = ["90%"];
 
-export function ProductPresentationsDialog({
+export function ProductPresentationSelector({
   product,
-  onClose,
-  filterInactive = false,
+  setSelectedProduct,
 }: Props) {
-  const [selectedPresentation, setSelectedPresentation] =
-    useState<Presentation | null>(null);
-  const { t } = useTranslation();
   const { dispatch, selectedTicketId } = useTickets();
-  const snapPoints = ["90%"];
+  const { t } = useTranslation();
+
+  const [selectedPresentation, setSelectedPresentation] =
+    useState<Presentation | null>(() => {
+      console.log(product);
+      if (!product?.id) return null;
+
+      return product.presentations[0];
+    });
+
   const presentations = product
-    ? filterProductPresentations(product.presentations, filterInactive)
+    ? product.presentations.filter(
+        (presentation) => presentation.status === "active"
+      )
     : [];
 
   const isSelected = (item: Presentation) =>
     item.id === selectedPresentation?.id;
 
+  const handleAddItem = (item: NewCatalogTicketItem) => {
+    dispatch({
+      type: "add-item",
+      payload: {
+        item,
+        ticketId: selectedTicketId,
+      },
+    });
+  };
+
+  const onCancelSelection = () => {
+    setSelectedPresentation(null);
+    setSelectedProduct(null);
+  };
+
   return (
-    <BottomSheet
-      isOpen={product !== null}
-      onOpenChange={(isOpen) => isOpen === false && onClose()}
-    >
+    <BottomSheet isOpen={product !== null}>
       <BottomSheet.Portal>
         <BottomSheet.Overlay className="bg-black/50" />
         <BottomSheet.Content
-          snapPoints={snapPoints}
+          snapPoints={SNAP_POINTS}
           enableOverDrag={false}
           enableDynamicSizing={false}
           contentContainerClassName="h-full px-3"
-          onClose={() => {
-            setSelectedPresentation(null);
-          }}
+          onClose={onCancelSelection}
+          footerComponent={(props) => (
+            <ProductPresentationSelectorFooterComponent
+              bottomSheetFooterProps={props}
+              product={product}
+              selectedPresentation={selectedPresentation}
+              onAddItem={handleAddItem}
+              onCancelSelection={onCancelSelection}
+            />
+          )}
         >
           <View className="flex-row items-start justify-between gap-4 px-3 pb-3">
             <View className="flex-1">

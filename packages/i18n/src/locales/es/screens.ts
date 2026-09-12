@@ -85,9 +85,13 @@ export const screens = {
         },
       },
       presentations: {
+        modify_price: "Modificar precio",
+        add_to_ticket: "Añadir a ticket",
         title: "Seleccionar presentación",
         description: "Elegí una presentación para {{product}}",
         empty: "No hay presentaciones disponibles",
+        base_price: "Precio base: {{price}}",
+        wholesale_price: "Precio al por mayor: {{price}}",
         errors: {
           insufficient_stock_label: "Stock insuficiente",
           try_again: "Intentá con otra presentación",

@@ -7,7 +7,7 @@ export type CatalogPresentation = {
   readonly name: string;
   readonly conversionFactor: number;
   price: number;
-  priceWholesale?: number;
+  priceWholesale: number | null;
   originalPrice: number;
 };
 
