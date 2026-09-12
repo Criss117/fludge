@@ -20,9 +20,8 @@ interface Props {
 
 export function SalesSummaryContent({ isOpen, onOpenChange }: Props) {
   const { t } = useTranslation();
-  const { selectedTicket, dispatch, selectedTicketId } = useTickets();
-  const items = selectedTicket?.items ?? [];
-  const total = selectedTicket?.total ?? 0;
+  const { activeTicket, dispatch } = useTickets();
+  const items = Object.values(activeTicket.items);
   const snapPoints = ["90%"];
 
   const renderFooter = (props: BottomSheetFooterProps) => (
@@ -31,7 +30,9 @@ export function SalesSummaryContent({ isOpen, onOpenChange }: Props) {
         <Separator className="-mx-4 mb-3" />
         <View className="mb-3 flex-row items-center justify-between">
           <Typography>{t("screens.sales.summary.total")}</Typography>
-          <Typography className="font-bold">{formatPrice(total)}</Typography>
+          <Typography className="font-bold">
+            {formatPrice(activeTicket.total)}
+          </Typography>
         </View>
         <View className="flex-row gap-x-2">
           <Button
@@ -39,10 +40,7 @@ export function SalesSummaryContent({ isOpen, onOpenChange }: Props) {
             className="flex-1"
             onPress={() =>
               dispatch({
-                type: "clear-ticket",
-                payload: {
-                  ticketId: selectedTicketId,
-                },
+                type: "createTicket",
               })
             }
           >
@@ -96,30 +94,28 @@ export function SalesSummaryContent({ isOpen, onOpenChange }: Props) {
             contentContainerClassName="gap-y-3 pb-safe-offset-32 pt-3"
             showsVerticalScrollIndicator={false}
           >
-            {items.length === 0 ? (
+            {items.length === 0 && (
               <Typography color="muted" className="py-8 text-center">
                 {t("screens.sales.summary.empty")}
               </Typography>
-            ) : (
-              items.map((item) => (
-                <View
-                  key={item.id}
-                  className="bg-surface flex-row items-center justify-between rounded-xl px-3 py-3"
-                >
-                  <View className="flex-1 gap-y-1">
-                    <Typography className="font-semibold">
-                      {item.presentation.name}
-                    </Typography>
-                    <Typography color="muted">
-                      {item.quantity} × {formatPrice(item.presentation.price)}
-                    </Typography>
-                  </View>
-                  <Typography className="font-semibold">
-                    {formatPrice(item.subtotal)}
+            )}
+
+            {items.map((item) => (
+              <View
+                key={item.id}
+                className="bg-surface flex-row items-center justify-between rounded-xl px-3 py-3"
+              >
+                <View className="flex-1 gap-y-1">
+                  <Typography className="font-semibold">{item.name}</Typography>
+                  <Typography color="muted">
+                    {item.quantity} × {formatPrice(item.priceSale)}
                   </Typography>
                 </View>
-              ))
-            )}
+                <Typography className="font-semibold">
+                  {formatPrice(item.priceSale * item.quantity)}
+                </Typography>
+              </View>
+            ))}
           </BottomSheetScrollView>
         </BottomSheet.Content>
       </BottomSheet.Portal>

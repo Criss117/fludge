@@ -5,13 +5,14 @@ import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { MaterialIcons } from "@/modules/shared/components/icons";
+import type { Ticket } from "@fludge/client/application/sales/store/tickets.store/data";
 
 type TicketOption = { label: string; value: string };
 
 export function getTicketOptions(
-  tickets: ReadonlyMap<string, unknown>
+  tickets: Record<string, Ticket>
 ): TicketOption[] {
-  return Array.from(tickets.keys()).map((ticketId) => ({
+  return Object.keys(tickets).map((ticketId) => ({
     label: ticketId,
     value: ticketId,
   }));
@@ -19,10 +20,11 @@ export function getTicketOptions(
 
 export function TicketSelector() {
   const { t } = useTranslation();
-  const { tickets, selectedTicketId, dispatch } = useTickets();
-  const options = getTicketOptions(tickets);
+  const { state, dispatch, activeTicket } = useTickets();
+  const options = getTicketOptions(state.tickets);
+
   const selectedOption = options.find(
-    (option) => option.value === selectedTicketId
+    (option) => option.value === activeTicket.id
   );
 
   return (
@@ -35,8 +37,8 @@ export function TicketSelector() {
           if (!option?.value) return;
 
           dispatch({
-            type: "select-ticket",
-            payload: { ticketId: option.value },
+            type: "setActiveTicket",
+            payload: [option.value],
           });
         }}
         presentation="popover"
@@ -74,20 +76,20 @@ export function TicketSelector() {
         isIconOnly
         size="sm"
         variant="ghost"
-        onPress={() => dispatch({ type: "create-ticket" })}
+        onPress={() => dispatch({ type: "createTicket" })}
       >
         <MaterialIcons name="add" size={22} className="text-foreground" />
       </Button>
       <Button
         accessibilityLabel={t("screens.sales.ticket.delete")}
-        isDisabled={!selectedTicketId}
+        isDisabled={!activeTicket}
         isIconOnly
         size="sm"
         variant="ghost"
         onPress={() =>
           dispatch({
-            type: "delete-ticket",
-            payload: { ticketId: selectedTicketId },
+            type: "deleteTicket",
+            payload: [activeTicket.id],
           })
         }
       >

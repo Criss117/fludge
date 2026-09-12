@@ -11,8 +11,8 @@ import { SalesSummaryContent } from "./content";
 export function SalesSummary() {
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const { t } = useTranslation();
-  const { selectedTicket } = useTickets();
-  const total = selectedTicket?.total ?? 0;
+  const { activeTicket } = useTickets();
+  const total = activeTicket.total;
 
   const openSummary = () => setIsSummaryOpen(true);
   const closeSummary = () => setIsSummaryOpen(false);

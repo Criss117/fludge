@@ -1,33 +1,44 @@
 import { GeistFonts } from "@/integrations/fonts";
 import { Stack } from "expo-router";
 import { useThemeColor } from "heroui-native";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { TICKETS_LOCAL_STORAGE_KEY } from "@/modules/shared/utils/constanst";
 import {
-  deserializeTicketsState,
-  serializeTicketsState,
-  SyncStore,
+  type SyncStore,
   TicketsProvider,
 } from "@fludge/client/providers/tickets.provider";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { initialState } from "@fludge/client/application/sales/store/tickets.store";
-import { TICKETS_LOCAL_STORAGE_KEY } from "@/modules/shared/utils/constanst";
 
-export const asyncStorageSync: SyncStore = {
-  save: async (tickets) => {
-    await AsyncStorage.setItem(
-      TICKETS_LOCAL_STORAGE_KEY,
-      serializeTicketsState(tickets)
-    );
+const asyncStorageSyncStore: SyncStore = {
+  async save(state) {
+    try {
+      const serialized = JSON.stringify(state);
+      await AsyncStorage.setItem(TICKETS_LOCAL_STORAGE_KEY, serialized);
+    } catch (error) {
+      throw new Error(`No se pudo guardar en AsyncStorage: ${error}`);
+    }
   },
-  load: async () => {
+
+  async load() {
     const raw = await AsyncStorage.getItem(TICKETS_LOCAL_STORAGE_KEY);
-    return raw ? deserializeTicketsState(raw) : initialState;
+
+    if (!raw) {
+      throw new Error("No hay datos guardados");
+    }
+
+    try {
+      return JSON.parse(raw);
+    } catch (error) {
+      throw new Error(`Datos corruptos en AsyncStorage: ${error}`);
+    }
   },
 };
+
 export default function SaleLayout() {
   const [background, foreground] = useThemeColor(["background", "foreground"]);
 
   return (
-    <TicketsProvider sync={asyncStorageSync}>
+    <TicketsProvider syncStore={asyncStorageSyncStore}>
       <Stack
         screenOptions={{
           contentStyle: {
