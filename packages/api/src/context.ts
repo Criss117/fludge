@@ -1,4 +1,5 @@
 import { auth } from "@fludge/auth";
+import { ORGANIZATION_HEADER_kEY } from "@fludge/utils/constants";
 import type { Context as ElysiaContext } from "elysia";
 
 export type CreateContextOptions = {
@@ -10,11 +11,16 @@ export async function createContext({ context }: CreateContextOptions) {
     headers: context.request.headers,
   });
 
+  const activeOrganizationId = context.request.headers.get(
+    ORGANIZATION_HEADER_kEY,
+  );
+
   return {
     headers: context.request.headers,
     session: session
       ? {
           ...session.session,
+          activeOrganizationId: activeOrganizationId ?? null,
           user: session.user,
         }
       : null,

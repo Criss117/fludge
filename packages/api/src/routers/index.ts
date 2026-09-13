@@ -20,10 +20,8 @@ export const appRouter = {
   sale: salesRouter,
   seed: seedRouter,
 
-  ping: publicProcedure.handler(() => {
-    return {
-      message: "pong",
-    };
+  ping: publicProcedure.handler(({ context }) => {
+    return context;
   }),
 };
 

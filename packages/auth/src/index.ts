@@ -59,15 +59,6 @@ export function createAuth() {
         },
       },
     },
-    session: {
-      additionalFields: {
-        activeOrganizationId: {
-          type: "string",
-          returned: true,
-          required: false,
-        },
-      },
-    },
     plugins: [expo(), openAPI()],
   });
 }
