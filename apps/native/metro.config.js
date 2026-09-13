@@ -9,6 +9,8 @@ const {
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
 
+config.resolver.sourceExts.push("sql");
+
 module.exports = withRozenite(
   withUniwindConfig(wrapWithReanimatedMetroConfig(config), {
     // relative path to your global.css file (from previous step)

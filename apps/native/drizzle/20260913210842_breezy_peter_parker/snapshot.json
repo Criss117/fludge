@@ -1,0 +1,2035 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "id": "b6e8c2ff-c7a3-4def-943a-1a9f57f664df",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
+  "ddl": [
+    {
+      "name": "category",
+      "entityType": "tables"
+    },
+    {
+      "name": "product",
+      "entityType": "tables"
+    },
+    {
+      "name": "customer",
+      "entityType": "tables"
+    },
+    {
+      "name": "group",
+      "entityType": "tables"
+    },
+    {
+      "name": "group_member",
+      "entityType": "tables"
+    },
+    {
+      "name": "member",
+      "entityType": "tables"
+    },
+    {
+      "name": "organization",
+      "entityType": "tables"
+    },
+    {
+      "name": "user",
+      "entityType": "tables"
+    },
+    {
+      "name": "sale",
+      "entityType": "tables"
+    },
+    {
+      "name": "sale_item",
+      "entityType": "tables"
+    },
+    {
+      "name": "sale_sequences",
+      "entityType": "tables"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "category"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "name",
+      "entityType": "columns",
+      "table": "category"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "slug",
+      "entityType": "columns",
+      "table": "category"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "description",
+      "entityType": "columns",
+      "table": "category"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'active'",
+      "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "category"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "created_by",
+      "entityType": "columns",
+      "table": "category"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "organization_id",
+      "entityType": "columns",
+      "table": "category"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "category"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "category"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "name",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "slug",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "search_blob",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "description",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "category_id",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "stock",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "min_stock",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "false",
+      "generated": null,
+      "name": "allow_negative_stock",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'active'",
+      "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "presentations",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "created_by",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "organization_id",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "customer"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "name",
+      "entityType": "columns",
+      "table": "customer"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "phone",
+      "entityType": "columns",
+      "table": "customer"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "email",
+      "entityType": "columns",
+      "table": "customer"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "credit_limit",
+      "entityType": "columns",
+      "table": "customer"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "balance",
+      "entityType": "columns",
+      "table": "customer"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "document_type",
+      "entityType": "columns",
+      "table": "customer"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "document_number",
+      "entityType": "columns",
+      "table": "customer"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "customer"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "organization_id",
+      "entityType": "columns",
+      "table": "customer"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "customer"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "customer"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "created_by",
+      "entityType": "columns",
+      "table": "customer"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "group"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "name",
+      "entityType": "columns",
+      "table": "group"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "slug",
+      "entityType": "columns",
+      "table": "group"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "description",
+      "entityType": "columns",
+      "table": "group"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "permissions",
+      "entityType": "columns",
+      "table": "group"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'active'",
+      "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "group"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "created_by",
+      "entityType": "columns",
+      "table": "group"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "organization_id",
+      "entityType": "columns",
+      "table": "group"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "group"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "group"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "group_id",
+      "entityType": "columns",
+      "table": "group_member"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "member_id",
+      "entityType": "columns",
+      "table": "group_member"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "created_by",
+      "entityType": "columns",
+      "table": "group_member"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "organization_id",
+      "entityType": "columns",
+      "table": "group_member"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "group_member"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "member"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "user_id",
+      "entityType": "columns",
+      "table": "member"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "role",
+      "entityType": "columns",
+      "table": "member"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "assigned_by",
+      "entityType": "columns",
+      "table": "member"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'active'",
+      "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "member"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "member"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "organization_id",
+      "entityType": "columns",
+      "table": "member"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "organization"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "name",
+      "entityType": "columns",
+      "table": "organization"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "slug",
+      "entityType": "columns",
+      "table": "organization"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "logo",
+      "entityType": "columns",
+      "table": "organization"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "metadata",
+      "entityType": "columns",
+      "table": "organization"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "legal_name",
+      "entityType": "columns",
+      "table": "organization"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "tax_id",
+      "entityType": "columns",
+      "table": "organization"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "address",
+      "entityType": "columns",
+      "table": "organization"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "phone",
+      "entityType": "columns",
+      "table": "organization"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'active'",
+      "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "organization"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "organization"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "organization"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "name",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "email",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "image",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "is_root",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "phone",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "sale_number",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "payment_type",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "customer_id",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "completed_at",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "cancelled_at",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "total",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "cancel_reason",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "notes",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "organization_id",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "created_by",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "sale_item"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "sale_id",
+      "entityType": "columns",
+      "table": "sale_item"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "product_presentation_id",
+      "entityType": "columns",
+      "table": "sale_item"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "product_presentation_name",
+      "entityType": "columns",
+      "table": "sale_item"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "product_presentation_price",
+      "entityType": "columns",
+      "table": "sale_item"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "quantity",
+      "entityType": "columns",
+      "table": "sale_item"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "subtotal",
+      "entityType": "columns",
+      "table": "sale_item"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "organization_id",
+      "entityType": "columns",
+      "table": "sale_item"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "sale_item"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "sale_item"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "year",
+      "entityType": "columns",
+      "table": "sale_sequences"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "current_value",
+      "entityType": "columns",
+      "table": "sale_sequences"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "organization_id",
+      "entityType": "columns",
+      "table": "sale_sequences"
+    },
+    {
+      "columns": [
+        "created_by"
+      ],
+      "tableTo": "member",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "name": "fk_category_created_by_member_id_fk",
+      "entityType": "fks",
+      "table": "category"
+    },
+    {
+      "columns": [
+        "organization_id"
+      ],
+      "tableTo": "organization",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_category_organization_id_organization_id_fk",
+      "entityType": "fks",
+      "table": "category"
+    },
+    {
+      "columns": [
+        "category_id"
+      ],
+      "tableTo": "category",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "nameExplicit": false,
+      "name": "fk_product_category_id_category_id_fk",
+      "entityType": "fks",
+      "table": "product"
+    },
+    {
+      "columns": [
+        "created_by"
+      ],
+      "tableTo": "member",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "name": "fk_product_created_by_member_id_fk",
+      "entityType": "fks",
+      "table": "product"
+    },
+    {
+      "columns": [
+        "organization_id"
+      ],
+      "tableTo": "organization",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_product_organization_id_organization_id_fk",
+      "entityType": "fks",
+      "table": "product"
+    },
+    {
+      "columns": [
+        "organization_id"
+      ],
+      "tableTo": "organization",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_customer_organization_id_organization_id_fk",
+      "entityType": "fks",
+      "table": "customer"
+    },
+    {
+      "columns": [
+        "created_by"
+      ],
+      "tableTo": "member",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "name": "fk_customer_created_by_member_id_fk",
+      "entityType": "fks",
+      "table": "customer"
+    },
+    {
+      "columns": [
+        "created_by"
+      ],
+      "tableTo": "member",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "name": "fk_group_created_by_member_id_fk",
+      "entityType": "fks",
+      "table": "group"
+    },
+    {
+      "columns": [
+        "organization_id"
+      ],
+      "tableTo": "organization",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_group_organization_id_organization_id_fk",
+      "entityType": "fks",
+      "table": "group"
+    },
+    {
+      "columns": [
+        "group_id"
+      ],
+      "tableTo": "group",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_group_member_group_id_group_id_fk",
+      "entityType": "fks",
+      "table": "group_member"
+    },
+    {
+      "columns": [
+        "member_id"
+      ],
+      "tableTo": "member",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_group_member_member_id_member_id_fk",
+      "entityType": "fks",
+      "table": "group_member"
+    },
+    {
+      "columns": [
+        "created_by"
+      ],
+      "tableTo": "member",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "name": "fk_group_member_created_by_member_id_fk",
+      "entityType": "fks",
+      "table": "group_member"
+    },
+    {
+      "columns": [
+        "organization_id"
+      ],
+      "tableTo": "organization",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_group_member_organization_id_organization_id_fk",
+      "entityType": "fks",
+      "table": "group_member"
+    },
+    {
+      "columns": [
+        "user_id"
+      ],
+      "tableTo": "user",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_member_user_id_user_id_fk",
+      "entityType": "fks",
+      "table": "member"
+    },
+    {
+      "columns": [
+        "assigned_by"
+      ],
+      "tableTo": "member",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "nameExplicit": false,
+      "name": "fk_member_assigned_by_member_id_fk",
+      "entityType": "fks",
+      "table": "member"
+    },
+    {
+      "columns": [
+        "organization_id"
+      ],
+      "tableTo": "organization",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_member_organization_id_organization_id_fk",
+      "entityType": "fks",
+      "table": "member"
+    },
+    {
+      "columns": [
+        "customer_id"
+      ],
+      "tableTo": "customer",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "nameExplicit": false,
+      "name": "fk_sale_customer_id_customer_id_fk",
+      "entityType": "fks",
+      "table": "sale"
+    },
+    {
+      "columns": [
+        "organization_id"
+      ],
+      "tableTo": "organization",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_sale_organization_id_organization_id_fk",
+      "entityType": "fks",
+      "table": "sale"
+    },
+    {
+      "columns": [
+        "created_by"
+      ],
+      "tableTo": "member",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "name": "fk_sale_created_by_member_id_fk",
+      "entityType": "fks",
+      "table": "sale"
+    },
+    {
+      "columns": [
+        "sale_id"
+      ],
+      "tableTo": "sale",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_sale_item_sale_id_sale_id_fk",
+      "entityType": "fks",
+      "table": "sale_item"
+    },
+    {
+      "columns": [
+        "organization_id"
+      ],
+      "tableTo": "organization",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_sale_item_organization_id_organization_id_fk",
+      "entityType": "fks",
+      "table": "sale_item"
+    },
+    {
+      "columns": [
+        "organization_id"
+      ],
+      "tableTo": "organization",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_sale_sequences_organization_id_organization_id_fk",
+      "entityType": "fks",
+      "table": "sale_sequences"
+    },
+    {
+      "columns": [
+        "group_id",
+        "member_id"
+      ],
+      "nameExplicit": false,
+      "name": "group_member_pk",
+      "entityType": "pks",
+      "table": "group_member"
+    },
+    {
+      "columns": [
+        "organization_id",
+        "year"
+      ],
+      "nameExplicit": false,
+      "name": "sale_sequences_pk",
+      "entityType": "pks",
+      "table": "sale_sequences"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "category_pk",
+      "table": "category",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "product_pk",
+      "table": "product",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "customer_pk",
+      "table": "customer",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "group_pk",
+      "table": "group",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "member_pk",
+      "table": "member",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "organization_pk",
+      "table": "organization",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "user_pk",
+      "table": "user",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "sale_pk",
+      "table": "sale",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "sale_item_pk",
+      "table": "sale_item",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "name",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "category_organization_name_unique",
+      "entityType": "indexes",
+      "table": "category"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "slug",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "category_organization_slug_unique",
+      "entityType": "indexes",
+      "table": "category"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "category_organization_idx",
+      "entityType": "indexes",
+      "table": "category"
+    },
+    {
+      "columns": [
+        {
+          "value": "name",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "category_name_idx",
+      "entityType": "indexes",
+      "table": "category"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "name",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "category_organization_name_idx",
+      "entityType": "indexes",
+      "table": "category"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "slug",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "product_organization_slug_unique",
+      "entityType": "indexes",
+      "table": "product"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "product_organization_idx",
+      "entityType": "indexes",
+      "table": "product"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "search_blob",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "product_organization_search_blob_idx",
+      "entityType": "indexes",
+      "table": "product"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "category_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "product_organization_category_idx",
+      "entityType": "indexes",
+      "table": "product"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "status",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "product_organization_status_idx",
+      "entityType": "indexes",
+      "table": "product"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "category_id",
+          "isExpression": false
+        },
+        {
+          "value": "status",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "product_organization_category_status_idx",
+      "entityType": "indexes",
+      "table": "product"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "document_number",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "customer_org_document_unique",
+      "entityType": "indexes",
+      "table": "customer"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "status",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "customer_org_status_idx",
+      "entityType": "indexes",
+      "table": "customer"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "name",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "customer_org_name_idx",
+      "entityType": "indexes",
+      "table": "customer"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "group_organization_id_idx",
+      "entityType": "indexes",
+      "table": "group"
+    },
+    {
+      "columns": [
+        {
+          "value": "slug",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "group_slug_idx",
+      "entityType": "indexes",
+      "table": "group"
+    },
+    {
+      "columns": [
+        {
+          "value": "group_id",
+          "isExpression": false
+        },
+        {
+          "value": "member_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "group_member_group_id_member_id_idx",
+      "entityType": "indexes",
+      "table": "group_member"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "user_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "member_organizationId_userId_unique",
+      "entityType": "indexes",
+      "table": "member"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "member_organizationId_idx",
+      "entityType": "indexes",
+      "table": "member"
+    },
+    {
+      "columns": [
+        {
+          "value": "user_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "member_userId_idx",
+      "entityType": "indexes",
+      "table": "member"
+    },
+    {
+      "columns": [
+        {
+          "value": "slug",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "organization_slug_unique",
+      "entityType": "indexes",
+      "table": "organization"
+    },
+    {
+      "columns": [
+        {
+          "value": "legal_name",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "organization_legal_name_unique",
+      "entityType": "indexes",
+      "table": "organization"
+    },
+    {
+      "columns": [
+        {
+          "value": "tax_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "organization_tax_id_unique",
+      "entityType": "indexes",
+      "table": "organization"
+    },
+    {
+      "columns": [
+        {
+          "value": "phone",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "organization_phone_unique",
+      "entityType": "indexes",
+      "table": "organization"
+    },
+    {
+      "columns": [
+        {
+          "value": "name",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "organization_name_idx",
+      "entityType": "indexes",
+      "table": "organization"
+    },
+    {
+      "columns": [
+        "organization_id",
+        "slug"
+      ],
+      "nameExplicit": true,
+      "name": "group_organization_id_slug_unique",
+      "entityType": "uniques",
+      "table": "group"
+    },
+    {
+      "columns": [
+        "organization_id",
+        "name"
+      ],
+      "nameExplicit": true,
+      "name": "group_organization_id_name_unique",
+      "entityType": "uniques",
+      "table": "group"
+    },
+    {
+      "columns": [
+        "email"
+      ],
+      "nameExplicit": false,
+      "name": "user_email_unique",
+      "entityType": "uniques",
+      "table": "user"
+    },
+    {
+      "value": "\"min_stock\" >= 0",
+      "name": "product_minimum_stock_check",
+      "entityType": "checks",
+      "table": "product"
+    },
+    {
+      "value": "\"allow_negative_stock\" = true OR \"stock\" >= 0",
+      "name": "product_stock_quantity_check",
+      "entityType": "checks",
+      "table": "product"
+    },
+    {
+      "value": "length(\"name\") BETWEEN 2 AND 120",
+      "name": "customer_name_length_check",
+      "entityType": "checks",
+      "table": "customer"
+    },
+    {
+      "value": "\"phone\" IS NULL OR length(\"phone\") BETWEEN 7 AND 20",
+      "name": "customer_phone_length_check",
+      "entityType": "checks",
+      "table": "customer"
+    },
+    {
+      "value": "\"email\" IS NULL OR length(\"email\") BETWEEN 5 AND 160",
+      "name": "customer_email_length_check",
+      "entityType": "checks",
+      "table": "customer"
+    },
+    {
+      "value": "\"document_number\" IS NULL OR length(\"document_number\") BETWEEN 5 AND 30",
+      "name": "customer_document_number_length_check",
+      "entityType": "checks",
+      "table": "customer"
+    },
+    {
+      "value": "\"credit_limit\" IS NULL OR \"credit_limit\" >= 0",
+      "name": "customer_credit_limit_non_negative_check",
+      "entityType": "checks",
+      "table": "customer"
+    },
+    {
+      "value": "(\"document_type\" IS NULL AND \"document_number\" IS NULL)\n          OR (\"document_type\" IS NOT NULL AND \"document_number\" IS NOT NULL)",
+      "name": "customer_document_pair_check",
+      "entityType": "checks",
+      "table": "customer"
+    },
+    {
+      "value": "\"phone\" IS NOT NULL OR \"email\" IS NOT NULL",
+      "name": "customer_contact_required_check",
+      "entityType": "checks",
+      "table": "customer"
+    }
+  ],
+  "renames": []
+}

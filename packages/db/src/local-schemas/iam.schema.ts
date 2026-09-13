@@ -1,5 +1,6 @@
 import {
   index,
+  integer,
   primaryKey,
   sqliteTable,
   text,
@@ -7,14 +8,27 @@ import {
   uniqueIndex,
   type AnySQLiteColumn,
 } from "drizzle-orm/sqlite-core";
-import {
-  statusEnum,
-  historyActionEnum,
-  roleEnum,
-} from "@fludge/utils/enums/db-enums";
-import { user } from "./auth.schema";
+import { statusEnum, roleEnum } from "@fludge/utils/enums/db-enums";
 import type { Permission } from "@fludge/utils/permissions/data";
+
+import { sql } from "drizzle-orm";
 import { auditMetadata } from "../shared";
+
+export const user = sqliteTable("user", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  image: text("image"),
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  isRoot: integer("is_root", { mode: "boolean" }).notNull(),
+  phone: text("phone").notNull(),
+});
 
 export const organization = sqliteTable(
   "organization",
@@ -87,23 +101,6 @@ export const createdByMetadata = {
     .notNull(),
 };
 
-export const organizationHistory = sqliteTable("organization_history", {
-  id: text("id").primaryKey(),
-
-  action: text("action", { enum: historyActionEnum }).notNull(),
-  description: text("description"),
-
-  before: text("before", { mode: "json" }).$type<OrganizationSelect>(),
-  after: text("after", { mode: "json" }).$type<OrganizationSelect>(),
-
-  actorId: text("actor_id").references(() => member.id, {
-    onDelete: "set null",
-  }),
-
-  createdAt: auditMetadata.createdAt,
-  ...organizationMetadata,
-});
-
 export const group = sqliteTable(
   "group",
   {
@@ -128,30 +125,6 @@ export const group = sqliteTable(
     unique("group_organization_id_slug_unique").on(t.organizationId, t.slug),
     unique("group_organization_id_name_unique").on(t.organizationId, t.name),
   ],
-);
-
-export const groupHistory = sqliteTable(
-  "group_history",
-  {
-    id: text("id").primaryKey(),
-    groupId: text("group_id")
-      .notNull()
-      .references(() => group.id, {
-        onDelete: "cascade",
-      }),
-
-    action: text("action", { enum: historyActionEnum }).notNull(),
-    description: text("description").notNull(),
-
-    before: text("before", { mode: "json" }).$type<GroupSelect>(),
-    after: text("after", { mode: "json" }).$type<GroupSelect>(),
-
-    ...createdByMetadata,
-    ...organizationMetadata,
-
-    createdAt: auditMetadata.createdAt,
-  },
-  (t) => [index("group_history_group_id_idx").on(t.groupId)],
 );
 
 export const groupMember = sqliteTable(
@@ -181,14 +154,8 @@ export const groupMember = sqliteTable(
   ],
 );
 
-export type OrganizationHistorySelect = typeof organizationHistory.$inferSelect;
-export type OrganizationHistoryInsert = typeof organizationHistory.$inferInsert;
-
 export type GroupSelect = typeof group.$inferSelect;
 export type GroupInsert = typeof group.$inferInsert;
-
-export type GroupHistorySelect = typeof groupHistory.$inferSelect;
-export type GroupHistoryInsert = typeof groupHistory.$inferInsert;
 
 export type GroupMemberSelect = typeof groupMember.$inferSelect;
 export type GroupMemberInsert = typeof groupMember.$inferInsert;

@@ -5,10 +5,8 @@ import {
   text,
 } from "drizzle-orm/sqlite-core";
 import { createdByMetadata, organizationMetadata } from "./iam.schema";
-
 import { paymentTypeEnum, saleStatusEnum } from "@fludge/utils/enums/db-enums";
 import { customer } from "./customer.schema";
-import { productPresentation } from "./catalog.schema";
 import { auditMetadata } from "../shared";
 
 export const sale = sqliteTable("sale", {
@@ -45,12 +43,7 @@ export const saleItem = sqliteTable("sale_item", {
     .references(() => sale.id, {
       onDelete: "cascade",
     }),
-  productPresentationId: text("product_presentation_id").references(
-    () => productPresentation.id,
-    {
-      onDelete: "set null",
-    },
-  ),
+  productPresentationId: text("product_presentation_id"),
 
   productPresentationName: text("product_presentation_name").notNull(),
   productPresentationPrice: integer("product_presentation_price").notNull(),

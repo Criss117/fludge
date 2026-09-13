@@ -9,6 +9,7 @@ import {
 import { createdByMetadata, organizationMetadata } from "./iam.schema";
 import { sql } from "drizzle-orm";
 import { auditMetadata, productStatus, status } from "../shared";
+import type { ProductPresentationSelect } from "../schema";
 
 export const category = sqliteTable(
   "category",
@@ -64,6 +65,10 @@ export const product = sqliteTable(
       .default(false),
     status: productStatus,
 
+    presentations: text("presentations", { mode: "json" }).$type<
+      ProductPresentationSelect[]
+    >(),
+
     ...createdByMetadata,
     ...organizationMetadata,
     ...auditMetadata,
@@ -104,72 +109,8 @@ export const product = sqliteTable(
   ],
 );
 
-export const productPresentation = sqliteTable(
-  "product_presentation",
-  {
-    id: text("id").primaryKey(),
-    productId: text("product_id")
-      .notNull()
-      .references(() => product.id, {
-        onDelete: "cascade",
-      }),
-
-    name: text("name").notNull(),
-    searchBlob: text("search_blob").notNull(),
-    barcode: text("barcode"),
-
-    conversionFactor: integer("conversion_factor").notNull(),
-
-    priceSale: integer("price_sale").notNull(),
-    pricePurchase: integer("price_purchase"),
-    priceWholesale: integer("price_wholesale"),
-
-    status: productStatus,
-
-    ...createdByMetadata,
-    ...organizationMetadata,
-    ...auditMetadata,
-  },
-  (t) => [
-    index("presentation_product_idx").on(t.productId),
-    index("presentation_organization_idx").on(t.organizationId),
-    index("presentation_name_idx").on(t.name),
-
-    uniqueIndex("presentation_product_name_unique").on(t.productId, t.name),
-
-    uniqueIndex("presentation_product_factor_unique").on(
-      t.productId,
-      t.conversionFactor,
-    ),
-
-    uniqueIndex("presentation_barcode_unique")
-      .on(t.organizationId, t.barcode)
-      .where(sql`${t.barcode} IS NOT NULL`),
-
-    check(
-      "presentation_conversion_factor_check",
-      sql`${t.conversionFactor} >= 1`,
-    ),
-
-    check("presentation_price_retail_check", sql`${t.priceSale} >= 0`),
-
-    check(
-      "presentation_price_purchase_check",
-      sql`${t.pricePurchase} IS NULL OR ${t.pricePurchase} >= 0`,
-    ),
-
-    check(
-      "presentation_price_wholesale_check",
-      sql`${t.priceWholesale} IS NULL OR ${t.priceWholesale} >= 0`,
-    ),
-  ],
-);
-
 export type CategorySelect = typeof category.$inferSelect;
 export type CategoryInsert = typeof category.$inferInsert;
 
 export type ProductSelect = typeof product.$inferSelect;
 export type ProductInsert = typeof product.$inferInsert;
-
-export type ProductPresentationSelect = typeof productPresentation.$inferSelect;
-export type ProductPresentationInsert = typeof productPresentation.$inferInsert;
