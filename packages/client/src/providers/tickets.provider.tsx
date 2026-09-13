@@ -53,7 +53,6 @@ export function TicketsProvider({ children, syncStore }: TicketsProviderProps) {
       (sum, item) => sum + item.priceSale * item.quantity,
       0,
     );
-
     return { ...ticket, total };
   }, [state.activeTicketId, state.tickets]);
 

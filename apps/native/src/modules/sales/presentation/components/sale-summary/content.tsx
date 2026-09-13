@@ -12,17 +12,24 @@ import { Separator } from "heroui-native/separator";
 import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
+import { TicketItem } from "./ticket-item";
+import { TicketItemUpdate } from "@fludge/client/application/sales/store/tickets.store/data";
+import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
+import { useEffect } from "react";
+import type { TranslationKey } from "@fludge/i18n/index";
+import { KeyboardController } from "react-native-keyboard-controller";
 
 interface Props {
   isOpen: boolean;
   onOpenChange: (value: boolean) => void;
 }
+const SNAP_POINTS = ["90%"];
 
 export function SalesSummaryContent({ isOpen, onOpenChange }: Props) {
   const { t } = useTranslation();
-  const { activeTicket, dispatch } = useTickets();
+  const { activeTicket, dispatch, state } = useTickets();
   const items = Object.values(activeTicket.items);
-  const snapPoints = ["90%"];
+  const mutationToast = useMutationToast("SALES_SUMMARY");
 
   const renderFooter = (props: BottomSheetFooterProps) => (
     <BottomSheetFooter {...props}>
@@ -64,16 +71,44 @@ export function SalesSummaryContent({ isOpen, onOpenChange }: Props) {
     </BottomSheetFooter>
   );
 
+  const handleRemoveItem = (itemId: string) => {
+    dispatch({
+      type: "deleteTicketItem",
+      payload: [itemId],
+    });
+  };
+
+  const handleUpdateItem = (itemId: string, updates: TicketItemUpdate) => {
+    dispatch({
+      type: "updateTicketItem",
+      payload: [itemId, updates],
+    });
+  };
+
+  useEffect(() => {
+    if (state.lastError) {
+      mutationToast.showErrorToast(
+        "forms.ticket.err_on_update",
+        state.lastError as TranslationKey
+      );
+    }
+
+    dispatch({
+      type: "clearError",
+    });
+  }, [state.lastError]);
+
   return (
     <BottomSheet isOpen={isOpen} onOpenChange={onOpenChange}>
       <BottomSheet.Portal>
         <BottomSheet.Overlay />
         <BottomSheet.Content
-          snapPoints={snapPoints}
+          snapPoints={SNAP_POINTS}
           enableOverDrag={false}
           enableDynamicSizing={false}
-          contentContainerClassName="h-full px-3"
+          contentContainerClassName="h-full px-0"
           footerComponent={renderFooter}
+          onClose={() => KeyboardController.dismiss()}
         >
           <View className="flex-row items-center justify-between gap-4 px-3 pb-3">
             <View className="flex-row items-center gap-x-2">
@@ -101,20 +136,12 @@ export function SalesSummaryContent({ isOpen, onOpenChange }: Props) {
             )}
 
             {items.map((item) => (
-              <View
+              <TicketItem
                 key={item.id}
-                className="bg-surface flex-row items-center justify-between rounded-xl px-3 py-3"
-              >
-                <View className="flex-1 gap-y-1">
-                  <Typography className="font-semibold">{item.name}</Typography>
-                  <Typography color="muted">
-                    {item.quantity} × {formatPrice(item.priceSale)}
-                  </Typography>
-                </View>
-                <Typography className="font-semibold">
-                  {formatPrice(item.priceSale * item.quantity)}
-                </Typography>
-              </View>
+                item={item}
+                onRemove={handleRemoveItem}
+                handleUpdateItem={handleUpdateItem}
+              />
             ))}
           </BottomSheetScrollView>
         </BottomSheet.Content>

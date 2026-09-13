@@ -180,6 +180,7 @@ function addCatalogTicketItem(
         minStock: product.minStock,
         allowsNegativeStock: product.allowsNegativeStock,
         availableStock: currentAvailableStock - totalQuantity,
+        name: product.name,
       };
 
   const existingItem = Object.values(ticket.items).find(
@@ -194,7 +195,7 @@ function addCatalogTicketItem(
         type: "catalog",
         presentationId,
         productId: product.id,
-        name: newItem.name,
+        name: product.name + ":" + newItem.name,
         quantity: newItem.quantity,
         priceSale: newItem.priceSale,
         originalPrice: newItem.originalPrice,
@@ -369,11 +370,14 @@ function updateTicketItem(
   itemId: string,
   updates: TicketItemUpdate,
 ): TicketStore {
-  if (updates.quantity !== undefined && updates.quantity <= 0)
-    return withError(store, "forms.ticket.item.quantity_required");
+  if (updates.quantity === undefined && updates.priceSale === undefined)
+    return store;
 
-  if (updates.priceSale !== undefined && updates.priceSale <= 0)
-    return withError(store, "forms.ticket.item.price_sale_required");
+  // if (updates.quantity !== undefined && updates.quantity <= 0)
+  //   return withError(store, "forms.ticket.item.quantity_required");
+
+  // if (updates.priceSale !== undefined && updates.priceSale <= 0)
+  //   return withError(store, "forms.ticket.item.price_sale_required");
 
   const ticket = getActiveTicket(store);
 

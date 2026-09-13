@@ -395,7 +395,10 @@ export class SeedService {
               organizationId: org.id,
               createdBy: org.owner,
               allowNegativeStock: false,
-              stock: 10,
+              stock: faker.number.int({
+                min: 0,
+                max: 100000,
+              }),
               minStock: 1,
               categoryId: category.id,
               presentations: Array.from({

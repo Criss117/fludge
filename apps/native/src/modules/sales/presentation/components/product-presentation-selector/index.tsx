@@ -55,6 +55,7 @@ export function ProductPresentationSelector() {
             stock: productPresentation.selectedProduct.stock,
             availableStock: productPresentation.selectedProduct.stock,
             minStock: productPresentation.selectedProduct.minStock,
+            name: productPresentation.selectedProduct.name,
           },
         },
       ],
@@ -79,7 +80,7 @@ export function ProductPresentationSelector() {
   const sheetFooter = useCallback(
     (props: BottomSheetFooterProps) => (
       <BottomSheetFooter {...props}>
-        <View className="bg-overlay pb-safe-offset-8 flex-row gap-x-2 px-3">
+        <View className="bg-overlay pb-safe-offset-8 flex-row gap-x-2 px-3 pt-4">
           <Button
             variant="outline"
             onPress={productPresentation.closeSheet}

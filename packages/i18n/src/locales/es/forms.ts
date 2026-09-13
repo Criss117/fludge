@@ -151,6 +151,7 @@ export const forms = {
   },
   ticket: {
     err_on_add: "Error al añadir al Ticket",
+    err_on_update: "Error al actualizar el Ticket",
     not_found: "No se encontró el ticket",
     name_required: "El nombre no puede estar vacío",
     name_taken: "Ya existe un ticket con ese nombre",

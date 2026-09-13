@@ -26,6 +26,7 @@ export type ProductStore = {
   readonly stock: number;
   readonly minStock: number;
   readonly allowsNegativeStock: boolean;
+  readonly name: string;
   availableStock: number;
 };
 

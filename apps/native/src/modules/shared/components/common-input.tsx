@@ -1,10 +1,16 @@
 import { Input } from "heroui-native/input";
 import { Label } from "heroui-native/label";
 import { TextField } from "heroui-native/text-field";
-import { FlatList, useWindowDimensions, View } from "react-native";
+import {
+  type BlurEvent,
+  type FocusEvent,
+  FlatList,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { MaterialIcons } from "./icons";
 import { FieldError } from "./field-error";
-import { useState, type ComponentProps } from "react";
+import { useEffect, useRef, useState, type ComponentProps } from "react";
 import { Button } from "heroui-native/button";
 import { TextArea } from "heroui-native/text-area";
 import { useTranslation } from "react-i18next";
@@ -21,6 +27,7 @@ import {
 import { Easing, FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { SearchInput } from "./search-input";
 import { cn } from "heroui-native";
+import { formatPrice } from "@fludge/utils/currency";
 
 type MaterialIconName = ComponentProps<typeof MaterialIcons>["name"];
 
@@ -112,25 +119,46 @@ function NumberInput({
 }: NumberInputProps) {
   const { t } = useTranslation();
 
-  const value = inputProps.value ? inputProps.value.toString() : "";
+  // Buffer local de texto, independiente del número parseado
+  const [text, setText] = useState(
+    inputProps.value != null ? String(inputProps.value) : ""
+  );
+
+  // Sincroniza si el valor cambia desde afuera (ej. reset del form)
+  useEffect(() => {
+    const external = inputProps.value != null ? String(inputProps.value) : "";
+    // Solo pisamos el texto si el número que representa es distinto
+    // al que ya tenemos, para no interrumpir mientras el usuario escribe.
+    if (Number(text) !== inputProps.value) {
+      setText(external);
+    }
+  }, [inputProps.value]);
 
   const onChangeText = (v: string) => {
+    // Permite estados intermedios válidos mientras se escribe
+    if (v === "" || v === "-" || v === "." || v === "-.") {
+      setText(v);
+      return;
+    }
+
+    // Solo dígitos, un signo negativo opcional y un punto decimal opcional
+    if (!/^-?\d*\.?\d*$/.test(v)) return;
+
+    setText(v);
+
     const n = Number(v);
-
-    if (isNaN(n)) return;
-
-    inputProps.onChangeText?.(n);
+    if (!isNaN(n)) {
+      inputProps.onChangeText?.(n);
+    }
   };
 
   return (
     <TextField isInvalid={isInvalid} isRequired={isRequired}>
-      <Label isInvalid={isInvalid} className="text-red-500">
-        {t(label)}
-      </Label>
+      <Label isInvalid={isInvalid}>{t(label)}</Label>
       <View className="w-full flex-row items-center">
         <Input
           {...inputProps}
-          value={value === "0" ? "" : value}
+          value={text}
           onChangeText={onChangeText}
           keyboardType="phone-pad"
           placeholder={t(inputProps.placeholder)}
