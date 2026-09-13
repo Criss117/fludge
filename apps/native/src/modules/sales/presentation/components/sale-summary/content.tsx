@@ -18,6 +18,7 @@ import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import { useEffect } from "react";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { KeyboardController } from "react-native-keyboard-controller";
+import { Link } from "expo-router";
 
 interface Props {
   isOpen: boolean;
@@ -60,12 +61,29 @@ export function SalesSummaryContent({ isOpen, onOpenChange }: Props) {
               {t("screens.sales.summary.clear")}
             </Button.Label>
           </Button>
-          <Button className="flex-1">
-            <MaterialIcons name="payments" size={20} className="text-eclipse" />
-            <Button.Label className="text-eclipse">
-              {t("screens.sales.summary.charge")}
-            </Button.Label>
-          </Button>
+          <Link
+            href={{
+              pathname: "/sales/charge",
+            }}
+            asChild
+            push
+            disabled={!items.length}
+          >
+            <Button
+              className="flex-1"
+              onPress={() => onOpenChange(false)}
+              isDisabled={!items.length}
+            >
+              <MaterialIcons
+                name="payments"
+                size={20}
+                className="text-eclipse"
+              />
+              <Button.Label className="text-eclipse">
+                {t("screens.sales.summary.charge")}
+              </Button.Label>
+            </Button>
+          </Link>
         </View>
       </View>
     </BottomSheetFooter>

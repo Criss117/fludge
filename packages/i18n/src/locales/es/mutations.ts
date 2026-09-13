@@ -99,4 +99,14 @@ export const mutations = {
       },
     },
   },
+  sale: {
+    create: {
+      is_pending: "Creando Venta",
+      success: {
+        title: "Venta Creada",
+        description: "La venta se ha creado correctamente.",
+      },
+      error: "Algo salió mal al crear la venta",
+    },
+  },
 };

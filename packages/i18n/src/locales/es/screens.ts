@@ -97,6 +97,18 @@ export const screens = {
       },
     },
   },
+  charge: {
+    title: "Procesar Pago",
+    sections: {
+      amount_received: {
+        title: "Monto recibido",
+        resubmitted: {
+          title: "Vuelto a entregar",
+          description: "Devolucion al cliente",
+        },
+      },
+    },
+  },
   catalog: {
     title: "Inventario",
   },

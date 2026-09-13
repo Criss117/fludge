@@ -3,7 +3,7 @@ import {
   type DatabaseService,
   type TransactionService,
 } from "@fludge/db";
-import { sale, saleItem } from "@fludge/db/schema/sales.schema";
+import { saleItem } from "@fludge/db/schema/sales.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { Sale } from "@fludge/api/modules/sales/domain/entities/sale.entity";
 
@@ -24,7 +24,7 @@ export class SaleItemRepository {
         .insert(saleItem)
         .values(items)
         .onConflictDoUpdate({
-          target: sale.id,
+          target: saleItem.id,
           set: buildConflictUpdateColumn(saleItem, [
             "quantity",
             "subtotal",

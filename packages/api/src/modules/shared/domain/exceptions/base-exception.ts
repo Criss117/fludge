@@ -14,6 +14,8 @@ export class DomainException<T extends ORPCErrorCode> extends ORPCError<
 
 export class InternalServerError extends DomainException<"INTERNAL_SERVER_ERROR"> {
   constructor(cause: Error, message?: TranslationKey) {
+    console.error(cause);
+
     super("INTERNAL_SERVER_ERROR", {
       message: getI18nKey(message ?? "api_errors.shared.internal_server_error"),
       cause,

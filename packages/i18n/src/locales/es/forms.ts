@@ -156,6 +156,7 @@ export const forms = {
     name_required: "El nombre no puede estar vacío",
     name_taken: "Ya existe un ticket con ese nombre",
     no_active_ticket: "No hay un ticket activo",
+    submit: "Confirmar Venta",
     item: {
       not_found: "El item no existe en el ticket",
       quantity_required: "La cantidad debe ser mayor a 0",

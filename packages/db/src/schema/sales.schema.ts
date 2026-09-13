@@ -1,10 +1,14 @@
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import {
+  integer,
+  primaryKey,
+  sqliteTable,
+  text,
+} from "drizzle-orm/sqlite-core";
 import { createdByMetadata, organizationMetadata } from "./iam.schema";
 import { auditMetadata } from "./shared";
 import { paymentTypeEnum, saleStatusEnum } from "@fludge/utils/enums/db-enums";
 import { customer } from "./customer.schema";
 import { productPresentation } from "./catalog.schema";
-import { primaryKey } from "drizzle-orm/cockroach-core";
 
 export const sale = sqliteTable("sale", {
   id: text("id").primaryKey(),

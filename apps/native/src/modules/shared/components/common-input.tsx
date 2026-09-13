@@ -116,7 +116,9 @@ function NumberInput({
   icon,
   errors,
   inputProps,
-}: NumberInputProps) {
+}: Omit<NumberInputProps, "label"> & {
+  label?: TranslationKey;
+}) {
   const { t } = useTranslation();
 
   // Buffer local de texto, independiente del número parseado
@@ -154,7 +156,7 @@ function NumberInput({
 
   return (
     <TextField isInvalid={isInvalid} isRequired={isRequired}>
-      <Label isInvalid={isInvalid}>{t(label)}</Label>
+      {label && <Label isInvalid={isInvalid}>{t(label)}</Label>}
       <View className="w-full flex-row items-center">
         <Input
           {...inputProps}

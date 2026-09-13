@@ -8,6 +8,8 @@ import {
   type SyncStore,
   TicketsProvider,
 } from "@fludge/client/providers/tickets.provider";
+import { BackButton } from "@/modules/shared/components/back-button";
+import { useTranslation } from "react-i18next";
 
 const asyncStorageSyncStore: SyncStore = {
   async save(state) {
@@ -35,6 +37,7 @@ const asyncStorageSyncStore: SyncStore = {
 };
 
 export default function SaleLayout() {
+  const { t } = useTranslation();
   const [background, foreground] = useThemeColor(["background", "foreground"]);
 
   return (
@@ -52,10 +55,22 @@ export default function SaleLayout() {
             fontFamily: GeistFonts.SemiBold,
           },
           animation: "slide_from_right",
-          headerShown: false,
+          headerShadowVisible: false,
+          headerLeft: () => <BackButton />,
         }}
       >
-        <Stack.Screen name="index" />
+        <Stack.Screen
+          name="index"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="charge"
+          options={{
+            title: t("screens.charge.title"),
+          }}
+        />
       </Stack>
     </TicketsProvider>
   );

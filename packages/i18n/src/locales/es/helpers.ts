@@ -53,4 +53,6 @@ export const helpers = {
   subtotal: "Subtotal",
   total: "Total",
   save: "Guardar",
+  summary: "Resumen",
+  see_details: "Ver detalles",
 };
