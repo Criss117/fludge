@@ -19,6 +19,7 @@
     "@fludge/env": "workspace:*",
     "@fludge/utils": "workspace:*",
     "@fludge/i18n": "workspace:*",
+    "@fludge/sync": "workspace:*",
     "@orpc/openapi": "catalog:",
     "@orpc/server": "catalog:",
     "@orpc/client": "catalog:",

@@ -114,4 +114,11 @@ export const api_errors = {
       not_found: "No se encontró el item",
     },
   },
+  sync: {
+    iam: {
+      isr_on_find_organizations: "Error al obtener las organizaciones",
+      isr_on_find_last_synced_at:
+        "Error al obtener los últimos datos sincronizados",
+    },
+  },
 };

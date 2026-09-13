@@ -154,6 +154,9 @@ export const groupMember = sqliteTable(
   ],
 );
 
+export type UserSelect = typeof user.$inferSelect;
+export type UserInsert = typeof user.$inferInsert;
+
 export type GroupSelect = typeof group.$inferSelect;
 export type GroupInsert = typeof group.$inferInsert;
 
