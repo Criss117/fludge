@@ -10,13 +10,17 @@ import {
 import { Typography } from "heroui-native/text";
 import { SalePresentationCard } from "./presentation-card";
 import { useProductPresentationSelector } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { Button } from "heroui-native/button";
-import { tryCatch } from "@fludge/utils/trycatch";
+import { useTickets } from "@fludge/client/providers/tickets.provider";
+import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
+import type { TranslationKey } from "@fludge/i18n/index";
 
 const SNAP_POINTS = ["70%"];
 
 export function ProductPresentationSelector() {
+  const mutationToast = useMutationToast("PRODUCT_PRESENTATION_SELECTOR");
+  const { dispatch, state } = useTickets();
   const productPresentation = useProductPresentationSelector();
   const { t } = useTranslation();
 
@@ -24,17 +28,53 @@ export function ProductPresentationSelector() {
     productPresentation.selectedProduct?.presentations ?? [];
 
   const handleAddTicketItem = () => {
-    const [, error] = tryCatch(() => {
-      console.log(productPresentation.selectedPresentation);
-      if (!productPresentation.selectedPresentation) return;
+    if (
+      !productPresentation.selectedPresentation ||
+      !productPresentation.selectedProduct
+    )
+      return;
 
-      productPresentation.closeSheet();
+    dispatch({
+      type: "addTicketItem",
+      payload: [
+        {
+          name: productPresentation.selectedPresentation.name,
+          presentationId: productPresentation.selectedPresentation.id,
+          conversionFactor:
+            productPresentation.selectedPresentation.conversionFactor,
+          originalPrice: productPresentation.selectedPresentation.priceSale,
+          priceSale: productPresentation.selectedPresentation.priceSale,
+          quantity: 1,
+          wholesalePrice:
+            productPresentation.selectedPresentation.priceWholesale,
+          type: "catalog",
+          product: {
+            id: productPresentation.selectedProduct.id,
+            allowsNegativeStock:
+              productPresentation.selectedProduct.allowNegativeStock,
+            stock: productPresentation.selectedProduct.stock,
+            availableStock: productPresentation.selectedProduct.stock,
+            minStock: productPresentation.selectedProduct.minStock,
+          },
+        },
+      ],
     });
 
-    if (error) {
-      console.log(error);
-    }
+    productPresentation.closeSheet();
   };
+
+  useEffect(() => {
+    if (state.lastError) {
+      mutationToast.showErrorToast(
+        "forms.ticket.err_on_add",
+        state.lastError as TranslationKey
+      );
+    }
+
+    dispatch({
+      type: "clearError",
+    });
+  }, [state.lastError]);
 
   const sheetFooter = useCallback(
     (props: BottomSheetFooterProps) => (

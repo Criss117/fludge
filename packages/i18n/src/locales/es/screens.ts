@@ -85,8 +85,6 @@ export const screens = {
         },
       },
       presentations: {
-        modify_price: "Modificar precio",
-        add_to_ticket: "Añadir a ticket",
         title: "Seleccionar presentación",
         description: "Elegí una presentación para {{product}}",
         empty: "No hay presentaciones disponibles",

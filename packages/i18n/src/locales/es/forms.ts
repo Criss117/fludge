@@ -149,4 +149,20 @@ export const forms = {
     },
     add_variant: "Añadir otra Variante o Presentación",
   },
+  ticket: {
+    err_on_add: "Error al añadir al Ticket",
+    not_found: "No se encontró el ticket",
+    name_required: "El nombre no puede estar vacío",
+    name_taken: "Ya existe un ticket con ese nombre",
+    no_active_ticket: "No hay un ticket activo",
+    item: {
+      not_found: "El item no existe en el ticket",
+      quantity_required: "La cantidad debe ser mayor a 0",
+      price_sale_required: "El precio debe ser mayor a 0",
+    },
+    product: {
+      not_found: "El producto ya no existe en el ticket",
+      insufficient_stock: "El stock es insuficiente.",
+    },
+  },
 };

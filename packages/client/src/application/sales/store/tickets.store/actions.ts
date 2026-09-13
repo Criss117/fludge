@@ -1,4 +1,5 @@
 import { initialTicketStore } from "./data";
+import type { TranslationKey } from "@fludge/i18n/index";
 
 import type {
   AdHocTicketItem,
@@ -14,7 +15,7 @@ import type {
 
 const MAX_TICKET_NAME_LENGTH = 15;
 
-function withError(store: TicketStore, error: string): TicketStore {
+function withError(store: TicketStore, error: TranslationKey): TicketStore {
   return { ...store, lastError: error };
 }
 
@@ -48,7 +49,7 @@ function createTicket(store: TicketStore): TicketStore {
 
 function deleteTicket(store: TicketStore, ticketId: string): TicketStore {
   if (!store.tickets[ticketId]) {
-    return withError(store, "El ticket no existe");
+    return withError(store, "forms.ticket.not_found");
   }
 
   const remainingTicketIds = Object.keys(store.tickets).filter(
@@ -80,20 +81,17 @@ function updateTicketName(
   const trimmedName = newName.trim().slice(0, MAX_TICKET_NAME_LENGTH);
 
   if (!trimmedName) {
-    return withError(store, "El nombre no puede estar vacío");
+    return withError(store, "forms.ticket.name_required");
   }
 
   if (trimmedName === ticketId) return store;
 
   const ticket = store.tickets[ticketId];
 
-  if (!ticket) {
-    return withError(store, "El ticket no existe");
-  }
+  if (!ticket) return withError(store, "forms.ticket.not_found");
 
-  if (store.tickets[trimmedName]) {
-    return withError(store, "Ya existe un ticket con ese nombre");
-  }
+  if (store.tickets[trimmedName])
+    return withError(store, "forms.ticket.name_taken");
 
   const { [ticketId]: _removed, ...restTickets } = store.tickets;
 
@@ -110,9 +108,8 @@ function updateTicketName(
 }
 
 function setActiveTicket(store: TicketStore, ticketId: string): TicketStore {
-  if (!store.tickets[ticketId]) {
-    return withError(store, "El ticket no existe");
-  }
+  if (!store.tickets[ticketId])
+    return withError(store, "forms.ticket.not_found");
 
   if (store.activeTicketId === ticketId) return store;
 
@@ -155,7 +152,7 @@ function addAdHocTicketItem(
 function addCatalogTicketItem(
   ticket: Ticket,
   newItem: NewCatalogTicketItem,
-): { ticket: Ticket; error: string | null } {
+): { ticket: Ticket; error: TranslationKey | null } {
   const { product, presentationId } = newItem;
 
   const existingProductInTicket = ticket.products[product.id];
@@ -168,7 +165,7 @@ function addCatalogTicketItem(
   if (!product.allowsNegativeStock && totalQuantity > currentAvailableStock) {
     return {
       ticket,
-      error: `Stock insuficiente. Disponible: ${currentAvailableStock}`,
+      error: "forms.ticket.product.insufficient_stock",
     };
   }
 
@@ -226,9 +223,7 @@ function addTicketItem(
 ): TicketStore {
   const ticket = getActiveTicket(store);
 
-  if (!ticket) {
-    return withError(store, "No hay un ticket activo");
-  }
+  if (!ticket) return withError(store, "forms.ticket.no_active_ticket");
 
   if (newItem.type === "adHoc") {
     const newTicket = addAdHocTicketItem(ticket, newItem);
@@ -271,9 +266,7 @@ function deleteCatalogTicketItem(
 
   const { [item.id]: _removed, ...restItems } = ticket.items;
 
-  if (!product) {
-    return { ...ticket, items: restItems };
-  }
+  if (!product) return { ...ticket, items: restItems };
 
   const updatedProduct: ProductStore = {
     ...product,
@@ -293,15 +286,11 @@ function deleteCatalogTicketItem(
 function deleteTicketItem(store: TicketStore, itemId: string): TicketStore {
   const ticket = getActiveTicket(store);
 
-  if (!ticket) {
-    return withError(store, "No hay un ticket activo");
-  }
+  if (!ticket) return withError(store, "forms.ticket.no_active_ticket");
 
   const item = ticket.items[itemId];
 
-  if (!item) {
-    return withError(store, "El item no existe en el ticket");
-  }
+  if (!item) return withError(store, "forms.ticket.item.not_found");
 
   const newTicket =
     item.type === "adHoc"
@@ -337,24 +326,21 @@ function updateCatalogTicketItem(
   ticket: Ticket,
   item: CatalogTicketItem,
   updates: TicketItemUpdate,
-): { ticket: Ticket; error: string | null } {
+): { ticket: Ticket; error: TranslationKey | null } {
   const product = ticket.products[item.productId];
 
-  if (!product) {
-    return { ticket, error: "El producto ya no existe en el ticket" };
-  }
+  if (!product) return { ticket, error: "forms.ticket.product.not_found" };
 
   const newQuantity = updates.quantity ?? item.quantity;
 
   const quantityDelta = (newQuantity - item.quantity) * item.conversionFactor;
   const projectedAvailableStock = product.availableStock - quantityDelta;
 
-  if (!product.allowsNegativeStock && projectedAvailableStock < 0) {
+  if (!product.allowsNegativeStock && projectedAvailableStock < 0)
     return {
       ticket,
-      error: `Stock insuficiente. Disponible: ${product.availableStock}`,
+      error: "forms.ticket.product.insufficient_stock",
     };
-  }
 
   const updatedProduct: ProductStore = {
     ...product,
@@ -383,25 +369,19 @@ function updateTicketItem(
   itemId: string,
   updates: TicketItemUpdate,
 ): TicketStore {
-  if (updates.quantity !== undefined && updates.quantity <= 0) {
-    return withError(store, "La cantidad debe ser mayor a 0");
-  }
+  if (updates.quantity !== undefined && updates.quantity <= 0)
+    return withError(store, "forms.ticket.item.quantity_required");
 
-  if (updates.priceSale !== undefined && updates.priceSale <= 0) {
-    return withError(store, "El precio debe ser mayor a 0");
-  }
+  if (updates.priceSale !== undefined && updates.priceSale <= 0)
+    return withError(store, "forms.ticket.item.price_sale_required");
 
   const ticket = getActiveTicket(store);
 
-  if (!ticket) {
-    return withError(store, "No hay un ticket activo");
-  }
+  if (!ticket) return withError(store, "forms.ticket.no_active_ticket");
 
   const item = ticket.items[itemId];
 
-  if (!item) {
-    return withError(store, "El item no existe en el ticket");
-  }
+  if (!item) return withError(store, "forms.ticket.item.not_found");
 
   if (item.type === "adHoc") {
     const newTicket = updateAdHocTicketItem(ticket, item, updates);
@@ -433,9 +413,7 @@ function updateTicketItem(
 function clearTicket(store: TicketStore): TicketStore {
   const ticket = getActiveTicket(store);
 
-  if (!ticket) {
-    return withError(store, "No hay un ticket activo");
-  }
+  if (!ticket) return withError(store, "forms.ticket.no_active_ticket");
 
   const clearedTicket: Ticket = {
     ...ticket,
