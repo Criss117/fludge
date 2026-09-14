@@ -1,8 +1,6 @@
 import { SearchInput } from "@/modules/shared/components/search-input";
-import type { ProductDetail } from "@fludge/client/application/catalog/queries/use-find-products";
 import { Card } from "heroui-native/card";
 import { Chip } from "heroui-native/chip";
-import { Separator } from "heroui-native/separator";
 import { Typography } from "heroui-native/text";
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,6 +10,7 @@ import { Button } from "heroui-native/button";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { Link } from "expo-router";
 import { formatCurrency } from "@fludge/utils/format-currency";
+import type { ProductDetail } from "@fludge/client/application/catalog/domain/product.repository";
 
 interface Props {
   productId: string;

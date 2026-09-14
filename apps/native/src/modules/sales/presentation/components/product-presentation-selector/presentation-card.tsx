@@ -1,10 +1,10 @@
-import type { ProductSummary } from "@fludge/client/application/catalog/queries/use-find-products";
 import { formatCurrency } from "@fludge/utils/format-currency";
 import { Card } from "heroui-native/card";
 import { Checkbox } from "heroui-native/checkbox";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
 import { useProductPresentationSelector } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
+import type { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
 
 interface Props {
   presentation: ProductSummary["presentations"][number];

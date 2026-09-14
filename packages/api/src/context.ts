@@ -1,5 +1,5 @@
 import { auth } from "@fludge/auth";
-import { ORGANIZATION_HEADER_kEY } from "@fludge/utils/constants";
+import { ORGANIZATION_HEADER_KEY } from "@fludge/utils/constants";
 import type { Context as ElysiaContext } from "elysia";
 
 export type CreateContextOptions = {
@@ -12,7 +12,7 @@ export async function createContext({ context }: CreateContextOptions) {
   });
 
   const activeOrganizationId = context.request.headers.get(
-    ORGANIZATION_HEADER_kEY,
+    ORGANIZATION_HEADER_KEY,
   );
 
   return {

@@ -1,9 +1,5 @@
 import { TransactionalRepository } from "@fludge/api/modules/shared/infrastructure/repositories/transactional-repository";
-import {
-  jsonObject,
-  type DatabaseService,
-  type TransactionService,
-} from "@fludge/db";
+import type { DatabaseService, TransactionService } from "@fludge/db";
 import {
   sale,
   saleItem,
@@ -13,6 +9,7 @@ import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { and, eq, getColumns, sql } from "drizzle-orm";
 import { Sale } from "@fludge/api/modules/sales/domain/entities/sale.entity";
 import type { SaleItemRepository } from "./sale-item.repository";
+import { jsonObject } from "@fludge/db/utils/build-queries";
 
 type Options = {
   tx?: TransactionService;

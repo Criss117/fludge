@@ -7,7 +7,7 @@ function Screen({ memberid }: { memberid: string }) {
 
   if (!member) return <Redirect href="/(private)/dashboard/(tabs)/iam" />;
 
-  return <AssignGroupsToMember memberId={memberid} />;
+  return <AssignGroupsToMember member={member} />;
 }
 
 export default function AssignGroups() {

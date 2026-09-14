@@ -36,7 +36,7 @@ export function SelectOrganizationScreen() {
 
   const onChangeText = (text: string) => setQuery(text.trim());
 
-  const onPress = (organizationId: string) => {
+  const onPress = async (organizationId: string) => {
     if (organizationId === activeOrganization?.id) {
       router.replace({
         pathname: "/(private)/dashboard/(tabs)",
@@ -45,7 +45,7 @@ export function SelectOrganizationScreen() {
       return;
     }
 
-    switchOrganization(organizationId);
+    await switchOrganization(organizationId);
     router.replace({ pathname: "/(private)/dashboard/(tabs)" });
   };
 

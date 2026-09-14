@@ -1,68 +1,82 @@
-import {
-  eq,
-  ilike,
-  useLiveInfiniteQuery,
-  useLiveSuspenseQuery,
-} from "@tanstack/react-db";
-import { useProductsCollection } from "@fludge/client/application/catalog/collections/products.collection";
+import { useContainer } from "@fludge/client/providers/container.provider";
+import { useOrganization } from "@fludge/client/providers/organization.provider";
+import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import { SearchBlob } from "@fludge/utils/search-blob";
+import {
+  useQueryClient,
+  useSuspenseInfiniteQuery,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 
 interface Filters {
-  query: string;
-  onlyActive?: boolean;
+  searchQuery?: string;
 }
+
+export const productKeys = {
+  all: (orgId: string) =>
+    ["catalog", "organizations", orgId, "products"] as const,
+  list: (orgId: string, filters?: Filters) =>
+    [...productKeys.all(orgId), "list", filters] as const,
+  detail: (orgId: string, productId?: string) =>
+    [...productKeys.all(orgId), "detail", productId] as const,
+};
 
 export function useFindProducts(filters?: Filters) {
-  const { productCollection, activeOrganization } = useProductsCollection();
+  const { catalogContainer } = useContainer();
+  const { activeOrganization } = useOrganization();
 
-  const normalizedQuery = SearchBlob.normalize(filters?.query ?? "");
-  const onlyActive = filters?.onlyActive ?? false;
+  if (!activeOrganization) throw new Error("Active organization not found");
 
-  return useLiveInfiniteQuery(
-    (q) => {
-      const query = q
-        .from({
-          pc: productCollection,
-        })
-        .where(({ pc }) => ilike(pc.searchBlob, "%" + normalizedQuery + "%"))
-        .orderBy(({ pc }) => pc.createdAt, "desc");
+  const normalizedQuery = SearchBlob.normalize(filters?.searchQuery ?? "");
 
-      if (onlyActive) {
-        query.where(({ pc }) => eq(pc.status, "active"));
-      }
-
-      return query;
-    },
-    {
-      initialPageParam: 0,
-      pageSize: 10,
-      queryKey: [
-        "organization",
+  return useSuspenseInfiniteQuery({
+    queryKey: productKeys.list(activeOrganization.id, filters),
+    initialPageParam: DEFAULT_CURSOR,
+    queryFn: ({ pageParam }) =>
+      catalogContainer.repositories.productRepository.findAll(
         activeOrganization.id,
-        "products",
-        normalizedQuery,
-        onlyActive ? "all" : "only-active",
-      ],
-    },
-  );
-}
-
-export function useFindOneProduct(productId: string) {
-  const { productCollection, activeOrganization } = useProductsCollection();
-
-  return useLiveSuspenseQuery({
-    queryKey: ["organization", activeOrganization.id, "products", productId],
-    query: (q) =>
-      q
-        .from({
-          pc: productCollection,
-        })
-        .where(({ pc }) => eq(pc.id, productId))
-        .findOne(),
+        pageParam,
+        {
+          searchQuery: normalizedQuery,
+        },
+      ),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 }
 
-export type ProductSummary = ReturnType<typeof useFindProducts>["data"][number];
-export type ProductDetail = NonNullable<
-  ReturnType<typeof useFindOneProduct>["data"]
->;
+export function useFindProduct(productId: string) {
+  const { catalogContainer } = useContainer();
+  const { activeOrganization } = useOrganization();
+
+  if (!activeOrganization) throw new Error("Active organization not found");
+
+  return useSuspenseQuery({
+    queryKey: productKeys.detail(activeOrganization.id, productId),
+    queryFn: () =>
+      catalogContainer.repositories.productRepository.findOneById(
+        activeOrganization.id,
+        productId,
+      ),
+  });
+}
+
+export function useInvalidateProducts() {
+  const { activeOrganization } = useOrganization();
+  const queryClient = useQueryClient();
+
+  if (!activeOrganization) throw new Error("Active organization not found");
+
+  const invalidateAll = () => {
+    queryClient.invalidateQueries({
+      queryKey: productKeys.all(activeOrganization.id),
+    });
+  };
+
+  const invalidateList = () => {
+    queryClient.invalidateQueries({
+      queryKey: productKeys.list(activeOrganization.id),
+    });
+  };
+
+  return { invalidateAll, invalidateList };
+}

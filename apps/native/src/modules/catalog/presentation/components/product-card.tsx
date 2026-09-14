@@ -1,6 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { StatusChip } from "@/modules/shared/components/status-chip";
-import { ProductSummary } from "@fludge/client/application/catalog/queries/use-find-products";
 import { useRouter } from "expo-router";
 import { Card } from "heroui-native/card";
 import { Chip } from "heroui-native/chip";
@@ -10,6 +9,7 @@ import { SkeletonGroup } from "heroui-native/skeleton-group";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { IsCriticalStock } from "./is-critical-stock";
+import type { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
 
 interface Props {
   product: ProductSummary;

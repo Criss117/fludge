@@ -1,11 +1,11 @@
 import { ProductMenuOptions } from "@/modules/catalog/presentation/components/product-menu-options";
 import { ProductScreen } from "@/modules/catalog/presentation/screens/product.screen";
-import { useFindOneProduct } from "@fludge/client/application/catalog/queries/use-find-products";
+import { useFindProduct } from "@fludge/client/application/catalog/queries/use-find-products";
 import { Redirect, Stack, useLocalSearchParams } from "expo-router";
 import { Suspense } from "react";
 
 function ScreenSuspense({ productId }: { productId: string }) {
-  const { data } = useFindOneProduct(productId);
+  const { data } = useFindProduct(productId);
 
   if (!data)
     return (

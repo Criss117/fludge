@@ -65,9 +65,9 @@ export const product = sqliteTable(
       .default(false),
     status: productStatus,
 
-    presentations: text("presentations", { mode: "json" }).$type<
-      ProductPresentationSelect[]
-    >(),
+    presentations: text("presentations", { mode: "json" })
+      .$type<ProductPresentationSelect[]>()
+      .notNull(),
 
     ...createdByMetadata,
     ...organizationMetadata,

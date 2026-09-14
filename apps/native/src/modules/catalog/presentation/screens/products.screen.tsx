@@ -1,7 +1,4 @@
-import {
-  ProductSummary,
-  useFindProducts,
-} from "@fludge/client/application/catalog/queries/use-find-products";
+import { useFindProducts } from "@fludge/client/application/catalog/queries/use-find-products";
 import { FlatList, View } from "react-native";
 import {
   CARD_HEIGHT,
@@ -16,11 +13,12 @@ import {
   SearchInput,
   SearchInputSkeleton,
 } from "@/modules/shared/components/search-input";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   CameraDialog,
   CameraDialogSkeleton,
 } from "@/modules/shared/components/camera-dialog";
+import { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
 
 interface ListFooterProps {
   hasNextPage: boolean;
@@ -77,14 +75,11 @@ function ProductsScreenList({
 
 export function ProductsScreen() {
   const [query, setQuery] = useState("");
-  const { data, fetchNextPage, hasNextPage, isReady, isLoading, ...rest } =
-    useFindProducts({
-      query,
-    });
+  const { data, fetchNextPage, hasNextPage } = useFindProducts({
+    searchQuery: query,
+  });
 
-  console.log({ hasNextPage, isReady, isLoading, ...rest });
-
-  if (isLoading) return <ProductsScreenSkeleton length={10} />;
+  const items = useMemo(() => data.pages.flatMap((page) => page.items), [data]);
 
   return (
     <View className="relative flex-1 gap-y-3 px-3 pt-2">
@@ -98,20 +93,11 @@ export function ProductsScreen() {
         </View>
         <CameraDialog setBarcode={setQuery} />
       </View>
-      {isReady && (
-        <ProductsScreenList
-          data={data}
-          fetchNextPage={fetchNextPage}
-          hasNextPage={hasNextPage}
-        />
-      )}
-      {!isReady && (
-        <View>
-          {Array.from({ length: 10 }).map((_, i) => (
-            <ProductCardSkeleton key={i} />
-          ))}
-        </View>
-      )}
+      <ProductsScreenList
+        data={items}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
+      />
 
       <View className="absolute right-0 bottom-20 px-3">
         <FloatingLink

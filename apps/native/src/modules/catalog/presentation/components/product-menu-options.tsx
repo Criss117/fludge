@@ -1,7 +1,7 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
+import type { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
 import { useDeleteProductMutation } from "@fludge/client/application/catalog/mutations/use-product.mutations";
-import type { ProductSummary } from "@fludge/client/application/catalog/queries/use-find-products";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { Link, useRouter } from "expo-router";
 import { Button } from "heroui-native/button";

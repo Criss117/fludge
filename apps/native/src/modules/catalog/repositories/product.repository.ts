@@ -8,15 +8,21 @@ import { product } from "@fludge/db/local-schemas/catalog.schema";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import { LocalProduct } from "@fludge/sync/entities/catalog.entities";
 import { and, desc, eq, inArray, like, or } from "drizzle-orm";
+import {
+  type Cursor,
+  type PaginatedResponse,
+  paginate,
+} from "@fludge/utils/pagination";
 
 export class SQLiteProductRepository implements ProductRepository {
   constructor(private readonly db: DatabaseService) {}
 
   public async findAll(
     organizationId: string,
+    cursor: Cursor,
     filters?: FindAllProductsFilters
-  ): Promise<ProductSummary[]> {
-    return this.db
+  ): Promise<PaginatedResponse<ProductSummary>> {
+    const rows = await this.db
       .select()
       .from(product)
       .where(
@@ -30,7 +36,11 @@ export class SQLiteProductRepository implements ProductRepository {
             : undefined
         )
       )
+      .limit(cursor.limit + 1)
+      .offset(cursor.limit * cursor.page)
       .orderBy(desc(product.createdAt));
+
+    return paginate(rows, cursor);
   }
 
   public async findOneById(

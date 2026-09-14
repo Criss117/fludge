@@ -1,9 +1,5 @@
 import { and, desc, eq, getColumns, sql } from "drizzle-orm";
-import {
-  jsonObject,
-  type DatabaseService,
-  type TransactionService,
-} from "@fludge/db";
+import type { DatabaseService, TransactionService } from "@fludge/db";
 import {
   member,
   organization,
@@ -23,6 +19,7 @@ import type { GroupRepository } from "./group.repository";
 import type { MemberRepository } from "./member.repository";
 import type { GroupMemberRepository } from "./group-member.repository";
 import type { Permission } from "@fludge/utils/permissions/data";
+import { jsonObject } from "@fludge/db/utils/build-queries";
 
 const memberAuth = alias(member, "memberAuth");
 

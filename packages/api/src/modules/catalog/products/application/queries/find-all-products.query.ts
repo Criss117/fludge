@@ -1,10 +1,11 @@
 import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
-import { jsonObject, type DatabaseService } from "@fludge/db";
+import type { DatabaseService } from "@fludge/db";
 import {
   product,
   productPresentation,
   type ProductPresentationSelect,
 } from "@fludge/db/schema/catalog.schema";
+import { jsonObject } from "@fludge/db/utils/build-queries";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { desc, eq, getColumns, sql } from "drizzle-orm";
 

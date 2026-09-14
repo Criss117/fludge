@@ -1,10 +1,11 @@
-import { jsonObject, type DatabaseService } from "@fludge/db";
+import type { DatabaseService } from "@fludge/db";
 import {
   category,
   product,
   productPresentation,
   type ProductPresentationSelect,
 } from "@fludge/db/schema/catalog.schema";
+import { jsonObject } from "@fludge/db/utils/build-queries";
 import type {
   LocalCategory,
   LocalProduct,

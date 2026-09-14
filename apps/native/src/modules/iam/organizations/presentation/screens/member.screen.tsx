@@ -38,7 +38,7 @@ export function MemberScreen({ member }: Props) {
           </Card.Header>
         </Card>
 
-        <MemberGroupsSection memberId={member.id} />
+        <MemberGroupsSection member={member} />
       </ScrollView>
 
       <View className="pt-2 pb-4">

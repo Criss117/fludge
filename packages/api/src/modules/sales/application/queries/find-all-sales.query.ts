@@ -1,11 +1,12 @@
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
-import { jsonObject, type DatabaseService } from "@fludge/db";
+import type { DatabaseService } from "@fludge/db";
 import {
   sale,
   saleItem,
   type SaleItemSelect,
 } from "@fludge/db/schema/sales.schema";
+import { jsonObject } from "@fludge/db/utils/build-queries";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { eq, getColumns, sql } from "drizzle-orm";
 

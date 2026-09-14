@@ -1,5 +1,4 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { ProductDetail } from "@fludge/client/application/catalog/queries/use-find-products";
 import { Separator } from "heroui-native";
 import { Card } from "heroui-native/card";
 import { Chip } from "heroui-native/chip";
@@ -10,6 +9,7 @@ import { IsCriticalStock } from "../components/is-critical-stock";
 import { ProductPresentationSection } from "../sections/product-presentation.section";
 import { Link } from "expo-router";
 import { Button } from "heroui-native/button";
+import { ProductDetail } from "@fludge/client/application/catalog/domain/product.repository";
 
 interface Props {
   product: ProductDetail;

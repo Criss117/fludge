@@ -3,12 +3,10 @@ import {
   SalesProductCard,
   SALES_CARD_HEIGHT,
 } from "../components/sales-product-card";
-import {
-  ProductSummary,
-  useFindProducts,
-} from "@fludge/client/application/catalog/queries/use-find-products";
+import { useFindProducts } from "@fludge/client/application/catalog/queries/use-find-products";
 import { Typography } from "heroui-native";
 import { useTranslation } from "react-i18next";
+import type { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
 
 interface Props {
   onSelectProduct: (product: ProductSummary) => void;
@@ -20,14 +18,15 @@ const ROW_HEIGHT = SALES_CARD_HEIGHT + 8;
 export function SaleProductsListSection({ onSelectProduct, query }: Props) {
   const { t } = useTranslation();
   const { data, fetchNextPage, hasNextPage } = useFindProducts({
-    query,
-    onlyActive: true,
+    searchQuery: query,
   });
+
+  const items = data.pages.flatMap((page) => page.items);
 
   return (
     <FlatList
       className="flex-1"
-      data={data}
+      data={items}
       numColumns={2}
       showsVerticalScrollIndicator={false}
       columnWrapperClassName="gap-2 px-3"
@@ -51,7 +50,7 @@ export function SaleProductsListSection({ onSelectProduct, query }: Props) {
         </View>
       }
       ListFooterComponent={
-        data.length > 0 && !hasNextPage ? (
+        items.length > 0 && !hasNextPage ? (
           <View className="items-center justify-center py-4">
             <Typography>{t("screens.sales.no_more")}</Typography>
           </View>

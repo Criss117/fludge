@@ -2,7 +2,6 @@ import { CameraDialog } from "@/modules/shared/components/camera-dialog";
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { View } from "react-native";
 import { useRef, useState } from "react";
-import type { ProductSummary } from "@fludge/client/application/catalog/queries/use-find-products";
 import { TicketSelector } from "../components/ticket-selector";
 import { SalesSummary } from "../components/sale-summary";
 import { SaleProductsListSection } from "../sections/sale-products-list.section";
@@ -11,6 +10,7 @@ import {
   ProductPresentationSelectorProvider,
 } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
 import { ProductPresentationSelector } from "../components/product-presentation-selector";
+import type { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
 
 export function SalesScreen() {
   const [query, setQuery] = useState("");

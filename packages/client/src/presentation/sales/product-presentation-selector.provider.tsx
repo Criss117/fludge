@@ -1,4 +1,4 @@
-import type { ProductSummary } from "@fludge/client/application/catalog/queries/use-find-products";
+import type { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
 import {
   createContext,
   use,
