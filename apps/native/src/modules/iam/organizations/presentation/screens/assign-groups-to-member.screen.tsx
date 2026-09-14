@@ -14,6 +14,7 @@ import type { TranslationKey } from "@fludge/i18n/index";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import type { MemberDetail } from "@fludge/client/application/iam/domain/member.repository";
 import { GroupSummary } from "@fludge/client/application/iam/domain/group.repository";
+import { useFindAllGroups } from "@fludge/client/application/iam/queries/use-find-groups";
 
 interface Props {
   member: MemberDetail;
@@ -32,6 +33,11 @@ export function AssignGroupsToMember({ member }: Props) {
 
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [query, setQuery] = useState("");
+
+  const { data } = useFindAllGroups({
+    searchQuery: query,
+    excludeIds: member.groups.map((g) => g.id),
+  });
 
   const onSelectGroup = (group: GroupSummary) => {
     setSelectedGroups((prev) => {
@@ -88,7 +94,7 @@ export function AssignGroupsToMember({ member }: Props) {
         placeholder="helpers.placeholder.search_groups"
       />
       <FlatList
-        data={member.groups}
+        data={data}
         className="flex-1 pb-1"
         renderItem={({ item }) => (
           <SelectableGroupCard

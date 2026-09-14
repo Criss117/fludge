@@ -18,6 +18,7 @@ import {
   getColumns,
   ilike,
   inArray,
+  like,
   notInArray,
 } from "drizzle-orm";
 
@@ -50,6 +51,7 @@ export class SqliteMemberRepository implements MemberRepository {
         user: getColumns(user),
       })
       .from(member)
+      .innerJoin(user, eq(user.id, member.userId))
       .where(
         and(eq(member.organizationId, organizationId), eq(member.id, memberId))
       )
@@ -70,7 +72,8 @@ export class SqliteMemberRepository implements MemberRepository {
           eq(groupMember.memberId, memberId),
           eq(groupMember.organizationId, organizationId)
         )
-      );
+      )
+      .orderBy(desc(groupMember.createdAt));
 
     return {
       ...memberData,
@@ -91,11 +94,12 @@ export class SqliteMemberRepository implements MemberRepository {
         user: getColumns(user),
       })
       .from(member)
+      .innerJoin(user, eq(user.id, member.userId))
       .where(
         and(
           eq(member.organizationId, organizationId),
           excludeIds ? notInArray(member.id, excludeIds) : undefined,
-          ilike(user.name, "%" + searchQuery + "%")
+          like(user.name, "%" + searchQuery + "%")
         )
       )
       .orderBy(desc(member.createdAt));

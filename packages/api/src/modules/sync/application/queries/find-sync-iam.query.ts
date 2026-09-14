@@ -11,6 +11,7 @@ export const findSyncIamQuery = z.object({
   group: z.coerce.date<Date>().nullable().default(null),
   member: z.coerce.date<Date>().nullable().default(null),
   organization: z.coerce.date<Date>().nullable().default(null),
+  groupMember: z.coerce.date<Date>().nullable().default(null),
 });
 
 type Query = z.infer<typeof findSyncIamQuery>;

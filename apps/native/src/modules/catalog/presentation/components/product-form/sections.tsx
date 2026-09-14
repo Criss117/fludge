@@ -88,24 +88,15 @@ export function BasicInformationSection({ form }: { form: Form }) {
       </Card.Header>
       <Separator />
       <Card.Body className="gap-y-2">
-        {/* TanStack Form render-prop API requires explicit children callbacks. */}
-        {/* react-doctor-disable-next-line no-children-prop */}
-        <form.Field
-          name="name"
-          children={(field) => <ProductFormInputs.Name field={field} />}
-        />
-        {/* react-doctor-disable-next-line no-children-prop */}
-        <form.Field
-          name="description"
-          children={(field) => <ProductFormInputs.Description field={field} />}
-        />
-        {/* react-doctor-disable-next-line no-children-prop */}
-        <form.Field
-          name="categoryId"
-          children={(field) => (
-            <ProductFormInputs.CategorySelect field={field} />
-          )}
-        />
+        <form.Field name="name">
+          {(field) => <ProductFormInputs.Name field={field} />}
+        </form.Field>
+        <form.Field name="description">
+          {(field) => <ProductFormInputs.Description field={field} />}
+        </form.Field>
+        {/* <form.Field name="categoryId">
+          {(field) => <ProductFormInputs.CategorySelect field={field} />}
+        </form.Field> */}
       </Card.Body>
     </Card>
   );

@@ -107,47 +107,46 @@ function MinStock({ field }: FieldProps<number>) {
   );
 }
 
-function CategorySelect({ field }: FieldProps<string>) {
-  const { data } = useFindCategories();
+// function CategorySelect({ field }: FieldProps<string>) {
+//   const { data } = useFindCategories();
 
-  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-  const errors = field.state.meta.errors;
+//   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+//   const errors = field.state.meta.errors;
 
-  const options = useMemo(
-    () =>
-      data.map((item) => ({
-        label: item.name,
-        value: item.id,
-      })),
-    [data]
-  );
+//   const options = useMemo(
+//     () =>
+//       data.map((item) => ({
+//         label: item.name,
+//         value: item.id,
+//       })),
+//     [data]
+//   );
 
-  const value = field.state.value
-    ? options.find((o) => o.value === field.state.value)
-    : undefined;
+//   const value = field.state.value
+//     ? options.find((o) => o.value === field.state.value)
+//     : undefined;
 
-  return (
-    <CommonInputs.SearchableSelect
-      isInvalid={isInvalid}
-      errors={errors}
-      label="forms.product.categories.add"
-      options={options}
-      onChange={(option) => {
-        field.handleChange(option.value);
-      }}
-      value={value}
-    />
-  );
-}
+//   return (
+//     <CommonInputs.SearchableSelect
+//       isInvalid={isInvalid}
+//       errors={errors}
+//       label="forms.product.categories.add"
+//       options={options}
+//       onChange={(option) => {
+//         field.handleChange(option.value);
+//       }}
+//       value={value}
+//     />
+//   );
+// }
 
-// react-doctor-disable-next-line only-export-components -- This component namespace is the public form-input composition API.
 export const ProductFormInputs = {
   Name,
   Description,
   Stock,
   AllowNegativeStock,
   MinStock,
-  CategorySelect,
+  // CategorySelect,
 };
 
 function PresentationName({ field, onFocus }: FieldProps<string>) {

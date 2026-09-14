@@ -10,7 +10,7 @@ export class SyncServerIamEngine {
     organizationIds: string[],
     lastSyncedAt: IamLastSyncedAt,
   ) {
-    const { users, groups, members, organizations } =
+    const { users, groups, members, organizations, groupMembers } =
       await this.serverSyncIamRepository.findAllItems(
         organizationIds,
         lastSyncedAt,
@@ -21,6 +21,7 @@ export class SyncServerIamEngine {
       groups,
       members,
       organizations,
+      groupMembers,
     };
   }
 }

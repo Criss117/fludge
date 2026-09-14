@@ -89,7 +89,7 @@ export function SettingsScreen() {
                 />
               </PressableFeedback>
             </Link>
-            <Link href="/(private)/organization/select" asChild replace>
+            <Link href={{ pathname: "/organization" }} asChild replace>
               <PressableFeedback className="flex flex-row items-center justify-between py-2">
                 <View className="flex-row items-center gap-x-2">
                   <MaterialIcons

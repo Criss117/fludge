@@ -1,5 +1,6 @@
 import type {
   LocalGroup,
+  LocalGroupMember,
   LocalMember,
   LocalOrganization,
   LocalUser,
@@ -11,6 +12,7 @@ type AllIamItems = {
   groups: LocalGroup[];
   members: LocalMember[];
   organizations: LocalOrganization[];
+  groupMembers: LocalGroupMember[];
 };
 
 export interface ServerSyncIamRepository {

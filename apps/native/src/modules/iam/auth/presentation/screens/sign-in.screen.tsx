@@ -1,4 +1,4 @@
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 
@@ -12,12 +12,13 @@ import { FieldError } from "heroui-native/field-error";
 import { useTranslation } from "react-i18next";
 import { useSignInForm } from "@fludge/client/application/iam/form/sign-in-form";
 import { AuthFormInputs } from "../components/auth-form-inputs";
+import { useInvalidateSync } from "@/integrations/db/sync";
 
 export function SignInScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
   const { signInEmail } = useAuth();
   const [rootError, setRootError] = useState<string | null>(null);
+  const { invalidateIam } = useInvalidateSync();
 
   const form = useSignInForm({
     onSubmit: ({ value, resetForm }) => {
@@ -25,9 +26,7 @@ export function SignInScreen() {
       signInEmail.mutate(value, {
         onSuccess: () => {
           resetForm();
-          router.replace({
-            pathname: "/dashboard",
-          });
+          invalidateIam();
         },
         onError: (error) => {
           setRootError(error.message);
@@ -54,13 +53,13 @@ export function SignInScreen() {
           {rootError && (
             <FieldError isInvalid={!!rootError}>{rootError}</FieldError>
           )}
-              {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
-              <form.Field
+          {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
+          <form.Field
             name="email"
             children={(field) => <AuthFormInputs.EmailInput field={field} />}
           />
-              {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
-              <form.Field
+          {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
+          <form.Field
             name="password"
             children={(field) => <AuthFormInputs.PasswordInput field={field} />}
           />

@@ -18,9 +18,8 @@ export const databaseService = drizzle(expoDb);
 export type DatabaseService = typeof databaseService;
 
 export function DatabaseProvider({ children }: { children: React.ReactNode }) {
-  useDrizzleStudio(expoDb);
-
   const { success, error } = useMigrations(databaseService, migrations as any);
+  useDrizzleStudio(expoDb);
 
   if (error) return <Text>Error de migración: {error.message}</Text>;
 

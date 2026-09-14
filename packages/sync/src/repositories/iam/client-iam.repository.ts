@@ -1,5 +1,6 @@
 import type {
   LocalGroup,
+  LocalGroupMember,
   LocalMember,
   LocalOrganization,
   LocalUser,
@@ -10,6 +11,7 @@ export type IamLastSyncedAt = {
   group: Date | null;
   member: Date | null;
   organization: Date | null;
+  groupMember: Date | null;
 };
 
 type AllItems = {
@@ -17,14 +19,16 @@ type AllItems = {
   groups: LocalGroup[];
   members: LocalMember[];
   organizations: LocalOrganization[];
+  groupMembers: LocalGroupMember[];
 };
 
 export interface LocalClientIamRepository {
   getLastSyncedAt: () => Promise<{
     user: LocalUser | null;
+    organization: LocalOrganization | null;
     group: LocalGroup | null;
     member: LocalMember | null;
-    organization: LocalOrganization | null;
+    groupMember: LocalGroupMember | null;
   }>;
 
   saveAll: (values: AllItems) => Promise<void>;

@@ -11,7 +11,7 @@ export class SyncClientIamEngine {
   ) {}
 
   public async getLastSyncedAt(): Promise<IamLastSyncedAt> {
-    const { group, member, organization, user } =
+    const { group, member, organization, user, groupMember } =
       await this.localClientIamRepository.getLastSyncedAt();
 
     return {
@@ -19,11 +19,12 @@ export class SyncClientIamEngine {
       group: group?.updatedAt ?? null,
       member: member?.createdAt ?? null,
       organization: organization?.updatedAt ?? null,
+      groupMember: groupMember?.createdAt ?? null,
     };
   }
 
   public async sync(lastSyncedAt: IamLastSyncedAt) {
-    const { users, groups, members, organizations } =
+    const { users, groups, members, organizations, groupMembers } =
       await this.httpClientIamRepository.findLastSyncedAt(lastSyncedAt);
 
     await this.localClientIamRepository.saveAll({
@@ -31,6 +32,7 @@ export class SyncClientIamEngine {
       groups,
       members,
       organizations,
+      groupMembers,
     });
   }
 }

@@ -1,8 +1,14 @@
 import type { DatabaseService } from "@fludge/db";
 import { user } from "@fludge/db/schema/auth.schema";
-import { group, member, organization } from "@fludge/db/schema/iam.schema";
+import {
+  group,
+  groupMember,
+  member,
+  organization,
+} from "@fludge/db/schema/iam.schema";
 import type {
   LocalGroup,
+  LocalGroupMember,
   LocalMember,
   LocalOrganization,
   LocalUser,
@@ -40,6 +46,21 @@ export class SyncIamRepository implements ServerSyncIamRepository {
         and(
           inArray(member.organizationId, organizationIds),
           lastSyncedAt ? gt(member.createdAt, lastSyncedAt) : undefined,
+        ),
+      );
+  }
+
+  private async findGroupMembers(
+    organizationIds: string[],
+    lastSyncedAt: IamLastSyncedAt["groupMember"],
+  ): Promise<LocalGroupMember[]> {
+    return this.db
+      .select()
+      .from(groupMember)
+      .where(
+        and(
+          inArray(groupMember.organizationId, organizationIds),
+          lastSyncedAt ? gt(groupMember.createdAt, lastSyncedAt) : undefined,
         ),
       );
   }
@@ -88,6 +109,7 @@ export class SyncIamRepository implements ServerSyncIamRepository {
     groups: LocalGroup[];
     members: LocalMember[];
     organizations: LocalOrganization[];
+    groupMembers: LocalGroupMember[];
   }> {
     const organizationsPromise = this.findOrganizations(
       organizationIds,
@@ -103,18 +125,26 @@ export class SyncIamRepository implements ServerSyncIamRepository {
 
     const usersPromise = this.findUsers(organizationIds, lastSyncedAt.user);
 
-    const [organizations, members, groups, users] = await Promise.all([
-      organizationsPromise,
-      membersPromise,
-      groupsPromise,
-      usersPromise,
-    ]);
+    const groupMembersPromise = this.findGroupMembers(
+      organizationIds,
+      lastSyncedAt.groupMember,
+    );
+
+    const [organizations, members, groups, users, groupMembers] =
+      await Promise.all([
+        organizationsPromise,
+        membersPromise,
+        groupsPromise,
+        usersPromise,
+        groupMembersPromise,
+      ]);
 
     return {
       users,
       groups,
       members,
       organizations,
+      groupMembers,
     };
   }
 }

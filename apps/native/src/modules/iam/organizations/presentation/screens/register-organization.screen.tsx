@@ -101,7 +101,7 @@ export function RegisterOrganizationScreen() {
           </Button.Label>
         </Button>
         {hasOrganizations && (
-          <Link href="/(private)/organization/select" asChild replace>
+          <Link href={{ pathname: "/organization" }} asChild replace>
             <PressableFeedback>
               <Typography
                 className="text-muted text-center underline"
