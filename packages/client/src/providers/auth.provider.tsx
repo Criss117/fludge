@@ -8,10 +8,30 @@ import {
 } from "@tanstack/react-query";
 import type { createAuthClient } from "better-auth/client";
 import { createContext, use, useMemo, Suspense, type ReactNode } from "react";
-import { useOrpc } from "./orpc.provider";
+import { useNetwork } from "./network-status.provider";
 
 type AuthClient = ReturnType<typeof createAuthClient>;
 
+type SessionData = {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+  expiresAt: Date;
+  token: string;
+  ipAddress?: string | null | undefined;
+  userAgent?: string | null | undefined;
+  user: {
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    email: string;
+    emailVerified: boolean;
+    name: string;
+    image?: string | null | undefined;
+    isRoot: boolean;
+  };
+};
 export interface AuthContextAdapter {
   getSession: AuthClient["getSession"];
   signUpEmail: AuthClient["signUp"]["email"];
@@ -19,29 +39,51 @@ export interface AuthContextAdapter {
   signOut: AuthClient["signOut"];
 }
 
-function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
+export interface ISessionStorage {
+  save(session: SessionData): Promise<void>;
+  load(): Promise<SessionData | null>;
+  clear(): Promise<void>;
+}
+
+function authOptions(
+  authClient: AuthContextAdapter,
+  queryClient: QueryClient,
+  sessionStorage: ISessionStorage,
+  isInternetReachable: boolean | null,
+) {
   const session = queryOptions({
     queryKey: ["session"],
     queryFn: async () => {
-      const { data, error } = await authClient.getSession();
+      if (!isInternetReachable) {
+        return sessionStorage.load();
+      }
 
-      if (error || !data) return null;
+      try {
+        const { data, error } = await authClient.getSession();
 
-      const sessionData = data.session as typeof data.session & {
-        activeOrganizationId: string | null;
-      };
+        if (error) {
+          if (error.status === 401 || error.status === 403) {
+            await sessionStorage.clear();
+            return null;
+          }
 
-      const userData = data.user as typeof data.user & {
-        isRoot: boolean;
-      };
+          return sessionStorage.load();
+        }
 
-      return {
-        ...sessionData,
-        activeOrganizationId: sessionData.activeOrganizationId as unknown as
-          string | null,
-        user: userData,
-      };
+        if (!data) return null;
+
+        const sessionData = data.session as typeof data.session;
+        const userData = data.user as typeof data.user & { isRoot: boolean };
+
+        const result = { ...sessionData, user: userData } satisfies SessionData;
+        await sessionStorage.save(result);
+        return result;
+      } catch (networkError) {
+        // La request nunca completó (sin red, timeout, DNS, etc.)
+        return sessionStorage.load();
+      }
     },
+    refetchOnReconnect: true,
   });
 
   const signUpEmail = mutationOptions({
@@ -79,36 +121,32 @@ function authOptions(authClient: AuthContextAdapter, queryClient: QueryClient) {
 
       if (error) throw new Error(error.message, { cause: error });
 
+      await sessionStorage.clear();
+
       await queryClient.invalidateQueries({ queryKey: session.queryKey });
     },
   });
+
   return { session, signUpEmail, signInEmail, signOut };
 }
 
-// 👇 Este es el truco: aquí se "ejecutan" los hooks, y el tipo de retorno
-// de esta función es exactamente lo que queremos en el Context.
-// No escribimos ningún tipo a mano — todo se infiere desde authOptions.
 function useAuthState(
   authClient: AuthContextAdapter,
   queryClient: QueryClient,
+  sessionStorage: ISessionStorage,
 ) {
-  const orpc = useOrpc();
+  const { isInternetReachable } = useNetwork();
   const options = useMemo(
-    () => authOptions(authClient, queryClient),
-    [authClient, queryClient],
+    () =>
+      authOptions(authClient, queryClient, sessionStorage, isInternetReachable),
+    [authClient, queryClient, sessionStorage, isInternetReachable],
   );
 
   const session = useSuspenseQuery(options.session);
+
   const signUpEmail = useMutation(options.signUpEmail);
   const signInEmail = useMutation(options.signInEmail);
   const signOut = useMutation(options.signOut);
-  const setActiveOrganization = useMutation(
-    orpc.auth.commands.setActiveOrganization.mutationOptions({
-      onSuccess: async () => {
-        await session.refetch();
-      },
-    }),
-  );
 
   return useMemo(
     () => ({
@@ -117,20 +155,11 @@ function useAuthState(
       signUpEmail,
       signInEmail,
       signOut,
-      setActiveOrganization,
     }),
-    [
-      authClient,
-      session,
-      signUpEmail,
-      signInEmail,
-      signOut,
-      setActiveOrganization,
-    ],
+    [authClient, session, signUpEmail, signInEmail, signOut],
   );
 }
 
-// El Context se tipa con ReturnType de useAuthState — cero anotación manual.
 type Context = ReturnType<typeof useAuthState>;
 
 const AuthContext = createContext<Context | null>(null);
@@ -139,14 +168,21 @@ export function AuthProvider({
   children,
   authClient,
   fallback = null,
+  sessionStorage,
 }: {
   children: ReactNode;
   authClient: AuthContextAdapter;
   fallback?: ReactNode;
+  sessionStorage: ISessionStorage;
 }) {
   return (
     <Suspense fallback={fallback}>
-      <AuthProviderInner authClient={authClient}>{children}</AuthProviderInner>
+      <AuthProviderInner
+        authClient={authClient}
+        sessionStorage={sessionStorage}
+      >
+        {children}
+      </AuthProviderInner>
     </Suspense>
   );
 }
@@ -154,12 +190,14 @@ export function AuthProvider({
 function AuthProviderInner({
   children,
   authClient,
+  sessionStorage,
 }: {
   children: ReactNode;
   authClient: AuthContextAdapter;
+  sessionStorage: ISessionStorage;
 }) {
   const queryClient = useQueryClient();
-  const value = useAuthState(authClient, queryClient);
+  const value = useAuthState(authClient, queryClient, sessionStorage);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

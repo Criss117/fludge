@@ -1,5 +1,3 @@
-import { ilike, useLiveInfiniteQuery } from "@tanstack/react-db";
-import { useCategoriesCollection } from "@fludge/client/application/catalog/collections/categories.collection";
 import { SearchBlob } from "@fludge/utils/search-blob";
 
 interface Filters {

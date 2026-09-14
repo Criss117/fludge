@@ -1,11 +1,21 @@
 import {
   QueryClient,
   QueryClientProvider as Provider,
+  onlineManager,
 } from "@tanstack/react-query";
 import { useTanStackQueryDevTools } from "@rozenite/tanstack-query-plugin";
-import { DbClient, DbProvider } from "@tanstack/react-db";
+import { INetworkService } from "@fludge/client/providers/network-status.provider";
+import { networkService } from "../network";
 
-// react-doctor-disable-next-line only-export-components -- React Query client is an integration singleton shared by the provider.
+export function setupQueryClientNetwork(networkService: INetworkService) {
+  onlineManager.setEventListener((setOnline) => {
+    return networkService.subscribe((state) => {
+      const isOnline = state.isConnected && state.isInternetReachable !== false;
+      setOnline(isOnline);
+    });
+  });
+}
+
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -18,7 +28,7 @@ export const queryClient = new QueryClient({
   },
 });
 
-const dbClient = new DbClient({ queryClient });
+setupQueryClientNetwork(networkService);
 
 function QueryDevTools() {
   useTanStackQueryDevTools(queryClient);
@@ -33,7 +43,7 @@ export function QueryClientProvider({
   return (
     <Provider client={queryClient}>
       {__DEV__ && <QueryDevTools />}
-      <DbProvider client={dbClient}>{children}</DbProvider>
+      {children}
     </Provider>
   );
 }

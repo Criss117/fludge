@@ -1,5 +1,4 @@
 import { hasPermissionProcedure, protectedProcedure } from "@fludge/api/index";
-import { setActiveOrganizationCommand } from "@fludge/api/modules/iam/auth/application/commands/set-active-organization.command";
 import { authContainer } from "@fludge/api/modules/iam/auth/container";
 import { signUpMemberCommand } from "@fludge/api/modules/iam/auth/application/commands/sign-up-member.command";
 import { updateUserInfoCommand } from "@fludge/api/modules/iam/auth/application/commands/update-user-info.command";
@@ -17,21 +16,6 @@ export const authRouter = {
       .input(updateUserInfoCommand)
       .handler(({ input, context }) =>
         authContainer.commands.updateUserInfo.execute(context.headers, input),
-      ),
-
-    setActiveOrganization: protectedProcedure
-      .route({
-        method: "POST",
-        path: "/auth/set-active-organization",
-        tags: TAGS,
-      })
-      .input(setActiveOrganizationCommand)
-      .handler(({ input, context }) =>
-        authContainer.commands.setActiveOrganization.execute({
-          organizationId: input.organizationId,
-          loggedUserId: context.session.user.id,
-          sessionId: context.session.id,
-        }),
       ),
 
     signUpMember: hasPermissionProcedure({

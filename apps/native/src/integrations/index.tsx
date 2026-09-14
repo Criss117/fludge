@@ -7,23 +7,32 @@ import { QueryClientProvider } from "./query";
 import { ORPCProvider } from "./orpc";
 import { AuthProvider } from "./auth";
 import { AppThemeProvider } from "@/modules/shared/context/app-theme-context";
+import { DatabaseProvider } from "./db";
+import { SyncDatabase } from "./db/sync";
+import { NetworkProvider } from "./network";
 
 export function Integrations({ children }: { children: React.ReactNode }) {
   return (
-    <GestureHandlerRootView>
-      <KeyboardProvider>
-        <QueryClientProvider>
-          <ORPCProvider>
+    <NetworkProvider>
+      <DatabaseProvider>
+        <GestureHandlerRootView>
+          <KeyboardProvider>
             <FontsProvider>
-              <AuthProvider>
-                <HeroUIProvider>
-                  <AppThemeProvider>{children}</AppThemeProvider>
-                </HeroUIProvider>
-              </AuthProvider>
+              <QueryClientProvider>
+                <AuthProvider>
+                  <ORPCProvider>
+                    <SyncDatabase>
+                      <HeroUIProvider>
+                        <AppThemeProvider>{children}</AppThemeProvider>
+                      </HeroUIProvider>
+                    </SyncDatabase>
+                  </ORPCProvider>
+                </AuthProvider>
+              </QueryClientProvider>
             </FontsProvider>
-          </ORPCProvider>
-        </QueryClientProvider>
-      </KeyboardProvider>
-    </GestureHandlerRootView>
+          </KeyboardProvider>
+        </GestureHandlerRootView>
+      </DatabaseProvider>
+    </NetworkProvider>
   );
 }
