@@ -9,7 +9,7 @@ import { Skeleton } from "heroui-native/skeleton";
 import { SkeletonGroup } from "heroui-native/skeleton-group";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { IsCriticalStock } from "./is-cristical-stock";
+import { IsCriticalStock } from "./is-critical-stock";
 
 interface Props {
   product: ProductSummary;

@@ -1,58 +1,63 @@
 import { useMutation } from "@tanstack/react-query";
-import { useCategoriesCollection } from "../collections/categories.collection";
-import type { CategorySchema } from "../form/category-form";
+import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import { useContainer } from "@fludge/client/providers/container.provider";
+import { useInvalidateCategories } from "../queries/use-find-categories";
+import { useOrganization } from "@fludge/client/providers/organization.provider";
 
 export function useCreateCategoryMutation() {
-  const { categoryCollection, activeOrganization } = useCategoriesCollection();
+  const orpc = useOrpc();
+  const invalidateCategories = useInvalidateCategories();
+  const { catalogContainer } = useContainer();
 
-  return useMutation({
-    mutationKey: ["catalog", "category", "create"],
-    mutationFn: async (values: CategorySchema) => {
-      const now = new Date();
+  return useMutation(
+    orpc.category.commands.create.mutationOptions({
+      onSuccess: async (newCategory) => {
+        await catalogContainer.repositories.categoryRepository.save(
+          newCategory,
+        );
 
-      const tx = categoryCollection.insert({
-        name: values.name,
-        description: values.description,
-        createdAt: now,
-        updatedAt: now,
-        createdBy: "",
-        id: crypto.randomUUID(),
-        organizationId: activeOrganization.id,
-        slug: values.name,
-        status: "active",
-      });
-
-      await tx.isPersisted.promise;
-    },
-  });
+        invalidateCategories.invalidateList();
+      },
+    }),
+  );
 }
 
 export function useUpdateCategoryMutation() {
-  const { categoryCollection } = useCategoriesCollection();
+  const orpc = useOrpc();
+  const invalidateCategories = useInvalidateCategories();
+  const { catalogContainer } = useContainer();
 
-  return useMutation({
-    mutationKey: ["catalog", "category", "update"],
-    mutationFn: async (values: CategorySchema & { id: string }) => {
-      const now = new Date();
+  return useMutation(
+    orpc.category.commands.update.mutationOptions({
+      onSuccess: async (newCategory) => {
+        await catalogContainer.repositories.categoryRepository.save(
+          newCategory,
+        );
 
-      categoryCollection.update(values.id, (draft) => {
-        draft.name = values.name;
-        draft.description = values.description;
-        draft.updatedAt = now;
-      });
-    },
-  });
+        invalidateCategories.invalidateList();
+      },
+    }),
+  );
 }
 
 export function useDeleteCategoryMutation() {
-  const { categoryCollection } = useCategoriesCollection();
+  const orpc = useOrpc();
+  const invalidateCategories = useInvalidateCategories();
+  const { catalogContainer } = useContainer();
+  const { activeOrganization } = useOrganization();
 
-  return useMutation({
-    mutationKey: ["catalog", "category", "delete"],
-    mutationFn: async (categoryId: string) => {
-      const tx = categoryCollection.delete(categoryId);
+  if (!activeOrganization) throw new Error("Active organization not found");
 
-      await tx.isPersisted.promise;
-    },
-  });
+  return useMutation(
+    orpc.category.commands.delete.mutationOptions({
+      onSuccess: async (_, variables) => {
+        await catalogContainer.repositories.categoryRepository.delete(
+          activeOrganization.id,
+          variables.id,
+        );
+
+        invalidateCategories.invalidateList();
+      },
+    }),
+  );
 }

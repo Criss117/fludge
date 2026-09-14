@@ -1,22 +1,22 @@
 import { createContext, use } from "react";
-import { generateIamContainer } from "../application/iam/container";
-
-type IAMContainer = ReturnType<typeof generateIamContainer>;
+import type { IAMContainer } from "../application/iam/container";
+import type { CatalogContainer } from "../application/catalog/container";
 
 type Context = {
   iamContainer: IAMContainer;
+  catalogContainer: CatalogContainer;
 };
 
 const ContainerContext = createContext<Context | null>(null);
 
 type Props = {
   children: React.ReactNode;
-  iamContainer: IAMContainer;
+  containers: Context;
 };
 
-export function ContainerProvider({ children, iamContainer }: Props) {
+export function ContainerProvider({ children, containers }: Props) {
   return (
-    <ContainerContext.Provider value={{ iamContainer }}>
+    <ContainerContext.Provider value={containers}>
       {children}
     </ContainerContext.Provider>
   );

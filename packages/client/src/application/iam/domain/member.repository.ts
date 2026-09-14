@@ -37,5 +37,7 @@ export interface MemberRepository {
     memberId: string,
   ): Promise<MemberDetail | null>;
 
-  save(member: MemberSummary): Promise<void>;
+  save(member: MemberSummary | MemberSummary[]): Promise<void>;
+
+  delete(organizationId: string, memberIds: string | string[]): Promise<void>;
 }

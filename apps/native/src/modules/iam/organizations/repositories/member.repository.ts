@@ -11,10 +11,35 @@ import {
   member,
   user,
 } from "@fludge/db/local-schemas/iam.schema";
-import { and, desc, eq, getColumns, ilike, notInArray } from "drizzle-orm";
+import {
+  and,
+  desc,
+  eq,
+  getColumns,
+  ilike,
+  inArray,
+  notInArray,
+} from "drizzle-orm";
 
 export class SqliteMemberRepository implements MemberRepository {
   constructor(private readonly db: DatabaseService) {}
+
+  public async delete(
+    organizationId: string,
+    memberId: string | string[]
+  ): Promise<void> {
+    const memberIds = Array.isArray(memberId) ? memberId : [memberId];
+
+    await this.db
+      .delete(member)
+      .where(
+        and(
+          eq(member.organizationId, organizationId),
+          inArray(member.id, memberIds)
+        )
+      );
+  }
+
   public async findOneById(
     organizationId: string,
     memberId: string

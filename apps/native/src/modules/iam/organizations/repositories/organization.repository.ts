@@ -3,18 +3,28 @@ import type {
   OrganizationDetail,
   OrganizationRepository,
 } from "@fludge/client/application/iam/domain/organization.repository";
-import { buildConflictUpdateColumn } from "@fludge/db";
 import {
   group,
   groupMember,
   member,
   organization,
 } from "@fludge/db/local-schemas/iam.schema";
+import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import type { LocalOrganization } from "@fludge/sync/entities/iam.entities";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 export class SqliteOrganizationRepository implements OrganizationRepository {
   constructor(private readonly db: DatabaseService) {}
+
+  public async delete(organizationId: string | string[]): Promise<void> {
+    const organizationIds = Array.isArray(organizationId)
+      ? organizationId
+      : [organizationId];
+
+    await this.db
+      .delete(organization)
+      .where(inArray(organization.id, organizationIds));
+  }
 
   public async findAll(): Promise<LocalOrganization[]> {
     return this.db.select().from(organization);

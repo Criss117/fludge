@@ -13,5 +13,6 @@ export type OrganizationDetail = LocalOrganization & {
 
 export interface OrganizationRepository {
   findAll(): Promise<LocalOrganization[]>;
-  save(organization: OrganizationDetail): Promise<void>;
+  save(organization: OrganizationDetail | OrganizationDetail[]): Promise<void>;
+  delete(organizationId: string | string[]): Promise<void>;
 }

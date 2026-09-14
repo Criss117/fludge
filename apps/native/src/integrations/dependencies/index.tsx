@@ -1,5 +1,6 @@
 import { ContainerProvider } from "@fludge/client/providers/container.provider";
 import { iamContainer } from "./iam.container";
+import { catalogContainer } from "./catalog.container";
 
 export function DependenciesProvider({
   children,
@@ -7,7 +8,12 @@ export function DependenciesProvider({
   children: React.ReactNode;
 }) {
   return (
-    <ContainerProvider iamContainer={iamContainer}>
+    <ContainerProvider
+      containers={{
+        iamContainer,
+        catalogContainer,
+      }}
+    >
       {children}
     </ContainerProvider>
   );

@@ -1,11 +1,8 @@
-import {
-  buildConflictUpdateColumn,
-  type DatabaseService,
-  type TransactionService,
-} from "@fludge/db";
+import { type DatabaseService, type TransactionService } from "@fludge/db";
 import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 import { member } from "@fludge/db/schema/iam.schema";
-import type { Member } from "../../domain/entities/member.entity";
+import type { Member } from "@fludge/api/modules/iam/organization/domain/entities/member.entity";
+import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 
 type Options = { tx?: TransactionService };
 

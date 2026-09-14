@@ -1,4 +1,3 @@
-import { CategorySummary } from "@fludge/client/application/catalog/queries/use-find-categories";
 import { StatusChip } from "@/modules/shared/components/status-chip";
 import { Card } from "heroui-native/card";
 import { SkeletonGroup } from "heroui-native/skeleton-group";
@@ -8,6 +7,7 @@ import { useState } from "react";
 import { Button } from "heroui-native/button";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useTranslation } from "react-i18next";
+import type { CategorySummary } from "@fludge/client/application/catalog/domain/category.repository";
 
 export const CARD_HEIGHT = 120;
 

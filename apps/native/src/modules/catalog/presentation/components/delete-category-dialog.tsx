@@ -1,6 +1,6 @@
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
+import type { CategorySummary } from "@fludge/client/application/catalog/domain/category.repository";
 import { useDeleteCategoryMutation } from "@fludge/client/application/catalog/mutations/use-category.mutations";
-import type { CategorySummary } from "@fludge/client/application/catalog/queries/use-find-categories";
 import { TranslationKey } from "@fludge/i18n/index";
 import { Button } from "heroui-native/button";
 import { Dialog } from "heroui-native/dialog";
@@ -22,21 +22,26 @@ export function DeleteCategoryDialog({ category, onClose }: Props) {
 
     mutationToast.showIsPendingToast("mutations.categories.delete.is_pending");
 
-    deleteCategory.mutate(category.id, {
-      onSuccess: () => {
-        mutationToast.showSuccessToast(
-          "mutations.categories.delete.success.title",
-          "mutations.categories.delete.success.description"
-        );
-        onClose();
+    deleteCategory.mutate(
+      {
+        id: category.id,
       },
-      onError: (error) => {
-        mutationToast.showErrorToast(
-          "mutations.categories.delete.error",
-          error.message as TranslationKey
-        );
-      },
-    });
+      {
+        onSuccess: () => {
+          mutationToast.showSuccessToast(
+            "mutations.categories.delete.success.title",
+            "mutations.categories.delete.success.description"
+          );
+          onClose();
+        },
+        onError: (error) => {
+          mutationToast.showErrorToast(
+            "mutations.categories.delete.error",
+            error.message as TranslationKey
+          );
+        },
+      }
+    );
   };
 
   return (

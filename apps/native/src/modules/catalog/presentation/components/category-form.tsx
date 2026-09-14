@@ -21,9 +21,9 @@ import {
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { KeyboardController } from "react-native-keyboard-controller";
-import type { CategorySummary } from "@fludge/client/application/catalog/queries/use-find-categories";
 import { useBottomSheetAwareHandlers } from "heroui-native";
 import { Separator } from "heroui-native/separator";
+import { CategorySummary } from "@fludge/client/application/catalog/domain/category.repository";
 
 type Form =
   | ReturnType<typeof useCreateCategoryForm>

@@ -6,9 +6,15 @@ export class SyncServerCatalogEngine {
     private readonly serverSyncCatalogRepository: ServerSyncCatalogRepository,
   ) {}
 
-  public async getLastSyncedAt(lastSyncedAt: CatalogLastSyncedAt) {
+  public async getLastSyncedAt(
+    organizationIds: string[],
+    lastSyncedAt: CatalogLastSyncedAt,
+  ) {
     const { products, categories } =
-      await this.serverSyncCatalogRepository.findAllItems(lastSyncedAt);
+      await this.serverSyncCatalogRepository.findAllItems(
+        organizationIds,
+        lastSyncedAt,
+      );
 
     return {
       products,

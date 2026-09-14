@@ -1,5 +1,5 @@
 import type { AuthService } from "@fludge/auth";
-import { buildConflictUpdateColumn, type DatabaseService } from "@fludge/db";
+import type { DatabaseService } from "@fludge/db";
 import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/organization.repository";
 import {
   group,
@@ -29,6 +29,7 @@ import { and, eq } from "drizzle-orm";
 import { Product } from "../catalog/products/domain/entities/product.entity";
 import type { ProductRepository } from "../catalog/products/infrastructure/repositories/product.repository";
 import { PERMISSIONS } from "@fludge/utils/permissions/data";
+import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 
 export const seedUsers = z.object({
   totalRoots: z.number().optional().default(2),

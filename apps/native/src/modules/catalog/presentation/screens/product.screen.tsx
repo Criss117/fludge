@@ -6,7 +6,7 @@ import { Chip } from "heroui-native/chip";
 import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
-import { IsCriticalStock } from "../components/is-cristical-stock";
+import { IsCriticalStock } from "../components/is-critical-stock";
 import { ProductPresentationSection } from "../sections/product-presentation.section";
 import { Link } from "expo-router";
 import { Button } from "heroui-native/button";

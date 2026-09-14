@@ -7,19 +7,15 @@ import {
 } from "../components/category-card";
 import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 import { Typography } from "heroui-native/text";
-import type { CategorySummary } from "@fludge/client/application/catalog/queries/use-find-categories";
 import { useTranslation } from "react-i18next";
 import {
   CreateCategoryForm,
   UpdateCategoryForm,
 } from "../components/category-form";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { DeleteCategoryDialog } from "../components/delete-category-dialog";
 import { SearchInput } from "@/modules/shared/components/search-input";
-
-interface Props {
-  query: string;
-}
+import type { CategorySummary } from "@fludge/client/application/catalog/domain/category.repository";
 
 const ITEM_SEPARATOR_HEIGHT = 16;
 
@@ -54,12 +50,12 @@ type SelectedCategory = {
 
 export function CategoriesScreen() {
   const [query, setQuery] = useState("");
-  const { data, fetchNextPage, hasNextPage, isLoading, isReady } =
-    useFindCategories();
   const [selectedCategory, setSelectedCategory] =
     useState<SelectedCategory | null>(null);
 
-  if (isLoading && !isReady) return <CategoriesScreenSkeleton length={10} />;
+  const { data, fetchNextPage, hasNextPage } = useFindCategories();
+
+  const items = useMemo(() => data.pages.flatMap((page) => page.items), [data]);
 
   return (
     <View className="relative flex-1 gap-y-3 px-3 pt-2">
@@ -71,7 +67,7 @@ export function CategoriesScreen() {
       <FlatList
         className="flex-1"
         contentContainerClassName="pb-40"
-        data={data}
+        data={items}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (

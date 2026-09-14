@@ -32,7 +32,7 @@ export interface GroupRepository {
     groupId: string,
   ): Promise<GroupDetail | null>;
 
-  save(group: LocalGroup): Promise<void>;
+  save(group: LocalGroup | LocalGroup[]): Promise<void>;
 
-  delete(organizationId: string, groupIds: string[]): Promise<void>;
+  delete(organizationId: string, groupId: string | string[]): Promise<void>;
 }

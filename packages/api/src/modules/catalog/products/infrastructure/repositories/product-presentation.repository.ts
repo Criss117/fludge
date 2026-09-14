@@ -1,13 +1,10 @@
-import {
-  buildConflictUpdateColumn,
-  type DatabaseService,
-  type TransactionService,
-} from "@fludge/db";
+import { type DatabaseService, type TransactionService } from "@fludge/db";
 import { TransactionalRepository } from "@fludge/api/modules/shared/infrastructure/repositories/transactional-repository";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { productPresentation } from "@fludge/db/schema/catalog.schema";
 import type { ProductPresentation } from "@fludge/api/modules/catalog/products/domain/entities/product-presentation.entity";
 import { and, eq, inArray } from "drizzle-orm";
+import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 
 type Options = {
   tx?: TransactionService;

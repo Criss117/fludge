@@ -17,3 +17,5 @@ export function generateIamContainer(deps: Deps) {
     },
   };
 }
+
+export type IAMContainer = ReturnType<typeof generateIamContainer>;
