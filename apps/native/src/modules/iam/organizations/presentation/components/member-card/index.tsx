@@ -10,11 +10,11 @@ import { View } from "react-native";
 
 import { StatusChip } from "@/modules/shared/components/status-chip";
 import { MemberOptions } from "./options";
-import type { MemberSummary } from "@fludge/client/application/iam/queries/use-find-members";
 import { UserAvatar } from "@/modules/shared/components/user-avatar";
 import { cn } from "heroui-native";
 import { Checkbox } from "heroui-native/checkbox";
 import { useTranslation } from "react-i18next";
+import type { MemberSummary } from "@fludge/client/application/iam/domain/member.repository";
 
 export interface MemberCardProps {
   member: MemberSummary;

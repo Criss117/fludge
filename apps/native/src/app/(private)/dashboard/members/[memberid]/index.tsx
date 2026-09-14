@@ -1,12 +1,11 @@
 import { MemberScreen } from "@/modules/iam/organizations/presentation/screens/member.screen";
-import { useFindMember } from "@fludge/client/application/iam/queries/use-find-members";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { useFindMemberDetail } from "@fludge/client/application/iam/queries/use-find-members";
+import { Redirect, Stack, useLocalSearchParams } from "expo-router";
 
-export default function Member() {
-  const { memberid } = useLocalSearchParams<{
-    memberid: string;
-  }>();
-  const { data: member } = useFindMember(memberid);
+function Screen({ memberid }: { memberid: string }) {
+  const { data: member } = useFindMemberDetail(memberid);
+
+  if (!member) return <Redirect href="/(private)/dashboard/(tabs)/iam" />;
 
   return (
     <>
@@ -18,4 +17,14 @@ export default function Member() {
       <MemberScreen member={member} />
     </>
   );
+}
+
+export default function Member() {
+  const { memberid } = useLocalSearchParams<{
+    memberid?: string;
+  }>();
+
+  if (!memberid) return null;
+
+  return <Screen memberid={memberid} />;
 }

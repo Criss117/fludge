@@ -2,7 +2,10 @@ import { FlatList, View } from "react-native";
 import { GroupCard } from "@/modules/iam/organizations/presentation/components/group-card";
 import { useFindAllGroups } from "@fludge/client/application/iam/queries/use-find-groups";
 import { FloatingLink } from "@/modules/shared/components/floating-link";
-import { SearchInput } from "@/modules/shared/components/search-input";
+import {
+  SearchInput,
+  SearchInputSkeleton,
+} from "@/modules/shared/components/search-input";
 import { useState } from "react";
 
 const ITEM_SEPARATOR_HEIGHT = 16;
@@ -10,7 +13,7 @@ const ITEM_SEPARATOR_HEIGHT = 16;
 export function GroupsScreen() {
   const [query, setQuery] = useState("");
   const { data: groups } = useFindAllGroups({
-    query,
+    searchQuery: query,
   });
 
   return (
@@ -40,4 +43,8 @@ export function GroupsScreen() {
       </View>
     </View>
   );
+}
+
+export function GroupsScreenSkeleton() {
+  return null;
 }

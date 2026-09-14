@@ -4,7 +4,6 @@ import {
   CARD_HEIGHT,
   MemberCardSkeleton,
 } from "@/modules/iam/organizations/presentation/components/member-card";
-import { useFindAllMembers } from "@fludge/client/application/iam/queries/use-find-members";
 import { FloatingLink } from "@/modules/shared/components/floating-link";
 import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 import {
@@ -12,12 +11,15 @@ import {
   SearchInputSkeleton,
 } from "@/modules/shared/components/search-input";
 import { useState } from "react";
+import { useFindAllMembers } from "@fludge/client/application/iam/queries/use-find-members";
 
 const ITEM_SEPARATOR_HEIGHT = 16;
 
 export function MembersScreen() {
   const [query, setQuery] = useState("");
-  const { data: members } = useFindAllMembers();
+  const { data: members } = useFindAllMembers({
+    searchQuery: query,
+  });
 
   return (
     <View className="relative flex-1 gap-y-3 px-3 pt-2">

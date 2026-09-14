@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { MemberSummary } from "@fludge/client/application/iam/queries/use-find-members";
+import type { MemberSummary } from "@fludge/client/application/iam/domain/member.repository";
 import { Link } from "expo-router";
 import { Button } from "heroui-native/button";
 import { Popover } from "heroui-native/popover";

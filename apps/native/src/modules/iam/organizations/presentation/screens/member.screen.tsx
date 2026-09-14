@@ -1,16 +1,15 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { Link } from "expo-router";
-import { Avatar } from "heroui-native/avatar";
 import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import { ScrollView, View } from "react-native";
 import { MemberGroupsSection } from "../sections/member-groups.section";
-import type { MemberSummary } from "@fludge/client/application/iam/queries/use-find-members";
 import { UserAvatar } from "@/modules/shared/components/user-avatar";
 import { useTranslation } from "react-i18next";
+import { MemberDetail } from "@fludge/client/application/iam/domain/member.repository";
 
 interface Props {
-  member: MemberSummary;
+  member: MemberDetail;
 }
 
 export function MemberScreen({ member }: Props) {

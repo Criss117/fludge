@@ -2,9 +2,10 @@ import {
   GroupScreen,
   GroupScreenSkeleton,
 } from "@/modules/iam/organizations/presentation/screens/group.screen";
-import { useFindGroup } from "@fludge/client/application/iam/queries/use-find-groups";
+import { useFindGroupDetail } from "@fludge/client/application/iam/queries/use-find-groups";
 import {
   type ErrorBoundaryProps,
+  Redirect,
   Stack,
   useLocalSearchParams,
 } from "expo-router";
@@ -32,16 +33,27 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   );
 }
 
-export default function Group() {
-  const { groupid } = useLocalSearchParams<{ groupid: string }>();
-  const { data: group } = useFindGroup(groupid);
+function Screen({ groupid }: { groupid: string }) {
+  const { data: group } = useFindGroupDetail(groupid);
+
+  if (!group) return <Redirect href="/(private)/dashboard/(tabs)/iam" />;
 
   return (
     <>
       <Stack.Screen options={{ title: group.name }} />
-      <Suspense fallback={<GroupScreenSkeleton />}>
-        <GroupScreen group={group} />
-      </Suspense>
+      <GroupScreen group={group} />
     </>
+  );
+}
+
+export default function Group() {
+  const { groupid } = useLocalSearchParams<{ groupid?: string }>();
+
+  if (!groupid) return null;
+
+  return (
+    <Suspense fallback={<GroupScreenSkeleton />}>
+      <Screen groupid={groupid} />
+    </Suspense>
   );
 }

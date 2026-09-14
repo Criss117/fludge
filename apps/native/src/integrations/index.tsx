@@ -10,29 +10,50 @@ import { AppThemeProvider } from "@/modules/shared/context/app-theme-context";
 import { DatabaseProvider } from "./db";
 import { SyncDatabase } from "./db/sync";
 import { NetworkProvider } from "./network";
+import { DependenciesProvider } from "./dependencies";
 
-export function Integrations({ children }: { children: React.ReactNode }) {
+function UiProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <HeroUIProvider>
+      <AppThemeProvider>{children}</AppThemeProvider>
+    </HeroUIProvider>
+  );
+}
+
+function NetworkProviders({ children }: { children: React.ReactNode }) {
   return (
     <NetworkProvider>
       <DatabaseProvider>
-        <GestureHandlerRootView>
-          <KeyboardProvider>
-            <FontsProvider>
-              <QueryClientProvider>
-                <AuthProvider>
-                  <ORPCProvider>
-                    <SyncDatabase>
-                      <HeroUIProvider>
-                        <AppThemeProvider>{children}</AppThemeProvider>
-                      </HeroUIProvider>
-                    </SyncDatabase>
-                  </ORPCProvider>
-                </AuthProvider>
-              </QueryClientProvider>
-            </FontsProvider>
-          </KeyboardProvider>
-        </GestureHandlerRootView>
+        <QueryClientProvider>
+          <AuthProvider>
+            <ORPCProvider>
+              <DependenciesProvider>
+                <SyncDatabase>{children}</SyncDatabase>
+              </DependenciesProvider>
+            </ORPCProvider>
+          </AuthProvider>
+        </QueryClientProvider>
       </DatabaseProvider>
     </NetworkProvider>
+  );
+}
+
+function MiscellaneousProviders({ children }: { children: React.ReactNode }) {
+  return (
+    <GestureHandlerRootView>
+      <KeyboardProvider>
+        <FontsProvider>{children}</FontsProvider>
+      </KeyboardProvider>
+    </GestureHandlerRootView>
+  );
+}
+
+export function Integrations({ children }: { children: React.ReactNode }) {
+  return (
+    <MiscellaneousProviders>
+      <NetworkProviders>
+        <UiProviders>{children}</UiProviders>
+      </NetworkProviders>
+    </MiscellaneousProviders>
   );
 }

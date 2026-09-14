@@ -1,4 +1,3 @@
-import type { GroupSummary } from "@fludge/client/application/iam/queries/use-find-groups";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { StatusChip } from "@/modules/shared/components/status-chip";
 import { Link } from "expo-router";
@@ -12,8 +11,9 @@ import { ScrollView, View } from "react-native";
 import { GroupMembersSection } from "../sections/group-members.section";
 import { GroupPermissionsSection } from "../sections/group-permissions.section";
 import { useTranslation } from "react-i18next";
+import type { GroupDetail } from "@fludge/client/application/iam/domain/group.repository";
 
-export function GroupScreen({ group }: { group: GroupSummary }) {
+export function GroupScreen({ group }: { group: GroupDetail }) {
   const [tab, setTab] = useState("members");
   const { t } = useTranslation();
 
@@ -63,7 +63,7 @@ export function GroupScreen({ group }: { group: GroupSummary }) {
             </Tabs.ScrollView>
           </Tabs.List>
           <Tabs.Content value="members" className="flex-1">
-            <GroupMembersSection groupId={group.id} />
+            <GroupMembersSection group={group} />
           </Tabs.Content>
           <Tabs.Content value="permissions" className="flex-1">
             <GroupPermissionsSection group={group} />

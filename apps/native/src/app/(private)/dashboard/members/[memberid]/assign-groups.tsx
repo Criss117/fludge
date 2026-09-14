@@ -1,5 +1,14 @@
 import { AssignGroupsToMember } from "@/modules/iam/organizations/presentation/screens/assign-groups-to-member.screen";
-import { useLocalSearchParams } from "expo-router";
+import { useFindMemberDetail } from "@fludge/client/application/iam/queries/use-find-members";
+import { Redirect, useLocalSearchParams } from "expo-router";
+
+function Screen({ memberid }: { memberid: string }) {
+  const { data: member } = useFindMemberDetail(memberid);
+
+  if (!member) return <Redirect href="/(private)/dashboard/(tabs)/iam" />;
+
+  return <AssignGroupsToMember memberId={memberid} />;
+}
 
 export default function AssignGroups() {
   const { memberid } = useLocalSearchParams<{
@@ -8,5 +17,5 @@ export default function AssignGroups() {
 
   if (!memberid) return null;
 
-  return <AssignGroupsToMember memberId={memberid} />;
+  return <Screen memberid={memberid} />;
 }

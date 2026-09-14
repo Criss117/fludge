@@ -20,7 +20,7 @@
     "@fludge/auth": "workspace:*",
     "@fludge/db": "workspace:*",
     "@fludge/utils": "workspace:*",
-    "@fludge/api": "workspace:*",
+    "@fludge/sync": "workspace:*",
     "i18next": "catalog:",
     "react-i18next": "catalog:",
     "@orpc/client": "catalog:",
@@ -34,6 +34,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@fludge/api": "workspace:*",
     "@fludge/config": "workspace:*",
     "@types/bun": "catalog:",
     "elysia": "catalog:",

@@ -1,7 +1,3 @@
-import {
-  type GroupSummary,
-  useFindAllGroups,
-} from "@fludge/client/application/iam/queries/use-find-groups";
 import { FlatList, View } from "react-native";
 import { SelectableGroupCard } from "../components/group-card";
 import { useState } from "react";
@@ -16,15 +12,17 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
+import type { MemberDetail } from "@fludge/client/application/iam/domain/member.repository";
+import { GroupSummary } from "@fludge/client/application/iam/domain/group.repository";
 
 interface Props {
-  memberId: string;
+  member: MemberDetail;
 }
 
 const ITEM_SEPARATOR_HEIGHT = 16;
 const PADDING_BOTTOM = 16;
 
-export function AssignGroupsToMember({ memberId }: Props) {
+export function AssignGroupsToMember({ member }: Props) {
   const mutationToast = useMutationToast("assign-groups-to-member-toast");
   const { t } = useTranslation();
   const router = useRouter();
@@ -34,14 +32,6 @@ export function AssignGroupsToMember({ memberId }: Props) {
 
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [query, setQuery] = useState("");
-
-  const { data: groups } = useFindAllGroups({
-    query,
-    byMember: {
-      memberId,
-      type: "exclude",
-    },
-  });
 
   const onSelectGroup = (group: GroupSummary) => {
     setSelectedGroups((prev) => {
@@ -61,7 +51,7 @@ export function AssignGroupsToMember({ memberId }: Props) {
 
     assignGroupsToMember.mutate(
       {
-        memberId,
+        memberId: member.id,
         groupIds: selectedGroups,
       },
       {
@@ -98,7 +88,7 @@ export function AssignGroupsToMember({ memberId }: Props) {
         placeholder="helpers.placeholder.search_groups"
       />
       <FlatList
-        data={groups}
+        data={member.groups}
         className="flex-1 pb-1"
         renderItem={({ item }) => (
           <SelectableGroupCard

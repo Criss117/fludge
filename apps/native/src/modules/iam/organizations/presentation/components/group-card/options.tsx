@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
+import type { GroupSummary } from "@fludge/client/application/iam/domain/group.repository";
 import { useUpdateGroup } from "@fludge/client/application/iam/mutations/use-group.mutations";
-import type { GroupSummary } from "@fludge/client/application/iam/queries/use-find-groups";
 import { Link } from "expo-router";
 import { Button } from "heroui-native/button";
 import { Popover } from "heroui-native/popover";

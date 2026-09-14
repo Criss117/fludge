@@ -1,7 +1,4 @@
-import {
-  type MemberSummary,
-  useFindAllMembers,
-} from "@fludge/client/application/iam/queries/use-find-members";
+import { useFindAllMembers } from "@fludge/client/application/iam/queries/use-find-members";
 import { useAssignMembersToGroup } from "@fludge/client/application/iam/mutations/use-group.mutations";
 import { useRouter } from "expo-router";
 import { Button } from "heroui-native/button";
@@ -21,15 +18,17 @@ import {
 import { useTranslation } from "react-i18next";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
+import type { GroupDetail } from "@fludge/client/application/iam/domain/group.repository";
+import type { MemberSummary } from "@fludge/client/application/iam/domain/member.repository";
 
 interface Props {
-  groupId: string;
+  group: GroupDetail;
 }
 
 const ITEM_SEPARATOR_HEIGHT = 16;
 const PADDING_BOTTOM = 16;
 
-export function AssignMembersToGroup({ groupId }: Props) {
+export function AssignMembersToGroup({ group }: Props) {
   const { t } = useTranslation();
   const mutationToast = useMutationToast("assign-members-to-group-toast");
   const router = useRouter();
@@ -39,9 +38,10 @@ export function AssignMembersToGroup({ groupId }: Props) {
   const [query, setQuery] = useState("");
 
   const { data: members } = useFindAllMembers({
-    query,
-    byGroup: { groupId, type: "exclude" },
+    searchQuery: query,
+    excludeIds: group.members.map((m) => m.id),
   });
+
   const assignableMembers = filterAssignableMembers(members);
 
   const onSelectMember = (member: MemberSummary) => {
@@ -56,7 +56,7 @@ export function AssignMembersToGroup({ groupId }: Props) {
     );
 
     assignMembersToGroup.mutate(
-      { groupId, memberIds: selectedMemberIds },
+      { groupId: group.id, memberIds: selectedMemberIds },
       {
         onSuccess: () => {
           mutationToast.showSuccessToast(

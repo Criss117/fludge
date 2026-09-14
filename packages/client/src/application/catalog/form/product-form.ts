@@ -1,8 +1,8 @@
-import { getI18nKey } from "@fludge/api/modules/shared/i18n/utils";
 import {
   updateProductPresentationValidator,
   updateProductValidator,
 } from "@fludge/utils/validators/product.validators";
+import { getI18nKey } from "@fludge/utils/validators/shared";
 import { formOptions, useForm } from "@tanstack/react-form";
 import { z } from "zod";
 

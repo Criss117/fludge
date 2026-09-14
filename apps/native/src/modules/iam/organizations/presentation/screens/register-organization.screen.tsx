@@ -1,21 +1,21 @@
 import { Card } from "heroui-native/card";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { OrganizationFormInputs } from "@/modules/iam/organizations/presentation/components/organization-form-inputs";
 import { Button } from "heroui-native/button";
 import { Link, useRouter } from "expo-router";
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { useFindAllOrganizations } from "@fludge/client/application/iam/queries/use-find-organization";
 import { useRegisterOrganization } from "@fludge/client/application/iam/mutations/use-organization.mutations";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { useRegisterOrganizationForm } from "@fludge/client/application/iam/form/organization-form";
 import { KeyboardScrollView } from "@/modules/shared/components/keyboard-scroll-view";
+import { useOrganization } from "@fludge/client/providers/organization.provider";
 
 export function RegisterOrganizationScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { data } = useFindAllOrganizations();
+  const { organizations } = useOrganization();
   const registerOrganization = useRegisterOrganization();
 
   const form = useRegisterOrganizationForm({
@@ -31,7 +31,7 @@ export function RegisterOrganizationScreen() {
     },
   });
 
-  const hasOrganizations = data.length > 0;
+  const hasOrganizations = organizations.data.length > 0;
 
   return (
     <View className="relative flex-1">
@@ -50,27 +50,18 @@ export function RegisterOrganizationScreen() {
               </Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
-          {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
-          <form.Field
-                name="name"
-                children={(field) => (
-                  <OrganizationFormInputs.NameInput field={field} />
-                )}
-              />
-          {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
-          <form.Field
-                name="legalName"
-                children={(field) => (
+              <form.Field name="name">
+                {(field) => <OrganizationFormInputs.NameInput field={field} />}
+              </form.Field>
+
+              <form.Field name="legalName">
+                {(field) => (
                   <OrganizationFormInputs.LegalNameInput field={field} />
                 )}
-              />
-          {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
-          <form.Field
-                name="taxId"
-                children={(field) => (
-                  <OrganizationFormInputs.TaxIdInput field={field} />
-                )}
-              />
+              </form.Field>
+              <form.Field name="taxId">
+                {(field) => <OrganizationFormInputs.TaxIdInput field={field} />}
+              </form.Field>
             </Card.Body>
           </Card>
           <Card className="gap-y-4">
@@ -82,20 +73,15 @@ export function RegisterOrganizationScreen() {
               </Card.Title>
             </Card.Header>
             <Card.Body className="gap-y-3">
-          {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
-          <form.Field
-                name="phone"
-                children={(field) => (
-                  <OrganizationFormInputs.PhoneInput field={field} />
-                )}
-              />
-          {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
-          <form.Field
-                name="address"
-                children={(field) => (
+              <form.Field name="phone">
+                {(field) => <OrganizationFormInputs.PhoneInput field={field} />}
+              </form.Field>
+
+              <form.Field name="address">
+                {(field) => (
                   <OrganizationFormInputs.AddressInput field={field} />
                 )}
-              />
+              </form.Field>
             </Card.Body>
           </Card>
         </View>

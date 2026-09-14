@@ -1,7 +1,3 @@
-import {
-  type MemberSummary,
-  useFindAllMembers,
-} from "@fludge/client/application/iam/queries/use-find-members";
 import { Typography } from "heroui-native/text";
 import { useState } from "react";
 import { View } from "react-native";
@@ -12,24 +8,19 @@ import { useRemoveMembersFromGroup } from "@fludge/client/application/iam/mutati
 import { Dialog } from "heroui-native/dialog";
 import { Button } from "heroui-native/button";
 import { useTranslation } from "react-i18next";
+import type { MemberSummary } from "@fludge/client/application/iam/domain/member.repository";
+import type { GroupDetail } from "@fludge/client/application/iam/domain/group.repository";
 
-export function GroupMembersSection({ groupId }: { groupId: string }) {
+export function GroupMembersSection({ group }: { group: GroupDetail }) {
   const removeMembersFromGroup = useRemoveMembersFromGroup();
   const { t } = useTranslation();
   const [memberToRemove, setMemberToRemove] = useState<MemberSummary | null>(
     null
   );
   const [query, setQuery] = useState("");
-  const { data: members } = useFindAllMembers({
-    byGroup: {
-      groupId: groupId,
-      type: "include",
-    },
-    query,
-  });
 
   const onPressRemoveMember = (memberId: string, close: () => void) => {
-    const m = members.find((d) => d.id === memberId);
+    const m = group.members.find((d) => d.id === memberId);
 
     if (!m) return;
 
@@ -42,7 +33,7 @@ export function GroupMembersSection({ groupId }: { groupId: string }) {
 
     removeMembersFromGroup.mutate(
       {
-        groupId: groupId,
+        groupId: group.id,
         memberIds: [memberToRemove.id],
       },
       {
@@ -60,7 +51,7 @@ export function GroupMembersSection({ groupId }: { groupId: string }) {
         setQuery={setQuery}
         placeholder="helpers.placeholder.search_members"
       />
-      {members.length === 0 ? (
+      {group.members.length === 0 ? (
         <View className="flex-1 items-center justify-center py-12">
           <MaterialIcons name="info" size={20} className="text-muted" />
           <Typography.Paragraph color="muted">
@@ -69,7 +60,7 @@ export function GroupMembersSection({ groupId }: { groupId: string }) {
         </View>
       ) : (
         <View className="gap-y-4">
-          {members.map((member) => (
+          {group.members.map((member) => (
             <MemberCard
               key={member.id}
               member={member}

@@ -26,6 +26,7 @@
         "@fludge/api": "workspace:*",
         "@fludge/auth": "workspace:*",
         "@fludge/client": "workspace:*",
+        "@fludge/db": "workspace:*",
         "@fludge/env": "workspace:*",
         "@fludge/i18n": "workspace:*",
         "@fludge/utils": "workspace:*",
@@ -171,9 +172,9 @@
     "packages/client": {
       "name": "@fludge/client",
       "dependencies": {
-        "@fludge/api": "workspace:*",
         "@fludge/auth": "workspace:*",
         "@fludge/db": "workspace:*",
+        "@fludge/sync": "workspace:*",
         "@fludge/utils": "workspace:*",
         "@orpc/client": "catalog:",
         "@orpc/tanstack-query": "catalog:",
@@ -188,6 +189,7 @@
         "zod": "catalog:",
       },
       "devDependencies": {
+        "@fludge/api": "workspace:*",
         "@fludge/config": "workspace:*",
         "@types/bun": "catalog:",
         "@types/react": "catalog:",

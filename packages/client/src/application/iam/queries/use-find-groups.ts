@@ -1,64 +1,77 @@
-import { useMemo } from "react";
-import { useFindActiveOrganization } from "./use-find-organization";
+import { useContainer } from "@fludge/client/providers/container.provider";
+import { useOrganization } from "@fludge/client/providers/organization.provider";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  normalizeFilters,
+  type FindAllGroupsFilters,
+} from "../domain/group.repository";
 
-type Filters = {
-  query?: string;
-  byMember?: {
-    memberId: string;
-    type: "include" | "exclude";
-  };
+export const groupKeys = {
+  all: (orgId: string) => ["iam", "organizations", orgId, "groups"] as const,
+  list: (orgId: string, filters?: FindAllGroupsFilters) =>
+    [...groupKeys.all(orgId), "list", normalizeFilters(filters)] as const,
+  detail: (orgId: string, groupId?: string) => [
+    ...groupKeys.all(orgId),
+    "detail",
+    groupId,
+  ],
 };
 
-export function useFindAllGroups(filters?: Filters) {
-  const { data, ...rest } = useFindActiveOrganization();
+export function useFindAllGroups(filters?: FindAllGroupsFilters) {
+  const { iamContainer } = useContainer();
+  const { activeOrganization } = useOrganization();
 
-  const groups = useMemo(() => {
-    const membersByGroup = new Map<string, string[]>();
-    for (const groupMember of data.groupMembers) {
-      const members = membersByGroup.get(groupMember.groupId) ?? [];
-      members.push(groupMember.memberId);
-      membersByGroup.set(groupMember.groupId, members);
-    }
+  if (!activeOrganization) throw new Error("Active organization not found");
 
-    const groups = data.groups.map((group) => ({
-      ...group,
-      members: membersByGroup.get(group.id) ?? [],
-    }));
-
-    if (!filters?.query && !filters?.byMember) return groups;
-
-    const query = filters?.query;
-    const byMember = filters?.byMember;
-
-    const filterByquery = query
-      ? groups.filter((d) => d.name.toLowerCase().includes(query.toLowerCase()))
-      : groups;
-
-    const filterByMemberId = byMember
-      ? filterByquery.filter((d) => {
-          const include = d.members.includes(byMember.memberId);
-
-          return byMember.type === "include" ? include : !include;
-        })
-      : filterByquery;
-
-    return filterByMemberId;
-  }, [data.groups, data.groupMembers, filters?.query, filters?.byMember]);
-
-  return { data: groups, ...rest };
+  return useSuspenseQuery({
+    queryKey: groupKeys.list(activeOrganization.id, filters),
+    queryFn: () =>
+      iamContainer.repositories.groupRepository.findAll(
+        activeOrganization.id,
+        filters,
+      ),
+  });
 }
 
-export function useFindGroup(groupId: string) {
-  const { data, ...rest } = useFindAllGroups();
+export function useFindGroupDetail(groupId: string) {
+  const { iamContainer } = useContainer();
+  const { activeOrganization } = useOrganization();
 
-  const group = data.find((d) => d.id === groupId);
+  if (!activeOrganization) throw new Error("Active organization not found");
 
-  if (!group) throw new Error("Grupo no encontrado");
+  return useSuspenseQuery({
+    queryKey: groupKeys.detail(activeOrganization.id, groupId),
+    queryFn: () =>
+      iamContainer.repositories.groupRepository.findOneById(
+        activeOrganization.id,
+        groupId,
+      ),
+  });
+}
 
-  return {
-    data: { ...group },
-    ...rest,
+export function useInvalidateGroups() {
+  const { activeOrganization } = useOrganization();
+  const queryClient = useQueryClient();
+
+  if (!activeOrganization) throw new Error("Active organization not found");
+
+  const invalidateAll = () => {
+    queryClient.invalidateQueries({
+      queryKey: groupKeys.all(activeOrganization.id),
+    });
   };
-}
 
-export type GroupSummary = ReturnType<typeof useFindAllGroups>["data"][number];
+  const invalidateList = () => {
+    queryClient.invalidateQueries({
+      queryKey: groupKeys.list(activeOrganization.id),
+    });
+  };
+
+  const invalidateDetail = (groupId?: string) => {
+    queryClient.invalidateQueries({
+      queryKey: groupKeys.detail(activeOrganization.id, groupId),
+    });
+  };
+
+  return { invalidateAll, invalidateDetail, invalidateList };
+}

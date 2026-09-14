@@ -1,12 +1,17 @@
+import { iamContainer } from "@/integrations/dependencies/iam.container";
 import { useAuth } from "@fludge/client/providers/auth.provider";
+import {
+  OrganizationProvider,
+  useOrganization,
+} from "@fludge/client/providers/organization.provider";
 import { Stack } from "expo-router";
 import { useThemeColor } from "heroui-native";
 
-export default function PrivateLayout() {
-  const { session } = useAuth();
+function StackOptions() {
+  const { activeOrganization } = useOrganization();
   const backgroundColor = useThemeColor("background");
 
-  const hasActiveOrganization = session.data?.activeOrganizationId !== null;
+  const hasActiveOrganization = activeOrganization !== null;
 
   return (
     <Stack
@@ -25,5 +30,15 @@ export default function PrivateLayout() {
       </Stack.Protected>
       <Stack.Screen name="organization" />
     </Stack>
+  );
+}
+
+export default function PrivateLayout() {
+  return (
+    <OrganizationProvider
+      organizationRepository={iamContainer.repositories.organizationRepository}
+    >
+      <StackOptions />
+    </OrganizationProvider>
   );
 }

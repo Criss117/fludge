@@ -9,7 +9,7 @@ import { Button } from "heroui-native/button";
 import { Typography } from "heroui-native/text";
 import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 import { useTranslation } from "react-i18next";
-import { useFindAllOrganizations } from "@fludge/client/application/iam/queries/use-find-organization";
+import { useOrganization } from "@fludge/client/providers/organization.provider";
 
 const ITEM_SEPARATOR_HEIGHT = 16;
 
@@ -17,26 +17,27 @@ export function SelectOrganizationScreen() {
   const router = useRouter();
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
-  const { setActiveOrganization, session } = useAuth();
-  const { data } = useFindAllOrganizations();
+  const { session } = useAuth();
+  const { organizations, activeOrganization, switchOrganization } =
+    useOrganization();
 
   const userIsRoot = !!session.data?.user.isRoot;
 
   const allOrganizations = useMemo(() => {
-    if (!query) return data;
+    if (!query) return organizations.data;
 
-    return data.filter(
+    return organizations.data.filter(
       (d) =>
         d.name.toLowerCase().includes(query.toLowerCase()) ||
         d.taxId.toLowerCase().includes(query.toLowerCase()) ||
         d.legalName.toLowerCase().includes(query.toLowerCase())
     );
-  }, [data, query]);
+  }, [organizations.data, query]);
 
   const onChangeText = (text: string) => setQuery(text.trim());
 
   const onPress = (organizationId: string) => {
-    if (organizationId === session.data?.activeOrganizationId) {
+    if (organizationId === activeOrganization?.id) {
       router.replace({
         pathname: "/(private)/dashboard/(tabs)",
       });
@@ -44,22 +45,9 @@ export function SelectOrganizationScreen() {
       return;
     }
 
-    setActiveOrganization.mutate({ organizationId });
+    switchOrganization(organizationId);
+    router.replace({ pathname: "/(private)/dashboard/(tabs)" });
   };
-
-  useEffect(() => {
-    if (setActiveOrganization.isSuccess && session.data?.activeOrganizationId) {
-      router.replace({ pathname: "/(private)/dashboard/(tabs)" });
-    }
-
-    return () => {
-      setActiveOrganization.reset();
-    };
-  }, [
-    setActiveOrganization.isSuccess,
-    session.data?.activeOrganizationId,
-    router,
-  ]);
 
   const containerPaddingBottom = userIsRoot ? 8 : 32;
 
@@ -88,11 +76,7 @@ export function SelectOrganizationScreen() {
         }
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
-          <OrganizationCard
-            organization={item}
-            isPending={setActiveOrganization.isPending}
-            onPress={onPress}
-          />
+          <OrganizationCard organization={item} onPress={onPress} />
         )}
         getItemLayout={(_, index) => ({
           length: CARD_HEIGHT + DEFAULT_CARD_PADDING * 2,
@@ -103,13 +87,8 @@ export function SelectOrganizationScreen() {
 
       {userIsRoot && (
         <View className="gap-y-2 px-3">
-          <Link
-            href="/(private)/organization"
-            replace
-            asChild
-            disabled={setActiveOrganization.isPending}
-          >
-            <Button isDisabled={setActiveOrganization.isPending}>
+          <Link href="/(private)/organization" replace asChild>
+            <Button>
               <MaterialIcons
                 name="add-business"
                 size={20}
@@ -127,8 +106,4 @@ export function SelectOrganizationScreen() {
       )}
     </View>
   );
-}
-
-export function SelectOrganizationScreenSkeleton() {
-  return <></>;
 }

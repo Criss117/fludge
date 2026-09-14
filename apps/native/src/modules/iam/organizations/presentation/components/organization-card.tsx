@@ -5,22 +5,20 @@ import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
 import { View } from "react-native";
 import { Chip } from "heroui-native/chip";
-import type { OrganizationSummary } from "@fludge/client/application/iam/queries/use-find-organization";
 import { UserAvatar } from "@/modules/shared/components/user-avatar";
+import type { LocalOrganization } from "@fludge/sync/entities/iam.entities";
 
 interface Props {
   onPress: (organizationId: string) => void;
-  isPending: boolean;
-  organization: OrganizationSummary;
+  organization: LocalOrganization;
 }
 
 export const CARD_HEIGHT = 170;
 
-export function OrganizationCard({ organization, isPending, onPress }: Props) {
+export function OrganizationCard({ organization, onPress }: Props) {
   return (
     <PressableFeedback
       onPress={() => onPress(organization.id)}
-      isDisabled={isPending}
       className="rounded-3xl shadow"
     >
       <Card

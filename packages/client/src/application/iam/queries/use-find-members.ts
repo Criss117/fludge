@@ -1,98 +1,77 @@
-import { useMemo } from "react";
-import { useAuth } from "@fludge/client/providers/auth.provider";
-import { useOrpc } from "@fludge/client/providers/orpc.provider";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useFindActiveOrganization } from "./use-find-organization";
+import { useContainer } from "@fludge/client/providers/container.provider";
+import { useOrganization } from "@fludge/client/providers/organization.provider";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  type FindAllMembersFilters,
+  normalizeFilters,
+} from "../domain/member.repository";
 
-type ORPC = ReturnType<typeof useOrpc>;
-
-export function findAllMembersOptions(orpc: ORPC, organizationId: string) {
-  return {
-    ...orpc.member.queries.findAll.queryOptions(),
-    queryKey: orpc.member.queries.findAll.queryKey().concat([organizationId]),
-  };
-}
-
-export function useFindMembersQueryOptions() {
-  const orpc = useOrpc();
-  const { session } = useAuth();
-
-  const activeOrganizationId = session.data?.activeOrganizationId;
-
-  if (!activeOrganizationId) throw new Error("Active organization not found");
-
-  const findAllOptions = findAllMembersOptions(orpc, activeOrganizationId);
-
-  return { findAllOptions };
-}
-
-type MemberFilters = {
-  query?: string;
-  byGroup?: {
-    groupId: string;
-    type: "include" | "exclude";
-  };
+export const membersKeys = {
+  all: (orgId: string) => ["iam", "organizations", orgId, "members"] as const,
+  list: (orgId: string, filters?: FindAllMembersFilters) =>
+    [...membersKeys.all(orgId), "list", normalizeFilters(filters)] as const,
+  detail: (orgId: string, memberId?: string) => [
+    ...membersKeys.all(orgId),
+    "detail",
+    memberId,
+  ],
 };
 
-export function useFindAllMembers(filters?: MemberFilters) {
-  const { findAllOptions } = useFindMembersQueryOptions();
+export function useFindAllMembers(filters?: FindAllMembersFilters) {
+  const { iamContainer } = useContainer();
+  const { activeOrganization } = useOrganization();
 
-  const { data, ...rest } = useSuspenseQuery(findAllOptions);
-  const { data: activeOrganization } = useFindActiveOrganization();
+  if (!activeOrganization) throw new Error("Active organization not found");
 
-  const members = useMemo(() => {
-    const groupsByMember = new Map<string, string[]>();
-    for (const groupMember of activeOrganization.groupMembers) {
-      const groups = groupsByMember.get(groupMember.memberId) ?? [];
-      groups.push(groupMember.groupId);
-      groupsByMember.set(groupMember.memberId, groups);
-    }
-
-    const membersWithGroups = data.map((m) => ({
-      ...m,
-      groups: groupsByMember.get(m.id) ?? [],
-    }));
-
-    const query = filters?.query;
-    const byGroup = filters?.byGroup;
-
-    if (!query && !byGroup) return membersWithGroups;
-
-    const filterByquery = query
-      ? membersWithGroups.filter(
-          (d) =>
-            d.user.name.toLowerCase().includes(query.toLowerCase()) ||
-            d.user.email.toLowerCase().includes(query.toLowerCase()) ||
-            d.user.phone.toLowerCase().includes(query.toLowerCase()),
-        )
-      : membersWithGroups;
-
-    if (!byGroup) return filterByquery;
-
-    const filterByGroupId = byGroup
-      ? filterByquery.filter((d) => {
-          const include = d.groups.includes(byGroup.groupId);
-
-          return byGroup.type === "include" ? include : !include;
-        })
-      : filterByquery;
-
-    return filterByGroupId;
-  }, [data, activeOrganization.groupMembers, filters?.query, filters?.byGroup]);
-
-  return { data: members, ...rest };
+  return useSuspenseQuery({
+    queryKey: membersKeys.list(activeOrganization.id, filters),
+    queryFn: () =>
+      iamContainer.repositories.memberRepository.findAll(
+        activeOrganization.id,
+        filters,
+      ),
+  });
 }
 
-export function useFindMember(memberId: string) {
-  const { data: allMembers, ...rest } = useFindAllMembers();
+export function useFindMemberDetail(memberId: string) {
+  const { iamContainer } = useContainer();
+  const { activeOrganization } = useOrganization();
 
-  const member = allMembers.find((d) => d.id === memberId);
+  if (!activeOrganization) throw new Error("Active organization not found");
 
-  if (!member) throw new Error("Miembro no encontrado");
-
-  return { data: member, ...rest };
+  return useSuspenseQuery({
+    queryKey: membersKeys.detail(activeOrganization.id, memberId),
+    queryFn: () =>
+      iamContainer.repositories.memberRepository.findOneById(
+        activeOrganization.id,
+        memberId,
+      ),
+  });
 }
 
-export type MemberSummary = ReturnType<
-  typeof useFindAllMembers
->["data"][number];
+export function useInvalidateMembers() {
+  const { activeOrganization } = useOrganization();
+  const queryClient = useQueryClient();
+
+  if (!activeOrganization) throw new Error("Active organization not found");
+
+  const invalidateAll = () => {
+    queryClient.invalidateQueries({
+      queryKey: membersKeys.all(activeOrganization.id),
+    });
+  };
+
+  const invalidateList = () => {
+    queryClient.invalidateQueries({
+      queryKey: membersKeys.list(activeOrganization.id),
+    });
+  };
+
+  const invalidateDetail = (memberId?: string) => {
+    queryClient.invalidateQueries({
+      queryKey: membersKeys.detail(activeOrganization.id, memberId),
+    });
+  };
+
+  return { invalidateAll, invalidateDetail, invalidateList };
+}

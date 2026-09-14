@@ -1,4 +1,3 @@
-import { useFindGroup } from "@fludge/client/application/iam/queries/use-find-groups";
 import { useUpdateGroup } from "@fludge/client/application/iam/mutations/use-group.mutations";
 import { useKeyboardGradualHeight } from "@/modules/shared/hooks/use-keyboard-gradual-height";
 import { MaterialIcons } from "@/modules/shared/components/icons";
@@ -12,13 +11,13 @@ import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { Card } from "heroui-native/card";
 import { Button } from "heroui-native/button";
+import { GroupDetail } from "@fludge/client/application/iam/domain/group.repository";
 
 const PADDING_BOTTOM = 20;
 
-export function UpdateGroupScreen({ groupid }: { groupid: string }) {
+export function UpdateGroupScreen({ group }: { group: GroupDetail }) {
   const { t } = useTranslation();
   const { height } = useKeyboardGradualHeight(PADDING_BOTTOM);
-  const { data: group } = useFindGroup(groupid);
   const mutation = useUpdateGroup();
   const mutationToast = useMutationToast("update-group-toast");
   const router = useRouter();
@@ -128,4 +127,8 @@ export function UpdateGroupScreen({ groupid }: { groupid: string }) {
       </View>
     </View>
   );
+}
+
+export function UpdateGroupScreenSkeleton() {
+  return null;
 }

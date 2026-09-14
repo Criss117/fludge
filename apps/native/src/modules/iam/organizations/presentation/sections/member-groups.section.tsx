@@ -5,32 +5,24 @@ import { useState } from "react";
 import { Dialog } from "heroui-native/dialog";
 import { Button } from "heroui-native/button";
 import { useRemoveGroupsFromMember } from "@fludge/client/application/iam/mutations/use-member.mutations";
-import {
-  useFindAllGroups,
-  type GroupSummary,
-} from "@fludge/client/application/iam/queries/use-find-groups";
+
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { useTranslation } from "react-i18next";
+import type { MemberDetail } from "@fludge/client/application/iam/domain/member.repository";
+import type { GroupSummary } from "@fludge/client/application/iam/domain/group.repository";
 
 interface Props {
-  memberId: string;
+  member: MemberDetail;
 }
 
-export function MemberGroupsSection({ memberId }: Props) {
+export function MemberGroupsSection({ member }: Props) {
   const removeGroupsFromMember = useRemoveGroupsFromMember();
   const { t } = useTranslation();
   const [groupToRemove, setGroupToRemove] = useState<GroupSummary | null>(null);
   const [query, setQuery] = useState("");
-  const { data: groups } = useFindAllGroups({
-    query,
-    byMember: {
-      memberId,
-      type: "include",
-    },
-  });
 
   const onPressRemoveGroup = (groupId: string, close: () => void) => {
-    const g = groups.find((d) => d.id === groupId);
+    const g = member.groups.find((d) => d.id === groupId);
 
     if (!g) return;
 
@@ -43,7 +35,7 @@ export function MemberGroupsSection({ memberId }: Props) {
 
     removeGroupsFromMember.mutate(
       {
-        memberId: memberId,
+        memberId: member.id,
         groupIds: [groupToRemove.id],
       },
       {
@@ -70,7 +62,7 @@ export function MemberGroupsSection({ memberId }: Props) {
         placeholder="helpers.placeholder.search_groups"
       />
 
-      {groups.length === 0 && (
+      {member.groups.length === 0 && (
         <View className="flex-1 items-center justify-center">
           <Typography.Paragraph color="muted">
             {t("helpers.no_groups")}
@@ -78,7 +70,7 @@ export function MemberGroupsSection({ memberId }: Props) {
         </View>
       )}
 
-      {groups.map((g) => (
+      {member.groups.map((g) => (
         <GroupCardBase
           key={g.id}
           group={g}

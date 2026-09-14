@@ -15,6 +15,8 @@ export const expoDb = openDatabaseSync(DATABASE_NAME, {
 
 export const databaseService = drizzle(expoDb);
 
+export type DatabaseService = typeof databaseService;
+
 export function DatabaseProvider({ children }: { children: React.ReactNode }) {
   useDrizzleStudio(expoDb);
 

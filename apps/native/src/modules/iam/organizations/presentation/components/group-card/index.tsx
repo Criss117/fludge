@@ -9,12 +9,12 @@ import { StatusChip } from "@/modules/shared/components/status-chip";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { useRouter } from "expo-router";
 import { GroupsOptions } from "./options";
-import type { GroupSummary } from "@fludge/client/application/iam/queries/use-find-groups";
 
 import { Checkbox, cn } from "heroui-native";
 import { useTranslation } from "react-i18next";
 import type { ActionFor, Resource } from "@fludge/utils/permissions/data";
 import type { TranslationKey } from "@fludge/i18n/index";
+import type { GroupSummary } from "@fludge/client/application/iam/domain/group.repository";
 
 interface Props {
   group: GroupSummary;
@@ -130,12 +130,6 @@ export function GroupCardBase({ group, asMemberGroup, hideOptions }: Props) {
         <View>
           <Typography color="muted" type="body-sm">
             Creado el: {group.createdAt.toLocaleDateString()}
-          </Typography>
-        </View>
-        <View className="flex-row items-center gap-x-1">
-          <MaterialIcons name="people" size={20} className="text-muted" />
-          <Typography color="muted" type="body-sm">
-            {group.members.length}
           </Typography>
         </View>
       </Card.Footer>

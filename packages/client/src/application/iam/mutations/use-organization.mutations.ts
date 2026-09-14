@@ -1,52 +1,45 @@
-import { useAuth } from "@fludge/client/providers/auth.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useContainer } from "@fludge/client/providers/container.provider";
 import {
-  findActiveOrganizationOptions,
-  findAllOrganizationsOptions,
-  useFindActiveOrganizationQueryOptions,
-} from "../queries/use-find-organization";
+  useInvalidateOrganizations,
+  useOrganization,
+} from "@fludge/client/providers/organization.provider";
 
 export function useRegisterOrganization() {
-  const queryClient = useQueryClient();
   const orpc = useOrpc();
-  const { session, setActiveOrganization } = useAuth();
+  const { iamContainer } = useContainer();
+  const invalidateOrganizations = useInvalidateOrganizations();
+  const { switchOrganization } = useOrganization();
 
   return useMutation(
     orpc.organization.commands.register.mutationOptions({
       onSuccess: async (organization) => {
-        await setActiveOrganization.mutateAsync({
-          organizationId: organization.id,
-        });
+        switchOrganization(organization.id);
 
-        const { data: sessionData } = await session.refetch();
-
-        queryClient.invalidateQueries(
-          findAllOrganizationsOptions(orpc, sessionData?.user.id!),
-        );
-
-        queryClient.setQueryData(
-          findActiveOrganizationOptions(
-            orpc,
-            sessionData?.user.id!,
-            organization.id,
-          ).queryKey,
+        await iamContainer.repositories.organizationRepository.save(
           organization,
         );
+
+        invalidateOrganizations.invalidateAll();
       },
     }),
   );
 }
 
 export function useUpdateOrganization() {
-  const findActiveOptions = useFindActiveOrganizationQueryOptions();
-  const queryClient = useQueryClient();
+  const invalidateOrganizations = useInvalidateOrganizations();
+  const { iamContainer } = useContainer();
   const orpc = useOrpc();
 
   return useMutation(
     orpc.organization.commands.update.mutationOptions({
       onSuccess: async (organization) => {
-        queryClient.setQueryData(findActiveOptions.queryKey, organization);
+        await iamContainer.repositories.organizationRepository.save(
+          organization,
+        );
+
+        invalidateOrganizations.invalidateAll();
       },
     }),
   );

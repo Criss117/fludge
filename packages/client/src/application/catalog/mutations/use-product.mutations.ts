@@ -1,8 +1,9 @@
 import { useProductsCollection } from "@fludge/client/application/catalog/collections/products.collection";
-import { getI18nKey } from "@fludge/api/modules/shared/i18n/utils";
+
 import { useMutation } from "@tanstack/react-query";
 import type { ProductDetail } from "@fludge/client/application/catalog/queries/use-find-products";
 import type { ProductFormSchema } from "@fludge/client/application/catalog/form/product-form";
+import { getI18nKey } from "@fludge/utils/validators/shared";
 
 function generateNewPresentation(
   activeOrganizationId: string,
@@ -93,7 +94,10 @@ export function useUpdateProductMutation() {
 
       const newPresentations: ProductDetail["presentations"] = [];
       const existingPresentations = new Map(
-        exisiting.presentations.map((presentation) => [presentation.id, presentation]),
+        exisiting.presentations.map((presentation) => [
+          presentation.id,
+          presentation,
+        ]),
       );
 
       for (const pres of input.presentations) {

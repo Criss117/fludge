@@ -3,7 +3,6 @@ import { UserAvatar } from "@/modules/shared/components/user-avatar";
 import { useAppTheme } from "@/modules/shared/context/app-theme-context";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { Link } from "expo-router";
-import { Avatar } from "heroui-native/avatar";
 import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import { ControlField } from "heroui-native/control-field";

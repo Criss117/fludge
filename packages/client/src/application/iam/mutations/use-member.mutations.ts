@@ -1,47 +1,66 @@
+import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useFindActiveOrganizationQueryOptions } from "../queries/use-find-organization";
+import { useMutation } from "@tanstack/react-query";
+import { useInvalidateMembers } from "../queries/use-find-members";
+import { useInvalidateGroups } from "../queries/use-find-groups";
 
 export function useRegisterMember() {
-  const findActiveOptions = useFindActiveOrganizationQueryOptions();
-  const queryClient = useQueryClient();
   const orpc = useOrpc();
+  const { iamContainer } = useContainer();
+  const invalidateMembers = useInvalidateMembers();
 
   return useMutation(
     orpc.auth.commands.signUpMember.mutationOptions({
       onSuccess: async (organization) => {
-        queryClient.setQueryData(findActiveOptions.queryKey, organization);
-        await queryClient.invalidateQueries(
-          orpc.member.queries.findAll.queryOptions(),
+        await iamContainer.repositories.organizationRepository.save(
+          organization,
         );
+
+        invalidateMembers.invalidateList();
       },
     }),
   );
 }
 
 export function useAssignGroupsToMember() {
-  const findActiveOptions = useFindActiveOrganizationQueryOptions();
-  const queryClient = useQueryClient();
   const orpc = useOrpc();
+  const { iamContainer } = useContainer();
+  const invalidateMembers = useInvalidateMembers();
+  const invalidateGroups = useInvalidateGroups();
 
   return useMutation(
     orpc.member.commands.assignGroups.mutationOptions({
-      onSuccess: async (organization) => {
-        queryClient.setQueryData(findActiveOptions.queryKey, organization);
+      onSuccess: async (organization, variables) => {
+        await iamContainer.repositories.organizationRepository.save(
+          organization,
+        );
+
+        invalidateMembers.invalidateDetail(variables.memberId);
+        variables.groupIds.forEach((groupId) =>
+          invalidateGroups.invalidateDetail(groupId),
+        );
       },
     }),
   );
 }
 
 export function useRemoveGroupsFromMember() {
-  const findActiveOptions = useFindActiveOrganizationQueryOptions();
-  const queryClient = useQueryClient();
   const orpc = useOrpc();
+  const { iamContainer } = useContainer();
+  const invalidateMembers = useInvalidateMembers();
+  const invalidateGroups = useInvalidateGroups();
 
   return useMutation(
     orpc.member.commands.removeGroups.mutationOptions({
-      onSuccess: async (organization) => {
-        queryClient.setQueryData(findActiveOptions.queryKey, organization);
+      onSuccess: async (organization, variables) => {
+        await iamContainer.repositories.organizationRepository.save(
+          organization,
+        );
+
+        invalidateMembers.invalidateDetail(variables.memberId);
+        variables.groupIds.forEach((groupId) =>
+          invalidateGroups.invalidateDetail(groupId),
+        );
       },
     }),
   );
