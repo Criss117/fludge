@@ -1,7 +1,7 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "26e328a0-ff35-4638-bcd8-5a532c52cde8",
+  "id": "90a412a1-5155-4bc6-b7ff-468ea386d59e",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -94,16 +94,6 @@
       "type": "text",
       "notNull": true,
       "autoincrement": false,
-      "default": "'active'",
-      "generated": null,
-      "name": "status",
-      "entityType": "columns",
-      "table": "category"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
       "default": null,
       "generated": null,
       "name": "created_by",
@@ -117,6 +107,16 @@
       "default": null,
       "generated": null,
       "name": "organization_id",
+      "entityType": "columns",
+      "table": "category"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'active'",
+      "generated": null,
+      "name": "status",
       "entityType": "columns",
       "table": "category"
     },
@@ -234,26 +234,6 @@
       "type": "text",
       "notNull": true,
       "autoincrement": false,
-      "default": "'active'",
-      "generated": null,
-      "name": "status",
-      "entityType": "columns",
-      "table": "product"
-    },
-    {
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "presentations",
-      "entityType": "columns",
-      "table": "product"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
       "default": null,
       "generated": null,
       "name": "created_by",
@@ -287,6 +267,26 @@
       "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
       "generated": null,
       "name": "updated_at",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'active'",
+      "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "product"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "presentations",
       "entityType": "columns",
       "table": "product"
     },
@@ -376,7 +376,7 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "status",
+      "name": "organization_id",
       "entityType": "columns",
       "table": "customer"
     },
@@ -386,7 +386,17 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "organization_id",
+      "name": "created_by",
+      "entityType": "columns",
+      "table": "customer"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'active'",
+      "generated": null,
+      "name": "status",
       "entityType": "columns",
       "table": "customer"
     },
@@ -407,16 +417,6 @@
       "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
       "generated": null,
       "name": "updated_at",
-      "entityType": "columns",
-      "table": "customer"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "created_by",
       "entityType": "columns",
       "table": "customer"
     },
@@ -474,9 +474,9 @@
       "type": "text",
       "notNull": true,
       "autoincrement": false,
-      "default": "'active'",
+      "default": null,
       "generated": null,
-      "name": "status",
+      "name": "organization_id",
       "entityType": "columns",
       "table": "group"
     },
@@ -494,9 +494,9 @@
       "type": "text",
       "notNull": true,
       "autoincrement": false,
-      "default": null,
+      "default": "'active'",
       "generated": null,
-      "name": "organization_id",
+      "name": "status",
       "entityType": "columns",
       "table": "group"
     },
@@ -546,7 +546,7 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "created_by",
+      "name": "organization_id",
       "entityType": "columns",
       "table": "group_member"
     },
@@ -556,7 +556,7 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "organization_id",
+      "name": "created_by",
       "entityType": "columns",
       "table": "group_member"
     },
@@ -614,6 +614,16 @@
       "type": "text",
       "notNull": true,
       "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "organization_id",
+      "entityType": "columns",
+      "table": "member"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
       "default": "'active'",
       "generated": null,
       "name": "status",
@@ -631,12 +641,12 @@
       "table": "member"
     },
     {
-      "type": "text",
+      "type": "integer",
       "notNull": true,
       "autoincrement": false,
-      "default": null,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
       "generated": null,
-      "name": "organization_id",
+      "name": "updated_at",
       "entityType": "columns",
       "table": "member"
     },
@@ -866,16 +876,6 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "status",
-      "entityType": "columns",
-      "table": "sale"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
       "name": "payment_type",
       "entityType": "columns",
       "table": "sale"
@@ -946,7 +946,27 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
+      "name": "status",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
       "name": "organization_id",
+      "entityType": "columns",
+      "table": "sale"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "created_by",
       "entityType": "columns",
       "table": "sale"
     },
@@ -967,16 +987,6 @@
       "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
       "generated": null,
       "name": "updated_at",
-      "entityType": "columns",
-      "table": "sale"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "created_by",
       "entityType": "columns",
       "table": "sale"
     },
@@ -1057,6 +1067,16 @@
       "default": null,
       "generated": null,
       "name": "organization_id",
+      "entityType": "columns",
+      "table": "sale_item"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'active'",
+      "generated": null,
+      "name": "status",
       "entityType": "columns",
       "table": "sale_item"
     },
@@ -1217,21 +1237,6 @@
     },
     {
       "columns": [
-        "created_by"
-      ],
-      "tableTo": "member",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "NO ACTION",
-      "nameExplicit": false,
-      "name": "fk_group_created_by_member_id_fk",
-      "entityType": "fks",
-      "table": "group"
-    },
-    {
-      "columns": [
         "organization_id"
       ],
       "tableTo": "organization",
@@ -1242,6 +1247,21 @@
       "onDelete": "CASCADE",
       "nameExplicit": false,
       "name": "fk_group_organization_id_organization_id_fk",
+      "entityType": "fks",
+      "table": "group"
+    },
+    {
+      "columns": [
+        "created_by"
+      ],
+      "tableTo": "member",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "name": "fk_group_created_by_member_id_fk",
       "entityType": "fks",
       "table": "group"
     },
@@ -1277,21 +1297,6 @@
     },
     {
       "columns": [
-        "created_by"
-      ],
-      "tableTo": "member",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "NO ACTION",
-      "nameExplicit": false,
-      "name": "fk_group_member_created_by_member_id_fk",
-      "entityType": "fks",
-      "table": "group_member"
-    },
-    {
-      "columns": [
         "organization_id"
       ],
       "tableTo": "organization",
@@ -1302,6 +1307,21 @@
       "onDelete": "CASCADE",
       "nameExplicit": false,
       "name": "fk_group_member_organization_id_organization_id_fk",
+      "entityType": "fks",
+      "table": "group_member"
+    },
+    {
+      "columns": [
+        "created_by"
+      ],
+      "tableTo": "member",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "name": "fk_group_member_created_by_member_id_fk",
       "entityType": "fks",
       "table": "group_member"
     },
@@ -1580,20 +1600,6 @@
     {
       "columns": [
         {
-          "value": "organization_id",
-          "isExpression": false
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "origin": "manual",
-      "name": "category_organization_idx",
-      "entityType": "indexes",
-      "table": "category"
-    },
-    {
-      "columns": [
-        {
           "value": "name",
           "isExpression": false
         }
@@ -1602,24 +1608,6 @@
       "where": null,
       "origin": "manual",
       "name": "category_name_idx",
-      "entityType": "indexes",
-      "table": "category"
-    },
-    {
-      "columns": [
-        {
-          "value": "organization_id",
-          "isExpression": false
-        },
-        {
-          "value": "name",
-          "isExpression": false
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "origin": "manual",
-      "name": "category_organization_name_idx",
       "entityType": "indexes",
       "table": "category"
     },
@@ -1788,20 +1776,6 @@
     {
       "columns": [
         {
-          "value": "organization_id",
-          "isExpression": false
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "origin": "manual",
-      "name": "group_organization_id_idx",
-      "entityType": "indexes",
-      "table": "group"
-    },
-    {
-      "columns": [
-        {
           "value": "slug",
           "isExpression": false
         }
@@ -1816,20 +1790,52 @@
     {
       "columns": [
         {
-          "value": "group_id",
-          "isExpression": false
-        },
-        {
-          "value": "member_id",
+          "value": "name",
           "isExpression": false
         }
       ],
       "isUnique": false,
       "where": null,
       "origin": "manual",
-      "name": "group_member_group_id_member_id_idx",
+      "name": "group_name_idx",
       "entityType": "indexes",
-      "table": "group_member"
+      "table": "group"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "slug",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "group_organization_id_slug_unique",
+      "entityType": "indexes",
+      "table": "group"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "name",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "group_organization_id_name_unique",
+      "entityType": "indexes",
+      "table": "group"
     },
     {
       "columns": [
@@ -1845,7 +1851,7 @@
       "isUnique": true,
       "where": null,
       "origin": "manual",
-      "name": "member_organizationId_userId_unique",
+      "name": "member_organization_user_unique",
       "entityType": "indexes",
       "table": "member"
     },
@@ -1854,28 +1860,32 @@
         {
           "value": "organization_id",
           "isExpression": false
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "origin": "manual",
-      "name": "member_organizationId_idx",
-      "entityType": "indexes",
-      "table": "member"
-    },
-    {
-      "columns": [
+        },
         {
-          "value": "user_id",
+          "value": "assigned_by",
           "isExpression": false
         }
       ],
       "isUnique": false,
       "where": null,
       "origin": "manual",
-      "name": "member_userId_idx",
+      "name": "member_organization_assignedBy_idx",
       "entityType": "indexes",
       "table": "member"
+    },
+    {
+      "columns": [
+        {
+          "value": "name",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "organization_name_unique",
+      "entityType": "indexes",
+      "table": "organization"
     },
     {
       "columns": [
@@ -1918,54 +1928,6 @@
       "name": "organization_tax_id_unique",
       "entityType": "indexes",
       "table": "organization"
-    },
-    {
-      "columns": [
-        {
-          "value": "phone",
-          "isExpression": false
-        }
-      ],
-      "isUnique": true,
-      "where": null,
-      "origin": "manual",
-      "name": "organization_phone_unique",
-      "entityType": "indexes",
-      "table": "organization"
-    },
-    {
-      "columns": [
-        {
-          "value": "name",
-          "isExpression": false
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "origin": "manual",
-      "name": "organization_name_idx",
-      "entityType": "indexes",
-      "table": "organization"
-    },
-    {
-      "columns": [
-        "organization_id",
-        "slug"
-      ],
-      "nameExplicit": true,
-      "name": "group_organization_id_slug_unique",
-      "entityType": "uniques",
-      "table": "group"
-    },
-    {
-      "columns": [
-        "organization_id",
-        "name"
-      ],
-      "nameExplicit": true,
-      "name": "group_organization_id_name_unique",
-      "entityType": "uniques",
-      "table": "group"
     },
     {
       "columns": [

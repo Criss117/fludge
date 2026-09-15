@@ -4,16 +4,16 @@ import {
   sqliteTable,
   text,
 } from "drizzle-orm/sqlite-core";
-import { createdByMetadata, organizationMetadata } from "./iam.schema";
+
 import { paymentTypeEnum, saleStatusEnum } from "@fludge/utils/enums/db-enums";
 import { customer } from "./customer.schema";
 import { auditMetadata } from "../shared";
+import { memberId, organizationId } from "../schema";
 
 export const sale = sqliteTable("sale", {
   id: text("id").primaryKey(),
   saleNumber: text("sale_number").notNull(),
 
-  status: text("status", { enum: saleStatusEnum }).notNull(),
   paymentType: text("payment_type", { enum: paymentTypeEnum }).notNull(),
 
   customerId: text("customer_id").references(() => customer.id, {
@@ -31,9 +31,11 @@ export const sale = sqliteTable("sale", {
   cancelReason: text("cancel_reason"),
   notes: text("notes"),
 
-  ...organizationMetadata,
-  ...auditMetadata,
-  ...createdByMetadata,
+  status: text("status", { enum: saleStatusEnum }).notNull(),
+  organizationId: organizationId(),
+  createdBy: memberId(),
+  createdAt: auditMetadata.createdAt,
+  updatedAt: auditMetadata.updatedAt,
 });
 
 export const saleItem = sqliteTable("sale_item", {
@@ -50,7 +52,7 @@ export const saleItem = sqliteTable("sale_item", {
   quantity: integer("quantity").notNull(),
   subtotal: integer("subtotal").notNull(),
 
-  ...organizationMetadata,
+  organizationId: organizationId(),
   ...auditMetadata,
 });
 
@@ -59,7 +61,7 @@ export const saleSequences = sqliteTable(
   {
     year: integer("year").notNull(),
     currentValue: integer("current_value").notNull().default(0),
-    ...organizationMetadata,
+    organizationId: organizationId(),
   },
   (table) => [primaryKey({ columns: [table.organizationId, table.year] })],
 );

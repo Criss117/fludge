@@ -12,15 +12,6 @@ export type FindAllGroupsFilters = {
   excludeIds?: string[];
 };
 
-export function normalizeFilters(filters?: FindAllGroupsFilters) {
-  return {
-    searchQuery: filters?.searchQuery?.trim() || undefined,
-    excludeIds: filters?.excludeIds?.length
-      ? [...filters.excludeIds].sort()
-      : undefined,
-  };
-}
-
 export interface GroupRepository {
   findAll(
     organizationId: string,

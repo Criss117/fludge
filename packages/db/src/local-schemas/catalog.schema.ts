@@ -1,13 +1,12 @@
 import {
   check,
-  foreignKey,
   index,
   integer,
   sqliteTable,
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
-import { member, memberId, organizationId } from "./iam.schema";
+import { memberId, organizationId } from "./iam.schema";
 import { sql } from "drizzle-orm";
 import { auditMetadata, productStatus } from "../shared";
 import { type ProductPresentationSelect } from "../schema";
@@ -35,10 +34,6 @@ export const category = sqliteTable(
       t.slug,
     ),
     index("category_name_idx").on(t.name),
-    foreignKey({
-      columns: [t.createdBy, t.organizationId],
-      foreignColumns: [member.id, member.organizationId],
-    }),
   ],
 );
 export const product = sqliteTable(

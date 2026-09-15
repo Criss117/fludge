@@ -31,6 +31,7 @@ export function useUpdateProductMutation() {
         await catalogContainer.repositories.productRepository.save(newProduct);
 
         invalidateProducts.invalidateList();
+        invalidateProducts.invalidateDetail(newProduct.id);
       },
     }),
   );

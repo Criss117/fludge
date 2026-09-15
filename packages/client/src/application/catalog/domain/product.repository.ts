@@ -9,12 +9,6 @@ export type FindAllProductsFilters = {
   searchQuery?: string;
 };
 
-export function normalizeFilters(filters?: FindAllProductsFilters) {
-  return {
-    searchQuery: filters?.searchQuery?.trim() || undefined,
-  };
-}
-
 export interface ProductRepository {
   findAll(
     organizationId: string,

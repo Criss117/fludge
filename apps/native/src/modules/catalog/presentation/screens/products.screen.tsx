@@ -1,4 +1,7 @@
-import { useFindProducts } from "@fludge/client/application/catalog/queries/use-find-products";
+import {
+  useFindProducts,
+  useInvalidateProducts,
+} from "@fludge/client/application/catalog/queries/use-find-products";
 import { FlatList, View } from "react-native";
 import {
   CARD_HEIGHT,
@@ -19,6 +22,7 @@ import {
   CameraDialogSkeleton,
 } from "@/modules/shared/components/camera-dialog";
 import { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
+import { Button } from "heroui-native/button";
 
 interface ListFooterProps {
   hasNextPage: boolean;
@@ -75,6 +79,7 @@ function ProductsScreenList({
 
 export function ProductsScreen() {
   const [query, setQuery] = useState("");
+  const { invalidateList } = useInvalidateProducts();
   const { data, fetchNextPage, hasNextPage } = useFindProducts({
     searchQuery: query,
   });
@@ -93,6 +98,13 @@ export function ProductsScreen() {
         </View>
         <CameraDialog setBarcode={setQuery} />
       </View>
+      <Button
+        onPress={() => {
+          invalidateList();
+        }}
+      >
+        Invalidar
+      </Button>
       <ProductsScreenList
         data={items}
         fetchNextPage={fetchNextPage}

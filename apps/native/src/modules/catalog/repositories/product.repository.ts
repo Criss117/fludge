@@ -56,7 +56,7 @@ export class SQLiteProductRepository implements ProductRepository {
           eq(product.id, productId)
         )
       )
-      .limit(0);
+      .limit(1);
 
     return rows.at(0) || null;
   }

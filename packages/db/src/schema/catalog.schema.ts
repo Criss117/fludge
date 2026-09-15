@@ -1,6 +1,5 @@
 import {
   check,
-  foreignKey,
   index,
   integer,
   sqliteTable,
@@ -9,7 +8,7 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 import { auditMetadata, productStatus } from "../shared";
-import { member, memberId, organizationId } from "./iam.schema";
+import { memberId, organizationId } from "./iam.schema";
 
 export const category = sqliteTable(
   "category",
@@ -34,10 +33,6 @@ export const category = sqliteTable(
       t.slug,
     ),
     index("category_name_idx").on(t.name),
-    foreignKey({
-      columns: [t.createdBy, t.organizationId],
-      foreignColumns: [member.id, member.organizationId],
-    }),
   ],
 );
 
@@ -97,11 +92,6 @@ export const product = sqliteTable(
       t.status,
     ),
 
-    foreignKey({
-      columns: [t.categoryId, t.organizationId],
-      foreignColumns: [category.id, category.organizationId],
-    }),
-
     check("product_minimum_stock_check", sql`${t.minStock} >= 0`),
 
     check(
@@ -156,7 +146,9 @@ export const productPresentation = sqliteTable(
 
     organizationId: organizationId(),
 
-    ...auditMetadata,
+    createdAt: auditMetadata.createdAt,
+    updatedAt: auditMetadata.updatedAt,
+    status: productStatus,
   },
   (t) => [
     uniqueIndex("presentation_product_name_unique").on(t.productId, t.name),

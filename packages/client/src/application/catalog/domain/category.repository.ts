@@ -7,12 +7,6 @@ export type FindAllCategoriesFilters = {
   searchQuery?: string;
 };
 
-export function normalizeFilters(filters?: FindAllCategoriesFilters) {
-  return {
-    searchQuery: filters?.searchQuery?.trim() || undefined,
-  };
-}
-
 export interface CategoryRepository {
   findAll(
     organizationId: string,

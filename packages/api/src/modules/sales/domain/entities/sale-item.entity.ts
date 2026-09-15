@@ -85,6 +85,7 @@ export class SaleItem {
       subtotal: this._subtotal,
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
+      status: "active",
     };
   }
 }

@@ -1,24 +1,29 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrganization } from "@fludge/client/providers/organization.provider";
 import { SearchBlob } from "@fludge/utils/search-blob";
-import {
-  useQueryClient,
-  useSuspenseInfiniteQuery,
-} from "@tanstack/react-query";
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
+import type { FindAllGroupsFilters } from "@fludge/client/application/iam/domain/group.repository";
+import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 
-interface Filters {
-  searchQuery?: string;
+function normalizeFilters(filters?: FindAllGroupsFilters) {
+  return {
+    searchQuery: filters?.searchQuery
+      ? SearchBlob.normalize(filters.searchQuery)
+      : undefined,
+  };
 }
 
-export const categoryKeys = {
-  all: (orgId: string) =>
-    ["catalog", "organizations", orgId, "categories"] as const,
-  list: (orgId: string, filters?: Filters) =>
-    [...categoryKeys.all(orgId), "list", filters] as const,
-};
+export const {
+  keys: categoryKeys,
+  useInvalidateQueries: useInvalidateCategories,
+} = keysGenerator({
+  module: "catalog",
+  resource: "categories",
+  normalizeFilters,
+});
 
-export function useFindCategories(filters?: Filters) {
+export function useFindCategories(filters?: FindAllGroupsFilters) {
   const { catalogContainer } = useContainer();
   const { activeOrganization } = useOrganization();
 
@@ -27,7 +32,7 @@ export function useFindCategories(filters?: Filters) {
   const normalizedQuery = SearchBlob.normalize(filters?.searchQuery ?? "");
 
   return useSuspenseInfiniteQuery({
-    queryKey: categoryKeys.list(activeOrganization.id, filters),
+    queryKey: categoryKeys.filteredList(activeOrganization.id, filters),
     initialPageParam: DEFAULT_CURSOR,
     queryFn: ({ pageParam }) =>
       catalogContainer.repositories.categoryRepository.findAll(
@@ -39,25 +44,4 @@ export function useFindCategories(filters?: Filters) {
       ),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
-}
-
-export function useInvalidateCategories() {
-  const { activeOrganization } = useOrganization();
-  const queryClient = useQueryClient();
-
-  if (!activeOrganization) throw new Error("Active organization not found");
-
-  const invalidateAll = () => {
-    queryClient.invalidateQueries({
-      queryKey: categoryKeys.all(activeOrganization.id),
-    });
-  };
-
-  const invalidateList = () => {
-    queryClient.invalidateQueries({
-      queryKey: categoryKeys.list(activeOrganization.id),
-    });
-  };
-
-  return { invalidateAll, invalidateList };
 }

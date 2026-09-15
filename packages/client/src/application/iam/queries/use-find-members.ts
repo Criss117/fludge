@@ -1,21 +1,24 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrganization } from "@fludge/client/providers/organization.provider";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import {
-  type FindAllMembersFilters,
-  normalizeFilters,
-} from "../domain/member.repository";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import type { FindAllMembersFilters } from "../domain/member.repository";
+import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 
-export const membersKeys = {
-  all: (orgId: string) => ["iam", "organizations", orgId, "members"] as const,
-  list: (orgId: string, filters?: FindAllMembersFilters) =>
-    [...membersKeys.all(orgId), "list", normalizeFilters(filters)] as const,
-  detail: (orgId: string, memberId?: string) => [
-    ...membersKeys.all(orgId),
-    "detail",
-    memberId,
-  ],
-};
+function normalizeFilters(filters?: FindAllMembersFilters) {
+  return {
+    searchQuery: filters?.searchQuery?.trim() || undefined,
+    excludeIds: filters?.excludeIds?.length
+      ? [...filters.excludeIds].sort()
+      : undefined,
+  };
+}
+
+export const { keys: membersKeys, useInvalidateQueries: useInvalidateMembers } =
+  keysGenerator({
+    module: "catalog",
+    resource: "categories",
+    normalizeFilters,
+  });
 
 export function useFindAllMembers(filters?: FindAllMembersFilters) {
   const { iamContainer } = useContainer();
@@ -24,7 +27,7 @@ export function useFindAllMembers(filters?: FindAllMembersFilters) {
   if (!activeOrganization) throw new Error("Active organization not found");
 
   return useSuspenseQuery({
-    queryKey: membersKeys.list(activeOrganization.id, filters),
+    queryKey: membersKeys.filteredList(activeOrganization.id, filters),
     queryFn: () =>
       iamContainer.repositories.memberRepository.findAll(
         activeOrganization.id,
@@ -47,31 +50,4 @@ export function useFindMemberDetail(memberId: string) {
         memberId,
       ),
   });
-}
-
-export function useInvalidateMembers() {
-  const { activeOrganization } = useOrganization();
-  const queryClient = useQueryClient();
-
-  if (!activeOrganization) throw new Error("Active organization not found");
-
-  const invalidateAll = () => {
-    queryClient.invalidateQueries({
-      queryKey: membersKeys.all(activeOrganization.id),
-    });
-  };
-
-  const invalidateList = () => {
-    queryClient.invalidateQueries({
-      queryKey: membersKeys.list(activeOrganization.id),
-    });
-  };
-
-  const invalidateDetail = (memberId?: string) => {
-    queryClient.invalidateQueries({
-      queryKey: membersKeys.detail(activeOrganization.id, memberId),
-    });
-  };
-
-  return { invalidateAll, invalidateDetail, invalidateList };
 }

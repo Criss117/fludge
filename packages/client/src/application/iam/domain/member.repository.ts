@@ -17,15 +17,6 @@ export type FindAllMembersFilters = {
   excludeIds?: string[];
 };
 
-export function normalizeFilters(filters?: FindAllMembersFilters) {
-  return {
-    searchQuery: filters?.searchQuery?.trim() || undefined,
-    excludeIds: filters?.excludeIds?.length
-      ? [...filters.excludeIds].sort()
-      : undefined,
-  };
-}
-
 export interface MemberRepository {
   findAll(
     organizationId: string,
