@@ -1,3 +1,4 @@
+import type { LocalClientIamRepository } from "@fludge/sync/repositories/iam/client-iam.repository";
 import type { GroupRepository } from "./domain/group.repository";
 import type { MemberRepository } from "./domain/member.repository";
 import type { OrganizationRepository } from "./domain/organization.repository";
@@ -6,6 +7,7 @@ type Deps = {
   organizationRepository: OrganizationRepository;
   memberRepository: MemberRepository;
   groupRepository: GroupRepository;
+  syncIamRepository: LocalClientIamRepository;
 };
 
 export function generateIamContainer(deps: Deps) {
@@ -14,6 +16,7 @@ export function generateIamContainer(deps: Deps) {
       organizationRepository: deps.organizationRepository,
       memberRepository: deps.memberRepository,
       groupRepository: deps.groupRepository,
+      syncIamRepository: deps.syncIamRepository,
     },
   };
 }

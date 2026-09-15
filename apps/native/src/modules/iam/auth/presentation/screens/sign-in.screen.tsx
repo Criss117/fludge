@@ -12,13 +12,13 @@ import { FieldError } from "heroui-native/field-error";
 import { useTranslation } from "react-i18next";
 import { useSignInForm } from "@fludge/client/application/iam/form/sign-in-form";
 import { AuthFormInputs } from "../components/auth-form-inputs";
-import { useInvalidateSync } from "@/integrations/db/sync";
+import { useInvalidateSync } from "@fludge/client/application/sync/use-invalidate-sync";
 
 export function SignInScreen() {
   const { t } = useTranslation();
   const { signInEmail } = useAuth();
   const [rootError, setRootError] = useState<string | null>(null);
-  const { invalidateIam } = useInvalidateSync();
+  const { invalidateSync } = useInvalidateSync();
 
   const form = useSignInForm({
     onSubmit: ({ value, resetForm }) => {
@@ -26,7 +26,7 @@ export function SignInScreen() {
       signInEmail.mutate(value, {
         onSuccess: () => {
           resetForm();
-          invalidateIam();
+          invalidateSync();
         },
         onError: (error) => {
           setRootError(error.message);
@@ -53,16 +53,12 @@ export function SignInScreen() {
           {rootError && (
             <FieldError isInvalid={!!rootError}>{rootError}</FieldError>
           )}
-          {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
-          <form.Field
-            name="email"
-            children={(field) => <AuthFormInputs.EmailInput field={field} />}
-          />
-          {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
-          <form.Field
-            name="password"
-            children={(field) => <AuthFormInputs.PasswordInput field={field} />}
-          />
+          <form.Field name="email">
+            {(field) => <AuthFormInputs.EmailInput field={field} />}
+          </form.Field>
+          <form.Field name="password">
+            {(field) => <AuthFormInputs.PasswordInput field={field} />}
+          </form.Field>
           <Button
             onPress={form.handleSubmit}
             isDisabled={signInEmail.isPending}

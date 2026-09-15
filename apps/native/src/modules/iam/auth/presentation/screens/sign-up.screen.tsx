@@ -1,4 +1,4 @@
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import { View } from "react-native";
 import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
@@ -14,7 +14,6 @@ import { AuthFormInputs } from "../components/auth-form-inputs";
 
 export function SignUpScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
   const { signUpEmail } = useAuth();
   const [rootError, setRootError] = useState<string | null>(null);
 
@@ -24,9 +23,6 @@ export function SignUpScreen() {
       signUpEmail.mutate(value, {
         onSuccess: () => {
           resetForm();
-          router.replace({
-            pathname: "/dashboard",
-          });
         },
         onError: (error) => {
           setRootError(error.message);
@@ -53,27 +49,18 @@ export function SignUpScreen() {
           {rootError && (
             <FieldError isInvalid={!!rootError}>{rootError}</FieldError>
           )}
-              {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
-              <form.Field
-            name="name"
-            children={(field) => <AuthFormInputs.NameInput field={field} />}
-          />
-
-              {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
-              <form.Field
-            name="phone"
-            children={(field) => <AuthFormInputs.PhoneInput field={field} />}
-          />
-              {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
-              <form.Field
-            name="email"
-            children={(field) => <AuthFormInputs.EmailInput field={field} />}
-          />
-              {/* react-doctor-disable-next-line no-children-prop -- TanStack Form render-prop API requires explicit children callbacks. */}
-              <form.Field
-            name="password"
-            children={(field) => <AuthFormInputs.PasswordInput field={field} />}
-          />
+          <form.Field name="name">
+            {(field) => <AuthFormInputs.NameInput field={field} />}
+          </form.Field>
+          <form.Field name="phone">
+            {(field) => <AuthFormInputs.PhoneInput field={field} />}
+          </form.Field>
+          <form.Field name="email">
+            {(field) => <AuthFormInputs.EmailInput field={field} />}
+          </form.Field>
+          <form.Field name="password">
+            {(field) => <AuthFormInputs.PasswordInput field={field} />}
+          </form.Field>
           <Button onPress={form.handleSubmit}>
             {t("screens.sign_up.button")}
           </Button>

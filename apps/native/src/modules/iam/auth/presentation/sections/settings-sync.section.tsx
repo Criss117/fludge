@@ -1,6 +1,6 @@
-import { useSyncIam } from "@/integrations/db/sync";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
+import { useSyncIam } from "@fludge/client/application/sync/use-sync-iam";
 import { useNetwork } from "@fludge/client/providers/network-status.provider";
 import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";

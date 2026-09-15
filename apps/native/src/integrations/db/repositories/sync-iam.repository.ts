@@ -5,11 +5,7 @@ import {
   LocalOrganization,
   LocalUser,
 } from "@fludge/sync/entities/iam.entities";
-import type {
-  LocalClientIamRepository as LCIR,
-  HttpClientIamRepository as HCIR,
-  IamLastSyncedAt,
-} from "@fludge/sync/repositories/iam/client-iam.repository";
+import type { LocalClientIamRepository as LCIR } from "@fludge/sync/repositories/iam/client-iam.repository";
 import { DatabaseService } from "..";
 import {
   group,
@@ -20,7 +16,6 @@ import {
 } from "@fludge/db/local-schemas/iam.schema";
 import { desc } from "drizzle-orm";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
-import { OrpcQueryClient } from "@fludge/client/providers/orpc.provider";
 
 export class LocalClientIamRepository implements LCIR {
   constructor(private readonly db: DatabaseService) {}
@@ -171,21 +166,5 @@ export class LocalClientIamRepository implements LCIR {
           .run();
       }
     });
-  }
-}
-
-export class HttpClientIamRepository implements HCIR {
-  constructor(private readonly orpcClient: OrpcQueryClient) {}
-
-  public async findLastSyncedAt(lastSyncedAt: IamLastSyncedAt): Promise<{
-    users: LocalUser[];
-    groups: LocalGroup[];
-    members: LocalMember[];
-    organizations: LocalOrganization[];
-    groupMembers: LocalGroupMember[];
-  }> {
-    const data = await this.orpcClient.sync.iam.find.call(lastSyncedAt);
-
-    return data;
   }
 }
