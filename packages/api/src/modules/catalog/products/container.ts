@@ -46,7 +46,6 @@ const updateProductCommand = new UpdateProductCommand(
   categoryContainer.services.ensureCategoryExistsService,
   productUniquenessValidator,
   productRepository,
-  productPresentationRepository,
 );
 
 const deleteProductCommand = new DeleteProductCommand(productRepository);

@@ -3,9 +3,7 @@ import type { Organization } from "@fludge/api/modules/iam/organization/domain/e
 import type { EnsureCategoryExistsService } from "@fludge/api/modules/catalog/categories/application/services/ensure-category-exists.service";
 import type { ProductUniquenessValidator } from "@fludge/api/modules/catalog/products/application/services/product-uniqueness-validator.service";
 import type { ProductRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product.repository";
-import type { ProductPresentationRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product-presentation.repository";
 import { Slug } from "@fludge/utils/slugify";
-import { tryCatch } from "@fludge/utils/trycatch";
 import { updateProductValidator } from "@fludge/utils/validators/product.validators";
 import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 import { ProductNotFoundException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-not-found.exception";
@@ -24,7 +22,6 @@ export class UpdateProductCommand {
     private readonly ensureCategoryExistsService: EnsureCategoryExistsService,
     private readonly productUniquenessValidator: ProductUniquenessValidator,
     private readonly productRepository: ProductRepository,
-    private readonly productPresentationRepository: ProductPresentationRepository,
   ) {}
 
   private async findProduct(activeOrganizationId: string, productId: string) {
@@ -93,39 +90,6 @@ export class UpdateProductCommand {
     }
   }
 
-  private async checkExternalBarcodes(
-    existing: Product,
-    activeOrganization: Organization,
-    barcodes: string[],
-  ) {
-    if (barcodes.length === 0) return;
-
-    console.log("barcodes", barcodes);
-    console.log(
-      "existing.presentations",
-      existing.presentations.map((p) => p.id.toString()),
-    );
-
-    const [barcodeIsTaken, errValidate] =
-      await this.productUniquenessValidator.validateUniqueBarcode(
-        activeOrganization.id.toString(),
-        barcodes,
-        existing.presentations.map((p) => p.id.toString()),
-      );
-
-    if (errValidate)
-      throw new InternalServerError(
-        errValidate,
-        "api_errors.catalog.products_presentations.isr_on_find",
-      );
-
-    if (barcodeIsTaken.barcodesTaken) {
-      throw new ProductPresentationAlreadyExistsException(
-        "api_errors.catalog.products_presentations.barcodes_taken",
-      );
-    }
-  }
-
   public async execute(
     loggedUserId: string,
     activeOrganization: Organization,
@@ -151,7 +115,7 @@ export class UpdateProductCommand {
       categoryId: cmd.categoryId,
     });
 
-    const presentations = existing.savePresentations(
+    existing.savePresentations(
       cmd.presentations.map((p) => ({
         conversionFactor: p.conversionFactor,
         name: p.name,
@@ -166,45 +130,28 @@ export class UpdateProductCommand {
       })),
     );
 
-    const barcodes = presentations.toSave
-      .map((item) => item.barcode)
-      .filter((b) => b !== undefined && b !== null);
+    const barcodes = existing.barcodes;
 
-    await this.checkExternalBarcodes(existing, activeOrganization, barcodes);
+    const [barcodeIsTaken, errValidate] =
+      await this.productUniquenessValidator.validateUniqueBarcode(
+        activeOrganization.id.toString(),
+        barcodes,
+        existing.presentations.map((p) => p.id.toString()),
+      );
 
-    const [, errInsert] = await tryCatch(
-      this.productRepository.transaction(async (tx) => {
-        const [, errSaveProduct] = await this.productRepository.saveOnlyProduct(
-          existing,
-          { tx },
-        );
+    if (errValidate)
+      throw new InternalServerError(
+        errValidate,
+        "api_errors.catalog.products_presentations.isr_on_find",
+      );
 
-        if (errSaveProduct) throw errSaveProduct;
+    if (barcodeIsTaken.barcodesTaken) {
+      throw new ProductPresentationAlreadyExistsException(
+        "api_errors.catalog.products_presentations.barcodes_taken",
+      );
+    }
 
-        if (presentations.toSave.length > 0) {
-          const [, errSavePresentations] =
-            await this.productPresentationRepository.save(
-              existing.id.toString(),
-              presentations.toSave,
-              { tx },
-            );
-
-          if (errSavePresentations) throw errSavePresentations;
-        }
-
-        if (presentations.toDelete.length > 0) {
-          const [, errSavePresentations] =
-            await this.productPresentationRepository.deleteMany(
-              activeOrganization.id.toString(),
-              existing.id.toString(),
-              presentations.toDelete,
-              { tx },
-            );
-
-          if (errSavePresentations) throw errSavePresentations;
-        }
-      }),
-    );
+    const [, errInsert] = await this.productRepository.save(existing);
 
     if (errInsert)
       throw new InternalServerError(

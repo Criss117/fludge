@@ -36,6 +36,8 @@ export function UpdateProductScreen({ product }: Props) {
   const form = useProductForm(
     {
       onSubmit: ({ value }) => {
+        console.log({ value });
+
         mutationToast.showIsPendingToast(
           "mutations.products.update.is_pending"
         );

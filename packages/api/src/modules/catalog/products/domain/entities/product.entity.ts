@@ -174,9 +174,6 @@ export class Product {
   public savePresentations(
     data: Array<UpdateProductPresentation & { id: string }>,
   ) {
-    const newPresentations: ProductPresentation[] = [];
-    const oldIds = this._presentations.items.map((item) => item.id.toString());
-
     for (const item of data) {
       const existing = this._presentations.get(item.id);
 
@@ -193,7 +190,7 @@ export class Product {
           barcode: item.barcode,
         });
 
-        newPresentations.push(newItem);
+        this._presentations.add(newItem);
         continue;
       }
 
@@ -208,20 +205,12 @@ export class Product {
         barcode: item.barcode,
       });
 
-      newPresentations.push(existing);
+      this._presentations.update(existing);
     }
 
-    this._presentations =
-      ProductPresentationCollection.create(newPresentations);
     this._presentations.checkBarcodes();
     this._searchBlob = this.buildSearchBlob();
     this.touch();
-
-    const newIds = this._presentations.items.map((item) => item.id.toString());
-
-    const toDelete = oldIds.filter((id) => !newIds.includes(id));
-
-    return { toSave: newPresentations, toDelete };
   }
 
   public deletePresentations(ids: string[]) {

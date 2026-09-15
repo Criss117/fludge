@@ -1,76 +1,102 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
+import {
+  useSyncCatalog,
+  type SyncData,
+} from "@fludge/client/application/sync/use-sync-catalog";
 import { useSyncIam } from "@fludge/client/application/sync/use-sync-iam";
 import { useNetwork } from "@fludge/client/providers/network-status.provider";
+import { TranslationKey } from "@fludge/i18n/index";
+import type { UseSuspenseQueryResult } from "@tanstack/react-query";
 import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 
-export function SettingsSyncSection() {
+interface Props {
+  syncHook: UseSuspenseQueryResult<SyncData, Error>;
+  module: "iam" | "catalog";
+  icon: "security" | "view-list";
+}
+
+function SyncItem({ module, syncHook, icon }: Props) {
   const { t } = useTranslation();
+
   const { isInternetReachable } = useNetwork();
-  const iamSync = useSyncIam();
-  const mutationToast = useMutationToast("sync-toast");
 
-  const isDisabled = iamSync.isRefetching || !isInternetReachable;
+  const mutationToast = useMutationToast(`sync-toast-${module}`);
 
-  function syncIam() {
+  const isDisabled = syncHook.isRefetching || !isInternetReachable;
+
+  const translationBaseKey = `screens.settings.sync.${module}` as const;
+
+  function sync() {
     if (!isInternetReachable) {
       mutationToast.showErrorToast(
-        "screens.settings.sync.iam.on_error.title",
+        `${translationBaseKey}.on_error.title` as TranslationKey,
         "helpers.no_conection"
       );
       return;
     }
 
-    if (iamSync.isRefetching) return;
+    if (syncHook.isRefetching) return;
 
-    mutationToast.showIsPendingToast("screens.settings.sync.iam.refetching");
-    iamSync
+    mutationToast.showIsPendingToast(
+      `${translationBaseKey}.refetching` as TranslationKey
+    );
+    syncHook
       .refetch()
       .then(() => {
         mutationToast.showSuccessToast(
-          "screens.settings.sync.iam.on_success.title",
-          "screens.settings.sync.iam.on_success.description"
+          `${translationBaseKey}.on_success.title` as TranslationKey,
+          `${translationBaseKey}.on_success.description` as TranslationKey
         );
       })
       .catch(() => {
         mutationToast.showErrorToast(
-          "screens.settings.sync.iam.on_error.title",
-          "screens.settings.sync.iam.on_error.description"
+          `${translationBaseKey}.on_error.title` as TranslationKey,
+          `${translationBaseKey}.on_error.description` as TranslationKey
         );
       });
   }
+
+  return (
+    <View className="flex-row justify-between">
+      <View>
+        <View className="flex-row items-center gap-x-2">
+          <MaterialIcons name={icon} size={20} className="text-foreground" />
+          <Typography>
+            {t(`${translationBaseKey}.title` as TranslationKey)}
+          </Typography>
+        </View>
+        {syncHook.data.syncedAt !== null && (
+          <Typography type="body-sm" color="muted">
+            {t(`${translationBaseKey}.last_synced_at` as TranslationKey)}:{" "}
+            {syncHook.data.syncedAt.toLocaleDateString()}
+          </Typography>
+        )}
+      </View>
+      <Button isIconOnly isDisabled={isDisabled} onPress={sync}>
+        <MaterialIcons name="sync" size={20} className="text-eclipse" />
+      </Button>
+    </View>
+  );
+}
+
+export function SettingsSyncSection() {
+  const { t } = useTranslation();
+  const iamSync = useSyncIam();
+  const catalogSync = useSyncCatalog();
 
   return (
     <Card>
       <Card.Header>
         <Card.Title>{t("screens.settings.sync.title")}</Card.Title>
       </Card.Header>
-      <Card.Body>
-        <View className="flex-row justify-between">
-          <View>
-            <View className="flex-row items-center gap-x-2">
-              <MaterialIcons
-                name="security"
-                size={20}
-                className="text-foreground"
-              />
-              <Typography>{t("screens.settings.sync.iam.title")}</Typography>
-            </View>
-            {iamSync.data.syncedAt !== null && (
-              <Typography type="body-sm" color="muted">
-                {t("screens.settings.sync.iam.last_synced_at")}:{" "}
-                {iamSync.data.syncedAt.toLocaleDateString()}
-              </Typography>
-            )}
-          </View>
-          <Button isIconOnly isDisabled={isDisabled} onPress={syncIam}>
-            <MaterialIcons name="sync" size={20} className="text-eclipse" />
-          </Button>
-        </View>
+      <Card.Body className="gap-y-2">
+        <SyncItem module="iam" syncHook={iamSync} icon="security" />
+        <SyncItem module="catalog" syncHook={catalogSync} icon="view-list" />
       </Card.Body>
     </Card>
   );

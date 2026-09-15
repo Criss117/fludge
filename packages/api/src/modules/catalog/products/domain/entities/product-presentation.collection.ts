@@ -3,10 +3,7 @@ import { DuplicatedBarcodeException } from "../exceptions/duplicated-barcode.exc
 import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-bresentation-no-has-barcode.exception";
 import { ProductPresentationAlreadyExistsException } from "../exceptions/product-presentation-already-exists.exception";
 import { ProductPresentationNotFoundException } from "../exceptions/product-presentation-not-found.exception";
-import type {
-  ProductPresentation,
-  UpdateProductPresentation,
-} from "./product-presentation.entity";
+import type { ProductPresentation } from "./product-presentation.entity";
 
 export class ProductPresentationCollection {
   private constructor(
@@ -49,14 +46,12 @@ export class ProductPresentationCollection {
     return item;
   }
 
-  public update(values: UpdateProductPresentation & { id: string }) {
-    const item = this._items.get(values.id);
+  public update(updated: ProductPresentation) {
+    const item = this._items.get(updated.id.toString());
 
     if (!item) throw new ProductPresentationNotFoundException();
 
-    item.update(values);
-
-    this._items.set(values.id, item);
+    this._items.set(updated.id.toString(), updated);
 
     return item;
   }

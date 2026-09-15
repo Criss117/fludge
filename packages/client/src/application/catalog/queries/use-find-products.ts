@@ -22,7 +22,7 @@ export const {
   useInvalidateQueries: useInvalidateProducts,
 } = keysGenerator({
   module: "catalog",
-  resource: "categories",
+  resource: "products",
   normalizeFilters,
 });
 

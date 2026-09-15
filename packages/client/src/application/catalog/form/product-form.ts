@@ -6,11 +6,7 @@ import { getI18nKey } from "@fludge/utils/validators/shared";
 import { formOptions, useForm } from "@tanstack/react-form";
 import { z } from "zod";
 
-const productPresentationFormSchema = updateProductPresentationValidator.extend(
-  {
-    isDeleted: z.boolean().optional(),
-  },
-);
+const productPresentationFormSchema = updateProductPresentationValidator;
 
 const productFormSchema = updateProductValidator
   .omit({
@@ -21,10 +17,6 @@ const productFormSchema = updateProductValidator
     presentations: z.array(productPresentationFormSchema).min(1, {
       message: getI18nKey("validators.array.at_least_one"),
     }),
-  })
-  .refine((data) => data.presentations.filter((p) => !p.isDeleted).length > 0, {
-    path: ["presentations"],
-    message: getI18nKey("validators.array.presentations.at_least_one"),
   });
 
 export type ProductPresentationFormSchema = z.input<
@@ -81,7 +73,6 @@ const defaultProductPresentationValues: ProductPresentationFormSchema = {
   pricePurchase: 0,
   priceWholesale: 0,
   status: "active",
-  isDeleted: false,
 };
 
 export function productPresentationFormOptions(

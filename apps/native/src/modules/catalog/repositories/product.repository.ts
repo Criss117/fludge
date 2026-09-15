@@ -63,12 +63,12 @@ export class SQLiteProductRepository implements ProductRepository {
 
   public async save(
     productValues: LocalProduct | LocalProduct[]
-  ): Promise<void> {
+  ): Promise<LocalProduct[]> {
     const prductsArray = Array.isArray(productValues)
       ? productValues
       : [productValues];
 
-    await this.db
+    return this.db
       .insert(product)
       .values(prductsArray)
       .onConflictDoUpdate({
@@ -86,7 +86,8 @@ export class SQLiteProductRepository implements ProductRepository {
           "categoryId",
           "presentations",
         ]),
-      });
+      })
+      .returning();
   }
 
   public async delete(

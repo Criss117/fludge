@@ -21,7 +21,7 @@ export interface ProductRepository {
     productId: string,
   ): Promise<ProductDetail | null>;
 
-  save(product: LocalProduct | LocalProduct[]): Promise<void>;
+  save(product: LocalProduct | LocalProduct[]): Promise<LocalProduct[]>;
 
   delete(organizationId: string, productId: string | string[]): Promise<void>;
 }

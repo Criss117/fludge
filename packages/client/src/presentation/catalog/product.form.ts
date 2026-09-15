@@ -56,13 +56,13 @@ function Presentations({ children }: PresentationsChildrenProps) {
 
   function markAsDeleted(id: string) {
     field.setValue((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, isDeleted: true } : p)),
+      prev.map((p) => (p.id === id ? { ...p, status: "inactive" } : p)),
     );
   }
 
   function restore(id: string) {
     field.setValue((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, isDeleted: false } : p)),
+      prev.map((p) => (p.id === id ? { ...p, status: "active" } : p)),
     );
   }
 

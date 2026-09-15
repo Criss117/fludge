@@ -39,6 +39,19 @@ export const screens = {
           description: "Se ha producido un error al sincronizar IAM",
         },
       },
+      catalog: {
+        title: "Catálogo",
+        last_synced_at: "Última sincronización",
+        refetching: "Sincronizando Catálogo...",
+        on_success: {
+          title: "Sincronización realizada con éxito",
+          description: "Se han sincronizado todos los datos de Catálogo",
+        },
+        on_error: {
+          title: "Error al sincronizar Catálogo",
+          description: "Se ha producido un error al sincronizar Catálogo",
+        },
+      },
     },
   },
   members: {

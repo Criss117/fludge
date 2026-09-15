@@ -31,15 +31,17 @@ export function PresentationFormCard({
 }: Props) {
   const { t } = useTranslation();
 
-  if (presentation.isDeleted && action === "create") return null;
+  const presentationIsInActive = presentation.status === "inactive";
+
+  if (presentationIsInActive && action === "create") return null;
 
   const onSelect = () => {
-    if (presentation.isDeleted) return;
+    if (presentationIsInActive) return;
     setSelectedPresentation(presentation);
   };
 
   const onDelete = () => {
-    if (presentation.isDeleted) return;
+    if (presentationIsInActive) return;
 
     if (action === "create") remove(presentation.id);
 
@@ -47,7 +49,7 @@ export function PresentationFormCard({
   };
 
   const onRestore = () => {
-    if (!presentation.isDeleted) return;
+    if (!presentationIsInActive) return;
     restore(presentation.id);
   };
 
@@ -55,7 +57,7 @@ export function PresentationFormCard({
     <Card
       className={cn(
         "bg-default gap-y-2",
-        presentation.isDeleted && "opacity-50"
+        presentationIsInActive && "opacity-50"
       )}
     >
       <Card.Header className="flex-1 flex-row items-start">
@@ -69,12 +71,12 @@ export function PresentationFormCard({
           </Card.Description>
         </View>
         <View className="flex-row items-center">
-          {!presentation.isDeleted && (
+          {!presentationIsInActive && (
             <Button
               size="sm"
               variant="ghost"
               isIconOnly
-              isDisabled={presentation.isDeleted}
+              isDisabled={presentationIsInActive}
               onPress={onSelect}
             >
               <MaterialIcons
@@ -85,18 +87,18 @@ export function PresentationFormCard({
             </Button>
           )}
 
-          {!presentation.isDeleted && (
+          {!presentationIsInActive && (
             <Button
               size="sm"
               variant="ghost"
               isIconOnly
-              isDisabled={presentation.isDeleted}
+              isDisabled={presentationIsInActive}
               onPress={onDelete}
             >
               <MaterialIcons name="delete" size={20} className="text-danger" />
             </Button>
           )}
-          {presentation.isDeleted && (
+          {presentationIsInActive && (
             <Button size="sm" isIconOnly onPress={onRestore}>
               <MaterialIcons
                 name="undo"

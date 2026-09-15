@@ -28,7 +28,13 @@ export function useUpdateProductMutation() {
   return useMutation(
     orpc.product.commands.update.mutationOptions({
       onSuccess: async (newProduct) => {
-        await catalogContainer.repositories.productRepository.save(newProduct);
+        console.log({ newProduct });
+        const updatedProduct =
+          await catalogContainer.repositories.productRepository.save(
+            newProduct,
+          );
+
+        console.log({ updatedProduct });
 
         invalidateProducts.invalidateList();
         invalidateProducts.invalidateDetail(newProduct.id);
