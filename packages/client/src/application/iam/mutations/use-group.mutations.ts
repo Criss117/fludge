@@ -37,7 +37,7 @@ export function useUpdateGroup() {
 
         invalidateGroups.invalidateList();
         invalidateGroups.invalidateDetail(variables.id);
-        invalidateMembers.invalidateDetail();
+        invalidateMembers.invalidateAllDetails();
       },
     }),
   );
@@ -62,7 +62,7 @@ export function useDeleteGroup() {
           invalidateGroups.invalidateDetail(groupId),
         );
 
-        invalidateMembers.invalidateDetail();
+        invalidateMembers.invalidateAllDetails();
       },
     }),
   );

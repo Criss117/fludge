@@ -84,7 +84,7 @@ function genearteInvalidateQueries<T, TNormalizedFilters>(
       });
     };
 
-    const invalidatelist = () => {
+    const invalidateList = () => {
       return queryClient.invalidateQueries({
         queryKey: keys.list(orgId),
       });
@@ -110,7 +110,7 @@ function genearteInvalidateQueries<T, TNormalizedFilters>(
 
     return {
       invalidateAll,
-      invalidatelist,
+      invalidateList,
       invalidateFilteredList,
       invalidateAllDetails,
       invalidateDetail,
