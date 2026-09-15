@@ -1,6 +1,6 @@
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import type { CategorySummary } from "@fludge/client/application/catalog/domain/category.repository";
-import { useDeleteCategoryMutation } from "@fludge/client/application/catalog/mutations/use-category.mutations";
+import { useToggleCategoryStatusMutation } from "@fludge/client/application/catalog/mutations/use-category.mutations";
 import { TranslationKey } from "@fludge/i18n/index";
 import { Button } from "heroui-native/button";
 import { Dialog } from "heroui-native/dialog";
@@ -14,15 +14,15 @@ interface Props {
 
 export function DeleteCategoryDialog({ category, onClose }: Props) {
   const { t } = useTranslation();
-  const deleteCategory = useDeleteCategoryMutation();
+  const toggleCategoryStatusMutation = useToggleCategoryStatusMutation();
   const mutationToast = useMutationToast("delete-category-toast");
 
   const onRemoveCategory = () => {
-    if (deleteCategory.isPending || !category) return;
+    if (toggleCategoryStatusMutation.isPending || !category) return;
 
     mutationToast.showIsPendingToast("mutations.categories.delete.is_pending");
 
-    deleteCategory.mutate(
+    toggleCategoryStatusMutation.mutate(
       {
         id: category.id,
       },
@@ -69,13 +69,13 @@ export function DeleteCategoryDialog({ category, onClose }: Props) {
               className="flex-1"
               variant="outline"
               onPress={onClose}
-              isDisabled={deleteCategory.isPending}
+              isDisabled={toggleCategoryStatusMutation.isPending}
             >
               {t("helpers.cancel")}
             </Button>
             <Button
               className="flex-1"
-              isDisabled={deleteCategory.isPending}
+              isDisabled={toggleCategoryStatusMutation.isPending}
               variant="danger-soft"
               onPress={onRemoveCategory}
             >

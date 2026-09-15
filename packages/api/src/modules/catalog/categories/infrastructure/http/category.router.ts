@@ -2,6 +2,7 @@ import { hasPermissionProcedure } from "@fludge/api/index";
 import { categoryContainer } from "@fludge/api/modules/catalog/categories/container";
 import { createCategoryCommand } from "@fludge/api/modules/catalog/categories/application/commands/create-category.command";
 import { updateCategoryCommand } from "@fludge/api/modules/catalog/categories/application/commands/update-category.command";
+import { toggleCategoryStatusCommand } from "../../application/commands/toogle-category-status.command";
 
 const TAGS = ["Categories"] as const;
 
@@ -50,6 +51,22 @@ export const categoryRouter = {
       .input(updateCategoryCommand)
       .handler(({ input, context }) =>
         categoryContainer.commands.update.execute(
+          context.session.activeOrganization,
+          input,
+        ),
+      ),
+
+    toggleStatus: hasPermissionProcedure({
+      categories: ["update"],
+    })
+      .route({
+        method: "PATCH",
+        path: "/categories/status",
+        tags: TAGS,
+      })
+      .input(toggleCategoryStatusCommand)
+      .handler(({ input, context }) =>
+        categoryContainer.commands.toggleStatus.execute(
           context.session.activeOrganization,
           input,
         ),

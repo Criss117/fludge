@@ -94,6 +94,11 @@ export class Category {
     this._touch();
   }
 
+  public toggleStatus(): void {
+    this._status = this._status.toggle();
+    this._touch();
+  }
+
   /** Verifica si esta categoría pertenece a la organización dada (autorización a nivel de dominio). */
   public belongsTo(organizationId: UUID): boolean {
     return this._organizationId.equals(organizationId);

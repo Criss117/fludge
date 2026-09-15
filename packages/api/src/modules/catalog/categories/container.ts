@@ -5,6 +5,7 @@ import { CreateCategoryCommand } from "./application/commands/create-category.co
 import { UpdateCategoryCommand } from "./application/commands/update-category.command";
 import { FindAllCategoriesQuery } from "./application/queries/find-all-categories.query";
 import { EnsureCategoryExistsService } from "./application/services/ensure-category-exists.service";
+import { ToggleCategoryStatusCommand } from "./application/commands/toogle-category-status.command";
 
 //Repositories
 const categoryRepository = new CategoryRepository(databaseService);
@@ -26,6 +27,10 @@ const updateCategoryCommand = new UpdateCategoryCommand(
   categoryUniquenessValidator,
 );
 
+const toggleCategoryStatusCommand = new ToggleCategoryStatusCommand(
+  categoryRepository,
+);
+
 //Queries
 const findAllCategoriesQuery = new FindAllCategoriesQuery(databaseService);
 
@@ -38,6 +43,7 @@ export const categoryContainer = {
   commands: {
     create: createCategoryCommand,
     update: updateCategoryCommand,
+    toggleStatus: toggleCategoryStatusCommand,
   },
   queries: {
     findAll: findAllCategoriesQuery,
