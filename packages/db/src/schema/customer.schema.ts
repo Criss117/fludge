@@ -7,13 +7,10 @@ import {
   index,
   check,
 } from "drizzle-orm/sqlite-core";
-import { createdByMetadata, organizationMetadata } from "./iam.schema";
 
-import {
-  customerDocumentTypeEnum,
-  statusEnum,
-} from "@fludge/utils/enums/db-enums";
+import { customerDocumentTypeEnum } from "@fludge/utils/enums/db-enums";
 import { auditMetadata } from "../shared";
+import { memberId, organizationId } from "./iam.schema";
 
 export const customer = sqliteTable(
   "customer",
@@ -30,11 +27,9 @@ export const customer = sqliteTable(
     documentType: text("document_type", { enum: customerDocumentTypeEnum }),
     documentNumber: text("document_number"),
 
-    status: text("status", { enum: statusEnum }).notNull(),
-
-    ...organizationMetadata,
+    organizationId: organizationId(),
+    createdBy: memberId(),
     ...auditMetadata,
-    ...createdByMetadata,
   },
   (t) => [
     // Un mismo documento no se puede repetir dentro de la misma organización.

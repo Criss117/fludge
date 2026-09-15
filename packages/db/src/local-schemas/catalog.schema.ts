@@ -1,15 +1,16 @@
 import {
   check,
+  foreignKey,
   index,
   integer,
   sqliteTable,
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
-import { createdByMetadata, organizationMetadata } from "./iam.schema";
+import { member, memberId, organizationId } from "./iam.schema";
 import { sql } from "drizzle-orm";
-import { auditMetadata, productStatus, status } from "../shared";
-import type { ProductPresentationSelect } from "../schema";
+import { auditMetadata, productStatus } from "../shared";
+import { type ProductPresentationSelect } from "../schema";
 
 export const category = sqliteTable(
   "category",
@@ -20,10 +21,8 @@ export const category = sqliteTable(
 
     description: text("description").notNull(),
 
-    status: status,
-
-    ...createdByMetadata,
-    ...organizationMetadata,
+    createdBy: memberId(),
+    organizationId: organizationId(),
     ...auditMetadata,
   },
   (t) => [
@@ -35,12 +34,13 @@ export const category = sqliteTable(
       t.organizationId,
       t.slug,
     ),
-    index("category_organization_idx").on(t.organizationId),
     index("category_name_idx").on(t.name),
-    index("category_organization_name_idx").on(t.organizationId, t.name),
+    foreignKey({
+      columns: [t.createdBy, t.organizationId],
+      foreignColumns: [member.id, member.organizationId],
+    }),
   ],
 );
-
 export const product = sqliteTable(
   "product",
   {
@@ -63,15 +63,16 @@ export const product = sqliteTable(
     })
       .notNull()
       .default(false),
+
+    createdBy: memberId(),
+    organizationId: organizationId(),
+    createdAt: auditMetadata.createdAt,
+    updatedAt: auditMetadata.updatedAt,
     status: productStatus,
 
     presentations: text("presentations", { mode: "json" })
       .$type<ProductPresentationSelect[]>()
       .notNull(),
-
-    ...createdByMetadata,
-    ...organizationMetadata,
-    ...auditMetadata,
   },
   (t) => [
     uniqueIndex("product_organization_slug_unique").on(
