@@ -1,5 +1,8 @@
 import { FlatList, View } from "react-native";
-import { GroupCard } from "@/modules/iam/organizations/presentation/components/group-card";
+import {
+  GroupCard,
+  GroupCardSkeleton,
+} from "@/modules/iam/organizations/presentation/components/group-card";
 import { useFindAllGroups } from "@fludge/client/application/iam/queries/use-find-groups";
 import { FloatingLink } from "@/modules/shared/components/floating-link";
 import {
@@ -46,5 +49,29 @@ export function GroupsScreen() {
 }
 
 export function GroupsScreenSkeleton() {
-  return null;
+  const items = Array.from({ length: 10 }).map((_, index) => index.toString());
+
+  return (
+    <View className="relative flex-1 gap-y-3 px-3 pt-2">
+      <SearchInputSkeleton placeholder="helpers.placeholder.search_groups" />
+      <FlatList
+        data={items}
+        className="flex-1"
+        renderItem={() => <GroupCardSkeleton />}
+        keyExtractor={(d) => d.toString()}
+        ItemSeparatorComponent={
+          <View style={{ height: ITEM_SEPARATOR_HEIGHT }} />
+        }
+        showsVerticalScrollIndicator={false}
+        contentContainerClassName="pb-40"
+      />
+      <View className="absolute right-0 bottom-20 px-3">
+        <FloatingLink
+          href={{
+            pathname: "/(private)/dashboard/groups/create",
+          }}
+        />
+      </View>
+    </View>
+  );
 }

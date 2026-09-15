@@ -1,15 +1,13 @@
 import { iamContainer } from "@/integrations/dependencies/iam.container";
-import { ORGANIZATION_LOCAL_STORAGE_KEY } from "@/modules/shared/utils/constanst";
+import { LoadingScreen } from "@/modules/shared/components/loading-screen";
 import { OrganizationStore } from "@/modules/shared/utils/organization-store";
-import { useAuth } from "@fludge/client/providers/auth.provider";
 import {
-  IOrganizationStorage,
   OrganizationProvider,
   useOrganization,
 } from "@fludge/client/providers/organization.provider";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack } from "expo-router";
 import { useThemeColor } from "heroui-native";
+import { Suspense } from "react";
 
 function StackOptions() {
   const { activeOrganization } = useOrganization();
@@ -43,7 +41,9 @@ export default function PrivateLayout() {
       organizationStorage={OrganizationStore}
       organizationRepository={iamContainer.repositories.organizationRepository}
     >
-      <StackOptions />
+      <Suspense fallback={<LoadingScreen message="app.loading_organization" />}>
+        <StackOptions />
+      </Suspense>
     </OrganizationProvider>
   );
 }

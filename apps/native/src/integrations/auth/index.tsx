@@ -11,7 +11,6 @@ import {
 import { LoadingScreen } from "@/modules/shared/components/loading-screen";
 import { SESSION_LOCAL_STORAGE_KEY } from "@/modules/shared/utils/constanst";
 
-// react-doctor-disable-next-line only-export-components -- Better Auth client is an integration singleton shared by the provider.
 export const authClient = createAuthClient({
   baseURL: env.EXPO_PUBLIC_SERVER_URL,
   plugins: [
@@ -51,7 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AProvider
       sessionStorage={sessionStorage}
       authClient={authAdapter}
-      fallback={<LoadingScreen message={"app.loading_session"} />}
+      fallback={<LoadingScreen message="app.loading_session" />}
     >
       {children}
     </AProvider>

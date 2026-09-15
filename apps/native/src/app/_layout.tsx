@@ -6,8 +6,6 @@ import { useThemeColor } from "heroui-native";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { useNetworkActivityDevTools } from "@rozenite/network-activity-plugin";
 import { useAppTheme } from "@/modules/shared/context/app-theme-context";
-import { Suspense } from "react";
-import { LoadingScreen } from "@/modules/shared/components/loading-screen";
 
 function StackConfig() {
   const background = useThemeColor("background");
@@ -37,10 +35,6 @@ function StackConfig() {
   );
 }
 
-function LoadingData() {
-  return <LoadingScreen message={"app.loading_data"} />;
-}
-
 function NetworkDevTools() {
   useNetworkActivityDevTools();
   return null;
@@ -50,9 +44,7 @@ export default function RootLayout() {
   return (
     <Integrations>
       {__DEV__ && <NetworkDevTools />}
-      <Suspense fallback={<LoadingData />}>
-        <StackConfig />
-      </Suspense>
+      <StackConfig />
     </Integrations>
   );
 }

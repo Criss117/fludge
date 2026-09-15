@@ -1,10 +1,27 @@
 export const app = {
   title: "Fludge",
+  loading: "Cargando...",
+  loading_organization: "Cargando organización...",
+  loading_fonts: "Cargando fuentes...",
   loading_data: "Cargando datos...",
   loading_session: "Cargando sesión...",
   loading_database: "Cargando base de datos...",
   loading_iam: "Obteniendo datos de la IAM...",
   loading_catalog: "Cargando catálogo...",
+
+  errors: {
+    fatal: {
+      title: "¡Error fatal!",
+      message: "Algo ha salido mal. Por favor, vuelva a intentarlo.",
+      retry: "Intentar de nuevo",
+    },
+    db: {
+      title: "Error de base de datos",
+      message:
+        "Algo salió mal al migrar la base de datos. Por favor, vuelva a intentarlo.",
+    },
+  },
+
   permissions: {
     camera: {
       required: "Necesitamos permisos para usar la cámara",

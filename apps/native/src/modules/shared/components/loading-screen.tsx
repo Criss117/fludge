@@ -65,9 +65,7 @@ export function LoadingScreen({ message }: LoadingScreenProps) {
       <Animated.View style={logoStyle} className="items-center gap-2">
         <Text className="text-accent text-5xl font-bold">{t("app.title")}</Text>
         {message ? (
-          <Text className="text-muted-foreground text-center text-sm">
-            {message}
-          </Text>
+          <Text className="text-muted text-center text-sm">{t(message)}</Text>
         ) : null}
       </Animated.View>
 

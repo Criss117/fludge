@@ -10,11 +10,12 @@ import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { useRouter } from "expo-router";
 import { GroupsOptions } from "./options";
 
-import { Checkbox, cn } from "heroui-native";
+import { Checkbox, cn, Skeleton } from "heroui-native";
 import { useTranslation } from "react-i18next";
 import type { ActionFor, Resource } from "@fludge/utils/permissions/data";
 import type { TranslationKey } from "@fludge/i18n/index";
 import type { GroupSummary } from "@fludge/client/application/iam/domain/group.repository";
+import { SkeletonGroup } from "heroui-native/skeleton-group";
 
 interface Props {
   group: GroupSummary;
@@ -132,6 +133,35 @@ export function GroupCardBase({ group, asMemberGroup, hideOptions }: Props) {
             Creado el: {group.createdAt.toLocaleDateString()}
           </Typography>
         </View>
+      </Card.Footer>
+    </Card>
+  );
+}
+
+export function GroupCardSkeleton() {
+  return (
+    <Card className="gap-y-2">
+      <Card.Header className="gap-y-2">
+        <View className="w-full flex-row items-start">
+          <View className="flex-1 gap-y-1">
+            <Skeleton className="h-7 w-1/2 rounded-full" />
+            <Skeleton className="h-7 w-1/3 rounded-full" />
+          </View>
+          <Skeleton className="size-12 rounded-full" />
+        </View>
+
+        <Skeleton className="h-6 w-1/2 rounded-full" />
+      </Card.Header>
+      <SkeletonGroup className="flex-row flex-wrap gap-2">
+        <SkeletonGroup.Item className="h-7 w-2/3 rounded-full" />
+        <SkeletonGroup.Item className="h-7 w-4/5 rounded-full" />
+        <SkeletonGroup.Item className="h-7 w-4/5 rounded-full" />
+        <SkeletonGroup.Item className="h-7 w-2/3 rounded-full" />
+      </SkeletonGroup>
+
+      <Separator />
+      <Card.Footer className="flex-row items-center justify-between">
+        <Skeleton className="h-6 w-3/4 rounded-full" />
       </Card.Footer>
     </Card>
   );
