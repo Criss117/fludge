@@ -10,18 +10,21 @@ import { historyActionEnum, roleEnum } from "@fludge/utils/enums/db-enums";
 import { user } from "./auth.schema";
 import type { Permission } from "@fludge/utils/permissions/data";
 import { auditMetadata } from "../shared";
-import { sql } from "drizzle-orm";
 
 export const organization = sqliteTable(
   "organization",
   {
     id: text("id").primaryKey(),
+
     name: text("name").notNull(),
     slug: text("slug").notNull(),
+
     logo: text("logo"),
+
     metadata: text("metadata", { mode: "json" }).$type<
       Record<string, unknown>
     >(),
+
     legalName: text("legal_name").notNull(),
     taxId: text("tax_id").notNull(),
     address: text("address").notNull(),
@@ -34,7 +37,6 @@ export const organization = sqliteTable(
     uniqueIndex("organization_slug_unique").on(table.slug),
     uniqueIndex("organization_legal_name_unique").on(table.legalName),
     uniqueIndex("organization_tax_id_unique").on(table.taxId),
-    uniqueIndex("organization_phone_unique").on(table.phone),
   ],
 );
 
@@ -53,8 +55,12 @@ export const member = sqliteTable(
 
     userId: text("user_id")
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => user.id, {
+        onDelete: "cascade",
+      }),
+
     role: text("role", { enum: roleEnum }).notNull(),
+
     assignedBy: text("assigned_by").references(
       (): AnySQLiteColumn => member.id,
       {
@@ -63,16 +69,19 @@ export const member = sqliteTable(
     ),
 
     organizationId: organizationId(),
+
     ...auditMetadata,
   },
   (table) => [
-    uniqueIndex("member_organizationId_userId_unique").on(
+    uniqueIndex("member_organization_user_unique").on(
       table.organizationId,
       table.userId,
     ),
-    index("member_assignedBy_idx")
-      .on(table.assignedBy)
-      .where(sql`${table.assignedBy} IS NOT NULL`),
+
+    index("member_organization_assignedBy_idx").on(
+      table.organizationId,
+      table.assignedBy,
+    ),
   ],
 );
 

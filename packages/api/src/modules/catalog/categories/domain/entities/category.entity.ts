@@ -7,7 +7,7 @@ export type CreateCategory = {
   name: string;
   organizationId: UUID;
   createdBy: UUID;
-  description?: string;
+  description: string;
 };
 
 export type UpdateCategory = {

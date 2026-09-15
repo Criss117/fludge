@@ -1,14 +1,15 @@
 import {
   check,
+  foreignKey,
   index,
   integer,
   sqliteTable,
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
-import { createdByMetadata, organizationMetadata } from "./iam.schema";
 import { sql } from "drizzle-orm";
-import { auditMetadata, productStatus, status } from "../shared";
+import { auditMetadata, productStatus } from "../shared";
+import { member, memberId, organizationId } from "./iam.schema";
 
 export const category = sqliteTable(
   "category",
@@ -19,10 +20,8 @@ export const category = sqliteTable(
 
     description: text("description").notNull(),
 
-    status: status,
-
-    ...createdByMetadata,
-    ...organizationMetadata,
+    createdBy: memberId(),
+    organizationId: organizationId(),
     ...auditMetadata,
   },
   (t) => [
@@ -34,9 +33,11 @@ export const category = sqliteTable(
       t.organizationId,
       t.slug,
     ),
-    index("category_organization_idx").on(t.organizationId),
     index("category_name_idx").on(t.name),
-    index("category_organization_name_idx").on(t.organizationId, t.name),
+    foreignKey({
+      columns: [t.createdBy, t.organizationId],
+      foreignColumns: [member.id, member.organizationId],
+    }),
   ],
 );
 
@@ -62,11 +63,12 @@ export const product = sqliteTable(
     })
       .notNull()
       .default(false),
-    status: productStatus,
 
-    ...createdByMetadata,
-    ...organizationMetadata,
-    ...auditMetadata,
+    createdBy: memberId(),
+    organizationId: organizationId(),
+    createdAt: auditMetadata.createdAt,
+    updatedAt: auditMetadata.updatedAt,
+    status: productStatus,
   },
   (t) => [
     uniqueIndex("product_organization_slug_unique").on(
@@ -95,6 +97,11 @@ export const product = sqliteTable(
       t.status,
     ),
 
+    foreignKey({
+      columns: [t.categoryId, t.organizationId],
+      foreignColumns: [category.id, category.organizationId],
+    }),
+
     check("product_minimum_stock_check", sql`${t.minStock} >= 0`),
 
     check(
@@ -108,6 +115,7 @@ export const productPresentation = sqliteTable(
   "product_presentation",
   {
     id: text("id").primaryKey(),
+
     productId: text("product_id")
       .notNull()
       .references(() => product.id, {
@@ -115,26 +123,42 @@ export const productPresentation = sqliteTable(
       }),
 
     name: text("name").notNull(),
+
     searchBlob: text("search_blob").notNull(),
+
     barcode: text("barcode"),
 
+    /**
+     * Cantidad de unidades base que representa esta presentación.
+     *
+     * Ejemplo:
+     * Producto: Agua
+     * Presentación: Caja
+     * conversionFactor: 24
+     *
+     * 1 Caja = 24 unidades base.
+     */
     conversionFactor: integer("conversion_factor").notNull(),
 
+    /**
+     * Precios expresados en la unidad monetaria mínima.
+     *
+     * Ejemplo para COP:
+     * $12.500 -> 12500
+     */
     priceSale: integer("price_sale").notNull(),
+
     pricePurchase: integer("price_purchase"),
+
     priceWholesale: integer("price_wholesale"),
 
-    status: productStatus,
+    createdBy: memberId(),
 
-    ...createdByMetadata,
-    ...organizationMetadata,
+    organizationId: organizationId(),
+
     ...auditMetadata,
   },
   (t) => [
-    index("presentation_product_idx").on(t.productId),
-    index("presentation_organization_idx").on(t.organizationId),
-    index("presentation_name_idx").on(t.name),
-
     uniqueIndex("presentation_product_name_unique").on(t.productId, t.name),
 
     uniqueIndex("presentation_product_factor_unique").on(
@@ -142,7 +166,7 @@ export const productPresentation = sqliteTable(
       t.conversionFactor,
     ),
 
-    uniqueIndex("presentation_barcode_unique")
+    uniqueIndex("presentation_organization_barcode_unique")
       .on(t.organizationId, t.barcode)
       .where(sql`${t.barcode} IS NOT NULL`),
 
@@ -151,16 +175,32 @@ export const productPresentation = sqliteTable(
       sql`${t.conversionFactor} >= 1`,
     ),
 
-    check("presentation_price_retail_check", sql`${t.priceSale} >= 0`),
+    check("presentation_price_sale_check", sql`${t.priceSale} >= 0`),
 
     check(
       "presentation_price_purchase_check",
-      sql`${t.pricePurchase} IS NULL OR ${t.pricePurchase} >= 0`,
+      sql`
+        ${t.pricePurchase} IS NULL
+        OR ${t.pricePurchase} >= 0
+      `,
     ),
 
     check(
       "presentation_price_wholesale_check",
-      sql`${t.priceWholesale} IS NULL OR ${t.priceWholesale} >= 0`,
+      sql`
+        ${t.priceWholesale} IS NULL
+        OR ${t.priceWholesale} >= 0
+      `,
+    ),
+
+    index("presentation_organization_product_idx").on(
+      t.organizationId,
+      t.productId,
+    ),
+
+    index("presentation_organization_status_idx").on(
+      t.organizationId,
+      t.status,
     ),
   ],
 );

@@ -42,17 +42,4 @@ export class CategoryRepository {
       }),
     );
   }
-
-  public async delete(organizationId: string, categoryId: string) {
-    return tryCatch(
-      this.db
-        .delete(category)
-        .where(
-          and(
-            eq(category.organizationId, organizationId),
-            eq(category.id, categoryId),
-          ),
-        ),
-    );
-  }
 }
