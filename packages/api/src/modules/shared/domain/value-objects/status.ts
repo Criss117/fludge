@@ -7,6 +7,14 @@ export class Status {
     this._value = value;
   }
 
+  static active() {
+    return new Status("active");
+  }
+
+  static inactive() {
+    return new Status("inactive");
+  }
+
   public equals(status: Status) {
     return this._value === status._value;
   }
@@ -17,6 +25,12 @@ export class Status {
 
   public isInactive() {
     return this._value === "inactive";
+  }
+
+  public toggle() {
+    if (this.isActive()) return new Status("inactive");
+
+    return new Status("active");
   }
 
   public get value() {

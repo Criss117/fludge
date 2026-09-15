@@ -15,10 +15,11 @@ export class Member {
   private constructor(
     private readonly _id: UUID,
     private readonly _userId: UUID,
-    private readonly _createdAt: Date,
     private readonly _assignedBy: UUID | null,
     private readonly _role: Role,
     private _status: Status,
+    private readonly _createdAt: Date,
+    private _updatedAt: Date,
   ) {}
 
   public static create(values: CreateMember) {
@@ -26,10 +27,11 @@ export class Member {
     return new Member(
       UUID.generate(),
       values.userId,
-      now,
       values.assignedBy,
       new Role(values.role),
-      new Status("active"),
+      Status.active(),
+      now,
+      now,
     );
   }
 
@@ -37,11 +39,16 @@ export class Member {
     return new Member(
       UUID.fromString(values.id),
       UUID.fromString(values.userId),
-      new Date(values.createdAt),
       values.assignedBy ? UUID.fromString(values.assignedBy) : null,
       new Role(values.role),
       new Status(values.status),
+      new Date(values.createdAt),
+      new Date(values.updatedAt),
     );
+  }
+
+  public touch() {
+    this._updatedAt = new Date();
   }
 
   public get id() {
@@ -60,6 +67,21 @@ export class Member {
     return this._status;
   }
 
+  public setInactive() {
+    this._status = Status.inactive();
+    this.touch();
+  }
+
+  public setActive() {
+    this._status = Status.active();
+    this.touch();
+  }
+
+  public toggleStatus() {
+    this._status = this._status.toggle();
+    this.touch();
+  }
+
   public get values(): Omit<MemberSelect, "organizationId"> {
     return {
       id: this._id.toString(),
@@ -68,6 +90,7 @@ export class Member {
       assignedBy: this._assignedBy?.toString() ?? null,
       role: this._role.value,
       status: this._status.value,
+      updatedAt: this._updatedAt,
     };
   }
 

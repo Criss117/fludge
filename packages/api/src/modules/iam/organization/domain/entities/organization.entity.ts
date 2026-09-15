@@ -26,7 +26,7 @@ import type { PermissionsRecord } from "@fludge/utils/permissions/data";
 type CreateOrganization = {
   name: string;
   logo?: string | null;
-  metadata?: string | null;
+  metadata?: Record<string, unknown> | null;
   legalName: string;
   taxId: string;
   address: string;
@@ -35,7 +35,9 @@ type CreateOrganization = {
   owner: CreateMember;
 };
 
-export type UpdateOrganization = Partial<Omit<CreateOrganization, "groups">>;
+export type UpdateOrganization = Partial<
+  Omit<CreateOrganization, "groups" | "taxId">
+>;
 
 export class Organization {
   private constructor(
@@ -43,7 +45,7 @@ export class Organization {
     private _name: string,
     private _slug: Slug,
     private _logo: string | null,
-    private _metadata: string | null,
+    private _metadata: Record<string, unknown> | null,
     private _legalName: string,
     private _taxId: string,
     private _address: string,
@@ -128,9 +130,11 @@ export class Organization {
     return `${groupId.toString()}-${memberId.toString()}`;
   }
 
-  public update(values: UpdateOrganization) {
-    const now = new Date();
+  public touch() {
+    this._updatedAt = new Date();
+  }
 
+  public update(values: UpdateOrganization) {
     if (values.name) {
       this._name = values.name;
       this._slug = new Slug(values.name);
@@ -139,11 +143,10 @@ export class Organization {
     if (values.logo) this._logo = values.logo;
     if (values.metadata) this._metadata = values.metadata;
     if (values.legalName) this._legalName = values.legalName;
-    if (values.taxId) this._taxId = values.taxId;
     if (values.address) this._address = values.address;
     if (values.phone) this._phone = values.phone;
 
-    this._updatedAt = now;
+    this.touch();
   }
 
   public deleteGroup(groupId: UUID) {
@@ -157,6 +160,8 @@ export class Organization {
     }
 
     const group = this._groups.removeGroup(groupId);
+
+    this.touch();
 
     return {
       group,
@@ -185,6 +190,8 @@ export class Organization {
       Organization.generateGroupMemberKey(groupMember),
       groupMember,
     );
+
+    this.touch();
   }
 
   public removeGroupMember(groupId: UUID, memberId: UUID) {
@@ -205,6 +212,8 @@ export class Organization {
     this._groupMembers.delete(
       Organization.generateGroupMemberKeyFromIds(groupId, memberId),
     );
+
+    this.touch();
 
     return existingGroupMember;
   }

@@ -3,18 +3,14 @@ import {
   primaryKey,
   sqliteTable,
   text,
-  unique,
   uniqueIndex,
   type AnySQLiteColumn,
 } from "drizzle-orm/sqlite-core";
-import {
-  statusEnum,
-  historyActionEnum,
-  roleEnum,
-} from "@fludge/utils/enums/db-enums";
+import { historyActionEnum, roleEnum } from "@fludge/utils/enums/db-enums";
 import { user } from "./auth.schema";
 import type { Permission } from "@fludge/utils/permissions/data";
 import { auditMetadata } from "../shared";
+import { sql } from "drizzle-orm";
 
 export const organization = sqliteTable(
   "organization",
@@ -23,31 +19,32 @@ export const organization = sqliteTable(
     name: text("name").notNull(),
     slug: text("slug").notNull(),
     logo: text("logo"),
-    metadata: text("metadata", { mode: "json" }).$type<string>(),
+    metadata: text("metadata", { mode: "json" }).$type<
+      Record<string, unknown>
+    >(),
     legalName: text("legal_name").notNull(),
     taxId: text("tax_id").notNull(),
     address: text("address").notNull(),
     phone: text("phone").notNull(),
-    status: text("status", { enum: statusEnum }).notNull().default("active"),
 
     ...auditMetadata,
   },
   (table) => [
+    uniqueIndex("organization_name_unique").on(table.name),
     uniqueIndex("organization_slug_unique").on(table.slug),
     uniqueIndex("organization_legal_name_unique").on(table.legalName),
     uniqueIndex("organization_tax_id_unique").on(table.taxId),
     uniqueIndex("organization_phone_unique").on(table.phone),
-    index("organization_name_idx").on(table.name),
   ],
 );
 
-export const organizationMetadata = {
-  organizationId: text("organization_id")
+export function organizationId() {
+  return text("organization_id")
     .notNull()
     .references(() => organization.id, {
       onDelete: "cascade",
-    }),
-};
+    });
+}
 
 export const member = sqliteTable(
   "member",
@@ -65,27 +62,25 @@ export const member = sqliteTable(
       },
     ),
 
-    status: text("status", { enum: statusEnum }).notNull().default("active"),
-
-    createdAt: auditMetadata.createdAt,
-
-    ...organizationMetadata,
+    organizationId: organizationId(),
+    ...auditMetadata,
   },
   (table) => [
     uniqueIndex("member_organizationId_userId_unique").on(
       table.organizationId,
       table.userId,
     ),
-    index("member_organizationId_idx").on(table.organizationId),
-    index("member_userId_idx").on(table.userId),
+    index("member_assignedBy_idx")
+      .on(table.assignedBy)
+      .where(sql`${table.assignedBy} IS NOT NULL`),
   ],
 );
 
-export const createdByMetadata = {
-  createdBy: text("created_by")
+export function memberId(name = "created_by") {
+  return text(name)
     .references(() => member.id)
-    .notNull(),
-};
+    .notNull();
+}
 
 export const organizationHistory = sqliteTable("organization_history", {
   id: text("id").primaryKey(),
@@ -100,8 +95,9 @@ export const organizationHistory = sqliteTable("organization_history", {
     onDelete: "set null",
   }),
 
+  organizationId: organizationId(),
+
   createdAt: auditMetadata.createdAt,
-  ...organizationMetadata,
 });
 
 export const group = sqliteTable(
@@ -115,18 +111,22 @@ export const group = sqliteTable(
       .notNull()
       .$type<Permission[]>(),
 
-    status: text("status", { enum: statusEnum }).notNull().default("active"),
-
-    ...createdByMetadata,
-    ...organizationMetadata,
+    organizationId: organizationId(),
+    createdBy: memberId(),
     ...auditMetadata,
   },
   (t) => [
-    index("group_organization_id_idx").on(t.organizationId),
     index("group_slug_idx").on(t.slug),
+    index("group_name_idx").on(t.name),
 
-    unique("group_organization_id_slug_unique").on(t.organizationId, t.slug),
-    unique("group_organization_id_name_unique").on(t.organizationId, t.name),
+    uniqueIndex("group_organization_id_slug_unique").on(
+      t.organizationId,
+      t.slug,
+    ),
+    uniqueIndex("group_organization_id_name_unique").on(
+      t.organizationId,
+      t.name,
+    ),
   ],
 );
 
@@ -146,8 +146,8 @@ export const groupHistory = sqliteTable(
     before: text("before", { mode: "json" }).$type<GroupSelect>(),
     after: text("after", { mode: "json" }).$type<GroupSelect>(),
 
-    ...createdByMetadata,
-    ...organizationMetadata,
+    createdBy: memberId(),
+    organizationId: organizationId(),
 
     createdAt: auditMetadata.createdAt,
   },
@@ -168,16 +168,15 @@ export const groupMember = sqliteTable(
         onDelete: "cascade",
       }),
 
-    ...createdByMetadata,
-    ...organizationMetadata,
+    organizationId: organizationId(),
 
+    createdBy: memberId(),
     createdAt: auditMetadata.createdAt,
   },
   (t) => [
     primaryKey({
       columns: [t.groupId, t.memberId],
     }),
-    index("group_member_group_id_member_id_idx").on(t.groupId, t.memberId),
   ],
 );
 

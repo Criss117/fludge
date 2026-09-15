@@ -60,6 +60,10 @@ export class Group {
     );
   }
 
+  public touch() {
+    this._updatedAt = new Date();
+  }
+
   public nameIsTaken(name: string) {
     const slug = new Slug(name);
 
@@ -79,21 +83,22 @@ export class Group {
 
     if (values.status !== undefined) this._status = new Status(values.status);
 
-    this._updatedAt = new Date();
+    this.touch();
   }
 
   public setInactive() {
-    if (this._status.isInactive()) return;
-
-    this._status = new Status("inactive");
-    this._updatedAt = new Date();
+    this._status = Status.inactive();
+    this.touch();
   }
 
   public setActive() {
-    if (this._status.isActive()) return;
+    this._status = Status.active();
+    this.touch();
+  }
 
-    this._status = new Status("active");
-    this._updatedAt = new Date();
+  public toggleStatus() {
+    this._status = this._status.toggle();
+    this.touch();
   }
 
   public get status() {
