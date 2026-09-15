@@ -10,17 +10,25 @@ import { Suspense } from "react";
 import { LoadingScreen } from "@/modules/shared/components/loading-screen";
 import { View } from "react-native";
 import { Text } from "@/modules/shared/components/app-text";
+import { useNetwork } from "@fludge/client/providers/network-status.provider";
+
+export type SyncData = {
+  error: Error | null;
+  success: boolean;
+  syncedAt: Date | null;
+};
 
 export function useSyncIam() {
   const orpc = useOrpc();
   const { session } = useAuth();
+  const { isInternetReachable } = useNetwork();
 
   const httpClientIamRepository = new HttpClientIamRepository(orpc);
 
   return useSuspenseQuery({
     queryKey: ["sync", "iam"],
-    queryFn: async () => {
-      if (!session.data)
+    queryFn: async (): Promise<SyncData> => {
+      if (!session.data || !isInternetReachable)
         return {
           error: null,
           success: false,
@@ -54,8 +62,6 @@ export function useSyncIam() {
           success: false,
           syncedAt: null,
         };
-
-      console.log("values", values);
 
       const [, erroSaveAll] = await tryCatch(
         syncContainer.syncIamRepository.saveAll(values)

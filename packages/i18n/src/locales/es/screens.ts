@@ -13,12 +13,33 @@ export const screens = {
   },
   settings: {
     title: "Mi Cuenta",
-    preferences: "Preferencias",
-    dark_mode: "Modo oscuro",
-    security_and_access: "Seguridad y Accesos",
-    change_password: "Cambiar contraseña",
-    organizational_management: "Gestión de Organizaciones",
     sign_out: "Cerrar Sesión",
+
+    preferences: {
+      title: "Preferencias",
+      dark_mode: "Modo oscuro",
+    },
+    security_and_access: {
+      title: "Seguridad y Accesos",
+      change_password: "Cambiar contraseña",
+      organizational_management: "Gestión de Organizaciones",
+    },
+    sync: {
+      title: "Sincronización",
+      iam: {
+        title: "IAM",
+        last_synced_at: "Última sincronización",
+        refetching: "Sincronizando Iam...",
+        on_success: {
+          title: "Sincronización realizada con éxito",
+          description: "Se han sincronizado todos los datos de IAM",
+        },
+        on_error: {
+          title: "Error al sincronizar IAM",
+          description: "Se ha producido un error al sincronizar IAM",
+        },
+      },
+    },
   },
   members: {
     title: "Miembros",

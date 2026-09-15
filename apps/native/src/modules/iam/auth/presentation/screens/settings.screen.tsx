@@ -11,6 +11,7 @@ import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
+import { SettingsSyncSection } from "../sections/settings-sync.section";
 
 export function SettingsScreen() {
   const { t } = useTranslation();
@@ -43,7 +44,7 @@ export function SettingsScreen() {
 
         <Card className="gap-y-4">
           <Card.Header>
-            <Card.Title>{t("screens.settings.preferences")}</Card.Title>
+            <Card.Title>{t("screens.settings.preferences.title")}</Card.Title>
           </Card.Header>
           <Card.Body>
             <ControlField
@@ -57,7 +58,7 @@ export function SettingsScreen() {
                     size={26}
                     className="text-foreground"
                   />
-                  <Label>{t("screens.settings.dark_mode")}</Label>
+                  <Label>{t("screens.settings.preferences.dark_mode")}</Label>
                 </View>
                 <ControlField.Indicator />
               </View>
@@ -67,7 +68,9 @@ export function SettingsScreen() {
 
         <Card className="gap-y-4">
           <Card.Header>
-            <Card.Title>{t("screens.settings.security_and_access")}</Card.Title>
+            <Card.Title>
+              {t("screens.settings.security_and_access.title")}
+            </Card.Title>
           </Card.Header>
           <Card.Body className="gap-y-4">
             <Link href="/(private)/dashboard/settings" asChild push>
@@ -79,7 +82,7 @@ export function SettingsScreen() {
                     className="text-foreground"
                   />
                   <Typography>
-                    {t("screens.settings.change_password")}
+                    {t("screens.settings.security_and_access.change_password")}
                   </Typography>
                 </View>
                 <MaterialIcons
@@ -98,7 +101,9 @@ export function SettingsScreen() {
                     className="text-foreground"
                   />
                   <Typography>
-                    {t("screens.settings.organizational_management")}
+                    {t(
+                      "screens.settings.security_and_access.organizational_management"
+                    )}
                   </Typography>
                 </View>
                 <MaterialIcons
@@ -110,6 +115,8 @@ export function SettingsScreen() {
             </Link>
           </Card.Body>
         </Card>
+
+        <SettingsSyncSection />
       </ScrollView>
 
       <View className="pt-2 pb-4">

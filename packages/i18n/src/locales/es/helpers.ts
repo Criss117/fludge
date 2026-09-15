@@ -19,6 +19,13 @@ export const helpers = {
     zero: "0",
   },
 
+  sync_status: {
+    synced: "Sincronizado",
+    not_synced: "No sincronizado",
+    syncing: "Sincronizando",
+    error: "Error",
+  },
+
   assign: "Asignar",
   add: "Agregar",
   please_wait: "Por favor, espere...",
@@ -55,4 +62,6 @@ export const helpers = {
   save: "Guardar",
   summary: "Resumen",
   see_details: "Ver detalles",
+  refresh: "Actualizar",
+  no_conection: "No hay conexión",
 };
