@@ -12,11 +12,11 @@ interface Props {
 }
 
 export function SalePresentationCard({ presentation, context }: Props) {
-  const isSelected = context.isPresentationSelected(presentation);
+  const isSelected = context.isPresentationSelected(presentation.id);
 
   return (
     <PressableFeedback
-      onPress={() => context.selectPresentation(presentation)}
+      onPress={() => context.selectPresentation(presentation.id)}
       className="rounded-3xl shadow"
     >
       <Card className="bg-default flex-row items-center gap-x-2">
@@ -24,7 +24,7 @@ export function SalePresentationCard({ presentation, context }: Props) {
           <Checkbox
             className="bg-background"
             isSelected={isSelected}
-            onPress={() => context.selectPresentation(presentation)}
+            onPress={() => context.selectPresentation(presentation.id)}
           />
         </Card.Header>
         <Card.Body className="flex-1 gap-y-1">

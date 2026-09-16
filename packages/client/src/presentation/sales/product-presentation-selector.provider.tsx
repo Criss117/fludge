@@ -1,120 +1,96 @@
 import type { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
-import {
-  createContext,
-  use,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from "react";
+import { createContext, use, useState } from "react";
 
 export interface ProductPresentationSelectorRef {
   open: (product: ProductSummary) => void;
   close: () => void;
 }
 
-export function ProductPresentationSelectorProvider({
-  children,
-  ref,
-}: {
-  children: React.ReactNode;
-  ref: React.RefObject<ProductPresentationSelectorRef | null>;
-}) {
-  const [selectedProduct, setSelectedProduct] = useState<ProductSummary | null>(
-    null,
-  );
-
-  useImperativeHandle(ref, () => ({
-    open: (selectedProduct: ProductSummary) =>
-      setSelectedProduct({
-        ...selectedProduct,
-        presentations: selectedProduct.presentations.filter(
-          (p) => p.status === "active",
-        ),
-      }),
-    close: () => setSelectedProduct(null),
-  }));
-
-  const closeSheet = () => setSelectedProduct(null);
-
-  return (
-    <TicketItemContextProvider
-      selectedProduct={selectedProduct}
-      closeSheet={closeSheet}
-    >
-      {children}
-    </TicketItemContextProvider>
-  );
-}
-
-type Presentation = ProductSummary["presentations"][number];
+type SelectedProduct = Omit<ProductSummary, "presentations"> & {
+  presentations: Array<
+    ProductSummary["presentations"][number] & {
+      selected?: boolean;
+    }
+  >;
+};
 
 interface Context {
-  selectedProduct: ProductSummary | null;
+  selectedProduct: SelectedProduct | null;
   isSheetOpen: boolean;
-  selectedPresentation: Presentation | null;
+  selectedPresentations: SelectedProduct["presentations"];
+  onOpenSheetChange: (v: boolean) => void;
+  isPresentationSelected: (presentationId: string) => boolean;
   closeSheet: () => void;
-  isPresentationSelected: (item: Presentation) => boolean;
-  selectPresentation: (item: Presentation) => void;
+  selectProduct: (item: SelectedProduct) => void;
+  selectPresentation: (presentationId: string) => void;
 }
 
-const TicketItemContext = createContext<Context | null>(null);
+const ProductPresentationSelectorContext = createContext<Context | null>(null);
 
-function TicketItemContextProvider({
+export function ProductPresentationSelectorProvider({
   children,
-  selectedProduct,
-  closeSheet,
 }: {
   children: React.ReactNode;
-  selectedProduct: ProductSummary | null;
-  closeSheet: () => void;
 }) {
-  const [selectedPresentation, setSelectedPresentation] =
-    useState<Presentation | null>(() => {
-      if (!selectedProduct?.id) return null;
-
-      return selectedProduct.presentations.at(0)!;
-    });
+  const [selectedProduct, setSelectedProduct] =
+    useState<SelectedProduct | null>(null);
 
   const isSheetOpen = selectedProduct !== null;
+  const selectedPresentations =
+    selectedProduct?.presentations.filter((p) => p.selected) ?? [];
 
-  const isPresentationSelected = (item: Presentation) =>
-    item.id === selectedPresentation?.id;
+  const onOpenSheetChange = (v: boolean) => {
+    if (v) setSelectedProduct(null);
+  };
 
-  const selectPresentation = (item: Presentation) => {
+  const closeSheet = () => {
+    setSelectedProduct(null);
+  };
+
+  const isPresentationSelected = (presentationId: string) =>
+    selectedProduct?.presentations.some((p) => p.id === presentationId) ??
+    false;
+
+  const selectProduct = (item: SelectedProduct) => {
+    setSelectedProduct(item);
+  };
+
+  const selectPresentation = (presentationId: string) => {
     if (!selectedProduct) return;
 
-    setSelectedPresentation(item);
+    const updatedProduct: SelectedProduct = {
+      ...selectedProduct,
+      presentations: selectedProduct.presentations.map((p) => {
+        if (p.id === presentationId)
+          return { ...p, selected: p.selected ? !p.selected : true };
+
+        return p;
+      }),
+    };
+
+    setSelectedProduct(updatedProduct);
   };
-
-  const onClose = () => {
-    setSelectedPresentation(null);
-    closeSheet();
-  };
-
-  useEffect(() => {
-    if (selectedPresentation !== null || !selectedProduct?.id) return;
-
-    setSelectedPresentation(selectedProduct.presentations.at(0)!);
-  }, [selectedProduct?.id]);
 
   return (
-    <TicketItemContext.Provider
+    <ProductPresentationSelectorContext.Provider
       value={{
-        closeSheet: onClose,
-        isPresentationSelected,
-        selectPresentation,
-        selectedPresentation,
-        isSheetOpen,
         selectedProduct,
+        isSheetOpen,
+        selectedPresentations,
+        onOpenSheetChange,
+        closeSheet,
+        isPresentationSelected,
+        selectProduct,
+        selectPresentation,
       }}
     >
       {children}
-    </TicketItemContext.Provider>
+    </ProductPresentationSelectorContext.Provider>
   );
 }
 
 export function useProductPresentationSelector() {
-  const context = use(TicketItemContext);
+  const context = use(ProductPresentationSelectorContext);
 
   if (!context) {
     throw new Error(

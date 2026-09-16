@@ -44,8 +44,6 @@ function ProductsScreenList({ searchQuery }: { searchQuery: string }) {
       searchQuery,
     });
 
-  console.log({ hasNextPage, isFetchingNextPage, ...rest });
-
   const items = useMemo(() => data.pages.flatMap((page) => page.items), [data]);
 
   return (

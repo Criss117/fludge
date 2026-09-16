@@ -13,8 +13,10 @@ import type {
   LocalOrganization,
   LocalUser,
 } from "@fludge/sync/entities/iam.entities";
-import type { IamLastSyncedAt } from "@fludge/sync/repositories/iam/client-sync-iam.repository";
-import type { ServerSyncIamRepository } from "@fludge/sync/repositories/iam/server-sync-iam.repository";
+import type {
+  IamLastSyncedAt,
+  ServerSyncIamRepository,
+} from "@fludge/sync/repositories/iam/server-sync-iam.repository";
 import { and, inArray, gt } from "drizzle-orm";
 
 export class SyncIamRepository implements ServerSyncIamRepository {

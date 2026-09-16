@@ -10,8 +10,10 @@ import type {
   LocalCategory,
   LocalProduct,
 } from "@fludge/sync/entities/catalog.entities";
-import type { CatalogLastSyncedAt } from "@fludge/sync/repositories/catalog/client-sync-catalog.repository";
-import type { ServerSyncCatalogRepository } from "@fludge/sync/repositories/catalog/server-sync-catalog.repository";
+import type {
+  CatalogLastSyncedAt,
+  ServerSyncCatalogRepository,
+} from "@fludge/sync/repositories/catalog/server-sync-catalog.repository";
 import { and, eq, getColumns, gt, inArray, sql } from "drizzle-orm";
 
 export class SyncCatalogRepository implements ServerSyncCatalogRepository {

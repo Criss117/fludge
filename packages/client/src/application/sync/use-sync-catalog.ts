@@ -9,7 +9,7 @@ import {
 import { tryCatch } from "@fludge/utils/trycatch";
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { MINUTE } from "@fludge/utils/constants";
-import type { HttpClientCatalogRepository } from "@fludge/sync/repositories/catalog/client-catalog.repository";
+import type { HttpClientSyncCatalogRepository } from "@fludge/sync/repositories/catalog/client-sync-catalog.repository";
 
 export type SyncData = {
   error: Error | null;
@@ -19,7 +19,7 @@ export type SyncData = {
 
 function httpClientCatalogRepository(
   orpc: OrpcQueryClient,
-): HttpClientCatalogRepository {
+): HttpClientSyncCatalogRepository {
   return {
     findLastSyncedAt: async (lastSyncedAt) => {
       const data = await orpc.sync.catalog.find.call(lastSyncedAt);

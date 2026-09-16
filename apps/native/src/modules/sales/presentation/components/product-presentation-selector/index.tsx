@@ -28,37 +28,35 @@ export function ProductPresentationSelector() {
     productPresentation.selectedProduct?.presentations ?? [];
 
   const handleAddTicketItem = () => {
-    if (
-      !productPresentation.selectedPresentation ||
-      !productPresentation.selectedProduct
-    )
-      return;
+    const selectedPresentations = productPresentation.selectedPresentations;
+    const selectedProduct = productPresentation.selectedProduct;
 
-    dispatch({
-      type: "addTicketItem",
-      payload: [
-        {
-          name: productPresentation.selectedPresentation.name,
-          presentationId: productPresentation.selectedPresentation.id,
-          conversionFactor:
-            productPresentation.selectedPresentation.conversionFactor,
-          originalPrice: productPresentation.selectedPresentation.priceSale,
-          priceSale: productPresentation.selectedPresentation.priceSale,
-          quantity: 1,
-          wholesalePrice:
-            productPresentation.selectedPresentation.priceWholesale,
-          type: "catalog",
-          product: {
-            id: productPresentation.selectedProduct.id,
-            allowsNegativeStock:
-              productPresentation.selectedProduct.allowNegativeStock,
-            stock: productPresentation.selectedProduct.stock,
-            availableStock: productPresentation.selectedProduct.stock,
-            minStock: productPresentation.selectedProduct.minStock,
-            name: productPresentation.selectedProduct.name,
+    if (selectedPresentations.length === 0 || !selectedProduct) return;
+
+    productPresentation.selectedPresentations.forEach((presentation) => {
+      dispatch({
+        type: "addTicketItem",
+        payload: [
+          {
+            name: presentation.name,
+            presentationId: presentation.id,
+            conversionFactor: presentation.conversionFactor,
+            originalPrice: presentation.priceSale,
+            priceSale: presentation.priceSale,
+            quantity: 1,
+            wholesalePrice: presentation.priceWholesale,
+            type: "catalog",
+            product: {
+              id: selectedProduct.id,
+              allowsNegativeStock: selectedProduct.allowNegativeStock,
+              stock: selectedProduct.stock,
+              availableStock: selectedProduct.stock,
+              minStock: selectedProduct.minStock,
+              name: selectedProduct.name,
+            },
           },
-        },
-      ],
+        ],
+      });
     });
 
     productPresentation.closeSheet();

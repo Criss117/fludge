@@ -6,16 +6,16 @@ import {
 import { useFindProducts } from "@fludge/client/application/catalog/queries/use-find-products";
 import { Typography } from "heroui-native";
 import { useTranslation } from "react-i18next";
-import type { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
+import { useProductPresentationSelector } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
 
 interface Props {
-  onSelectProduct: (product: ProductSummary) => void;
   query: string;
 }
 
 const ROW_HEIGHT = SALES_CARD_HEIGHT + 8;
 
-export function SaleProductsListSection({ onSelectProduct, query }: Props) {
+export function SaleProductsListSection({ query }: Props) {
+  const { selectProduct } = useProductPresentationSelector();
   const { t } = useTranslation();
   const { data, fetchNextPage, hasNextPage } = useFindProducts({
     searchQuery: query,
@@ -33,7 +33,7 @@ export function SaleProductsListSection({ onSelectProduct, query }: Props) {
       contentContainerClassName="flex-grow gap-2 pb-8"
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
-        <SalesProductCard product={item} onPress={onSelectProduct} />
+        <SalesProductCard product={item} onPress={selectProduct} />
       )}
       getItemLayout={(_, index) => ({
         length: ROW_HEIGHT,

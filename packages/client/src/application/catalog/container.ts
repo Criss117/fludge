@@ -1,4 +1,4 @@
-import type { LocalClientCatalogRepository } from "@fludge/sync/repositories/catalog/client-catalog.repository";
+import type { ClientSyncCatalogRepository } from "@fludge/sync/repositories/catalog/client-sync-catalog.repository";
 import type { CategoryRepository } from "./domain/category.repository";
 import type { ProductRepository } from "./domain/product.repository";
 
@@ -6,7 +6,7 @@ type Deps = {
   productRepository: ProductRepository;
   categoryRepository: CategoryRepository;
 
-  syncCatalogRepository: LocalClientCatalogRepository;
+  syncCatalogRepository: ClientSyncCatalogRepository;
 };
 
 export function generateCatalogContainer(deps: Deps) {

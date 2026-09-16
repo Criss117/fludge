@@ -16,8 +16,6 @@ export function FieldError({
 }: FieldErrorProps) {
   const { t } = useTranslation();
 
-  // console.log(t("validators.auth.email.invalid"));
-
   const content = useMemo(() => {
     if (children) {
       return children;

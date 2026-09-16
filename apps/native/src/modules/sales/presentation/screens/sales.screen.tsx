@@ -5,20 +5,11 @@ import { useRef, useState } from "react";
 import { TicketSelector } from "../components/ticket-selector";
 import { SalesSummary } from "../components/sale-summary";
 import { SaleProductsListSection } from "../sections/sale-products-list.section";
-import {
-  type ProductPresentationSelectorRef,
-  ProductPresentationSelectorProvider,
-} from "@fludge/client/presentation/sales/product-presentation-selector.provider";
+import { ProductPresentationSelectorProvider } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
 import { ProductPresentationSelector } from "../components/product-presentation-selector";
-import type { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
 
 export function SalesScreen() {
   const [query, setQuery] = useState("");
-  const ticketItemRef = useRef<ProductPresentationSelectorRef>(null);
-
-  const handleProductPress = (product: ProductSummary) => {
-    ticketItemRef.current?.open(product);
-  };
 
   return (
     <View className="flex-1 pt-2">
@@ -34,15 +25,12 @@ export function SalesScreen() {
           </View>
           <CameraDialog setBarcode={setQuery} />
         </View>
-        <SaleProductsListSection
-          onSelectProduct={handleProductPress}
-          query={query}
-        />
+        <ProductPresentationSelectorProvider>
+          <SaleProductsListSection query={query} />
+          <ProductPresentationSelector />
+        </ProductPresentationSelectorProvider>
       </View>
       <SalesSummary />
-      <ProductPresentationSelectorProvider ref={ticketItemRef}>
-        <ProductPresentationSelector />
-      </ProductPresentationSelectorProvider>
     </View>
   );
 }

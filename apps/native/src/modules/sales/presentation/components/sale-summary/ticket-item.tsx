@@ -79,7 +79,6 @@ function UpdatePriceDialog({
 
   const onOpenChange = (v: boolean) => {
     if (v) return;
-    console.log("onOpenChange");
     setPrice(currentPrice);
     KeyboardController.dismiss();
   };

@@ -7,9 +7,9 @@ import {
   type OrpcQueryClient,
 } from "@fludge/client/providers/orpc.provider";
 import { tryCatch } from "@fludge/utils/trycatch";
-import type { HttpClientIamRepository } from "@fludge/sync/repositories/iam/client-iam.repository";
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { MINUTE } from "@fludge/utils/constants";
+import type { HttpClientSyncIamRepository } from "@fludge/sync/repositories/iam/client-sync-iam.repository";
 
 export type SyncData = {
   error: Error | null;
@@ -19,7 +19,7 @@ export type SyncData = {
 
 function httpClientIamRepository(
   orpc: OrpcQueryClient,
-): HttpClientIamRepository {
+): HttpClientSyncIamRepository {
   return {
     findLastSyncedAt: async (lastSyncedAt) => {
       const data = await orpc.sync.iam.find.call(lastSyncedAt);

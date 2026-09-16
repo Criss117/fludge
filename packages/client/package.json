@@ -31,7 +31,8 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "uuid": "catalog:",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "zustand": "catalog:"
   },
   "devDependencies": {
     "@fludge/api": "workspace:*",

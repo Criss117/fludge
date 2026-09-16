@@ -1,8 +1,8 @@
 import type {
-  CatalogLastSyncedAt,
   ClientSyncCatalogRepository,
   HttpClientSyncCatalogRepository,
 } from "@fludge/sync/repositories/catalog/client-sync-catalog.repository";
+import type { CatalogLastSyncedAt } from "@fludge/sync/repositories/catalog/server-sync-catalog.repository";
 
 export class SyncClientCatalogEngine {
   constructor(
