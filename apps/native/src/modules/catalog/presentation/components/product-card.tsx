@@ -107,26 +107,25 @@ export function ProductCardSkeleton() {
   return (
     <Card className="justify-between gap-y-3" style={{ height: CARD_HEIGHT }}>
       <Card.Header className="flex-row items-start">
-        <View className="flex-1">
-          <SkeletonGroup className="gap-y-1 py-0.5">
-            <SkeletonGroup.Item className="h-6 w-4/6 rounded-full" />
-            <SkeletonGroup.Item className="h-6 w-1/3 rounded-full" />
-          </SkeletonGroup>
+        <View className="flex-1 gap-y-1">
+          <Skeleton className="h-7 w-4/5 rounded-full" />
           <View className="flex flex-row items-center gap-x-1">
             <MaterialIcons
               name="conveyor-belt"
               size={20}
               className="text-muted"
             />
-            <Skeleton className="h-4 w-1/2 rounded-full" />
+            <Skeleton className="h-6 w-3/5 rounded-full" />
           </View>
         </View>
-        <Skeleton className="h-7 w-1/4 rounded-full" />
+        <Skeleton className="h-7 w-1/5 rounded-full" />
       </Card.Header>
       <Card.Body>
-        <View className="flex flex-row items-center gap-x-2">
-          <Skeleton className="h-7 w-1/4 rounded-full" />
-        </View>
+        <SkeletonGroup className="gap-y-2">
+          <SkeletonGroup.Item className="h-5 w-3/5 rounded-full" />
+          <SkeletonGroup.Item className="h-5 w-3/5 rounded-full" />
+          <SkeletonGroup.Item className="h-5 w-3/5 rounded-full" />
+        </SkeletonGroup>
       </Card.Body>
     </Card>
   );

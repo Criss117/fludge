@@ -1,8 +1,6 @@
-import { SearchInput } from "@/modules/shared/components/search-input";
 import { Card } from "heroui-native/card";
 import { Chip } from "heroui-native/chip";
 import { Typography } from "heroui-native/text";
-import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StatusChip } from "@/modules/shared/components/status-chip";
@@ -11,6 +9,8 @@ import { MaterialIcons } from "@/modules/shared/components/icons";
 import { Link } from "expo-router";
 import { formatCurrency } from "@fludge/utils/format-currency";
 import type { ProductDetail } from "@fludge/client/application/catalog/domain/product.repository";
+import { SkeletonGroup } from "heroui-native/skeleton-group";
+import { Skeleton } from "heroui-native/skeleton";
 
 interface Props {
   productId: string;
@@ -21,25 +21,11 @@ export function ProductPresentationSection({
   presentations,
   productId,
 }: Props) {
-  const [search, setSearch] = useState("");
   const { t } = useTranslation();
-
-  const filteredPresentations = useMemo(
-    () =>
-      presentations.filter((presentation) =>
-        presentation.searchBlob.toLowerCase().includes(search.toLowerCase())
-      ),
-    [presentations, search]
-  );
 
   return (
     <View className="flex-1 gap-y-2">
-      <SearchInput
-        query={search}
-        setQuery={setSearch}
-        placeholder="helpers.placeholder.search_presentations"
-      />
-      {filteredPresentations.map((presentation) => (
+      {presentations.map((presentation) => (
         <Card key={presentation.id} className="gap-y-2">
           <Card.Header className="flex-row items-start">
             <View className="flex-1">
@@ -90,7 +76,7 @@ export function ProductPresentationSection({
           </Card.Body>
         </Card>
       ))}
-      {filteredPresentations.length === 0 && (
+      {presentations.length === 0 && (
         <View className="flex-1 items-center justify-center">
           <Typography>{t("helpers.no_presentations")}</Typography>
         </View>
@@ -110,6 +96,39 @@ export function ProductPresentationSection({
           </Button.Label>
         </Button>
       </Link>
+    </View>
+  );
+}
+
+export function ProductPresentationSectionSkeleton() {
+  const { t } = useTranslation();
+
+  return (
+    <View className="flex-1 gap-y-2">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <Card key={index} className="gap-y-2">
+          <Card.Header className="flex-row items-start">
+            <SkeletonGroup className="flex-1 gap-y-1">
+              <SkeletonGroup.Item className="h-7 w-4/5 rounded-full" />
+              <SkeletonGroup.Item className="h-6 w-3/5 rounded-full" />
+              <SkeletonGroup.Item className="h-6 w-3/5 rounded-full" />
+            </SkeletonGroup>
+            <Skeleton className="h-6 w-1/5 rounded-full" />
+          </Card.Header>
+          <Skeleton className="h-36 w-full rounded-3xl" />
+        </Card>
+      ))}
+
+      <Button
+        variant="outline"
+        className="border-muted border-dashed"
+        isDisabled
+      >
+        <MaterialIcons name="add" size={20} className="text-muted" />
+        <Button.Label className="text-muted">
+          {t("forms.product.sections.presentations.add")}
+        </Button.Label>
+      </Button>
     </View>
   );
 }

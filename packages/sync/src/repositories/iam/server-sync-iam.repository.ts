@@ -14,7 +14,7 @@ export type IamLastSyncedAt = {
   groupMember: Date | null;
 };
 
-type AllItems = {
+export type SyncIamAllItems = {
   users: LocalUser[];
   groups: LocalGroup[];
   members: LocalMember[];
@@ -22,18 +22,9 @@ type AllItems = {
   groupMembers: LocalGroupMember[];
 };
 
-export interface LocalClientIamRepository {
-  getLastSyncedAt: () => Promise<{
-    user: LocalUser | null;
-    organization: LocalOrganization | null;
-    group: LocalGroup | null;
-    member: LocalMember | null;
-    groupMember: LocalGroupMember | null;
-  }>;
-
-  saveAll: (values: AllItems) => Promise<void>;
-}
-
-export interface HttpClientIamRepository {
-  findLastSyncedAt: (lastSyncedAt: IamLastSyncedAt) => Promise<AllItems>;
+export interface ServerSyncIamRepository {
+  findAllItems: (
+    organizationIds: string[],
+    lastSyncedAt: IamLastSyncedAt,
+  ) => Promise<SyncIamAllItems>;
 }

@@ -1,18 +1,18 @@
 import type {
-  HttpClientIamRepository,
   IamLastSyncedAt,
-  LocalClientIamRepository,
-} from "@fludge/sync/repositories/iam/client-iam.repository";
+  ClientSyncIamRepository,
+  HttpClientSyncIamRepository,
+} from "@fludge/sync/repositories/iam/client-sync-iam.repository";
 
 export class SyncClientIamEngine {
   constructor(
-    private readonly localClientIamRepository: LocalClientIamRepository,
-    private readonly httpClientIamRepository: HttpClientIamRepository,
+    private readonly clientSyncIamRepository: ClientSyncIamRepository,
+    private readonly httpClientSyncIamRepository: HttpClientSyncIamRepository,
   ) {}
 
   public async getLastSyncedAt(): Promise<IamLastSyncedAt> {
     const { group, member, organization, user, groupMember } =
-      await this.localClientIamRepository.getLastSyncedAt();
+      await this.clientSyncIamRepository.getLastSyncedAt();
 
     return {
       user: user?.updatedAt ?? null,
@@ -25,9 +25,9 @@ export class SyncClientIamEngine {
 
   public async sync(lastSyncedAt: IamLastSyncedAt) {
     const { users, groups, members, organizations, groupMembers } =
-      await this.httpClientIamRepository.findLastSyncedAt(lastSyncedAt);
+      await this.httpClientSyncIamRepository.findLastSyncedAt(lastSyncedAt);
 
-    await this.localClientIamRepository.saveAll({
+    await this.clientSyncIamRepository.saveAll({
       users,
       groups,
       members,

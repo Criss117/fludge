@@ -15,8 +15,8 @@ function normalizeFilters(filters?: FindAllGroupsFilters) {
 
 export const { keys: groupKeys, useInvalidateQueries: useInvalidateGroups } =
   keysGenerator({
-    module: "catalog",
-    resource: "categories",
+    module: "iam",
+    resource: "groups",
     normalizeFilters,
   });
 

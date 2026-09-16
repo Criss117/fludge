@@ -9,49 +9,50 @@ import { FloatingLink } from "@/modules/shared/components/floating-link";
 import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
-import {
-  SearchInput,
-  SearchInputSkeleton,
-} from "@/modules/shared/components/search-input";
-import { useMemo, useState } from "react";
-import {
-  CameraDialog,
-  CameraDialogSkeleton,
-} from "@/modules/shared/components/camera-dialog";
-import { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
+import { SearchInput } from "@/modules/shared/components/search-input";
+import { Suspense, useMemo, useState } from "react";
+import { CameraDialog } from "@/modules/shared/components/camera-dialog";
 
 interface ListFooterProps {
   hasNextPage: boolean;
+  isFetchingNextPage: boolean;
 }
 
 const ITEM_SEPARATOR_HEIGHT = 16;
 
-function ListFooterComponent({ hasNextPage }: ListFooterProps) {
+function ListFooterComponent({
+  hasNextPage,
+  isFetchingNextPage,
+}: ListFooterProps) {
   const { t } = useTranslation();
 
-  if (hasNextPage) return null;
+  if (isFetchingNextPage) return <ProductsListSkeleton length={10} />;
 
-  return (
-    <View className="flex-row items-center justify-center">
-      <Typography>{t("screens.products.no_more")}</Typography>
-    </View>
-  );
+  if (!hasNextPage)
+    return (
+      <View className="flex-row items-center justify-center">
+        <Typography>{t("screens.products.no_more")}</Typography>
+      </View>
+    );
+
+  return null;
 }
 
-function ProductsScreenList({
-  data,
-  fetchNextPage,
-  hasNextPage,
-}: {
-  data: ProductSummary[];
-  fetchNextPage: () => void;
-  hasNextPage: boolean;
-}) {
+function ProductsScreenList({ searchQuery }: { searchQuery: string }) {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, ...rest } =
+    useFindProducts({
+      searchQuery,
+    });
+
+  console.log({ hasNextPage, isFetchingNextPage, ...rest });
+
+  const items = useMemo(() => data.pages.flatMap((page) => page.items), [data]);
+
   return (
     <FlatList
       className="flex-1"
       contentContainerClassName="pb-40"
-      data={data}
+      data={items}
       keyExtractor={(item) => item.id}
       showsVerticalScrollIndicator={false}
       renderItem={({ item }) => <ProductCard product={item} />}
@@ -68,18 +69,28 @@ function ProductsScreenList({
         if (hasNextPage) fetchNextPage();
       }}
       ListFooterComponentClassName="py-4"
-      ListFooterComponent={<ListFooterComponent hasNextPage={hasNextPage} />}
+      ListFooterComponent={
+        <ListFooterComponent
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+        />
+      }
     />
+  );
+}
+
+function ProductsListSkeleton({ length = 3 }: { length?: number }) {
+  return (
+    <View className="gap-y-4 pb-40">
+      {Array.from({ length }).map((_, i) => (
+        <ProductCardSkeleton key={i} />
+      ))}
+    </View>
   );
 }
 
 export function ProductsScreen() {
   const [query, setQuery] = useState("");
-  const { data, fetchNextPage, hasNextPage } = useFindProducts({
-    searchQuery: query,
-  });
-
-  const items = useMemo(() => data.pages.flatMap((page) => page.items), [data]);
 
   return (
     <View className="relative flex-1 gap-y-3 px-3 pt-2">
@@ -93,11 +104,9 @@ export function ProductsScreen() {
         </View>
         <CameraDialog setBarcode={setQuery} />
       </View>
-      <ProductsScreenList
-        data={items}
-        fetchNextPage={fetchNextPage}
-        hasNextPage={hasNextPage}
-      />
+      <Suspense fallback={<ProductsListSkeleton />}>
+        <ProductsScreenList searchQuery={query} />
+      </Suspense>
 
       <View className="absolute right-0 bottom-20 px-3">
         <FloatingLink
@@ -106,22 +115,6 @@ export function ProductsScreen() {
           }}
         />
       </View>
-    </View>
-  );
-}
-
-export function ProductsScreenSkeleton({ length = 3 }: { length?: number }) {
-  return (
-    <View className="relative flex-1 gap-y-3 px-3 pt-2">
-      <View className="flex-row items-center gap-x-2">
-        <View className="flex-1">
-          <SearchInputSkeleton placeholder="helpers.placeholder.search_products" />
-        </View>
-        <CameraDialogSkeleton />
-      </View>
-      {Array.from({ length }).map((_, i) => (
-        <ProductCardSkeleton key={i} />
-      ))}
     </View>
   );
 }

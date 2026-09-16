@@ -14,7 +14,7 @@ import {
   paginate,
 } from "@fludge/utils/pagination";
 
-export class SQLiteProductRepository implements ProductRepository {
+export class NativeProductRepository implements ProductRepository {
   constructor(private readonly db: DatabaseService) {}
 
   public async findAll(

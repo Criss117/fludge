@@ -14,7 +14,7 @@ import {
   paginate,
 } from "@fludge/utils/pagination";
 
-export class SQLiteCategoryRepository implements CategoryRepository {
+export class NativeCategoryRepository implements CategoryRepository {
   constructor(private readonly db: DatabaseService) {}
 
   public async findAll(

@@ -171,6 +171,7 @@ export const screens = {
       title: "Editar producto",
     },
     product: {
+      loading_details: "Cargando detalles del producto",
       sections: {
         details: {
           stock: "Stock total disponible",
@@ -178,6 +179,12 @@ export const screens = {
           low_stock: "Stock bajo",
           negative_stock: "Stock negativo",
           min_stock: "Stock mínimo",
+        },
+        presentations: {
+          title: "Presentaciones",
+        },
+        movements: {
+          title: "Movimientos de stock",
         },
       },
     },

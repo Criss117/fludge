@@ -1,13 +1,5 @@
-import {
-  ProductsScreen,
-  ProductsScreenSkeleton,
-} from "@/modules/catalog/presentation/screens/products.screen";
-import { Suspense } from "react";
+import { ProductsScreen } from "@/modules/catalog/presentation/screens/products.screen";
 
 export default function CatalogProducts() {
-  return (
-    <Suspense fallback={<ProductsScreenSkeleton />}>
-      <ProductsScreen />
-    </Suspense>
-  );
+  return <ProductsScreen />;
 }

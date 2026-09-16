@@ -1,5 +1,5 @@
-import type { ServerSyncIamRepository } from "@fludge/sync/repositories/iam/server-iam.repository";
-import type { IamLastSyncedAt } from "@fludge/sync/repositories/iam/client-iam.repository";
+import type { ServerSyncIamRepository } from "../../repositories/iam/server-sync-iam.repository";
+import type { IamLastSyncedAt } from "../../repositories/iam/client-sync-iam.repository";
 
 export class SyncServerIamEngine {
   constructor(

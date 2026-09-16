@@ -15,8 +15,8 @@ function normalizeFilters(filters?: FindAllMembersFilters) {
 
 export const { keys: membersKeys, useInvalidateQueries: useInvalidateMembers } =
   keysGenerator({
-    module: "catalog",
-    resource: "categories",
+    module: "iam",
+    resource: "members",
     normalizeFilters,
   });
 

@@ -1,11 +1,3 @@
-import {
-  LocalGroup,
-  LocalGroupMember,
-  LocalMember,
-  LocalOrganization,
-  LocalUser,
-} from "@fludge/sync/entities/iam.entities";
-import type { LocalClientIamRepository as LCIR } from "@fludge/sync/repositories/iam/client-iam.repository";
 import { DatabaseService } from "..";
 import {
   group,
@@ -16,8 +8,13 @@ import {
 } from "@fludge/db/local-schemas/iam.schema";
 import { desc } from "drizzle-orm";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
+import { SyncIamAllItems } from "@fludge/sync/repositories/iam/server-sync-iam.repository";
+import {
+  ClientSyncIamRepository,
+  GetIamLastSyncedAt,
+} from "@fludge/sync/repositories/iam/client-sync-iam.repository";
 
-export class LocalClientIamRepository implements LCIR {
+export class NativeSyncIamRepository implements ClientSyncIamRepository {
   constructor(private readonly db: DatabaseService) {}
 
   private async getLastSyncedUser() {
@@ -70,13 +67,7 @@ export class LocalClientIamRepository implements LCIR {
     return row.at(0) ?? null;
   }
 
-  public async getLastSyncedAt(): Promise<{
-    user: LocalUser | null;
-    group: LocalGroup | null;
-    member: LocalMember | null;
-    organization: LocalOrganization | null;
-    groupMember: LocalGroupMember | null;
-  }> {
+  public async getLastSyncedAt(): Promise<GetIamLastSyncedAt> {
     const [user, group, member, organization, groupMember] = await Promise.all([
       this.getLastSyncedUser(),
       this.getLastSyncedGroup(),
@@ -94,13 +85,7 @@ export class LocalClientIamRepository implements LCIR {
     };
   }
 
-  public async saveAll(values: {
-    users: LocalUser[];
-    groups: LocalGroup[];
-    members: LocalMember[];
-    organizations: LocalOrganization[];
-    groupMembers: LocalGroupMember[];
-  }): Promise<void> {
+  public async saveAll(values: SyncIamAllItems): Promise<void> {
     this.db.transaction((tx) => {
       if (values.users.length > 0) {
         tx.insert(user)

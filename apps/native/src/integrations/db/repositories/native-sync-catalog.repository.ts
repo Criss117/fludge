@@ -1,19 +1,14 @@
-import {
-  type LocalCategory,
-  type LocalProduct,
-} from "@fludge/sync/entities/catalog.entities";
-import type { LocalClientCatalogRepository as LCCR } from "@fludge/sync/repositories/catalog/client-catalog.repository";
 import { DatabaseService } from "..";
 import { category, product } from "@fludge/db/local-schemas/catalog.schema";
 import { desc } from "drizzle-orm";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
+import type {
+  ClientSyncCatalogRepository,
+  GetCatalogLastSyncedAt,
+} from "@fludge/sync/repositories/catalog/client-sync-catalog.repository";
+import { SyncCatalogAllItems } from "@fludge/sync/repositories/catalog/server-sync-catalog.repository";
 
-type AllItems = {
-  products: LocalProduct[];
-  categories: LocalCategory[];
-};
-
-export class LocalClientCatalogRepository implements LCCR {
+export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository {
   constructor(private readonly db: DatabaseService) {}
 
   private async getLastSyncedProduct() {
@@ -36,10 +31,7 @@ export class LocalClientCatalogRepository implements LCCR {
     return row.at(0) ?? null;
   }
 
-  public async getLastSyncedAt(): Promise<{
-    product: LocalProduct | null;
-    category: LocalCategory | null;
-  }> {
+  public async getLastSyncedAt(): Promise<GetCatalogLastSyncedAt> {
     const [product, category] = await Promise.all([
       this.getLastSyncedProduct(),
       this.getLastSyncedCategory(),
@@ -51,7 +43,7 @@ export class LocalClientCatalogRepository implements LCCR {
     };
   }
 
-  public async saveAll(values: AllItems): Promise<void> {
+  public async saveAll(values: SyncCatalogAllItems): Promise<void> {
     this.db.transaction((tx) => {
       if (values.products.length > 0) {
         tx.insert(product)
