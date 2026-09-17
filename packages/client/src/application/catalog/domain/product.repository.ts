@@ -6,7 +6,12 @@ export type ProductSummary = LocalProduct;
 export type ProductDetail = LocalProduct;
 
 export type FindAllProductsFilters = {
-  searchQuery?: string;
+  searchQuery: string;
+  status: "active" | "inactive" | "discontinued" | "all";
+  orderBy: {
+    createdAt: "asc" | "desc";
+    stock: "asc" | "desc";
+  };
 };
 
 export interface ProductRepository {

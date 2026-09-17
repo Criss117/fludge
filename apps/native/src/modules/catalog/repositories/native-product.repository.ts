@@ -7,7 +7,7 @@ import {
 import { product } from "@fludge/db/local-schemas/catalog.schema";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import { LocalProduct } from "@fludge/sync/entities/catalog.entities";
-import { and, desc, eq, inArray, like, or } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, like, not, or } from "drizzle-orm";
 import {
   type Cursor,
   type PaginatedResponse,
@@ -20,7 +20,7 @@ export class NativeProductRepository implements ProductRepository {
   public async findAll(
     organizationId: string,
     cursor: Cursor,
-    filters?: FindAllProductsFilters
+    filters: FindAllProductsFilters
   ): Promise<PaginatedResponse<ProductSummary>> {
     const rows = await this.db
       .select()
@@ -28,17 +28,25 @@ export class NativeProductRepository implements ProductRepository {
       .where(
         and(
           eq(product.organizationId, organizationId),
-          filters?.searchQuery
-            ? or(
-                like(product.name, `%${filters.searchQuery}%`),
-                like(product.searchBlob, `%${filters.searchQuery}%`)
-              )
+          or(
+            like(product.name, `%${filters.searchQuery}%`),
+            like(product.searchBlob, `%${filters.searchQuery}%`)
+          ),
+          filters.status !== "all"
+            ? eq(product.status, filters.status)
             : undefined
         )
       )
       .limit(cursor.limit + 1)
       .offset(cursor.limit * cursor.page)
-      .orderBy(desc(product.createdAt));
+      .orderBy(
+        filters.orderBy.createdAt === "desc"
+          ? desc(product.createdAt)
+          : asc(product.createdAt),
+        filters.orderBy.stock === "desc"
+          ? desc(product.stock)
+          : asc(product.stock)
+      );
 
     return paginate(rows, cursor);
   }

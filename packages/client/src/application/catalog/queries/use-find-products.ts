@@ -9,11 +9,15 @@ import {
 import type { FindAllProductsFilters } from "../domain/product.repository";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 
-function normalizeFilters(filters?: FindAllProductsFilters) {
+function normalizeFilters(filters: FindAllProductsFilters) {
   return {
-    searchQuery: filters?.searchQuery
-      ? SearchBlob.normalize(filters.searchQuery)
-      : undefined,
+    searchQuery: SearchBlob.normalize(filters.searchQuery),
+
+    status: filters.status,
+    orderBy: {
+      createdAt: filters.orderBy.createdAt,
+      stock: filters.orderBy.stock,
+    },
   };
 }
 
@@ -26,13 +30,13 @@ export const {
   normalizeFilters,
 });
 
-export function useFindProducts(filters?: FindAllProductsFilters) {
+export function useFindProducts(filters: FindAllProductsFilters) {
   const { catalogContainer } = useContainer();
   const { activeOrganization } = useOrganization();
 
   if (!activeOrganization) throw new Error("Active organization not found");
 
-  const normalizedQuery = SearchBlob.normalize(filters?.searchQuery ?? "");
+  const normalizedQuery = SearchBlob.normalize(filters.searchQuery);
 
   return useSuspenseInfiniteQuery({
     queryKey: productKeys.filteredList(activeOrganization.id, filters),
@@ -43,6 +47,11 @@ export function useFindProducts(filters?: FindAllProductsFilters) {
         pageParam,
         {
           searchQuery: normalizedQuery,
+          status: filters.status,
+          orderBy: {
+            createdAt: filters.orderBy.createdAt,
+            stock: filters.orderBy.stock,
+          },
         },
       ),
     getNextPageParam: (lastPage) => lastPage.nextCursor,

@@ -19,6 +19,11 @@ export function SaleProductsListSection({ query }: Props) {
   const { t } = useTranslation();
   const { data, fetchNextPage, hasNextPage } = useFindProducts({
     searchQuery: query,
+    status: "active",
+    orderBy: {
+      createdAt: "desc",
+      stock: "desc",
+    },
   });
 
   const items = data.pages.flatMap((page) => page.items);

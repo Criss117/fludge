@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { Suspense, useMemo, useState } from "react";
 import { CameraDialog } from "@/modules/shared/components/camera-dialog";
+import type { FindAllProductsFilters } from "@fludge/client/application/catalog/domain/product.repository";
 
 interface ListFooterProps {
   hasNextPage: boolean;
@@ -38,11 +39,9 @@ function ListFooterComponent({
   return null;
 }
 
-function ProductsScreenList({ searchQuery }: { searchQuery: string }) {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, ...rest } =
-    useFindProducts({
-      searchQuery,
-    });
+function ProductsScreenList({ filters }: { filters: FindAllProductsFilters }) {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useFindProducts(filters);
 
   const items = useMemo(() => data.pages.flatMap((page) => page.items), [data]);
 
@@ -88,22 +87,32 @@ function ProductsListSkeleton({ length = 3 }: { length?: number }) {
 }
 
 export function ProductsScreen() {
-  const [query, setQuery] = useState("");
+  const [filters, setFilters] = useState<FindAllProductsFilters>({
+    searchQuery: "",
+    status: "all",
+    orderBy: {
+      createdAt: "desc",
+      stock: "asc",
+    },
+  });
+
+  const setSearchQuery = (query: string) =>
+    setFilters((prev) => ({ ...prev, searchQuery: query }));
 
   return (
     <View className="relative flex-1 gap-y-3 px-3 pt-2">
       <View className="flex-row items-center gap-x-2">
         <View className="flex-1">
           <SearchInput
-            query={query}
-            setQuery={setQuery}
+            query={filters.searchQuery}
+            setQuery={setSearchQuery}
             placeholder="helpers.placeholder.search_products"
           />
         </View>
-        <CameraDialog setBarcode={setQuery} />
+        <CameraDialog setBarcode={setSearchQuery} />
       </View>
       <Suspense fallback={<ProductsListSkeleton />}>
-        <ProductsScreenList searchQuery={query} />
+        <ProductsScreenList filters={filters} />
       </Suspense>
 
       <View className="absolute right-0 bottom-20 px-3">

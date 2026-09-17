@@ -7,7 +7,7 @@ type Resource = "products" | "groups" | "members" | "categories";
 interface QueryKeysGeneratorProps<T, TNormalizedFilters> {
   module: Module;
   resource: Resource;
-  normalizeFilters: (filters?: T) => TNormalizedFilters;
+  normalizeFilters: (filters: T) => TNormalizedFilters;
 }
 
 type QueryKeysReturn<T, TNormalizedFilters> = {
@@ -17,7 +17,7 @@ type QueryKeysReturn<T, TNormalizedFilters> = {
   ) => readonly [Module, "organizations", string, Resource, "list"];
   filteredList: (
     orgId: string,
-    filters?: T,
+    filters: T,
   ) => readonly [
     Module,
     "organizations",
@@ -48,7 +48,7 @@ function queriesKeysGenerator<T, TNormalizedFilters>({
 
   const list = (orgId: string) => [...all(orgId), "list"] as const;
 
-  const filteredList = (orgId: string, filters?: T) =>
+  const filteredList = (orgId: string, filters: T) =>
     [...list(orgId), normalizeFilters(filters)] as const;
 
   const allDetails = (orgId: string) => [...all(orgId), "detail"] as const;
@@ -90,7 +90,7 @@ function genearteInvalidateQueries<T, TNormalizedFilters>(
       });
     };
 
-    const invalidateFilteredList = (filters?: T) => {
+    const invalidateFilteredList = (filters: T) => {
       return queryClient.invalidateQueries({
         queryKey: keys.filteredList(orgId, filters),
       });
