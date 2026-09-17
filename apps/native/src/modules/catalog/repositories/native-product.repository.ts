@@ -5,9 +5,12 @@ import {
   ProductSummary,
 } from "@fludge/client/application/catalog/domain/product.repository";
 import { product } from "@fludge/db/local-schemas/catalog.schema";
-import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
+import {
+  buildConflictUpdateColumn,
+  sortBy,
+} from "@fludge/db/utils/build-queries";
 import { LocalProduct } from "@fludge/sync/entities/catalog.entities";
-import { and, asc, desc, eq, inArray, like, not, or } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, like, not, or, SQL } from "drizzle-orm";
 import {
   type Cursor,
   type PaginatedResponse,
@@ -22,6 +25,14 @@ export class NativeProductRepository implements ProductRepository {
     cursor: Cursor,
     filters: FindAllProductsFilters
   ): Promise<PaginatedResponse<ProductSummary>> {
+    const orderByFilters: SQL[] = [];
+
+    if (filters.orderBy.stock !== "none") {
+      orderByFilters.push(sortBy(product.stock, filters.orderBy.stock));
+    }
+
+    orderByFilters.push(sortBy(product.createdAt, filters.orderBy.createdAt));
+
     const rows = await this.db
       .select()
       .from(product)
@@ -39,14 +50,7 @@ export class NativeProductRepository implements ProductRepository {
       )
       .limit(cursor.limit + 1)
       .offset(cursor.limit * cursor.page)
-      .orderBy(
-        filters.orderBy.createdAt === "desc"
-          ? desc(product.createdAt)
-          : asc(product.createdAt),
-        filters.orderBy.stock === "desc"
-          ? desc(product.stock)
-          : asc(product.stock)
-      );
+      .orderBy(...orderByFilters);
 
     return paginate(rows, cursor);
   }

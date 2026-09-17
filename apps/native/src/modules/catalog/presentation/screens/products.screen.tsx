@@ -13,6 +13,9 @@ import { SearchInput } from "@/modules/shared/components/search-input";
 import { Suspense, useMemo, useState } from "react";
 import { CameraDialog } from "@/modules/shared/components/camera-dialog";
 import type { FindAllProductsFilters } from "@fludge/client/application/catalog/domain/product.repository";
+import { ProductFiltersBottomSheet } from "../components/product-filters-bottom-sheet";
+import { Button } from "heroui-native/button";
+import { MaterialIcons } from "@/modules/shared/components/icons";
 
 interface ListFooterProps {
   hasNextPage: boolean;
@@ -44,6 +47,13 @@ function ProductsScreenList({ filters }: { filters: FindAllProductsFilters }) {
     useFindProducts(filters);
 
   const items = useMemo(() => data.pages.flatMap((page) => page.items), [data]);
+
+  console.log(
+    items.map((i) => ({
+      createdAt: i.createdAt,
+      stock: i.stock,
+    }))
+  );
 
   return (
     <FlatList
@@ -92,7 +102,7 @@ export function ProductsScreen() {
     status: "all",
     orderBy: {
       createdAt: "desc",
-      stock: "asc",
+      stock: "none",
     },
   });
 
@@ -110,6 +120,7 @@ export function ProductsScreen() {
           />
         </View>
         <CameraDialog setBarcode={setSearchQuery} />
+        <ProductFiltersBottomSheet filters={filters} onApply={setFilters} />
       </View>
       <Suspense fallback={<ProductsListSkeleton />}>
         <ProductsScreenList filters={filters} />

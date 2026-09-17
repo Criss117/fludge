@@ -1,5 +1,5 @@
-import { getColumns, SQL, sql } from "drizzle-orm";
-import type { SQLiteTable } from "drizzle-orm/sqlite-core";
+import { asc, desc, getColumns, SQL, sql } from "drizzle-orm";
+import type { SQLiteColumn, SQLiteTable } from "drizzle-orm/sqlite-core";
 
 export function buildConflictUpdateColumn<
   T extends SQLiteTable,
@@ -27,4 +27,11 @@ export function jsonObject<T extends SQLiteTable>(table: T) {
   });
 
   return sql`json_object(${sql.join(chunks, sql``)})`;
+}
+
+export function sortBy<T extends SQLiteColumn>(
+  column: T,
+  direction: "asc" | "desc",
+) {
+  return direction === "asc" ? asc(column) : desc(column);
 }

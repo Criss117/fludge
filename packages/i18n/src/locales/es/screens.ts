@@ -170,6 +170,30 @@ export const screens = {
     update: {
       title: "Editar producto",
     },
+    filters: {
+      title: "Filtros",
+      status: {
+        label: "Estado",
+        all: "Todos",
+        active: "Activo",
+        inactive: "Inactivo",
+        discontinued: "Descontinuado",
+      },
+      order_by: {
+        created_at: {
+          label: "Fecha de creación",
+          desc: "Más recientes",
+          asc: "Más antiguos",
+        },
+        stock: {
+          label: "Stock",
+          asc: "Menor stock",
+          desc: "Mayor stock",
+          none: "-",
+        },
+      },
+      apply: "Aplicar",
+    },
     product: {
       loading_details: "Cargando detalles del producto",
       sections: {

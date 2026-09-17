@@ -10,7 +10,7 @@ export type FindAllProductsFilters = {
   status: "active" | "inactive" | "discontinued" | "all";
   orderBy: {
     createdAt: "asc" | "desc";
-    stock: "asc" | "desc";
+    stock: "asc" | "desc" | "none";
   };
 };
 
