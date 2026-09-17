@@ -4,27 +4,30 @@ import { Checkbox } from "heroui-native/checkbox";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
 import { useProductPresentationSelector } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
-import type { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
+
+import type { SelectedProduct } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
 
 interface Props {
-  presentation: ProductSummary["presentations"][number];
+  presentation: SelectedProduct["presentations"][number];
   context: ReturnType<typeof useProductPresentationSelector>;
 }
 
 export function SalePresentationCard({ presentation, context }: Props) {
-  const isSelected = context.isPresentationSelected(presentation.id);
+  function selectPresentation() {
+    context.selectPresentation(presentation.id);
+  }
 
   return (
     <PressableFeedback
-      onPress={() => context.selectPresentation(presentation.id)}
+      onPress={selectPresentation}
       className="rounded-3xl shadow"
     >
       <Card className="bg-default flex-row items-center gap-x-2">
         <Card.Header>
           <Checkbox
             className="bg-background"
-            isSelected={isSelected}
-            onPress={() => context.selectPresentation(presentation.id)}
+            isSelected={presentation.selected}
+            onPress={selectPresentation}
           />
         </Card.Header>
         <Card.Body className="flex-1 gap-y-1">

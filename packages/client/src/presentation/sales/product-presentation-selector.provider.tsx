@@ -6,7 +6,7 @@ export interface ProductPresentationSelectorRef {
   close: () => void;
 }
 
-type SelectedProduct = Omit<ProductSummary, "presentations"> & {
+export type SelectedProduct = Omit<ProductSummary, "presentations"> & {
   presentations: Array<
     ProductSummary["presentations"][number] & {
       selected?: boolean;
@@ -19,7 +19,6 @@ interface Context {
   isSheetOpen: boolean;
   selectedPresentations: SelectedProduct["presentations"];
   onOpenSheetChange: (v: boolean) => void;
-  isPresentationSelected: (presentationId: string) => boolean;
   closeSheet: () => void;
   selectProduct: (item: SelectedProduct) => void;
   selectPresentation: (presentationId: string) => void;
@@ -46,10 +45,6 @@ export function ProductPresentationSelectorProvider({
   const closeSheet = () => {
     setSelectedProduct(null);
   };
-
-  const isPresentationSelected = (presentationId: string) =>
-    selectedProduct?.presentations.some((p) => p.id === presentationId) ??
-    false;
 
   const selectProduct = (item: SelectedProduct) => {
     setSelectedProduct(item);
@@ -79,7 +74,6 @@ export function ProductPresentationSelectorProvider({
         selectedPresentations,
         onOpenSheetChange,
         closeSheet,
-        isPresentationSelected,
         selectProduct,
         selectPresentation,
       }}
