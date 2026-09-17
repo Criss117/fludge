@@ -1,4 +1,4 @@
-import { CommonInputs } from "@/modules/shared/components/common-input";
+import { CommonInputs } from "@/modules/shared/components/common-inputs";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { formatPrice } from "@fludge/utils/currency";
 import { cn } from "heroui-native";

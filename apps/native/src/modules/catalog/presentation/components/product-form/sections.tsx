@@ -94,9 +94,9 @@ export function BasicInformationSection({ form }: { form: Form }) {
         <form.Field name="description">
           {(field) => <ProductFormInputs.Description field={field} />}
         </form.Field>
-        {/* <form.Field name="categoryId">
+        <form.Field name="categoryId">
           {(field) => <ProductFormInputs.CategorySelect field={field} />}
-        </form.Field> */}
+        </form.Field>
       </Card.Body>
     </Card>
   );

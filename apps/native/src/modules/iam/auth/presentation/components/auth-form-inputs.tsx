@@ -1,4 +1,4 @@
-import { CommonInputs } from "@/modules/shared/components/common-input";
+import { CommonInputs } from "@/modules/shared/components/common-inputs";
 import type { MinimalField } from "@fludge/client/shared/field-api";
 
 interface FieldProps<T> {

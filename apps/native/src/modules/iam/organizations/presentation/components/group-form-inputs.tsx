@@ -16,7 +16,7 @@ import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { MinimalField } from "@fludge/client/shared/field-api";
-import { CommonInputs } from "@/modules/shared/components/common-input";
+import { CommonInputs } from "@/modules/shared/components/common-inputs";
 import { PermissionsFieldChildrenProps } from "@fludge/client/presentation/iam/group.form";
 import type { TranslationKey } from "@fludge/i18n/index";
 

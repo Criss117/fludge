@@ -33,28 +33,12 @@ export function ProductScreen({ product }: Props) {
     >
       <Card className="gap-y-2">
         <Card.Header className="flex-row items-start">
-          <View className="flex-1">
-            <Card.Title className="line-clamp-2">{product.name}</Card.Title>
-            <Card.Description className="line-clamp-2">
-              {product.description}
-            </Card.Description>
-          </View>
-          <Link
-            href={{
-              pathname: "/dashboard/products/[productid]/update",
-              params: { productid: product.id },
-            }}
-            asChild
-            push
-          >
-            <Button size="sm" variant="ghost" isIconOnly>
-              <MaterialIcons
-                name="edit"
-                size={20}
-                className="text-foreground"
-              />
-            </Button>
-          </Link>
+          <Card.Title className="line-clamp-2 flex-1">
+            {product.name}
+          </Card.Title>
+          <Card.Description className="line-clamp-2">
+            {product.description}
+          </Card.Description>
         </Card.Header>
         <Card.Body>
           <Card className="bg-default gap-y-3">
@@ -146,7 +130,6 @@ export function ProductScreenSkeleton() {
             <Skeleton className="h-7 w-3/5 rounded-full" />
             <Skeleton className="h-7 w-4/5 rounded-full" />
           </View>
-          <MaterialIcons name="edit" size={20} className="text-foreground" />
         </Card.Header>
         <Card.Body>
           <Card className="bg-default gap-y-3">
