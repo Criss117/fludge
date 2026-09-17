@@ -1,8 +1,8 @@
 import { CameraDialog } from "@/modules/shared/components/camera-dialog";
-import { CommonInputs } from "@/modules/shared/components/common-input";
+import { CommonInputs } from "@/modules/shared/components/common-inputs";
 import { useFindCategories } from "@fludge/client/application/catalog/queries/use-find-categories";
 import type { MinimalField } from "@fludge/client/shared/field-api";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { type FocusEvent, View } from "react-native";
 
 interface FieldProps<T> {
@@ -107,38 +107,42 @@ function MinStock({ field }: FieldProps<number>) {
   );
 }
 
-// function CategorySelect({ field }: FieldProps<string>) {
-//   const { data } = useFindCategories();
+function CategorySelect({ field }: FieldProps<string>) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useFindCategories({ searchQuery });
 
-//   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-//   const errors = field.state.meta.errors;
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+  const errors = field.state.meta.errors;
 
-//   const options = useMemo(
-//     () =>
-//       data.map((item) => ({
-//         label: item.name,
-//         value: item.id,
-//       })),
-//     [data]
-//   );
+  const items = useMemo(
+    () => data.pages.flatMap((page) => page.items.map((item) => ({
+      label: item.name,
+      value: item.id,
+    }))),
+    [data]
+  );
 
-//   const value = field.state.value
-//     ? options.find((o) => o.value === field.state.value)
-//     : undefined;
+  const value = field.state.value
+    ? items.find((o) => o.value === field.state.value)
+    : undefined;
 
-//   return (
-//     <CommonInputs.SearchableSelect
-//       isInvalid={isInvalid}
-//       errors={errors}
-//       label="forms.product.categories.add"
-//       options={options}
-//       onChange={(option) => {
-//         field.handleChange(option.value);
-//       }}
-//       value={value}
-//     />
-//   );
-// }
+  return (
+    <CommonInputs.SearchableSelect
+      isInvalid={isInvalid}
+      errors={errors}
+      label="forms.product.categories.add"
+      items={items}
+      onChange={(option) => field.handleChange(option.value)}
+      value={value}
+      searchQuery={searchQuery}
+      onSearchQueryChange={setSearchQuery}
+      fetchNextPage={fetchNextPage}
+      hasNextPage={hasNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+    />
+  );
+}
 
 export const ProductFormInputs = {
   Name,
@@ -146,7 +150,7 @@ export const ProductFormInputs = {
   Stock,
   AllowNegativeStock,
   MinStock,
-  // CategorySelect,
+  CategorySelect,
 };
 
 function PresentationName({ field, onFocus }: FieldProps<string>) {

@@ -1,43 +1,39 @@
-import { Label } from "heroui-native/label";
 import { Select } from "heroui-native/select";
 import { Typography } from "heroui-native/text";
-import { FlatList, useWindowDimensions, View } from "react-native";
+import { ActivityIndicator, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   KeyboardAvoidingView,
   KeyboardController,
 } from "react-native-keyboard-controller";
 import { Easing, FadeInDown, FadeOutDown } from "react-native-reanimated";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SearchInput } from "../search-input";
 import { FieldError } from "../field-error";
-import type { SelectInputProps } from "./types";
+import type { SearchableSelectProps } from "./types";
+import { FlatList } from "react-native-gesture-handler";
 
 export function SearchableSelect({
   isInvalid,
   errors,
   label,
-  options,
   onChange,
   isRequired,
   value,
-}: SelectInputProps) {
+  searchQuery,
+  onSearchQueryChange,
+  items,
+  fetchNextPage,
+  hasNextPage,
+  isFetchingNextPage,
+  emptyMessageKey = "screens.categories.not_found",
+}: SearchableSelectProps) {
   const { t } = useTranslation();
-  const [searchQuery, setSearchQuery] = useState("");
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
   const insetTop = insets.top + 12;
   const maxDialogHeight = (height - insetTop) / 2;
-
-  const filteredOptions = options.filter((o) =>
-    o.label.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const resetSearch = () => {
-    setSearchQuery("");
-  };
 
   return (
     <Select
@@ -46,8 +42,7 @@ export function SearchableSelect({
       value={value}
       className="flex-1"
       onValueChange={(v) => {
-        const option = options.find((o) => o.value === v?.value);
-
+        const option = items.find((o) => o.value === v?.value);
         if (option) onChange(option);
       }}
     >
@@ -82,23 +77,24 @@ export function SearchableSelect({
               <SearchInput
                 autoFocus
                 query={searchQuery}
-                setQuery={setSearchQuery}
-                placeholder={"api_errors.auth.sessions.invalid_credentials"}
+                setQuery={onSearchQueryChange}
+                placeholder="helpers.placeholder.search_categories"
               />
             </View>
             <FlatList
-              data={filteredOptions}
+              data={items}
               className="flex-1"
               keyboardShouldPersistTaps="handled"
               keyExtractor={(option) => option.value}
+              onEndReachedThreshold={0.5}
+              onEndReached={() => {
+                if (hasNextPage) fetchNextPage();
+              }}
               renderItem={({ item: option }) => (
                 <Select.Item
                   value={option.value}
                   label={option.label}
-                  onPress={() => {
-                    KeyboardController.dismiss();
-                    resetSearch();
-                  }}
+                  onPress={() => KeyboardController.dismiss()}
                 >
                   <View className="flex-1 flex-row items-center gap-3">
                     <Typography
@@ -111,12 +107,19 @@ export function SearchableSelect({
                   <Select.ItemIndicator />
                 </Select.Item>
               )}
+              ListFooterComponent={
+                isFetchingNextPage ? (
+                  <View className="py-4">
+                    <ActivityIndicator size="small" />
+                  </View>
+                ) : null
+              }
               ListEmptyComponent={
                 <Typography
                   className="text-muted mt-8 text-center"
                   maxFontSizeMultiplier={1}
                 >
-                  {t("screens.categories.not_found")}
+                  {t(emptyMessageKey)}
                 </Typography>
               }
             />

@@ -9,6 +9,8 @@ export type {
   TextInputProps,
   SwitchInputProps,
   SelectInputProps,
+  SelectOption,
+  SearchableSelectProps,
   NumberInputProps,
   TextAreaInputProps,
 } from "./types";
