@@ -10,8 +10,6 @@ import {
   ProductPresentationSection,
   ProductPresentationSectionSkeleton,
 } from "../sections/product-presentation.section";
-import { Link } from "expo-router";
-import { Button } from "heroui-native/button";
 import { ProductDetail } from "@fludge/client/application/catalog/domain/product.repository";
 import { Skeleton } from "heroui-native/skeleton";
 import { Tabs } from "heroui-native/tabs";
@@ -32,7 +30,7 @@ export function ProductScreen({ product }: Props) {
       showsVerticalScrollIndicator={false}
     >
       <Card className="gap-y-2">
-        <Card.Header className="flex-row items-start">
+        <Card.Header>
           <Card.Title className="line-clamp-2 flex-1">
             {product.name}
           </Card.Title>

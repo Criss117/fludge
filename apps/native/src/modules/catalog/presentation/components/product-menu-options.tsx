@@ -29,10 +29,10 @@ const ProductStatus = {
     nextStatus: "active" as ProductStatusEnum,
   },
   discontinued: {
-    icon: "report-off",
-    label: "helpers.discontinue",
-    textColor: "text-danger",
-    nextStatus: "discontinued" as ProductStatusEnum,
+    icon: "bookmarks",
+    label: "helpers.activate",
+    textColor: "text-success",
+    nextStatus: "active" as ProductStatusEnum,
   },
 } as const;
 
@@ -121,16 +121,14 @@ export function ProductMenuOptions({ product }: Props) {
                 <View className="flex-row items-center gap-x-2">
                   <View className="w-1/4 items-center">
                     <MaterialIcons
-                      name={ProductStatus.discontinued.icon}
+                      name={"report-off"}
                       size={20}
-                      className={cn(ProductStatus.discontinued.textColor)}
+                      className="text-danger"
                     />
                   </View>
 
-                  <Typography
-                    className={cn(ProductStatus.discontinued.textColor)}
-                  >
-                    {t(ProductStatus.discontinued.label)}
+                  <Typography className="text-danger">
+                    {t("helpers.discontinue")}
                   </Typography>
                 </View>
               </PressableFeedback>
