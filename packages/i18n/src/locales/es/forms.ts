@@ -119,6 +119,23 @@ export const forms = {
       description: "Selecciona las categorías que pertenecen al producto",
       add: "Añadir Categoría",
     },
+    status: {
+      activate: {
+        title: "Activar Producto",
+        description:
+          "¿Estás seguro de que deseas activar el producto {{name}}?",
+      },
+      deactivate: {
+        title: "Desactivar Producto",
+        description:
+          "¿Estás seguro de que deseas desactivar el producto {{name}}?",
+      },
+      discontinue: {
+        title: "Descontinuar Producto",
+        description:
+          "¿Estás seguro de que deseas descontinuar el producto {{name}}? Esta acción no se puede deshacer.",
+      },
+    },
     create: "Crear Producto",
     update: "Actualizar Producto",
   },
