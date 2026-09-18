@@ -1,7 +1,7 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "b6d05579-e574-44c7-997b-a84dca213b3e",
+  "id": "5cf83d0c-33c4-4c46-b751-4cab8de77da0",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -51,15 +51,15 @@
       "entityType": "tables"
     },
     {
-      "name": "ticket_product_presentations",
+      "name": "ticket",
       "entityType": "tables"
     },
     {
-      "name": "ticket_products",
+      "name": "ticket_product",
       "entityType": "tables"
     },
     {
-      "name": "tickets",
+      "name": "ticket_product_presentation",
       "entityType": "tables"
     },
     {
@@ -1253,204 +1253,14 @@
       "table": "user"
     },
     {
-      "type": "integer",
-      "notNull": false,
-      "autoincrement": true,
-      "default": null,
-      "generated": null,
-      "name": "row_id",
-      "entityType": "columns",
-      "table": "ticket_product_presentations"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "ticket_product_row_id",
-      "entityType": "columns",
-      "table": "ticket_product_presentations"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "presentation_id",
-      "entityType": "columns",
-      "table": "ticket_product_presentations"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "name",
-      "entityType": "columns",
-      "table": "ticket_product_presentations"
-    },
-    {
-      "type": "real",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "original_price",
-      "entityType": "columns",
-      "table": "ticket_product_presentations"
-    },
-    {
-      "type": "real",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "wholesale_price",
-      "entityType": "columns",
-      "table": "ticket_product_presentations"
-    },
-    {
-      "type": "real",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "conversion_factor",
-      "entityType": "columns",
-      "table": "ticket_product_presentations"
-    },
-    {
-      "type": "real",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "price_sale",
-      "entityType": "columns",
-      "table": "ticket_product_presentations"
-    },
-    {
-      "type": "real",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "quantity",
-      "entityType": "columns",
-      "table": "ticket_product_presentations"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
-      "generated": null,
-      "name": "created_at",
-      "entityType": "columns",
-      "table": "ticket_product_presentations"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
-      "generated": null,
-      "name": "updated_at",
-      "entityType": "columns",
-      "table": "ticket_product_presentations"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "ticket_id",
-      "entityType": "columns",
-      "table": "ticket_products"
-    },
-    {
-      "type": "integer",
-      "notNull": false,
-      "autoincrement": true,
-      "default": null,
-      "generated": null,
-      "name": "row_id",
-      "entityType": "columns",
-      "table": "ticket_products"
-    },
-    {
       "type": "text",
       "notNull": false,
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "product_id",
+      "name": "id",
       "entityType": "columns",
-      "table": "ticket_products"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "type",
-      "entityType": "columns",
-      "table": "ticket_products"
-    },
-    {
-      "type": "real",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "stock",
-      "entityType": "columns",
-      "table": "ticket_products"
-    },
-    {
-      "type": "real",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "min_stock",
-      "entityType": "columns",
-      "table": "ticket_products"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "false",
-      "generated": null,
-      "name": "allows_negative_stock",
-      "entityType": "columns",
-      "table": "ticket_products"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
-      "generated": null,
-      "name": "created_at",
-      "entityType": "columns",
-      "table": "ticket_products"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
-      "generated": null,
-      "name": "updated_at",
-      "entityType": "columns",
-      "table": "ticket_products"
+      "table": "ticket"
     },
     {
       "type": "text",
@@ -1460,27 +1270,157 @@
       "generated": null,
       "name": "id",
       "entityType": "columns",
-      "table": "tickets"
+      "table": "ticket_product"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ticket_id",
+      "entityType": "columns",
+      "table": "ticket_product"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "product_id",
+      "entityType": "columns",
+      "table": "ticket_product"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "type",
+      "entityType": "columns",
+      "table": "ticket_product"
+    },
+    {
+      "type": "real",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "stock",
+      "entityType": "columns",
+      "table": "ticket_product"
+    },
+    {
+      "type": "real",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "min_stock",
+      "entityType": "columns",
+      "table": "ticket_product"
     },
     {
       "type": "integer",
       "notNull": true,
       "autoincrement": false,
-      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "default": "false",
       "generated": null,
-      "name": "created_at",
+      "name": "allows_negative_stock",
       "entityType": "columns",
-      "table": "tickets"
+      "table": "ticket_product"
     },
     {
-      "type": "integer",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "ticket_product_presentation"
+    },
+    {
+      "type": "text",
       "notNull": true,
       "autoincrement": false,
-      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "default": null,
       "generated": null,
-      "name": "updated_at",
+      "name": "ticket_product_id",
       "entityType": "columns",
-      "table": "tickets"
+      "table": "ticket_product_presentation"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "presentation_id",
+      "entityType": "columns",
+      "table": "ticket_product_presentation"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "name",
+      "entityType": "columns",
+      "table": "ticket_product_presentation"
+    },
+    {
+      "type": "real",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "original_price",
+      "entityType": "columns",
+      "table": "ticket_product_presentation"
+    },
+    {
+      "type": "real",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "wholesale_price",
+      "entityType": "columns",
+      "table": "ticket_product_presentation"
+    },
+    {
+      "type": "real",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "conversion_factor",
+      "entityType": "columns",
+      "table": "ticket_product_presentation"
+    },
+    {
+      "type": "real",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "price_sale",
+      "entityType": "columns",
+      "table": "ticket_product_presentation"
+    },
+    {
+      "type": "real",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "quantity",
+      "entityType": "columns",
+      "table": "ticket_product_presentation"
     },
     {
       "columns": [
@@ -1859,33 +1799,18 @@
     },
     {
       "columns": [
-        "ticket_product_row_id"
-      ],
-      "tableTo": "ticket_products",
-      "columnsTo": [
-        "product_id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "nameExplicit": false,
-      "name": "fk_ticket_product_presentations_ticket_product_row_id_ticket_products_product_id_fk",
-      "entityType": "fks",
-      "table": "ticket_product_presentations"
-    },
-    {
-      "columns": [
         "ticket_id"
       ],
-      "tableTo": "tickets",
+      "tableTo": "ticket",
       "columnsTo": [
         "id"
       ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
-      "name": "fk_ticket_products_ticket_id_tickets_id_fk",
+      "name": "fk_ticket_product_ticket_id_ticket_id_fk",
       "entityType": "fks",
-      "table": "ticket_products"
+      "table": "ticket_product"
     },
     {
       "columns": [
@@ -1898,9 +1823,39 @@
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "nameExplicit": false,
-      "name": "fk_ticket_products_product_id_product_id_fk",
+      "name": "fk_ticket_product_product_id_product_id_fk",
       "entityType": "fks",
-      "table": "ticket_products"
+      "table": "ticket_product"
+    },
+    {
+      "columns": [
+        "ticket_product_id"
+      ],
+      "tableTo": "ticket_product",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_ticket_product_presentation_ticket_product_id_ticket_product_id_fk",
+      "entityType": "fks",
+      "table": "ticket_product_presentation"
+    },
+    {
+      "columns": [
+        "presentation_id"
+      ],
+      "tableTo": "product_presentation",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_ticket_product_presentation_presentation_id_product_presentation_id_fk",
+      "entityType": "fks",
+      "table": "ticket_product_presentation"
     },
     {
       "columns": [
@@ -2004,20 +1959,11 @@
     },
     {
       "columns": [
-        "row_id"
+        "id"
       ],
       "nameExplicit": false,
-      "name": "ticket_product_presentations_pk",
-      "table": "ticket_product_presentations",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "row_id"
-      ],
-      "nameExplicit": false,
-      "name": "ticket_products_pk",
-      "table": "ticket_products",
+      "name": "ticket_pk",
+      "table": "ticket",
       "entityType": "pks"
     },
     {
@@ -2025,8 +1971,17 @@
         "id"
       ],
       "nameExplicit": false,
-      "name": "tickets_pk",
-      "table": "tickets",
+      "name": "ticket_product_pk",
+      "table": "ticket_product",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "ticket_product_presentation_pk",
+      "table": "ticket_product_presentation",
       "entityType": "pks"
     },
     {
@@ -2490,24 +2445,6 @@
     {
       "columns": [
         {
-          "value": "ticket_product_row_id",
-          "isExpression": false
-        },
-        {
-          "value": "presentation_id",
-          "isExpression": false
-        }
-      ],
-      "isUnique": true,
-      "where": null,
-      "origin": "manual",
-      "name": "presentation_unique_idx",
-      "entityType": "indexes",
-      "table": "ticket_product_presentations"
-    },
-    {
-      "columns": [
-        {
           "value": "ticket_id",
           "isExpression": false
         },
@@ -2521,7 +2458,25 @@
       "origin": "manual",
       "name": "ticket_product_unique_idx",
       "entityType": "indexes",
-      "table": "ticket_products"
+      "table": "ticket_product"
+    },
+    {
+      "columns": [
+        {
+          "value": "ticket_product_id",
+          "isExpression": false
+        },
+        {
+          "value": "presentation_id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "presentation_unique_idx",
+      "entityType": "indexes",
+      "table": "ticket_product_presentation"
     },
     {
       "columns": [

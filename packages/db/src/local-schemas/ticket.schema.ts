@@ -5,42 +5,48 @@ import {
   real,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
-import { auditMetadata } from "../shared";
-import { localProduct } from "./shared.schema";
-
-export const tickets = sqliteTable("tickets", {
-  id: text("id").primaryKey(),
-  createdAt: auditMetadata.createdAt,
-  updatedAt: auditMetadata.updatedAt,
-});
+import {
+  localOrganization,
+  localProduct,
+  localProductPresentation,
+} from "./shared.schema";
+import { sql } from "drizzle-orm";
 
 export const ticketProductTypeValues = ["catalog", "adHoc"] as const;
-export type TicketProductType = (typeof ticketProductTypeValues)[number];
 
-export const ticketProducts = sqliteTable(
-  "ticket_products",
+export const ticket = sqliteTable(
+  "ticket",
   {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    isActive: integer("is_active", { mode: "boolean" }).notNull(),
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => localOrganization.id, {
+        onDelete: "cascade",
+      }),
+  },
+  (t) => [
+    uniqueIndex("ticket_organization_name_unique").on(t.organizationId, t.name),
+    uniqueIndex("ticket_organization_active_unique")
+      .on(t.organizationId, t.isActive)
+      .where(sql`${t.isActive} = 1`),
+  ],
+);
+
+export const ticketProduct = sqliteTable(
+  "ticket_product",
+  {
+    id: text("id").primaryKey(),
     ticketId: text("ticket_id")
       .notNull()
-      .references(() => tickets.id, { onDelete: "cascade" }),
-    rowId: integer("row_id").primaryKey({ autoIncrement: true }),
+      .references(() => ticket.id, { onDelete: "cascade" }),
 
     productId: text("product_id").references(() => localProduct.id, {
       onDelete: "set null",
     }),
 
     type: text("type", { enum: ticketProductTypeValues }).notNull(),
-
-    stock: real("stock").notNull(),
-    minStock: real("min_stock").notNull(),
-    allowsNegativeStock: integer("allows_negative_stock", {
-      mode: "boolean",
-    })
-      .notNull()
-      .default(false),
-
-    createdAt: auditMetadata.createdAt,
-    updatedAt: auditMetadata.updatedAt,
   },
   (table) => [
     uniqueIndex("ticket_product_unique_idx").on(
@@ -50,16 +56,21 @@ export const ticketProducts = sqliteTable(
   ],
 );
 
-export const ticketProductPresentations = sqliteTable(
-  "ticket_product_presentations",
+export const ticketProductPresentation = sqliteTable(
+  "ticket_product_presentation",
   {
-    rowId: integer("row_id").primaryKey({ autoIncrement: true }),
+    id: text("id").primaryKey(),
 
-    ticketProductRowId: integer("ticket_product_row_id")
+    ticketProductId: text("ticket_product_id")
       .notNull()
-      .references(() => ticketProducts.productId, { onDelete: "cascade" }),
+      .references(() => ticketProduct.id, { onDelete: "cascade" }),
 
-    presentationId: text("presentation_id").notNull(),
+    presentationId: text("presentation_id").references(
+      () => localProductPresentation.id,
+      {
+        onDelete: "cascade",
+      },
+    ),
 
     name: text("name").notNull(),
     originalPrice: real("original_price").notNull(),
@@ -67,26 +78,23 @@ export const ticketProductPresentations = sqliteTable(
     conversionFactor: real("conversion_factor").notNull(),
     priceSale: real("price_sale").notNull(),
     quantity: real("quantity").notNull(),
-
-    createdAt: auditMetadata.createdAt,
-    updatedAt: auditMetadata.updatedAt,
   },
   (table) => [
     // Una presentación no puede repetirse dentro del mismo ticket_product
     uniqueIndex("presentation_unique_idx").on(
-      table.ticketProductRowId,
+      table.ticketProductId,
       table.presentationId,
     ),
   ],
 );
 
-export type TicketSelect = typeof tickets.$inferSelect;
-export type TicketInsert = typeof tickets.$inferInsert;
+export type TicketSelect = typeof ticket.$inferSelect;
+export type TicketInsert = typeof ticket.$inferInsert;
 
-export type TicketProductSelect = typeof ticketProducts.$inferSelect;
-export type TicketProductInsert = typeof ticketProducts.$inferInsert;
+export type TicketProductSelect = typeof ticketProduct.$inferSelect;
+export type TicketProductInsert = typeof ticketProduct.$inferInsert;
 
 export type TicketProductPresentationSelect =
-  typeof ticketProductPresentations.$inferSelect;
+  typeof ticketProductPresentation.$inferSelect;
 export type TicketProductPresentationInsert =
-  typeof ticketProductPresentations.$inferInsert;
+  typeof ticketProductPresentation.$inferInsert;

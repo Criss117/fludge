@@ -196,39 +196,34 @@ CREATE TABLE `user` (
 	`phone` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `ticket_product_presentations` (
-	`row_id` integer PRIMARY KEY AUTOINCREMENT,
-	`ticket_product_row_id` integer NOT NULL,
-	`presentation_id` text NOT NULL,
+CREATE TABLE `ticket` (
+	`id` text PRIMARY KEY
+);
+--> statement-breakpoint
+CREATE TABLE `ticket_product` (
+	`id` text PRIMARY KEY,
+	`ticket_id` text NOT NULL,
+	`product_id` text,
+	`type` text NOT NULL,
+	`stock` real NOT NULL,
+	`min_stock` real NOT NULL,
+	`allows_negative_stock` integer DEFAULT false NOT NULL,
+	CONSTRAINT `fk_ticket_product_ticket_id_ticket_id_fk` FOREIGN KEY (`ticket_id`) REFERENCES `ticket`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `fk_ticket_product_product_id_product_id_fk` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`) ON DELETE SET NULL
+);
+--> statement-breakpoint
+CREATE TABLE `ticket_product_presentation` (
+	`id` text PRIMARY KEY,
+	`ticket_product_id` text NOT NULL,
+	`presentation_id` text,
 	`name` text NOT NULL,
 	`original_price` real NOT NULL,
 	`wholesale_price` real,
 	`conversion_factor` real NOT NULL,
 	`price_sale` real NOT NULL,
 	`quantity` real NOT NULL,
-	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
-	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
-	CONSTRAINT `fk_ticket_product_presentations_ticket_product_row_id_ticket_products_product_id_fk` FOREIGN KEY (`ticket_product_row_id`) REFERENCES `ticket_products`(`product_id`) ON DELETE CASCADE
-);
---> statement-breakpoint
-CREATE TABLE `ticket_products` (
-	`ticket_id` text NOT NULL,
-	`row_id` integer PRIMARY KEY AUTOINCREMENT,
-	`product_id` text,
-	`type` text NOT NULL,
-	`stock` real NOT NULL,
-	`min_stock` real NOT NULL,
-	`allows_negative_stock` integer DEFAULT false NOT NULL,
-	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
-	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
-	CONSTRAINT `fk_ticket_products_ticket_id_tickets_id_fk` FOREIGN KEY (`ticket_id`) REFERENCES `tickets`(`id`) ON DELETE CASCADE,
-	CONSTRAINT `fk_ticket_products_product_id_product_id_fk` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`) ON DELETE SET NULL
-);
---> statement-breakpoint
-CREATE TABLE `tickets` (
-	`id` text PRIMARY KEY,
-	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
-	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL
+	CONSTRAINT `fk_ticket_product_presentation_ticket_product_id_ticket_product_id_fk` FOREIGN KEY (`ticket_product_id`) REFERENCES `ticket_product`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `fk_ticket_product_presentation_presentation_id_product_presentation_id_fk` FOREIGN KEY (`presentation_id`) REFERENCES `product_presentation`(`id`) ON DELETE CASCADE
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `category_organization_name_unique` ON `category` (`organization_id`,`name`);--> statement-breakpoint
@@ -258,5 +253,5 @@ CREATE UNIQUE INDEX `presentation_product_factor_unique` ON `product_presentatio
 CREATE UNIQUE INDEX `presentation_organization_barcode_unique` ON `product_presentation` (`organization_id`,`barcode`) WHERE "product_presentation"."barcode" IS NOT NULL;--> statement-breakpoint
 CREATE INDEX `presentation_organization_product_idx` ON `product_presentation` (`organization_id`,`product_id`);--> statement-breakpoint
 CREATE INDEX `presentation_organization_status_idx` ON `product_presentation` (`organization_id`,`status`);--> statement-breakpoint
-CREATE UNIQUE INDEX `presentation_unique_idx` ON `ticket_product_presentations` (`ticket_product_row_id`,`presentation_id`);--> statement-breakpoint
-CREATE UNIQUE INDEX `ticket_product_unique_idx` ON `ticket_products` (`ticket_id`,`product_id`);
+CREATE UNIQUE INDEX `ticket_product_unique_idx` ON `ticket_product` (`ticket_id`,`product_id`);--> statement-breakpoint
+CREATE UNIQUE INDEX `presentation_unique_idx` ON `ticket_product_presentation` (`ticket_product_id`,`presentation_id`);
