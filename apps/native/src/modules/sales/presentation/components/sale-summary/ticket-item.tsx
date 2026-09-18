@@ -1,5 +1,7 @@
 import { CommonInputs } from "@/modules/shared/components/common-inputs";
 import { MaterialIcons } from "@/modules/shared/components/icons";
+import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
+import type { TranslationKey } from "@fludge/i18n/index";
 import type {
   TicketProduct,
   TicketProductPresentation,
@@ -18,6 +20,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { KeyboardController } from "react-native-keyboard-controller";
+import { QuantityInput } from "./quantity-input";
 
 interface Props {
   item: TicketProduct;
@@ -147,29 +150,57 @@ function PresentationItem({
   const { onFocus } = useBottomSheetAwareHandlers();
   const { updateTicketProductPresentation, removeTicketProductPresentations } =
     ticketStore;
+  const mutationToast = useMutationToast("TICKET_PRESENTATION_ITEM");
 
   const canDecreaseQuantity = presentation.quantity > 1;
 
   const handleUpdateQuantity = (quantity: number) => {
-    updateTicketProductPresentation.mutate({
-      ticketProductId,
-      ticketProductPresentationId: presentation.id,
-      quantity,
-      priceSale: presentation.priceSale,
-    });
+    updateTicketProductPresentation.mutate(
+      {
+        ticketProductId,
+        ticketProductPresentationId: presentation.id,
+        quantity,
+        priceSale: presentation.priceSale,
+      },
+      {
+        onError: (error) => {
+          mutationToast.showErrorToast(
+            "mutations.tickets.error",
+            error.message as TranslationKey
+          );
+        },
+      }
+    );
   };
 
   const handleUpdatePrice = (priceSale: number) => {
-    updateTicketProductPresentation.mutate({
-      ticketProductId,
-      ticketProductPresentationId: presentation.id,
-      quantity: presentation.quantity,
-      priceSale,
-    });
+    updateTicketProductPresentation.mutate(
+      {
+        ticketProductId,
+        ticketProductPresentationId: presentation.id,
+        quantity: presentation.quantity,
+        priceSale,
+      },
+      {
+        onError: (error) => {
+          mutationToast.showErrorToast(
+            "mutations.tickets.error",
+            error.message as TranslationKey
+          );
+        },
+      }
+    );
   };
 
   const handleRemove = () => {
-    removeTicketProductPresentations.mutate([presentation.id]);
+    removeTicketProductPresentations.mutate([presentation.id], {
+      onError: (error) => {
+        mutationToast.showErrorToast(
+          "mutations.tickets.error",
+          error.message as TranslationKey
+        );
+      },
+    });
   };
 
   return (
@@ -192,39 +223,11 @@ function PresentationItem({
       </View>
 
       <View className="flex-row items-center justify-between">
-        <View className="border-accent flex-row items-center rounded-3xl border">
-          <Button
-            className="px-3 py-2"
-            isDisabled={!canDecreaseQuantity}
-            onPress={() => handleUpdateQuantity(presentation.quantity - 1)}
-            isIconOnly
-            size="sm"
-            variant="ghost"
-          >
-            <MaterialIcons
-              name="remove"
-              size={18}
-              className="text-foreground"
-            />
-          </Button>
-          <Input
-            className="w-16 bg-transparent px-3 text-center"
-            value={presentation.quantity.toString()}
-            onChangeText={(value) => handleUpdateQuantity(Number(value) || 1)}
-            keyboardType="numeric"
-            placeholder="0"
-            onFocus={onFocus}
-          />
-          <Button
-            className="px-3 py-2"
-            onPress={() => handleUpdateQuantity(presentation.quantity + 1)}
-            isIconOnly
-            size="sm"
-            variant="ghost"
-          >
-            <MaterialIcons name="add" size={18} className="text-foreground" />
-          </Button>
-        </View>
+        <QuantityInput
+          quantity={presentation.quantity}
+          onUpdateQuantity={handleUpdateQuantity}
+          onFocus={onFocus}
+        />
 
         <PressableFeedback onPress={handleRemove}>
           <MaterialIcons
@@ -239,6 +242,7 @@ function PresentationItem({
 }
 
 export function TicketProductItem({ item, ticketStore }: Props) {
+  const mutationToast = useMutationToast("TICKET_PRODUCT_ITEM");
   const totalPrice = useMemo(
     () =>
       item.presentations.reduce((sum, p) => sum + p.priceSale * p.quantity, 0),
@@ -251,7 +255,14 @@ export function TicketProductItem({ item, ticketStore }: Props) {
   );
 
   const handleRemoveProduct = () => {
-    ticketStore.removeTicketProduct.mutate(item.id);
+    ticketStore.removeTicketProduct.mutate(item.id, {
+      onError: (error) => {
+        mutationToast.showErrorToast(
+          "mutations.tickets.error",
+          error.message as TranslationKey
+        );
+      },
+    });
   };
 
   return (

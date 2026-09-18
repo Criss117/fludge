@@ -27,10 +27,7 @@ function validateTicketProductStock(product: TicketProduct) {
   const requestedQuantity = getTicketProductStockQuantity(product);
 
   if (requestedQuantity > product.stock) {
-    throw new Error(
-      `Insufficient stock for product "${product.id}". ` +
-        `Requested: ${requestedQuantity}, available: ${product.stock}`,
-    );
+    throw new Error("mutations.tickets.errors.insufficient_stock");
   }
 }
 
@@ -92,7 +89,8 @@ export function useInvalidateTicketsQueries() {
 }
 
 export function useTicketStore() {
-  const { data: store, refetch } = useFindAllTickets();
+  const queryClient = useQueryClient();
+  const { data: store } = useFindAllTickets();
   const { activeOrganization } = useOrganization();
   const { salesContainer } = useContainer();
 
@@ -115,11 +113,15 @@ export function useTicketStore() {
   }, [store]);
 
   async function persist(nextTickets: Ticket[]) {
+    queryClient.setQueryData(
+      ["organizations", activeOrganization!.id, "sales", "tickets"],
+      nextTickets,
+    );
+
     await salesContainer.localTicketRepository.save(
       activeOrganization!.id,
       nextTickets,
     );
-    await refetch();
   }
 
   const switchActiveTicket = useMutation({
@@ -202,12 +204,30 @@ export function useTicketStore() {
     },
   });
 
+  const clearTicket = useMutation({
+    mutationKey: ["sales", "tickets", "clear"],
+    mutationFn: async () => {
+      const activeTicket = store.find((ticket) => ticket.isActive);
+
+      if (!activeTicket)
+        throw new Error("mutations.tickets.errors.ticket_not_found");
+
+      const nextTickets = store.map((t) => {
+        if (t.id === activeTicket.id) return { ...t, products: [] };
+        return t;
+      });
+
+      await persist(nextTickets);
+    },
+  });
+
   const addTicketProduct = useMutation({
     mutationKey: ["sales", "tickets", "add_product"],
     mutationFn: async (product: AddTicketProduct) => {
       const activeTicket = store.find((ticket) => ticket.isActive);
 
-      if (!activeTicket) throw new Error(`Ticket  not found`);
+      if (!activeTicket)
+        throw new Error("mutations.tickets.errors.ticket_not_found");
 
       if (product.type === "adHoc") {
         const newProduct: TicketProduct = {
@@ -283,7 +303,8 @@ export function useTicketStore() {
     mutationFn: async (ticketProductId: string) => {
       const activeTicket = store.find((ticket) => ticket.isActive);
 
-      if (!activeTicket) throw new Error("Active ticket not found");
+      if (!activeTicket)
+        throw new Error("mutations.tickets.errors.ticket_not_found");
 
       const productExists = activeTicket.products.some(
         (product) => product.id === ticketProductId,
@@ -313,7 +334,8 @@ export function useTicketStore() {
     mutationFn: async (ticketProductPresentationIds: string[]) => {
       const activeTicket = store.find((ticket) => ticket.isActive);
 
-      if (!activeTicket) throw new Error("Active ticket not found");
+      if (!activeTicket)
+        throw new Error("mutations.tickets.errors.ticket_not_found");
 
       if (ticketProductPresentationIds.length === 0) return;
 
@@ -354,27 +376,24 @@ export function useTicketStore() {
       quantity: number;
       priceSale: number;
     }) => {
-      console.log("updateTicketProductPresentation");
-
       const activeTicket = store.find((ticket) => ticket.isActive);
 
-      if (!activeTicket) throw new Error("Active ticket not found");
+      if (!activeTicket)
+        throw new Error("mutations.tickets.errors.ticket_not_found");
 
       const product = activeTicket.products.find(
         (product) => product.id === ticketProductId,
       );
 
       if (!product)
-        throw new Error(`Ticket product "${ticketProductId}" not found`);
+        throw new Error("mutations.tickets.errors.product_not_found");
 
       const presentationExists = product.presentations.some(
         (presentation) => presentation.id === ticketProductPresentationId,
       );
 
       if (!presentationExists)
-        throw new Error(
-          `Ticket product presentation "${ticketProductPresentationId}" not found`,
-        );
+        throw new Error("mutations.tickets.errors.presentation_not_found");
 
       const nextProduct: TicketProduct = {
         ...product,
@@ -415,6 +434,7 @@ export function useTicketStore() {
     createTicket,
     removeTicket,
     renameTicket,
+    clearTicket,
     addTicketProduct,
     removeTicketProduct,
     removeTicketProductPresentations,

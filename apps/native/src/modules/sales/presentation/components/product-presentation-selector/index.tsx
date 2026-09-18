@@ -14,6 +14,7 @@ import { useCallback } from "react";
 import { Button } from "heroui-native/button";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import { useTicketStore } from "@fludge/client/application/sales/store/use-ticket.store";
+import type { TranslationKey } from "@fludge/i18n/index";
 
 const SNAP_POINTS = ["70%"];
 
@@ -32,24 +33,34 @@ export function ProductPresentationSelector() {
 
     if (selectedPresentations.length === 0 || !selectedProduct) return;
 
-    addTicketProduct.mutate({
-      allowNegativeStock: selectedProduct.allowNegativeStock,
-      minStock: selectedProduct.minStock,
-      name: selectedProduct.name,
-      productId: selectedProduct.id,
-      stock: selectedProduct.stock,
-      type: "catalog",
-      presentations: selectedPresentations.map((presentation) => ({
-        conversionFactor: presentation.conversionFactor,
-        name: presentation.name,
-        originalPrice: presentation.priceSale,
-        priceSale: presentation.priceSale,
-        presentationId: presentation.id,
-        wholesalePrice: presentation.priceWholesale,
-        ticketProductId: selectedProduct.id,
-        quantity: 1,
-      })),
-    });
+    addTicketProduct.mutate(
+      {
+        allowNegativeStock: selectedProduct.allowNegativeStock,
+        minStock: selectedProduct.minStock,
+        name: selectedProduct.name,
+        productId: selectedProduct.id,
+        stock: selectedProduct.stock,
+        type: "catalog",
+        presentations: selectedPresentations.map((presentation) => ({
+          conversionFactor: presentation.conversionFactor,
+          name: presentation.name,
+          originalPrice: presentation.priceSale,
+          priceSale: presentation.priceSale,
+          presentationId: presentation.id,
+          wholesalePrice: presentation.priceWholesale,
+          ticketProductId: selectedProduct.id,
+          quantity: 1,
+        })),
+      },
+      {
+        onError: (error) => {
+          mutationToast.showErrorToast(
+            "mutations.tickets.error",
+            error.message as TranslationKey,
+          );
+        },
+      },
+    );
 
     productPresentation.closeSheet();
   };

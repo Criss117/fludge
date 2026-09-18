@@ -109,4 +109,14 @@ export const mutations = {
       error: "Algo salió mal al crear la venta",
     },
   },
+  tickets: {
+    error: "Error en el ticket",
+    errors: {
+      ticket_not_found: "No se encontró el ticket activo",
+      product_not_found: "No se encontró el producto en el ticket",
+      presentation_not_found:
+        "No se encontró la presentación del producto",
+      insufficient_stock: "Stock insuficiente para el producto",
+    },
+  },
 };

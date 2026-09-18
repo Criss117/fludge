@@ -12,7 +12,6 @@ import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { TicketProductItem } from "./ticket-item";
-import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import { KeyboardController } from "react-native-keyboard-controller";
 import { Link } from "expo-router";
 import { useTicketStore } from "@fludge/client/application/sales/store/use-ticket.store";
@@ -41,7 +40,7 @@ export function SalesSummaryContent({ isOpen, onOpenChange }: Props) {
           <Button
             variant="outline"
             className="flex-1"
-            onPress={() => ticketStore.createTicket.mutate()}
+            onPress={() => ticketStore.clearTicket.mutate()}
           >
             <MaterialIcons
               name="delete-outline"

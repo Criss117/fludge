@@ -137,12 +137,6 @@ export class SqliteLocalTicketRepository implements LocalTicketRepository {
       }
     }
 
-    console.log({
-      flatTickets,
-      flatProducts,
-      flatPresentations,
-    });
-
     await this.db.transaction((tx) => {
       tx.delete(ticketProductPresentation)
         .where(eq(ticketProductPresentation.organizationId, organizationId))

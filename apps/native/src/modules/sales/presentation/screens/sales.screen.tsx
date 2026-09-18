@@ -13,9 +13,9 @@ export function SalesScreen() {
 
   return (
     <View className="flex-1 pt-2">
-      <View className="flex-1 gap-y-3">
+      <View className="flex-1">
         <TicketSelector />
-        <View className="flex-row items-center gap-2 px-3">
+        <View className="flex-row items-center gap-2 px-3 pb-3">
           <View className="flex-1">
             <SearchInput
               query={query}

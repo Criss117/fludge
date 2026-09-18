@@ -48,13 +48,6 @@ function ProductsScreenList({ filters }: { filters: FindAllProductsFilters }) {
 
   const items = useMemo(() => data.pages.flatMap((page) => page.items), [data]);
 
-  console.log(
-    items.map((i) => ({
-      createdAt: i.createdAt,
-      stock: i.stock,
-    }))
-  );
-
   return (
     <FlatList
       className="flex-1"
