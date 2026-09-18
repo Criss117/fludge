@@ -15,14 +15,12 @@ export const OrganizationStore: IOrganizationStorage = {
   async load() {
     const raw = await AsyncStorage.getItem(ORGANIZATION_LOCAL_STORAGE_KEY);
 
-    if (!raw) {
-      throw new Error("No hay datos guardados");
-    }
+    if (!raw) return null;
 
     try {
       return JSON.parse(raw);
     } catch (error) {
-      throw new Error(`Datos corruptos en AsyncStorage: ${error}`);
+      return null;
     }
   },
 

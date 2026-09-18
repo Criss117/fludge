@@ -47,6 +47,12 @@ export const ticketProduct = sqliteTable(
     }),
 
     type: text("type", { enum: ticketProductTypeValues }).notNull(),
+
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => localOrganization.id, {
+        onDelete: "cascade",
+      }),
   },
   (table) => [
     uniqueIndex("ticket_product_unique_idx").on(
@@ -78,6 +84,12 @@ export const ticketProductPresentation = sqliteTable(
     conversionFactor: real("conversion_factor").notNull(),
     priceSale: real("price_sale").notNull(),
     quantity: real("quantity").notNull(),
+
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => localOrganization.id, {
+        onDelete: "cascade",
+      }),
   },
   (table) => [
     // Una presentación no puede repetirse dentro del mismo ticket_product

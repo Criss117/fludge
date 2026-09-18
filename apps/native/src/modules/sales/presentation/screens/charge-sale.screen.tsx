@@ -1,4 +1,3 @@
-import { useTickets } from "@fludge/client/providers/tickets.provider";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { ChargeSaleSummarySection } from "@/modules/sales/presentation/sections/charge-sale-summary.section";
@@ -11,9 +10,10 @@ import { useCreateSaleMutation } from "@fludge/client/application/sales/mutation
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useRouter } from "expo-router";
+import { useTicketStore } from "@fludge/client/application/sales/store/use-ticket.store";
 
 export function ChargeSaleScreen() {
-  const { activeTicket, dispatch } = useTickets();
+  const { activeTicket, removeTicket } = useTicketStore();
   const { t } = useTranslation();
   const mutationToast = useMutationToast("SALES_CHARGE");
   const createSale = useCreateSaleMutation();
@@ -26,32 +26,18 @@ export function ChargeSaleScreen() {
         customerId: "",
         paymentType: "cash",
         notes: "",
-        items: Object.values(activeTicket.items).map((i) => {
-          let presentationId: string = "";
-          let name: string = "";
-
-          if (i.type === "catalog") {
-            presentationId = i.presentationId;
-            const [, presentationName] = i.name.split(":");
-            name = presentationName;
-          } else {
-            presentationId = "";
-            name = i.name;
-          }
-
-          return {
-            name: name,
-            quantity: i.quantity,
-            presentationId: presentationId,
-            price: i.priceSale,
-          };
-        }),
+        items: activeTicket.products.flatMap((p) =>
+          p.presentations.map((pp) => ({
+            quantity: pp.quantity,
+            name: p.name + ":" + pp.name,
+            price: pp.priceSale,
+            presentationId: pp.id,
+          }))
+        ),
       },
       {
         onSuccess: () => {
-          dispatch({
-            type: "clearTicket",
-          });
+          removeTicket.mutateAsync(activeTicket.id);
           mutationToast.showSuccessToast(
             "mutations.sale.create.success.title",
             "mutations.sale.create.success.description"

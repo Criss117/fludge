@@ -1,6 +1,7 @@
 import { ContainerProvider } from "@fludge/client/providers/container.provider";
 import { iamContainer } from "./iam.container";
 import { catalogContainer } from "./catalog.container";
+import { salesContainer } from "./sale.container";
 
 export function DependenciesProvider({
   children,
@@ -12,6 +13,7 @@ export function DependenciesProvider({
       containers={{
         iamContainer,
         catalogContainer,
+        salesContainer,
       }}
     >
       {children}

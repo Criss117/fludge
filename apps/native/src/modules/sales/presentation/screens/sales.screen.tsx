@@ -1,7 +1,7 @@
 import { CameraDialog } from "@/modules/shared/components/camera-dialog";
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { View } from "react-native";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { TicketSelector } from "../components/ticket-selector";
 import { SalesSummary } from "../components/sale-summary";
 import { SaleProductsListSection } from "../sections/sale-products-list.section";

@@ -1,7 +1,7 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "5cf83d0c-33c4-4c46-b751-4cab8de77da0",
+  "id": "b0d72afd-17e2-4d9c-889f-6463deb2d314",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -1264,6 +1264,36 @@
     },
     {
       "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "name",
+      "entityType": "columns",
+      "table": "ticket"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "is_active",
+      "entityType": "columns",
+      "table": "ticket"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "organization_id",
+      "entityType": "columns",
+      "table": "ticket"
+    },
+    {
+      "type": "text",
       "notNull": false,
       "autoincrement": false,
       "default": null,
@@ -1303,32 +1333,12 @@
       "table": "ticket_product"
     },
     {
-      "type": "real",
+      "type": "text",
       "notNull": true,
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "stock",
-      "entityType": "columns",
-      "table": "ticket_product"
-    },
-    {
-      "type": "real",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "min_stock",
-      "entityType": "columns",
-      "table": "ticket_product"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "false",
-      "generated": null,
-      "name": "allows_negative_stock",
+      "name": "organization_id",
       "entityType": "columns",
       "table": "ticket_product"
     },
@@ -1419,6 +1429,16 @@
       "default": null,
       "generated": null,
       "name": "quantity",
+      "entityType": "columns",
+      "table": "ticket_product_presentation"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "organization_id",
       "entityType": "columns",
       "table": "ticket_product_presentation"
     },
@@ -1799,6 +1819,21 @@
     },
     {
       "columns": [
+        "organization_id"
+      ],
+      "tableTo": "organization",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_ticket_organization_id_organization_id_fk",
+      "entityType": "fks",
+      "table": "ticket"
+    },
+    {
+      "columns": [
         "ticket_id"
       ],
       "tableTo": "ticket",
@@ -1829,6 +1864,21 @@
     },
     {
       "columns": [
+        "organization_id"
+      ],
+      "tableTo": "organization",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_ticket_product_organization_id_organization_id_fk",
+      "entityType": "fks",
+      "table": "ticket_product"
+    },
+    {
+      "columns": [
         "ticket_product_id"
       ],
       "tableTo": "ticket_product",
@@ -1854,6 +1904,21 @@
       "onDelete": "CASCADE",
       "nameExplicit": false,
       "name": "fk_ticket_product_presentation_presentation_id_product_presentation_id_fk",
+      "entityType": "fks",
+      "table": "ticket_product_presentation"
+    },
+    {
+      "columns": [
+        "organization_id"
+      ],
+      "tableTo": "organization",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "name": "fk_ticket_product_presentation_organization_id_organization_id_fk",
       "entityType": "fks",
       "table": "ticket_product_presentation"
     },
@@ -2441,6 +2506,42 @@
       "name": "presentation_organization_status_idx",
       "entityType": "indexes",
       "table": "product_presentation"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "name",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "ticket_organization_name_unique",
+      "entityType": "indexes",
+      "table": "ticket"
+    },
+    {
+      "columns": [
+        {
+          "value": "organization_id",
+          "isExpression": false
+        },
+        {
+          "value": "is_active",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": "\"ticket\".\"is_active\" = 1",
+      "origin": "manual",
+      "name": "ticket_organization_active_unique",
+      "entityType": "indexes",
+      "table": "ticket"
     },
     {
       "columns": [

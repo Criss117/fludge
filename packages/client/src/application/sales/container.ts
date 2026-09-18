@@ -4,10 +4,10 @@ type Deps = {
   localTicketRepository: LocalTicketRepository;
 };
 
-export function createContainer(deps: Deps) {
+export function generateSaleContainer(deps: Deps) {
   return {
     localTicketRepository: deps.localTicketRepository,
   };
 }
 
-export type SalesContainer = ReturnType<typeof createContainer>;
+export type SalesContainer = ReturnType<typeof generateSaleContainer>;

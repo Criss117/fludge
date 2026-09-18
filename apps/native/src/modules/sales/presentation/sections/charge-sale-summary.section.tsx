@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { Ticket } from "@fludge/client/application/sales/store/tickets.store/data";
+import type { Ticket } from "@fludge/client/application/sales/domain/repositories/local-ticket.repository";
 import { formatPrice } from "@fludge/utils/currency";
 import { Card } from "heroui-native/card";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
@@ -20,22 +20,29 @@ interface Props {
   };
 }
 
-// Alturas fijas conocidas de antemano (ajustalas a tu diseño real)
-const ITEM_ROW_HEIGHT = 100; // alto de cada fila de producto
-const SEPARATOR_HEIGHT = 1; // alto del <Separator />
-const BODY_VERTICAL_PADDING = 16; // padding total (top+bottom) de Card.Body
-const FOOTER_HEIGHT = 56; // alto fijo del Card.Footer (py-4 + contenido)
+// Receipt-style constants
+const RECEIPT_FONT_SIZE = 13;
+const ITEM_ROW_HEIGHT = 72;
+const PRESENTATION_ROW_HEIGHT = 28;
+const SEPARATOR_HEIGHT = 1;
+const BODY_VERTICAL_PADDING = 16;
+const FOOTER_HEIGHT = 56;
 
 export function ChargeSaleSummarySection({ ticket }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
 
-  const items = useMemo(() => Object.values(ticket.items), [ticket.items]);
-
   const contentHeight = useMemo(() => {
-    const rowsHeight = items.length * (ITEM_ROW_HEIGHT + SEPARATOR_HEIGHT);
-    return rowsHeight + BODY_VERTICAL_PADDING + FOOTER_HEIGHT;
-  }, [items.length]);
+    let height = BODY_VERTICAL_PADDING + FOOTER_HEIGHT;
+
+    for (const product of ticket.products) {
+      height += ITEM_ROW_HEIGHT;
+      height += product.presentations.length * PRESENTATION_ROW_HEIGHT;
+      height += SEPARATOR_HEIGHT;
+    }
+
+    return height;
+  }, [ticket.products]);
 
   const sharedHeight = useSharedValue(contentHeight);
 
@@ -48,7 +55,7 @@ export function ChargeSaleSummarySection({ ticket }: Props) {
     overflow: "hidden",
   }));
 
-  const iconStype = useAnimatedStyle(() => ({
+  const iconStyle = useAnimatedStyle(() => ({
     transform: [
       { rotate: withTiming(isOpen ? "-90deg" : "90deg", { duration: 250 }) },
     ],
@@ -70,7 +77,7 @@ export function ChargeSaleSummarySection({ ticket }: Props) {
               <Card.Title>{t("helpers.summary")}</Card.Title>
               <View className="flex-row items-center gap-x-1">
                 <Card.Description>{t("helpers.see_details")}</Card.Description>
-                <Animated.View style={iconStype}>
+                <Animated.View style={iconStyle}>
                   <MaterialIcons
                     name="chevron-right"
                     size={20}
@@ -92,39 +99,78 @@ export function ChargeSaleSummarySection({ ticket }: Props) {
 
       <Animated.View style={animatedStyle}>
         <Card.Body className="pt-4">
-          {items.map((item) => {
-            const [productName, presentationName] = item.name.split(":");
-
-            return (
-              <View
-                key={item.id}
-                style={{ height: ITEM_ROW_HEIGHT }}
-                className="border-muted justify-between border-b-[0.2px] border-dashed"
+          {ticket.products.map((product) => (
+            <View
+              key={product.id}
+              className="border-muted border-b-[0.5px] border-dashed py-2"
+            >
+              {/* Product name */}
+              <Typography
+                className="font-semibold"
+                style={{ fontSize: RECEIPT_FONT_SIZE }}
               >
-                <View>
-                  <Typography className="line-clamp-1">
-                    {productName}
-                  </Typography>
+                {product.name}
+              </Typography>
+
+              {/* Presentations sub-listing */}
+              {product.presentations.map((presentation) => (
+                <View
+                  key={presentation.id}
+                  className="flex-row justify-between pl-4"
+                  style={{ height: PRESENTATION_ROW_HEIGHT }}
+                >
+                  <View className="flex-1 flex-row items-center">
+                    <Typography
+                      color="muted"
+                      className="flex-1"
+                      style={{ fontSize: RECEIPT_FONT_SIZE - 1 }}
+                    >
+                      {presentation.name}
+                    </Typography>
+                    <Typography
+                      color="muted"
+                      style={{ fontSize: RECEIPT_FONT_SIZE - 1 }}
+                    >
+                      x{presentation.quantity}
+                    </Typography>
+                  </View>
                   <Typography
-                    className="line-clamp-1"
-                    color="muted"
-                    type="body-sm"
+                    className="text-right"
+                    style={{ fontSize: RECEIPT_FONT_SIZE - 1 }}
                   >
-                    {presentationName}
+                    {formatPrice(presentation.priceSale * presentation.quantity)}
                   </Typography>
                 </View>
-                <View className="flex-row justify-between">
-                  <Typography>
-                    {item.quantity} x{formatPrice(item.priceSale)}
-                  </Typography>
-                  <Typography type="h6">
-                    {formatPrice(item.priceSale * item.quantity)}
-                  </Typography>
-                </View>
+              ))}
+
+              {/* Product subtotal */}
+              <View className="flex-row justify-between pt-1">
+                <Typography
+                  color="muted"
+                  style={{ fontSize: RECEIPT_FONT_SIZE - 2 }}
+                >
+                  {product.presentations.reduce(
+                    (sum, p) => sum + p.quantity,
+                    0,
+                  )}{" "}
+                  {t("helpers.items", "items")}
+                </Typography>
+                <Typography
+                  className="font-semibold"
+                  style={{ fontSize: RECEIPT_FONT_SIZE }}
+                >
+                  {formatPrice(
+                    product.presentations.reduce(
+                      (sum, p) => sum + p.priceSale * p.quantity,
+                      0,
+                    ),
+                  )}
+                </Typography>
               </View>
-            );
-          })}
+            </View>
+          ))}
         </Card.Body>
+
         <Card.Footer
           className="flex-row items-center justify-between"
           style={{ height: FOOTER_HEIGHT }}

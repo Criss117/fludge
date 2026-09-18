@@ -1,31 +1,47 @@
-import { useTickets } from "@fludge/client/providers/tickets.provider";
 import { Button } from "heroui-native/button";
 import { Select } from "heroui-native/select";
 import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { Ticket } from "@fludge/client/application/sales/store/tickets.store/data";
+import { useTicketStore } from "@fludge/client/application/sales/store/use-ticket.store";
+import { Ticket } from "@fludge/client/application/sales/domain/repositories/local-ticket.repository";
 
 type TicketOption = { label: string; value: string };
 
-export function getTicketOptions(
-  tickets: Record<string, Ticket>
-): TicketOption[] {
-  return Object.keys(tickets).map((ticketId) => ({
-    label: ticketId,
-    value: ticketId,
+export function getTicketOptions(tickets: Ticket[]): TicketOption[] {
+  return tickets.map(({ id, name }) => ({
+    label: name,
+    value: id,
   }));
 }
 
 export function TicketSelector() {
   const { t } = useTranslation();
-  const { state, dispatch, activeTicket } = useTickets();
-  const options = getTicketOptions(state.tickets);
+  const {
+    store,
+    activeTicket,
+    switchActiveTicket,
+    createTicket,
+    removeTicket,
+  } = useTicketStore();
+  const options = getTicketOptions(store);
 
   const selectedOption = options.find(
     (option) => option.value === activeTicket.id
   );
+
+  const handleSwitchTicket = (ticketId: string) => {
+    switchActiveTicket.mutate(ticketId);
+  };
+
+  const handleCreateTicket = () => {
+    createTicket.mutate();
+  };
+
+  const handleRemoveTicket = () => {
+    removeTicket.mutate(activeTicket.id);
+  };
 
   return (
     <View className="flex-row items-center gap-2 px-3">
@@ -36,10 +52,7 @@ export function TicketSelector() {
         onValueChange={(option) => {
           if (!option?.value) return;
 
-          dispatch({
-            type: "setActiveTicket",
-            payload: [option.value],
-          });
+          handleSwitchTicket(option.value);
         }}
         presentation="popover"
       >
@@ -76,7 +89,7 @@ export function TicketSelector() {
         isIconOnly
         size="sm"
         variant="ghost"
-        onPress={() => dispatch({ type: "createTicket" })}
+        onPress={handleCreateTicket}
       >
         <MaterialIcons name="add" size={22} className="text-foreground" />
       </Button>
@@ -86,12 +99,7 @@ export function TicketSelector() {
         isIconOnly
         size="sm"
         variant="ghost"
-        onPress={() =>
-          dispatch({
-            type: "deleteTicket",
-            payload: [activeTicket.id],
-          })
-        }
+        onPress={handleRemoveTicket}
       >
         <MaterialIcons name="delete" size={22} className="text-danger" />
       </Button>

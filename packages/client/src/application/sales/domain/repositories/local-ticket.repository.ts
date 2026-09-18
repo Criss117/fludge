@@ -4,17 +4,23 @@ import type {
   TicketSelect,
 } from "@fludge/db/local-schemas/ticket.schema";
 
+export type TicketProductPresentation = Omit<
+  TicketProductPresentationSelect,
+  "organizationId" | "ticketProductId"
+>;
+
 export type AddTicketProductBase = {
+  readonly name: string;
   readonly stock: number;
   readonly minStock: number;
-  readonly allowsNegativeStock: boolean;
+  readonly allowNegativeStock: boolean;
 };
 
 export type AddCatalogTicketProduct = AddTicketProductBase & {
   type: "catalog";
   productId: string;
   presentations: Array<
-    Omit<TicketProductPresentationSelect, "presentationId"> & {
+    Omit<TicketProductPresentation, "presentationId" | "id"> & {
       presentationId: string;
     }
   >;
@@ -24,7 +30,7 @@ export type AddAdHocTicketProduct = AddTicketProductBase & {
   type: "adHoc";
   productId: null;
   presentations: Array<
-    Omit<TicketProductPresentationSelect, "presentationId"> & {
+    Omit<TicketProductPresentation, "presentationId" | "id"> & {
       presentationId: null;
     }
   >;
@@ -32,11 +38,12 @@ export type AddAdHocTicketProduct = AddTicketProductBase & {
 
 export type AddTicketProduct = AddCatalogTicketProduct | AddAdHocTicketProduct;
 
-export type TicketProduct = TicketProductSelect & {
+export type TicketProduct = Omit<TicketProductSelect, "organizationId"> & {
+  readonly name: string;
   readonly stock: number;
   readonly minStock: number;
-  readonly allowsNegativeStock: boolean;
-  presentations: Array<TicketProductPresentationSelect>;
+  readonly allowNegativeStock: boolean;
+  presentations: Array<TicketProductPresentation>;
 };
 
 export type Ticket = TicketSelect & {
@@ -45,6 +52,8 @@ export type Ticket = TicketSelect & {
 
 export interface LocalTicketRepository {
   load(organizationId: string): Promise<Ticket[]>;
-  save(organizationId: string, tickets: Ticket[]): Promise<Ticket[]>;
+
+  save(organizationId: string, tickets: Ticket[]): Promise<void>;
+
   clear(organizationId: string): Promise<void>;
 }

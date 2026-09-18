@@ -1,9 +1,10 @@
 import { CommonInputs } from "@/modules/shared/components/common-inputs";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import type {
-  TicketItem,
-  TicketItemUpdate,
-} from "@fludge/client/application/sales/store/tickets.store/data";
+  TicketProduct,
+  TicketProductPresentation,
+} from "@fludge/client/application/sales/domain/repositories/local-ticket.repository";
+import type { useTicketStore } from "@fludge/client/application/sales/store/use-ticket.store";
 import { formatPrice } from "@fludge/utils/currency";
 import { useBottomSheetAwareHandlers } from "heroui-native";
 import { Button } from "heroui-native/button";
@@ -11,16 +12,22 @@ import { Card } from "heroui-native/card";
 import { Dialog, useDialog } from "heroui-native/dialog";
 import { Input } from "heroui-native/input";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
+import { Separator } from "heroui-native/separator";
 import { Typography } from "heroui-native/text";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { KeyboardController } from "react-native-keyboard-controller";
 
 interface Props {
-  item: TicketItem;
-  onRemove: (itemId: string) => void;
-  handleUpdateItem: (itemId: string, updates: TicketItemUpdate) => void;
+  item: TicketProduct;
+  ticketStore: ReturnType<typeof useTicketStore>;
+}
+
+interface PresentationItemProps {
+  presentation: TicketProductPresentation;
+  ticketProductId: string;
+  ticketStore: ReturnType<typeof useTicketStore>;
 }
 
 interface UpdatePriceDialogProps {
@@ -99,7 +106,7 @@ function UpdatePriceDialog({
           <Dialog.Close className="absolute top-3 right-3 z-50" />
           <View>
             <Dialog.Title>
-              {t("mutations.categories.delete.dialog.title")}
+              {t("resources.presentations.price_sale")}
             </Dialog.Title>
           </View>
           <View className="relative justify-center">
@@ -132,89 +139,160 @@ function UpdatePriceDialog({
   );
 }
 
-export function TicketItem({ item, onRemove, handleUpdateItem }: Props) {
+function PresentationItem({
+  presentation,
+  ticketProductId,
+  ticketStore,
+}: PresentationItemProps) {
   const { onFocus } = useBottomSheetAwareHandlers();
-  const [productName, presentationName] = item.name.split(":");
+  const { updateTicketProductPresentation, removeTicketProductPresentations } =
+    ticketStore;
 
-  const canDecreaseQuantity = item.quantity > 1;
+  const canDecreaseQuantity = presentation.quantity > 1;
 
-  const increaseQuantity = () => {
-    handleUpdateItem(item.id, { quantity: item.quantity + 1 });
+  const handleUpdateQuantity = (quantity: number) => {
+    updateTicketProductPresentation.mutate({
+      ticketProductId,
+      ticketProductPresentationId: presentation.id,
+      quantity,
+      priceSale: presentation.priceSale,
+    });
   };
 
-  const decreaseQuantity = () => {
-    if (!canDecreaseQuantity) return;
-    handleUpdateItem(item.id, { quantity: item.quantity - 1 });
+  const handleUpdatePrice = (priceSale: number) => {
+    updateTicketProductPresentation.mutate({
+      ticketProductId,
+      ticketProductPresentationId: presentation.id,
+      quantity: presentation.quantity,
+      priceSale,
+    });
+  };
+
+  const handleRemove = () => {
+    removeTicketProductPresentations.mutate([presentation.id]);
   };
 
   return (
-    <Card className="mx-3 flex-row justify-between">
-      <Card.Header className="w-3/5 gap-y-1">
-        <Card.Title className="line-clamp-2 font-semibold">
-          {productName}
-        </Card.Title>
-        <Card.Description className="text-muted line-clamp-1">
-          {presentationName}
-        </Card.Description>
-        <UpdatePriceDialog
-          currentPrice={item.priceSale}
-          originalPrice={item.originalPrice}
-          priceWholesale={item.wholesalePrice}
-          onSubmit={(price) => {
-            handleUpdateItem(item.id, { priceSale: price });
-          }}
-        />
-      </Card.Header>
-      <Card.Body className="w-2/5 items-end justify-between">
-        <View className="w-full items-end">
-          <Typography className="font-semibold">
-            {formatPrice(item.priceSale * item.quantity)}
+    <View className="gap-y-2 py-3">
+      <View className="flex-row items-start justify-between">
+        <View className="flex-1 gap-y-0.5">
+          <Typography className="line-clamp-1 font-medium">
+            {presentation.name}
           </Typography>
-
-          <View className="border-accent w-full flex-row items-center justify-between rounded-3xl border">
-            <Button
-              className="px-3 py-2"
-              isDisabled={!canDecreaseQuantity}
-              onPress={decreaseQuantity}
-              isIconOnly
-              size="sm"
-              variant="ghost"
-            >
-              <MaterialIcons
-                name="remove"
-                size={18}
-                className="text-foreground"
-              />
-            </Button>
-            <Input
-              className="bg-transparent px-3"
-              value={item.quantity.toString()}
-              onChangeText={(value) => {
-                handleUpdateItem(item.id, { quantity: Number(value) });
-              }}
-              keyboardType="numeric"
-              placeholder="0"
-              onFocus={onFocus}
-            />
-            <Button
-              className="px-3 py-2"
-              onPress={increaseQuantity}
-              isIconOnly
-              size="sm"
-              variant="ghost"
-            >
-              <MaterialIcons name="add" size={18} className="text-foreground" />
-            </Button>
-          </View>
+          <UpdatePriceDialog
+            currentPrice={presentation.priceSale}
+            originalPrice={presentation.originalPrice}
+            priceWholesale={presentation.wholesalePrice}
+            onSubmit={handleUpdatePrice}
+          />
         </View>
-        <PressableFeedback onPress={() => onRemove(item.id)}>
+        <Typography className="font-semibold">
+          {formatPrice(presentation.priceSale * presentation.quantity)}
+        </Typography>
+      </View>
+
+      <View className="flex-row items-center justify-between">
+        <View className="border-accent flex-row items-center rounded-3xl border">
+          <Button
+            className="px-3 py-2"
+            isDisabled={!canDecreaseQuantity}
+            onPress={() => handleUpdateQuantity(presentation.quantity - 1)}
+            isIconOnly
+            size="sm"
+            variant="ghost"
+          >
+            <MaterialIcons
+              name="remove"
+              size={18}
+              className="text-foreground"
+            />
+          </Button>
+          <Input
+            className="w-16 bg-transparent px-3 text-center"
+            value={presentation.quantity.toString()}
+            onChangeText={(value) => handleUpdateQuantity(Number(value) || 1)}
+            keyboardType="numeric"
+            placeholder="0"
+            onFocus={onFocus}
+          />
+          <Button
+            className="px-3 py-2"
+            onPress={() => handleUpdateQuantity(presentation.quantity + 1)}
+            isIconOnly
+            size="sm"
+            variant="ghost"
+          >
+            <MaterialIcons name="add" size={18} className="text-foreground" />
+          </Button>
+        </View>
+
+        <PressableFeedback onPress={handleRemove}>
           <MaterialIcons
             name="delete-outline"
             size={20}
             className="text-danger"
           />
         </PressableFeedback>
+      </View>
+    </View>
+  );
+}
+
+export function TicketProductItem({ item, ticketStore }: Props) {
+  const totalPrice = useMemo(
+    () =>
+      item.presentations.reduce((sum, p) => sum + p.priceSale * p.quantity, 0),
+    [item.presentations]
+  );
+
+  const totalQuantity = useMemo(
+    () => item.presentations.reduce((sum, p) => sum + p.quantity, 0),
+    [item.presentations]
+  );
+
+  const handleRemoveProduct = () => {
+    ticketStore.removeTicketProduct.mutate(item.id);
+  };
+
+  return (
+    <Card className="mx-3">
+      <Card.Header className="flex-row justify-between">
+        <View className="flex-1 gap-y-1">
+          <Card.Title className="line-clamp-2 font-semibold">
+            {item.name}
+          </Card.Title>
+          <Card.Description className="text-muted">
+            {totalQuantity} {totalQuantity === 1 ? "unidad" : "unidades"}
+          </Card.Description>
+        </View>
+        <Typography className="font-bold">{formatPrice(totalPrice)}</Typography>
+      </Card.Header>
+
+      <Card.Body className="gap-y-0">
+        <Separator />
+        {item.presentations.map((presentation) => (
+          <PresentationItem
+            key={presentation.id}
+            presentation={presentation}
+            ticketProductId={item.id}
+            ticketStore={ticketStore}
+          />
+        ))}
       </Card.Body>
+
+      <Card.Footer>
+        <PressableFeedback
+          onPress={handleRemoveProduct}
+          className="flex-row items-center gap-x-2"
+        >
+          <MaterialIcons
+            name="delete-outline"
+            size={20}
+            className="text-danger"
+          />
+          <Typography className="text-danger">Eliminar producto</Typography>
+        </PressableFeedback>
+      </Card.Footer>
     </Card>
   );
 }

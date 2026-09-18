@@ -11,6 +11,7 @@ import type {
   Ticket,
   TicketProduct,
 } from "../domain/repositories/local-ticket.repository";
+import { useMemo } from "react";
 
 function getTicketProductStockQuantity(product: TicketProduct): number {
   return product.presentations.reduce(
@@ -21,7 +22,7 @@ function getTicketProductStockQuantity(product: TicketProduct): number {
 }
 
 function validateTicketProductStock(product: TicketProduct) {
-  if (product.allowsNegativeStock) return;
+  if (product.allowNegativeStock) return;
 
   const requestedQuantity = getTicketProductStockQuantity(product);
 
@@ -46,7 +47,10 @@ function mergeTicketProduct(
     );
 
     if (!existingPresentation) {
-      presentations.push(incomingPresentation);
+      presentations.push({
+        ...incomingPresentation,
+        id: crypto.randomUUID(),
+      });
       continue;
     }
 
@@ -66,7 +70,7 @@ export function useFindAllTickets() {
   if (!activeOrganization) throw new Error("Active organization not found");
 
   return useSuspenseQuery({
-    queryKey: ["orgnaizations", activeOrganization.id, "sales", "tickets"],
+    queryKey: ["organizations", activeOrganization.id, "sales", "tickets"],
     queryFn: async () =>
       salesContainer.localTicketRepository.load(activeOrganization.id),
   });
@@ -80,7 +84,7 @@ export function useInvalidateTicketsQueries() {
 
   const invalidateAll = () => {
     queryClient.invalidateQueries({
-      queryKey: ["orgnaizations", activeOrganization.id, "sales", "tickets"],
+      queryKey: ["organizations", activeOrganization.id, "sales", "tickets"],
     });
   };
 
@@ -93,6 +97,22 @@ export function useTicketStore() {
   const { salesContainer } = useContainer();
 
   if (!activeOrganization) throw new Error("Active organization not found");
+
+  const activeTicket = useMemo(() => {
+    const ticket = store.find((t) => t.isActive)!;
+
+    const total = ticket.products.reduce((sum, product) => {
+      const subTotal = product.presentations.reduce(
+        (total, presentation) =>
+          total + presentation.quantity * presentation.priceSale,
+        0,
+      );
+
+      return sum + subTotal;
+    }, 0);
+
+    return { ...ticket, total };
+  }, [store]);
 
   async function persist(nextTickets: Ticket[]) {
     await salesContainer.localTicketRepository.save(
@@ -182,7 +202,7 @@ export function useTicketStore() {
     },
   });
 
-  const addProduct = useMutation({
+  const addTicketProduct = useMutation({
     mutationKey: ["sales", "tickets", "add_product"],
     mutationFn: async (product: AddTicketProduct) => {
       const activeTicket = store.find((ticket) => ticket.isActive);
@@ -197,6 +217,7 @@ export function useTicketStore() {
           productId: null,
           presentations: product.presentations.map((presentation) => ({
             ...presentation,
+            id: crypto.randomUUID(),
             presentationId: null,
           })),
         };
@@ -257,7 +278,7 @@ export function useTicketStore() {
     },
   });
 
-  const removeProduct = useMutation({
+  const removeTicketProduct = useMutation({
     mutationKey: ["sales", "tickets", "remove_product"],
     mutationFn: async (ticketProductId: string) => {
       const activeTicket = store.find((ticket) => ticket.isActive);
@@ -287,16 +308,16 @@ export function useTicketStore() {
     },
   });
 
-  const removePresentations = useMutation({
+  const removeTicketProductPresentations = useMutation({
     mutationKey: ["sales", "tickets", "remove_presentations"],
-    mutationFn: async (presentationIds: string[]) => {
+    mutationFn: async (ticketProductPresentationIds: string[]) => {
       const activeTicket = store.find((ticket) => ticket.isActive);
 
       if (!activeTicket) throw new Error("Active ticket not found");
 
-      if (presentationIds.length === 0) return;
+      if (ticketProductPresentationIds.length === 0) return;
 
-      const idsToRemove = new Set(presentationIds);
+      const idsToRemove = new Set(ticketProductPresentationIds);
 
       const nextProducts = activeTicket.products
         .map((product) => ({
@@ -320,7 +341,7 @@ export function useTicketStore() {
     },
   });
 
-  const updatePresentation = useMutation({
+  const updateTicketProductPresentation = useMutation({
     mutationKey: ["sales", "tickets", "update_presentation"],
     mutationFn: async ({
       ticketProductId,
@@ -333,6 +354,8 @@ export function useTicketStore() {
       quantity: number;
       priceSale: number;
     }) => {
+      console.log("updateTicketProductPresentation");
+
       const activeTicket = store.find((ticket) => ticket.isActive);
 
       if (!activeTicket) throw new Error("Active ticket not found");
@@ -387,13 +410,14 @@ export function useTicketStore() {
 
   return {
     store,
+    activeTicket,
     switchActiveTicket,
     createTicket,
     removeTicket,
     renameTicket,
-    addProduct,
-    removeProduct,
-    removePresentations,
-    updatePresentation,
+    addTicketProduct,
+    removeTicketProduct,
+    removeTicketProductPresentations,
+    updateTicketProductPresentation,
   };
 }

@@ -10,17 +10,16 @@ import {
 import { Typography } from "heroui-native/text";
 import { SalePresentationCard } from "./presentation-card";
 import { useProductPresentationSelector } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { Button } from "heroui-native/button";
-import { useTickets } from "@fludge/client/providers/tickets.provider";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
-import type { TranslationKey } from "@fludge/i18n/index";
+import { useTicketStore } from "@fludge/client/application/sales/store/use-ticket.store";
 
 const SNAP_POINTS = ["70%"];
 
 export function ProductPresentationSelector() {
   const mutationToast = useMutationToast("PRODUCT_PRESENTATION_SELECTOR");
-  const { dispatch, state } = useTickets();
+  const { addTicketProduct } = useTicketStore();
   const productPresentation = useProductPresentationSelector();
   const { t } = useTranslation();
 
@@ -33,47 +32,27 @@ export function ProductPresentationSelector() {
 
     if (selectedPresentations.length === 0 || !selectedProduct) return;
 
-    productPresentation.selectedPresentations.forEach((presentation) => {
-      dispatch({
-        type: "addTicketItem",
-        payload: [
-          {
-            name: presentation.name,
-            presentationId: presentation.id,
-            conversionFactor: presentation.conversionFactor,
-            originalPrice: presentation.priceSale,
-            priceSale: presentation.priceSale,
-            quantity: 1,
-            wholesalePrice: presentation.priceWholesale,
-            type: "catalog",
-            product: {
-              id: selectedProduct.id,
-              allowsNegativeStock: selectedProduct.allowNegativeStock,
-              stock: selectedProduct.stock,
-              availableStock: selectedProduct.stock,
-              minStock: selectedProduct.minStock,
-              name: selectedProduct.name,
-            },
-          },
-        ],
-      });
+    addTicketProduct.mutate({
+      allowNegativeStock: selectedProduct.allowNegativeStock,
+      minStock: selectedProduct.minStock,
+      name: selectedProduct.name,
+      productId: selectedProduct.id,
+      stock: selectedProduct.stock,
+      type: "catalog",
+      presentations: selectedPresentations.map((presentation) => ({
+        conversionFactor: presentation.conversionFactor,
+        name: presentation.name,
+        originalPrice: presentation.priceSale,
+        priceSale: presentation.priceSale,
+        presentationId: presentation.id,
+        wholesalePrice: presentation.priceWholesale,
+        ticketProductId: selectedProduct.id,
+        quantity: 1,
+      })),
     });
 
     productPresentation.closeSheet();
   };
-
-  useEffect(() => {
-    if (state.lastError) {
-      mutationToast.showErrorToast(
-        "forms.ticket.err_on_add",
-        state.lastError as TranslationKey
-      );
-    }
-
-    dispatch({
-      type: "clearError",
-    });
-  }, [state.lastError]);
 
   const sheetFooter = useCallback(
     (props: BottomSheetFooterProps) => (

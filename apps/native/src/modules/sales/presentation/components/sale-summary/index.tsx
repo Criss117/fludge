@@ -1,5 +1,4 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { useTickets } from "@fludge/client/providers/tickets.provider";
 import { formatPrice } from "@fludge/utils/currency";
 import { Button } from "heroui-native/button";
 import { Typography } from "heroui-native/text";
@@ -7,12 +6,12 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { SalesSummaryContent } from "./content";
+import { useTicketStore } from "@fludge/client/application/sales/store/use-ticket.store";
 
 export function SalesSummary() {
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const { t } = useTranslation();
-  const { activeTicket } = useTickets();
-  const total = activeTicket.total;
+  const { activeTicket } = useTicketStore();
 
   const openSummary = () => setIsSummaryOpen(true);
   const closeSummary = () => setIsSummaryOpen(false);
@@ -23,7 +22,9 @@ export function SalesSummary() {
         <Typography color="muted">
           {t("screens.sales.summary.title")}
         </Typography>
-        <Typography className="font-bold">{formatPrice(total)}</Typography>
+        <Typography className="font-bold">
+          {formatPrice(activeTicket.total)}
+        </Typography>
       </View>
       <Button onPress={openSummary}>
         <MaterialIcons

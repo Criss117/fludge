@@ -89,11 +89,9 @@ export function OrganizationProvider({
       if (!saved?.activeOrganizationId) return;
 
       await switchOrganization(saved.activeOrganizationId);
-
-      setIsPending(false);
     }
 
-    handleActiveOrganizationChange();
+    handleActiveOrganizationChange().finally(() => setIsPending(false));
   }, []);
 
   if (isPending) {
