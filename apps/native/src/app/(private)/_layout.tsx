@@ -38,6 +38,7 @@ function StackOptions() {
 export default function PrivateLayout() {
   return (
     <OrganizationProvider
+      fallback={<LoadingScreen message="app.loading_organization" />}
       organizationStorage={OrganizationStore}
       organizationRepository={iamContainer.repositories.organizationRepository}
     >

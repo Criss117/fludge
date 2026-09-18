@@ -156,7 +156,9 @@ export class Product {
       this._stock = new ProductStock(
         data.stock ?? this._stock.stock,
         data.minStock ?? this._stock.minStock,
-        data.allowNegativeStock ?? this._stock.allowNegativeStock,
+        data.allowNegativeStock !== undefined
+          ? data.allowNegativeStock
+          : this._stock.allowNegativeStock,
       );
     }
 

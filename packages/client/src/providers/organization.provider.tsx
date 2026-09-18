@@ -6,6 +6,7 @@ import {
 import { createContext, use, useEffect, useState } from "react";
 import type { OrganizationRepository } from "../application/iam/domain/organization.repository";
 import type { LocalOrganization } from "@fludge/sync/entities/iam.entities";
+import { tryCatch } from "@fludge/utils/trycatch";
 
 const organizationsKeys = {
   all: ["iam", "organizations"] as const,
@@ -53,13 +54,16 @@ interface Props {
   children: React.ReactNode;
   organizationRepository: OrganizationRepository;
   organizationStorage: IOrganizationStorage;
+  fallback: React.ReactNode;
 }
 
 export function OrganizationProvider({
   children,
   organizationRepository,
   organizationStorage,
+  fallback,
 }: Props) {
+  const [isPending, setIsPending] = useState(true);
   const [activeOrganization, setActiveOrganization] =
     useState<LocalOrganization | null>(null);
   const context = useGenerateContext(organizationRepository);
@@ -77,17 +81,24 @@ export function OrganizationProvider({
   };
 
   useEffect(() => {
-    organizationStorage
-      .load()
-      .then((values) => {
-        if (values?.activeOrganizationId) {
-          switchOrganization(values.activeOrganizationId);
-        }
-      })
-      .catch(() => {
-        setActiveOrganization(null);
-      });
+    async function handleActiveOrganizationChange() {
+      const [saved, errorLoading] = await tryCatch(organizationStorage.load());
+
+      if (errorLoading) return;
+
+      if (!saved?.activeOrganizationId) return;
+
+      await switchOrganization(saved.activeOrganizationId);
+
+      setIsPending(false);
+    }
+
+    handleActiveOrganizationChange();
   }, []);
+
+  if (isPending) {
+    return fallback;
+  }
 
   return (
     <OrganizationContext.Provider

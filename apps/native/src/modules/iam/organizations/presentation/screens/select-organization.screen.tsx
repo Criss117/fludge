@@ -1,6 +1,6 @@
 import { FlatList, View } from "react-native";
 import { CARD_HEIGHT, OrganizationCard } from "../components/organization-card";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { Input } from "heroui-native/input";
 import { MaterialIcons } from "@/modules/shared/components/icons";
@@ -87,7 +87,13 @@ export function SelectOrganizationScreen() {
 
       {userIsRoot && (
         <View className="gap-y-2 px-3">
-          <Link href="/(private)/organization" replace asChild>
+          <Link
+            href={{
+              pathname: "/organization/register",
+            }}
+            replace
+            asChild
+          >
             <Button>
               <MaterialIcons
                 name="add-business"

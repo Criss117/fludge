@@ -337,11 +337,15 @@ function updateCatalogTicketItem(
   const quantityDelta = (newQuantity - item.quantity) * item.conversionFactor;
   const projectedAvailableStock = product.availableStock - quantityDelta;
 
+  console.log(product.allowsNegativeStock, projectedAvailableStock);
+
   if (!product.allowsNegativeStock && projectedAvailableStock < 0)
     return {
       ticket,
       error: "forms.ticket.product.insufficient_stock",
     };
+
+  console.log(product.allowsNegativeStock, projectedAvailableStock);
 
   const updatedProduct: ProductStore = {
     ...product,
