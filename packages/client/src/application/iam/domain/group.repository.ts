@@ -1,7 +1,7 @@
-import type { LocalGroup } from "@fludge/sync/entities/iam.entities";
+import type { LocalGroupSelect } from "@fludge/db/local-schemas/shared.schema";
 import type { MemberSummary } from "./member.repository";
 
-export type GroupSummary = LocalGroup;
+export type GroupSummary = LocalGroupSelect;
 
 export type GroupDetail = GroupSummary & {
   members: MemberSummary[];
@@ -23,7 +23,7 @@ export interface GroupRepository {
     groupId: string,
   ): Promise<GroupDetail | null>;
 
-  save(group: LocalGroup | LocalGroup[]): Promise<void>;
+  save(group: LocalGroupSelect | LocalGroupSelect[]): Promise<void>;
 
   delete(organizationId: string, groupId: string | string[]): Promise<void>;
 }

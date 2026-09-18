@@ -6,17 +6,12 @@ import {
   member,
   organization,
 } from "@fludge/db/schema/iam.schema";
+
+import type { ServerSyncIamRepository } from "@fludge/sync/repositories/iam/server-sync-iam.repository";
 import type {
-  LocalGroup,
-  LocalGroupMember,
-  LocalMember,
-  LocalOrganization,
-  LocalUser,
-} from "@fludge/sync/entities/iam.entities";
-import type {
-  IamLastSyncedAt,
-  ServerSyncIamRepository,
-} from "@fludge/sync/repositories/iam/server-sync-iam.repository";
+  IamLastSyncedAtQuery,
+  IamSyncAllItems,
+} from "@fludge/sync/types/iam.types";
 import { and, inArray, gt } from "drizzle-orm";
 
 export class SyncIamRepository implements ServerSyncIamRepository {
@@ -24,7 +19,7 @@ export class SyncIamRepository implements ServerSyncIamRepository {
 
   private async findOrganizations(
     organizationIds: string[],
-    lastSyncedAt: IamLastSyncedAt["organization"],
+    lastSyncedAt: IamLastSyncedAtQuery["organization"],
   ) {
     return this.db
       .select()
@@ -39,8 +34,8 @@ export class SyncIamRepository implements ServerSyncIamRepository {
 
   private async findMembers(
     organizationIds: string[],
-    lastSyncedAt: IamLastSyncedAt["member"],
-  ): Promise<LocalMember[]> {
+    lastSyncedAt: IamLastSyncedAtQuery["member"],
+  ) {
     return this.db
       .select()
       .from(member)
@@ -54,8 +49,8 @@ export class SyncIamRepository implements ServerSyncIamRepository {
 
   private async findGroupMembers(
     organizationIds: string[],
-    lastSyncedAt: IamLastSyncedAt["groupMember"],
-  ): Promise<LocalGroupMember[]> {
+    lastSyncedAt: IamLastSyncedAtQuery["groupMember"],
+  ) {
     return this.db
       .select()
       .from(groupMember)
@@ -69,8 +64,8 @@ export class SyncIamRepository implements ServerSyncIamRepository {
 
   private async findUsers(
     organizationIds: string[],
-    lastSyncedAt: IamLastSyncedAt["user"],
-  ): Promise<LocalUser[]> {
+    lastSyncedAt: IamLastSyncedAtQuery["user"],
+  ) {
     return this.db
       .select()
       .from(user)
@@ -90,8 +85,8 @@ export class SyncIamRepository implements ServerSyncIamRepository {
 
   private async findGroups(
     organizationIds: string[],
-    lastSyncedAt: IamLastSyncedAt["group"],
-  ): Promise<LocalGroup[]> {
+    lastSyncedAt: IamLastSyncedAtQuery["group"],
+  ) {
     return this.db
       .select()
       .from(group)
@@ -105,14 +100,8 @@ export class SyncIamRepository implements ServerSyncIamRepository {
 
   public async findAllItems(
     organizationIds: string[],
-    lastSyncedAt: IamLastSyncedAt,
-  ): Promise<{
-    users: LocalUser[];
-    groups: LocalGroup[];
-    members: LocalMember[];
-    organizations: LocalOrganization[];
-    groupMembers: LocalGroupMember[];
-  }> {
+    lastSyncedAt: IamLastSyncedAtQuery,
+  ): Promise<IamSyncAllItems> {
     const organizationsPromise = this.findOrganizations(
       organizationIds,
       lastSyncedAt.organization,

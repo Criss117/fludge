@@ -6,11 +6,11 @@ import { Typography } from "heroui-native/text";
 import { View } from "react-native";
 import { Chip } from "heroui-native/chip";
 import { UserAvatar } from "@/modules/shared/components/user-avatar";
-import type { LocalOrganization } from "@fludge/sync/entities/iam.entities";
+import type { LocalOrganizationSelect } from "@fludge/db/local-schemas/shared.schema";
 
 interface Props {
   onPress: (organizationId: string) => void;
-  organization: LocalOrganization;
+  organization: LocalOrganizationSelect;
 }
 
 export const CARD_HEIGHT = 170;

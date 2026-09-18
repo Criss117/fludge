@@ -1,17 +1,17 @@
 import type {
   IamLastSyncedAtLocal,
   IamLastSyncedAtQuery,
-  SyncIamAllItems,
+  IamSyncAllItems,
 } from "@fludge/sync/types/iam.types";
 
 export interface ClientSyncIamRepository {
   getLastSyncedAt: () => Promise<IamLastSyncedAtLocal>;
 
-  saveAll: (values: SyncIamAllItems) => Promise<void>;
+  saveAll: (values: IamSyncAllItems) => Promise<void>;
 }
 
 export interface HttpClientSyncIamRepository {
   findLastSyncedAt: (
     lastSyncedAt: IamLastSyncedAtQuery,
-  ) => Promise<SyncIamAllItems>;
+  ) => Promise<IamSyncAllItems>;
 }

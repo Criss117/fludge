@@ -16,7 +16,7 @@ export type CatalogLastSyncedAtQuery = {
   productPresentation: Date | null;
 };
 
-export type SyncCatalogAllItems = {
+export type CatalogSyncAllItems = {
   products: LocalProductSelect[];
   categories: LocalCategorySelect[];
   productPresentations: LocalProductPresentationSelect[];

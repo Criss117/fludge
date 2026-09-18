@@ -1,15 +1,15 @@
 import type {
-  LocalGroup,
-  LocalMember,
-  LocalUser,
-} from "@fludge/sync/entities/iam.entities";
+  LocalGroupSelect,
+  LocalMemberSelect,
+  LocalUserSelect,
+} from "@fludge/db/local-schemas/shared.schema";
 
-export type MemberSummary = LocalMember & {
-  user: LocalUser;
+export type MemberSummary = LocalMemberSelect & {
+  user: LocalUserSelect;
 };
 
 export type MemberDetail = MemberSummary & {
-  groups: LocalGroup[];
+  groups: LocalGroupSelect[];
 };
 
 export type FindAllMembersFilters = {

@@ -62,6 +62,8 @@ export function useSyncCatalog() {
         httpRepository.findLastSyncedAt({
           category: lastSyncedAt.category?.updatedAt ?? null,
           product: lastSyncedAt.product?.updatedAt ?? null,
+          productPresentation:
+            lastSyncedAt.productPresentation?.updatedAt ?? null,
         }),
       );
 

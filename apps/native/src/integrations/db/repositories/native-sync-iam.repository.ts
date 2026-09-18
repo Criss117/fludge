@@ -1,18 +1,18 @@
-import { DatabaseService } from "..";
+import type { ClientSyncIamRepository } from "@fludge/sync/repositories/iam/client-sync-iam.repository";
+import type { DatabaseService } from "..";
 import {
-  group,
-  groupMember,
-  member,
-  organization,
-  user,
-} from "@fludge/db/local-schemas/iam.schema";
+  localGroup,
+  localGroupMember,
+  localMember,
+  localOrganization,
+  localUser,
+} from "@fludge/db/local-schemas/shared.schema";
 import { desc } from "drizzle-orm";
+import type {
+  IamLastSyncedAtLocal,
+  IamSyncAllItems,
+} from "@fludge/sync/types/iam.types";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
-import { SyncIamAllItems } from "@fludge/sync/repositories/iam/server-sync-iam.repository";
-import {
-  ClientSyncIamRepository,
-  GetIamLastSyncedAt,
-} from "@fludge/sync/repositories/iam/client-sync-iam.repository";
 
 export class NativeSyncIamRepository implements ClientSyncIamRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -20,8 +20,8 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
   private async getLastSyncedUser() {
     const row = await this.db
       .select()
-      .from(user)
-      .orderBy(desc(user.updatedAt))
+      .from(localUser)
+      .orderBy(desc(localUser.updatedAt))
       .limit(1);
 
     return row.at(0) ?? null;
@@ -30,8 +30,8 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
   private async getLastSyncedGroup() {
     const row = await this.db
       .select()
-      .from(group)
-      .orderBy(desc(group.updatedAt))
+      .from(localGroup)
+      .orderBy(desc(localGroup.updatedAt))
       .limit(1);
 
     return row.at(0) ?? null;
@@ -40,8 +40,8 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
   private async getLastSyncedMember() {
     const row = await this.db
       .select()
-      .from(member)
-      .orderBy(desc(member.createdAt))
+      .from(localMember)
+      .orderBy(desc(localMember.createdAt))
       .limit(1);
 
     return row.at(0) ?? null;
@@ -50,8 +50,8 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
   private async getLastSyncedOrganization() {
     const row = await this.db
       .select()
-      .from(organization)
-      .orderBy(desc(organization.updatedAt))
+      .from(localOrganization)
+      .orderBy(desc(localOrganization.updatedAt))
       .limit(1);
 
     return row.at(0) ?? null;
@@ -60,14 +60,14 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
   private async getLastSyncedGroupMember() {
     const row = await this.db
       .select()
-      .from(groupMember)
-      .orderBy(desc(groupMember.createdAt))
+      .from(localGroupMember)
+      .orderBy(desc(localGroupMember.createdAt))
       .limit(1);
 
     return row.at(0) ?? null;
   }
 
-  public async getLastSyncedAt(): Promise<GetIamLastSyncedAt> {
+  public async getLastSyncedAt(): Promise<IamLastSyncedAtLocal> {
     const [user, group, member, organization, groupMember] = await Promise.all([
       this.getLastSyncedUser(),
       this.getLastSyncedGroup(),
@@ -85,14 +85,14 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
     };
   }
 
-  public async saveAll(values: SyncIamAllItems): Promise<void> {
+  public async saveAll(values: IamSyncAllItems): Promise<void> {
     this.db.transaction((tx) => {
       if (values.users.length > 0) {
-        tx.insert(user)
+        tx.insert(localUser)
           .values(values.users)
           .onConflictDoUpdate({
-            target: user.id,
-            set: buildConflictUpdateColumn(user, [
+            target: localUser.id,
+            set: buildConflictUpdateColumn(localUser, [
               "name",
               "email",
               "image",
@@ -104,11 +104,11 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
       }
 
       if (values.organizations.length > 0) {
-        tx.insert(organization)
+        tx.insert(localOrganization)
           .values(values.organizations)
           .onConflictDoUpdate({
-            target: organization.id,
-            set: buildConflictUpdateColumn(organization, [
+            target: localOrganization.id,
+            set: buildConflictUpdateColumn(localOrganization, [
               "name",
               "slug",
               "logo",
@@ -124,15 +124,18 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
       }
 
       if (values.members.length > 0) {
-        tx.insert(member).values(values.members).onConflictDoNothing().run();
+        tx.insert(localMember)
+          .values(values.members)
+          .onConflictDoNothing()
+          .run();
       }
 
       if (values.groups.length > 0) {
-        tx.insert(group)
+        tx.insert(localGroup)
           .values(values.groups)
           .onConflictDoUpdate({
-            target: group.id,
-            set: buildConflictUpdateColumn(group, [
+            target: localGroup.id,
+            set: buildConflictUpdateColumn(localGroup, [
               "name",
               "slug",
               "description",
@@ -145,7 +148,7 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
       }
 
       if (values.groupMembers.length > 0) {
-        tx.insert(groupMember)
+        tx.insert(localGroupMember)
           .values(values.groupMembers)
           .onConflictDoNothing()
           .run();

@@ -3,40 +3,25 @@ import {
   category,
   product,
   productPresentation,
-  type ProductPresentationSelect,
 } from "@fludge/db/schema/catalog.schema";
-import { jsonObject } from "@fludge/db/utils/build-queries";
+import type { ServerSyncCatalogRepository } from "@fludge/sync/repositories/catalog/server-sync-catalog.repository";
 import type {
-  LocalCategory,
-  LocalProduct,
-} from "@fludge/sync/entities/catalog.entities";
-import type {
-  CatalogLastSyncedAt,
-  ServerSyncCatalogRepository,
-} from "@fludge/sync/repositories/catalog/server-sync-catalog.repository";
-import { and, eq, getColumns, gt, inArray, sql } from "drizzle-orm";
+  CatalogLastSyncedAtQuery,
+  CatalogSyncAllItems,
+} from "@fludge/sync/types/catalog.types";
+import { and, gt, inArray } from "drizzle-orm";
 
 export class SyncCatalogRepository implements ServerSyncCatalogRepository {
   constructor(private readonly db: DatabaseService) {}
 
   public async findAllProducts(
     organizationIds: string[],
-    lastSyncedAt: CatalogLastSyncedAt["product"],
+    lastSyncedAt: CatalogLastSyncedAtQuery["product"],
   ) {
-    const rows = await this.db
-      .select({
-        ...getColumns(product),
-        presentations: sql<string>`
-            json_group_array(
-              DISTINCT ${jsonObject(productPresentation)}
-            ) FILTER (WHERE ${productPresentation.productId} IS NOT NULL)
-          `.as("presentations"),
-      })
+    return this.db
+      .select()
       .from(product)
-      .innerJoin(
-        productPresentation,
-        eq(productPresentation.productId, product.id),
-      )
+
       .where(
         and(
           inArray(product.organizationId, organizationIds),
@@ -44,23 +29,28 @@ export class SyncCatalogRepository implements ServerSyncCatalogRepository {
         ),
       )
       .groupBy(product.id);
+  }
 
-    return rows.map((p) => {
-      const presentations = (
-        JSON.parse(p.presentations) as ProductPresentationSelect[]
-      ).map((p) => ({
-        ...p,
-        createdAt: new Date(p.createdAt),
-        updatedAt: new Date(p.updatedAt),
-      }));
-
-      return { ...p, presentations };
-    });
+  public async findAllProductPresentations(
+    organizationIds: string[],
+    lastSyncedAt: CatalogLastSyncedAtQuery["productPresentation"],
+  ) {
+    return this.db
+      .select()
+      .from(productPresentation)
+      .where(
+        and(
+          inArray(productPresentation.organizationId, organizationIds),
+          lastSyncedAt
+            ? gt(productPresentation.updatedAt, lastSyncedAt)
+            : undefined,
+        ),
+      );
   }
 
   public async findAllCategories(
     organizationIds: string[],
-    lastSyncedAt: CatalogLastSyncedAt["category"],
+    lastSyncedAt: CatalogLastSyncedAtQuery["category"],
   ) {
     return this.db
       .select()
@@ -75,11 +65,8 @@ export class SyncCatalogRepository implements ServerSyncCatalogRepository {
 
   public async findAllItems(
     organizationIds: string[],
-    lastSyncedAt: CatalogLastSyncedAt,
-  ): Promise<{
-    products: LocalProduct[];
-    categories: LocalCategory[];
-  }> {
+    lastSyncedAt: CatalogLastSyncedAtQuery,
+  ): Promise<CatalogSyncAllItems> {
     const productsPromise = this.findAllProducts(
       organizationIds,
       lastSyncedAt.product,
@@ -90,14 +77,21 @@ export class SyncCatalogRepository implements ServerSyncCatalogRepository {
       lastSyncedAt.category,
     );
 
-    const [products, categories] = await Promise.all([
+    const productPresentationsPromise = this.findAllProductPresentations(
+      organizationIds,
+      lastSyncedAt.productPresentation,
+    );
+
+    const [products, productPresentations, categories] = await Promise.all([
       productsPromise,
+      productPresentationsPromise,
       categoriesPromise,
     ]);
 
     return {
       products,
       categories,
+      productPresentations,
     };
   }
 }

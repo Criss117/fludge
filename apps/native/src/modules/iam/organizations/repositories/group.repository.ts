@@ -6,12 +6,12 @@ import type {
   GroupSummary,
 } from "@fludge/client/application/iam/domain/group.repository";
 import {
-  group,
-  groupMember,
-  member,
-  user,
-} from "@fludge/db/local-schemas/iam.schema";
-import { LocalGroup } from "@fludge/sync/entities/iam.entities";
+  localGroup,
+  localGroupMember,
+  LocalGroupSelect,
+  localMember,
+  localUser,
+} from "@fludge/db/local-schemas/shared.schema";
 
 import {
   and,
@@ -35,17 +35,16 @@ export class SqliteGroupRepository implements GroupRepository {
 
     const rows = await this.db
       .select()
-      .from(group)
-
+      .from(localGroup)
       .where(
         and(
-          eq(group.organizationId, organizationId),
-          excludeIds ? notInArray(group.id, excludeIds) : undefined,
-          like(group.name, "%" + searchQuery + "%")
+          eq(localGroup.organizationId, organizationId),
+          excludeIds ? notInArray(localGroup.id, excludeIds) : undefined,
+          like(localGroup.name, "%" + searchQuery + "%")
         )
       )
-      .groupBy(group.id)
-      .orderBy(desc(group.updatedAt));
+      .groupBy(localGroup.id)
+      .orderBy(desc(localGroup.updatedAt));
 
     return rows;
   }
@@ -56,9 +55,12 @@ export class SqliteGroupRepository implements GroupRepository {
   ): Promise<GroupDetail | null> {
     const rows = await this.db
       .select()
-      .from(group)
+      .from(localGroup)
       .where(
-        and(eq(group.organizationId, organizationId), eq(group.id, groupId))
+        and(
+          eq(localGroup.organizationId, organizationId),
+          eq(localGroup.id, groupId)
+        )
       )
       .limit(1);
 
@@ -68,14 +70,14 @@ export class SqliteGroupRepository implements GroupRepository {
 
     const memberRows = await this.db
       .select({
-        ...getColumns(member),
-        user: getColumns(user),
+        ...getColumns(localMember),
+        user: getColumns(localUser),
       })
-      .from(groupMember)
-      .innerJoin(member, eq(member.id, groupMember.memberId))
-      .innerJoin(user, eq(user.id, member.userId))
-      .where(eq(groupMember.groupId, groupId))
-      .orderBy(desc(member.createdAt));
+      .from(localGroupMember)
+      .innerJoin(localMember, eq(localMember.id, localGroupMember.memberId))
+      .innerJoin(localUser, eq(localUser.id, localMember.userId))
+      .where(eq(localGroupMember.groupId, groupId))
+      .orderBy(desc(localMember.createdAt));
 
     return {
       ...groupData,
@@ -83,9 +85,9 @@ export class SqliteGroupRepository implements GroupRepository {
     };
   }
 
-  public async save(values: LocalGroup): Promise<void> {
-    await this.db.insert(group).values(values).onConflictDoUpdate({
-      target: group.id,
+  public async save(values: LocalGroupSelect): Promise<void> {
+    await this.db.insert(localGroup).values(values).onConflictDoUpdate({
+      target: localGroup.id,
       set: values,
     });
   }
@@ -95,11 +97,11 @@ export class SqliteGroupRepository implements GroupRepository {
     groupIds: string[]
   ): Promise<void> {
     await this.db
-      .delete(group)
+      .delete(localGroup)
       .where(
         and(
-          eq(group.organizationId, organizationId),
-          inArray(group.id, groupIds)
+          eq(localGroup.organizationId, organizationId),
+          inArray(localGroup.id, groupIds)
         )
       );
   }

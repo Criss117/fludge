@@ -10,7 +10,7 @@ import {
   ProductPresentationSection,
   ProductPresentationSectionSkeleton,
 } from "../sections/product-presentation.section";
-import { ProductDetail } from "@fludge/client/application/catalog/domain/product.repository";
+import type { ProductDetail } from "@fludge/client/application/catalog/domain/product.repository";
 import { Skeleton } from "heroui-native/skeleton";
 import { Tabs } from "heroui-native/tabs";
 import { useState } from "react";

@@ -1,5 +1,5 @@
 import type { ServerSyncIamRepository } from "@fludge/sync/repositories/iam/server-sync-iam.repository";
-import type { IamLastSyncedAt } from "@fludge/sync/types/iam.types";
+import type { IamLastSyncedAtQuery } from "@fludge/sync/types/iam.types";
 
 export class SyncServerIamEngine {
   constructor(
@@ -8,7 +8,7 @@ export class SyncServerIamEngine {
 
   public async getLastSyncedAt(
     organizationIds: string[],
-    lastSyncedAt: IamLastSyncedAt,
+    lastSyncedAt: IamLastSyncedAtQuery,
   ) {
     const { users, groups, members, organizations, groupMembers } =
       await this.serverSyncIamRepository.findAllItems(

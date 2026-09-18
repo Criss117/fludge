@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
+import type { ProductDetail } from "@fludge/client/application/catalog/domain/product.repository";
 import { formatPrice } from "@fludge/utils/currency";
 import { Card } from "heroui-native/card";
 import { Chip } from "heroui-native/chip";
@@ -29,8 +29,8 @@ export function getSalesProductPrice(
 }
 
 interface Props {
-  product: ProductSummary;
-  onPress?: (product: ProductSummary) => void;
+  product: ProductDetail;
+  onPress?: (product: ProductDetail) => void;
 }
 
 export const SalesProductCard = React.memo(function SalesProductCard({

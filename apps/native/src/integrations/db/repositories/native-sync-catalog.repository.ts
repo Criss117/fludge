@@ -1,12 +1,16 @@
 import { DatabaseService } from "..";
-import { category, product } from "@fludge/db/local-schemas/catalog.schema";
 import { desc } from "drizzle-orm";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
+import type { ClientSyncCatalogRepository } from "@fludge/sync/repositories/catalog/client-sync-catalog.repository";
+import {
+  localCategory,
+  localProduct,
+  localProductPresentation,
+} from "@fludge/db/local-schemas/shared.schema";
 import type {
-  ClientSyncCatalogRepository,
-  GetCatalogLastSyncedAt,
-} from "@fludge/sync/repositories/catalog/client-sync-catalog.repository";
-import { SyncCatalogAllItems } from "@fludge/sync/repositories/catalog/server-sync-catalog.repository";
+  CatalogLastSyncedAtLocal,
+  CatalogSyncAllItems,
+} from "@fludge/sync/types/catalog.types";
 
 export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -14,8 +18,8 @@ export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository 
   private async getLastSyncedProduct() {
     const row = await this.db
       .select()
-      .from(product)
-      .orderBy(desc(product.updatedAt))
+      .from(localProduct)
+      .orderBy(desc(localProduct.updatedAt))
       .limit(1);
 
     return row.at(0) ?? null;
@@ -24,39 +28,66 @@ export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository 
   private async getLastSyncedCategory() {
     const row = await this.db
       .select()
-      .from(category)
-      .orderBy(desc(category.updatedAt))
+      .from(localCategory)
+      .orderBy(desc(localCategory.updatedAt))
       .limit(1);
 
     return row.at(0) ?? null;
   }
 
-  public async getLastSyncedAt(): Promise<GetCatalogLastSyncedAt> {
-    const [product, category] = await Promise.all([
+  private async getLastSyncedProductPresentation() {
+    const row = await this.db
+      .select()
+      .from(localProductPresentation)
+      .orderBy(desc(localProductPresentation.updatedAt))
+      .limit(1);
+
+    return row.at(0) ?? null;
+  }
+
+  public async getLastSyncedAt(): Promise<CatalogLastSyncedAtLocal> {
+    const [product, category, productPresentation] = await Promise.all([
       this.getLastSyncedProduct(),
       this.getLastSyncedCategory(),
+      this.getLastSyncedProductPresentation(),
     ]);
 
     return {
       product,
       category,
+      productPresentation,
     };
   }
 
-  public async saveAll(values: SyncCatalogAllItems): Promise<void> {
+  public async saveAll(values: CatalogSyncAllItems): Promise<void> {
     this.db.transaction((tx) => {
+      if (values.categories.length > 0) {
+        tx.insert(localCategory)
+          .values(values.categories)
+          .onConflictDoUpdate({
+            target: localCategory.id,
+            set: buildConflictUpdateColumn(localCategory, [
+              "description",
+              "name",
+              "slug",
+              "status",
+              "updatedAt",
+            ]),
+          })
+          .run();
+      }
+
       if (values.products.length > 0) {
-        tx.insert(product)
+        tx.insert(localProduct)
           .values(values.products)
           .onConflictDoUpdate({
-            target: product.id,
-            set: buildConflictUpdateColumn(product, [
+            target: localProduct.id,
+            set: buildConflictUpdateColumn(localProduct, [
               "allowNegativeStock",
               "categoryId",
               "description",
               "minStock",
               "name",
-              "presentations",
               "searchBlob",
               "slug",
               "status",
@@ -67,15 +98,19 @@ export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository 
           .run();
       }
 
-      if (values.categories.length > 0) {
-        tx.insert(category)
-          .values(values.categories)
+      if (values.productPresentations.length > 0) {
+        tx.insert(localProductPresentation)
+          .values(values.productPresentations)
           .onConflictDoUpdate({
-            target: category.id,
-            set: buildConflictUpdateColumn(category, [
-              "description",
+            target: localProductPresentation.id,
+            set: buildConflictUpdateColumn(localProductPresentation, [
+              "barcode",
+              "conversionFactor",
               "name",
-              "slug",
+              "pricePurchase",
+              "priceSale",
+              "priceWholesale",
+              "searchBlob",
               "status",
               "updatedAt",
             ]),

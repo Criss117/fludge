@@ -1,18 +1,20 @@
 import { DatabaseService } from "@/integrations/db";
-import {
+import type {
   CategoryRepository,
   CategorySummary,
   FindAllCategoriesFilters,
 } from "@fludge/client/application/catalog/domain/category.repository";
-import { category } from "@fludge/db/local-schemas/catalog.schema";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
-import { LocalCategory } from "@fludge/sync/entities/catalog.entities";
 import { and, desc, eq, inArray, like } from "drizzle-orm";
 import {
   type Cursor,
   type PaginatedResponse,
   paginate,
 } from "@fludge/utils/pagination";
+import {
+  localCategory,
+  type LocalCategorySelect,
+} from "@fludge/db/local-schemas/shared.schema";
 
 export class NativeCategoryRepository implements CategoryRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -24,18 +26,18 @@ export class NativeCategoryRepository implements CategoryRepository {
   ): Promise<PaginatedResponse<CategorySummary>> {
     const rows = await this.db
       .select()
-      .from(category)
+      .from(localCategory)
       .where(
         and(
-          eq(category.organizationId, organizationId),
+          eq(localCategory.organizationId, organizationId),
           filters?.searchQuery
-            ? like(category.name, `%${filters.searchQuery}%`)
+            ? like(localCategory.name, `%${filters.searchQuery}%`)
             : undefined
         )
       )
       .limit(cursor.limit + 1)
       .offset(cursor.limit * cursor.page)
-      .orderBy(desc(category.createdAt));
+      .orderBy(desc(localCategory.createdAt));
 
     return paginate(rows, cursor);
   }
@@ -46,11 +48,11 @@ export class NativeCategoryRepository implements CategoryRepository {
   ): Promise<CategorySummary | null> {
     const rows = await this.db
       .select()
-      .from(category)
+      .from(localCategory)
       .where(
         and(
-          eq(category.organizationId, organizationId),
-          eq(category.id, categoryId)
+          eq(localCategory.organizationId, organizationId),
+          eq(localCategory.id, categoryId)
         )
       )
       .limit(0);
@@ -59,18 +61,18 @@ export class NativeCategoryRepository implements CategoryRepository {
   }
 
   public async save(
-    categoryValues: LocalCategory | LocalCategory[]
+    categoryValues: LocalCategorySelect | LocalCategorySelect[]
   ): Promise<void> {
     const categoriesArray = Array.isArray(categoryValues)
       ? categoryValues
       : [categoryValues];
 
     await this.db
-      .insert(category)
+      .insert(localCategory)
       .values(categoriesArray)
       .onConflictDoUpdate({
-        target: category.id,
-        set: buildConflictUpdateColumn(category, [
+        target: localCategory.id,
+        set: buildConflictUpdateColumn(localCategory, [
           "name",
           "slug",
           "status",
@@ -86,11 +88,11 @@ export class NativeCategoryRepository implements CategoryRepository {
     const categoryIds = Array.isArray(categoryId) ? categoryId : [categoryId];
 
     await this.db
-      .delete(category)
+      .delete(localCategory)
       .where(
         and(
-          eq(category.organizationId, organizationId),
-          inArray(category.id, categoryIds)
+          eq(localCategory.organizationId, organizationId),
+          inArray(localCategory.id, categoryIds)
         )
       );
   }

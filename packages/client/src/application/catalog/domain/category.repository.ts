@@ -1,7 +1,7 @@
-import type { LocalCategory } from "@fludge/sync/entities/catalog.entities";
+import type { LocalCategorySelect } from "@fludge/db/local-schemas/shared.schema";
 import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
 
-export type CategorySummary = LocalCategory;
+export type CategorySummary = LocalCategorySelect;
 
 export type FindAllCategoriesFilters = {
   searchQuery?: string;
@@ -19,7 +19,7 @@ export interface CategoryRepository {
     categoryId: string,
   ): Promise<CategorySummary | null>;
 
-  save(category: LocalCategory | LocalCategory[]): Promise<void>;
+  save(category: LocalCategorySelect | LocalCategorySelect[]): Promise<void>;
 
   delete(organizationId: string, categoryId: string | string[]): Promise<void>;
 }

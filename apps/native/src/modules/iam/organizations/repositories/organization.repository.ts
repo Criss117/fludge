@@ -4,13 +4,14 @@ import type {
   OrganizationRepository,
 } from "@fludge/client/application/iam/domain/organization.repository";
 import {
-  group,
-  groupMember,
-  member,
-  organization,
-} from "@fludge/db/local-schemas/iam.schema";
+  localGroup,
+  localGroupMember,
+  localMember,
+  localOrganization,
+  type LocalOrganizationSelect,
+} from "@fludge/db/local-schemas/shared.schema";
+
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
-import type { LocalOrganization } from "@fludge/sync/entities/iam.entities";
 import { eq, inArray } from "drizzle-orm";
 
 export class SqliteOrganizationRepository implements OrganizationRepository {
@@ -22,12 +23,12 @@ export class SqliteOrganizationRepository implements OrganizationRepository {
       : [organizationId];
 
     await this.db
-      .delete(organization)
-      .where(inArray(organization.id, organizationIds));
+      .delete(localOrganization)
+      .where(inArray(localOrganization.id, organizationIds));
   }
 
-  public async findAll(): Promise<LocalOrganization[]> {
-    return this.db.select().from(organization);
+  public async findAll(): Promise<LocalOrganizationSelect[]> {
+    return this.db.select().from(localOrganization);
   }
 
   public async save(data: OrganizationDetail): Promise<void> {
@@ -39,19 +40,19 @@ export class SqliteOrganizationRepository implements OrganizationRepository {
     } = data;
 
     this.db.transaction((tx) => {
-      tx.insert(organization)
+      tx.insert(localOrganization)
         .values(organizationData)
         .onConflictDoUpdate({
-          target: organization.id,
+          target: localOrganization.id,
           set: organizationData,
         })
         .run();
 
-      tx.insert(member)
+      tx.insert(localMember)
         .values(membersData)
         .onConflictDoUpdate({
-          target: member.id,
-          set: buildConflictUpdateColumn(member, [
+          target: localMember.id,
+          set: buildConflictUpdateColumn(localMember, [
             "userId",
             "assignedBy",
             "role",
@@ -59,11 +60,11 @@ export class SqliteOrganizationRepository implements OrganizationRepository {
         })
         .run();
 
-      tx.insert(group)
+      tx.insert(localGroup)
         .values(groupsData)
         .onConflictDoUpdate({
-          target: group.id,
-          set: buildConflictUpdateColumn(group, [
+          target: localGroup.id,
+          set: buildConflictUpdateColumn(localGroup, [
             "name",
             "slug",
             "description",
@@ -73,11 +74,11 @@ export class SqliteOrganizationRepository implements OrganizationRepository {
         })
         .run();
 
-      tx.delete(groupMember)
-        .where(eq(groupMember.organizationId, organizationData.id))
+      tx.delete(localGroupMember)
+        .where(eq(localGroupMember.organizationId, organizationData.id))
         .run();
 
-      tx.insert(groupMember)
+      tx.insert(localGroupMember)
         .values(groupMembersData)
         .onConflictDoNothing()
         .run();

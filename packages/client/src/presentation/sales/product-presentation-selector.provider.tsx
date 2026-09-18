@@ -1,14 +1,14 @@
-import type { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
+import type { ProductDetail } from "@fludge/client/application/catalog/domain/product.repository";
 import { createContext, use, useState } from "react";
 
 export interface ProductPresentationSelectorRef {
-  open: (product: ProductSummary) => void;
+  open: (product: ProductDetail) => void;
   close: () => void;
 }
 
-export type SelectedProduct = Omit<ProductSummary, "presentations"> & {
+export type SelectedProduct = Omit<ProductDetail, "presentations"> & {
   presentations: Array<
-    ProductSummary["presentations"][number] & {
+    ProductDetail["presentations"][number] & {
       selected?: boolean;
     }
   >;

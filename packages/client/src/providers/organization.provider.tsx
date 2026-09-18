@@ -5,8 +5,8 @@ import {
 } from "@tanstack/react-query";
 import { createContext, use, useEffect, useState } from "react";
 import type { OrganizationRepository } from "../application/iam/domain/organization.repository";
-import type { LocalOrganization } from "@fludge/sync/entities/iam.entities";
 import { tryCatch } from "@fludge/utils/trycatch";
+import type { LocalOrganizationSelect } from "@fludge/db/local-schemas/shared.schema";
 
 const organizationsKeys = {
   all: ["iam", "organizations"] as const,
@@ -34,7 +34,7 @@ function useGenerateContext(organizationRepository: OrganizationRepository) {
 }
 
 type Context = ReturnType<typeof useGenerateContext> & {
-  activeOrganization: LocalOrganization | null;
+  activeOrganization: LocalOrganizationSelect | null;
   switchOrganization: (organizationId: string) => Promise<void>;
 };
 
@@ -65,7 +65,7 @@ export function OrganizationProvider({
 }: Props) {
   const [isPending, setIsPending] = useState(true);
   const [activeOrganization, setActiveOrganization] =
-    useState<LocalOrganization | null>(null);
+    useState<LocalOrganizationSelect | null>(null);
   const context = useGenerateContext(organizationRepository);
 
   const switchOrganization = async (organizationId: string) => {

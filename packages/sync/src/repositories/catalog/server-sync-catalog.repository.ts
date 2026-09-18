@@ -1,11 +1,11 @@
 import type {
   CatalogLastSyncedAtQuery,
-  SyncCatalogAllItems,
+  CatalogSyncAllItems,
 } from "@fludge/sync/types/catalog.types";
 
 export interface ServerSyncCatalogRepository {
   findAllItems: (
     organizationIds: string[],
     lastSyncedAt: CatalogLastSyncedAtQuery,
-  ) => Promise<SyncCatalogAllItems>;
+  ) => Promise<CatalogSyncAllItems>;
 }

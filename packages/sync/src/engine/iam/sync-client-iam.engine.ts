@@ -2,7 +2,7 @@ import type {
   ClientSyncIamRepository,
   HttpClientSyncIamRepository,
 } from "@fludge/sync/repositories/iam/client-sync-iam.repository";
-import type { IamLastSyncedAt } from "@fludge/sync/types/iam.types";
+import type { IamLastSyncedAtQuery } from "@fludge/sync/types/iam.types";
 
 export class SyncClientIamEngine {
   constructor(
@@ -10,7 +10,7 @@ export class SyncClientIamEngine {
     private readonly httpClientSyncIamRepository: HttpClientSyncIamRepository,
   ) {}
 
-  public async getLastSyncedAt(): Promise<IamLastSyncedAt> {
+  public async getLastSyncedAt(): Promise<IamLastSyncedAtQuery> {
     const { group, member, organization, user, groupMember } =
       await this.clientSyncIamRepository.getLastSyncedAt();
 
@@ -23,7 +23,7 @@ export class SyncClientIamEngine {
     };
   }
 
-  public async sync(lastSyncedAt: IamLastSyncedAt) {
+  public async sync(lastSyncedAt: IamLastSyncedAtQuery) {
     const { users, groups, members, organizations, groupMembers } =
       await this.httpClientSyncIamRepository.findLastSyncedAt(lastSyncedAt);
 

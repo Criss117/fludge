@@ -1,11 +1,11 @@
 import type {
   IamLastSyncedAtQuery,
-  SyncIamAllItems,
+  IamSyncAllItems,
 } from "@fludge/sync/types/iam.types";
 
 export interface ServerSyncIamRepository {
   findAllItems: (
     organizationIds: string[],
     lastSyncedAt: IamLastSyncedAtQuery,
-  ) => Promise<SyncIamAllItems>;
+  ) => Promise<IamSyncAllItems>;
 }

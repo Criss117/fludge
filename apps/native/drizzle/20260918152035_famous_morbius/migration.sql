@@ -12,29 +12,6 @@ CREATE TABLE `category` (
 	CONSTRAINT `fk_category_organization_id_organization_id_fk` FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON DELETE CASCADE
 );
 --> statement-breakpoint
-CREATE TABLE `product` (
-	`id` text PRIMARY KEY,
-	`name` text NOT NULL,
-	`slug` text NOT NULL,
-	`search_blob` text NOT NULL,
-	`description` text NOT NULL,
-	`category_id` text,
-	`stock` integer NOT NULL,
-	`min_stock` integer NOT NULL,
-	`allow_negative_stock` integer DEFAULT false NOT NULL,
-	`created_by` text NOT NULL,
-	`organization_id` text NOT NULL,
-	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
-	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
-	`status` text DEFAULT 'active' NOT NULL,
-	`presentations` text NOT NULL,
-	CONSTRAINT `fk_product_category_id_category_id_fk` FOREIGN KEY (`category_id`) REFERENCES `category`(`id`) ON DELETE SET NULL,
-	CONSTRAINT `fk_product_created_by_member_id_fk` FOREIGN KEY (`created_by`) REFERENCES `member`(`id`),
-	CONSTRAINT `fk_product_organization_id_organization_id_fk` FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON DELETE CASCADE,
-	CONSTRAINT "product_minimum_stock_check" CHECK("min_stock" >= 0),
-	CONSTRAINT "product_stock_quantity_check" CHECK("allow_negative_stock" = true OR "stock" >= 0)
-);
---> statement-breakpoint
 CREATE TABLE `customer` (
 	`id` text PRIMARY KEY,
 	`name` text NOT NULL,
@@ -118,15 +95,56 @@ CREATE TABLE `organization` (
 	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `user` (
+CREATE TABLE `product` (
 	`id` text PRIMARY KEY,
 	`name` text NOT NULL,
-	`email` text NOT NULL UNIQUE,
-	`image` text,
+	`slug` text NOT NULL,
+	`search_blob` text NOT NULL,
+	`description` text NOT NULL,
+	`category_id` text,
+	`stock` integer NOT NULL,
+	`min_stock` integer NOT NULL,
+	`allow_negative_stock` integer DEFAULT false NOT NULL,
+	`created_by` text NOT NULL,
+	`organization_id` text NOT NULL,
 	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
 	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
-	`is_root` integer NOT NULL,
-	`phone` text NOT NULL
+	`status` text DEFAULT 'active' NOT NULL,
+	CONSTRAINT `fk_product_category_id_category_id_fk` FOREIGN KEY (`category_id`) REFERENCES `category`(`id`) ON DELETE SET NULL,
+	CONSTRAINT `fk_product_created_by_member_id_fk` FOREIGN KEY (`created_by`) REFERENCES `member`(`id`),
+	CONSTRAINT `fk_product_organization_id_organization_id_fk` FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON DELETE CASCADE,
+	CONSTRAINT "product_minimum_stock_check" CHECK("min_stock" >= 0),
+	CONSTRAINT "product_stock_quantity_check" CHECK("allow_negative_stock" = true OR "stock" >= 0)
+);
+--> statement-breakpoint
+CREATE TABLE `product_presentation` (
+	`id` text PRIMARY KEY,
+	`product_id` text NOT NULL,
+	`name` text NOT NULL,
+	`search_blob` text NOT NULL,
+	`barcode` text,
+	`conversion_factor` integer NOT NULL,
+	`price_sale` integer NOT NULL,
+	`price_purchase` integer,
+	`price_wholesale` integer,
+	`created_by` text NOT NULL,
+	`organization_id` text NOT NULL,
+	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	`status` text DEFAULT 'active' NOT NULL,
+	CONSTRAINT `fk_product_presentation_product_id_product_id_fk` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `fk_product_presentation_created_by_member_id_fk` FOREIGN KEY (`created_by`) REFERENCES `member`(`id`),
+	CONSTRAINT `fk_product_presentation_organization_id_organization_id_fk` FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON DELETE CASCADE,
+	CONSTRAINT "presentation_conversion_factor_check" CHECK("conversion_factor" >= 1),
+	CONSTRAINT "presentation_price_sale_check" CHECK("price_sale" >= 0),
+	CONSTRAINT "presentation_price_purchase_check" CHECK(
+        "price_purchase" IS NULL
+        OR "price_purchase" >= 0
+      ),
+	CONSTRAINT "presentation_price_wholesale_check" CHECK(
+        "price_wholesale" IS NULL
+        OR "price_wholesale" >= 0
+      )
 );
 --> statement-breakpoint
 CREATE TABLE `sale` (
@@ -162,26 +180,60 @@ CREATE TABLE `sale_item` (
 	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
 	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
 	CONSTRAINT `fk_sale_item_sale_id_sale_id_fk` FOREIGN KEY (`sale_id`) REFERENCES `sale`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `fk_sale_item_product_presentation_id_product_presentation_id_fk` FOREIGN KEY (`product_presentation_id`) REFERENCES `product_presentation`(`id`) ON DELETE SET NULL,
 	CONSTRAINT `fk_sale_item_organization_id_organization_id_fk` FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON DELETE CASCADE
 );
 --> statement-breakpoint
-CREATE TABLE `sale_sequences` (
-	`year` integer NOT NULL,
-	`current_value` integer DEFAULT 0 NOT NULL,
-	`organization_id` text NOT NULL,
-	CONSTRAINT `sale_sequences_pk` PRIMARY KEY(`organization_id`, `year`),
-	CONSTRAINT `fk_sale_sequences_organization_id_organization_id_fk` FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON DELETE CASCADE
+CREATE TABLE `user` (
+	`id` text PRIMARY KEY,
+	`name` text NOT NULL,
+	`email` text NOT NULL UNIQUE,
+	`email_verified` integer DEFAULT false NOT NULL,
+	`image` text,
+	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	`is_root` integer NOT NULL,
+	`phone` text NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE `ticket_product_presentations` (
+	`row_id` integer PRIMARY KEY AUTOINCREMENT,
+	`ticket_product_row_id` integer NOT NULL,
+	`presentation_id` text NOT NULL,
+	`name` text NOT NULL,
+	`original_price` real NOT NULL,
+	`wholesale_price` real,
+	`conversion_factor` real NOT NULL,
+	`price_sale` real NOT NULL,
+	`quantity` real NOT NULL,
+	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	CONSTRAINT `fk_ticket_product_presentations_ticket_product_row_id_ticket_products_product_id_fk` FOREIGN KEY (`ticket_product_row_id`) REFERENCES `ticket_products`(`product_id`) ON DELETE CASCADE
+);
+--> statement-breakpoint
+CREATE TABLE `ticket_products` (
+	`ticket_id` text NOT NULL,
+	`row_id` integer PRIMARY KEY AUTOINCREMENT,
+	`product_id` text,
+	`type` text NOT NULL,
+	`stock` real NOT NULL,
+	`min_stock` real NOT NULL,
+	`allows_negative_stock` integer DEFAULT false NOT NULL,
+	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	CONSTRAINT `fk_ticket_products_ticket_id_tickets_id_fk` FOREIGN KEY (`ticket_id`) REFERENCES `tickets`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `fk_ticket_products_product_id_product_id_fk` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`) ON DELETE SET NULL
+);
+--> statement-breakpoint
+CREATE TABLE `tickets` (
+	`id` text PRIMARY KEY,
+	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `category_organization_name_unique` ON `category` (`organization_id`,`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `category_organization_slug_unique` ON `category` (`organization_id`,`slug`);--> statement-breakpoint
 CREATE INDEX `category_name_idx` ON `category` (`name`);--> statement-breakpoint
-CREATE UNIQUE INDEX `product_organization_slug_unique` ON `product` (`organization_id`,`slug`);--> statement-breakpoint
-CREATE INDEX `product_organization_idx` ON `product` (`organization_id`);--> statement-breakpoint
-CREATE INDEX `product_organization_search_blob_idx` ON `product` (`organization_id`,`search_blob`);--> statement-breakpoint
-CREATE INDEX `product_organization_category_idx` ON `product` (`organization_id`,`category_id`);--> statement-breakpoint
-CREATE INDEX `product_organization_status_idx` ON `product` (`organization_id`,`status`);--> statement-breakpoint
-CREATE INDEX `product_organization_category_status_idx` ON `product` (`organization_id`,`category_id`,`status`);--> statement-breakpoint
 CREATE UNIQUE INDEX `customer_org_document_unique` ON `customer` (`organization_id`,`document_number`);--> statement-breakpoint
 CREATE INDEX `customer_org_status_idx` ON `customer` (`organization_id`,`status`);--> statement-breakpoint
 CREATE INDEX `customer_org_name_idx` ON `customer` (`organization_id`,`name`);--> statement-breakpoint
@@ -194,4 +246,17 @@ CREATE INDEX `member_organization_assignedBy_idx` ON `member` (`organization_id`
 CREATE UNIQUE INDEX `organization_name_unique` ON `organization` (`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `organization_slug_unique` ON `organization` (`slug`);--> statement-breakpoint
 CREATE UNIQUE INDEX `organization_legal_name_unique` ON `organization` (`legal_name`);--> statement-breakpoint
-CREATE UNIQUE INDEX `organization_tax_id_unique` ON `organization` (`tax_id`);
+CREATE UNIQUE INDEX `organization_tax_id_unique` ON `organization` (`tax_id`);--> statement-breakpoint
+CREATE UNIQUE INDEX `product_organization_slug_unique` ON `product` (`organization_id`,`slug`);--> statement-breakpoint
+CREATE INDEX `product_organization_idx` ON `product` (`organization_id`);--> statement-breakpoint
+CREATE INDEX `product_organization_search_blob_idx` ON `product` (`organization_id`,`search_blob`);--> statement-breakpoint
+CREATE INDEX `product_organization_category_idx` ON `product` (`organization_id`,`category_id`);--> statement-breakpoint
+CREATE INDEX `product_organization_status_idx` ON `product` (`organization_id`,`status`);--> statement-breakpoint
+CREATE INDEX `product_organization_category_status_idx` ON `product` (`organization_id`,`category_id`,`status`);--> statement-breakpoint
+CREATE UNIQUE INDEX `presentation_product_name_unique` ON `product_presentation` (`product_id`,`name`);--> statement-breakpoint
+CREATE UNIQUE INDEX `presentation_product_factor_unique` ON `product_presentation` (`product_id`,`conversion_factor`);--> statement-breakpoint
+CREATE UNIQUE INDEX `presentation_organization_barcode_unique` ON `product_presentation` (`organization_id`,`barcode`) WHERE "product_presentation"."barcode" IS NOT NULL;--> statement-breakpoint
+CREATE INDEX `presentation_organization_product_idx` ON `product_presentation` (`organization_id`,`product_id`);--> statement-breakpoint
+CREATE INDEX `presentation_organization_status_idx` ON `product_presentation` (`organization_id`,`status`);--> statement-breakpoint
+CREATE UNIQUE INDEX `presentation_unique_idx` ON `ticket_product_presentations` (`ticket_product_row_id`,`presentation_id`);--> statement-breakpoint
+CREATE UNIQUE INDEX `ticket_product_unique_idx` ON `ticket_products` (`ticket_id`,`product_id`);

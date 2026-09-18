@@ -9,6 +9,7 @@ import { z } from "zod";
 export const findSyncCatalogQuery = z.object({
   product: z.coerce.date<Date>().nullable().default(null),
   category: z.coerce.date<Date>().nullable().default(null),
+  productPresentation: z.coerce.date<Date>().nullable().default(null),
 });
 
 type Query = z.infer<typeof findSyncCatalogQuery>;

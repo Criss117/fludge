@@ -14,7 +14,7 @@ export type IamLastSyncedAtLocal = {
   groupMember: LocalGroupMemberSelect | null;
 };
 
-export type SyncIamAllItems = {
+export type IamSyncAllItems = {
   users: LocalUserSelect[];
   groups: LocalGroupSelect[];
   members: LocalMemberSelect[];

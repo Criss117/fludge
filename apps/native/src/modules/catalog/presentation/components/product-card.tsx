@@ -9,10 +9,10 @@ import { SkeletonGroup } from "heroui-native/skeleton-group";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { IsCriticalStock } from "./is-critical-stock";
-import type { ProductSummary } from "@fludge/client/application/catalog/domain/product.repository";
+import type { ProductDetail } from "@fludge/client/application/catalog/domain/product.repository";
 
 interface Props {
-  product: ProductSummary;
+  product: ProductDetail;
 }
 
 export const CARD_HEIGHT = 180;
