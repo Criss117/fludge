@@ -1,25 +1,17 @@
 import type {
-  LocalCategory,
-  LocalProduct,
-} from "@fludge/sync/entities/catalog.entities";
-import type {
-  CatalogLastSyncedAt,
+  CatalogLastSyncedAtLocal,
+  CatalogLastSyncedAtQuery,
   SyncCatalogAllItems,
-} from "./server-sync-catalog.repository";
-
-export type GetCatalogLastSyncedAt = {
-  product: LocalProduct | null;
-  category: LocalCategory | null;
-};
+} from "@fludge/sync/types/catalog.types";
 
 export interface ClientSyncCatalogRepository {
-  getLastSyncedAt: () => Promise<GetCatalogLastSyncedAt>;
+  getLastSyncedAt: () => Promise<CatalogLastSyncedAtLocal>;
 
   saveAll: (values: SyncCatalogAllItems) => Promise<void>;
 }
 
 export interface HttpClientSyncCatalogRepository {
   findLastSyncedAt: (
-    lastSyncedAt: CatalogLastSyncedAt,
+    lastSyncedAt: CatalogLastSyncedAtQuery,
   ) => Promise<SyncCatalogAllItems>;
 }

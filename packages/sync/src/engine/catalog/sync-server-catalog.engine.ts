@@ -1,7 +1,5 @@
-import type {
-  CatalogLastSyncedAt,
-  ServerSyncCatalogRepository,
-} from "@fludge/sync/repositories/catalog/server-sync-catalog.repository";
+import type { ServerSyncCatalogRepository } from "@fludge/sync/repositories/catalog/server-sync-catalog.repository";
+import type { CatalogLastSyncedAtQuery } from "@fludge/sync/types/catalog.types";
 
 export class SyncServerCatalogEngine {
   constructor(
@@ -10,9 +8,9 @@ export class SyncServerCatalogEngine {
 
   public async getLastSyncedAt(
     organizationIds: string[],
-    lastSyncedAt: CatalogLastSyncedAt,
+    lastSyncedAt: CatalogLastSyncedAtQuery,
   ) {
-    const { products, categories } =
+    const { products, categories, productPresentations } =
       await this.serverSyncCatalogRepository.findAllItems(
         organizationIds,
         lastSyncedAt,
@@ -21,6 +19,7 @@ export class SyncServerCatalogEngine {
     return {
       products,
       categories,
+      productPresentations,
     };
   }
 }

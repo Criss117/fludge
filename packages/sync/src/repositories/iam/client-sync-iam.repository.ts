@@ -1,29 +1,17 @@
 import type {
-  LocalGroup,
-  LocalGroupMember,
-  LocalMember,
-  LocalOrganization,
-  LocalUser,
-} from "@fludge/sync/entities/iam.entities";
-import type {
-  IamLastSyncedAt,
+  IamLastSyncedAtLocal,
+  IamLastSyncedAtQuery,
   SyncIamAllItems,
-} from "./server-sync-iam.repository";
-
-export type GetIamLastSyncedAt = {
-  user: LocalUser | null;
-  organization: LocalOrganization | null;
-  group: LocalGroup | null;
-  member: LocalMember | null;
-  groupMember: LocalGroupMember | null;
-};
+} from "@fludge/sync/types/iam.types";
 
 export interface ClientSyncIamRepository {
-  getLastSyncedAt: () => Promise<GetIamLastSyncedAt>;
+  getLastSyncedAt: () => Promise<IamLastSyncedAtLocal>;
 
   saveAll: (values: SyncIamAllItems) => Promise<void>;
 }
 
 export interface HttpClientSyncIamRepository {
-  findLastSyncedAt: (lastSyncedAt: IamLastSyncedAt) => Promise<SyncIamAllItems>;
+  findLastSyncedAt: (
+    lastSyncedAt: IamLastSyncedAtQuery,
+  ) => Promise<SyncIamAllItems>;
 }

@@ -2,7 +2,7 @@ import type {
   ClientSyncIamRepository,
   HttpClientSyncIamRepository,
 } from "@fludge/sync/repositories/iam/client-sync-iam.repository";
-import type { IamLastSyncedAt } from "@fludge/sync/repositories/iam/server-sync-iam.repository";
+import type { IamLastSyncedAt } from "@fludge/sync/types/iam.types";
 
 export class SyncClientIamEngine {
   constructor(

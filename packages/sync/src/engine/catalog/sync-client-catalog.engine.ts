@@ -2,7 +2,7 @@ import type {
   ClientSyncCatalogRepository,
   HttpClientSyncCatalogRepository,
 } from "@fludge/sync/repositories/catalog/client-sync-catalog.repository";
-import type { CatalogLastSyncedAt } from "@fludge/sync/repositories/catalog/server-sync-catalog.repository";
+import type { CatalogLastSyncedAtQuery } from "@fludge/sync/types/catalog.types";
 
 export class SyncClientCatalogEngine {
   constructor(
@@ -10,7 +10,7 @@ export class SyncClientCatalogEngine {
     private readonly httpClientSyncCatalogRepository: HttpClientSyncCatalogRepository,
   ) {}
 
-  public async getLastSyncedAt(): Promise<CatalogLastSyncedAt> {
+  public async getLastSyncedAt(): Promise<CatalogLastSyncedAtQuery> {
     const { category, product } =
       await this.clientSyncCatalogRepository.getLastSyncedAt();
 
@@ -20,7 +20,7 @@ export class SyncClientCatalogEngine {
     };
   }
 
-  public async sync(lastSyncedAt: CatalogLastSyncedAt) {
+  public async sync(lastSyncedAt: CatalogLastSyncedAtQuery) {
     const { products, categories } =
       await this.httpClientSyncCatalogRepository.findLastSyncedAt(lastSyncedAt);
 
