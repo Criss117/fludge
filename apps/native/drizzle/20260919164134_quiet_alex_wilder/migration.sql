@@ -17,7 +17,7 @@ CREATE TABLE `customer` (
 	`name` text NOT NULL,
 	`phone` text,
 	`email` text,
-	`credit_limit` integer,
+	`credit_limit` integer NOT NULL,
 	`balance` integer DEFAULT 0 NOT NULL,
 	`document_type` text,
 	`document_number` text,
@@ -170,9 +170,11 @@ CREATE TABLE `sale` (
 CREATE TABLE `sale_item` (
 	`id` text PRIMARY KEY,
 	`sale_id` text NOT NULL,
+	`product_id` text,
 	`product_presentation_id` text,
-	`product_presentation_name` text NOT NULL,
-	`product_presentation_price` integer NOT NULL,
+	`product_snapshot` text,
+	`name` text NOT NULL,
+	`unit_price` integer NOT NULL,
 	`quantity` integer NOT NULL,
 	`subtotal` integer NOT NULL,
 	`organization_id` text NOT NULL,
@@ -180,6 +182,7 @@ CREATE TABLE `sale_item` (
 	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
 	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
 	CONSTRAINT `fk_sale_item_sale_id_sale_id_fk` FOREIGN KEY (`sale_id`) REFERENCES `sale`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `fk_sale_item_product_id_product_id_fk` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`) ON DELETE SET NULL,
 	CONSTRAINT `fk_sale_item_product_presentation_id_product_presentation_id_fk` FOREIGN KEY (`product_presentation_id`) REFERENCES `product_presentation`(`id`) ON DELETE SET NULL,
 	CONSTRAINT `fk_sale_item_organization_id_organization_id_fk` FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON DELETE CASCADE
 );

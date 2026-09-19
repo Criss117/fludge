@@ -47,19 +47,32 @@ export function ChargeSaleScreen() {
 
   function handleSubmit() {
     mutationToast.showIsPendingToast("mutations.sale.create.is_pending");
+    const items = activeTicket.products
+      .map((p) => {
+        if (p.type === "adHoc") {
+          return p.presentations.map((p) => ({
+            name: p.name,
+            price: p.priceSale,
+            quantity: p.quantity,
+            presentationId: undefined,
+          }));
+        }
+
+        return p.presentations.map((p) => ({
+          presentationId: p.id,
+          price: p.priceSale,
+          quantity: p.quantity,
+          name: undefined,
+        }));
+      })
+      .flat();
+
     createSale.mutate(
       {
-        customerId: selectedCustomer?.id ?? "",
+        customerId: selectedCustomer?.id,
         paymentType: effectivePaymentType,
         notes: "",
-        items: activeTicket.products.flatMap((p) =>
-          p.presentations.map((pp) => ({
-            quantity: pp.quantity,
-            name: p.name + ":" + pp.name,
-            price: pp.priceSale,
-            presentationId: pp.presentationId ?? "",
-          }))
-        ),
+        items: items,
       },
       {
         onSuccess: () => {

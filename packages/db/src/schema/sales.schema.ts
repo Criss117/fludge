@@ -7,7 +7,7 @@ import {
 
 import { paymentTypeEnum, saleStatusEnum } from "@fludge/utils/enums/db-enums";
 import { customer } from "./customer.schema";
-import { productPresentation } from "./catalog.schema";
+import { product, productPresentation } from "./catalog.schema";
 import { auditMetadata } from "../shared";
 import { memberId, organizationId } from "./iam.schema";
 
@@ -39,6 +39,20 @@ export const sale = sqliteTable("sale", {
   updatedAt: auditMetadata.updatedAt,
 });
 
+type SaleItemSnapshot = {
+  product: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  presentation: {
+    id: string;
+    name: string;
+    barcode: string | null;
+    conversionFactor: number;
+  };
+};
+
 export const saleItem = sqliteTable("sale_item", {
   id: text("id").primaryKey(),
   saleId: text("sale_id")
@@ -46,6 +60,11 @@ export const saleItem = sqliteTable("sale_item", {
     .references(() => sale.id, {
       onDelete: "cascade",
     }),
+
+  productId: text("product_id").references(() => product.id, {
+    onDelete: "set null",
+  }),
+
   productPresentationId: text("product_presentation_id").references(
     () => productPresentation.id,
     {
@@ -53,8 +72,12 @@ export const saleItem = sqliteTable("sale_item", {
     },
   ),
 
-  productPresentationName: text("product_presentation_name").notNull(),
-  productPresentationPrice: integer("product_presentation_price").notNull(),
+  productSnapshot: text("product_snapshot", {
+    mode: "json",
+  }).$type<SaleItemSnapshot>(),
+
+  name: text("name").notNull(),
+  unitPrice: integer("unit_price").notNull(),
   quantity: integer("quantity").notNull(),
   subtotal: integer("subtotal").notNull(),
 

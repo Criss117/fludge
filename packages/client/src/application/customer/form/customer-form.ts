@@ -16,7 +16,7 @@ const defaultCustomerValues: CustomerFormSchema = {
   phone: "",
   email: "",
   creditLimit: 0,
-  documentType: "",
+  documentType: "CC",
   documentNumber: "",
 };
 

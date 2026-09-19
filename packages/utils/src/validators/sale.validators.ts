@@ -22,22 +22,31 @@ export const priceSchema = z
     error: getI18nKey("validators.price_sale.positive"),
   });
 
-export const createSaleItemValidator = z.object({
-  quantity: quantitySchema,
-  name: nameSchema,
-  price: priceSchema,
-  presentationId: uuidSchema
-    .or(z.literal(""))
-    .transform((v) => (v === "" ? undefined : v)),
-});
+export const createSaleItemValidator = z.union([
+  z.object({
+    quantity: quantitySchema,
+    price: priceSchema,
+    name: nameSchema,
+    presentationId: z.undefined(),
+  }),
+  z.object({
+    quantity: quantitySchema,
+    price: priceSchema,
+    name: z.undefined(),
+    presentationId: uuidSchema,
+  }),
+]);
 
-export const createSaleValidator = z.object({
-  customerId: uuidSchema
-    .or(z.literal(""))
-    .transform((v) => (v === "" ? undefined : v)),
-  paymentType: paymentTypeSchema,
-  notes: notesSchema,
-  items: z
-    .array(createSaleItemValidator)
-    .min(1, { error: getI18nKey("validators.array.sale_items.at_least_one") }),
-});
+export const createSaleValidator = z
+  .object({
+    customerId: uuidSchema.optional(),
+    paymentType: paymentTypeSchema,
+    notes: notesSchema,
+    items: z.array(createSaleItemValidator).min(1, {
+      error: getI18nKey("validators.array.sale_items.at_least_one"),
+    }),
+  })
+  .refine((data) => data.paymentType === "credit" && data.customerId !== null, {
+    message: getI18nKey("validators.customers.required"),
+    path: ["customerId"],
+  });

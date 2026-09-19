@@ -123,4 +123,7 @@ export const validators = {
   contact: {
     required: "Debe proporcionar al menos un teléfono o email",
   },
+  customers: {
+    required: "El cliente es requerido",
+  },
 };

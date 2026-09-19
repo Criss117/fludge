@@ -2,7 +2,10 @@ import { DatabaseService } from "..";
 import { desc } from "drizzle-orm";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import type { ClientSyncSaleRepository } from "@fludge/sync/repositories/sale/client-sync-sale.repository";
-import { localSale, localSaleItem } from "@fludge/db/local-schemas/shared.schema";
+import {
+  localSale,
+  localSaleItem,
+} from "@fludge/db/local-schemas/shared.schema";
 import type {
   SaleLastSyncedAtLocal,
   SaleSyncAllItems,
@@ -74,14 +77,10 @@ export class NativeSyncSaleRepository implements ClientSyncSaleRepository {
           .onConflictDoUpdate({
             target: localSaleItem.id,
             set: buildConflictUpdateColumn(localSaleItem, [
-              "saleId",
-              "productPresentationId",
-              "productPresentationName",
-              "productPresentationPrice",
+              "name",
+              "unitPrice",
               "quantity",
               "subtotal",
-              "organizationId",
-              "updatedAt",
             ]),
           })
           .run();

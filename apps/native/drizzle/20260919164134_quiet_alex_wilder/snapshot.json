@@ -1,7 +1,7 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "b0d72afd-17e2-4d9c-889f-6463deb2d314",
+  "id": "c0405d57-c6fc-4e22-b215-4efc5449083d",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -194,7 +194,7 @@
     },
     {
       "type": "integer",
-      "notNull": false,
+      "notNull": true,
       "autoincrement": false,
       "default": null,
       "generated": null,
@@ -1078,7 +1078,27 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
+      "name": "product_id",
+      "entityType": "columns",
+      "table": "sale_item"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
       "name": "product_presentation_id",
+      "entityType": "columns",
+      "table": "sale_item"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "product_snapshot",
       "entityType": "columns",
       "table": "sale_item"
     },
@@ -1088,7 +1108,7 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "product_presentation_name",
+      "name": "name",
       "entityType": "columns",
       "table": "sale_item"
     },
@@ -1098,7 +1118,7 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "product_presentation_price",
+      "name": "unit_price",
       "entityType": "columns",
       "table": "sale_item"
     },
@@ -1784,6 +1804,21 @@
       "onDelete": "CASCADE",
       "nameExplicit": false,
       "name": "fk_sale_item_sale_id_sale_id_fk",
+      "entityType": "fks",
+      "table": "sale_item"
+    },
+    {
+      "columns": [
+        "product_id"
+      ],
+      "tableTo": "product",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "nameExplicit": false,
+      "name": "fk_sale_item_product_id_product_id_fk",
       "entityType": "fks",
       "table": "sale_item"
     },

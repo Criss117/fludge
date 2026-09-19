@@ -18,7 +18,6 @@ import { alias } from "drizzle-orm/sqlite-core";
 import type { GroupRepository } from "./group.repository";
 import type { MemberRepository } from "./member.repository";
 import type { GroupMemberRepository } from "./group-member.repository";
-import type { Permission } from "@fludge/utils/permissions/data";
 import { jsonObject } from "@fludge/db/utils/build-queries";
 
 const memberAuth = alias(member, "memberAuth");
@@ -80,34 +79,36 @@ export class OrganizationRepository {
 
     if (!org) return ok(null);
 
-    const members = (JSON.parse(org.members) as MemberSelect[]).map((m) => ({
-      ...m,
-      createdAt: new Date(m.createdAt),
-    }));
-    const groups = (JSON.parse(org.groups) as GroupSelect[]).map((g) => ({
-      ...g,
-      createdAt: new Date(g.createdAt),
-      updatedAt: new Date(g.updatedAt),
-      permissions: JSON.parse(
-        g.permissions as unknown as string,
-      ) as Permission[],
-    }));
+    const [parsedOrg, errorOnparse] = tryCatch(() => {
+      const members = (JSON.parse(org.members) as MemberSelect[]).map((m) => ({
+        ...m,
+        createdAt: new Date(m.createdAt),
+      }));
 
-    const groupMembers = (
-      JSON.parse(org.groupMembers) as GroupMemberSelect[]
-    ).map((gm) => ({
-      ...gm,
-      createdAt: new Date(gm.createdAt),
-    }));
+      const groups = (JSON.parse(org.groups) as GroupSelect[]).map((g) => ({
+        ...g,
+        createdAt: new Date(g.createdAt),
+        updatedAt: new Date(g.updatedAt),
+      }));
 
-    return ok(
-      Organization.reconstitute({
+      const groupMembers = (
+        JSON.parse(org.groupMembers) as GroupMemberSelect[]
+      ).map((gm) => ({
+        ...gm,
+        createdAt: new Date(gm.createdAt),
+      }));
+
+      return {
         ...org,
         members: members,
         groups: groups,
         groupMembers: groupMembers,
-      }),
-    );
+      };
+    });
+
+    if (errorOnparse) return err(errorOnparse);
+
+    return ok(Organization.reconstitute(parsedOrg));
   }
 
   public async saveOnlyOrganization(

@@ -82,7 +82,8 @@ function hasPermission(required: PermissionsRecord) {
         UUID.fromString(context.session.user.id),
       );
 
-    if (!userMember) throw new ForbiddenError("api_errors.iam.members.not_member");
+    if (!userMember)
+      throw new ForbiddenError("api_errors.iam.members.not_member");
 
     const hasPermissions =
       context.session.activeOrganization.memberHasPermission(
@@ -101,7 +102,7 @@ function hasPermission(required: PermissionsRecord) {
 
 const devOnly = o.middleware(({ context, next }) => {
   if (env.NODE_ENV !== "development")
-      throw new ForbiddenError("api_errors.auth.users.only_dev");
+    throw new ForbiddenError("api_errors.auth.users.only_dev");
 
   return next({
     context,

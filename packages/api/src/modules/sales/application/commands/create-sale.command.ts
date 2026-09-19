@@ -5,10 +5,16 @@ import type { Organization } from "@fludge/api/modules/iam/organization/domain/e
 import { UUID } from "@fludge/utils/uuid";
 import type { SaleSequenceRepository } from "@fludge/api/modules/sales/infrastructure/repositories/sale-sequense.repository";
 import { Sale } from "@fludge/api/modules/sales/domain/entities/sale.entity";
-import { InternalServerError, NotFoundError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
+import {
+  InternalServerError,
+  NotFoundError,
+} from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 import type { ProductRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product.repository";
 import type { SaleProductService } from "@fludge/api/modules/catalog/products/application/services/sale-product.service";
+import { ProductPresentationNotFoundException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-presentation-not-found.exception";
 import type { CustomerRepository } from "@fludge/api/modules/customer/infrastructure/repositories/customer.repository";
+import type { CreateSaleItem } from "@fludge/api/modules/sales/domain/entities/sale-item.entity";
+import type { SaleItemSnapshotValue } from "@fludge/api/modules/sales/domain/value-objects/sale-item-snapshot";
 
 export const createSaleCommand = createSaleValidator;
 
@@ -32,23 +38,6 @@ export class CreateSaleCommand {
       UUID.fromString(loggedUserId),
     )!;
 
-    const items: { presentationId: string; quantity: number }[] = [];
-
-    for (const item of cmd.items) {
-      if (item.presentationId === undefined) continue;
-
-      items.push({
-        presentationId: item.presentationId,
-        quantity: item.quantity,
-      });
-    }
-
-    const productsToSave = await this.saleProductService.execute(
-      activeOrganization,
-      items,
-    );
-
-    // La búsqueda del cliente es una lectura: no va dentro de la transacción.
     const [customer, errFindCustomer] = cmd.customerId
       ? await this.customerRepository.findById(
           activeOrganization.id.toString(),
@@ -64,6 +53,79 @@ export class CreateSaleCommand {
 
     if (cmd.customerId && !customer)
       throw new NotFoundError("api_errors.customers.not_found");
+
+    const itemsWithPresentationId: {
+      presentationId: string;
+      quantity: number;
+      price: number;
+    }[] = [];
+
+    for (const item of cmd.items) {
+      if (item.presentationId !== undefined) {
+        itemsWithPresentationId.push({
+          presentationId: item.presentationId,
+          quantity: item.quantity,
+          price: item.price,
+        });
+      }
+    }
+
+    const productsToSave = await this.saleProductService.execute(
+      activeOrganization,
+      itemsWithPresentationId,
+    );
+
+    // Los items de catálogo congelan la identidad del producto y su
+    // presentación para que la venta no dependa del catálogo actual.
+    const snapshotsByPresentationId = new Map<string, SaleItemSnapshotValue>();
+
+    for (const product of productsToSave) {
+      const productValues = product.values;
+
+      for (const presentation of productValues.presentations) {
+        snapshotsByPresentationId.set(presentation.id, {
+          product: {
+            id: productValues.id,
+            name: productValues.name,
+            slug: productValues.slug,
+          },
+          presentation: {
+            id: presentation.id,
+            name: presentation.name,
+            barcode: presentation.barcode,
+            conversionFactor: presentation.conversionFactor,
+          },
+        });
+      }
+    }
+
+    const saleItems: CreateSaleItem[] = cmd.items.map((item) => {
+      if (item.presentationId === undefined) {
+        return {
+          organizationId: activeOrganization.id,
+          productId: null,
+          productPresentationId: null,
+          productSnapshot: null,
+          name: item.name,
+          unitPrice: item.price,
+          quantity: item.quantity,
+        };
+      }
+
+      const snapshot = snapshotsByPresentationId.get(item.presentationId);
+
+      if (!snapshot) throw new ProductPresentationNotFoundException();
+
+      return {
+        organizationId: activeOrganization.id,
+        productId: UUID.fromString(snapshot.product.id),
+        productPresentationId: UUID.fromString(snapshot.presentation.id),
+        productSnapshot: snapshot,
+        name: snapshot.presentation.name,
+        unitPrice: item.price,
+        quantity: item.quantity,
+      };
+    });
 
     const [newSale, errTransaction] = await this.saleRepository.transaction(
       async (tx) => {
@@ -82,17 +144,7 @@ export class CreateSaleCommand {
           paymentType: cmd.paymentType,
           notes: cmd.notes,
           sequence: nextSecuence,
-          items: cmd.items.map((item) => ({
-            organizationId: activeOrganization.id,
-            productPresentation: {
-              id: item.presentationId
-                ? UUID.fromString(item.presentationId)
-                : null,
-              name: item.name,
-              price: item.price,
-            },
-            quantity: item.quantity,
-          })),
+          items: saleItems,
         });
 
         const [, errSavingSale] = await this.saleRepository.save(sale, { tx });

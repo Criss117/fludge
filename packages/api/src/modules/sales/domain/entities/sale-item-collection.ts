@@ -13,7 +13,7 @@ export class SaleItemCollection {
     let found: SaleItem | null = null;
 
     for (const item of this._items.values()) {
-      if (item.presentation.id?.toString() === id) {
+      if (item.presentationId?.toString() === id) {
         found = item;
         break;
       }
@@ -27,7 +27,7 @@ export class SaleItemCollection {
   }
 
   public add(item: SaleItem) {
-    const presentationId = item.presentation.id?.toString();
+    const presentationId = item.presentationId?.toString();
 
     if (!presentationId) {
       this._items.set(item.id.toString(), item);
@@ -72,7 +72,7 @@ export class SaleItemCollection {
     const presentationsIds: string[] = [];
 
     for (const item of this._items.values()) {
-      const presentationId = item.presentation.id?.toString();
+      const presentationId = item.presentationId?.toString();
 
       if (!presentationId) continue;
 

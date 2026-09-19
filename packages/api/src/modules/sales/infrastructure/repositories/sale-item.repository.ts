@@ -23,9 +23,10 @@ export class SaleItemRepository {
         .onConflictDoUpdate({
           target: saleItem.id,
           set: buildConflictUpdateColumn(saleItem, [
+            "name",
+            "unitPrice",
             "quantity",
             "subtotal",
-            "productPresentationPrice",
           ]),
         }),
     );

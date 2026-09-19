@@ -43,9 +43,7 @@ export const createCustomerValidator = z
       .or(z.literal(""))
       .transform((v) => (v === "" ? null : v)),
     creditLimit: creditLimitSchema,
-    documentType: documentTypeSchema
-      .or(z.literal(""))
-      .transform((v) => (v === "" ? null : v)),
+    documentType: documentTypeSchema,
     documentNumber: documentNumberSchema
       .or(z.literal(""))
       .transform((v) => (v === "" ? null : v)),
@@ -53,19 +51,6 @@ export const createCustomerValidator = z
   .refine((data) => data.phone !== null || data.email !== null, {
     error: getI18nKey("validators.contact.required"),
     path: ["phone"],
-  })
-  .transform((data) => {
-    const hasDocType = data.documentType !== null;
-    const hasDocNumber = data.documentNumber !== null;
-
-    // Si el par de documento está incompleto, no se guarda documento.
-    if (hasDocType === hasDocNumber) return data;
-
-    return {
-      ...data,
-      documentType: null,
-      documentNumber: null,
-    };
   });
 
 export const updateCustomerValidator = z.object({
