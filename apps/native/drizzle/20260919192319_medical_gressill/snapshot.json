@@ -1,7 +1,7 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "fa766319-9817-4a42-9296-0fc614eee469",
+  "id": "eddf72c0-d547-443d-afe5-e0094768da0e",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -224,7 +224,7 @@
     },
     {
       "type": "text",
-      "notNull": false,
+      "notNull": true,
       "autoincrement": false,
       "default": null,
       "generated": null,
@@ -2642,26 +2642,14 @@
       "table": "customer"
     },
     {
-      "value": "\"document_number\" IS NULL OR length(\"document_number\") BETWEEN 5 AND 30",
+      "value": "length(\"document_number\") BETWEEN 5 AND 30",
       "name": "customer_document_number_length_check",
       "entityType": "checks",
       "table": "customer"
     },
     {
-      "value": "\"credit_limit\" IS NULL OR \"credit_limit\" >= 0",
+      "value": "\"credit_limit\" >= 0",
       "name": "customer_credit_limit_non_negative_check",
-      "entityType": "checks",
-      "table": "customer"
-    },
-    {
-      "value": "(\"document_type\" IS NULL AND \"document_number\" IS NULL)\n          OR (\"document_type\" IS NOT NULL AND \"document_number\" IS NOT NULL)",
-      "name": "customer_document_pair_check",
-      "entityType": "checks",
-      "table": "customer"
-    },
-    {
-      "value": "\"phone\" IS NOT NULL OR \"email\" IS NOT NULL",
-      "name": "customer_contact_required_check",
       "entityType": "checks",
       "table": "customer"
     },

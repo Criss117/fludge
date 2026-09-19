@@ -30,8 +30,6 @@ export class NativeSyncCustomerRepository implements ClientSyncCustomerRepositor
   }
 
   public async saveAll(values: CustomerSyncAllItems): Promise<void> {
-    console.log(values);
-
     this.db.transaction((tx) => {
       if (values.customers.length > 0) {
         tx.insert(localCustomer)

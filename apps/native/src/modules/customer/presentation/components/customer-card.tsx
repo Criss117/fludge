@@ -112,8 +112,10 @@ export function CustomerCardBase({ customer }: Props) {
             <Card.Description>{identification}</Card.Description>
           </View>
         </View>
-        <View className="flex-col items-end gap-y-1">
-          <StatusChip status={customer.status} />
+        <View className="items-end gap-y-1">
+          <View>
+            <StatusChip status={customer.status} />
+          </View>
           <Typography type="body-sm" color="muted">
             {t("helpers.created_at")} {customer.createdAt.toLocaleDateString()}
           </Typography>

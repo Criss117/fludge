@@ -13,8 +13,7 @@ import { useRouter } from "expo-router";
 import { useTicketStore } from "@fludge/client/application/sales/store/use-ticket.store";
 import { CustomerSelectorSection } from "../sections/customer-selector.section";
 import { PaymentTypeSection } from "../sections/payment-type.section";
-import { useState } from "react";
-import type { CustomerSummary } from "@fludge/client/application/customer/domain/customer.repository";
+import { useChargeSale } from "@fludge/client/application/sales/hooks/use-charge-sale";
 
 export function ChargeSaleScreen() {
   const { activeTicket, removeTicket } = useTicketStore();
@@ -23,27 +22,7 @@ export function ChargeSaleScreen() {
   const createSale = useCreateSaleMutation();
   const router = useRouter();
 
-  const [selectedCustomer, setSelectedCustomer] =
-    useState<CustomerSummary | null>(null);
-  const [customerTab, setCustomerTab] = useState<"walk-in" | "customer">(
-    "walk-in"
-  );
-  const [paymentType, setPaymentType] = useState<"cash" | "credit">("cash");
-
-  const isWalkIn = customerTab === "walk-in";
-  const isCustomerTabActiveWithoutSelection =
-    customerTab === "customer" && !selectedCustomer;
-
-  // Walk-in siempre paga en efectivo: el tipo de pago queda fijo y oculto.
-  const effectivePaymentType = isWalkIn ? "cash" : paymentType;
-
-  function handleSelectCustomerTab(tab: "walk-in" | "customer") {
-    setCustomerTab(tab);
-
-    if (tab === "walk-in") {
-      setPaymentType("cash");
-    }
-  }
+  const { state, dispatch, getEffectiveState } = useChargeSale();
 
   function handleSubmit() {
     mutationToast.showIsPendingToast("mutations.sale.create.is_pending");
@@ -65,17 +44,12 @@ export function ChargeSaleScreen() {
       })
       .flat();
 
-    console.log({
-      customerId: selectedCustomer?.id,
-      paymentType: effectivePaymentType,
-      notes: "",
-      items: items,
-    });
+    const { paymentType, selectedCustomer } = getEffectiveState();
 
     createSale.mutate(
       {
         customerId: selectedCustomer?.id,
-        paymentType: effectivePaymentType,
+        paymentType: paymentType,
         notes: "",
         items: items,
       },
@@ -105,15 +79,21 @@ export function ChargeSaleScreen() {
         showsVerticalScrollIndicator={false}
       >
         <CustomerSelectorSection
-          selectedCustomer={selectedCustomer}
-          onSelectCustomer={setSelectedCustomer}
-          tab={customerTab}
-          onTabChange={handleSelectCustomerTab}
+          selectedCustomer={state.selectedCustomer}
+          onSelectCustomer={(customer) =>
+            dispatch({ type: "set-selected-customer", payload: customer })
+          }
+          tab={state.customerTab}
+          onTabChange={(tab) =>
+            dispatch({ type: "set-customer-tab", payload: tab })
+          }
         />
-        {!isWalkIn && (
+        {state.customerTab === "customer" && (
           <PaymentTypeSection
-            paymentType={paymentType}
-            onPaymentTypeChange={setPaymentType}
+            paymentType={state.paymentType}
+            onPaymentTypeChange={(paymentType) =>
+              dispatch({ type: "set-payment-type", payload: paymentType })
+            }
           />
         )}
         <AmountReceivedSection total={activeTicket.total} />
@@ -124,7 +104,8 @@ export function ChargeSaleScreen() {
           <Button
             className="flex-1"
             isDisabled={
-              createSale.isPending || isCustomerTabActiveWithoutSelection
+              createSale.isPending ||
+              (state.customerTab === "customer" && !state.selectedCustomer)
             }
             onPress={handleSubmit}
           >

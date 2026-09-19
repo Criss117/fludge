@@ -52,9 +52,6 @@ export const updateCustomerValidator = z.object({
     .optional(),
   creditLimit: creditLimitSchema.optional(),
   documentType: documentTypeSchema.optional(),
-  documentNumber: documentNumberSchema
-    .or(z.literal(""))
-    .transform((v) => (v === "" ? null : v))
-    .optional(),
+  documentNumber: documentNumberSchema.optional(),
   status: statusSchema.optional(),
 });

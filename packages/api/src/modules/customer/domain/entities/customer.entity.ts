@@ -17,7 +17,7 @@ interface CreateCustomer {
   email: string | null;
   creditLimit: number;
   documentType: CustomerDocumentTypeEnum;
-  documentNumber: string | null;
+  documentNumber: string;
 }
 
 interface UpdateCustomer {
@@ -26,7 +26,7 @@ interface UpdateCustomer {
   email?: string | null;
   creditLimit?: number;
   documentType?: CustomerDocumentTypeEnum;
-  documentNumber?: string | null;
+  documentNumber?: string;
   status?: StatusEnum;
 }
 
@@ -40,7 +40,7 @@ export class Customer {
     private _phone: string,
     private _email: string | null,
     private _balance: CustomerBalance,
-    private _document: CustomerDocument | null,
+    private _document: CustomerDocument,
     private _status: Status,
     private _updatedAt: Date,
     private readonly _createdAt: Date,
@@ -50,9 +50,10 @@ export class Customer {
     const now = new Date();
 
     // documentType is always present; document only exists when documentNumber is also provided.
-    const customerDocument = data.documentNumber
-      ? new CustomerDocument(data.documentType, data.documentNumber)
-      : null;
+    const customerDocument = new CustomerDocument(
+      data.documentType,
+      data.documentNumber,
+    );
 
     return new Customer(
       UUID.generate(),
@@ -70,20 +71,6 @@ export class Customer {
   }
 
   public update(data: UpdateCustomer) {
-    const currentDoc = this._document?.value;
-    const newDocType =
-      data.documentType !== undefined ? data.documentType : currentDoc?.type ?? null;
-    const newDocNumber =
-      data.documentNumber !== undefined
-        ? data.documentNumber
-        : currentDoc?.number ?? null;
-
-    // documentType is always present; document only exists when documentNumber is also provided.
-    const mergedDocument =
-      newDocType && newDocNumber
-        ? new CustomerDocument(newDocType, newDocNumber)
-        : null;
-
     if (data.name !== undefined) this._name = data.name;
     if (data.phone !== undefined) this._phone = data.phone;
     if (data.email !== undefined) this._email = data.email;
@@ -96,7 +83,10 @@ export class Customer {
     }
 
     if (data.documentType !== undefined || data.documentNumber !== undefined) {
-      this._document = mergedDocument;
+      this._document = new CustomerDocument(
+        data.documentType ?? this._document.value.type,
+        data.documentNumber ?? this._document.value.number,
+      );
     }
 
     if (data.status !== undefined) {
@@ -114,9 +104,7 @@ export class Customer {
     const newBalance = balance + amount;
 
     if (creditLimit > 0 && newBalance > creditLimit) {
-      throw new BadRequestError(
-        "api_errors.customers.credit_limit_exceeded",
-      );
+      throw new BadRequestError("api_errors.customers.credit_limit_exceeded");
     }
 
     this._balance = new CustomerBalance(newBalance, creditLimit);
@@ -126,11 +114,6 @@ export class Customer {
   }
 
   public static reconstitute(data: CustomerSelect) {
-    const customerDocument =
-      data.documentType && data.documentNumber
-        ? new CustomerDocument(data.documentType, data.documentNumber)
-        : null;
-
     return new Customer(
       UUID.fromString(data.id),
       UUID.fromString(data.organizationId),
@@ -139,7 +122,7 @@ export class Customer {
       data.phone,
       data.email,
       new CustomerBalance(data.balance, data.creditLimit),
-      customerDocument,
+      new CustomerDocument(data.documentType, data.documentNumber),
       new Status(data.status),
       new Date(data.updatedAt),
       new Date(data.createdAt),
@@ -162,7 +145,7 @@ export class Customer {
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
       documentType: customerDocument?.type ?? "CC",
-      documentNumber: customerDocument?.number ?? null,
+      documentNumber: customerDocument.number,
       status: this._status.value,
     };
   }

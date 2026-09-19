@@ -20,7 +20,7 @@ CREATE TABLE `customer` (
 	`credit_limit` integer NOT NULL,
 	`balance` integer DEFAULT 0 NOT NULL,
 	`document_type` text DEFAULT 'CC' NOT NULL,
-	`document_number` text,
+	`document_number` text NOT NULL,
 	`organization_id` text NOT NULL,
 	`created_by` text NOT NULL,
 	`status` text DEFAULT 'active' NOT NULL,
@@ -31,11 +31,8 @@ CREATE TABLE `customer` (
 	CONSTRAINT "customer_name_length_check" CHECK(length("name") BETWEEN 2 AND 120),
 	CONSTRAINT "customer_phone_length_check" CHECK("phone" IS NULL OR length("phone") BETWEEN 7 AND 20),
 	CONSTRAINT "customer_email_length_check" CHECK("email" IS NULL OR length("email") BETWEEN 5 AND 160),
-	CONSTRAINT "customer_document_number_length_check" CHECK("document_number" IS NULL OR length("document_number") BETWEEN 5 AND 30),
-	CONSTRAINT "customer_credit_limit_non_negative_check" CHECK("credit_limit" IS NULL OR "credit_limit" >= 0),
-	CONSTRAINT "customer_document_pair_check" CHECK(("document_type" IS NULL AND "document_number" IS NULL)
-          OR ("document_type" IS NOT NULL AND "document_number" IS NOT NULL)),
-	CONSTRAINT "customer_contact_required_check" CHECK("phone" IS NOT NULL OR "email" IS NOT NULL)
+	CONSTRAINT "customer_document_number_length_check" CHECK(length("document_number") BETWEEN 5 AND 30),
+	CONSTRAINT "customer_credit_limit_non_negative_check" CHECK("credit_limit" >= 0)
 );
 --> statement-breakpoint
 CREATE TABLE `group` (
