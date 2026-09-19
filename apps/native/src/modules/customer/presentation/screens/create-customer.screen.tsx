@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useCreateCustomerForm } from "@fludge/client/application/customer/form/customer-form";
 import { useCreateCustomerMutation } from "@fludge/client/application/customer/mutations/use-customer.mutations";
-import { Card } from "heroui-native/card";
 import { Button } from "heroui-native/button";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import {

@@ -66,7 +66,7 @@ function DocumentType({
           const value = documentTypeOptions.find(
             (o) => o.value === option?.value
           );
-          field.handleChange(value?.value ?? "");
+          field.handleChange(value?.value ?? "CC");
         }}
       >
         <Select.Trigger className="bg-default h-12">
@@ -185,7 +185,6 @@ function CreditLimit({ field }: FieldProps<number>) {
   );
 }
 
-// react-doctor-disable-next-line only-export-components -- This component namespace is the public form-input composition API.
 export const CustomerFormInputs = {
   Name,
   DocumentType,

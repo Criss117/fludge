@@ -18,14 +18,16 @@ export const customer = sqliteTable(
     id: text("id").primaryKey(),
 
     name: text("name").notNull(),
-    phone: text("phone"),
+    phone: text("phone").notNull(),
     email: text("email"),
 
     creditLimit: integer("credit_limit").notNull(),
     balance: integer("balance").notNull().default(0),
 
-    documentType: text("document_type", { enum: customerDocumentTypeEnum }),
-    documentNumber: text("document_number"),
+    documentType: text("document_type", { enum: customerDocumentTypeEnum })
+      .notNull()
+      .default("CC"),
+    documentNumber: text("document_number").notNull(),
 
     organizationId: organizationId(),
     createdBy: memberId(),
@@ -55,21 +57,12 @@ export const customer = sqliteTable(
     ),
     check(
       "customer_document_number_length_check",
-      sql`${t.documentNumber} IS NULL OR length(${t.documentNumber}) BETWEEN 5 AND 30`,
+      sql`length(${t.documentNumber}) BETWEEN 5 AND 30`,
     ),
 
     check(
       "customer_credit_limit_non_negative_check",
-      sql`${t.creditLimit} IS NULL OR ${t.creditLimit} >= 0`,
-    ),
-    check(
-      "customer_document_pair_check",
-      sql`(${t.documentType} IS NULL AND ${t.documentNumber} IS NULL)
-          OR (${t.documentType} IS NOT NULL AND ${t.documentNumber} IS NOT NULL)`,
-    ),
-    check(
-      "customer_contact_required_check",
-      sql`${t.phone} IS NOT NULL OR ${t.email} IS NOT NULL`,
+      sql`${t.creditLimit} >= 0`,
     ),
   ],
 );

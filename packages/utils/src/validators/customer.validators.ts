@@ -33,42 +33,25 @@ export const creditLimitSchema = z
     error: getI18nKey("validators.credit_limit.non_negative"),
   });
 
-export const createCustomerValidator = z
-  .object({
-    name: nameSchema,
-    phone: phoneSchema
-      .or(z.literal(""))
-      .transform((v) => (v === "" ? null : v)),
-    email: emailSchema
-      .or(z.literal(""))
-      .transform((v) => (v === "" ? null : v)),
-    creditLimit: creditLimitSchema,
-    documentType: documentTypeSchema,
-    documentNumber: documentNumberSchema
-      .or(z.literal(""))
-      .transform((v) => (v === "" ? null : v)),
-  })
-  .refine((data) => data.phone !== null || data.email !== null, {
-    error: getI18nKey("validators.contact.required"),
-    path: ["phone"],
-  });
+export const createCustomerValidator = z.object({
+  name: nameSchema,
+  phone: phoneSchema,
+  email: emailSchema.or(z.literal("")).transform((v) => (v === "" ? null : v)),
+  creditLimit: creditLimitSchema,
+  documentType: documentTypeSchema,
+  documentNumber: documentNumberSchema,
+});
 
 export const updateCustomerValidator = z.object({
   id: uuidSchema,
   name: nameSchema.optional(),
-  phone: phoneSchema
-    .or(z.literal(""))
-    .transform((v) => (v === "" ? null : v))
-    .optional(),
+  phone: phoneSchema.optional(),
   email: emailSchema
     .or(z.literal(""))
     .transform((v) => (v === "" ? null : v))
     .optional(),
   creditLimit: creditLimitSchema.optional(),
-  documentType: documentTypeSchema
-    .or(z.literal(""))
-    .transform((v) => (v === "" ? null : v))
-    .optional(),
+  documentType: documentTypeSchema.optional(),
   documentNumber: documentNumberSchema
     .or(z.literal(""))
     .transform((v) => (v === "" ? null : v))

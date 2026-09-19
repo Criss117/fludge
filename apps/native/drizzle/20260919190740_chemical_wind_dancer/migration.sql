@@ -15,11 +15,11 @@ CREATE TABLE `category` (
 CREATE TABLE `customer` (
 	`id` text PRIMARY KEY,
 	`name` text NOT NULL,
-	`phone` text,
+	`phone` text NOT NULL,
 	`email` text,
 	`credit_limit` integer NOT NULL,
 	`balance` integer DEFAULT 0 NOT NULL,
-	`document_type` text,
+	`document_type` text DEFAULT 'CC' NOT NULL,
 	`document_number` text,
 	`organization_id` text NOT NULL,
 	`created_by` text NOT NULL,

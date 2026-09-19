@@ -13,19 +13,19 @@ interface CreateCustomer {
   organizationId: UUID;
   createdBy: UUID;
   name: string;
-  phone: string | null;
+  phone: string;
   email: string | null;
   creditLimit: number;
-  documentType: CustomerDocumentTypeEnum | null;
+  documentType: CustomerDocumentTypeEnum;
   documentNumber: string | null;
 }
 
 interface UpdateCustomer {
   name?: string;
-  phone?: string | null;
+  phone?: string;
   email?: string | null;
   creditLimit?: number;
-  documentType?: CustomerDocumentTypeEnum | null;
+  documentType?: CustomerDocumentTypeEnum;
   documentNumber?: string | null;
   status?: StatusEnum;
 }
@@ -37,7 +37,7 @@ export class Customer {
     private readonly _createdBy: UUID,
 
     private _name: string,
-    private _phone: string | null,
+    private _phone: string,
     private _email: string | null,
     private _balance: CustomerBalance,
     private _document: CustomerDocument | null,
@@ -47,24 +47,12 @@ export class Customer {
   ) {}
 
   public static create(data: CreateCustomer) {
-    if (!data.phone && !data.email) {
-      throw new BadRequestError("api_errors.customers.contact_required");
-    }
-
-    const hasDocType = data.documentType !== null;
-    const hasDocNumber = data.documentNumber !== null;
-
-    // Si el par de documento está incompleto, no se guarda documento.
-    const documentType = hasDocType === hasDocNumber ? data.documentType : null;
-    const documentNumber =
-      hasDocType === hasDocNumber ? data.documentNumber : null;
-
     const now = new Date();
 
-    const customerDocument =
-      documentType && documentNumber
-        ? new CustomerDocument(documentType, documentNumber)
-        : null;
+    // documentType is always present; document only exists when documentNumber is also provided.
+    const customerDocument = data.documentNumber
+      ? new CustomerDocument(data.documentType, data.documentNumber)
+      : null;
 
     return new Customer(
       UUID.generate(),
@@ -82,13 +70,6 @@ export class Customer {
   }
 
   public update(data: UpdateCustomer) {
-    const newPhone = data.phone !== undefined ? data.phone : this._phone;
-    const newEmail = data.email !== undefined ? data.email : this._email;
-
-    if (!newPhone && !newEmail) {
-      throw new BadRequestError("api_errors.customers.contact_required");
-    }
-
     const currentDoc = this._document?.value;
     const newDocType =
       data.documentType !== undefined ? data.documentType : currentDoc?.type ?? null;
@@ -97,13 +78,11 @@ export class Customer {
         ? data.documentNumber
         : currentDoc?.number ?? null;
 
-    const hasDocType = newDocType !== null;
-    const hasDocNumber = newDocNumber !== null;
-
-    // Si el par de documento queda incompleto tras el merge, no se guarda documento.
-    const mergedDocType = hasDocType === hasDocNumber ? newDocType : null;
-    const mergedDocNumber =
-      hasDocType === hasDocNumber ? newDocNumber : null;
+    // documentType is always present; document only exists when documentNumber is also provided.
+    const mergedDocument =
+      newDocType && newDocNumber
+        ? new CustomerDocument(newDocType, newDocNumber)
+        : null;
 
     if (data.name !== undefined) this._name = data.name;
     if (data.phone !== undefined) this._phone = data.phone;
@@ -117,10 +96,7 @@ export class Customer {
     }
 
     if (data.documentType !== undefined || data.documentNumber !== undefined) {
-      this._document =
-        mergedDocType && mergedDocNumber
-          ? new CustomerDocument(mergedDocType, mergedDocNumber)
-          : null;
+      this._document = mergedDocument;
     }
 
     if (data.status !== undefined) {
@@ -185,7 +161,7 @@ export class Customer {
       creditLimit: customerBalance.creditLimit,
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
-      documentType: customerDocument?.type ?? null,
+      documentType: customerDocument?.type ?? "CC",
       documentNumber: customerDocument?.number ?? null,
       status: this._status.value,
     };

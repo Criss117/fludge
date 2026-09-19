@@ -13,7 +13,7 @@ function SyncIamSuspense({ children }: { children: React.ReactNode }) {
   if (data.error)
     return (
       <View>
-        <Text>Retrying</Text>
+        <Text>Retrying Iam</Text>
       </View>
     );
 
@@ -26,7 +26,7 @@ function SyncCatalogSuspense({ children }: { children: React.ReactNode }) {
   if (data.error)
     return (
       <View>
-        <Text>Retrying</Text>
+        <Text>Retrying Catalog</Text>
       </View>
     );
 
@@ -39,7 +39,7 @@ function SyncCustomerSuspense({ children }: { children: React.ReactNode }) {
   if (data.error)
     return (
       <View>
-        <Text>Retrying</Text>
+        <Text>Retrying Customer {data.error.message}</Text>
       </View>
     );
 
@@ -52,7 +52,7 @@ function SyncSaleSuspense({ children }: { children: React.ReactNode }) {
   if (data.error)
     return (
       <View>
-        <Text>Retrying</Text>
+        <Text>Retrying Sale</Text>
       </View>
     );
 

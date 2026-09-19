@@ -8,9 +8,7 @@ import type {
   CustomerSyncAllItems,
 } from "@fludge/sync/types/customer.types";
 
-export class NativeSyncCustomerRepository
-  implements ClientSyncCustomerRepository
-{
+export class NativeSyncCustomerRepository implements ClientSyncCustomerRepository {
   constructor(private readonly db: DatabaseService) {}
 
   private async getLastSyncedCustomer() {
@@ -32,6 +30,8 @@ export class NativeSyncCustomerRepository
   }
 
   public async saveAll(values: CustomerSyncAllItems): Promise<void> {
+    console.log(values);
+
     this.db.transaction((tx) => {
       if (values.customers.length > 0) {
         tx.insert(localCustomer)
