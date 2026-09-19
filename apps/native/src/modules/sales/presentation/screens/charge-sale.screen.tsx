@@ -31,7 +31,7 @@ export function ChargeSaleScreen() {
             quantity: pp.quantity,
             name: p.name + ":" + pp.name,
             price: pp.priceSale,
-            presentationId: pp.id,
+            presentationId: pp.presentationId ?? "",
           }))
         ),
       },

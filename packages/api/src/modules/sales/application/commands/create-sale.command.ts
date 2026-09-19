@@ -100,8 +100,8 @@ export class CreateSaleCommand {
       );
 
     return {
-      sale: newSale,
-      products: productsToSave,
+      sale: newSale.values,
+      products: productsToSave.map((p) => p.values),
     };
   }
 }

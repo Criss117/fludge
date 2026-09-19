@@ -22,7 +22,7 @@ export function SaleProductsListSection({ query }: Props) {
     status: "active",
     orderBy: {
       createdAt: "desc",
-      stock: "desc",
+      stock: "none",
     },
   });
 

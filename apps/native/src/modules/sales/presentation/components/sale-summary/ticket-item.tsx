@@ -152,8 +152,6 @@ function PresentationItem({
     ticketStore;
   const mutationToast = useMutationToast("TICKET_PRESENTATION_ITEM");
 
-  const canDecreaseQuantity = presentation.quantity > 1;
-
   const handleUpdateQuantity = (quantity: number) => {
     updateTicketProductPresentation.mutate(
       {
@@ -266,15 +264,12 @@ export function TicketProductItem({ item, ticketStore }: Props) {
   };
 
   return (
-    <Card className="mx-3">
+    <Card className="bg-default mx-3">
       <Card.Header className="flex-row justify-between">
         <View className="flex-1 gap-y-1">
           <Card.Title className="line-clamp-2 font-semibold">
             {item.name}
           </Card.Title>
-          <Card.Description className="text-muted">
-            {totalQuantity} {totalQuantity === 1 ? "unidad" : "unidades"}
-          </Card.Description>
         </View>
         <Typography className="font-bold">{formatPrice(totalPrice)}</Typography>
       </Card.Header>

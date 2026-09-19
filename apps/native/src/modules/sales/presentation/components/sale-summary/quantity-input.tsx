@@ -69,7 +69,7 @@ export function QuantityInput({ quantity, onUpdateQuantity, onFocus }: Props) {
       <Input
         className="w-16 bg-transparent px-3 text-center"
         value={localQuantity.toString()}
-        onChangeText={(value) => handleUpdateQuantity(Number(value) || 1)}
+        onChangeText={(value) => handleUpdateQuantity(Number(value) || 0)}
         keyboardType="numeric"
         placeholder="0"
         onFocus={onFocus}

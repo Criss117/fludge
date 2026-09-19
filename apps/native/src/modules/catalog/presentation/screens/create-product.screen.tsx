@@ -75,7 +75,7 @@ export function CreateProductScreen() {
         >
           <MaterialIcons name="add-box" size={20} className="text-eclipse" />
           <Button.Label className="text-eclipse">
-            {t("forms.product.update")}
+            {t("forms.product.create")}
           </Button.Label>
         </Button>
       </View>

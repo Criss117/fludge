@@ -114,27 +114,19 @@ export function StockSection({ form }: { form: Form }) {
       <Card.Body className="gap-y-2">
         <View className="flex-row items-start gap-x-2">
           <View className="flex-1">
-            {/* react-doctor-disable-next-line no-children-prop */}
-            <form.Field
-              name="stock"
-              children={(field) => <ProductFormInputs.Stock field={field} />}
-            />
+            <form.Field name="stock">
+              {(field) => <ProductFormInputs.Stock field={field} />}
+            </form.Field>
           </View>
           <View className="flex-1">
-            {/* react-doctor-disable-next-line no-children-prop */}
-            <form.Field
-              name="minStock"
-              children={(field) => <ProductFormInputs.MinStock field={field} />}
-            />
+            <form.Field name="minStock">
+              {(field) => <ProductFormInputs.MinStock field={field} />}
+            </form.Field>
           </View>
         </View>
-        {/* react-doctor-disable-next-line no-children-prop */}
-        <form.Field
-          name="allowNegativeStock"
-          children={(field) => (
-            <ProductFormInputs.AllowNegativeStock field={field} />
-          )}
-        />
+        <form.Field name="allowNegativeStock">
+          {(field) => <ProductFormInputs.AllowNegativeStock field={field} />}
+        </form.Field>
       </Card.Body>
     </Card>
   );

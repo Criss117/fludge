@@ -165,7 +165,10 @@ export function useTicketStore() {
         products: [],
       };
 
-      const nextTickets = [...store, newTicket];
+      const nextTickets = [
+        ...store.map((t) => ({ ...t, isActive: false })),
+        newTicket,
+      ];
 
       await persist(nextTickets);
     },
@@ -177,6 +180,22 @@ export function useTicketStore() {
       if (!store.some((t) => t.id === ticketId)) return;
 
       const nextTickets = store.filter((t) => t.id !== ticketId);
+
+      if (nextTickets.length === 0) {
+        nextTickets.push({
+          id: crypto.randomUUID(),
+          isActive: true,
+          name: "Ticket-1",
+          organizationId: activeOrganization.id,
+          products: [],
+        });
+      }
+
+      const someTicketIsActive = nextTickets.some((t) => t.isActive);
+
+      if (!someTicketIsActive) {
+        nextTickets[0]!.isActive = true;
+      }
 
       await persist(nextTickets);
     },

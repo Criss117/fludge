@@ -101,7 +101,7 @@ export class SqliteLocalTicketRepository implements LocalTicketRepository {
       };
     });
 
-    return tickets.map((ticketRow) => {
+    const allTickets = tickets.map((ticketRow) => {
       const ticketProducts = products.filter(
         (product) => product.ticketId === ticketRow.id
       );
@@ -111,6 +111,19 @@ export class SqliteLocalTicketRepository implements LocalTicketRepository {
         products: ticketProducts,
       };
     });
+
+    const someTicketIsActive = allTickets.some((t) => t.isActive);
+
+    if (!someTicketIsActive) {
+      allTickets[0]!.isActive = true;
+
+      await this.db
+        .update(ticket)
+        .set({ isActive: true })
+        .where(eq(ticket.id, allTickets[0]!.id));
+    }
+
+    return allTickets;
   }
 
   public async save(organizationId: string, tickets: Ticket[]): Promise<void> {
