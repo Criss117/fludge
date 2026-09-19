@@ -1,5 +1,12 @@
 import { z } from "zod";
-import { getI18nKey, nameSchema, phoneSchema, emailSchema } from "./shared";
+import {
+  getI18nKey,
+  nameSchema,
+  phoneSchema,
+  emailSchema,
+  uuidSchema,
+  statusSchema,
+} from "./shared";
 import { customerDocumentTypeEnum } from "../enums/db-enums";
 
 export const documentTypeSchema = z.enum(customerDocumentTypeEnum, {
@@ -49,6 +56,47 @@ export const createCustomerValidator = z
   })
   .refine(
     (data) => {
+      const hasDocType = data.documentType !== null;
+      const hasDocNumber = data.documentNumber !== null;
+      return (hasDocType && hasDocNumber) || (!hasDocType && !hasDocNumber);
+    },
+    {
+      error: getI18nKey("validators.document.pair_required"),
+      path: ["documentType"],
+    },
+  );
+
+export const updateCustomerValidator = z
+  .object({
+    id: uuidSchema,
+    name: nameSchema.optional(),
+    phone: phoneSchema
+      .or(z.literal(""))
+      .transform((v) => (v === "" ? null : v))
+      .optional(),
+    email: emailSchema
+      .or(z.literal(""))
+      .transform((v) => (v === "" ? null : v))
+      .optional(),
+    creditLimit: creditLimitSchema.optional(),
+    documentType: documentTypeSchema
+      .or(z.literal(""))
+      .transform((v) => (v === "" ? null : v))
+      .optional(),
+    documentNumber: documentNumberSchema
+      .or(z.literal(""))
+      .transform((v) => (v === "" ? null : v))
+      .optional(),
+    status: statusSchema.optional(),
+  })
+  .refine(
+    (data) => {
+      if (
+        data.documentType === undefined ||
+        data.documentNumber === undefined
+      ) {
+        return true;
+      }
       const hasDocType = data.documentType !== null;
       const hasDocNumber = data.documentNumber !== null;
       return (hasDocType && hasDocNumber) || (!hasDocType && !hasDocNumber);

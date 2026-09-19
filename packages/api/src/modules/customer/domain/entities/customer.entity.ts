@@ -3,7 +3,10 @@ import { CustomerDocument } from "../value-objects/document-type";
 import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
 import { CustomerBalance } from "../value-objects/customer-balance";
 import type { CustomerSelect } from "@fludge/db/schema/customer.schema";
-import type { CustomerDocumentTypeEnum } from "@fludge/utils/enums/db-enums";
+import type {
+  CustomerDocumentTypeEnum,
+  StatusEnum,
+} from "@fludge/utils/enums/db-enums";
 import { BadRequestError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 
 interface CreateCustomer {
@@ -15,6 +18,16 @@ interface CreateCustomer {
   creditLimit: number;
   documentType: CustomerDocumentTypeEnum | null;
   documentNumber: string | null;
+}
+
+interface UpdateCustomer {
+  name?: string;
+  phone?: string | null;
+  email?: string | null;
+  creditLimit?: number;
+  documentType?: CustomerDocumentTypeEnum | null;
+  documentNumber?: string | null;
+  status?: StatusEnum;
 }
 
 export class Customer {
@@ -67,6 +80,58 @@ export class Customer {
       now,
       now,
     );
+  }
+
+  public update(data: UpdateCustomer) {
+    const newPhone = data.phone !== undefined ? data.phone : this._phone;
+    const newEmail = data.email !== undefined ? data.email : this._email;
+
+    if (!newPhone && !newEmail) {
+      throw new BadRequestError("api_errors.customers.contact_required");
+    }
+
+    const currentDoc = this._document?.value;
+    const newDocType =
+      data.documentType !== undefined ? data.documentType : currentDoc?.type ?? null;
+    const newDocNumber =
+      data.documentNumber !== undefined
+        ? data.documentNumber
+        : currentDoc?.number ?? null;
+
+    const hasDocType = newDocType !== null;
+    const hasDocNumber = newDocNumber !== null;
+
+    if (hasDocType !== hasDocNumber) {
+      throw new BadRequestError(
+        "api_errors.customers.document_pair_required",
+      );
+    }
+
+    if (data.name !== undefined) this._name = data.name;
+    if (data.phone !== undefined) this._phone = data.phone;
+    if (data.email !== undefined) this._email = data.email;
+
+    if (data.creditLimit !== undefined) {
+      this._balance = new CustomerBalance(
+        this._balance.value.balance,
+        data.creditLimit,
+      );
+    }
+
+    if (data.documentType !== undefined || data.documentNumber !== undefined) {
+      this._document =
+        newDocType && newDocNumber
+          ? new CustomerDocument(newDocType, newDocNumber)
+          : null;
+    }
+
+    if (data.status !== undefined) {
+      this._status = new Status(data.status);
+    }
+
+    this._updatedAt = new Date();
+
+    return this;
   }
 
   public static reconstitute(data: CustomerSelect) {
