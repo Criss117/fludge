@@ -65,6 +65,19 @@ export const screens = {
           description: "Se ha producido un error al sincronizar Clientes",
         },
       },
+      sale: {
+        title: "Ventas",
+        last_synced_at: "Última sincronización",
+        refetching: "Sincronizando Ventas...",
+        on_success: {
+          title: "Sincronización realizada con éxito",
+          description: "Se han sincronizado todos los datos de Ventas",
+        },
+        on_error: {
+          title: "Error al sincronizar Ventas",
+          description: "Se ha producido un error al sincronizar Ventas",
+        },
+      },
     },
   },
   members: {

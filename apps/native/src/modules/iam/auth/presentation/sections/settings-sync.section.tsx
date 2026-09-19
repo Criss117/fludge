@@ -6,6 +6,7 @@ import {
 } from "@fludge/client/application/sync/use-sync-catalog";
 import { useSyncIam } from "@fludge/client/application/sync/use-sync-iam";
 import { useSyncCustomer } from "@fludge/client/application/sync/use-sync-customer";
+import { useSyncSale } from "@fludge/client/application/sync/use-sync-sale";
 import { useNetwork } from "@fludge/client/providers/network-status.provider";
 import { TranslationKey } from "@fludge/i18n/index";
 import type { UseSuspenseQueryResult } from "@tanstack/react-query";
@@ -17,8 +18,8 @@ import { View } from "react-native";
 
 interface Props {
   syncHook: UseSuspenseQueryResult<SyncData, Error>;
-  module: "iam" | "catalog" | "customer";
-  icon: "security" | "view-list" | "people";
+  module: "iam" | "catalog" | "customer" | "sale";
+  icon: "security" | "view-list" | "people" | "point-of-sale";
 }
 
 function SyncItem({ module, syncHook, icon }: Props) {
@@ -90,6 +91,7 @@ export function SettingsSyncSection() {
   const iamSync = useSyncIam();
   const catalogSync = useSyncCatalog();
   const customerSync = useSyncCustomer();
+  const saleSync = useSyncSale();
 
   return (
     <Card>
@@ -100,6 +102,7 @@ export function SettingsSyncSection() {
         <SyncItem module="iam" syncHook={iamSync} icon="security" />
         <SyncItem module="catalog" syncHook={catalogSync} icon="view-list" />
         <SyncItem module="customer" syncHook={customerSync} icon="people" />
+        <SyncItem module="sale" syncHook={saleSync} icon="point-of-sale" />
       </Card.Body>
     </Card>
   );
