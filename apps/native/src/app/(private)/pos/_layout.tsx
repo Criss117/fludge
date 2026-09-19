@@ -5,7 +5,7 @@ import { useThemeColor } from "heroui-native";
 import { BackButton } from "@/modules/shared/components/back-button";
 import { useTranslation } from "react-i18next";
 
-export default function SaleLayout() {
+export default function POSLayout() {
   const { t } = useTranslation();
   const [background, foreground] = useThemeColor(["background", "foreground"]);
 

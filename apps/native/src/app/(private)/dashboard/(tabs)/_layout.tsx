@@ -129,7 +129,7 @@ export default function DashboardTabsLayout() {
           headerTitle: () => (
             <Link
               href={{
-                pathname: "/(private)/sales",
+                pathname: "/(private)/pos",
               }}
               asChild
               push

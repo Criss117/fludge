@@ -53,7 +53,7 @@ export function SalesSummaryContent({ isOpen, onOpenChange }: Props) {
           </Button>
           <Link
             href={{
-              pathname: "/sales/charge",
+              pathname: "/pos/charge",
             }}
             asChild
             push

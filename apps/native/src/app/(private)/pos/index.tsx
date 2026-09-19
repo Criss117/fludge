@@ -1,4 +1,4 @@
-import { SalesScreen } from "@/modules/sales/presentation/screens/sales.screen";
+import { POSScreen } from "@/modules/sales/presentation/screens/pos.screen";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Sale() {
@@ -8,7 +8,7 @@ export default function Sale() {
         flex: 1,
       }}
     >
-      <SalesScreen />
+      <POSScreen />
     </SafeAreaView>
   );
 }

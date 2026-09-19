@@ -29,7 +29,7 @@ function StackOptions() {
         <Stack.Screen name="dashboard" />
       </Stack.Protected>
       <Stack.Protected guard={hasActiveOrganization}>
-        <Stack.Screen name="sales" />
+        <Stack.Screen name="pos" />
       </Stack.Protected>
       <Stack.Screen name="organization" />
     </Stack>

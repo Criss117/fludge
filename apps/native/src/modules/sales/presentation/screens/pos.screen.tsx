@@ -8,7 +8,7 @@ import { SaleProductsListSection } from "../sections/sale-products-list.section"
 import { ProductPresentationSelectorProvider } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
 import { ProductPresentationSelector } from "../components/product-presentation-selector";
 
-export function SalesScreen() {
+export function POSScreen() {
   const [query, setQuery] = useState("");
 
   return (
