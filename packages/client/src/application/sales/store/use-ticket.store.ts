@@ -69,7 +69,9 @@ export function useFindAllTickets() {
   return useSuspenseQuery({
     queryKey: ["organizations", activeOrganization.id, "sales", "tickets"],
     queryFn: async () =>
-      salesContainer.localTicketRepository.load(activeOrganization.id),
+      salesContainer.repositories.localTicketRepository.load(
+        activeOrganization.id,
+      ),
   });
 }
 
@@ -118,7 +120,7 @@ export function useTicketStore() {
       nextTickets,
     );
 
-    await salesContainer.localTicketRepository.save(
+    await salesContainer.repositories.localTicketRepository.save(
       activeOrganization!.id,
       nextTickets,
     );

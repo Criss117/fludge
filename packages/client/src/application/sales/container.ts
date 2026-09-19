@@ -10,9 +10,11 @@ type Deps = {
 
 export function generateSaleContainer(deps: Deps) {
   return {
-    localTicketRepository: deps.localTicketRepository,
-    syncSaleRepository: deps.syncSaleRepository,
-    saleRepository: deps.saleRepository,
+    repositories: {
+      localTicketRepository: deps.localTicketRepository,
+      syncSaleRepository: deps.syncSaleRepository,
+      saleRepository: deps.saleRepository,
+    },
   };
 }
 

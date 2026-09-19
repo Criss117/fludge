@@ -48,7 +48,7 @@ export function useSyncSale() {
         };
 
       const [lastSyncedAt, errorGetLastSyncedAt] = await tryCatch(
-        salesContainer.syncSaleRepository.getLastSyncedAt(),
+        salesContainer.repositories.syncSaleRepository.getLastSyncedAt(),
       );
 
       if (errorGetLastSyncedAt)
@@ -73,7 +73,7 @@ export function useSyncSale() {
         };
 
       const [, erroSaveAll] = await tryCatch(
-        salesContainer.syncSaleRepository.saveAll(values),
+        salesContainer.repositories.syncSaleRepository.saveAll(values),
       );
 
       if (erroSaveAll)
