@@ -111,6 +111,14 @@ export const screens = {
     title: "Ventas",
     no_more: "No hay más productos",
     not_found: "No se encontraron productos",
+    customer_selector: {
+      title: "Cliente",
+      walk_in: "Consumidor final",
+      walk_in_hint: "La venta no tendrá cliente asignado",
+      customer: "Cliente",
+      select_customer: "Seleccionar cliente",
+      select_title: "Seleccionar cliente",
+    },
     ticket: {
       select_label: "Seleccionar ticket",
       create: "Nuevo ticket",
@@ -172,9 +180,11 @@ export const screens = {
     card: {
       debt: "Deuda",
       credit_used: "Cupo utilizado",
+      credit_limit: "Cupo máximo",
       pay: "Abonar",
       phone: "Teléfono",
       email: "Correo",
+      deselect: "Quitar cliente",
     },
   },
   iam: {

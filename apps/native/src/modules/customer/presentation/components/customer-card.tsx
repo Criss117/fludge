@@ -95,13 +95,61 @@ function DebtProgress({ customer }: { customer: CustomerSummary }) {
   );
 }
 
-export function CustomerCard({ customer }: Props) {
+export function CustomerCardBase({ customer }: Props) {
   const { t } = useTranslation();
-  const router = useRouter();
 
   const identification = customer.documentNumber
     ? `${customer.documentType ?? ""} ${customer.documentNumber}`.trim()
     : "-";
+
+  return (
+    <Card className="justify-between gap-y-3" style={{ height: CARD_HEIGHT }}>
+      <Card.Header className="flex-row items-start">
+        <View className="flex-1">
+          <Card.Title className="line-clamp-1">{customer.name}</Card.Title>
+          <View className="flex-row items-center gap-x-1">
+            <MaterialIcons name="badge" size={16} className="text-muted" />
+            <Card.Description>{identification}</Card.Description>
+          </View>
+        </View>
+        <View className="flex-col items-end gap-y-1">
+          <StatusChip status={customer.status} />
+          <Typography type="body-sm" color="muted">
+            {t("helpers.created_at")} {customer.createdAt.toLocaleDateString()}
+          </Typography>
+        </View>
+      </Card.Header>
+
+      <Card.Body>
+        <View className="gap-y-1.5">
+          <View className="flex-row items-center gap-x-2">
+            <Chip size="sm">
+              <MaterialIcons name="phone" size={14} className="text-muted" />
+              <Chip.Label>
+                {t("screens.customers.card.phone")}: {customer.phone ?? "-"}
+              </Chip.Label>
+            </Chip>
+          </View>
+          <View className="flex-row items-center gap-x-2">
+            <Chip size="sm">
+              <MaterialIcons name="email" size={14} className="text-muted" />
+              <Chip.Label>
+                {t("screens.customers.card.email")}: {customer.email ?? "-"}
+              </Chip.Label>
+            </Chip>
+          </View>
+        </View>
+      </Card.Body>
+
+      <Card.Footer>
+        <DebtProgress customer={customer} />
+      </Card.Footer>
+    </Card>
+  );
+}
+
+export function CustomerCard({ customer }: Props) {
+  const router = useRouter();
 
   return (
     <PressableFeedback
@@ -113,49 +161,7 @@ export function CustomerCard({ customer }: Props) {
         })
       }
     >
-      <Card className="justify-between gap-y-3" style={{ height: CARD_HEIGHT }}>
-        <Card.Header className="flex-row items-start">
-          <View className="flex-1">
-            <Card.Title className="line-clamp-1">{customer.name}</Card.Title>
-            <View className="flex-row items-center gap-x-1">
-              <MaterialIcons name="badge" size={16} className="text-muted" />
-              <Card.Description>{identification}</Card.Description>
-            </View>
-          </View>
-          <View className="flex-col items-end gap-y-1">
-            <StatusChip status={customer.status} />
-            <Typography type="body-sm" color="muted">
-              {t("helpers.created_at")}{" "}
-              {customer.createdAt.toLocaleDateString()}
-            </Typography>
-          </View>
-        </Card.Header>
-
-        <Card.Body>
-          <View className="gap-y-1.5">
-            <View className="flex-row items-center gap-x-2">
-              <Chip size="sm">
-                <MaterialIcons name="phone" size={14} className="text-muted" />
-                <Chip.Label>
-                  {t("screens.customers.card.phone")}: {customer.phone ?? "-"}
-                </Chip.Label>
-              </Chip>
-            </View>
-            <View className="flex-row items-center gap-x-2">
-              <Chip size="sm">
-                <MaterialIcons name="email" size={14} className="text-muted" />
-                <Chip.Label>
-                  {t("screens.customers.card.email")}: {customer.email ?? "-"}
-                </Chip.Label>
-              </Chip>
-            </View>
-          </View>
-        </Card.Body>
-
-        <Card.Footer>
-          <DebtProgress customer={customer} />
-        </Card.Footer>
-      </Card>
+      <CustomerCardBase customer={customer} />
     </PressableFeedback>
   );
 }

@@ -1,4 +1,5 @@
 import type { TranslationKey } from "@fludge/i18n/index";
+import { cn } from "heroui-native";
 import { SearchField } from "heroui-native/search-field";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,6 +10,7 @@ interface Props {
   placeholder: TranslationKey;
   autoFocus?: boolean;
   debounceMs?: number;
+  className?: string;
 }
 
 export function SearchInput({
@@ -17,6 +19,7 @@ export function SearchInput({
   placeholder,
   autoFocus,
   debounceMs = 300,
+  className,
 }: Props) {
   const { t } = useTranslation();
   const [localQuery, setLocalQuery] = useState(query);
@@ -56,7 +59,11 @@ export function SearchInput({
     <SearchField value={localQuery} onChange={handleChange}>
       <SearchField.Group>
         <SearchField.SearchIcon />
-        <SearchField.Input placeholder={t(placeholder)} autoFocus={autoFocus} />
+        <SearchField.Input
+          placeholder={t(placeholder)}
+          autoFocus={autoFocus}
+          className={cn(className)}
+        />
         <SearchField.ClearButton />
       </SearchField.Group>
     </SearchField>

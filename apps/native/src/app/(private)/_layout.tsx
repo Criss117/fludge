@@ -1,4 +1,5 @@
 import { iamContainer } from "@/integrations/dependencies/iam.container";
+import { HeroUIProvider } from "@/integrations/heroui";
 import { LoadingScreen } from "@/modules/shared/components/loading-screen";
 import { OrganizationStore } from "@/modules/shared/utils/organization-store";
 import {
@@ -42,9 +43,13 @@ export default function PrivateLayout() {
       organizationStorage={OrganizationStore}
       organizationRepository={iamContainer.repositories.organizationRepository}
     >
-      <Suspense fallback={<LoadingScreen message="app.loading_organization" />}>
-        <StackOptions />
-      </Suspense>
+      <HeroUIProvider>
+        <Suspense
+          fallback={<LoadingScreen message="app.loading_organization" />}
+        >
+          <StackOptions />
+        </Suspense>
+      </HeroUIProvider>
     </OrganizationProvider>
   );
 }

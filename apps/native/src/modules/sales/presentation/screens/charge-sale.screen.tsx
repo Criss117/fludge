@@ -11,6 +11,9 @@ import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useRouter } from "expo-router";
 import { useTicketStore } from "@fludge/client/application/sales/store/use-ticket.store";
+import { CustomerSelectorSection } from "../sections/customer-selector.section";
+import { useState } from "react";
+import type { CustomerSummary } from "@fludge/client/application/customer/domain/customer.repository";
 
 export function ChargeSaleScreen() {
   const { activeTicket, removeTicket } = useTicketStore();
@@ -18,18 +21,20 @@ export function ChargeSaleScreen() {
   const mutationToast = useMutationToast("SALES_CHARGE");
   const createSale = useCreateSaleMutation();
   const router = useRouter();
+  const [selectedCustomer, setSelectedCustomer] =
+    useState<CustomerSummary | null>(null);
 
   function handleSubmit() {
     mutationToast.showIsPendingToast("mutations.sale.create.is_pending");
     createSale.mutate(
       {
-        customerId: "",
+        customerId: selectedCustomer?.id ?? "",
         paymentType: "cash",
         notes: "",
         items: activeTicket.products.flatMap((p) =>
           p.presentations.map((pp) => ({
             quantity: pp.quantity,
-            name: p.name + ":" + pp.name,
+            name: pp.name,
             price: pp.priceSale,
             presentationId: pp.presentationId ?? "",
           }))
@@ -60,6 +65,10 @@ export function ChargeSaleScreen() {
         contentContainerClassName="px-3 gap-y-4 pb-safe-offset-24"
         showsVerticalScrollIndicator={false}
       >
+        <CustomerSelectorSection
+          selectedCustomer={selectedCustomer}
+          onSelectCustomer={setSelectedCustomer}
+        />
         <AmountReceivedSection total={activeTicket.total} />
         <ChargeSaleSummarySection ticket={activeTicket} />
       </ScrollView>

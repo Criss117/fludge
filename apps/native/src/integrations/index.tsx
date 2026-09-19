@@ -14,9 +14,9 @@ import { DependenciesProvider } from "./dependencies";
 
 function UiProviders({ children }: { children: React.ReactNode }) {
   return (
-    <HeroUIProvider>
+    <>
       <AppThemeProvider>{children}</AppThemeProvider>
-    </HeroUIProvider>
+    </>
   );
 }
 
