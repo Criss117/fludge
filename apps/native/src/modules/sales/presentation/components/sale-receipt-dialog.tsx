@@ -24,102 +24,106 @@ export function SaleReceiptDialog({ sale, onClose }: Props) {
     >
       <Dialog.Portal>
         <Dialog.Overlay className="bg-black/50" />
-        <Dialog.Content style={{ maxHeight: "80%" }}>
+        <Dialog.Content style={{ height: "85%" }}>
           <Dialog.Close className="absolute top-3 right-3 z-50" />
           {sale !== null ? (
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerClassName="gap-y-3 pb-2"
-            >
-              {/* Encabezado tirilla */}
-              <View className="items-center gap-y-1">
-                <Typography className="font-semibold">
-                  {t("screens.sales.receipt.title")}
-                </Typography>
-                <Typography
-                  color="muted"
-                  style={{ fontSize: RECEIPT_FONT_SIZE }}
-                >
-                  {sale.saleNumber}
-                </Typography>
-                <Typography
-                  color="muted"
-                  style={{ fontSize: RECEIPT_FONT_SIZE }}
-                >
-                  {sale.createdAt.toLocaleString()}
-                </Typography>
-              </View>
-
-              <Separator className="-mx-6" />
-
-              <View className="gap-y-1">
-                <View className="flex-row items-center justify-between gap-x-2">
+            <View className="flex-1">
+              <ScrollView
+                className="flex-1"
+                showsVerticalScrollIndicator={false}
+                contentContainerClassName="gap-y-3 pb-2"
+              >
+                {/* Encabezado tirilla */}
+                <View className="items-center gap-y-1">
+                  <Typography className="font-semibold">
+                    {t("screens.sales.receipt.title")}
+                  </Typography>
                   <Typography
                     color="muted"
                     style={{ fontSize: RECEIPT_FONT_SIZE }}
                   >
-                    {t("screens.sales.payment_type.title")}
+                    {sale.saleNumber}
                   </Typography>
-                  <Typography style={{ fontSize: RECEIPT_FONT_SIZE }}>
-                    {t(`screens.sales.payment_type.${sale.paymentType}`)}
-                  </Typography>
-                </View>
-                <View className="flex-row items-center justify-between gap-x-2">
                   <Typography
                     color="muted"
                     style={{ fontSize: RECEIPT_FONT_SIZE }}
                   >
-                    {t("screens.sales.card.customer")}
-                  </Typography>
-                  <Typography
-                    className="flex-1 text-right"
-                    numberOfLines={1}
-                    style={{ fontSize: RECEIPT_FONT_SIZE }}
-                  >
-                    {sale.customerId ?? t("screens.sales.card.walk_in")}
+                    {sale.createdAt.toLocaleString()}
                   </Typography>
                 </View>
-              </View>
 
-              {/* Items */}
-              <View className="gap-y-2">
-                {sale.items.map((item) => (
-                  <View
-                    key={item.id}
-                    className="border-muted border-b-[0.5px] border-dashed py-2"
-                  >
-                    <View className="flex-row items-start justify-between gap-x-2">
-                      <Typography
-                        className="flex-1 font-semibold"
-                        style={{ fontSize: RECEIPT_FONT_SIZE }}
-                      >
-                        {item.name}
-                      </Typography>
-                      <Typography
-                        className="font-semibold"
-                        style={{ fontSize: RECEIPT_FONT_SIZE }}
-                      >
-                        {formatPrice(item.subtotal)}
-                      </Typography>
-                    </View>
+                <Separator className="-mx-6" />
+
+                <View className="gap-y-1">
+                  <View className="flex-row items-center justify-between gap-x-2">
                     <Typography
                       color="muted"
-                      style={{ fontSize: RECEIPT_FONT_SIZE - 1 }}
+                      style={{ fontSize: RECEIPT_FONT_SIZE }}
                     >
-                      x{item.quantity} × {formatPrice(item.unitPrice)}
+                      {t("screens.sales.payment_type.title")}
+                    </Typography>
+                    <Typography style={{ fontSize: RECEIPT_FONT_SIZE }}>
+                      {t(`screens.sales.payment_type.${sale.paymentType}`)}
                     </Typography>
                   </View>
-                ))}
-              </View>
+                  <View className="flex-row items-center justify-between gap-x-2">
+                    <Typography
+                      color="muted"
+                      style={{ fontSize: RECEIPT_FONT_SIZE }}
+                    >
+                      {t("screens.sales.card.customer")}
+                    </Typography>
+                    <Typography
+                      className="flex-1 text-right"
+                      numberOfLines={1}
+                      style={{ fontSize: RECEIPT_FONT_SIZE }}
+                    >
+                      {sale.customerId ?? t("screens.sales.card.walk_in")}
+                    </Typography>
+                  </View>
+                </View>
 
-              <Separator className="-mx-6 border-dashed" />
+                {/* Items */}
+                <View className="gap-y-2">
+                  {sale.items.map((item) => (
+                    <View
+                      key={item.id}
+                      className="border-muted border-b-[0.5px] border-dashed py-2"
+                    >
+                      <View className="flex-row items-start justify-between gap-x-2">
+                        <Typography
+                          className="flex-1 font-semibold"
+                          style={{ fontSize: RECEIPT_FONT_SIZE }}
+                        >
+                          {item.name}
+                        </Typography>
+                        <Typography
+                          className="font-semibold"
+                          style={{ fontSize: RECEIPT_FONT_SIZE }}
+                        >
+                          {formatPrice(item.subtotal)}
+                        </Typography>
+                      </View>
+                      <Typography
+                        color="muted"
+                        style={{ fontSize: RECEIPT_FONT_SIZE - 1 }}
+                      >
+                        x{item.quantity} × {formatPrice(item.unitPrice)}
+                      </Typography>
+                    </View>
+                  ))}
+                </View>
+              </ScrollView>
 
-              {/* Total */}
-              <View className="flex-row items-center justify-between">
-                <Typography type="h5">{t("helpers.total")}</Typography>
-                <Typography type="h3">{formatPrice(sale.total)}</Typography>
+              {/* Footer fijo: total siempre visible */}
+              <View className="pt-2">
+                <Separator className="-mx-6 border-dashed" />
+                <View className="flex-row items-center justify-between pt-3">
+                  <Typography type="h5">{t("helpers.total")}</Typography>
+                  <Typography type="h3">{formatPrice(sale.total)}</Typography>
+                </View>
               </View>
-            </ScrollView>
+            </View>
           ) : null}
         </Dialog.Content>
       </Dialog.Portal>
