@@ -109,6 +109,24 @@ export const mutations = {
       error: "Algo salió mal al crear la venta",
     },
   },
+  customers: {
+    create: {
+      is_pending: "Creando Cliente",
+      success: {
+        title: "Cliente Creado",
+        description: "El cliente se ha creado correctamente.",
+      },
+      error: "Algo salió mal al crear el cliente",
+    },
+    update: {
+      is_pending: "Actualizando Cliente",
+      success: {
+        title: "Cliente Actualizado",
+        description: "El cliente se actualizó correctamente.",
+      },
+      error: "Algo salió mal al actualizar el cliente",
+    },
+  },
   tickets: {
     error: "Error en el ticket",
     errors: {

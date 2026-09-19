@@ -159,8 +159,16 @@ export const screens = {
   catalog: {
     title: "Inventario",
   },
-  clients: {
+  customers: {
     title: "Clientes",
+    not_found: "No se encontraron clientes",
+    no_more: "No hay más clientes",
+    create: {
+      title: "Crear cliente",
+    },
+    update: {
+      title: "Editar cliente",
+    },
   },
   iam: {
     title: "IAM",

@@ -184,4 +184,39 @@ export const forms = {
       insufficient_stock: "El stock es insuficiente.",
     },
   },
+  customer: {
+    name: {
+      label: "Nombre del cliente",
+      placeholder: "Ej. Natalia Arturo",
+    },
+    document_type: {
+      label: "Tipo Doc.",
+    },
+    document_number: {
+      label: "Número de documento",
+      placeholder: "Ej. 1023456789",
+    },
+    phone: {
+      label: "Teléfono",
+      placeholder: "3212345678",
+    },
+    email: {
+      label: "Correo electrónico",
+      placeholder: "natalia@fludge.dev",
+    },
+    credit_limit: {
+      label: "Límite de cupo",
+      placeholder: "0",
+    },
+    sections: {
+      general: "Información General",
+      general_description: "Datos básicos de identificación del cliente",
+      contact: "Contacto",
+      contact_description: "Medios para comunicarte con el cliente",
+      credit: "Crédito y Cartera",
+      credit_description: "Configura el cupo de crédito del cliente",
+    },
+    create: "Crear Cliente",
+    update: "Actualizar Cliente",
+  },
 };

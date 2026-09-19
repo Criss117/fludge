@@ -1,8 +1,13 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useOrganization } from "../providers/organization.provider";
 
-type Module = "catalog" | "iam";
-type Resource = "products" | "groups" | "members" | "categories";
+type Module = "catalog" | "iam" | "customer";
+type Resource =
+  | "products"
+  | "groups"
+  | "members"
+  | "categories"
+  | "customers";
 
 interface QueryKeysGeneratorProps<T, TNormalizedFilters> {
   module: Module;

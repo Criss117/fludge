@@ -29,7 +29,7 @@ export const creditLimitSchema = z
   .number({
     error: getI18nKey("validators.credit_limit.invalid"),
   })
-  .min(0, {
+  .positive({
     error: getI18nKey("validators.credit_limit.non_negative"),
   });
 
@@ -54,55 +54,39 @@ export const createCustomerValidator = z
     error: getI18nKey("validators.contact.required"),
     path: ["phone"],
   })
-  .refine(
-    (data) => {
-      const hasDocType = data.documentType !== null;
-      const hasDocNumber = data.documentNumber !== null;
-      return (hasDocType && hasDocNumber) || (!hasDocType && !hasDocNumber);
-    },
-    {
-      error: getI18nKey("validators.document.pair_required"),
-      path: ["documentType"],
-    },
-  );
+  .transform((data) => {
+    const hasDocType = data.documentType !== null;
+    const hasDocNumber = data.documentNumber !== null;
 
-export const updateCustomerValidator = z
-  .object({
-    id: uuidSchema,
-    name: nameSchema.optional(),
-    phone: phoneSchema
-      .or(z.literal(""))
-      .transform((v) => (v === "" ? null : v))
-      .optional(),
-    email: emailSchema
-      .or(z.literal(""))
-      .transform((v) => (v === "" ? null : v))
-      .optional(),
-    creditLimit: creditLimitSchema.optional(),
-    documentType: documentTypeSchema
-      .or(z.literal(""))
-      .transform((v) => (v === "" ? null : v))
-      .optional(),
-    documentNumber: documentNumberSchema
-      .or(z.literal(""))
-      .transform((v) => (v === "" ? null : v))
-      .optional(),
-    status: statusSchema.optional(),
-  })
-  .refine(
-    (data) => {
-      if (
-        data.documentType === undefined ||
-        data.documentNumber === undefined
-      ) {
-        return true;
-      }
-      const hasDocType = data.documentType !== null;
-      const hasDocNumber = data.documentNumber !== null;
-      return (hasDocType && hasDocNumber) || (!hasDocType && !hasDocNumber);
-    },
-    {
-      error: getI18nKey("validators.document.pair_required"),
-      path: ["documentType"],
-    },
-  );
+    // Si el par de documento está incompleto, no se guarda documento.
+    if (hasDocType === hasDocNumber) return data;
+
+    return {
+      ...data,
+      documentType: null,
+      documentNumber: null,
+    };
+  });
+
+export const updateCustomerValidator = z.object({
+  id: uuidSchema,
+  name: nameSchema.optional(),
+  phone: phoneSchema
+    .or(z.literal(""))
+    .transform((v) => (v === "" ? null : v))
+    .optional(),
+  email: emailSchema
+    .or(z.literal(""))
+    .transform((v) => (v === "" ? null : v))
+    .optional(),
+  creditLimit: creditLimitSchema.optional(),
+  documentType: documentTypeSchema
+    .or(z.literal(""))
+    .transform((v) => (v === "" ? null : v))
+    .optional(),
+  documentNumber: documentNumberSchema
+    .or(z.literal(""))
+    .transform((v) => (v === "" ? null : v))
+    .optional(),
+  status: statusSchema.optional(),
+});

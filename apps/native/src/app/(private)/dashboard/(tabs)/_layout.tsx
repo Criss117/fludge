@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 const TabsIcons = {
   catalog: "inventory-2",
   index: "shopping-cart",
-  clients: "people",
+  customers: "people",
   iam: "security",
 } as const;
 
@@ -148,9 +148,9 @@ export default function DashboardTabsLayout() {
         }}
       />
       <ExpoTabs.Screen
-        name="clients"
+        name="customers"
         options={{
-          title: t("screens.clients.title"),
+          title: t("screens.customers.title"),
         }}
       />
       <ExpoTabs.Screen

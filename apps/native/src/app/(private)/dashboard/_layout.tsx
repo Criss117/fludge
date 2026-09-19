@@ -38,6 +38,7 @@ export default function DashboardLayout() {
         <Stack.Screen name="members" />
         <Stack.Screen name="groups" />
         <Stack.Screen name="products" />
+        <Stack.Screen name="customers" />
       </Stack>
     </RemountBoundary>
   );

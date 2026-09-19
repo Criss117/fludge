@@ -54,17 +54,16 @@ export class Customer {
     const hasDocType = data.documentType !== null;
     const hasDocNumber = data.documentNumber !== null;
 
-    if (hasDocType !== hasDocNumber) {
-      throw new BadRequestError(
-        "api_errors.customers.document_pair_required",
-      );
-    }
+    // Si el par de documento está incompleto, no se guarda documento.
+    const documentType = hasDocType === hasDocNumber ? data.documentType : null;
+    const documentNumber =
+      hasDocType === hasDocNumber ? data.documentNumber : null;
 
     const now = new Date();
 
     const customerDocument =
-      data.documentType && data.documentNumber
-        ? new CustomerDocument(data.documentType, data.documentNumber)
+      documentType && documentNumber
+        ? new CustomerDocument(documentType, documentNumber)
         : null;
 
     return new Customer(
@@ -101,11 +100,10 @@ export class Customer {
     const hasDocType = newDocType !== null;
     const hasDocNumber = newDocNumber !== null;
 
-    if (hasDocType !== hasDocNumber) {
-      throw new BadRequestError(
-        "api_errors.customers.document_pair_required",
-      );
-    }
+    // Si el par de documento queda incompleto tras el merge, no se guarda documento.
+    const mergedDocType = hasDocType === hasDocNumber ? newDocType : null;
+    const mergedDocNumber =
+      hasDocType === hasDocNumber ? newDocNumber : null;
 
     if (data.name !== undefined) this._name = data.name;
     if (data.phone !== undefined) this._phone = data.phone;
@@ -120,8 +118,8 @@ export class Customer {
 
     if (data.documentType !== undefined || data.documentNumber !== undefined) {
       this._document =
-        newDocType && newDocNumber
-          ? new CustomerDocument(newDocType, newDocNumber)
+        mergedDocType && mergedDocNumber
+          ? new CustomerDocument(mergedDocType, mergedDocNumber)
           : null;
     }
 

@@ -118,13 +118,9 @@ export const validators = {
   },
   credit_limit: {
     invalid: "El límite de crédito es inválido",
-    non_negative: "El límite de crédito debe ser mayor o igual a 0",
+    non_negative: "El límite de crédito debe ser mayor a 0",
   },
   contact: {
     required: "Debe proporcionar al menos un teléfono o email",
-  },
-  document: {
-    pair_required:
-      "El tipo y número de documento deben estar ambos presentes o ambos vacíos",
   },
 };
