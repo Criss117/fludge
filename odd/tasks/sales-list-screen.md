@@ -45,6 +45,8 @@ Files to edit:
 - [x] T6: check-types + i18n tests + prettier (see evidence below)
 - [x] T7: Persist created sale locally + invalidate sales list (user-authored, commit 9a94217)
 - [x] T8: Receipt dialog scroll end-to-end (commit 13ea808)
+- [x] T9: Pinned total footer + taller dialog (commit 176a199)
+- [x] T10: gesture-handler ScrollView in receipt dialog (user-authored, commit 6c68dbe)
 
 ## Verification evidence
 
