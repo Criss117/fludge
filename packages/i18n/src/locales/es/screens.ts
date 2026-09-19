@@ -124,6 +124,25 @@ export const screens = {
     title: "Ventas",
     no_more: "No hay más productos",
     not_found: "No se encontraron productos",
+    history: {
+      empty: "No hay ventas",
+      no_more: "No hay más ventas",
+    },
+    status: {
+      open: "Abierta",
+      completed: "Completada",
+      cancelled: "Cancelada",
+    },
+    card: {
+      customer: "Cliente",
+      walk_in: "Consumidor final",
+      items: "items",
+      tirilla: "Tirilla",
+      detail: "Detalle",
+    },
+    receipt: {
+      title: "Tirilla de venta",
+    },
     customer_selector: {
       title: "Cliente",
       walk_in: "Consumidor final",
