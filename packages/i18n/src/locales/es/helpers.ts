@@ -15,6 +15,7 @@ export const helpers = {
     search_members: "Buscar miembros por nombre, descripción...",
     search_groups: "Buscar grupos por nombre, descripción...",
     search_organizations: "Buscar organizaciones por nombre, descripción...",
+    search_customers: "Buscar clientes por nombre, documento, teléfono...",
     search_presentations: "Buscar presentaciones",
     zero: "0",
   },

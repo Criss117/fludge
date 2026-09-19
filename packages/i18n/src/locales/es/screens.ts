@@ -169,6 +169,13 @@ export const screens = {
     update: {
       title: "Editar cliente",
     },
+    card: {
+      debt: "Deuda",
+      credit_used: "Cupo utilizado",
+      pay: "Abonar",
+      phone: "Teléfono",
+      email: "Correo",
+    },
   },
   iam: {
     title: "IAM",

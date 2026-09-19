@@ -1,15 +1,5 @@
-import { Link } from "expo-router";
+import { CustomersScreen } from "@/modules/customer/presentation/screens/customers.screen";
 
 export default function DashboardCustomers() {
-  return (
-    <>
-      <Link
-        href={{
-          pathname: "/dashboard/customers/create",
-        }}
-      >
-        Creare
-      </Link>
-    </>
-  );
+  return <CustomersScreen />;
 }
