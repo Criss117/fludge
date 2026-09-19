@@ -43,10 +43,14 @@ Files to edit:
 - [x] T4: Rewrite sale.screen.tsx list (FlatList, infinite scroll, skeleton/empty/footer) (commit 502277c)
 - [x] T5: i18n keys (es) (commit 502277c)
 - [x] T6: check-types + i18n tests + prettier (see evidence below)
+- [x] T7: Persist created sale locally + invalidate sales list (user-authored, commit 9a94217)
+- [x] T8: Receipt dialog scroll end-to-end (commit 13ea808)
 
 ## Verification evidence
 
 - bun run check-types → apps/native pass (tsc -b)
+- bun run check-types → packages/api pass (tsc -b) (after user's create-sale.command changes)
+- bun run check-types → packages/client pass (tsc -b) (after user's use-sale.mutations changes)
 - bun run check-types → packages/i18n pass (tsc -b)
 - bun test packages/i18n → 4 pass / 0 fail (incl. protected division hashes — pre-existing drift on main fixed in commit 477c985)
 - bun test packages/sync → 2 pass / 0 fail (unaffected)
@@ -54,9 +58,10 @@ Files to edit:
 - RDD: off (user-owned switch) — no native review; ordinary checks only
 - Note: no test infra for native UI components in this repo; verification is typecheck + pattern conformance
 - Note: the user's in-flight POS rename was committed as its own work unit (2cdd6d7) so this feature's history stays clean
+- Note: dialog scroll uses style maxHeight "80%" on Dialog.Content (no arbitrary Tailwind values in repo) with a single inner ScrollView
 
 ## Delivery
 
-- Branch: feat/sales-list-screen (3 commits: 2cdd6d7 rename+fixes, 502277c feature, 477c985 i18n hashes) — NOT pushed
+- Branch: feat/sales-list-screen (6 commits: 2cdd6d7 rename+fixes, 502277c feature, 477c985 i18n hashes, 4920c80 docs, 9a94217 local sale persist, 13ea808 dialog scroll) — NOT pushed
 - Authored changed lines: feature ~330 (within 400 budget)
 - Strategy: ask-on-risk
