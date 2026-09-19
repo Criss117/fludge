@@ -21,16 +21,24 @@ export function useInvalidateSync() {
     });
   };
 
+  const invalidateSale = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["sync", "sale"],
+    });
+  };
+
   const invalidateSync = () => {
     invalidateIam();
     invalidateCatalog();
     invalidateCustomer();
+    invalidateSale();
   };
 
   return {
     invalidateIam,
     invalidateCatalog,
     invalidateCustomer,
+    invalidateSale,
     invalidateSync,
   };
 }
