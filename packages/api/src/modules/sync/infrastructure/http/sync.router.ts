@@ -3,6 +3,7 @@ import { syncContainer } from "@fludge/api/modules/sync/container";
 import { findSyncIamQuery } from "@fludge/api/modules/sync/application/queries/find-sync-iam.query";
 import { findSyncCatalogQuery } from "@fludge/api/modules/sync/application/queries/find-sync-catalog.query";
 import { findSyncCustomerQuery } from "@fludge/api/modules/sync/application/queries/find-sync-customer.query";
+import { findSyncSaleQuery } from "@fludge/api/modules/sync/application/queries/find-sync-sale.query";
 
 const TAGS = ["Sync"];
 
@@ -47,6 +48,21 @@ export const syncRouter = {
       .input(findSyncCustomerQuery)
       .handler(({ context, input }) =>
         syncContainer.queries.findSyncCustomerQuery.execute(
+          context.session.userId,
+          input,
+        ),
+      ),
+  },
+  sale: {
+    find: protectedProcedure
+      .route({
+        path: "/sync/sale",
+        method: "POST",
+        tags: TAGS,
+      })
+      .input(findSyncSaleQuery)
+      .handler(({ context, input }) =>
+        syncContainer.queries.findSyncSaleQuery.execute(
           context.session.userId,
           input,
         ),
