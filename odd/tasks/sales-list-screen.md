@@ -37,19 +37,26 @@ Files to edit:
 
 ## Checklist
 
-- [ ] T1: Fix stale route links (tabs header, charge summary)
-- [ ] T2: SaleCard + SaleStatusChip + skeleton
-- [ ] T3: SaleReceiptDialog (receipt-style, based on ChargeSaleSummarySection)
-- [ ] T4: Rewrite sale.screen.tsx list (FlatList, infinite scroll, skeleton/empty/footer)
-- [ ] T5: i18n keys (es)
-- [ ] T6: check-types + i18n tests + prettier
+- [x] T1: Fix stale route links (tabs header, charge summary) (commit 2cdd6d7 — included in the POS rename work unit)
+- [x] T2: SaleCard + SaleStatusChip + skeleton (commit 502277c)
+- [x] T3: SaleReceiptDialog (receipt-style, based on ChargeSaleSummarySection) (commit 502277c)
+- [x] T4: Rewrite sale.screen.tsx list (FlatList, infinite scroll, skeleton/empty/footer) (commit 502277c)
+- [x] T5: i18n keys (es) (commit 502277c)
+- [x] T6: check-types + i18n tests + prettier (see evidence below)
 
 ## Verification evidence
 
-- (pending)
+- bun run check-types → apps/native pass (tsc -b)
+- bun run check-types → packages/i18n pass (tsc -b)
+- bun test packages/i18n → 4 pass / 0 fail (incl. protected division hashes — pre-existing drift on main fixed in commit 477c985)
+- bun test packages/sync → 2 pass / 0 fail (unaffected)
+- prettier --check on all touched files → pass
+- RDD: off (user-owned switch) — no native review; ordinary checks only
+- Note: no test infra for native UI components in this repo; verification is typecheck + pattern conformance
+- Note: the user's in-flight POS rename was committed as its own work unit (2cdd6d7) so this feature's history stays clean
 
 ## Delivery
 
-- Branch: feat/sales-list-screen
-- Forecast authored lines: ~330 (within 400 budget)
+- Branch: feat/sales-list-screen (3 commits: 2cdd6d7 rename+fixes, 502277c feature, 477c985 i18n hashes) — NOT pushed
+- Authored changed lines: feature ~330 (within 400 budget)
 - Strategy: ask-on-risk
