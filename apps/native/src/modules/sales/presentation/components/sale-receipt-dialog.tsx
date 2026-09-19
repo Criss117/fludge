@@ -24,10 +24,13 @@ export function SaleReceiptDialog({ sale, onClose }: Props) {
     >
       <Dialog.Portal>
         <Dialog.Overlay className="bg-black/50" />
-        <Dialog.Content>
+        <Dialog.Content style={{ maxHeight: "80%" }}>
           <Dialog.Close className="absolute top-3 right-3 z-50" />
           {sale !== null ? (
-            <View className="gap-y-3">
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerClassName="gap-y-3 pb-2"
+            >
               {/* Encabezado tirilla */}
               <View className="items-center gap-y-1">
                 <Typography className="font-semibold">
@@ -79,40 +82,35 @@ export function SaleReceiptDialog({ sale, onClose }: Props) {
               </View>
 
               {/* Items */}
-              <ScrollView
-                className="max-h-72"
-                showsVerticalScrollIndicator={false}
-              >
-                <View className="gap-y-2">
-                  {sale.items.map((item) => (
-                    <View
-                      key={item.id}
-                      className="border-muted border-b-[0.5px] border-dashed py-2"
-                    >
-                      <View className="flex-row items-start justify-between gap-x-2">
-                        <Typography
-                          className="flex-1 font-semibold"
-                          style={{ fontSize: RECEIPT_FONT_SIZE }}
-                        >
-                          {item.name}
-                        </Typography>
-                        <Typography
-                          className="font-semibold"
-                          style={{ fontSize: RECEIPT_FONT_SIZE }}
-                        >
-                          {formatPrice(item.subtotal)}
-                        </Typography>
-                      </View>
+              <View className="gap-y-2">
+                {sale.items.map((item) => (
+                  <View
+                    key={item.id}
+                    className="border-muted border-b-[0.5px] border-dashed py-2"
+                  >
+                    <View className="flex-row items-start justify-between gap-x-2">
                       <Typography
-                        color="muted"
-                        style={{ fontSize: RECEIPT_FONT_SIZE - 1 }}
+                        className="flex-1 font-semibold"
+                        style={{ fontSize: RECEIPT_FONT_SIZE }}
                       >
-                        x{item.quantity} × {formatPrice(item.unitPrice)}
+                        {item.name}
+                      </Typography>
+                      <Typography
+                        className="font-semibold"
+                        style={{ fontSize: RECEIPT_FONT_SIZE }}
+                      >
+                        {formatPrice(item.subtotal)}
                       </Typography>
                     </View>
-                  ))}
-                </View>
-              </ScrollView>
+                    <Typography
+                      color="muted"
+                      style={{ fontSize: RECEIPT_FONT_SIZE - 1 }}
+                    >
+                      x{item.quantity} × {formatPrice(item.unitPrice)}
+                    </Typography>
+                  </View>
+                ))}
+              </View>
 
               <Separator className="-mx-6 border-dashed" />
 
@@ -121,7 +119,7 @@ export function SaleReceiptDialog({ sale, onClose }: Props) {
                 <Typography type="h5">{t("helpers.total")}</Typography>
                 <Typography type="h3">{formatPrice(sale.total)}</Typography>
               </View>
-            </View>
+            </ScrollView>
           ) : null}
         </Dialog.Content>
       </Dialog.Portal>
