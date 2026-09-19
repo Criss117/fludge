@@ -23,6 +23,12 @@ export function ChargeSaleScreen() {
   const router = useRouter();
   const [selectedCustomer, setSelectedCustomer] =
     useState<CustomerSummary | null>(null);
+  const [customerTab, setCustomerTab] = useState<"walk-in" | "customer">(
+    "walk-in"
+  );
+
+  const isCustomerTabActiveWithoutSelection =
+    customerTab === "customer" && !selectedCustomer;
 
   function handleSubmit() {
     mutationToast.showIsPendingToast("mutations.sale.create.is_pending");
@@ -68,6 +74,8 @@ export function ChargeSaleScreen() {
         <CustomerSelectorSection
           selectedCustomer={selectedCustomer}
           onSelectCustomer={setSelectedCustomer}
+          tab={customerTab}
+          onTabChange={setCustomerTab}
         />
         <AmountReceivedSection total={activeTicket.total} />
         <ChargeSaleSummarySection ticket={activeTicket} />
@@ -76,7 +84,7 @@ export function ChargeSaleScreen() {
         <View className="px-3">
           <Button
             className="flex-1"
-            isDisabled={createSale.isPending}
+            isDisabled={createSale.isPending || isCustomerTabActiveWithoutSelection}
             onPress={handleSubmit}
           >
             <MaterialIcons name="payments" size={20} className="text-eclipse" />

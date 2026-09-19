@@ -13,14 +13,17 @@ import { Typography } from "heroui-native/text";
 interface Props {
   selectedCustomer: CustomerSummary | null;
   onSelectCustomer: (customer: CustomerSummary | null) => void;
+  tab: "walk-in" | "customer";
+  onTabChange: (tab: "walk-in" | "customer") => void;
 }
 
 export function CustomerSelectorSection({
   selectedCustomer,
   onSelectCustomer,
+  tab,
+  onTabChange,
 }: Props) {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<"walk-in" | "customer">("walk-in");
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   return (
@@ -31,7 +34,7 @@ export function CustomerSelectorSection({
       <Card.Body>
         <Tabs
           value={tab}
-          onValueChange={(v) => setTab(v as "walk-in" | "customer")}
+          onValueChange={(value) => onTabChange(value as "walk-in" | "customer")}
         >
           <Tabs.List className="flex-1">
             <Tabs.Indicator />
