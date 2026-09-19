@@ -4,14 +4,15 @@ import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
 import { CustomerBalance } from "../value-objects/customer-balance";
 import type { CustomerSelect } from "@fludge/db/schema/customer.schema";
 import type { CustomerDocumentTypeEnum } from "@fludge/utils/enums/db-enums";
+import { BadRequestError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 
 interface CreateCustomer {
   organizationId: UUID;
-  cratedBy: UUID;
+  createdBy: UUID;
   name: string;
   phone: string | null;
   email: string | null;
-  creditLimit: number | null;
+  creditLimit: number;
   documentType: CustomerDocumentTypeEnum | null;
   documentNumber: string | null;
 }
@@ -33,6 +34,19 @@ export class Customer {
   ) {}
 
   public static create(data: CreateCustomer) {
+    if (!data.phone && !data.email) {
+      throw new BadRequestError("api_errors.customers.contact_required");
+    }
+
+    const hasDocType = data.documentType !== null;
+    const hasDocNumber = data.documentNumber !== null;
+
+    if (hasDocType !== hasDocNumber) {
+      throw new BadRequestError(
+        "api_errors.customers.document_pair_required",
+      );
+    }
+
     const now = new Date();
 
     const customerDocument =
@@ -43,7 +57,7 @@ export class Customer {
     return new Customer(
       UUID.generate(),
       data.organizationId,
-      data.cratedBy,
+      data.createdBy,
       data.name,
       data.phone,
       data.email,

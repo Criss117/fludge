@@ -114,6 +114,17 @@ export const api_errors = {
       not_found: "No se encontró el item",
     },
   },
+  customers: {
+    isr_on_find: "Error al obtener el cliente",
+    isr_on_save: "Error al guardar el cliente",
+    isr_on_delete: "Error al eliminar el cliente",
+    not_found: "No se encontró el cliente",
+    already_exists: "El cliente ya existe",
+    document_taken: "El documento ya está en uso",
+    contact_required: "Debe proporcionar al menos un teléfono o email",
+    document_pair_required:
+      "El tipo y número de documento deben estar ambos presentes o ambos vacíos",
+  },
   sync: {
     iam: {
       isr_on_find_organizations: "Error al obtener las organizaciones",

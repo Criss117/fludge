@@ -108,4 +108,23 @@ export const validators = {
     invalid: "La cantidad es inválida",
     positive: "La cantidad debe ser mayor a 0",
   },
+  document_type: {
+    invalid: "El tipo de documento es inválido",
+  },
+  document_number: {
+    invalid: "El número de documento es inválido",
+    min_length: "El número de documento es demasiado corto",
+    max_length: "El número de documento es muy largo",
+  },
+  credit_limit: {
+    invalid: "El límite de crédito es inválido",
+    non_negative: "El límite de crédito debe ser mayor o igual a 0",
+  },
+  contact: {
+    required: "Debe proporcionar al menos un teléfono o email",
+  },
+  document: {
+    pair_required:
+      "El tipo y número de documento deben estar ambos presentes o ambos vacíos",
+  },
 };

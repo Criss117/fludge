@@ -1,7 +1,7 @@
 export class CustomerBalance {
   constructor(
     private readonly _balance: number,
-    private readonly _creditLimit: number | null,
+    private readonly _creditLimit: number,
   ) {}
 
   public get value() {

@@ -105,4 +105,23 @@ export const permissions = {
       description: "Puede eliminar ventas",
     },
   },
+  customers: {
+    name: "Clientes",
+    create: {
+      name: "Crear cliente",
+      description: "Puede crear clientes",
+    },
+    read: {
+      name: "Leer cliente",
+      description: "Puede leer clientes",
+    },
+    update: {
+      name: "Actualizar cliente",
+      description: "Puede actualizar clientes",
+    },
+    delete: {
+      name: "Eliminar cliente",
+      description: "Puede eliminar clientes",
+    },
+  },
 };

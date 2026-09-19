@@ -1,0 +1,116 @@
+import { TransactionalRepository } from "@fludge/api/modules/shared/infrastructure/repositories/transactional-repository";
+import type { DatabaseService, TransactionService } from "@fludge/db";
+import { customer } from "@fludge/db/schema/customer.schema";
+import { err, ok, tryCatch } from "@fludge/utils/trycatch";
+import { and, eq } from "drizzle-orm";
+import { Customer } from "@fludge/api/modules/customer/domain/entities/customer.entity";
+
+type Options = {
+  tx?: TransactionService;
+};
+
+export class CustomerRepository extends TransactionalRepository {
+  constructor(private readonly db: DatabaseService) {
+    super(db);
+  }
+
+  public async findById(organizationId: string, customerId: string) {
+    const [rows, error] = await tryCatch(
+      this.db
+        .select()
+        .from(customer)
+        .where(
+          and(
+            eq(customer.id, customerId),
+            eq(customer.organizationId, organizationId),
+          ),
+        )
+        .limit(1),
+    );
+
+    if (error) return err(error);
+
+    const data = rows.at(0);
+
+    if (!data) return ok(null);
+
+    return ok(Customer.reconstitute(data));
+  }
+
+  public async findByDocument(
+    organizationId: string,
+    documentNumber: string,
+  ) {
+    const [rows, error] = await tryCatch(
+      this.db
+        .select()
+        .from(customer)
+        .where(
+          and(
+            eq(customer.organizationId, organizationId),
+            eq(customer.documentNumber, documentNumber),
+          ),
+        )
+        .limit(1),
+    );
+
+    if (error) return err(error);
+
+    const data = rows.at(0);
+
+    if (!data) return ok(null);
+
+    return ok(Customer.reconstitute(data));
+  }
+
+  private async saveContent(customerEntity: Customer, options: Options) {
+    const values = customerEntity.values;
+
+    const [, errInsert] = await tryCatch(
+      (options.tx ?? this.db)
+        .insert(customer)
+        .values({
+          id: values.id,
+          name: values.name,
+          phone: values.phone,
+          email: values.email,
+          creditLimit: values.creditLimit,
+          balance: values.balance,
+          documentType: values.documentType,
+          documentNumber: values.documentNumber,
+          organizationId: values.organizationId,
+          createdBy: values.createdBy,
+          status: values.status,
+          createdAt: values.createdAt,
+          updatedAt: values.updatedAt,
+        })
+        .onConflictDoUpdate({
+          target: customer.id,
+          set: {
+            name: values.name,
+            phone: values.phone,
+            email: values.email,
+            creditLimit: values.creditLimit,
+            documentType: values.documentType,
+            documentNumber: values.documentNumber,
+            status: values.status,
+            updatedAt: values.updatedAt,
+          },
+        }),
+    );
+
+    if (errInsert) throw errInsert;
+  }
+
+  public async save(customerEntity: Customer, options?: Options) {
+    if (options?.tx) {
+      return tryCatch(this.saveContent(customerEntity, options));
+    }
+
+    const transaction = this.db.transaction(async (tx) => {
+      await this.saveContent(customerEntity, { tx });
+    });
+
+    return tryCatch(transaction);
+  }
+}
