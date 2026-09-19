@@ -49,23 +49,28 @@ export function ChargeSaleScreen() {
     mutationToast.showIsPendingToast("mutations.sale.create.is_pending");
     const items = activeTicket.products
       .map((p) => {
-        if (p.type === "adHoc") {
+        if (p.type === "catalog") {
           return p.presentations.map((p) => ({
-            name: p.name,
+            presentationId: p.presentationId!,
             price: p.priceSale,
             quantity: p.quantity,
-            presentationId: undefined,
           }));
         }
 
         return p.presentations.map((p) => ({
-          presentationId: p.id,
+          name: p.name,
           price: p.priceSale,
           quantity: p.quantity,
-          name: undefined,
         }));
       })
       .flat();
+
+    console.log({
+      customerId: selectedCustomer?.id,
+      paymentType: effectivePaymentType,
+      notes: "",
+      items: items,
+    });
 
     createSale.mutate(
       {

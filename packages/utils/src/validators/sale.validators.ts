@@ -27,12 +27,10 @@ export const createSaleItemValidator = z.union([
     quantity: quantitySchema,
     price: priceSchema,
     name: nameSchema,
-    presentationId: z.undefined(),
   }),
   z.object({
     quantity: quantitySchema,
     price: priceSchema,
-    name: z.undefined(),
     presentationId: uuidSchema,
   }),
 ]);

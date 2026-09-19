@@ -61,7 +61,7 @@ export class CreateSaleCommand {
     }[] = [];
 
     for (const item of cmd.items) {
-      if (item.presentationId !== undefined) {
+      if ("presentationId" in item) {
         itemsWithPresentationId.push({
           presentationId: item.presentationId,
           quantity: item.quantity,
@@ -100,7 +100,7 @@ export class CreateSaleCommand {
     }
 
     const saleItems: CreateSaleItem[] = cmd.items.map((item) => {
-      if (item.presentationId === undefined) {
+      if ("name" in item) {
         return {
           organizationId: activeOrganization.id,
           productId: null,
