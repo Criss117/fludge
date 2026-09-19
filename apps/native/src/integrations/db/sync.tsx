@@ -5,6 +5,7 @@ import { Text } from "@/modules/shared/components/app-text";
 import { useSyncIam } from "@fludge/client/application/sync/use-sync-iam";
 import { useSyncCatalog } from "@fludge/client/application/sync/use-sync-catalog";
 import { useSyncCustomer } from "@fludge/client/application/sync/use-sync-customer";
+import { useSyncSale } from "@fludge/client/application/sync/use-sync-sale";
 
 function SyncIamSuspense({ children }: { children: React.ReactNode }) {
   const { data } = useSyncIam();
@@ -45,6 +46,19 @@ function SyncCustomerSuspense({ children }: { children: React.ReactNode }) {
   return children;
 }
 
+function SyncSaleSuspense({ children }: { children: React.ReactNode }) {
+  const { data } = useSyncSale();
+
+  if (data.error)
+    return (
+      <View>
+        <Text>Retrying</Text>
+      </View>
+    );
+
+  return children;
+}
+
 export function SyncDatabase({ children }: { children: React.ReactNode }) {
   return (
     <Suspense fallback={<LoadingScreen message="app.loading_iam" />}>
@@ -52,7 +66,13 @@ export function SyncDatabase({ children }: { children: React.ReactNode }) {
         <Suspense fallback={<LoadingScreen message="app.loading_catalog" />}>
           <SyncCatalogSuspense>
             <Suspense fallback={<LoadingScreen message="app.loading_catalog" />}>
-              <SyncCustomerSuspense>{children}</SyncCustomerSuspense>
+              <SyncCustomerSuspense>
+                <Suspense
+                  fallback={<LoadingScreen message="app.loading_catalog" />}
+                >
+                  <SyncSaleSuspense>{children}</SyncSaleSuspense>
+                </Suspense>
+              </SyncCustomerSuspense>
             </Suspense>
           </SyncCatalogSuspense>
         </Suspense>
