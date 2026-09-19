@@ -39,17 +39,20 @@ Files to edit:
 - [x] T2: Implement `NativeSaleRepository` (paginated findAll, transactional save) (commit 37121c0)
 - [x] T3: Wire containers (client `generateSaleContainer` dep + native `sale.container.ts`) (commit 37121c0)
 - [x] T4: check-types verification (see evidence below)
+- [x] T5: `useFindSales` infinite query + sales container nested under `repositories` (user-authored; flat consumers migrated by orchestrator) (commit 5b870de)
 
 ## Verification evidence
 
 - bun run check-types → packages/client pass (tsc -b)
 - bun run check-types → apps/native pass (tsc -b)
+- bun test packages/sync → 2 pass / 0 fail (unaffected)
 - prettier --check on all touched files → pass
 - RDD: off (user-owned switch) — no native review; ordinary checks only
 - No repository-level DB test harness exists for native repos (DatabaseService = expo-sqlite, not runnable under bun); verification is typecheck + pattern conformance, consistent with the rest of the repo
+- Container restructure to `repositories.*` broke flat consumers: fixed `use-sync-sale.ts` and `use-ticket.store.ts` accesses (root cause of the ~100 TS7006 cascade)
 
 ## Delivery
 
-- Branch: feat/sales-local-repository (commit 37121c0, not pushed)
-- Authored changed lines: ~120 (within 400 budget)
+- Branch: feat/sales-local-repository → merged to main (ff) → pushed to origin/main (f452feb..5b870de)
+- Authored changed lines: ~236 total (within 400 budget)
 - Strategy: ask-on-risk
