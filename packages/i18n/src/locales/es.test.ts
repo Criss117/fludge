@@ -3,16 +3,21 @@ import { describe, expect, it } from "bun:test";
 import { es } from "./es";
 
 const protectedDivisionHashes = {
-  api_errors: "88e14b28632d74bc011b2eeba81797acbe574d694f5239c481350ae8b5a3bba5",
-  validators: "bc608b5f9371cd0d479b0311d5b8e7a4da72b3c537fce1eab564619d9d2998a6",
-  permissions: "07b464b19a7e08131f03e60fa58dcfbf655e651d925366fcbedb3506c638436d",
+  api_errors:
+    "d541495ba561115874e4352c85d30b18cd1335cc1382be7b3755fb5fbae58eba",
+  validators:
+    "f4d87bf601bfdf328cfa7c9ab26d9243627337d41902a67b4cb6481ba6e38144",
+  permissions:
+    "11c9dcf79ef77d75afcdafa501170237a6f77691bdf21ac645e09f24132d2d3e",
 } as const;
 
 function getTranslation(path: string): unknown {
-  return path.split(".").reduce<unknown>(
-    (value, segment) => (value as Record<string, unknown>)[segment],
-    es
-  );
+  return path
+    .split(".")
+    .reduce<unknown>(
+      (value, segment) => (value as Record<string, unknown>)[segment],
+      es,
+    );
 }
 
 describe("Spanish dictionary native contracts", () => {
