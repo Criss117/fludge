@@ -122,6 +122,7 @@ export const api_errors = {
     already_exists: "El cliente ya existe",
     document_taken: "El documento ya está en uso",
     contact_required: "Debe proporcionar al menos un teléfono o email",
+    credit_limit_exceeded: "El cupo de crédito del cliente es insuficiente",
   },
   sync: {
     iam: {

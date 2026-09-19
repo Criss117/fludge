@@ -35,7 +35,7 @@ export function ChargeSaleScreen() {
     createSale.mutate(
       {
         customerId: selectedCustomer?.id ?? "",
-        paymentType: "cash",
+        paymentType: "credit",
         notes: "",
         items: activeTicket.products.flatMap((p) =>
           p.presentations.map((pp) => ({
@@ -84,7 +84,9 @@ export function ChargeSaleScreen() {
         <View className="px-3">
           <Button
             className="flex-1"
-            isDisabled={createSale.isPending || isCustomerTabActiveWithoutSelection}
+            isDisabled={
+              createSale.isPending || isCustomerTabActiveWithoutSelection
+            }
             onPress={handleSubmit}
           >
             <MaterialIcons name="payments" size={20} className="text-eclipse" />

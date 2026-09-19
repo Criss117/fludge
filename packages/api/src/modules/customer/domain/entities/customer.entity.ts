@@ -132,6 +132,23 @@ export class Customer {
     return this;
   }
 
+  public charge(amount: number) {
+    const { balance, creditLimit } = this._balance.value;
+
+    const newBalance = balance + amount;
+
+    if (creditLimit > 0 && newBalance > creditLimit) {
+      throw new BadRequestError(
+        "api_errors.customers.credit_limit_exceeded",
+      );
+    }
+
+    this._balance = new CustomerBalance(newBalance, creditLimit);
+    this._updatedAt = new Date();
+
+    return this;
+  }
+
   public static reconstitute(data: CustomerSelect) {
     const customerDocument =
       data.documentType && data.documentNumber

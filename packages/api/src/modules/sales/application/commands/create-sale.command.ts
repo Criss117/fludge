@@ -5,9 +5,10 @@ import type { Organization } from "@fludge/api/modules/iam/organization/domain/e
 import { UUID } from "@fludge/utils/uuid";
 import type { SaleSequenceRepository } from "@fludge/api/modules/sales/infrastructure/repositories/sale-sequense.repository";
 import { Sale } from "@fludge/api/modules/sales/domain/entities/sale.entity";
-import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
+import { InternalServerError, NotFoundError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 import type { ProductRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product.repository";
 import type { SaleProductService } from "@fludge/api/modules/catalog/products/application/services/sale-product.service";
+import type { CustomerRepository } from "@fludge/api/modules/customer/infrastructure/repositories/customer.repository";
 
 export const createSaleCommand = createSaleValidator;
 
@@ -19,6 +20,7 @@ export class CreateSaleCommand {
     private readonly saleSequenceRepository: SaleSequenceRepository,
     private readonly productRepository: ProductRepository,
     private readonly saleProductService: SaleProductService,
+    private readonly customerRepository: CustomerRepository,
   ) {}
 
   public async execute(
@@ -45,6 +47,23 @@ export class CreateSaleCommand {
       activeOrganization,
       items,
     );
+
+    // La búsqueda del cliente es una lectura: no va dentro de la transacción.
+    const [customer, errFindCustomer] = cmd.customerId
+      ? await this.customerRepository.findById(
+          activeOrganization.id.toString(),
+          cmd.customerId,
+        )
+      : [null, null];
+
+    if (errFindCustomer)
+      throw new InternalServerError(
+        errFindCustomer,
+        "api_errors.customers.isr_on_find",
+      );
+
+    if (cmd.customerId && !customer)
+      throw new NotFoundError("api_errors.customers.not_found");
 
     const [newSale, errTransaction] = await this.saleRepository.transaction(
       async (tx) => {
@@ -89,6 +108,18 @@ export class CreateSaleCommand {
           if (errToSaveProducts) throw errToSaveProducts;
         }
 
+        // Solo las ventas a crédito cargan el saldo del cliente.
+        if (customer && cmd.paymentType === "credit") {
+          customer.charge(sale.values.total);
+
+          const [, errSavingCustomer] = await this.customerRepository.save(
+            customer,
+            { tx },
+          );
+
+          if (errSavingCustomer) throw errSavingCustomer;
+        }
+
         return sale;
       },
     );
@@ -102,6 +133,7 @@ export class CreateSaleCommand {
     return {
       sale: newSale.values,
       products: productsToSave.map((p) => p.values),
+      customer: customer?.values ?? null,
     };
   }
 }

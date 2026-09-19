@@ -5,6 +5,7 @@ import { SaleItemRepository } from "./infrastructure/repositories/sale-item.repo
 import { CreateSaleCommand } from "./application/commands/create-sale.command";
 import { productContainer } from "../catalog/products/container";
 import { FindAllSalesQuery } from "./application/queries/find-all-sales.query";
+import { customerContainer } from "../customer/container";
 
 // Repositories
 const saleSequenceRepository = new SaleSequenceRepository(databaseService);
@@ -17,6 +18,7 @@ const createSaleCommand = new CreateSaleCommand(
   saleSequenceRepository,
   productContainer.repositories.productRepository,
   productContainer.services.saleProductService,
+  customerContainer.repositories.customerRepository,
 );
 
 // Queries
