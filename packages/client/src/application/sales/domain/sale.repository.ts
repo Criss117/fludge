@@ -1,0 +1,18 @@
+import type {
+  LocalSaleItemSelect,
+  LocalSaleSelect,
+} from "@fludge/db/local-schemas/shared.schema";
+import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
+
+export type SaleDetail = LocalSaleSelect & {
+  items: LocalSaleItemSelect[];
+};
+
+export interface SaleRepository {
+  findAll(
+    organizationId: string,
+    cursor: Cursor,
+  ): Promise<PaginatedResponse<SaleDetail>>;
+
+  save(sale: SaleDetail | SaleDetail[]): Promise<void>;
+}
