@@ -65,10 +65,12 @@ export function SyncDatabase({ children }: { children: React.ReactNode }) {
       <SyncIamSuspense>
         <Suspense fallback={<LoadingScreen message="app.loading_catalog" />}>
           <SyncCatalogSuspense>
-            <Suspense fallback={<LoadingScreen message="app.loading_catalog" />}>
+            <Suspense
+              fallback={<LoadingScreen message="app.loading_customer" />}
+            >
               <SyncCustomerSuspense>
                 <Suspense
-                  fallback={<LoadingScreen message="app.loading_catalog" />}
+                  fallback={<LoadingScreen message="app.loading_sale" />}
                 >
                   <SyncSaleSuspense>{children}</SyncSaleSuspense>
                 </Suspense>

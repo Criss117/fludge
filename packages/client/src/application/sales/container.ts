@@ -1,5 +1,5 @@
 import type { ClientSyncSaleRepository } from "@fludge/sync/repositories/sale/client-sync-sale.repository";
-import type { LocalTicketRepository } from "./domain/repositories/local-ticket.repository";
+import type { LocalTicketRepository } from "./domain/local-ticket.repository";
 
 type Deps = {
   localTicketRepository: LocalTicketRepository;

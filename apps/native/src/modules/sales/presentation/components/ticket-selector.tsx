@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useTicketStore } from "@fludge/client/application/sales/store/use-ticket.store";
-import { Ticket } from "@fludge/client/application/sales/domain/repositories/local-ticket.repository";
+import { Ticket } from "@fludge/client/application/sales/domain/local-ticket.repository";
 
 type TicketOption = { label: string; value: string };
 

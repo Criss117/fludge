@@ -3,7 +3,7 @@ import type {
   LocalTicketRepository,
   Ticket,
   TicketProduct,
-} from "@fludge/client/application/sales/domain/repositories/local-ticket.repository";
+} from "@fludge/client/application/sales/domain/local-ticket.repository";
 import type {
   TicketProductPresentationSelect,
   TicketProductSelect,

@@ -8,6 +8,9 @@ export const app = {
   loading_database: "Cargando base de datos...",
   loading_iam: "Obteniendo datos de la IAM...",
   loading_catalog: "Cargando catálogo...",
+  loading_customer: "Cargando clientes...",
+  loading_sale: "Cargando ventas...",
+  loading_ticket: "Cargando ticket...",
 
   errors: {
     fatal: {

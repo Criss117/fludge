@@ -10,7 +10,7 @@ import type {
   AddTicketProduct,
   Ticket,
   TicketProduct,
-} from "../domain/repositories/local-ticket.repository";
+} from "../domain/local-ticket.repository";
 import { useMemo } from "react";
 
 function getTicketProductStockQuantity(product: TicketProduct): number {

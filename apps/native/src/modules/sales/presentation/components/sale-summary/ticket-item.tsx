@@ -5,7 +5,7 @@ import type { TranslationKey } from "@fludge/i18n/index";
 import type {
   TicketProduct,
   TicketProductPresentation,
-} from "@fludge/client/application/sales/domain/repositories/local-ticket.repository";
+} from "@fludge/client/application/sales/domain/local-ticket.repository";
 import type { useTicketStore } from "@fludge/client/application/sales/store/use-ticket.store";
 import { formatPrice } from "@fludge/utils/currency";
 import { useBottomSheetAwareHandlers } from "heroui-native";

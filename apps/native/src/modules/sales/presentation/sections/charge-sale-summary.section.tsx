@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { Ticket } from "@fludge/client/application/sales/domain/repositories/local-ticket.repository";
+import type { Ticket } from "@fludge/client/application/sales/domain/local-ticket.repository";
 import { formatPrice } from "@fludge/utils/currency";
 import { Card } from "heroui-native/card";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
@@ -138,7 +138,9 @@ export function ChargeSaleSummarySection({ ticket }: Props) {
                     className="text-right"
                     style={{ fontSize: RECEIPT_FONT_SIZE - 1 }}
                   >
-                    {formatPrice(presentation.priceSale * presentation.quantity)}
+                    {formatPrice(
+                      presentation.priceSale * presentation.quantity
+                    )}
                   </Typography>
                 </View>
               ))}
@@ -151,7 +153,7 @@ export function ChargeSaleSummarySection({ ticket }: Props) {
                 >
                   {product.presentations.reduce(
                     (sum, p) => sum + p.quantity,
-                    0,
+                    0
                   )}{" "}
                   {t("helpers.items", "items")}
                 </Typography>
@@ -162,8 +164,8 @@ export function ChargeSaleSummarySection({ ticket }: Props) {
                   {formatPrice(
                     product.presentations.reduce(
                       (sum, p) => sum + p.priceSale * p.quantity,
-                      0,
-                    ),
+                      0
+                    )
                   )}
                 </Typography>
               </View>
