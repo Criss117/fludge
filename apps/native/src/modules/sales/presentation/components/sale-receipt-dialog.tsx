@@ -4,7 +4,8 @@ import { Dialog } from "heroui-native/dialog";
 import { Separator } from "heroui-native/separator";
 import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 // Estilo tirilla (recibo de impresión), basado en ChargeSaleSummarySection.
 const RECEIPT_FONT_SIZE = 13;
