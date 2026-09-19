@@ -65,7 +65,12 @@ export function useChargeSale() {
 
   function getEffectiveState() {
     return {
-      paymentType: state.customerTab === "walk-in" ? "cash" : state.paymentType,
+      paymentType:
+        state.customerTab === "walk-in"
+          ? "cash"
+          : state.selectedCustomer
+            ? state.paymentType
+            : "cash",
       selectedCustomer:
         state.customerTab === "customer" ? state.selectedCustomer : null,
     };

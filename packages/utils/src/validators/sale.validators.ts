@@ -35,16 +35,11 @@ export const createSaleItemValidator = z.union([
   }),
 ]);
 
-export const createSaleValidator = z
-  .object({
-    customerId: uuidSchema.optional(),
-    paymentType: paymentTypeSchema,
-    notes: notesSchema,
-    items: z.array(createSaleItemValidator).min(1, {
-      error: getI18nKey("validators.array.sale_items.at_least_one"),
-    }),
-  })
-  .refine((data) => data.paymentType === "credit" && data.customerId !== null, {
-    message: getI18nKey("validators.customers.required"),
-    path: ["customerId"],
-  });
+export const createSaleValidator = z.object({
+  customerId: uuidSchema.optional(),
+  paymentType: paymentTypeSchema,
+  notes: notesSchema,
+  items: z.array(createSaleItemValidator).min(1, {
+    error: getI18nKey("validators.array.sale_items.at_least_one"),
+  }),
+});

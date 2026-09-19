@@ -7,7 +7,7 @@ import { Suspense } from "react";
 export default function DashboardSales() {
   return (
     <Suspense fallback={<SalesScreenSkeleton />}>
-      <SalesScreen />;
+      <SalesScreen />
     </Suspense>
   );
 }

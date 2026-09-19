@@ -15,6 +15,7 @@ import { ProductPresentationNotFoundException } from "@fludge/api/modules/catalo
 import type { CustomerRepository } from "@fludge/api/modules/customer/infrastructure/repositories/customer.repository";
 import type { CreateSaleItem } from "@fludge/api/modules/sales/domain/entities/sale-item.entity";
 import type { SaleItemSnapshotValue } from "@fludge/api/modules/sales/domain/value-objects/sale-item-snapshot";
+import type { Customer } from "@fludge/api/modules/customer/domain/entities/customer.entity";
 
 export const createSaleCommand = createSaleValidator;
 
@@ -34,25 +35,33 @@ export class CreateSaleCommand {
     loggedUserId: string,
     cmd: CMD,
   ) {
+    console.log(cmd);
+
     const loggerMember = activeOrganization.members.getMemberByUserId(
       UUID.fromString(loggedUserId),
     )!;
 
-    const [customer, errFindCustomer] = cmd.customerId
-      ? await this.customerRepository.findById(
-          activeOrganization.id.toString(),
-          cmd.customerId,
-        )
-      : [null, null];
+    let customer: Customer | null = null;
 
-    if (errFindCustomer)
-      throw new InternalServerError(
-        errFindCustomer,
-        "api_errors.customers.isr_on_find",
-      );
+    if (cmd.customerId) {
+      const [customerFind, errFindCustomer] = cmd.customerId
+        ? await this.customerRepository.findById(
+            activeOrganization.id.toString(),
+            cmd.customerId,
+          )
+        : [null, null];
 
-    if (cmd.customerId && !customer)
-      throw new NotFoundError("api_errors.customers.not_found");
+      if (errFindCustomer)
+        throw new InternalServerError(
+          errFindCustomer,
+          "api_errors.customers.isr_on_find",
+        );
+
+      if (!customerFind)
+        throw new NotFoundError("api_errors.customers.not_found");
+
+      customer = customerFind!;
+    }
 
     const itemsWithPresentationId: {
       presentationId: string;

@@ -46,6 +46,11 @@ export function ChargeSaleScreen() {
 
     const { paymentType, selectedCustomer } = getEffectiveState();
 
+    console.log({
+      customerId: selectedCustomer?.id,
+      paymentType: paymentType,
+    });
+
     createSale.mutate(
       {
         customerId: selectedCustomer?.id,
