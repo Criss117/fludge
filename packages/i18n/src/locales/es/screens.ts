@@ -119,6 +119,11 @@ export const screens = {
       select_customer: "Seleccionar cliente",
       select_title: "Seleccionar cliente",
     },
+    payment_type: {
+      title: "Tipo de pago",
+      cash: "Efectivo",
+      credit: "Crédito",
+    },
     ticket: {
       select_label: "Seleccionar ticket",
       create: "Nuevo ticket",

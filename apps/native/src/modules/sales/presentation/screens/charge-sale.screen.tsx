@@ -12,6 +12,7 @@ import type { TranslationKey } from "@fludge/i18n/index";
 import { useRouter } from "expo-router";
 import { useTicketStore } from "@fludge/client/application/sales/store/use-ticket.store";
 import { CustomerSelectorSection } from "../sections/customer-selector.section";
+import { PaymentTypeSection } from "../sections/payment-type.section";
 import { useState } from "react";
 import type { CustomerSummary } from "@fludge/client/application/customer/domain/customer.repository";
 
@@ -21,26 +22,40 @@ export function ChargeSaleScreen() {
   const mutationToast = useMutationToast("SALES_CHARGE");
   const createSale = useCreateSaleMutation();
   const router = useRouter();
+
   const [selectedCustomer, setSelectedCustomer] =
     useState<CustomerSummary | null>(null);
   const [customerTab, setCustomerTab] = useState<"walk-in" | "customer">(
     "walk-in"
   );
+  const [paymentType, setPaymentType] = useState<"cash" | "credit">("cash");
 
+  const isWalkIn = customerTab === "walk-in";
   const isCustomerTabActiveWithoutSelection =
     customerTab === "customer" && !selectedCustomer;
+
+  // Walk-in siempre paga en efectivo: el tipo de pago queda fijo y oculto.
+  const effectivePaymentType = isWalkIn ? "cash" : paymentType;
+
+  function handleSelectCustomerTab(tab: "walk-in" | "customer") {
+    setCustomerTab(tab);
+
+    if (tab === "walk-in") {
+      setPaymentType("cash");
+    }
+  }
 
   function handleSubmit() {
     mutationToast.showIsPendingToast("mutations.sale.create.is_pending");
     createSale.mutate(
       {
         customerId: selectedCustomer?.id ?? "",
-        paymentType: "credit",
+        paymentType: effectivePaymentType,
         notes: "",
         items: activeTicket.products.flatMap((p) =>
           p.presentations.map((pp) => ({
             quantity: pp.quantity,
-            name: pp.name,
+            name: p.name + ":" + pp.name,
             price: pp.priceSale,
             presentationId: pp.presentationId ?? "",
           }))
@@ -75,8 +90,14 @@ export function ChargeSaleScreen() {
           selectedCustomer={selectedCustomer}
           onSelectCustomer={setSelectedCustomer}
           tab={customerTab}
-          onTabChange={setCustomerTab}
+          onTabChange={handleSelectCustomerTab}
         />
+        {!isWalkIn && (
+          <PaymentTypeSection
+            paymentType={paymentType}
+            onPaymentTypeChange={setPaymentType}
+          />
+        )}
         <AmountReceivedSection total={activeTicket.total} />
         <ChargeSaleSummarySection ticket={activeTicket} />
       </ScrollView>
