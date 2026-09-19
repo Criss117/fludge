@@ -35,17 +35,21 @@ Files to edit:
 
 ## Checklist
 
-- [ ] T1: Create `SaleRepository` interface (`SaleDetail` = LocalSaleSelect + items; findAll sin filtros; save)
-- [ ] T2: Implement `NativeSaleRepository` (paginated findAll, transactional save)
-- [ ] T3: Wire containers (client `generateSaleContainer` dep + native `sale.container.ts`)
-- [ ] T4: check-types verification
+- [x] T1: Create `SaleRepository` interface (`SaleDetail` = LocalSaleSelect + items; findAll sin filtros; save) (commit 37121c0)
+- [x] T2: Implement `NativeSaleRepository` (paginated findAll, transactional save) (commit 37121c0)
+- [x] T3: Wire containers (client `generateSaleContainer` dep + native `sale.container.ts`) (commit 37121c0)
+- [x] T4: check-types verification (see evidence below)
 
 ## Verification evidence
 
-- (pending)
+- bun run check-types → packages/client pass (tsc -b)
+- bun run check-types → apps/native pass (tsc -b)
+- prettier --check on all touched files → pass
+- RDD: off (user-owned switch) — no native review; ordinary checks only
+- No repository-level DB test harness exists for native repos (DatabaseService = expo-sqlite, not runnable under bun); verification is typecheck + pattern conformance, consistent with the rest of the repo
 
 ## Delivery
 
-- Branch: feat/sales-local-repository
-- Forecast authored lines: ~120 (within 400 budget)
+- Branch: feat/sales-local-repository (commit 37121c0, not pushed)
+- Authored changed lines: ~120 (within 400 budget)
 - Strategy: ask-on-risk
