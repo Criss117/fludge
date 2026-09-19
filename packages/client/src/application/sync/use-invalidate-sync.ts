@@ -15,10 +15,22 @@ export function useInvalidateSync() {
     });
   };
 
+  const invalidateCustomer = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["sync", "customer"],
+    });
+  };
+
   const invalidateSync = () => {
     invalidateIam();
     invalidateCatalog();
+    invalidateCustomer();
   };
 
-  return { invalidateIam, invalidateCatalog, invalidateSync };
+  return {
+    invalidateIam,
+    invalidateCatalog,
+    invalidateCustomer,
+    invalidateSync,
+  };
 }

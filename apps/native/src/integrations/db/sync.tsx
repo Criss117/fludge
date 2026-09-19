@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { Text } from "@/modules/shared/components/app-text";
 import { useSyncIam } from "@fludge/client/application/sync/use-sync-iam";
 import { useSyncCatalog } from "@fludge/client/application/sync/use-sync-catalog";
+import { useSyncCustomer } from "@fludge/client/application/sync/use-sync-customer";
 
 function SyncIamSuspense({ children }: { children: React.ReactNode }) {
   const { data } = useSyncIam();
@@ -31,12 +32,29 @@ function SyncCatalogSuspense({ children }: { children: React.ReactNode }) {
   return children;
 }
 
+function SyncCustomerSuspense({ children }: { children: React.ReactNode }) {
+  const { data } = useSyncCustomer();
+
+  if (data.error)
+    return (
+      <View>
+        <Text>Retrying</Text>
+      </View>
+    );
+
+  return children;
+}
+
 export function SyncDatabase({ children }: { children: React.ReactNode }) {
   return (
     <Suspense fallback={<LoadingScreen message="app.loading_iam" />}>
       <SyncIamSuspense>
         <Suspense fallback={<LoadingScreen message="app.loading_catalog" />}>
-          <SyncCatalogSuspense>{children}</SyncCatalogSuspense>
+          <SyncCatalogSuspense>
+            <Suspense fallback={<LoadingScreen message="app.loading_catalog" />}>
+              <SyncCustomerSuspense>{children}</SyncCustomerSuspense>
+            </Suspense>
+          </SyncCatalogSuspense>
         </Suspense>
       </SyncIamSuspense>
     </Suspense>
