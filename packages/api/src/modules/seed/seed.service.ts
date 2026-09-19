@@ -1,6 +1,7 @@
 import type { AuthService } from "@fludge/auth";
 import type { DatabaseService } from "@fludge/db";
 import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/organization.repository";
+import type { CustomerRepository } from "@fludge/api/modules/customer/infrastructure/repositories/customer.repository";
 import {
   group,
   groupMember,
@@ -30,6 +31,8 @@ import { Product } from "../catalog/products/domain/entities/product.entity";
 import type { ProductRepository } from "../catalog/products/infrastructure/repositories/product.repository";
 import { PERMISSIONS } from "@fludge/utils/permissions/data";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
+import { customer } from "@fludge/db/schema/customer.schema";
+import { Customer } from "../customer/domain/entities/customer.entity";
 
 export const seedUsers = z.object({
   totalRoots: z.number().optional().default(2),
@@ -51,11 +54,16 @@ export const seedProducts = z.object({
   presentationsPerProduct: z.number().optional().default(2),
 });
 
+export const seedCustomers = z.object({
+  customersPerOrganization: z.number().optional().default(10),
+});
+
 export const seedAll = z.object({
   users: seedUsers,
   organizations: seedOrganizations,
   categories: seedCategories,
   products: seedProducts,
+  customers: seedCustomers,
 });
 
 const ALL_PERMISSIONS = Permissions.fromRecord(PERMISSIONS).values;
@@ -98,6 +106,7 @@ export class SeedService {
     private readonly authService: AuthService,
     private readonly organizationRepository: OrganizationRepository,
     private readonly productRepository: ProductRepository,
+    private readonly customerRepository: CustomerRepository,
   ) {}
 
   public async clear() {
@@ -105,6 +114,7 @@ export class SeedService {
       await tx.delete(productPresentation);
       await tx.delete(product);
       await tx.delete(category);
+      await tx.delete(customer);
       await tx.delete(groupMember);
       await tx.delete(group);
       await tx.delete(member);
@@ -455,6 +465,65 @@ export class SeedService {
     return products.map((p) => p.values);
   }
 
+  public async seedCustomers(values: z.infer<typeof seedCustomers>) {
+    const [allOrganizations, errFinding] = await tryCatch(
+      this.db
+        .select({
+          id: organization.id,
+          owner: member.id,
+        })
+        .from(organization)
+        .innerJoin(
+          member,
+          and(
+            eq(member.organizationId, organization.id),
+            eq(member.role, "owner"),
+          ),
+        ),
+    );
+
+    if (errFinding)
+      throw new ORPCError("INTERNAL_SERVER_ERROR", {
+        message: "Error al obtener las organizaciones",
+        cause: errFinding.cause,
+      });
+
+    const customers = allOrganizations
+      .map((org, index1) =>
+        Array.from({ length: values.customersPerOrganization }).map(
+          (_, index2) =>
+            Customer.create({
+              organizationId: UUID.fromString(org.id),
+              createdBy: UUID.fromString(org.owner),
+              name: faker.person.fullName() + ` ${index1}-${index2}`,
+              phone: faker.phone.number().replace(/\s/g, "").slice(0, 10),
+              email: faker.internet.email(),
+              creditLimit: faker.number.int({ min: 0, max: 5000000 }),
+              documentType: faker.helpers.arrayElement([
+                "CC",
+                "NIT",
+                "CE",
+              ] as const),
+              documentNumber:
+                faker.string.numeric(10) + `-${index1}-${index2}`,
+            }),
+        ),
+      )
+      .flat();
+
+    for (const v of customers) {
+      const [, errInsert] = await tryCatch(this.customerRepository.save(v));
+
+      if (errInsert)
+        throw new ORPCError("INTERNAL_SERVER_ERROR", {
+          message: "Error al guardar el cliente",
+          cause: errInsert.cause,
+        });
+    }
+
+    return customers.map((c) => c.values);
+  }
+
   public async seedAll(headers: Headers, values: z.infer<typeof seedAll>) {
     await this.clear();
 
@@ -466,10 +535,13 @@ export class SeedService {
 
     const products = await this.seedProducts(values.products);
 
+    const customers = await this.seedCustomers(values.customers);
+
     return {
       organizations,
       categories,
       products,
+      customers,
     };
   }
 }

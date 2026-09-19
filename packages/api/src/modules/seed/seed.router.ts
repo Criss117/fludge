@@ -3,6 +3,7 @@ import { seedContainer } from "./container";
 import {
   seedAll,
   seedCategories,
+  seedCustomers,
   seedOrganizations,
   seedProducts,
   seedUsers,
@@ -58,6 +59,15 @@ export const seedRouter = {
     })
     .input(seedProducts)
     .handler(({ input }) => seedContainer.services.seed.seedProducts(input)),
+
+  seedCustomers: devOnlyProcedure
+    .route({
+      method: "POST",
+      path: "/seed/customers",
+      tags: TAGS,
+    })
+    .input(seedCustomers)
+    .handler(({ input }) => seedContainer.services.seed.seedCustomers(input)),
 
   seedAll: devOnlyProcedure
     .route({

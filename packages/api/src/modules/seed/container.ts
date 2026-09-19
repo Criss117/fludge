@@ -3,12 +3,14 @@ import { SeedService } from "./seed.service";
 import { auth } from "@fludge/auth";
 import { organizationContainer } from "../iam/organization/container";
 import { productContainer } from "../catalog/products/container";
+import { customerContainer } from "../customer/container";
 
 const seedService = new SeedService(
   databaseService,
   auth,
   organizationContainer.repositories.organizationRepository,
   productContainer.repositories.productRepository,
+  customerContainer.repositories.customerRepository,
 );
 
 export const seedContainer = {
