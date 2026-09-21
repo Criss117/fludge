@@ -4,12 +4,13 @@ import { customer } from "@fludge/db/schema/customer.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { and, eq } from "drizzle-orm";
 import { Customer } from "@fludge/api/modules/customer/domain/entities/customer.entity";
+import type { CustomerRepository } from "@fludge/api/modules/customer/domain/repositories/customer.repository";
 
 type Options = {
   tx?: TransactionService;
 };
 
-export class CustomerRepository extends TransactionalRepository {
+export class SQLiteCustomerRepository extends TransactionalRepository implements CustomerRepository {
   constructor(private readonly db: DatabaseService) {
     super(db);
   }

@@ -1,9 +1,9 @@
 import { createSaleValidator } from "@fludge/utils/validators/sale.validators";
 import type { z } from "zod";
-import type { SaleRepository } from "@fludge/api/modules/sales/infrastructure/repositories/sale.repository";
+import type { SaleRepository } from "@fludge/api/modules/sales/domain/repositories/sale.repository";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
-import type { SaleSequenceRepository } from "@fludge/api/modules/sales/infrastructure/repositories/sale-sequense.repository";
+import type { SaleSequenceRepository } from "@fludge/api/modules/sales/domain/repositories/sale-sequence.repository";
 import { Sale } from "@fludge/api/modules/sales/domain/entities/sale.entity";
 import {
   InternalServerError,
@@ -12,7 +12,7 @@ import {
 import type { ProductRepository } from "@fludge/api/modules/catalog/products/domain/repositories/product.repository";
 import type { SaleProductService } from "@fludge/api/modules/catalog/products/application/services/sale-product.service";
 import { ProductPresentationNotFoundException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-presentation-not-found.exception";
-import type { CustomerRepository } from "@fludge/api/modules/customer/infrastructure/repositories/customer.repository";
+import type { CustomerRepository } from "@fludge/api/modules/customer/domain/repositories/customer.repository";
 import type { CreateSaleItem } from "@fludge/api/modules/sales/domain/entities/sale-item.entity";
 import type { SaleItemSnapshotValue } from "@fludge/api/modules/sales/domain/value-objects/sale-item-snapshot";
 import type { Customer } from "@fludge/api/modules/customer/domain/entities/customer.entity";

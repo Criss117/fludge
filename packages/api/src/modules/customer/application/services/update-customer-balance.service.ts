@@ -1,4 +1,4 @@
-import type { CustomerRepository } from "@fludge/api/modules/customer/infrastructure/repositories/customer.repository";
+import type { CustomerRepository } from "@fludge/api/modules/customer/domain/repositories/customer.repository";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { err, ok } from "@fludge/utils/trycatch";
 

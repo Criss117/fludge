@@ -1,6 +1,6 @@
 import { createCustomerValidator } from "@fludge/utils/validators/customer.validators";
 import type { z } from "zod";
-import type { CustomerRepository } from "@fludge/api/modules/customer/infrastructure/repositories/customer.repository";
+import type { CustomerRepository } from "@fludge/api/modules/customer/domain/repositories/customer.repository";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
 import { Customer } from "@fludge/api/modules/customer/domain/entities/customer.entity";

@@ -2,12 +2,13 @@ import type { DatabaseService, TransactionService } from "@fludge/db";
 import { saleSequences } from "@fludge/db/schema/sales.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { sql } from "drizzle-orm";
+import type { SaleSequenceRepository } from "@fludge/api/modules/sales/domain/repositories/sale-sequence.repository";
 
 type Options = {
   tx?: TransactionService;
 };
 
-export class SaleSequenceRepository {
+export class SQLiteSaleSequenceRepository implements SaleSequenceRepository {
   constructor(private readonly db: DatabaseService) {}
 
   public async getNextSequence(organizationId: string, options?: Options) {

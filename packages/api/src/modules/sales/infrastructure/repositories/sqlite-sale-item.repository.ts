@@ -3,12 +3,13 @@ import { saleItem } from "@fludge/db/schema/sales.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { Sale } from "@fludge/api/modules/sales/domain/entities/sale.entity";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
+import type { SaleItemRepository } from "@fludge/api/modules/sales/domain/repositories/sale-item.repository";
 
 type Options = {
   tx?: TransactionService;
 };
 
-export class SaleItemRepository {
+export class SQLiteSaleItemRepository implements SaleItemRepository {
   constructor(private readonly db: DatabaseService) {}
 
   public async save(saleEntity: Sale, options?: Options) {

@@ -1,6 +1,6 @@
 import type { AuthService } from "@fludge/auth";
 import type { DatabaseService } from "@fludge/db";
-import type { CustomerRepository } from "@fludge/api/modules/customer/infrastructure/repositories/customer.repository";
+import type { CustomerRepository } from "@fludge/api/modules/customer/domain/repositories/customer.repository";
 import {
   group,
   groupMember,

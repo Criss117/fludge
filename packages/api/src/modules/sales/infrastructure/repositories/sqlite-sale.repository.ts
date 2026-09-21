@@ -8,14 +8,15 @@ import {
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { and, eq, getColumns, sql } from "drizzle-orm";
 import { Sale } from "@fludge/api/modules/sales/domain/entities/sale.entity";
-import type { SaleItemRepository } from "./sale-item.repository";
+import type { SaleItemRepository } from "@fludge/api/modules/sales/domain/repositories/sale-item.repository";
 import { jsonObject } from "@fludge/db/utils/build-queries";
+import type { SaleRepository } from "@fludge/api/modules/sales/domain/repositories/sale.repository";
 
 type Options = {
   tx?: TransactionService;
 };
 
-export class SaleRepository extends TransactionalRepository {
+export class SQLiteSaleRepository extends TransactionalRepository implements SaleRepository {
   constructor(
     private readonly db: DatabaseService,
     private readonly saleItemRepository: SaleItemRepository,

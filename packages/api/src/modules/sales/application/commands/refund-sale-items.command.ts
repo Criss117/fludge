@@ -1,13 +1,13 @@
 import { refundSaleItemsValidator } from "@fludge/utils/validators/sale.validators";
 import type { z } from "zod";
-import type { SaleRepository } from "@fludge/api/modules/sales/infrastructure/repositories/sale.repository";
+import type { SaleRepository } from "@fludge/api/modules/sales/domain/repositories/sale.repository";
 import type { ProductRepository } from "@fludge/api/modules/catalog/products/domain/repositories/product.repository";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 import { SaleNotFoundException } from "@fludge/api/modules/sales/domain/exceptions/sale-not-found.exception";
 import { ProductNotFoundException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-not-found.exception";
 import type { Product } from "@fludge/api/modules/catalog/products/domain/entities/product.entity";
-import type { CustomerRepository } from "@fludge/api/modules/customer/infrastructure/repositories/customer.repository";
+import type { CustomerRepository } from "@fludge/api/modules/customer/domain/repositories/customer.repository";
 import type { UpdateCustomerBalanceService } from "@fludge/api/modules/customer/application/services/update-customer-balance.service";
 import type { Customer } from "@fludge/api/modules/customer/domain/entities/customer.entity";
 import { CustomerNotFoundException } from "@fludge/api/modules/customer/domain/exceptions/customer-not-found.exception";
