@@ -116,7 +116,10 @@ export class Sale {
       if (!existing) throw new SaleItemNotFoundException();
 
       if (existing.status.isInactive()) continue;
-      existing.status.toggle();
+
+      // Status es inmutable: toggle() devuelve un nuevo Status.
+      // Asignarlo vía update() para que el item quede realmente inactivo.
+      existing.update({ status: "inactive" });
       itemsToRefund.push(existing);
     }
 
