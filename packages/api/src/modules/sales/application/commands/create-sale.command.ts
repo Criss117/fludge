@@ -9,7 +9,7 @@ import {
   InternalServerError,
   NotFoundError,
 } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
-import type { ProductRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product.repository";
+import type { ProductRepository } from "@fludge/api/modules/catalog/products/domain/repositories/product.repository";
 import type { SaleProductService } from "@fludge/api/modules/catalog/products/application/services/sale-product.service";
 import { ProductPresentationNotFoundException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-presentation-not-found.exception";
 import type { CustomerRepository } from "@fludge/api/modules/customer/infrastructure/repositories/customer.repository";

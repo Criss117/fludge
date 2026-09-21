@@ -5,7 +5,7 @@ import type { Organization } from "@fludge/api/modules/iam/organization/domain/e
 import { ProductPresentationNotFoundException } from "../../domain/exceptions/product-presentation-not-found.exception";
 import { UUID } from "@fludge/utils/uuid";
 import { ProductNotFoundException } from "@fludge/api/modules/catalog/products/domain/exceptions/product-not-found.exception";
-import type { ProductRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product.repository";
+import type { ProductRepository } from "@fludge/api/modules/catalog/products/domain/repositories/product.repository";
 
 type Item = {
   presentationId: string;

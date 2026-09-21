@@ -27,7 +27,7 @@ import {
 import { Category } from "../catalog/categories/domain/entities/category.entity";
 import { and, eq } from "drizzle-orm";
 import { Product } from "../catalog/products/domain/entities/product.entity";
-import type { ProductRepository } from "../catalog/products/infrastructure/repositories/product.repository";
+import type { ProductRepository } from "../catalog/products/domain/repositories/product.repository";
 import { PERMISSIONS } from "@fludge/utils/permissions/data";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import { customer } from "@fludge/db/schema/customer.schema";

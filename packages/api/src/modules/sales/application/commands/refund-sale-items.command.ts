@@ -1,7 +1,7 @@
 import { refundSaleItemsValidator } from "@fludge/utils/validators/sale.validators";
 import type { z } from "zod";
 import type { SaleRepository } from "@fludge/api/modules/sales/infrastructure/repositories/sale.repository";
-import type { ProductRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product.repository";
+import type { ProductRepository } from "@fludge/api/modules/catalog/products/domain/repositories/product.repository";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 import { SaleNotFoundException } from "@fludge/api/modules/sales/domain/exceptions/sale-not-found.exception";

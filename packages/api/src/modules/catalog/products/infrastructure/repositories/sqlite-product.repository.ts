@@ -7,18 +7,19 @@ import {
   productPresentation,
   type ProductPresentationSelect,
 } from "@fludge/db/schema/catalog.schema";
-import type { ProductPresentationRepository } from "./product-presentation.repository";
+import type { ProductPresentationRepository } from "@fludge/api/modules/catalog/products/domain/repositories/product-presentation.repository";
 import { and, desc, eq, getColumns, inArray, sql } from "drizzle-orm";
 import {
   buildConflictUpdateColumn,
   jsonObject,
 } from "@fludge/db/utils/build-queries";
+import type { ProductRepository } from "@fludge/api/modules/catalog/products/domain/repositories/product.repository";
 
 type Options = {
   tx?: TransactionService;
 };
 
-export class ProductRepository extends TransactionalRepository {
+export class SQLiteProductRepository extends TransactionalRepository implements ProductRepository {
   constructor(
     private readonly db: DatabaseService,
     private readonly productPresentationRepository: ProductPresentationRepository,

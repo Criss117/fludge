@@ -5,12 +5,13 @@ import { productPresentation } from "@fludge/db/schema/catalog.schema";
 import type { ProductPresentation } from "@fludge/api/modules/catalog/products/domain/entities/product-presentation.entity";
 import { and, eq, inArray } from "drizzle-orm";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
+import type { ProductPresentationRepository } from "@fludge/api/modules/catalog/products/domain/repositories/product-presentation.repository";
 
 type Options = {
   tx?: TransactionService;
 };
 
-export class ProductPresentationRepository extends TransactionalRepository {
+export class SQLiteProductPresentationRepository extends TransactionalRepository implements ProductPresentationRepository {
   constructor(private readonly db: DatabaseService) {
     super(db);
   }

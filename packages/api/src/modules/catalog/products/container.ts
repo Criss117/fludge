@@ -2,19 +2,19 @@ import { databaseService } from "@fludge/db";
 import { categoryContainer } from "../categories/container";
 import { CreateProductCommand } from "./application/commands/create-product.command";
 import { ProductUniquenessValidator } from "./application/services/product-uniqueness-validator.service";
-import { ProductRepository } from "./infrastructure/repositories/product.repository";
-import { ProductPresentationRepository } from "./infrastructure/repositories/product-presentation.repository";
+import { SQLiteProductRepository } from "./infrastructure/repositories/sqlite-product.repository";
+import { SQLiteProductPresentationRepository } from "./infrastructure/repositories/sqlite-product-presentation.repository";
 import { FindAllProductsQuery } from "./application/queries/find-all-products.query";
 import { UpdateProductCommand } from "./application/commands/update-product.command";
 import { EnsurePresentationsExistsService } from "./application/services/ensure-presentations-exists.service";
 import { SaleProductService } from "./application/services/sale-product.service";
 
 //Repositories
-const productPresentationRepository = new ProductPresentationRepository(
+const productPresentationRepository = new SQLiteProductPresentationRepository(
   databaseService,
 );
 
-const productRepository = new ProductRepository(
+const productRepository = new SQLiteProductRepository(
   databaseService,
   productPresentationRepository,
 );

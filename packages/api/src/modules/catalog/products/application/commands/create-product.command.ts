@@ -4,7 +4,7 @@ import { UUID } from "@fludge/utils/uuid";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import type { EnsureCategoryExistsService } from "@fludge/api/modules/catalog/categories/application/services/ensure-category-exists.service";
 import type { ProductUniquenessValidator } from "@fludge/api/modules/catalog/products/application/services/product-uniqueness-validator.service";
-import type { ProductRepository } from "@fludge/api/modules/catalog/products/infrastructure/repositories/product.repository";
+import type { ProductRepository } from "@fludge/api/modules/catalog/products/domain/repositories/product.repository";
 import { Slug } from "@fludge/utils/slugify";
 import { createProductValidator } from "@fludge/utils/validators/product.validators";
 import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
