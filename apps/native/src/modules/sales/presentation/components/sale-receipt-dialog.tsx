@@ -92,12 +92,30 @@ export function SaleReceiptDialog({ sale, onClose }: Props) {
                       className="border-muted border-b-[0.5px] border-dashed py-2"
                     >
                       <View className="flex-row items-start justify-between gap-x-2">
-                        <Typography
-                          className="flex-1 font-semibold"
-                          style={{ fontSize: RECEIPT_FONT_SIZE }}
-                        >
-                          {item.name}
-                        </Typography>
+                        {item.productSnapshot === null ? (
+                          <Typography
+                            className="flex-1 font-semibold"
+                            style={{ fontSize: RECEIPT_FONT_SIZE }}
+                          >
+                            {item.name}
+                          </Typography>
+                        ) : (
+                          <View>
+                            <Typography
+                              className="line-clamp-1 flex-1 font-semibold"
+                              style={{ fontSize: RECEIPT_FONT_SIZE }}
+                            >
+                              {item.productSnapshot.product.name}
+                            </Typography>
+                            <Typography
+                              className="text-muted line-clamp-1 flex-1 text-sm"
+                              style={{ fontSize: RECEIPT_FONT_SIZE }}
+                            >
+                              {item.productSnapshot.presentation.name}
+                            </Typography>
+                          </View>
+                        )}
+
                         <Typography
                           className="font-semibold"
                           style={{ fontSize: RECEIPT_FONT_SIZE }}

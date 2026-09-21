@@ -33,14 +33,14 @@ fludge/
 
 ### Paquetes principales
 
-| Paquete | Qué hace |
-|---------|----------|
-| `@fludge/api` | Routers oRPC organizados por módulo (iam, auth, seed). Cada módulo tiene commands (escritura) y queries (lectura). |
+| Paquete          | Qué hace                                                                                                                   |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `@fludge/api`    | Routers oRPC organizados por módulo (iam, auth, seed). Cada módulo tiene commands (escritura) y queries (lectura).         |
 | `@fludge/client` | Capa del cliente: schemas de formularios (Zod), hooks de TanStack Form, mutaciones con cache strategy, providers de React. |
-| `@fludge/db` | Schema declarativo con Drizzle (tablas: organization, member, group, user). Migraciones automáticas. |
-| `@fludge/auth` | Configuración de Better Auth con soporte para Expo. |
-| `@fludge/env` | Variables de entorno tipadas y validadas por entorno (server, native). |
-| `@fludge/utils` | Utilidades puras: sistema de permisos, helpers de fecha, validaciones. |
+| `@fludge/db`     | Schema declarativo con Drizzle (tablas: organization, member, group, user). Migraciones automáticas.                       |
+| `@fludge/auth`   | Configuración de Better Auth con soporte para Expo.                                                                        |
+| `@fludge/env`    | Variables de entorno tipadas y validadas por entorno (server, native).                                                     |
+| `@fludge/utils`  | Utilidades puras: sistema de permisos, helpers de fecha, validaciones.                                                     |
 
 ### Convenciones de arquitectura
 
@@ -52,37 +52,37 @@ fludge/
 
 ### Desarrollo
 
-| Script | Qué hace |
-|--------|----------|
-| `bun run dev` | Levanta todas las apps en modo desarrollo (server + native) |
-| `bun run dev:server` | Solo el backend (Elysia en `localhost:3000`) |
-| `bun run dev:native` | Solo la app móvil (Expo) |
+| Script               | Qué hace                                                    |
+| -------------------- | ----------------------------------------------------------- |
+| `bun run dev`        | Levanta todas las apps en modo desarrollo (server + native) |
+| `bun run dev:server` | Solo el backend (Elysia en `localhost:3000`)                |
+| `bun run dev:native` | Solo la app móvil (Expo)                                    |
 
 ### Base de datos
 
-| Script | Qué hace |
-|--------|----------|
-| `bun run db:init` | Inicia Turso dev con `local.db` |
-| `bun run db:reset` | Elimina la DB y la recrea desde cero |
-| `bun run db:push` | Aplica el schema actual a la DB sin migraciones |
-| `bun run db:generate` | Genera archivos de migración con Drizzle Kit |
-| `bun run db:migrate` | Ejecuta migraciones pendientes |
-| `bun run db:studio` | Abre Drizzle Studio (UI para explorar la DB) |
-| `bun run db:start` | Levanta la DB con Docker Compose |
-| `bun run db:stop` | Detiene los contenedores de DB |
+| Script                | Qué hace                                        |
+| --------------------- | ----------------------------------------------- |
+| `bun run db:init`     | Inicia Turso dev con `local.db`                 |
+| `bun run db:reset`    | Elimina la DB y la recrea desde cero            |
+| `bun run db:push`     | Aplica el schema actual a la DB sin migraciones |
+| `bun run db:generate` | Genera archivos de migración con Drizzle Kit    |
+| `bun run db:migrate`  | Ejecuta migraciones pendientes                  |
+| `bun run db:studio`   | Abre Drizzle Studio (UI para explorar la DB)    |
+| `bun run db:start`    | Levanta la DB con Docker Compose                |
+| `bun run db:stop`     | Detiene los contenedores de DB                  |
 
 ### Calidad
 
-| Script | Qué hace |
-|--------|----------|
+| Script                | Qué hace                                      |
+| --------------------- | --------------------------------------------- |
 | `bun run check-types` | Verifica tipos TypeScript en todo el monorepo |
-| `bun run test` | Ejecuta tests en todos los paquetes |
-| `bun run build` | Build de producción de todas las apps |
+| `bun run test`        | Ejecuta tests en todos los paquetes           |
+| `bun run build`       | Build de producción de todas las apps         |
 
 ### Otros
 
-| Script | Qué hace |
-|--------|----------|
+| Script                  | Qué hace                              |
+| ----------------------- | ------------------------------------- |
 | `bun run auth:generate` | Genera tipos y helpers de Better Auth |
 
 ## Getting started

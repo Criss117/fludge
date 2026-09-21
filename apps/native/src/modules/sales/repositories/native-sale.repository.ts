@@ -2,12 +2,13 @@ import { DatabaseService } from "@/integrations/db";
 import type {
   SaleDetail,
   SaleRepository,
+  FindAllSalesFilters,
 } from "@fludge/client/application/sales/domain/sale.repository";
 import {
   buildConflictUpdateColumn,
   jsonObject,
 } from "@fludge/db/utils/build-queries";
-import { desc, eq, getColumns, sql } from "drizzle-orm";
+import { and, desc, eq, getColumns, sql } from "drizzle-orm";
 import {
   localSale,
   localSaleItem,
@@ -25,7 +26,8 @@ export class NativeSaleRepository implements SaleRepository {
 
   public async findAll(
     organizationId: string,
-    cursor: Cursor
+    cursor: Cursor,
+    filters?: FindAllSalesFilters,
   ): Promise<PaginatedResponse<SaleDetail>> {
     const rows = await this.db
       .select({
@@ -38,7 +40,14 @@ export class NativeSaleRepository implements SaleRepository {
       })
       .from(localSale)
       .innerJoin(localSaleItem, eq(localSaleItem.saleId, localSale.id))
-      .where(eq(localSale.organizationId, organizationId))
+      .where(
+        and(
+          eq(localSale.organizationId, organizationId),
+          filters?.customerId
+            ? eq(localSale.customerId, filters.customerId)
+            : undefined,
+        ),
+      )
       .groupBy(localSale.id)
       .orderBy(desc(localSale.createdAt))
       .limit(cursor.limit + 1)

@@ -32,7 +32,12 @@ export default function CustomersLayout() {
           title: t("screens.customers.create.title"),
         }}
       />
-      <Stack.Screen name="[customerid]/index" />
+      <Stack.Screen
+        name="[customerid]/index"
+        options={{
+          title: t("screens.customers.loading"),
+        }}
+      />
       <Stack.Screen
         name="[customerid]/update"
         options={{

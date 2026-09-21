@@ -1,5 +1,6 @@
 import { DatabaseService } from "@/integrations/db";
 import type {
+  CustomerDetail,
   CustomerRepository,
   CustomerSummary,
   FindAllCustomersFilters,
@@ -15,9 +16,13 @@ import {
   localCustomer,
   type LocalCustomerSelect,
 } from "@fludge/db/local-schemas/shared.schema";
+import type { SaleRepository } from "@fludge/client/application/sales/domain/sale.repository";
 
 export class NativeCustomerRepository implements CustomerRepository {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly saleRepository: SaleRepository
+  ) {}
 
   public async findAll(
     organizationId: string,
@@ -45,7 +50,7 @@ export class NativeCustomerRepository implements CustomerRepository {
   public async findOneById(
     organizationId: string,
     customerId: string
-  ): Promise<CustomerSummary | null> {
+  ): Promise<CustomerDetail | null> {
     const rows = await this.db
       .select()
       .from(localCustomer)
@@ -57,7 +62,22 @@ export class NativeCustomerRepository implements CustomerRepository {
       )
       .limit(1);
 
-    return rows.at(0) || null;
+    const customer = rows.at(0);
+
+    if (!customer) return null;
+
+    const sales = await this.saleRepository.findAll(
+      organizationId,
+      { page: 0, limit: 3 },
+      {
+        customerId: customer.id,
+      }
+    );
+
+    return {
+      ...customer,
+      sales: sales.items,
+    };
   }
 
   public async save(

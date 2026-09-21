@@ -208,10 +208,12 @@ export const screens = {
     title: "Clientes",
     not_found: "No se encontraron clientes",
     no_more: "No hay más clientes",
+    loading: "Cargando...",
     create: {
       title: "Crear cliente",
     },
     update: {
+      loading: "Cargando...",
       title: "Editar cliente",
     },
     card: {
@@ -222,6 +224,15 @@ export const screens = {
       phone: "Teléfono",
       email: "Correo",
       deselect: "Quitar cliente",
+    },
+    detail: {
+      account_status: "Estado de Cuenta",
+      usage: "Uso del cupo",
+      register_payment: "Registrar Abono",
+      registered_sales: "Ventas Registradas",
+      tab_sales: "Ventas",
+      tab_payments: "Historial de Abonos",
+      no_payments: "No hay abonos registrados",
     },
   },
   iam: {
