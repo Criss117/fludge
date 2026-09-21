@@ -5,10 +5,11 @@ import { group } from "@fludge/db/schema/iam.schema";
 import { TransactionalRepository } from "@fludge/api/modules/shared/infrastructure/repositories/transactional-repository";
 import { and, eq, inArray } from "drizzle-orm";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
+import type { GroupRepository } from "@fludge/api/modules/iam/organization/domain/repositories/group.repository";
 
 type Options = { tx?: TransactionService };
 
-export class GroupRepository extends TransactionalRepository {
+export class SQLiteGroupRepository extends TransactionalRepository implements GroupRepository {
   constructor(private readonly db: DatabaseService) {
     super(db);
   }

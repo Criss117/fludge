@@ -1,6 +1,5 @@
 import type { AuthService } from "@fludge/auth";
 import type { DatabaseService } from "@fludge/db";
-import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/organization.repository";
 import type { CustomerRepository } from "@fludge/api/modules/customer/infrastructure/repositories/customer.repository";
 import {
   group,
@@ -33,6 +32,7 @@ import { PERMISSIONS } from "@fludge/utils/permissions/data";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import { customer } from "@fludge/db/schema/customer.schema";
 import { Customer } from "../customer/domain/entities/customer.entity";
+import type { OrganizationRepository } from "../iam/organization/domain/repositories/organization.repository";
 
 export const seedUsers = z.object({
   totalRoots: z.number().optional().default(2),
@@ -504,8 +504,7 @@ export class SeedService {
                 "NIT",
                 "CE",
               ] as const),
-              documentNumber:
-                faker.string.numeric(10) + `-${index1}-${index2}`,
+              documentNumber: faker.string.numeric(10) + `-${index1}-${index2}`,
             }),
         ),
       )

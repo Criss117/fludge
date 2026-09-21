@@ -2,7 +2,7 @@ import type { z } from "zod";
 
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
-import type { GroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group-member.repository";
+import type { GroupMemberRepository } from "@fludge/api/modules/iam/organization/domain/repositories/group-member.repository";
 import { GroupMember } from "@fludge/api/modules/iam/organization/domain/entities/group-member.entity";
 import { assignMembersToGroupValidator } from "@fludge/utils/validators/group.validators";
 import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";

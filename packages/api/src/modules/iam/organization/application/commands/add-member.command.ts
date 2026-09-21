@@ -3,7 +3,7 @@ import type { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Member } from "@fludge/api/modules/iam/organization/domain/entities/member.entity";
 import { UUID } from "@fludge/utils/uuid";
-import type { MemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/member.repository";
+import type { MemberRepository } from "@fludge/api/modules/iam/organization/domain/repositories/member.repository";
 import { addMemberValidator } from "@fludge/utils/validators/organization.validators";
 import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 

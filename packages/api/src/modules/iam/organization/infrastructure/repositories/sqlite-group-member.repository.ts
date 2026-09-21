@@ -3,10 +3,11 @@ import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 import { groupMember } from "@fludge/db/schema/iam.schema";
 import type { GroupMember } from "@fludge/api/modules/iam/organization/domain/entities/group-member.entity";
 import { and, eq, or } from "drizzle-orm";
+import type { GroupMemberRepository } from "@fludge/api/modules/iam/organization/domain/repositories/group-member.repository";
 
 type Options = { tx?: TransactionService };
 
-export class GroupMemberRepository {
+export class SQLiteGroupMemberRepository implements GroupMemberRepository {
   constructor(private readonly db: DatabaseService) {}
 
   public async delete(

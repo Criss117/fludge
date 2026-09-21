@@ -15,16 +15,17 @@ import {
 import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 import { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { alias } from "drizzle-orm/sqlite-core";
-import type { GroupRepository } from "./group.repository";
-import type { MemberRepository } from "./member.repository";
-import type { GroupMemberRepository } from "./group-member.repository";
+import type { GroupRepository } from "@fludge/api/modules/iam/organization/domain/repositories/group.repository";
+import type { MemberRepository } from "@fludge/api/modules/iam/organization/domain/repositories/member.repository";
+import type { GroupMemberRepository } from "@fludge/api/modules/iam/organization/domain/repositories/group-member.repository";
+import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/domain/repositories/organization.repository";
 import { jsonObject } from "@fludge/db/utils/build-queries";
 
 const memberAuth = alias(member, "memberAuth");
 
 type Options = { tx?: TransactionService };
 
-export class OrganizationRepository {
+export class SQLiteOrganizationRepository implements OrganizationRepository {
   constructor(
     private readonly db: DatabaseService,
     private readonly groupRepository: GroupRepository,

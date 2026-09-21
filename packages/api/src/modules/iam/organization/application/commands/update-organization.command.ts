@@ -1,11 +1,11 @@
 import type { z } from "zod";
-import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/organization.repository";
 import type { OrganizationUniquenessValidator } from "../services/organization-uniqueness-validator.service";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { Slug } from "@fludge/utils/slugify";
 import { OrganizationAlreadyExistsException } from "@fludge/api/modules/iam/organization/domain/exceptions/organization-already-exists.exception";
 import { updateOrganizationValidator } from "@fludge/utils/validators/organization.validators";
 import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
+import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/domain/repositories/organization.repository";
 
 export const updateOrganizationCommand = updateOrganizationValidator;
 

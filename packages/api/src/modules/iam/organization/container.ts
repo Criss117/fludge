@@ -2,7 +2,7 @@ import { databaseService } from "@fludge/db";
 
 import { RegisterOrganizationCommand } from "./application/commands/register-organization.commad";
 import { OrganizationUniquenessValidator } from "./application/services/organization-uniqueness-validator.service";
-import { OrganizationRepository } from "./infrastructure/repositories/organization.repository";
+import { SQLiteOrganizationRepository } from "./infrastructure/repositories/sqlite-organization.repository";
 import { FindAllOrganizationsQuery } from "./application/queries/find-all-organizations.query";
 import { EnsureOrganizationExistsService } from "./application/services/ensure-organization-exists.service";
 import { UpdateOrganizationCommand } from "./application/commands/update-organization.command";
@@ -11,19 +11,19 @@ import { UpdateGroupCommand } from "./application/commands/update-group.command"
 import { AddMemberCommand } from "./application/commands/add-member.command";
 import { AssignMembersToGroupCommand } from "./application/commands/assign-members-to-group.command";
 import { AssignGroupsToMemberCommand } from "./application/commands/assign-groups-to-member.command";
-import { MemberRepository } from "./infrastructure/repositories/member.repository";
-import { GroupRepository } from "./infrastructure/repositories/group.repository";
-import { GroupMemberRepository } from "./infrastructure/repositories/group-member.repository";
+import { SQLiteMemberRepository } from "./infrastructure/repositories/sqlite-member.repository";
+import { SQLiteGroupRepository } from "./infrastructure/repositories/sqlite-group.repository";
+import { SQLiteGroupMemberRepository } from "./infrastructure/repositories/sqlite-group-member.repository";
 import { DeleteGroupsCommand } from "./application/commands/delete-groups.command";
 import { RemoveMembersFromGroupCommand } from "./application/commands/remove-members-from-group.command";
 import { RemoveGroupsFromMemberCommand } from "./application/commands/remove-groups-from-member.command";
 import { FindAllMembersQuery } from "./application/queries/find-all-members.query";
 
 //Repositories
-const memberRepository = new MemberRepository(databaseService);
-const groupRepository = new GroupRepository(databaseService);
-const groupMemberRepository = new GroupMemberRepository(databaseService);
-const organizationRepository = new OrganizationRepository(
+const memberRepository = new SQLiteMemberRepository(databaseService);
+const groupRepository = new SQLiteGroupRepository(databaseService);
+const groupMemberRepository = new SQLiteGroupMemberRepository(databaseService);
+const organizationRepository = new SQLiteOrganizationRepository(
   databaseService,
   groupRepository,
   memberRepository,

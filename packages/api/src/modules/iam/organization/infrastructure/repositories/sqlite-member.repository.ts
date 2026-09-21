@@ -3,10 +3,11 @@ import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 import { member } from "@fludge/db/schema/iam.schema";
 import type { Member } from "@fludge/api/modules/iam/organization/domain/entities/member.entity";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
+import type { MemberRepository } from "@fludge/api/modules/iam/organization/domain/repositories/member.repository";
 
 type Options = { tx?: TransactionService };
 
-export class MemberRepository {
+export class SQLiteMemberRepository implements MemberRepository {
   constructor(private readonly db: DatabaseService) {}
 
   public async save(

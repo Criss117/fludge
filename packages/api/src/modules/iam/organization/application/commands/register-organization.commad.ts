@@ -1,6 +1,5 @@
 import type { z } from "zod";
 import type { OrganizationUniquenessValidator } from "@fludge/api/modules/iam/organization/application/services/organization-uniqueness-validator.service";
-import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/organization.repository";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
@@ -9,6 +8,7 @@ import { OrganizationAlreadyExistsException } from "@fludge/api/modules/iam/orga
 import { registerOrganizationValidator } from "@fludge/utils/validators/organization.validators";
 import { PERMISSIONS } from "@fludge/utils/permissions/data";
 import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
+import type { OrganizationRepository } from "@fludge/api/modules/iam/organization/domain/repositories/organization.repository";
 
 export const registerOrganizationCommand = registerOrganizationValidator;
 

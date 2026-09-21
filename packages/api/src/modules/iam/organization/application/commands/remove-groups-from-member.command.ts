@@ -1,6 +1,6 @@
 import type { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
-import type { GroupMemberRepository } from "@fludge/api/modules/iam/organization/infrastructure/repositories/group-member.repository";
+import type { GroupMemberRepository } from "@fludge/api/modules/iam/organization/domain/repositories/group-member.repository";
 import { UUID } from "@fludge/utils/uuid";
 import { GroupMember } from "@fludge/api/modules/iam/organization/domain/entities/group-member.entity";
 import { assignGroupsToMemberValidator } from "@fludge/utils/validators/member.validators";
