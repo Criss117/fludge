@@ -129,6 +129,21 @@ export const api_errors = {
     credit_limit_exceeded: "El cupo de crédito del cliente es insuficiente",
     cant_decrease_balance: "No se puede disminuir el saldo del cliente",
   },
+  customer_payments: {
+    invalid_method: "Método de pago inválido",
+    invalid_status: "Estado de pago inválido",
+    customer_id_required: "El ID del cliente es requerido",
+    amount_must_be_positive: "El monto debe ser positivo",
+    payment_id_required: "El ID del pago es requerido",
+    reason_too_short: "La razón debe tener al menos 3 caracteres",
+    reason_too_long: "La razón debe tener menos de 500 caracteres",
+    not_found: "No se encontró el pago",
+    invalid_amount: "El monto del pago no es válido",
+    already_cancelled: "El pago ya fue cancelado",
+    exceeds_balance: "El monto del pago excede el saldo del cliente",
+    no_debt: "El cliente no tiene deuda",
+    isr_on_save: "Error al guardar el pago",
+  },
   sync: {
     iam: {
       isr_on_find_organizations: "Error al obtener las organizaciones",

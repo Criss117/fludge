@@ -2,9 +2,15 @@ import { UUID } from "@fludge/utils/uuid";
 import { CustomerDocument } from "../value-objects/document-type";
 import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
 import { CustomerBalance } from "../value-objects/customer-balance";
+import { CustomerPayment } from "./customer-payment.entity";
+import { CustomerPaymentCollection } from "./customer-payment.collection";
+import { CustomerHasNoDebtException } from "../exceptions/customer-has-no-debt.exception";
+import { PaymentExceedsBalanceException } from "../exceptions/payment-exceeds-balance.exception";
+import { CustomerPaymentNotFoundException } from "../exceptions/customer-payment-not-found.exception";
 import type { CustomerSelect } from "@fludge/db/schema/customer.schema";
 import type {
   CustomerDocumentTypeEnum,
+  CustomerPaymentMethodEnum,
   StatusEnum,
 } from "@fludge/utils/enums/db-enums";
 
@@ -43,6 +49,7 @@ export class Customer {
     private _status: Status,
     private _updatedAt: Date,
     private readonly _createdAt: Date,
+    private _payments: CustomerPaymentCollection = new CustomerPaymentCollection(),
   ) {}
 
   public static create(data: CreateCustomer) {
@@ -66,6 +73,7 @@ export class Customer {
       new Status("active"),
       now,
       now,
+      new CustomerPaymentCollection(),
     );
   }
 
@@ -128,7 +136,56 @@ export class Customer {
       new Status(data.status),
       new Date(data.updatedAt),
       new Date(data.createdAt),
+      new CustomerPaymentCollection(),
     );
+  }
+
+  public recordPayment(
+    amount: number,
+    method: CustomerPaymentMethodEnum,
+    notes: string | null,
+    createdBy: UUID,
+  ) {
+    if (this._balance.balance === 0) {
+      throw new CustomerHasNoDebtException();
+    }
+
+    if (amount > this._balance.balance) {
+      throw new PaymentExceedsBalanceException();
+    }
+
+    const payment = CustomerPayment.create({
+      organizationId: this._organizationId,
+      createdBy,
+      customerId: this._id,
+      amount,
+      method,
+      notes,
+    });
+
+    this._balance = this._balance.decreaseBalance(amount);
+    this._payments.add(payment);
+    this.touch();
+
+    return payment;
+  }
+
+  public cancelPayment(paymentId: string, reason: string) {
+    const payment = this._payments.findById(paymentId);
+
+    if (!payment) {
+      throw new CustomerPaymentNotFoundException();
+    }
+
+    payment.cancel(reason);
+    this._balance = this._balance.increaseBalance(payment.amount);
+    this.touch();
+
+    return payment;
+  }
+
+  public get payments() {
+    return this._payments.getAll();
   }
 
   public get values(): CustomerSelect {

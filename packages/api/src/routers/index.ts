@@ -11,6 +11,7 @@ import { salesRouter } from "@fludge/api/modules/sales/infrastructure/http/sale.
 import { seedRouter } from "@fludge/api/modules/seed/seed.router";
 import { syncRouter } from "../modules/sync/infrastructure/http/sync.router";
 import { customerRouter } from "@fludge/api/modules/customer/infrastructure/http/customer.router";
+import { customerPaymentRouter } from "@fludge/api/modules/customer/infrastructure/http/customer-payment.router";
 
 export const appRouter = {
   organization: organizationRouter,
@@ -21,6 +22,7 @@ export const appRouter = {
   product: productsRouter,
   sale: salesRouter,
   customer: customerRouter,
+  customerPayment: customerPaymentRouter,
   sync: syncRouter,
   seed: seedRouter,
 

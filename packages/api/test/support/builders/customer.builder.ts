@@ -20,7 +20,7 @@ export function buildCustomer(options?: BuildCustomerOptions) {
   const createdBy =
     options?.createdBy ?? "00000000-0000-4000-8000-000000000002";
 
-  return Customer.create({
+  const customer = Customer.create({
     name: options?.name ?? "Juan Pérez",
     phone: options?.phone ?? "+57 300 123 4567",
     email: options?.email !== undefined ? options.email : "juan@example.com",
@@ -30,6 +30,12 @@ export function buildCustomer(options?: BuildCustomerOptions) {
     organizationId: UUID.fromString(organizationId),
     createdBy: UUID.fromString(createdBy),
   });
+
+  if (options?.balance !== undefined && options.balance > 0) {
+    customer.increaseBalance(options.balance);
+  }
+
+  return customer;
 }
 
 export function makeCustomerOrganizationId() {

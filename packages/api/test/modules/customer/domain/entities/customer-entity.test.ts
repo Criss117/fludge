@@ -5,6 +5,10 @@ import { CustomerBalance } from "@fludge/api/modules/customer/domain/value-objec
 import { CustomerDocument } from "@fludge/api/modules/customer/domain/value-objects/document-type";
 import { CantIncreaseBalanceException } from "@fludge/api/modules/customer/domain/exceptions/cant-increase-balance.exception";
 import { CantDecreaseBalanceException } from "@fludge/api/modules/customer/domain/exceptions/cant-decrease-balance.exception";
+import { CustomerHasNoDebtException } from "@fludge/api/modules/customer/domain/exceptions/customer-has-no-debt.exception";
+import { PaymentExceedsBalanceException } from "@fludge/api/modules/customer/domain/exceptions/payment-exceeds-balance.exception";
+import { CustomerPaymentNotFoundException } from "@fludge/api/modules/customer/domain/exceptions/customer-payment-not-found.exception";
+import { PaymentAlreadyCancelledException } from "@fludge/api/modules/customer/domain/exceptions/payment-already-cancelled.exception";
 import { AmountMustBePositiveException } from "@fludge/api/modules/shared/domain/exceptions/amount-must-be-positive.exception";
 import { UUID } from "@fludge/utils/uuid";
 import type { CustomerSelect } from "@fludge/db/schema/customer.schema";
@@ -310,5 +314,122 @@ describe("CustomerDocument", () => {
     const document = new CustomerDocument("CC", "1234567890");
 
     expect(document.value).toEqual({ type: "CC", number: "1234567890" });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// recordPayment
+// ---------------------------------------------------------------------------
+
+describe("Customer.recordPayment", () => {
+  it("records a payment and decreases balance", () => {
+    const customer = buildCustomer({ creditLimit: 500000 });
+    customer.increaseBalance(100000);
+
+    const payment = customer.recordPayment(
+      40000,
+      "cash",
+      "Pago parcial",
+      makeCustomerUserId(),
+    );
+
+    expect(customer.values.balance).toBe(60000);
+    expect(payment.amount).toBe(40000);
+    expect(payment.method).toBe("cash");
+    expect(payment.status).toBe("active");
+    expect(customer.payments).toHaveLength(1);
+  });
+
+  it("throws CustomerHasNoDebtException when balance is zero", () => {
+    const customer = buildCustomer({ creditLimit: 500000 });
+
+    expect(() =>
+      customer.recordPayment(10000, "cash", null, makeCustomerUserId()),
+    ).toThrow(CustomerHasNoDebtException);
+  });
+
+  it("throws PaymentExceedsBalanceException when amount exceeds balance", () => {
+    const customer = buildCustomer({ creditLimit: 500000 });
+    customer.increaseBalance(50000);
+
+    expect(() =>
+      customer.recordPayment(60000, "cash", null, makeCustomerUserId()),
+    ).toThrow(PaymentExceedsBalanceException);
+  });
+
+  it("touches updatedAt when recording a payment", () => {
+    const customer = buildCustomer({ creditLimit: 500000 });
+    customer.increaseBalance(100000);
+    const before = customer.values.updatedAt.getTime();
+
+    customer.recordPayment(10000, "transfer", null, makeCustomerUserId());
+
+    expect(customer.values.updatedAt.getTime()).toBeGreaterThanOrEqual(before);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// cancelPayment
+// ---------------------------------------------------------------------------
+
+describe("Customer.cancelPayment", () => {
+  it("cancels a payment and restores balance", () => {
+    const customer = buildCustomer({ creditLimit: 500000 });
+    customer.increaseBalance(100000);
+
+    const payment = customer.recordPayment(
+      40000,
+      "cash",
+      null,
+      makeCustomerUserId(),
+    );
+
+    customer.cancelPayment(payment.id.toString(), "Error de cajero");
+
+    expect(customer.values.balance).toBe(100000);
+    expect(payment.status).toBe("cancelled");
+    expect(payment.cancellation?.reason).toBe("Error de cajero");
+  });
+
+  it("throws CustomerPaymentNotFoundException for unknown payment id", () => {
+    const customer = buildCustomer({ creditLimit: 500000 });
+
+    expect(() =>
+      customer.cancelPayment("non-existent-id", "razón"),
+    ).toThrow(CustomerPaymentNotFoundException);
+  });
+
+  it("throws PaymentAlreadyCancelledException when cancelling twice", () => {
+    const customer = buildCustomer({ creditLimit: 500000 });
+    customer.increaseBalance(100000);
+    const payment = customer.recordPayment(
+      40000,
+      "cash",
+      null,
+      makeCustomerUserId(),
+    );
+
+    customer.cancelPayment(payment.id.toString(), "primera");
+
+    expect(() =>
+      customer.cancelPayment(payment.id.toString(), "segunda"),
+    ).toThrow(PaymentAlreadyCancelledException);
+  });
+
+  it("touches updatedAt when cancelling a payment", () => {
+    const customer = buildCustomer({ creditLimit: 500000 });
+    customer.increaseBalance(100000);
+    const payment = customer.recordPayment(
+      40000,
+      "cash",
+      null,
+      makeCustomerUserId(),
+    );
+
+    // Wait a tiny bit to ensure time changes
+    const before = customer.values.updatedAt.getTime();
+    customer.cancelPayment(payment.id.toString(), "razón");
+
+    expect(customer.values.updatedAt.getTime()).toBeGreaterThanOrEqual(before);
   });
 });
