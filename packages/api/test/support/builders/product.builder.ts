@@ -10,10 +10,15 @@ export type BuildProductOptions = {
   allowNegativeStock?: boolean;
   barcodes?: Array<string | null>;
   categoryId?: string | null;
+  organizationId?: string;
+  createdBy?: string;
 };
 
 export function buildProduct(options?: BuildProductOptions) {
   const barcodes = options?.barcodes ?? ["7501234567890"];
+  const organizationId =
+    options?.organizationId ?? "00000000-0000-4000-8000-000000000001";
+  const createdBy = options?.createdBy ?? "00000000-0000-4000-8000-000000000002";
 
   const presentations: CreateProductPresentation[] = barcodes.map(
     (barcode, index) => ({
@@ -24,8 +29,8 @@ export function buildProduct(options?: BuildProductOptions) {
       pricePurchase: 800,
       priceSale: 1000,
       priceWholesale: 900,
-      organizationId: "00000000-0000-4000-8000-000000000001",
-      createdBy: "00000000-0000-4000-8000-000000000002",
+      organizationId,
+      createdBy,
     }),
   );
 
@@ -36,8 +41,8 @@ export function buildProduct(options?: BuildProductOptions) {
     stock: options?.stock ?? 100,
     allowNegativeStock: options?.allowNegativeStock ?? false,
     minStock: options?.minStock ?? 10,
-    createdBy: "00000000-0000-4000-8000-000000000002",
-    organizationId: "00000000-0000-4000-8000-000000000001",
+    createdBy,
+    organizationId,
     presentations,
   });
 }

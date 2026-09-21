@@ -42,6 +42,7 @@ export class UpdateCategoryCommand {
             name: cmd.name,
             slug: new Slug(cmd.name).toString(),
           },
+          existingCategory.id.toString(),
         );
 
       if (errUniqueness)

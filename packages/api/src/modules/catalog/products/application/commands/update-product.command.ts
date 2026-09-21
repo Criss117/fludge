@@ -74,6 +74,7 @@ export class UpdateProductCommand {
             name: cmd.name,
             slug: new Slug(cmd.name).toString(),
           },
+          existing.id.toString(),
         );
 
       if (errUnique)
