@@ -12,6 +12,8 @@ import { DuplicatedSaleItemException } from "../exceptions/duplicated-sale-item.
 import { SaleNumber } from "../value-objects/sale-number";
 import type { PaymentTypeEnum } from "@fludge/utils/enums/db-enums";
 import { PaymentType } from "../value-objects/payment-type";
+import { CantChangeSaleStatusException } from "../exceptions/cant-change-sale-status";
+import { SaleItemNotFoundException } from "../exceptions/sale-item-not-found.exception";
 
 interface CreateSale {
   organizationId: UUID;
@@ -64,7 +66,7 @@ export class Sale {
       total,
       data.notes,
       null,
-      new SaleStatus("open"),
+      new SaleStatus(data.paymentType === "credit" ? "open" : "completed"),
       null,
       now,
       now,
@@ -78,11 +80,8 @@ export class Sale {
     },
   ): Sale {
     const cancellation =
-      data.status === "cancelled" || data.cancelReason || data.cancelledAt
-        ? new SaleCancellation(
-            data.cancelReason,
-            data.cancelledAt ? new Date(data.cancelledAt) : null,
-          )
+      data.status === "cancelled" && data.cancelReason && data.cancelledAt
+        ? new SaleCancellation(data.cancelReason, data.cancelledAt)
         : null;
 
     return new Sale(
@@ -102,6 +101,68 @@ export class Sale {
 
       new SaleItemCollection(data.items.map((d) => SaleItem.reconstitute(d))),
     );
+  }
+
+  public touch() {
+    this._updatedAt = new Date();
+  }
+
+  public refundItems(itemIds: string[]) {
+    const itemsToRefund: SaleItem[] = [];
+
+    for (const id of itemIds) {
+      const existing = this._items.findById(id);
+
+      if (!existing) throw new SaleItemNotFoundException();
+
+      if (existing.status.isInactive()) continue;
+      existing.status.toggle();
+      itemsToRefund.push(existing);
+    }
+
+    this._total = this._items.calculateTotal();
+
+    this.touch();
+
+    return itemsToRefund;
+  }
+
+  public cancel(reason?: string) {
+    if (!this.status.canTransitionTo("cancelled"))
+      throw new CantChangeSaleStatusException();
+
+    this._status = this._status.transitionTo("cancelled");
+    this._cancellation = new SaleCancellation(reason ?? "", new Date());
+
+    for (const item of this._items.values) {
+      item.update({
+        status: "inactive",
+      });
+
+      this._items.update(item);
+    }
+
+    this.touch();
+  }
+
+  public complete() {
+    if (!this.status.canTransitionTo("completed"))
+      throw new CantChangeSaleStatusException();
+
+    this._status = this._status.transitionTo("completed");
+    this.touch();
+  }
+
+  public get status() {
+    return this._status;
+  }
+
+  public get id(): UUID {
+    return this._id;
+  }
+
+  public get items() {
+    return this._items;
   }
 
   public get values(): SaleSelect & {

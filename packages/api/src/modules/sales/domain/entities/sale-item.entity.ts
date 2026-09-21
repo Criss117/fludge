@@ -4,6 +4,8 @@ import {
   SaleItemSnapshot,
   type SaleItemSnapshotValue,
 } from "../value-objects/sale-item-snapshot";
+import { Status } from "@fludge/api/modules/shared/domain/value-objects/status";
+import type { StatusEnum } from "@fludge/utils/enums/db-enums";
 
 export interface CreateSaleItem {
   organizationId: UUID;
@@ -14,6 +16,12 @@ export interface CreateSaleItem {
   unitPrice: number;
   quantity: number;
 }
+
+export type UpdateSaleItem = {
+  quantity?: number;
+  price?: number;
+  status?: StatusEnum;
+};
 
 export class SaleItem {
   constructor(
@@ -28,6 +36,7 @@ export class SaleItem {
     private _subtotal: number,
     private _updatedAt: Date,
     private readonly _createdAt: Date,
+    private _status: Status,
   ) {}
 
   public static create(data: CreateSaleItem): SaleItem {
@@ -39,15 +48,14 @@ export class SaleItem {
       data.organizationId,
       data.productId,
       data.productPresentationId,
-      data.productSnapshot
-        ? new SaleItemSnapshot(data.productSnapshot)
-        : null,
+      data.productSnapshot ? new SaleItemSnapshot(data.productSnapshot) : null,
       data.name,
       data.unitPrice,
       data.quantity,
       subtotal,
       now,
       now,
+      new Status("active"),
     );
   }
 
@@ -59,16 +67,31 @@ export class SaleItem {
       data.productPresentationId
         ? UUID.fromString(data.productPresentationId)
         : null,
-      data.productSnapshot
-        ? new SaleItemSnapshot(data.productSnapshot)
-        : null,
+      data.productSnapshot ? new SaleItemSnapshot(data.productSnapshot) : null,
       data.name,
       data.unitPrice,
       data.quantity,
       data.subtotal,
       new Date(data.updatedAt),
       new Date(data.createdAt),
+      new Status(data.status),
     );
+  }
+
+  public touch() {
+    this._updatedAt = new Date();
+  }
+
+  public update(data: UpdateSaleItem) {
+    if (data.quantity !== undefined && data.quantity > 0)
+      this._quantity = data.quantity;
+
+    if (data.price !== undefined && data.price > 0)
+      this._unitPrice = data.price;
+
+    if (data.status !== undefined) this._status = new Status(data.status);
+
+    this.touch();
   }
 
   public get id(): UUID {
@@ -87,6 +110,10 @@ export class SaleItem {
     return this._productSnapshot;
   }
 
+  public get status(): Status {
+    return this._status;
+  }
+
   public get values(): Omit<SaleItemSelect, "saleId"> {
     return {
       id: this._id.toString(),
@@ -100,7 +127,7 @@ export class SaleItem {
       subtotal: this._subtotal,
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
-      status: "active",
+      status: this._status.value,
     };
   }
 }

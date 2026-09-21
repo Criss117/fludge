@@ -1,9 +1,13 @@
 import { z } from "zod";
 import { getI18nKey, nameSchema, notesSchema, uuidSchema } from "./shared";
-import { paymentTypeEnum } from "../enums/db-enums";
+import { paymentTypeEnum, saleStatusEnum } from "../enums/db-enums";
 
 export const paymentTypeSchema = z.enum(paymentTypeEnum, {
   error: getI18nKey("validators.payment_type.invalid"),
+});
+
+export const saleStatusSchema = z.enum(saleStatusEnum, {
+  error: getI18nKey("validators.sale_status.invalid"),
 });
 
 export const quantitySchema = z
@@ -42,4 +46,16 @@ export const createSaleValidator = z.object({
   items: z.array(createSaleItemValidator).min(1, {
     error: getI18nKey("validators.array.sale_items.at_least_one"),
   }),
+});
+
+export const refundSaleItemsValidator = z.object({
+  id: uuidSchema,
+  itemIds: z
+    .array(uuidSchema)
+    .min(1, { error: getI18nKey("validators.array.sale_items.at_least_one") }),
+});
+
+export const cancelSaleValidator = z.object({
+  id: uuidSchema,
+  cancellationReason: notesSchema,
 });

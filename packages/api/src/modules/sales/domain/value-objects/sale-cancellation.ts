@@ -1,14 +1,14 @@
 export class SaleCancellation {
   constructor(
-    private readonly _reason: string | null,
-    private readonly _cancelledAt: Date | null,
+    private readonly _reason: string,
+    private readonly _cancelledAt: Date,
   ) {}
 
-  public get reason(): string | null {
+  public get reason(): string {
     return this._reason;
   }
 
-  public get cancelledAt(): Date | null {
+  public get cancelledAt(): Date {
     return this._cancelledAt;
   }
 

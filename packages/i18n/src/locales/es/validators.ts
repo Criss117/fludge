@@ -126,4 +126,7 @@ export const validators = {
   customers: {
     required: "El cliente es requerido",
   },
+  sale_status: {
+    invalid: "El estado de la venta es inválido",
+  },
 };

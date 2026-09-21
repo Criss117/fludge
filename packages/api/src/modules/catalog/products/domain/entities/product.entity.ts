@@ -36,6 +36,17 @@ type UpdateProduct = Partial<
   status?: ProductStatusEnum;
 };
 
+type SaleProduct = {
+  id: string;
+  quantity: number;
+};
+
+type RefundProduct = {
+  presentationId: string;
+  quantity: number;
+  conversionFactor: number;
+};
+
 export class Product {
   private constructor(
     private readonly _id: UUID,
@@ -221,7 +232,11 @@ export class Product {
     this.touch();
   }
 
-  public sale(presentations: { id: string; quantity: number }[]) {
+  public sale(presentation: SaleProduct | SaleProduct[]) {
+    const presentations = Array.isArray(presentation)
+      ? presentation
+      : [presentation];
+
     const totalQuantity = presentations.reduce((acc, sale) => {
       const existing = this._presentations.get(sale.id);
 
@@ -233,6 +248,23 @@ export class Product {
     }, 0);
 
     this._stock = this._stock.decreaseStock(totalQuantity);
+    this.touch();
+  }
+
+  public refund(presentation: RefundProduct | RefundProduct[]) {
+    const presentations = Array.isArray(presentation)
+      ? presentation
+      : [presentation];
+
+    const totalQuantity = presentations.reduce((acc, item) => {
+      const existing = this._presentations.get(item.presentationId);
+
+      if (!existing) return acc;
+
+      return acc + item.quantity * item.conversionFactor;
+    }, 0);
+
+    this._stock = this._stock.increaseStock(totalQuantity);
     this.touch();
   }
 

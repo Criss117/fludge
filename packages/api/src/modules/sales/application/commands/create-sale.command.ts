@@ -35,8 +35,6 @@ export class CreateSaleCommand {
     loggedUserId: string,
     cmd: CMD,
   ) {
-    console.log(cmd);
-
     const loggerMember = activeOrganization.members.getMemberByUserId(
       UUID.fromString(loggedUserId),
     )!;
@@ -171,7 +169,7 @@ export class CreateSaleCommand {
 
         // Solo las ventas a crédito cargan el saldo del cliente.
         if (customer && cmd.paymentType === "credit") {
-          customer.charge(sale.values.total);
+          customer.increaseBalance(sale.values.total);
 
           const [, errSavingCustomer] = await this.customerRepository.save(
             customer,

@@ -7,7 +7,6 @@ import type {
   CustomerDocumentTypeEnum,
   StatusEnum,
 } from "@fludge/utils/enums/db-enums";
-import { BadRequestError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
 
 interface CreateCustomer {
   organizationId: UUID;
@@ -70,6 +69,10 @@ export class Customer {
     );
   }
 
+  private touch() {
+    this._updatedAt = new Date();
+  }
+
   public update(data: UpdateCustomer) {
     if (data.name !== undefined) this._name = data.name;
     if (data.phone !== undefined) this._phone = data.phone;
@@ -93,22 +96,21 @@ export class Customer {
       this._status = new Status(data.status);
     }
 
-    this._updatedAt = new Date();
+    this.touch();
 
     return this;
   }
 
-  public charge(amount: number) {
-    const { balance, creditLimit } = this._balance.value;
+  public increaseBalance(amount: number) {
+    this._balance = this._balance.increaseBalance(amount);
+    this.touch();
 
-    const newBalance = balance + amount;
+    return this;
+  }
 
-    if (creditLimit > 0 && newBalance > creditLimit) {
-      throw new BadRequestError("api_errors.customers.credit_limit_exceeded");
-    }
-
-    this._balance = new CustomerBalance(newBalance, creditLimit);
-    this._updatedAt = new Date();
+  public decreaseBalance(amount: number) {
+    this._balance = this._balance.decreaseBalance(amount);
+    this.touch();
 
     return this;
   }

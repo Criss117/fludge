@@ -9,6 +9,14 @@ export class SaleItemCollection {
     this._items = new Map(items.map((item) => [item.id.toString(), item]));
   }
 
+  public exists(id: string | string[]) {
+    if (Array.isArray(id)) {
+      return id.every((i) => this._items.has(i));
+    }
+
+    return this._items.has(id);
+  }
+
   public findByPresentationId(id: string) {
     let found: SaleItem | null = null;
 
@@ -82,6 +90,40 @@ export class SaleItemCollection {
     }
 
     return false;
+  }
+
+  public getProductIdsByItemIds(itemId: string | string[]) {
+    const itemIds = Array.isArray(itemId) ? itemId : [itemId];
+
+    const items: SaleItem[] = [];
+
+    for (const id of itemIds) {
+      const item = this._items.get(id);
+
+      if (!item) continue;
+
+      items.push(item);
+    }
+
+    if (items.length !== itemIds.length) throw new SaleItemNotFoundException();
+
+    const productIds: Set<string> = new Set();
+
+    for (const item of items) {
+      if (item.productId) productIds.add(item.productId.toString());
+    }
+
+    return Array.from(productIds);
+  }
+
+  public get productIds() {
+    const productIds: Set<string> = new Set();
+
+    for (const item of this._items.values()) {
+      if (item.productId) productIds.add(item.productId.toString());
+    }
+
+    return Array.from(productIds);
   }
 
   public get values() {

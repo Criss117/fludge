@@ -9,6 +9,7 @@ export const api_errors = {
     validation_error: "La petición es incorrecta",
     internal_error: "Error interno del servidor",
     timeout_error: "La petición ha tardado demasiado en responderse",
+    amount_must_be_positive: "El monto debe ser positivo",
   },
   auth: {
     sessions: {
@@ -109,6 +110,8 @@ export const api_errors = {
     isr_on_find: "Error al obtener la venta",
     isr_on_save: "Error al guardar la venta",
     isr_on_delete: "Error al eliminar la venta",
+    not_found: "No se encontró la venta",
+    cant_change_status: "No se puede cambiar el estado de la venta",
     sale_items: {
       duplicated: "El producto ya está en el pedido",
       not_found: "No se encontró el item",
@@ -118,11 +121,13 @@ export const api_errors = {
     isr_on_find: "Error al obtener el cliente",
     isr_on_save: "Error al guardar el cliente",
     isr_on_delete: "Error al eliminar el cliente",
+    isr_on_update: "Error al actualizar el cliente",
     not_found: "No se encontró el cliente",
     already_exists: "El cliente ya existe",
     document_taken: "El documento ya está en uso",
     contact_required: "Debe proporcionar al menos un teléfono o email",
     credit_limit_exceeded: "El cupo de crédito del cliente es insuficiente",
+    cant_decrease_balance: "No se puede disminuir el saldo del cliente",
   },
   sync: {
     iam: {

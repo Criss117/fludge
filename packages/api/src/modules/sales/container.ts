@@ -6,6 +6,7 @@ import { CreateSaleCommand } from "./application/commands/create-sale.command";
 import { productContainer } from "../catalog/products/container";
 import { FindAllSalesQuery } from "./application/queries/find-all-sales.query";
 import { customerContainer } from "../customer/container";
+import { CancelSaleCommand } from "./application/commands/cancel-sale.command";
 
 // Repositories
 const saleSequenceRepository = new SaleSequenceRepository(databaseService);
@@ -21,12 +22,18 @@ const createSaleCommand = new CreateSaleCommand(
   customerContainer.repositories.customerRepository,
 );
 
+const cancelSaleCommand = new CancelSaleCommand(
+  saleRepository,
+  productContainer.repositories.productRepository,
+);
+
 // Queries
 const findAllSalesQuery = new FindAllSalesQuery(databaseService);
 
 export const saleContainer = {
   commands: {
     createSaleCommand,
+    cancelSaleCommand,
   },
   queries: {
     findAllSalesQuery,
