@@ -1,4 +1,4 @@
-import type { CategoryRepository } from "@fludge/api/modules/catalog/categories/infrastructure/repositories/category.repository";
+import type { CategoryRepository } from "@fludge/api/modules/catalog/categories/domain/repositories/category.repository";
 import type { CategoryUniquenessValidator } from "@fludge/api/modules/catalog/categories/application/services/category-uniqueness-validator.service";
 import type { z } from "zod";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";

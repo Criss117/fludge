@@ -3,8 +3,9 @@ import { Category } from "@fludge/api/modules/catalog/categories/domain/entities
 import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 import { category } from "@fludge/db/schema/catalog.schema";
 import { and, eq } from "drizzle-orm";
+import type { CategoryRepository } from "@fludge/api/modules/catalog/categories/domain/repositories/category.repository";
 
-export class CategoryRepository {
+export class SQLiteCategoryRepository implements CategoryRepository {
   constructor(private readonly db: DatabaseService) {}
 
   public async findOneById(

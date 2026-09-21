@@ -1,5 +1,5 @@
 import { databaseService } from "@fludge/db";
-import { CategoryRepository } from "./infrastructure/repositories/category.repository";
+import { SQLiteCategoryRepository } from "./infrastructure/repositories/sqlite-category.repository";
 import { CategoryUniquenessValidator } from "./application/services/category-uniqueness-validator.service";
 import { CreateCategoryCommand } from "./application/commands/create-category.command";
 import { UpdateCategoryCommand } from "./application/commands/update-category.command";
@@ -8,7 +8,7 @@ import { EnsureCategoryExistsService } from "./application/services/ensure-categ
 import { ToggleCategoryStatusCommand } from "./application/commands/toogle-category-status.command";
 
 //Repositories
-const categoryRepository = new CategoryRepository(databaseService);
+const categoryRepository = new SQLiteCategoryRepository(databaseService);
 
 //Services
 const categoryUniquenessValidator = new CategoryUniquenessValidator(
