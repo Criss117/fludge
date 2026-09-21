@@ -61,7 +61,8 @@
     "db:stop": "turbo run db:stop -F @fludge/db --",
     "db:down": "turbo run db:down -F @fludge/db --",
     "auth:generate": "turbo -F server auth:generate",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "test:server": "turbo run test -F server --"
   },
   "dependencies": {
     "@fludge/env": "workspace:*",
