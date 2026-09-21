@@ -25,6 +25,8 @@ const createSaleCommand = new CreateSaleCommand(
 const cancelSaleCommand = new CancelSaleCommand(
   saleRepository,
   productContainer.repositories.productRepository,
+  customerContainer.repositories.customerRepository,
+  customerContainer.services.updateCustomerBalanceService,
 );
 
 // Queries
