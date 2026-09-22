@@ -61,37 +61,49 @@ export class CreateCustomerPaymentCommand {
     if (errPay)
       throw new InternalServerError(errPay, "api_errors.sales.isr_on_save");
 
-    const [] = await this.saleRepository.transaction(async (tx) => {
-      const [, errCustomerPayment] = await this.customerPaymentRepository.save(
-        newPayment,
-        { tx },
-      );
+    const [, errTransaction] = await this.saleRepository.transaction(
+      async (tx) => {
+        const [, errCustomerPayment] =
+          await this.customerPaymentRepository.save(newPayment, { tx });
 
-      if (errCustomerPayment) throw errCustomerPayment;
+        if (errCustomerPayment) throw errCustomerPayment;
 
-      const [, errCustomer] = await this.customerRepository.save(customer, {
-        tx,
-      });
-
-      if (errCustomer) throw errCustomer;
-
-      if (values.length > 0) {
-        const sales = values.map((v) => v.sale);
-        const salePayments = values.map((v) => v.salePayments);
-
-        const [, errSales] = await this.saleRepository.saveOnlySales(sales, {
+        const [, errCustomer] = await this.customerRepository.save(customer, {
           tx,
         });
 
-        if (errSales) throw errSales;
+        if (errCustomer) throw errCustomer;
 
-        const [, errSalePayments] = await this.salePaymentRepository.save(
-          salePayments,
-          { tx },
-        );
+        if (values.length > 0) {
+          const sales = values.map((v) => v.sale);
+          const salePayments = values.map((v) => v.salePayments);
 
-        if (errSalePayments) throw errSalePayments;
-      }
-    });
+          const [, errSales] = await this.saleRepository.saveOnlySales(sales, {
+            tx,
+          });
+
+          if (errSales) throw errSales;
+
+          const [, errSalePayments] = await this.salePaymentRepository.save(
+            salePayments,
+            { tx },
+          );
+
+          if (errSalePayments) throw errSalePayments;
+        }
+      },
+    );
+
+    if (errTransaction)
+      throw new InternalServerError(
+        errTransaction,
+        "api_errors.sales.isr_on_save",
+      );
+
+    return {
+      customer: customer.values,
+      payment: newPayment.values,
+      salePayments: values.map((v) => v.salePayments.values),
+    };
   }
 }
