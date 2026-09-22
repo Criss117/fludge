@@ -2,12 +2,16 @@ import { ok, type Result } from "@fludge/utils/trycatch";
 import { Product } from "@fludge/api/modules/catalog/products/domain/entities/product.entity";
 import type { ProductRepository } from "@fludge/api/modules/catalog/products/domain/repositories/product.repository";
 import type { TransactionService } from "@fludge/db";
+import { DummyTransactionalRepository } from "@fludge/api/modules/shared/infrastructure/repositories/transactional-repository";
 
 /**
  * Test double de ProductRepository.
  * Guarda los productos en un Map en memoria keyed por `${organizationId}:${productId}`.
  */
-export class InMemoryProductRepository implements ProductRepository {
+export class InMemoryProductRepository
+  extends DummyTransactionalRepository
+  implements ProductRepository
+{
   private readonly store = new Map<string, Product>();
 
   private key(organizationId: string, productId: string): string {

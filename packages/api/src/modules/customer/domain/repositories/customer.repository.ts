@@ -1,9 +1,9 @@
 import type { Result } from "@fludge/utils/trycatch";
 import type { TransactionService } from "@fludge/db";
 import type { Customer } from "../entities/customer.entity";
-import type { TransactionalRepository } from "@fludge/api/modules/shared/infrastructure/repositories/transactional-repository";
+import type { ITransactionalRepository } from "@fludge/api/modules/shared/infrastructure/repositories/transactional-repository";
 
-export interface CustomerRepository extends TransactionalRepository {
+export interface CustomerRepository extends ITransactionalRepository {
   findById(
     organizationId: string,
     customerId: string,

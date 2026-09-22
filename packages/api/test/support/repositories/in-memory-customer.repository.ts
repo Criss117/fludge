@@ -2,12 +2,16 @@ import { ok, type Result } from "@fludge/utils/trycatch";
 import { Customer } from "@fludge/api/modules/customer/domain/entities/customer.entity";
 import type { CustomerRepository } from "@fludge/api/modules/customer/domain/repositories/customer.repository";
 import type { TransactionService } from "@fludge/db";
+import { DummyTransactionalRepository } from "@fludge/api/modules/shared/infrastructure/repositories/transactional-repository";
 
 /**
  * Test double de CustomerRepository.
  * Guarda los clientes en un Map en memoria keyed por `${organizationId}:${customerId}`.
  */
-export class InMemoryCustomerRepository implements CustomerRepository {
+export class InMemoryCustomerRepository
+  extends DummyTransactionalRepository
+  implements CustomerRepository
+{
   private readonly store = new Map<string, Customer>();
 
   private key(organizationId: string, customerId: string): string {

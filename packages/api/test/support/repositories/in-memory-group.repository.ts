@@ -2,12 +2,16 @@ import { ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 import { Group } from "@fludge/api/modules/iam/organization/domain/entities/group.entity";
 import type { GroupRepository } from "@fludge/api/modules/iam/organization/domain/repositories/group.repository";
 import type { TransactionService } from "@fludge/db";
+import { DummyTransactionalRepository } from "@fludge/api/modules/shared/infrastructure/repositories/transactional-repository";
 
 /**
  * Test double de GroupRepository.
  * Guarda los grupos en un Map en memoria keyed por `${organizationId}:${groupId}`.
  */
-export class InMemoryGroupRepository implements GroupRepository {
+export class InMemoryGroupRepository
+  extends DummyTransactionalRepository
+  implements GroupRepository
+{
   private readonly store = new Map<string, Group>();
 
   private key(organizationId: string, groupId: string): string {
