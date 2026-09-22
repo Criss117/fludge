@@ -28,6 +28,7 @@ export const sale = sqliteTable("sale", {
     mode: "timestamp_ms",
   }),
   total: integer("total").notNull(),
+  totalPaid: integer("total_paid").notNull().default(0),
 
   cancelReason: text("cancel_reason"),
   notes: text("notes"),

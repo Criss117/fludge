@@ -5,23 +5,57 @@ import {
   saleItem,
   type SaleItemSelect,
 } from "@fludge/db/schema/sales.schema";
-import { err, ok, tryCatch } from "@fludge/utils/trycatch";
+import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 import { and, eq, getColumns, sql } from "drizzle-orm";
 import { Sale } from "@fludge/api/modules/sales/domain/entities/sale.entity";
 import type { SaleItemRepository } from "@fludge/api/modules/sales/domain/repositories/sale-item.repository";
-import { jsonObject } from "@fludge/db/utils/build-queries";
+import {
+  buildConflictUpdateColumn,
+  jsonObject,
+} from "@fludge/db/utils/build-queries";
 import type { SaleRepository } from "@fludge/api/modules/sales/domain/repositories/sale.repository";
 
 type Options = {
   tx?: TransactionService;
 };
 
-export class SQLiteSaleRepository extends TransactionalRepository implements SaleRepository {
+export class SQLiteSaleRepository
+  extends TransactionalRepository
+  implements SaleRepository
+{
   constructor(
     private readonly db: DatabaseService,
     private readonly saleItemRepository: SaleItemRepository,
   ) {
     super(db);
+  }
+  public async saveOnlySales(
+    saleEntity: Sale[],
+    options?: { tx?: TransactionService },
+  ): Promise<Result<unknown, Error>> {
+    const db = options?.tx ?? this.db;
+
+    const values = saleEntity.map((s) => s.values);
+
+    return tryCatch(
+      db
+        .insert(sale)
+        .values(values)
+        .onConflictDoUpdate({
+          target: sale.id,
+          set: buildConflictUpdateColumn(sale, [
+            "cancelReason",
+            "cancelledAt",
+            "completedAt",
+            "notes",
+            "paymentType",
+            "status",
+            "total",
+            "totalPaid",
+            "updatedAt",
+          ]),
+        }),
+    );
   }
 
   public async findById(organizationId: string, saleId: string) {
@@ -57,6 +91,46 @@ export class SQLiteSaleRepository extends TransactionalRepository implements Sal
     }));
 
     return ok(Sale.reconstitute({ ...data, items }));
+  }
+
+  public async findByCustomer(organizationId: string, customerId: string) {
+    const [rows, error] = await tryCatch(
+      this.db
+        .select({
+          ...getColumns(sale),
+          items: sql<string>`
+            json_group_array(
+              DISTINCT ${jsonObject(saleItem)}
+            ) FILTER (WHERE ${saleItem.saleId} IS NOT NULL)
+          `.as("items"),
+        })
+        .from(sale)
+        .innerJoin(saleItem, eq(saleItem.saleId, sale.id))
+        .where(
+          and(
+            eq(sale.customerId, customerId),
+            eq(sale.organizationId, organizationId),
+            eq(sale.status, "open"),
+            eq(sale.paymentType, "credit"),
+          ),
+        )
+        .limit(1)
+        .groupBy(sale.id),
+    );
+
+    if (error) return err(error);
+
+    const sales = rows.map((r) => {
+      const items = (JSON.parse(r.items) as SaleItemSelect[]).map((i) => ({
+        ...i,
+        createdAt: new Date(i.createdAt),
+        updatedAt: new Date(i.updatedAt),
+      }));
+
+      return Sale.reconstitute({ ...r, items });
+    });
+
+    return ok(sales);
   }
 
   public async saveOnlySale(saleEntity: Sale, options?: Options) {

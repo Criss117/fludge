@@ -14,6 +14,8 @@ import type { PaymentTypeEnum } from "@fludge/utils/enums/db-enums";
 import { PaymentType } from "../value-objects/payment-type";
 import { CantChangeSaleStatusException } from "../exceptions/cant-change-sale-status";
 import { SaleItemNotFoundException } from "../exceptions/sale-item-not-found.exception";
+import { AmountMustBePositiveException } from "@fludge/api/modules/shared/domain/exceptions/amount-must-be-positive.exception";
+import { SaleIsCompletedException } from "../exceptions/sale-is-completed.exception";
 
 interface CreateSale {
   organizationId: UUID;
@@ -34,6 +36,7 @@ export class Sale {
     private _saleNumber: SaleNumber,
     private _paymentType: PaymentType,
     private _total: number,
+    private _totalPaid: number,
     private _notes: string | null,
     private _cancellation: SaleCancellation | null,
     private _status: SaleStatus,
@@ -64,6 +67,7 @@ export class Sale {
       SaleNumber.create(data.sequence),
       new PaymentType(data.paymentType),
       total,
+      data.paymentType === "credit" ? 0 : total,
       data.notes,
       null,
       new SaleStatus(data.paymentType === "credit" ? "open" : "completed"),
@@ -92,6 +96,7 @@ export class Sale {
       SaleNumber.fromString(data.saleNumber),
       new PaymentType(data.paymentType),
       data.total,
+      data.totalPaid,
       data.notes,
       cancellation,
       new SaleStatus(data.status),
@@ -156,6 +161,36 @@ export class Sale {
     this.touch();
   }
 
+  public pay(amount: number) {
+    if (amount < 0) throw new AmountMustBePositiveException();
+
+    if (this.status.isCompleted()) throw new SaleIsCompletedException();
+
+    const remaining = this.remaining;
+
+    if (amount > remaining) throw new AmountMustBePositiveException();
+
+    this._totalPaid += amount;
+
+    if (this._totalPaid === this._total) {
+      this.complete();
+    }
+
+    this.touch();
+  }
+
+  public get total() {
+    return this._total;
+  }
+
+  public get totalPaid() {
+    return this._totalPaid;
+  }
+
+  public get remaining() {
+    return this._total - this._totalPaid;
+  }
+
   public get status() {
     return this._status;
   }
@@ -181,6 +216,7 @@ export class Sale {
       saleNumber: this._saleNumber.value,
       paymentType: this._paymentType.value,
       total: this._total,
+      totalPaid: this._totalPaid,
       notes: this._notes,
       status: this._status.value as "cancelled" | "completed" | "open",
       cancelReason: cancellation?.reason ?? null,

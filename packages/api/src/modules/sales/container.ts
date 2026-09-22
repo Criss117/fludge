@@ -7,11 +7,17 @@ import { productContainer } from "../catalog/products/container";
 import { FindAllSalesQuery } from "./application/queries/find-all-sales.query";
 import { customerContainer } from "../customer/container";
 import { CancelSaleCommand } from "./application/commands/cancel-sale.command";
+import { PaySaleService } from "./application/services/pay-sale.service";
 
 // Repositories
-const saleSequenceRepository = new SQLiteSaleSequenceRepository(databaseService);
+const saleSequenceRepository = new SQLiteSaleSequenceRepository(
+  databaseService,
+);
 const saleItemRepository = new SQLiteSaleItemRepository(databaseService);
-const saleRepository = new SQLiteSaleRepository(databaseService, saleItemRepository);
+const saleRepository = new SQLiteSaleRepository(
+  databaseService,
+  saleItemRepository,
+);
 
 // Commands
 const createSaleCommand = new CreateSaleCommand(
@@ -32,6 +38,9 @@ const cancelSaleCommand = new CancelSaleCommand(
 // Queries
 const findAllSalesQuery = new FindAllSalesQuery(databaseService);
 
+// Services
+const paySaleService = new PaySaleService(saleRepository);
+
 export const saleContainer = {
   commands: {
     createSaleCommand,
@@ -41,8 +50,11 @@ export const saleContainer = {
     findAllSalesQuery,
   },
   repositories: {
-    saleRepository: saleRepository,
+    saleRepository,
     saleSequenceRepository,
     saleItemRepository,
+  },
+  services: {
+    paySaleService,
   },
 };

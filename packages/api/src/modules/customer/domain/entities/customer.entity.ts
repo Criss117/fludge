@@ -188,6 +188,10 @@ export class Customer {
     return this._payments.getAll();
   }
 
+  public get id() {
+    return this._id;
+  }
+
   public get values(): CustomerSelect {
     const customerBalance = this._balance.value;
     const customerDocument = this._document?.value;

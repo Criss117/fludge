@@ -112,6 +112,7 @@ export const api_errors = {
     isr_on_delete: "Error al eliminar la venta",
     not_found: "No se encontró la venta",
     cant_change_status: "No se puede cambiar el estado de la venta",
+    is_completed: "La venta ya está completa",
     sale_items: {
       duplicated: "El producto ya está en el pedido",
       not_found: "No se encontró el item",
