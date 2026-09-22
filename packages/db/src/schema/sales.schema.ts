@@ -3,13 +3,28 @@ import {
   primaryKey,
   sqliteTable,
   text,
+  uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 
 import { paymentTypeEnum, saleStatusEnum } from "@fludge/utils/enums/db-enums";
-import { customer } from "./customer.schema";
+import { customer, customerPayment } from "./customer.schema";
 import { product, productPresentation } from "./catalog.schema";
 import { auditMetadata } from "../shared";
 import { memberId, organizationId } from "./iam.schema";
+
+type SaleItemSnapshot = {
+  product: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  presentation: {
+    id: string;
+    name: string;
+    barcode: string | null;
+    conversionFactor: number;
+  };
+};
 
 export const sale = sqliteTable("sale", {
   id: text("id").primaryKey(),
@@ -39,20 +54,6 @@ export const sale = sqliteTable("sale", {
   createdAt: auditMetadata.createdAt,
   updatedAt: auditMetadata.updatedAt,
 });
-
-type SaleItemSnapshot = {
-  product: {
-    id: string;
-    name: string;
-    slug: string;
-  };
-  presentation: {
-    id: string;
-    name: string;
-    barcode: string | null;
-    conversionFactor: number;
-  };
-};
 
 export const saleItem = sqliteTable("sale_item", {
   id: text("id").primaryKey(),
@@ -86,6 +87,36 @@ export const saleItem = sqliteTable("sale_item", {
   ...auditMetadata,
 });
 
+export const salePayment = sqliteTable(
+  "sale_payment",
+  {
+    id: text("id").primaryKey(),
+
+    customerPaymentId: text("customer_payment_id")
+      .notNull()
+      .references(() => customerPayment.id, {
+        onDelete: "cascade",
+      }),
+
+    saleId: text("sale_id")
+      .notNull()
+      .references(() => sale.id, {
+        onDelete: "restrict",
+      }),
+
+    amount: integer("amount").notNull(),
+    organizationId: organizationId(),
+    createdBy: memberId(),
+    ...auditMetadata,
+  },
+  (table) => [
+    uniqueIndex("sale_payments_org_customer_payment_idx").on(
+      table.saleId,
+      table.customerPaymentId,
+    ),
+  ],
+);
+
 export const saleSequences = sqliteTable(
   "sale_sequences",
   {
@@ -104,3 +135,6 @@ export type SaleItemInsert = typeof saleItem.$inferInsert;
 
 export type SaleSequenceSelect = typeof saleSequences.$inferSelect;
 export type SaleSequenceInsert = typeof saleSequences.$inferInsert;
+
+export type SalePaymentSelect = typeof salePayment.$inferSelect;
+export type SalePaymentInsert = typeof salePayment.$inferInsert;

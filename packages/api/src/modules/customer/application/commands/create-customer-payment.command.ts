@@ -1,17 +1,14 @@
 import { createCustomerPaymentValidator } from "@fludge/utils/validators/customer-payment.validators";
 import type { z } from "zod";
 import type { CustomerRepository } from "@fludge/api/modules/customer/domain/repositories/customer.repository";
-import type { CustomerPaymentRepository } from "@fludge/api/modules/customer/domain/repositories/customer-payment.repository";
-import type { CustomerPaymentApplicationRepository } from "@fludge/api/modules/customer/domain/repositories/customer-payment-application.repository";
-import { CustomerPaymentApplication } from "@fludge/api/modules/customer/domain/entities/customer-payment-application.entity";
+import type { SaleRepository } from "@fludge/api/modules/sales/domain/repositories/sale.repository";
+import type { PaySaleService } from "@fludge/api/modules/sales/application/services/pay-sale.service";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
-import {
-  InternalServerError,
-  NotFoundError,
-} from "@fludge/api/modules/shared/domain/exceptions/base-exception";
-import type { PaySaleService } from "@fludge/api/modules/sales/application/services/pay-sale.service";
-import type { SaleRepository } from "@fludge/api/modules/sales/domain/repositories/sale.repository";
+import { InternalServerError } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
+import { CustomerNotFoundException } from "@fludge/api/modules/customer/domain/exceptions/customer-not-found.exception";
+import type { CustomerPaymentRepository } from "@fludge/api/modules/customer/domain/repositories/customer-payment.repository";
+import type { SalePaymentRepository } from "@fludge/api/modules/sales/domain/repositories/sale-payment.repository";
 
 export const createCustomerPaymentCommand = createCustomerPaymentValidator;
 
@@ -21,115 +18,80 @@ export class CreateCustomerPaymentCommand {
   constructor(
     private readonly customerRepository: CustomerRepository,
     private readonly customerPaymentRepository: CustomerPaymentRepository,
+    private readonly salePaymentRepository: SalePaymentRepository,
     private readonly saleRepository: SaleRepository,
     private readonly paySaleService: PaySaleService,
-    private readonly customerPaymentApplicationRepository: CustomerPaymentApplicationRepository,
   ) {}
 
   public async execute(
-    activeOrganization: Organization,
     loggedUserId: string,
+    activeOrganization: Organization,
     cmd: CMD,
   ) {
-    const [existingCustomer, errFind] = await this.customerRepository.findById(
+    const loggedMember = activeOrganization.members.getMemberByUserId(
+      UUID.fromString(loggedUserId),
+    )!;
+
+    const [customer, errFindCustomer] = await this.customerRepository.findById(
       activeOrganization.id.toString(),
       cmd.customerId,
     );
 
-    if (errFind)
+    if (errFindCustomer)
       throw new InternalServerError(
-        errFind,
+        errFindCustomer,
         "api_errors.customers.isr_on_find",
       );
 
-    if (!existingCustomer)
-      throw new NotFoundError("api_errors.customers.not_found");
+    if (!customer) throw new CustomerNotFoundException();
 
-    const payment = existingCustomer.recordPayment(
+    const newPayment = customer.recordPayment(
       cmd.amount,
       cmd.method,
       cmd.notes ?? null,
-      UUID.fromString(loggedUserId),
+      loggedMember.id,
     );
 
-    const [saleApplications, errPaySale] = await this.paySaleService.execute(
+    const [values, errPay] = await this.paySaleService.execute(
       activeOrganization,
-      existingCustomer.id.toString(),
-      cmd.amount,
+      customer.id.toString(),
+      newPayment,
     );
 
-    if (errPaySale)
-      throw new InternalServerError(errPaySale, "api_errors.sales.isr_on_save");
+    if (errPay)
+      throw new InternalServerError(errPay, "api_errors.sales.isr_on_save");
 
-    const applications = saleApplications
-      .filter(({ amountApplied }) => amountApplied > 0)
-      .map(({ sale, amountApplied }) =>
-        CustomerPaymentApplication.create({
-          paymentId: payment.id,
-          saleId: sale.id,
-          amount: amountApplied,
-        }),
+    const [] = await this.saleRepository.transaction(async (tx) => {
+      const [, errCustomerPayment] = await this.customerPaymentRepository.save(
+        newPayment,
+        { tx },
       );
 
-    const [, errTransaction] = await this.customerRepository.transaction(
-      async (tx) => {
-        const [, errSaveCustomer] = await this.customerRepository.save(
-          existingCustomer,
+      if (errCustomerPayment) throw errCustomerPayment;
+
+      const [, errCustomer] = await this.customerRepository.save(customer, {
+        tx,
+      });
+
+      if (errCustomer) throw errCustomer;
+
+      if (values.length > 0) {
+        const sales = values.map((v) => v.sale);
+        const salePayments = values.map((v) => v.salePayments);
+
+        const [, errSales] = await this.saleRepository.saveOnlySales(sales, {
+          tx,
+        });
+
+        if (errSales) throw errSales;
+
+        const [, errSalePayments] = await this.salePaymentRepository.save(
+          salePayments,
           { tx },
         );
 
-        if (errSaveCustomer)
-          throw new InternalServerError(
-            errSaveCustomer,
-            "api_errors.customers.isr_on_save",
-          );
-
-        const [, errSavePayment] = await this.customerPaymentRepository.save(
-          payment,
-          { tx },
-        );
-
-        if (errSavePayment)
-          throw new InternalServerError(
-            errSavePayment,
-            "api_errors.customer_payments.isr_on_save",
-          );
-
-        if (saleApplications.length > 0) {
-          const [, errSaveSale] = await this.saleRepository.saveOnlySales(
-            saleApplications.map(({ sale }) => sale),
-            { tx },
-          );
-
-          if (errSaveSale)
-            throw new InternalServerError(
-              errSaveSale,
-              "api_errors.sales.isr_on_save",
-            );
-        }
-
-        if (applications.length > 0) {
-          const [, errSaveApplications] =
-            await this.customerPaymentApplicationRepository.saveMany(
-              applications,
-              { tx },
-            );
-
-          if (errSaveApplications)
-            throw new InternalServerError(
-              errSaveApplications,
-              "api_errors.customer_payments.isr_on_save",
-            );
-        }
-      },
-    );
-
-    if (errTransaction)
-      throw new InternalServerError(
-        errTransaction,
-        "api_errors.customer_payments.isr_on_save",
-      );
-
-    return payment.values;
+        if (errSalePayments) throw errSalePayments;
+      }
+    });
   }
 }

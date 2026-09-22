@@ -1,10 +1,11 @@
 import { TransactionalRepository } from "@fludge/api/modules/shared/infrastructure/repositories/transactional-repository";
 import type { DatabaseService, TransactionService } from "@fludge/db";
-import { customerPayment } from "@fludge/db/schema/customer-payment.schema";
+
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { and, eq } from "drizzle-orm";
 import { CustomerPayment } from "@fludge/api/modules/customer/domain/entities/customer-payment.entity";
 import type { CustomerPaymentRepository } from "@fludge/api/modules/customer/domain/repositories/customer-payment.repository";
+import { customerPayment } from "@fludge/db/schema/customer.schema";
 
 type Options = {
   tx?: TransactionService;
@@ -41,10 +42,7 @@ export class SQLiteCustomerPaymentRepository
     return ok(CustomerPayment.reconstitute(data));
   }
 
-  public async findByCustomer(
-    organizationId: string,
-    customerId: string,
-  ) {
+  public async findByCustomer(organizationId: string, customerId: string) {
     const [rows, error] = await tryCatch(
       this.db
         .select()
@@ -84,10 +82,7 @@ export class SQLiteCustomerPaymentRepository
     return ok(rows.map((r) => CustomerPayment.reconstitute(r)));
   }
 
-  private async saveContent(
-    paymentEntity: CustomerPayment,
-    options: Options,
-  ) {
+  private async saveContent(paymentEntity: CustomerPayment, options: Options) {
     const values = paymentEntity.values;
 
     const [, errInsert] = await tryCatch(
@@ -122,10 +117,7 @@ export class SQLiteCustomerPaymentRepository
     if (errInsert) throw errInsert;
   }
 
-  public async save(
-    paymentEntity: CustomerPayment,
-    options?: Options,
-  ) {
+  public async save(paymentEntity: CustomerPayment, options?: Options) {
     if (options?.tx) {
       return tryCatch(this.saveContent(paymentEntity, options));
     }

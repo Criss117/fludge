@@ -1,14 +1,15 @@
 import { TransactionalRepository } from "@fludge/api/modules/shared/infrastructure/repositories/transactional-repository";
 import type { DatabaseService, TransactionService } from "@fludge/db";
-import { customer } from "@fludge/db/schema/customer.schema";
+import {
+  customer,
+  customerPayment,
+  type CustomerPaymentSelect,
+} from "@fludge/db/schema/customer.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { and, eq, getColumns, sql } from "drizzle-orm";
 import { Customer } from "@fludge/api/modules/customer/domain/entities/customer.entity";
 import type { CustomerRepository } from "@fludge/api/modules/customer/domain/repositories/customer.repository";
-import {
-  customerPayment,
-  type CustomerPaymentSelect,
-} from "@fludge/db/schema/customer-payment.schema";
+
 import { jsonObject } from "@fludge/db/utils/build-queries";
 
 type Options = {

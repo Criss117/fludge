@@ -1,8 +1,8 @@
-// entities/sale.entity.ts
 import { UUID } from "@fludge/utils/uuid";
 import { SaleCancellation } from "../value-objects/sale-cancellation";
 import type {
   SaleItemSelect,
+  SalePaymentSelect,
   SaleSelect,
 } from "@fludge/db/schema/sales.schema";
 import { SaleStatus } from "../value-objects/sale-status";
@@ -16,6 +16,9 @@ import { CantChangeSaleStatusException } from "../exceptions/cant-change-sale-st
 import { SaleItemNotFoundException } from "../exceptions/sale-item-not-found.exception";
 import { AmountMustBePositiveException } from "@fludge/api/modules/shared/domain/exceptions/amount-must-be-positive.exception";
 import { SaleIsCompletedException } from "../exceptions/sale-is-completed.exception";
+import { SalePaymentsCollection } from "./sale-payments.collection";
+import { SalePayment } from "./sale-payments.entity";
+import { SalePaymentNotFoundException } from "../exceptions/sale-payments-not-found";
 
 interface CreateSale {
   organizationId: UUID;
@@ -45,6 +48,7 @@ export class Sale {
     private readonly _createdAt: Date,
 
     private _items: SaleItemCollection,
+    private _payments: SalePaymentsCollection,
   ) {}
 
   public static create(data: CreateSale): Sale {
@@ -75,12 +79,14 @@ export class Sale {
       now,
       now,
       collection,
+      new SalePaymentsCollection(),
     );
   }
 
   public static reconstitute(
     data: SaleSelect & {
       items: SaleItemSelect[];
+      payments: SalePaymentSelect[];
     },
   ): Sale {
     const cancellation =
@@ -105,6 +111,9 @@ export class Sale {
       new Date(data.createdAt),
 
       new SaleItemCollection(data.items.map((d) => SaleItem.reconstitute(d))),
+      new SalePaymentsCollection(
+        data.payments.map((d) => SalePayment.reconstitute(d)),
+      ),
     );
   }
 
@@ -161,7 +170,7 @@ export class Sale {
     this.touch();
   }
 
-  public pay(amount: number) {
+  public pay(customerPaymentId: UUID, amount: number, createdBy: UUID) {
     if (amount < 0) throw new AmountMustBePositiveException();
 
     if (this.status.isCompleted()) throw new SaleIsCompletedException();
@@ -176,12 +185,31 @@ export class Sale {
       this.complete();
     }
 
+    const newSalePayment = SalePayment.create({
+      customerPaymentId,
+      amount,
+      createdBy,
+      organizationId: this._organizationId,
+      saleId: this._id,
+    });
+
+    this._payments.add(newSalePayment);
+
     this.touch();
+
+    return newSalePayment;
   }
 
-  public revertPayment(amount: number) {
-    if (amount < 0) throw new AmountMustBePositiveException();
-    if (amount > this._totalPaid) throw new AmountMustBePositiveException();
+  public revertPayment(customerPaymentId: UUID[]) {
+    const paymentsToRevert =
+      this._payments.findByCustomerPaymentId(customerPaymentId);
+
+    if (paymentsToRevert.length === 0) throw new SalePaymentNotFoundException();
+
+    const amount = paymentsToRevert.reduce(
+      (acc, payment) => acc + payment.amount,
+      0,
+    );
 
     this._totalPaid -= amount;
 
@@ -219,6 +247,7 @@ export class Sale {
 
   public get values(): SaleSelect & {
     items: SaleItemSelect[];
+    payments: SalePaymentSelect[];
   } {
     const cancellation = this._cancellation?.value;
 
@@ -243,6 +272,8 @@ export class Sale {
         ...item.values,
         saleId: this._id.toString(),
       })),
+
+      payments: this._payments.all.map((p) => p.values),
     };
   }
 }

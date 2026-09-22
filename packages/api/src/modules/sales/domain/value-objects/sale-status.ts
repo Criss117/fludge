@@ -3,7 +3,7 @@ import type { SaleStatusEnum } from "@fludge/utils/enums/db-enums";
 const VALID_TRANSITIONS: Record<SaleStatusEnum, SaleStatusEnum[]> = {
   open: ["completed", "cancelled"],
   completed: ["open"],
-  cancelled: ["open", "completed"],
+  cancelled: [],
 };
 
 export class SaleStatus {

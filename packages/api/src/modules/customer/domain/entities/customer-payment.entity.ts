@@ -1,5 +1,4 @@
 import { UUID } from "@fludge/utils/uuid";
-import type { CustomerPaymentSelect } from "@fludge/db/schema/customer-payment.schema";
 import type {
   CustomerPaymentMethodEnum,
   CustomerPaymentStatusEnum,
@@ -9,6 +8,7 @@ import { CustomerPaymentMethod } from "../value-objects/customer-payment-method"
 import { CustomerPaymentStatus } from "../value-objects/customer-payment-status";
 import { CustomerPaymentCancellation } from "../value-objects/customer-payment-cancellation";
 import { PaymentAlreadyCancelledException } from "../exceptions/payment-already-cancelled.exception";
+import type { CustomerPaymentSelect } from "@fludge/db/schema/customer.schema";
 
 interface CreateCustomerPayment {
   organizationId: UUID;

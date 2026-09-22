@@ -3,7 +3,9 @@ import type { DatabaseService, TransactionService } from "@fludge/db";
 import {
   sale,
   saleItem,
+  salePayment,
   type SaleItemSelect,
+  type SalePaymentSelect,
 } from "@fludge/db/schema/sales.schema";
 import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 import { and, eq, getColumns, sql } from "drizzle-orm";
@@ -14,6 +16,7 @@ import {
   jsonObject,
 } from "@fludge/db/utils/build-queries";
 import type { SaleRepository } from "@fludge/api/modules/sales/domain/repositories/sale.repository";
+import type { SalePaymentRepository } from "@fludge/api/modules/sales/domain/repositories/sale-payment.repository";
 
 type Options = {
   tx?: TransactionService;
@@ -26,9 +29,11 @@ export class SQLiteSaleRepository
   constructor(
     private readonly db: DatabaseService,
     private readonly saleItemRepository: SaleItemRepository,
+    private readonly salePaymentRepository: SalePaymentRepository,
   ) {
     super(db);
   }
+
   public async saveOnlySales(
     saleEntity: Sale[],
     options?: { tx?: TransactionService },
@@ -68,9 +73,15 @@ export class SQLiteSaleRepository
               DISTINCT ${jsonObject(saleItem)}
             ) FILTER (WHERE ${saleItem.saleId} IS NOT NULL)
           `.as("items"),
+          payments: sql<string>`
+            json_group_array(
+              DISTINCT ${jsonObject(salePayment)}
+            ) FILTER (WHERE ${salePayment.saleId} IS NOT NULL)
+          `.as("payments"),
         })
         .from(sale)
-        .innerJoin(saleItem, eq(saleItem.saleId, sale.id))
+        .innerJoin(saleItem, and(eq(saleItem.saleId, sale.id)))
+        .innerJoin(salePayment, eq(salePayment.saleId, sale.id))
         .where(
           and(eq(sale.id, saleId), eq(sale.organizationId, organizationId)),
         )
@@ -90,7 +101,15 @@ export class SQLiteSaleRepository
       updatedAt: new Date(i.updatedAt),
     }));
 
-    return ok(Sale.reconstitute({ ...data, items }));
+    const payments = (JSON.parse(data.payments) as SalePaymentSelect[]).map(
+      (p) => ({
+        ...p,
+        createdAt: new Date(p.createdAt),
+        updatedAt: new Date(p.updatedAt),
+      }),
+    );
+
+    return ok(Sale.reconstitute({ ...data, items, payments }));
   }
 
   public async findByCustomer(organizationId: string, customerId: string) {
@@ -103,9 +122,15 @@ export class SQLiteSaleRepository
               DISTINCT ${jsonObject(saleItem)}
             ) FILTER (WHERE ${saleItem.saleId} IS NOT NULL)
           `.as("items"),
+          payments: sql<string>`
+            json_group_array(
+              DISTINCT ${jsonObject(salePayment)}
+            ) FILTER (WHERE ${salePayment.saleId} IS NOT NULL)
+          `.as("payments"),
         })
         .from(sale)
         .innerJoin(saleItem, eq(saleItem.saleId, sale.id))
+        .innerJoin(salePayment, eq(salePayment.saleId, sale.id))
         .where(
           and(
             eq(sale.customerId, customerId),
@@ -127,7 +152,15 @@ export class SQLiteSaleRepository
         updatedAt: new Date(i.updatedAt),
       }));
 
-      return Sale.reconstitute({ ...r, items });
+      const payments = (JSON.parse(r.payments) as SalePaymentSelect[]).map(
+        (p) => ({
+          ...p,
+          createdAt: new Date(p.createdAt),
+          updatedAt: new Date(p.updatedAt),
+        }),
+      );
+
+      return Sale.reconstitute({ ...r, items, payments });
     });
 
     return ok(sales);
@@ -181,6 +214,13 @@ export class SQLiteSaleRepository
     });
 
     if (errInsertItems) throw errInsertItems;
+
+    const [, errInsertPayments] = await this.salePaymentRepository.save(
+      saleEntity,
+      { tx: options.tx },
+    );
+
+    if (errInsertPayments) throw errInsertPayments;
   }
 
   public async save(saleEntity: Sale, options?: Options) {

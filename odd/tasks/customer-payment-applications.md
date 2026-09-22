@@ -18,11 +18,15 @@ Al crear un `CustomerPayment`, el `PaySaleService` distribuye el monto entre las
 - [x] Agregar tests para entidad y comando
 
 ## Tareas pendientes
-- [ ] Agregar `Sale.revertPayment(amount)` para deshacer pagos
-- [ ] Permitir transición `completed → open` en `SaleStatus`
-- [ ] Implementar `CancelCustomerPaymentCommand`
-- [ ] Agregar endpoint cancel al router
-- [ ] Agregar tests para cancel command y `Sale.revertPayment`
+- [x] Agregar `Sale.revertPayment(amount)` para deshacer pagos
+- [x] Permitir transición `completed → open` en `SaleStatus`
+- [x] Implementar `CancelCustomerPaymentCommand`
+- [x] Agregar endpoint cancel al router
+- [x] Agregar tests para cancel command y `Sale.revertPayment`
+
+## Estado
+Feature completa. Branch: `feat/cancel-customer-payment` (commit `b3bca85`).
+Total tests: 35 pass (6 cancel command + 29 sale entity, incluyendo 4 revertPayment).
 
 ## Archivos a tocar (fase 2)
 - `packages/api/src/modules/sales/domain/entities/sale.entity.ts`

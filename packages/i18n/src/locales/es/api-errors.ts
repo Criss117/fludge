@@ -117,6 +117,9 @@ export const api_errors = {
       duplicated: "El producto ya está en el pedido",
       not_found: "No se encontró el item",
     },
+    payments: {
+      not_found: "No se encontró el pago de venta",
+    },
   },
   customers: {
     isr_on_find: "Error al obtener el cliente",

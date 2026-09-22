@@ -2,10 +2,12 @@ import type { Organization } from "@fludge/api/modules/iam/organization/domain/e
 import type { SaleRepository } from "@fludge/api/modules/sales/domain/repositories/sale.repository";
 import { err, ok, type Result } from "@fludge/utils/trycatch";
 import type { Sale } from "@fludge/api/modules/sales/domain/entities/sale.entity";
+import type { CustomerPayment } from "@fludge/api/modules/customer/domain/entities/customer-payment.entity";
+import type { SalePayment } from "@fludge/api/modules/sales/domain/entities/sale-payments.entity";
 
 export type SalePaymentApplication = {
   sale: Sale;
-  amountApplied: number;
+  salePayments: SalePayment;
 };
 
 export class PaySaleService {
@@ -14,7 +16,7 @@ export class PaySaleService {
   public async execute(
     activeOrganization: Organization,
     customerId: string,
-    amount: number,
+    customerPayment: CustomerPayment,
   ): Promise<Result<SalePaymentApplication[], Error>> {
     const [sales, errFind] = await this._saleRepository.findByCustomer(
       activeOrganization.id.toString(),
@@ -27,7 +29,7 @@ export class PaySaleService {
 
     const applications: SalePaymentApplication[] = [];
 
-    let remainingAmount = amount;
+    let remainingAmount = customerPayment.amount;
 
     for (const sale of sales) {
       if (sale.status.isCompleted()) continue;
@@ -36,10 +38,15 @@ export class PaySaleService {
 
       if (amountToPay <= 0) break;
 
-      sale.pay(amountToPay);
+      const newSalePayment = sale.pay(
+        customerPayment.id,
+        amountToPay,
+        customerPayment.createdBy,
+      );
+
       remainingAmount -= amountToPay;
 
-      applications.push({ sale, amountApplied: amountToPay });
+      applications.push({ sale, salePayments: newSalePayment });
     }
 
     return ok(applications);

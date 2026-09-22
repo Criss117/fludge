@@ -7,13 +7,15 @@ import { CustomerPaymentCollection } from "./customer-payment.collection";
 import { CustomerHasNoDebtException } from "../exceptions/customer-has-no-debt.exception";
 import { PaymentExceedsBalanceException } from "../exceptions/payment-exceeds-balance.exception";
 import { CustomerPaymentNotFoundException } from "../exceptions/customer-payment-not-found.exception";
-import type { CustomerSelect } from "@fludge/db/schema/customer.schema";
+import type {
+  CustomerPaymentSelect,
+  CustomerSelect,
+} from "@fludge/db/schema/customer.schema";
 import type {
   CustomerDocumentTypeEnum,
   CustomerPaymentMethodEnum,
   StatusEnum,
 } from "@fludge/utils/enums/db-enums";
-import type { CustomerPaymentSelect } from "@fludge/db/schema/customer-payment.schema";
 
 interface CreateCustomer {
   organizationId: UUID;
