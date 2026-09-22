@@ -133,6 +133,7 @@ export class RefundSaleItemsCommand {
     return {
       sale: existingSale.values,
       products: productsToSave.map((p) => p.values),
+      customer: customerToSave?.values ?? null,
     };
   }
 }

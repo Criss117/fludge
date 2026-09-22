@@ -15,6 +15,4 @@ export interface GroupRepository extends ITransactionalRepository {
     groupValues: Group | Group[],
     options?: { tx?: TransactionService },
   ): Promise<Result<undefined, Error>>;
-
-  transaction<T>(fn: (tx: TransactionService) => Promise<T>): Promise<Result<T, Error>>;
 }
