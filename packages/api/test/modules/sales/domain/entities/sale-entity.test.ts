@@ -9,6 +9,7 @@ import { SaleItemSnapshot } from "@fludge/api/modules/sales/domain/value-objects
 import { DuplicatedSaleItemException } from "@fludge/api/modules/sales/domain/exceptions/duplicated-sale-item.exception";
 import { CantChangeSaleStatusException } from "@fludge/api/modules/sales/domain/exceptions/cant-change-sale-status";
 import { SaleItemNotFoundException } from "@fludge/api/modules/sales/domain/exceptions/sale-item-not-found.exception";
+import { AmountMustBePositiveException } from "@fludge/api/modules/shared/domain/exceptions/amount-must-be-positive.exception";
 import {
   buildSale,
   makeCatalogItem,
@@ -145,6 +146,52 @@ describe("Sale.reconstitute", () => {
     expect(sale.values.status).toBe("cancelled");
     expect(sale.values.cancelReason).toBe("Error del cajero");
     expect(sale.values.cancelledAt).toEqual(values.cancelledAt);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Sale.revertPayment
+// ---------------------------------------------------------------------------
+
+describe("Sale.revertPayment", () => {
+  it("reverts a partial payment and keeps sale open", () => {
+    const sale = buildSale({ paymentType: "credit" });
+    sale.pay(1000);
+
+    sale.revertPayment(500);
+
+    expect(sale.values.totalPaid).toBe(500);
+    expect(sale.values.status).toBe("open");
+  });
+
+  it("reverts a full payment and transitions completed sale back to open", () => {
+    const sale = buildSale({ paymentType: "credit" });
+    sale.pay(2000);
+    expect(sale.values.status).toBe("completed");
+
+    sale.revertPayment(2000);
+
+    expect(sale.values.totalPaid).toBe(0);
+    expect(sale.values.status).toBe("open");
+    expect(sale.values.completedAt).toBeNull();
+  });
+
+  it("throws when revert amount exceeds totalPaid", () => {
+    const sale = buildSale({ paymentType: "credit" });
+    sale.pay(1000);
+
+    expect(() => sale.revertPayment(1500)).toThrow(
+      AmountMustBePositiveException,
+    );
+  });
+
+  it("throws when revert amount is negative", () => {
+    const sale = buildSale({ paymentType: "credit" });
+    sale.pay(1000);
+
+    expect(() => sale.revertPayment(-1)).toThrow(
+      AmountMustBePositiveException,
+    );
   });
 });
 

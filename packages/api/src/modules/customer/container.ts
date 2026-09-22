@@ -5,6 +5,7 @@ import { SQLiteCustomerPaymentApplicationRepository } from "./infrastructure/rep
 import { CreateCustomerCommand } from "./application/commands/create-customer.command";
 import { UpdateCustomerCommand } from "./application/commands/update-customer.command";
 import { CreateCustomerPaymentCommand } from "./application/commands/create-customer-payment.command";
+import { CancelCustomerPaymentCommand } from "./application/commands/cancel-customer-payment.command";
 import { UpdateCustomerBalanceService } from "./application/services/update-customer-balance.service";
 import { saleContainer } from "../sales/container";
 
@@ -38,6 +39,20 @@ const getCreateCustomerPaymentCommand = () => {
   return createCustomerPaymentCommand;
 };
 
+let cancelCustomerPaymentCommand: CancelCustomerPaymentCommand | null = null;
+const getCancelCustomerPaymentCommand = () => {
+  if (!cancelCustomerPaymentCommand) {
+    cancelCustomerPaymentCommand = new CancelCustomerPaymentCommand(
+      customerRepository,
+      customerPaymentRepository,
+      customerPaymentApplicationRepository,
+      saleContainer.repositories.saleRepository,
+    );
+  }
+
+  return cancelCustomerPaymentCommand;
+};
+
 // Services
 const updateCustomerBalanceService = new UpdateCustomerBalanceService(
   customerRepository,
@@ -49,6 +64,9 @@ export const customerContainer = {
     updateCustomerCommand,
     get createCustomerPaymentCommand() {
       return getCreateCustomerPaymentCommand();
+    },
+    get cancelCustomerPaymentCommand() {
+      return getCancelCustomerPaymentCommand();
     },
   },
   repositories: {

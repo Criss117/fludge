@@ -8,25 +8,27 @@ Al crear un `CustomerPayment`, el `PaySaleService` distribuye el monto entre las
 - No se introduce infraestructura de eventos de dominio (overkill para el scope actual)
 - Se corrige bug en `PaySaleService`: la distribución de pagos estaba calculando mal el monto a aplicar a cada sale
 
-## Tareas
-- [ ] Crear schema DB: `customer_payment_application`
-- [ ] Crear entidad de dominio `CustomerPaymentApplication`
-- [ ] Crear repositorio: interface + SQLite + InMemory
-- [ ] Corregir bug en `PaySaleService` y devolver aplicaciones
-- [ ] Modificar `CreateCustomerPaymentCommand` para persistir aplicaciones
-- [ ] Actualizar containers (customer + sales)
-- [ ] Agregar tests para entidad y comando
+## Tareas completadas
+- [x] Crear schema DB: `customer_payment_application`
+- [x] Crear entidad de dominio `CustomerPaymentApplication`
+- [x] Crear repositorio: interface + SQLite + InMemory
+- [x] Corregir bug en `PaySaleService` y devolver aplicaciones
+- [x] Modificar `CreateCustomerPaymentCommand` para persistir aplicaciones
+- [x] Actualizar containers (customer + sales)
+- [x] Agregar tests para entidad y comando
 
-## Archivos a tocar
-- `packages/db/src/schema/customer-payment-application.schema.ts` (nuevo)
-- `packages/db/src/schema/index.ts`
-- `packages/api/src/modules/customer/domain/entities/customer-payment-application.entity.ts` (nuevo)
-- `packages/api/src/modules/customer/domain/repositories/customer-payment-application.repository.ts` (nuevo)
-- `packages/api/src/modules/customer/infrastructure/repositories/sqlite-customer-payment-application.repository.ts` (nuevo)
-- `packages/api/test/support/repositories/in-memory-customer-payment-application.repository.ts` (nuevo)
-- `packages/api/src/modules/sales/application/services/pay-sale.service.ts`
-- `packages/api/src/modules/customer/application/commands/create-customer-payment.command.ts`
+## Tareas pendientes
+- [ ] Agregar `Sale.revertPayment(amount)` para deshacer pagos
+- [ ] Permitir transición `completed → open` en `SaleStatus`
+- [ ] Implementar `CancelCustomerPaymentCommand`
+- [ ] Agregar endpoint cancel al router
+- [ ] Agregar tests para cancel command y `Sale.revertPayment`
+
+## Archivos a tocar (fase 2)
+- `packages/api/src/modules/sales/domain/entities/sale.entity.ts`
+- `packages/api/src/modules/sales/domain/value-objects/sale-status.ts`
+- `packages/api/src/modules/customer/application/commands/cancel-customer-payment.command.ts` (nuevo, reemplaza `cancel-customer-paymente.command.ts`)
+- `packages/api/src/modules/customer/infrastructure/http/customer-payment.router.ts`
 - `packages/api/src/modules/customer/container.ts`
-- `packages/api/src/modules/sales/container.ts`
-- `packages/api/test/modules/customer/application/commands/create-customer-payment.command.test.ts`
-- `packages/api/test/modules/customer/domain/entities/customer-payment-application-entity.test.ts` (nuevo)
+- `packages/api/test/modules/customer/application/commands/cancel-customer-payment.command.test.ts` (nuevo)
+- `packages/api/test/modules/sales/domain/entities/sale-entity.test.ts`

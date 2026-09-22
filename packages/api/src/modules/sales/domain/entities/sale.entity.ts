@@ -179,6 +179,20 @@ export class Sale {
     this.touch();
   }
 
+  public revertPayment(amount: number) {
+    if (amount < 0) throw new AmountMustBePositiveException();
+    if (amount > this._totalPaid) throw new AmountMustBePositiveException();
+
+    this._totalPaid -= amount;
+
+    if (this._status.isCompleted() && this._totalPaid < this._total) {
+      this._status = new SaleStatus("open");
+      this._completedAt = null;
+    }
+
+    this.touch();
+  }
+
   public get total() {
     return this._total;
   }
