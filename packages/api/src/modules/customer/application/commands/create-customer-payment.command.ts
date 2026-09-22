@@ -2,6 +2,8 @@ import { createCustomerPaymentValidator } from "@fludge/utils/validators/custome
 import type { z } from "zod";
 import type { CustomerRepository } from "@fludge/api/modules/customer/domain/repositories/customer.repository";
 import type { CustomerPaymentRepository } from "@fludge/api/modules/customer/domain/repositories/customer-payment.repository";
+import type { CustomerPaymentApplicationRepository } from "@fludge/api/modules/customer/domain/repositories/customer-payment-application.repository";
+import { CustomerPaymentApplication } from "@fludge/api/modules/customer/domain/entities/customer-payment-application.entity";
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import { UUID } from "@fludge/utils/uuid";
 import {
@@ -21,6 +23,7 @@ export class CreateCustomerPaymentCommand {
     private readonly customerPaymentRepository: CustomerPaymentRepository,
     private readonly saleRepository: SaleRepository,
     private readonly paySaleService: PaySaleService,
+    private readonly customerPaymentApplicationRepository: CustomerPaymentApplicationRepository,
   ) {}
 
   public async execute(
@@ -49,7 +52,7 @@ export class CreateCustomerPaymentCommand {
       UUID.fromString(loggedUserId),
     );
 
-    const [salesToPay, errPaySale] = await this.paySaleService.execute(
+    const [saleApplications, errPaySale] = await this.paySaleService.execute(
       activeOrganization,
       existingCustomer.id.toString(),
       cmd.amount,
@@ -57,6 +60,16 @@ export class CreateCustomerPaymentCommand {
 
     if (errPaySale)
       throw new InternalServerError(errPaySale, "api_errors.sales.isr_on_save");
+
+    const applications = saleApplications
+      .filter(({ amountApplied }) => amountApplied > 0)
+      .map(({ sale, amountApplied }) =>
+        CustomerPaymentApplication.create({
+          paymentId: payment.id,
+          saleId: sale.id,
+          amount: amountApplied,
+        }),
+      );
 
     const [, errTransaction] = await this.customerRepository.transaction(
       async (tx) => {
@@ -82,9 +95,9 @@ export class CreateCustomerPaymentCommand {
             "api_errors.customer_payments.isr_on_save",
           );
 
-        if (salesToPay.length > 0) {
+        if (saleApplications.length > 0) {
           const [, errSaveSale] = await this.saleRepository.saveOnlySales(
-            salesToPay,
+            saleApplications.map(({ sale }) => sale),
             { tx },
           );
 
@@ -92,6 +105,20 @@ export class CreateCustomerPaymentCommand {
             throw new InternalServerError(
               errSaveSale,
               "api_errors.sales.isr_on_save",
+            );
+        }
+
+        if (applications.length > 0) {
+          const [, errSaveApplications] =
+            await this.customerPaymentApplicationRepository.saveMany(
+              applications,
+              { tx },
+            );
+
+          if (errSaveApplications)
+            throw new InternalServerError(
+              errSaveApplications,
+              "api_errors.customer_payments.isr_on_save",
             );
         }
       },

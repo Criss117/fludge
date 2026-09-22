@@ -20,20 +20,38 @@ const saleRepository = new SQLiteSaleRepository(
 );
 
 // Commands
-const createSaleCommand = new CreateSaleCommand(
-  saleRepository,
-  saleSequenceRepository,
-  productContainer.repositories.productRepository,
-  productContainer.services.saleProductService,
-  customerContainer.repositories.customerRepository,
-);
+// `customerContainer` forms an import cycle with `saleContainer` (customer/container.ts
+// reads `saleContainer.repositories.saleRepository` and `.services.paySaleService`).
+// Wrap cross-container wiring in memoized lazy getters so module evaluation never
+// touches an uninitialized binding, keeping the cycle safe for any import order.
+let createSaleCommand: CreateSaleCommand | null = null;
+const getCreateSaleCommand = () => {
+  if (!createSaleCommand) {
+    createSaleCommand = new CreateSaleCommand(
+      saleRepository,
+      saleSequenceRepository,
+      productContainer.repositories.productRepository,
+      productContainer.services.saleProductService,
+      customerContainer.repositories.customerRepository,
+    );
+  }
 
-const cancelSaleCommand = new CancelSaleCommand(
-  saleRepository,
-  productContainer.repositories.productRepository,
-  customerContainer.repositories.customerRepository,
-  customerContainer.services.updateCustomerBalanceService,
-);
+  return createSaleCommand;
+};
+
+let cancelSaleCommand: CancelSaleCommand | null = null;
+const getCancelSaleCommand = () => {
+  if (!cancelSaleCommand) {
+    cancelSaleCommand = new CancelSaleCommand(
+      saleRepository,
+      productContainer.repositories.productRepository,
+      customerContainer.repositories.customerRepository,
+      customerContainer.services.updateCustomerBalanceService,
+    );
+  }
+
+  return cancelSaleCommand;
+};
 
 // Queries
 const findAllSalesQuery = new FindAllSalesQuery(databaseService);
@@ -43,8 +61,12 @@ const paySaleService = new PaySaleService(saleRepository);
 
 export const saleContainer = {
   commands: {
-    createSaleCommand,
-    cancelSaleCommand,
+    get createSaleCommand() {
+      return getCreateSaleCommand();
+    },
+    get cancelSaleCommand() {
+      return getCancelSaleCommand();
+    },
   },
   queries: {
     findAllSalesQuery,

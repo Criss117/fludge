@@ -1,7 +1,12 @@
 import type { Organization } from "@fludge/api/modules/iam/organization/domain/entities/organization.entity";
 import type { SaleRepository } from "@fludge/api/modules/sales/domain/repositories/sale.repository";
-import { err, ok } from "@fludge/utils/trycatch";
+import { err, ok, type Result } from "@fludge/utils/trycatch";
 import type { Sale } from "@fludge/api/modules/sales/domain/entities/sale.entity";
+
+export type SalePaymentApplication = {
+  sale: Sale;
+  amountApplied: number;
+};
 
 export class PaySaleService {
   constructor(private readonly _saleRepository: SaleRepository) {}
@@ -10,7 +15,7 @@ export class PaySaleService {
     activeOrganization: Organization,
     customerId: string,
     amount: number,
-  ) {
+  ): Promise<Result<SalePaymentApplication[], Error>> {
     const [sales, errFind] = await this._saleRepository.findByCustomer(
       activeOrganization.id.toString(),
       customerId,
@@ -20,19 +25,23 @@ export class PaySaleService {
 
     if (sales.length === 0) return ok([]);
 
-    const salesToSave: Sale[] = [];
+    const applications: SalePaymentApplication[] = [];
 
     let remainingAmount = amount;
 
     for (const sale of sales) {
       if (sale.status.isCompleted()) continue;
 
-      remainingAmount -= sale.remaining;
-      sale.pay(remainingAmount);
+      const amountToPay = Math.min(remainingAmount, sale.remaining);
 
-      salesToSave.push(sale);
+      if (amountToPay <= 0) break;
+
+      sale.pay(amountToPay);
+      remainingAmount -= amountToPay;
+
+      applications.push({ sale, amountApplied: amountToPay });
     }
 
-    return ok(salesToSave);
+    return ok(applications);
   }
 }
