@@ -82,6 +82,8 @@ describe("CreateCustomerPaymentCommand", () => {
       customer.id.toString(),
     );
     expect(updatedCustomer!.values.balance).toBe(40000);
+    expect(updatedCustomer!.payments).toHaveLength(1);
+    expect(updatedCustomer!.payments[0]!.amount).toBe(10000);
   });
 
   it("pays open sales for the customer", async () => {
@@ -114,6 +116,31 @@ describe("CreateCustomerPaymentCommand", () => {
 
     const persisted = saleRepository.getAll(org.id.toString())[0]!;
     expect(persisted.values.status).toBe("completed");
+  });
+
+  it("stores the payment in the customer's payment collection", async () => {
+    const { command, customerRepository } = setup();
+    const { org, ownerUserId } = buildOrganization();
+    const customer = buildCustomer({
+      organizationId: org.id.toString(),
+      balance: 50000,
+    });
+    await customerRepository.save(customer);
+
+    const result = await command.execute(
+      org,
+      ownerUserId,
+      validCmd({ customerId: customer.id.toString() }),
+    );
+
+    const [updatedCustomer] = await customerRepository.findById(
+      org.id.toString(),
+      customer.id.toString(),
+    );
+
+    expect(updatedCustomer!.payments).toHaveLength(1);
+    expect(updatedCustomer!.payments[0]!.id.toString()).toBe(result.id);
+    expect(updatedCustomer!.payments[0]!.method).toBe("cash");
   });
 
   it("throws NotFoundError when customer does not exist", async () => {
