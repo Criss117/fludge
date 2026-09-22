@@ -13,6 +13,7 @@ import type {
   CustomerPaymentMethodEnum,
   StatusEnum,
 } from "@fludge/utils/enums/db-enums";
+import type { CustomerPaymentSelect } from "@fludge/db/schema/customer-payment.schema";
 
 interface CreateCustomer {
   organizationId: UUID;
@@ -123,7 +124,15 @@ export class Customer {
     return this;
   }
 
-  public static reconstitute(data: CustomerSelect) {
+  public static reconstitute(
+    data: CustomerSelect & {
+      payments: CustomerPaymentSelect[];
+    },
+  ) {
+    const orderedPayments = data.payments.sort(
+      (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+    );
+
     return new Customer(
       UUID.fromString(data.id),
       UUID.fromString(data.organizationId),
@@ -136,7 +145,9 @@ export class Customer {
       new Status(data.status),
       new Date(data.updatedAt),
       new Date(data.createdAt),
-      new CustomerPaymentCollection(),
+      new CustomerPaymentCollection(
+        orderedPayments.map((p) => CustomerPayment.reconstitute(p)),
+      ),
     );
   }
 

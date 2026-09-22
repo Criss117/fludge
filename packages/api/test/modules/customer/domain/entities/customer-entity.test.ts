@@ -12,13 +12,20 @@ import { PaymentAlreadyCancelledException } from "@fludge/api/modules/customer/d
 import { AmountMustBePositiveException } from "@fludge/api/modules/shared/domain/exceptions/amount-must-be-positive.exception";
 import { UUID } from "@fludge/utils/uuid";
 import type { CustomerSelect } from "@fludge/db/schema/customer.schema";
-import { buildCustomer, makeCustomerOrganizationId, makeCustomerUserId } from "@test/support/builders/customer.builder";
+import {
+  buildCustomer,
+  makeCustomerOrganizationId,
+  makeCustomerUserId,
+} from "@test/support/builders/customer.builder";
+import type { CustomerPaymentSelect } from "@fludge/db/schema/customer-payment.schema";
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-function buildCustomerSelect(): CustomerSelect {
+function buildCustomerSelect(): CustomerSelect & {
+  payments: CustomerPaymentSelect[];
+} {
   const now = new Date("2026-01-01T00:00:00.000Z");
 
   return {
@@ -35,6 +42,7 @@ function buildCustomerSelect(): CustomerSelect {
     status: "active",
     createdAt: now,
     updatedAt: now,
+    payments: [],
   };
 }
 
@@ -394,9 +402,9 @@ describe("Customer.cancelPayment", () => {
   it("throws CustomerPaymentNotFoundException for unknown payment id", () => {
     const customer = buildCustomer({ creditLimit: 500000 });
 
-    expect(() =>
-      customer.cancelPayment("non-existent-id", "razón"),
-    ).toThrow(CustomerPaymentNotFoundException);
+    expect(() => customer.cancelPayment("non-existent-id", "razón")).toThrow(
+      CustomerPaymentNotFoundException,
+    );
   });
 
   it("throws PaymentAlreadyCancelledException when cancelling twice", () => {

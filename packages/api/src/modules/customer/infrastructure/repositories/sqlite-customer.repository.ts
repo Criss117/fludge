@@ -2,15 +2,23 @@ import { TransactionalRepository } from "@fludge/api/modules/shared/infrastructu
 import type { DatabaseService, TransactionService } from "@fludge/db";
 import { customer } from "@fludge/db/schema/customer.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
-import { and, eq } from "drizzle-orm";
+import { and, eq, getColumns, sql } from "drizzle-orm";
 import { Customer } from "@fludge/api/modules/customer/domain/entities/customer.entity";
 import type { CustomerRepository } from "@fludge/api/modules/customer/domain/repositories/customer.repository";
+import {
+  customerPayment,
+  type CustomerPaymentSelect,
+} from "@fludge/db/schema/customer-payment.schema";
+import { jsonObject } from "@fludge/db/utils/build-queries";
 
 type Options = {
   tx?: TransactionService;
 };
 
-export class SQLiteCustomerRepository extends TransactionalRepository implements CustomerRepository {
+export class SQLiteCustomerRepository
+  extends TransactionalRepository
+  implements CustomerRepository
+{
   constructor(private readonly db: DatabaseService) {
     super(db);
   }
@@ -18,8 +26,16 @@ export class SQLiteCustomerRepository extends TransactionalRepository implements
   public async findById(organizationId: string, customerId: string) {
     const [rows, error] = await tryCatch(
       this.db
-        .select()
+        .select({
+          ...getColumns(customer),
+          payments: sql<string>`
+            json_group_array(
+              DISTINCT ${jsonObject(customerPayment)}
+            ) FILTER (WHERE ${customerPayment.customerId} IS NOT NULL)
+          `,
+        })
         .from(customer)
+        .leftJoin(customerPayment, eq(customerPayment.customerId, customer.id))
         .where(
           and(
             eq(customer.id, customerId),
@@ -35,16 +51,32 @@ export class SQLiteCustomerRepository extends TransactionalRepository implements
 
     if (!data) return ok(null);
 
-    return ok(Customer.reconstitute(data));
+    return ok(
+      Customer.reconstitute({
+        ...data,
+        payments: (JSON.parse(data.payments) as CustomerPaymentSelect[]).map(
+          (p) => ({
+            ...p,
+            createdAt: new Date(p.createdAt),
+            updatedAt: new Date(p.updatedAt),
+            cancelledAt: p.cancelledAt ? new Date(p.cancelledAt) : null,
+          }),
+        ),
+      }),
+    );
   }
 
-  public async findByDocument(
-    organizationId: string,
-    documentNumber: string,
-  ) {
+  public async findByDocument(organizationId: string, documentNumber: string) {
     const [rows, error] = await tryCatch(
       this.db
-        .select()
+        .select({
+          ...getColumns(customer),
+          payments: sql<string>`
+            json_group_array(
+              DISTINCT ${jsonObject(customerPayment)}
+            ) FILTER (WHERE ${customerPayment.customerId} IS NOT NULL)
+          `,
+        })
         .from(customer)
         .where(
           and(
@@ -61,7 +93,19 @@ export class SQLiteCustomerRepository extends TransactionalRepository implements
 
     if (!data) return ok(null);
 
-    return ok(Customer.reconstitute(data));
+    return ok(
+      Customer.reconstitute({
+        ...data,
+        payments: (JSON.parse(data.payments) as CustomerPaymentSelect[]).map(
+          (p) => ({
+            ...p,
+            createdAt: new Date(p.createdAt),
+            updatedAt: new Date(p.updatedAt),
+            cancelledAt: p.cancelledAt ? new Date(p.cancelledAt) : null,
+          }),
+        ),
+      }),
+    );
   }
 
   private async saveContent(customerEntity: Customer, options: Options) {

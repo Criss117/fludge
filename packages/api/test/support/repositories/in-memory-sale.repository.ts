@@ -16,14 +16,27 @@ export class InMemorySaleRepository
     organizationId: string,
     customerId: string,
   ): Promise<Result<Sale[], Error>> {
-    throw new Error("Method not implemented.");
+    const sales = Array.from(this.store.values()).filter(
+      (s) =>
+        s.values.organizationId === organizationId &&
+        s.values.customerId === customerId,
+    );
+
+    return ok(sales);
   }
 
   public async saveOnlySales(
-    saleEntity: Sale[],
-    options?: { tx?: TransactionService },
+    saleEntities: Sale[],
+    _options?: { tx?: TransactionService },
   ): Promise<Result<unknown, Error>> {
-    throw new Error("Method not implemented.");
+    for (const sale of saleEntities) {
+      this.store.set(
+        this.key(sale.values.organizationId, sale.id.toString()),
+        sale,
+      );
+    }
+
+    return ok(undefined);
   }
 
   private readonly store = new Map<string, Sale>();

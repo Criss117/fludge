@@ -58,42 +58,50 @@ export class CreateCustomerPaymentCommand {
     if (errPaySale)
       throw new InternalServerError(errPaySale, "api_errors.sales.isr_on_save");
 
-    await this.customerRepository.transaction(async (tx) => {
-      const [, errSaveCustomer] = await this.customerRepository.save(
-        existingCustomer,
-        { tx },
-      );
-
-      if (errSaveCustomer)
-        throw new InternalServerError(
-          errSaveCustomer,
-          "api_errors.customers.isr_on_save",
-        );
-
-      const [, errSavePayment] = await this.customerPaymentRepository.save(
-        payment,
-        { tx },
-      );
-
-      if (errSavePayment)
-        throw new InternalServerError(
-          errSavePayment,
-          "api_errors.customer_payments.isr_on_save",
-        );
-
-      if (salesToPay.length > 0) {
-        const [, errSaveSale] = await this.saleRepository.saveOnlySales(
-          salesToPay,
+    const [, errTransaction] = await this.customerRepository.transaction(
+      async (tx) => {
+        const [, errSaveCustomer] = await this.customerRepository.save(
+          existingCustomer,
           { tx },
         );
 
-        if (errSaveSale)
+        if (errSaveCustomer)
           throw new InternalServerError(
-            errSaveSale,
-            "api_errors.sales.isr_on_save",
+            errSaveCustomer,
+            "api_errors.customers.isr_on_save",
           );
-      }
-    });
+
+        const [, errSavePayment] = await this.customerPaymentRepository.save(
+          payment,
+          { tx },
+        );
+
+        if (errSavePayment)
+          throw new InternalServerError(
+            errSavePayment,
+            "api_errors.customer_payments.isr_on_save",
+          );
+
+        if (salesToPay.length > 0) {
+          const [, errSaveSale] = await this.saleRepository.saveOnlySales(
+            salesToPay,
+            { tx },
+          );
+
+          if (errSaveSale)
+            throw new InternalServerError(
+              errSaveSale,
+              "api_errors.sales.isr_on_save",
+            );
+        }
+      },
+    );
+
+    if (errTransaction)
+      throw new InternalServerError(
+        errTransaction,
+        "api_errors.customer_payments.isr_on_save",
+      );
 
     return payment.values;
   }
