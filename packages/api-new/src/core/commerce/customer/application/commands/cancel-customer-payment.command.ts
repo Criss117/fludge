@@ -69,7 +69,7 @@ export class CancelCustomerPaymentCommand {
 
         // Actualizar ventas afectadas (totalPaid y status revertidos)
         if (sales.length > 0) {
-          const [, errSales] = await this.saleRepository.updateMany(sales, {
+          const [, errSales] = await this.saleRepository.updateManyOnlySale(sales, {
             tx,
           });
 

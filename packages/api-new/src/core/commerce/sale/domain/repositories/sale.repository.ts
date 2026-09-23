@@ -25,7 +25,14 @@ export interface SaleRepository extends TransactionalRepository {
 
   insert(sale: Sale, options?: Options): Promise<Result<void>>;
 
+  /** Actualiza sale + items del aggregate completo. */
   update(sale: Sale, options?: Options): Promise<Result<void>>;
 
+  /** Solo actualiza la tabla sale, sin tocar items. */
+  updateOnlySale(sale: Sale, options?: Options): Promise<Result<void>>;
+
   updateMany(sales: Sale[], options?: Options): Promise<Result<void>>;
+
+  /** Solo actualiza la tabla sale para múltiples ventas, sin tocar items. */
+  updateManyOnlySale(sales: Sale[], options?: Options): Promise<Result<void>>;
 }

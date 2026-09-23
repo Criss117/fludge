@@ -12,7 +12,7 @@ import {
   type SaleItemSelect,
   type SalePaymentSelect,
 } from "@fludge/db/schema/sales.schema";
-import { jsonObject } from "@fludge/db/utils/build-queries";
+import { buildConflictUpdateColumn, jsonObject } from "@fludge/db/utils/build-queries";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { and, eq, getColumns, inArray, sql } from "drizzle-orm";
 
@@ -87,6 +87,65 @@ export class SQLiteSaleRepository
     return ok(this.parseSaleRows(rows));
   }
 
+  private async saveItems(
+    saleEntity: Sale,
+    db: Parameters<typeof this.db.transaction>[0] extends (arg: infer T) => unknown ? T : never,
+  ) {
+    const items = saleEntity.values.items;
+
+    if (items.length === 0) return;
+
+    const [, errItems] = await tryCatch(
+      db
+        .insert(saleItem)
+        .values(items)
+        .onConflictDoUpdate({
+          target: saleItem.id,
+          set: buildConflictUpdateColumn(saleItem, [
+            "name",
+            "unitPrice",
+            "quantity",
+            "subtotal",
+            "status",
+            "updatedAt",
+          ]),
+        }),
+    );
+
+    if (errItems) throw errItems;
+  }
+
+  private async updateOnlySaleContent(
+    saleEntity: Sale,
+    db: Parameters<typeof this.db.transaction>[0] extends (arg: infer T) => unknown ? T : never,
+  ) {
+    const { items: _items, payments: _payments, ...rest } = saleEntity.values;
+
+    const [, errUpdate] = await tryCatch(
+      db
+        .update(sale)
+        .set({
+          customerId: rest.customerId,
+          total: rest.total,
+          totalPaid: rest.totalPaid,
+          notes: rest.notes,
+          status: rest.status,
+          cancelReason: rest.cancelReason,
+          cancelledAt: rest.cancelledAt,
+          completedAt: rest.completedAt,
+          updatedAt: rest.updatedAt,
+        })
+        .where(
+          and(
+            eq(sale.id, rest.id),
+            eq(sale.organizationId, rest.organizationId),
+          ),
+        ),
+    );
+
+    if (errUpdate) throw errUpdate;
+  }
+
   public async findById(organizationId: string, saleId: string) {
     const [sales, errFind] = await this.find(organizationId, { id: saleId });
 
@@ -148,37 +207,33 @@ export class SQLiteSaleRepository
 
     if (errInsert) return err(errInsert);
 
+    const [, errItems] = await tryCatch(this.saveItems(saleEntity, db));
+
+    if (errItems) return err(errItems);
+
     return ok(undefined);
   }
 
   public async update(saleEntity: Sale, options?: Options) {
     const db = options?.tx ?? this.db;
 
-    const { items: _items, payments: _payments, ...rest } = saleEntity.values;
+    const [, errSale] = await tryCatch(this.updateOnlySaleContent(saleEntity, db));
 
-    const [, errUpdate] = await tryCatch(
-      db
-        .update(sale)
-        .set({
-          customerId: rest.customerId,
-          total: rest.total,
-          totalPaid: rest.totalPaid,
-          notes: rest.notes,
-          status: rest.status,
-          cancelReason: rest.cancelReason,
-          cancelledAt: rest.cancelledAt,
-          completedAt: rest.completedAt,
-          updatedAt: rest.updatedAt,
-        })
-        .where(
-          and(
-            eq(sale.id, rest.id),
-            eq(sale.organizationId, rest.organizationId),
-          ),
-        ),
-    );
+    if (errSale) return err(errSale);
 
-    if (errUpdate) return err(errUpdate);
+    const [, errItems] = await tryCatch(this.saveItems(saleEntity, db));
+
+    if (errItems) return err(errItems);
+
+    return ok(undefined);
+  }
+
+  public async updateOnlySale(saleEntity: Sale, options?: Options) {
+    const db = options?.tx ?? this.db;
+
+    const [, errSale] = await tryCatch(this.updateOnlySaleContent(saleEntity, db));
+
+    if (errSale) return err(errSale);
 
     return ok(undefined);
   }
@@ -187,32 +242,25 @@ export class SQLiteSaleRepository
     const db = options?.tx ?? this.db;
 
     for (const saleEntity of sales) {
-      const { items: _items, payments: _payments, ...rest } =
-        saleEntity.values;
+      const [, errSale] = await tryCatch(this.updateOnlySaleContent(saleEntity, db));
 
-      const [, errUpdate] = await tryCatch(
-        db
-          .update(sale)
-          .set({
-            customerId: rest.customerId,
-            total: rest.total,
-            totalPaid: rest.totalPaid,
-            notes: rest.notes,
-            status: rest.status,
-            cancelReason: rest.cancelReason,
-            cancelledAt: rest.cancelledAt,
-            completedAt: rest.completedAt,
-            updatedAt: rest.updatedAt,
-          })
-          .where(
-            and(
-              eq(sale.id, rest.id),
-              eq(sale.organizationId, rest.organizationId),
-            ),
-          ),
-      );
+      if (errSale) return err(errSale);
 
-      if (errUpdate) return err(errUpdate);
+      const [, errItems] = await tryCatch(this.saveItems(saleEntity, db));
+
+      if (errItems) return err(errItems);
+    }
+
+    return ok(undefined);
+  }
+
+  public async updateManyOnlySale(sales: Sale[], options?: Options) {
+    const db = options?.tx ?? this.db;
+
+    for (const saleEntity of sales) {
+      const [, errSale] = await tryCatch(this.updateOnlySaleContent(saleEntity, db));
+
+      if (errSale) return err(errSale);
     }
 
     return ok(undefined);

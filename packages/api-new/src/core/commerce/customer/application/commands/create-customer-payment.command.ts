@@ -76,7 +76,7 @@ export class CreateCustomerPaymentCommand {
         if (errCustomer) throw errCustomer;
 
         if (salesToUpdate.length > 0) {
-          const [, errSales] = await this.saleRepository.updateMany(
+          const [, errSales] = await this.saleRepository.updateManyOnlySale(
             salesToUpdate,
             { tx },
           );
