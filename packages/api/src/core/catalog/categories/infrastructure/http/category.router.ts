@@ -1,8 +1,8 @@
 import { hasPermissionProcedure } from "@fludge/api/index";
-import { createCategoryCommand } from "@core/catalog/categories/application/commands/create-category.command";
-import { updateCategoryCommand } from "@core/catalog/categories/application/commands/update-category.command";
-import { toggleCategoryStatusCommand } from "@core/catalog/categories/application/commands/toggle-category-status.command";
-import { categoryContainer } from "@core/catalog/categories/container";
+import { createCategoryCommand } from "../../../../catalog/categories/application/commands/create-category.command";
+import { updateCategoryCommand } from "../../../../catalog/categories/application/commands/update-category.command";
+import { toggleCategoryStatusCommand } from "../../../../catalog/categories/application/commands/toggle-category-status.command";
+import { categoryContainer } from "../../../../catalog/categories/container";
 
 const TAGS = ["Categories"] as const;
 

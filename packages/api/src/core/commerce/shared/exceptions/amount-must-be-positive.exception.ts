@@ -1,5 +1,5 @@
 import type { TranslationKey } from "@fludge/i18n/index";
-import { BadRequestError } from "@core/shared/exceptions/base-exception";
+import { BadRequestError } from "../../../shared/exceptions/base-exception";
 
 export class AmountMustBePositiveException extends BadRequestError {
   constructor(

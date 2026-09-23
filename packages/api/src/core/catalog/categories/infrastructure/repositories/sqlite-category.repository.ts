@@ -1,8 +1,8 @@
-import { Category } from "@core/catalog/categories/domain/entities/category.entity";
+import { Category } from "../../../../catalog/categories/domain/entities/category.entity";
 import type {
   CategoryRepository,
   Options,
-} from "@core/catalog/categories/domain/repositories/category.repository";
+} from "../../../../catalog/categories/domain/repositories/category.repository";
 import type { DatabaseService } from "@fludge/db";
 import { category } from "@fludge/db/schema/catalog.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";

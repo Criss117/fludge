@@ -1,8 +1,8 @@
 import type { z } from "zod";
-import type { CategoryRepository } from "@core/catalog/categories/domain/repositories/category.repository";
-import { CategoryNotFoundException } from "@core/catalog/categories/domain/exceptions/category-not-found.exception";
-import type { UserAuthContext } from "@core/iam/domain/entities/user-auth-context.entity";
-import { InternalServerError } from "@core/shared/exceptions/base-exception";
+import type { CategoryRepository } from "../../../../catalog/categories/domain/repositories/category.repository";
+import { CategoryNotFoundException } from "../../../../catalog/categories/domain/exceptions/category-not-found.exception";
+import type { UserAuthContext } from "../../../../iam/domain/entities/user-auth-context.entity";
+import { InternalServerError } from "../../../../shared/exceptions/base-exception";
 import { updateCategoryValidator } from "@fludge/utils/validators/category.validators";
 
 export const toggleCategoryStatusCommand = updateCategoryValidator.pick({

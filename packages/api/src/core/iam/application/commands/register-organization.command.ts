@@ -1,17 +1,17 @@
 import type { z } from "zod";
-import { Group } from "@core/iam/domain/entities/group.entity";
-import { Member } from "@core/iam/domain/entities/member.entity";
-import { Organization } from "@core/iam/domain/entities/organization.entity";
-import { OrganizationAlreadyExistsException } from "@core/iam/domain/exceptions/organization-already-exists.exception";
-import type { GroupRepository } from "@core/iam/domain/repositories/group.repository";
-import type { MemberRepository } from "@core/iam/domain/repositories/member.repository";
-import type { OrganizationRepository } from "@core/iam/domain/repositories/organization.repository";
-import { InternalServerError } from "@core/shared/exceptions/base-exception";
+import { Group } from "../../../iam/domain/entities/group.entity";
+import { Member } from "../../../iam/domain/entities/member.entity";
+import { Organization } from "../../../iam/domain/entities/organization.entity";
+import { OrganizationAlreadyExistsException } from "../../../iam/domain/exceptions/organization-already-exists.exception";
+import type { GroupRepository } from "../../../iam/domain/repositories/group.repository";
+import type { MemberRepository } from "../../../iam/domain/repositories/member.repository";
+import type { OrganizationRepository } from "../../../iam/domain/repositories/organization.repository";
+import { InternalServerError } from "../../../shared/exceptions/base-exception";
 import { PERMISSIONS } from "@fludge/utils/permissions/data";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { registerOrganizationValidator } from "@fludge/utils/validators/organization.validators";
 import { UUID } from "@fludge/utils/uuid";
-import type { OrganizationUniquenessValidator } from "@core/iam/application/services/organization-uniqueness-validator.service";
+import type { OrganizationUniquenessValidator } from "../../../iam/application/services/organization-uniqueness-validator.service";
 
 export const registerOrganizationCommand = registerOrganizationValidator;
 

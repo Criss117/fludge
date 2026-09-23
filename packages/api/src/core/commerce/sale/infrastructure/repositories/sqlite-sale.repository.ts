@@ -1,10 +1,10 @@
-import { Sale } from "@core/commerce/sale/domain/entities/sale.entity";
+import { Sale } from "../../../../commerce/sale/domain/entities/sale.entity";
 import type {
   Options,
   SaleRepository,
-} from "@core/commerce/sale/domain/repositories/sale.repository";
-import { TransactionalRepository } from "@core/shared/repositories/transactional-repository";
-import type { DatabaseService } from "@fludge/db";
+} from "../../../../commerce/sale/domain/repositories/sale.repository";
+import { TransactionalRepository } from "../../../../shared/repositories/transactional-repository";
+import type { DatabaseService, TransactionService } from "@fludge/db";
 import {
   sale,
   saleItem,
@@ -24,13 +24,27 @@ export class SQLiteSaleRepository
     super(db);
   }
 
-  private parseSaleRows<
-    T extends {
+  private parseSaleRows(
+    rows: Array<{
       items: string;
       payments: string;
-      [key: string]: unknown;
-    },
-  >(rows: T[]) {
+      id: string;
+      organizationId: string;
+      createdBy: string;
+      customerId: string | null;
+      saleNumber: string;
+      paymentType: string;
+      total: number;
+      totalPaid: number;
+      notes: string | null;
+      status: string;
+      cancelReason: string | null;
+      cancelledAt: Date | null;
+      completedAt: Date | null;
+      createdAt: Date;
+      updatedAt: Date;
+    }>,
+  ) {
     return rows.map((row) => {
       const items = (JSON.parse(row.items) as SaleItemSelect[]).map((i) => ({
         ...i,
@@ -46,7 +60,13 @@ export class SQLiteSaleRepository
         }),
       );
 
-      return Sale.reconstitute({ ...row, items, payments });
+      return Sale.reconstitute({
+        ...row,
+        paymentType: row.paymentType as "cash" | "credit",
+        status: row.status as "open" | "partial" | "completed" | "cancelled",
+        items,
+        payments,
+      });
     });
   }
 
@@ -89,7 +109,7 @@ export class SQLiteSaleRepository
 
   private async saveItems(
     saleEntity: Sale,
-    db: Parameters<typeof this.db.transaction>[0] extends (arg: infer T) => unknown ? T : never,
+    db: DatabaseService | TransactionService,
   ) {
     const items = saleEntity.values.items;
 
@@ -117,7 +137,7 @@ export class SQLiteSaleRepository
 
   private async updateOnlySaleContent(
     saleEntity: Sale,
-    db: Parameters<typeof this.db.transaction>[0] extends (arg: infer T) => unknown ? T : never,
+    db: DatabaseService | TransactionService,
   ) {
     const { items: _items, payments: _payments, ...rest } = saleEntity.values;
 

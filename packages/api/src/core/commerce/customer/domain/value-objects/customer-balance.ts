@@ -1,4 +1,4 @@
-import { AmountMustBePositiveException } from "@core/commerce/shared/exceptions/amount-must-be-positive.exception";
+import { AmountMustBePositiveException } from "../../../../commerce/shared/exceptions/amount-must-be-positive.exception";
 import { CantIncreaseBalanceException } from "../exceptions/cant-increase-balance.exception";
 import { CantDecreaseBalanceException } from "../exceptions/cant-decrease-balance.exception";
 

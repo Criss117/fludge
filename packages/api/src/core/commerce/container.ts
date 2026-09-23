@@ -1,5 +1,5 @@
 import { databaseService } from "@fludge/db";
-import { productContainer } from "@core/catalog/products/container";
+import { productContainer } from "../catalog/products/container";
 
 // Customer repositories
 import { SQLiteCustomerRepository } from "./customer/infrastructure/repositories/sqlite-customer.repository";

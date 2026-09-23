@@ -1,9 +1,9 @@
-import { SalePayment } from "@core/commerce/sale/domain/entities/sale-payment.entity";
+import { SalePayment } from "../../../../commerce/sale/domain/entities/sale-payment.entity";
 import type {
   Options,
   SalePaymentRepository,
-} from "@core/commerce/sale/domain/repositories/sale-payment.repository";
-import { TransactionalRepository } from "@core/shared/repositories/transactional-repository";
+} from "../../../../commerce/sale/domain/repositories/sale-payment.repository";
+import { TransactionalRepository } from "../../../../shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
 import { salePayment } from "@fludge/db/schema/sales.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";

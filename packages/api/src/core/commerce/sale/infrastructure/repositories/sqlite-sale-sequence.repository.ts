@@ -1,4 +1,4 @@
-import type { SaleSequenceRepository } from "@core/commerce/sale/domain/repositories/sale-sequence.repository";
+import type { SaleSequenceRepository } from "../../../../commerce/sale/domain/repositories/sale-sequence.repository";
 import type { DatabaseService, TransactionService } from "@fludge/db";
 import { saleSequences } from "@fludge/db/schema/sales.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";

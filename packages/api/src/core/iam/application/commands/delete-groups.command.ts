@@ -1,8 +1,8 @@
 import type { z } from "zod";
-import type { UserAuthContext } from "@core/iam/domain/entities/user-auth-context.entity";
-import type { GroupMemberRepository } from "@core/iam/domain/repositories/group-member.repository";
-import type { GroupRepository } from "@core/iam/domain/repositories/group.repository";
-import { InternalServerError } from "@core/shared/exceptions/base-exception";
+import type { UserAuthContext } from "../../../iam/domain/entities/user-auth-context.entity";
+import type { GroupMemberRepository } from "../../../iam/domain/repositories/group-member.repository";
+import type { GroupRepository } from "../../../iam/domain/repositories/group.repository";
+import { InternalServerError } from "../../../shared/exceptions/base-exception";
 import { deleteGroupsValidator } from "@fludge/utils/validators/group.validators";
 
 export const deleteGroupsCommand = deleteGroupsValidator;

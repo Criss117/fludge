@@ -2,18 +2,18 @@ import type { z } from "zod";
 import {
   Sale,
   type CreateSale,
-} from "@core/commerce/sale/domain/entities/sale.entity";
-import type { SaleRepository } from "@core/commerce/sale/domain/repositories/sale.repository";
-import type { SaleSequenceRepository } from "@core/commerce/sale/domain/repositories/sale-sequence.repository";
-import type { CustomerRepository } from "@core/commerce/customer/domain/repositories/customer.repository";
-import type { ProductRepository } from "@core/catalog/products/domain/repositories/product.repository";
-import type { SaleProductService } from "@core/catalog/products/application/services/sale-product.service";
-import type { SaleItemSnapshotValue } from "@core/commerce/sale/domain/value-objects/sale-item-snapshot";
-import type { Customer } from "@core/commerce/customer/domain/entities/customer.entity";
-import type { UserAuthContext } from "@core/iam/domain/entities/user-auth-context.entity";
-import { InternalServerError } from "@core/shared/exceptions/base-exception";
-import { CustomerNotFoundException } from "@core/commerce/customer/domain/exceptions/customer-not-found.exception";
-import { ProductPresentationNotFoundException } from "@core/catalog/products/domain/exceptions/product-presentation-not-found.exception";
+} from "../../../../commerce/sale/domain/entities/sale.entity";
+import type { SaleRepository } from "../../../../commerce/sale/domain/repositories/sale.repository";
+import type { SaleSequenceRepository } from "../../../../commerce/sale/domain/repositories/sale-sequence.repository";
+import type { CustomerRepository } from "../../../../commerce/customer/domain/repositories/customer.repository";
+import type { ProductRepository } from "../../../../catalog/products/domain/repositories/product.repository";
+import type { SaleProductService } from "../../../../catalog/products/application/services/sale-product.service";
+import type { SaleItemSnapshotValue } from "../../../../commerce/sale/domain/value-objects/sale-item-snapshot";
+import type { Customer } from "../../../../commerce/customer/domain/entities/customer.entity";
+import type { UserAuthContext } from "../../../../iam/domain/entities/user-auth-context.entity";
+import { InternalServerError } from "../../../../shared/exceptions/base-exception";
+import { CustomerNotFoundException } from "../../../../commerce/customer/domain/exceptions/customer-not-found.exception";
+import { ProductPresentationNotFoundException } from "../../../../catalog/products/domain/exceptions/product-presentation-not-found.exception";
 import { UUID } from "@fludge/utils/uuid";
 import { createSaleValidator } from "@fludge/utils/validators/sale.validators";
 

@@ -1,5 +1,5 @@
 import type { Result } from "@fludge/utils/trycatch";
-import type { Member } from "@core/iam/domain/entities/member.entity";
+import type { Member } from "../../../iam/domain/entities/member.entity";
 import type { TransactionService } from "@fludge/db";
 
 export type Options = {

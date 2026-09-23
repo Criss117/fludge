@@ -1,9 +1,9 @@
-import { Group } from "@core/iam/domain/entities/group.entity";
+import { Group } from "../../../iam/domain/entities/group.entity";
 import type {
   GroupRepository,
   Options,
-} from "@core/iam/domain/repositories/group.repository";
-import { TransactionalRepository } from "@core/shared/repositories/transactional-repository";
+} from "../../../iam/domain/repositories/group.repository";
+import { TransactionalRepository } from "../../../shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
 import {
   group,

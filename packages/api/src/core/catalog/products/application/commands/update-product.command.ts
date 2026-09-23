@@ -1,14 +1,14 @@
 import type { z } from "zod";
-import type { EnsureCategoryExistsService } from "@core/catalog/categories/application/services/ensure-category-exists.service";
-import { CategoryNotFoundException } from "@core/catalog/categories/domain/exceptions/category-not-found.exception";
-import { ProductAlreadyExistsException } from "@core/catalog/products/domain/exceptions/product-already-exists.exception";
-import { ProductNotFoundException } from "@core/catalog/products/domain/exceptions/product-not-found.exception";
-import { ProductPresentationAlreadyExistsException } from "@core/catalog/products/domain/exceptions/product-presentation-already-exists.exception";
-import type { ProductPresentationRepository } from "@core/catalog/products/domain/repositories/product-presentation.repository";
-import type { ProductRepository } from "@core/catalog/products/domain/repositories/product.repository";
-import type { ProductUniquenessValidator } from "@core/catalog/products/application/services/product-uniqueness-validator.service";
-import type { UserAuthContext } from "@core/iam/domain/entities/user-auth-context.entity";
-import { InternalServerError } from "@core/shared/exceptions/base-exception";
+import type { EnsureCategoryExistsService } from "../../../../catalog/categories/application/services/ensure-category-exists.service";
+import { CategoryNotFoundException } from "../../../../catalog/categories/domain/exceptions/category-not-found.exception";
+import { ProductAlreadyExistsException } from "../../../../catalog/products/domain/exceptions/product-already-exists.exception";
+import { ProductNotFoundException } from "../../../../catalog/products/domain/exceptions/product-not-found.exception";
+import { ProductPresentationAlreadyExistsException } from "../../../../catalog/products/domain/exceptions/product-presentation-already-exists.exception";
+import type { ProductPresentationRepository } from "../../../../catalog/products/domain/repositories/product-presentation.repository";
+import type { ProductRepository } from "../../../../catalog/products/domain/repositories/product.repository";
+import type { ProductUniquenessValidator } from "../../../../catalog/products/application/services/product-uniqueness-validator.service";
+import type { UserAuthContext } from "../../../../iam/domain/entities/user-auth-context.entity";
+import { InternalServerError } from "../../../../shared/exceptions/base-exception";
 import { Slug } from "@fludge/utils/slugify";
 import { updateProductValidator } from "@fludge/utils/validators/product.validators";
 

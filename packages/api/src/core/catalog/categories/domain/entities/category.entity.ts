@@ -1,4 +1,4 @@
-import { Status } from "@core/shared/value-objects/status";
+import { Status } from "../../../../shared/value-objects/status";
 import { Slug } from "@fludge/utils/slugify";
 import { UUID } from "@fludge/utils/uuid";
 import type { CategorySelect } from "@fludge/db/schema/catalog.schema";

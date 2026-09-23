@@ -1,10 +1,10 @@
 import type { z } from "zod";
-import type { CategoryUniquenessValidator } from "@core/catalog/categories/application/services/category-uniqueness-validator.service";
-import { Category } from "@core/catalog/categories/domain/entities/category.entity";
-import { CategoryAlreadyExistsException } from "@core/catalog/categories/domain/exceptions/category-already-exists.exception";
-import type { CategoryRepository } from "@core/catalog/categories/domain/repositories/category.repository";
-import type { UserAuthContext } from "@core/iam/domain/entities/user-auth-context.entity";
-import { InternalServerError } from "@core/shared/exceptions/base-exception";
+import type { CategoryUniquenessValidator } from "../../../../catalog/categories/application/services/category-uniqueness-validator.service";
+import { Category } from "../../../../catalog/categories/domain/entities/category.entity";
+import { CategoryAlreadyExistsException } from "../../../../catalog/categories/domain/exceptions/category-already-exists.exception";
+import type { CategoryRepository } from "../../../../catalog/categories/domain/repositories/category.repository";
+import type { UserAuthContext } from "../../../../iam/domain/entities/user-auth-context.entity";
+import { InternalServerError } from "../../../../shared/exceptions/base-exception";
 import { createCategoryValidator } from "@fludge/utils/validators/category.validators";
 
 export const createCategoryCommand = createCategoryValidator;

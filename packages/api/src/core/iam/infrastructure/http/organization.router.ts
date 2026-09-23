@@ -1,7 +1,7 @@
 import { hasPermissionProcedure, rootOnlyProcedure } from "@fludge/api/index";
-import { registerOrganizationCommand } from "@core/iam/application/commands/register-organization.command";
-import { updateOrganizationCommand } from "@core/iam/application/commands/update-organization.command";
-import { organizationContainer } from "@core/iam/container";
+import { registerOrganizationCommand } from "../../../iam/application/commands/register-organization.command";
+import { updateOrganizationCommand } from "../../../iam/application/commands/update-organization.command";
+import { organizationContainer } from "../../../iam/container";
 
 const TAGS = ["Organizations"] as const;
 

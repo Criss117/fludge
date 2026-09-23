@@ -1,8 +1,8 @@
-import { GroupMember } from "@core/iam/domain/entities/group-member.entity";
+import { GroupMember } from "../../../iam/domain/entities/group-member.entity";
 import type {
   GroupMemberRepository,
   Options,
-} from "@core/iam/domain/repositories/group-member.repository";
+} from "../../../iam/domain/repositories/group-member.repository";
 import type { DatabaseService } from "@fludge/db";
 import { groupMember } from "@fludge/db/schema/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";

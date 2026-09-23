@@ -1,9 +1,9 @@
-import { CustomerPayment } from "@core/commerce/customer/domain/entities/customer-payment.entity";
+import { CustomerPayment } from "../../../../commerce/customer/domain/entities/customer-payment.entity";
 import type {
   Options,
   CustomerPaymentRepository,
-} from "@core/commerce/customer/domain/repositories/customer-payment.repository";
-import { TransactionalRepository } from "@core/shared/repositories/transactional-repository";
+} from "../../../../commerce/customer/domain/repositories/customer-payment.repository";
+import { TransactionalRepository } from "../../../../shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
 import { customerPayment } from "@fludge/db/schema/customer.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";

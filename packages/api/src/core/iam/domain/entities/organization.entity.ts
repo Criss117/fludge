@@ -1,4 +1,4 @@
-import { Status } from "@core/shared/value-objects/status";
+import { Status } from "../../../shared/value-objects/status";
 import type { OrganizationSelect } from "@fludge/db/schema/iam.schema";
 import { Slug } from "@fludge/utils/slugify";
 import { UUID } from "@fludge/utils/uuid";

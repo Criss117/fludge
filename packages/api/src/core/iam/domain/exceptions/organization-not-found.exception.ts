@@ -1,4 +1,4 @@
-import { NotFoundError } from "@core/shared/exceptions/base-exception";
+import { NotFoundError } from "../../../shared/exceptions/base-exception";
 import { getI18nKey } from "@fludge/utils/validators/shared";
 import type { TranslationKey } from "@fludge/i18n/index";
 

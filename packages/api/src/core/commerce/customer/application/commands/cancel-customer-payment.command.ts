@@ -1,12 +1,12 @@
 import type { z } from "zod";
-import type { CustomerRepository } from "@core/commerce/customer/domain/repositories/customer.repository";
-import type { CustomerPaymentRepository } from "@core/commerce/customer/domain/repositories/customer-payment.repository";
-import type { SaleRepository } from "@core/commerce/sale/domain/repositories/sale.repository";
-import type { SalePaymentRepository } from "@core/commerce/sale/domain/repositories/sale-payment.repository";
-import type { RevertSalePaymentsService } from "@core/commerce/sale/application/services/revert-sale-payments.service";
-import { CustomerNotFoundException } from "@core/commerce/customer/domain/exceptions/customer-not-found.exception";
-import type { UserAuthContext } from "@core/iam/domain/entities/user-auth-context.entity";
-import { InternalServerError } from "@core/shared/exceptions/base-exception";
+import type { CustomerRepository } from "../../../../commerce/customer/domain/repositories/customer.repository";
+import type { CustomerPaymentRepository } from "../../../../commerce/customer/domain/repositories/customer-payment.repository";
+import type { SaleRepository } from "../../../../commerce/sale/domain/repositories/sale.repository";
+import type { SalePaymentRepository } from "../../../../commerce/sale/domain/repositories/sale-payment.repository";
+import type { RevertSalePaymentsService } from "../../../../commerce/sale/application/services/revert-sale-payments.service";
+import { CustomerNotFoundException } from "../../../../commerce/customer/domain/exceptions/customer-not-found.exception";
+import type { UserAuthContext } from "../../../../iam/domain/entities/user-auth-context.entity";
+import { InternalServerError } from "../../../../shared/exceptions/base-exception";
 import { cancelCustomerPaymentValidator } from "@fludge/utils/validators/customer-payment.validators";
 
 export const cancelCustomerPaymentCommand = cancelCustomerPaymentValidator;
@@ -54,7 +54,7 @@ export class CancelCustomerPaymentCommand {
       async (tx) => {
         // Eliminar CustomerPayment
         const [, errPayment] = await this.customerPaymentRepository.delete(
-          removedPayment,
+          removedPayment.id.toString(),
           { tx },
         );
 

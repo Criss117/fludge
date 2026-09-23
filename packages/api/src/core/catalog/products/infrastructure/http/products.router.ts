@@ -1,7 +1,7 @@
 import { hasPermissionProcedure } from "@fludge/api/index";
-import { createProductCommand } from "@core/catalog/products/application/commands/create-product.command";
-import { updateProductCommand } from "@core/catalog/products/application/commands/update-product.command";
-import { productContainer } from "@core/catalog/products/container";
+import { createProductCommand } from "../../../../catalog/products/application/commands/create-product.command";
+import { updateProductCommand } from "../../../../catalog/products/application/commands/update-product.command";
+import { productContainer } from "../../../../catalog/products/container";
 
 const TAGS = ["Products"] as const;
 

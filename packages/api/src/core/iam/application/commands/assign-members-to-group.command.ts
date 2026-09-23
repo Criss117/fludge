@@ -1,13 +1,13 @@
 import type { z } from "zod";
-import type { UserAuthContext } from "@core/iam/domain/entities/user-auth-context.entity";
-import { GroupMember } from "@core/iam/domain/entities/group-member.entity";
-import { GroupNotFoundException } from "@core/iam/domain/exceptions/group-not-found.exception";
-import { MemberIsOwnerException } from "@core/iam/domain/exceptions/member-is-owner.exception";
-import { MemberNotFoundException } from "@core/iam/domain/exceptions/member-not-found.exception";
-import type { GroupMemberRepository } from "@core/iam/domain/repositories/group-member.repository";
-import type { GroupRepository } from "@core/iam/domain/repositories/group.repository";
-import type { MemberRepository } from "@core/iam/domain/repositories/member.repository";
-import { InternalServerError } from "@core/shared/exceptions/base-exception";
+import type { UserAuthContext } from "../../../iam/domain/entities/user-auth-context.entity";
+import { GroupMember } from "../../../iam/domain/entities/group-member.entity";
+import { GroupNotFoundException } from "../../../iam/domain/exceptions/group-not-found.exception";
+import { MemberIsOwnerException } from "../../../iam/domain/exceptions/member-is-owner.exception";
+import { MemberNotFoundException } from "../../../iam/domain/exceptions/member-not-found.exception";
+import type { GroupMemberRepository } from "../../../iam/domain/repositories/group-member.repository";
+import type { GroupRepository } from "../../../iam/domain/repositories/group.repository";
+import type { MemberRepository } from "../../../iam/domain/repositories/member.repository";
+import { InternalServerError } from "../../../shared/exceptions/base-exception";
 import { assignMembersToGroupValidator } from "@fludge/utils/validators/group.validators";
 
 export const assignMembersToGroupCommand = assignMembersToGroupValidator;

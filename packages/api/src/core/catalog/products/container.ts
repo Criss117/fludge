@@ -1,5 +1,5 @@
 import { databaseService } from "@fludge/db";
-import { categoryContainer } from "@core/catalog/categories/container";
+import { categoryContainer } from "../../catalog/categories/container";
 import { CreateProductCommand } from "./application/commands/create-product.command";
 import { UpdateProductCommand } from "./application/commands/update-product.command";
 import { EnsurePresentationsExistsService } from "./application/services/ensure-presentations-exists.service";

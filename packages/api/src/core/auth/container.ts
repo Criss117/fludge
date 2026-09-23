@@ -1,5 +1,5 @@
 import { auth } from "@fludge/auth";
-import { organizationContainer } from "@core/iam/container";
+import { organizationContainer } from "../iam/container";
 import { SignUpMemberCommand } from "./application/commands/sign-up-member.command";
 import { UpdateUserInfoCommand } from "./application/commands/update-user-info.command";
 

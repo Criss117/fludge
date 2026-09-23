@@ -1,6 +1,6 @@
 import { UUID } from "@fludge/utils/uuid";
 import { CustomerDocument } from "../value-objects/document-type";
-import { Status } from "@core/shared/value-objects/status";
+import { Status } from "../../../../shared/value-objects/status";
 import { CustomerBalance } from "../value-objects/customer-balance";
 import { CustomerPayment } from "./customer-payment.entity";
 import { CustomerPaymentCollection } from "./customer-payment.collection";

@@ -1,8 +1,8 @@
 import { hasPermissionProcedure } from "@fludge/api/index";
-import { addMemberCommand } from "@core/iam/application/commands/add-member.command";
-import { assignGroupsToMemberCommand } from "@core/iam/application/commands/assign-groups-to-member.command";
-import { removeGroupsFromMemberCommand } from "@core/iam/application/commands/remove-groups-from-member.command";
-import { organizationContainer } from "@core/iam/container";
+import { addMemberCommand } from "../../../iam/application/commands/add-member.command";
+import { assignGroupsToMemberCommand } from "../../../iam/application/commands/assign-groups-to-member.command";
+import { removeGroupsFromMemberCommand } from "../../../iam/application/commands/remove-groups-from-member.command";
+import { organizationContainer } from "../../../iam/container";
 
 const TAGS = ["Members"] as const;
 

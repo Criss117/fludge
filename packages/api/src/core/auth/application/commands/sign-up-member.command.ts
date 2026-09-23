@@ -1,9 +1,9 @@
 import { tryCatch } from "@fludge/utils/trycatch";
 import type { z } from "zod";
 import type { AuthService } from "@fludge/auth";
-import type { AddMemberCommand } from "@core/iam/application/commands/add-member.command";
-import type { UserAuthContext } from "@core/iam/domain/entities/user-auth-context.entity";
-import { InternalServerError } from "@core/shared/exceptions/base-exception";
+import type { AddMemberCommand } from "../../../iam/application/commands/add-member.command";
+import type { UserAuthContext } from "../../../iam/domain/entities/user-auth-context.entity";
+import { InternalServerError } from "../../../shared/exceptions/base-exception";
 import { signUpValidator } from "@fludge/utils/validators/auth.validators";
 
 export const signUpMemberCommand = signUpValidator;

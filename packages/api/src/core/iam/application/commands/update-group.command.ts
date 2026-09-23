@@ -1,10 +1,10 @@
 import type { z } from "zod";
-import type { GroupUniquenessValidator } from "@core/iam/application/services/group-uniqueness-validator.service";
-import type { UserAuthContext } from "@core/iam/domain/entities/user-auth-context.entity";
-import { GroupAlreadyExistsException } from "@core/iam/domain/exceptions/group-already-exists.exception";
-import { GroupNotFoundException } from "@core/iam/domain/exceptions/group-not-found.exception";
-import type { GroupRepository } from "@core/iam/domain/repositories/group.repository";
-import { InternalServerError } from "@core/shared/exceptions/base-exception";
+import type { GroupUniquenessValidator } from "../../../iam/application/services/group-uniqueness-validator.service";
+import type { UserAuthContext } from "../../../iam/domain/entities/user-auth-context.entity";
+import { GroupAlreadyExistsException } from "../../../iam/domain/exceptions/group-already-exists.exception";
+import { GroupNotFoundException } from "../../../iam/domain/exceptions/group-not-found.exception";
+import type { GroupRepository } from "../../../iam/domain/repositories/group.repository";
+import { InternalServerError } from "../../../shared/exceptions/base-exception";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { Slug } from "@fludge/utils/slugify";
 import { updateGroupValidator } from "@fludge/utils/validators/group.validators";

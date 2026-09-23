@@ -14,7 +14,7 @@ import type { PaymentTypeEnum } from "@fludge/utils/enums/db-enums";
 import { PaymentType } from "../value-objects/payment-type";
 import { CantChangeSaleStatusException } from "../exceptions/cant-change-sale-status";
 import { SaleItemNotFoundException } from "../exceptions/sale-item-not-found.exception";
-import { AmountMustBePositiveException } from "@core/commerce/shared/exceptions/amount-must-be-positive.exception";
+import { AmountMustBePositiveException } from "../../../../commerce/shared/exceptions/amount-must-be-positive.exception";
 import { SaleIsCompletedException } from "../exceptions/sale-is-completed.exception";
 import { SalePaymentsCollection } from "./sale-payments.collection";
 import { SalePayment } from "./sale-payment.entity";

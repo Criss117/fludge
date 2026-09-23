@@ -1,9 +1,9 @@
-import { Product } from "@core/catalog/products/domain/entities/product.entity";
+import { Product } from "../../../../catalog/products/domain/entities/product.entity";
 import type {
   Options,
   ProductRepository,
-} from "@core/catalog/products/domain/repositories/product.repository";
-import { TransactionalRepository } from "@core/shared/repositories/transactional-repository";
+} from "../../../../catalog/products/domain/repositories/product.repository";
+import { TransactionalRepository } from "../../../../shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
 import {
   product,
@@ -114,6 +114,63 @@ export class SQLiteProductRepository
     );
 
     if (errUpdate) return err(errUpdate);
+
+    return ok(undefined);
+  }
+
+  public async updateMany(products: Product[], options?: Options) {
+    const db = options?.tx ?? this.db;
+
+    for (const productEntity of products) {
+      const { presentations: _presentations, ...rest } = productEntity.values;
+
+      const [, errUpdate] = await tryCatch(
+        db
+          .update(product)
+          .set(rest)
+          .where(
+            and(
+              eq(product.id, rest.id),
+              eq(product.organizationId, rest.organizationId),
+            ),
+          ),
+      );
+
+      if (errUpdate) return err(errUpdate);
+    }
+
+    return ok(undefined);
+  }
+
+  public async saveOnlyProducts(products: Product[], options?: Options) {
+    const db = options?.tx ?? this.db;
+
+    for (const productEntity of products) {
+      const { presentations: _presentations, ...rest } = productEntity.values;
+
+      const [, errInsert] = await tryCatch(
+        db
+          .insert(product)
+          .values(rest)
+          .onConflictDoUpdate({
+            target: product.id,
+            set: {
+              name: rest.name,
+              searchBlob: rest.searchBlob,
+              slug: rest.slug,
+              description: rest.description,
+              stock: rest.stock,
+              minStock: rest.minStock,
+              allowNegativeStock: rest.allowNegativeStock,
+              status: rest.status,
+              updatedAt: rest.updatedAt,
+              categoryId: rest.categoryId,
+            },
+          }),
+      );
+
+      if (errInsert) return err(errInsert);
+    }
 
     return ok(undefined);
   }

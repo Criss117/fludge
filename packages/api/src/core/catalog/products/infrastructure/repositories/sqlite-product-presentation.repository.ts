@@ -1,8 +1,8 @@
-import type { ProductPresentation } from "@core/catalog/products/domain/entities/product-presentation.entity";
+import type { ProductPresentation } from "../../../../catalog/products/domain/entities/product-presentation.entity";
 import type {
   Options,
   ProductPresentationRepository,
-} from "@core/catalog/products/domain/repositories/product-presentation.repository";
+} from "../../../../catalog/products/domain/repositories/product-presentation.repository";
 import type { DatabaseService } from "@fludge/db";
 import { productPresentation } from "@fludge/db/schema/catalog.schema";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";

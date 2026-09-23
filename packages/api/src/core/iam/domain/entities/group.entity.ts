@@ -1,4 +1,4 @@
-import { Status } from "@core/shared/value-objects/status";
+import { Status } from "../../../shared/value-objects/status";
 import type {
   GroupMemberSelect,
   GroupSelect,

@@ -1,7 +1,7 @@
-import type { Customer } from "@core/commerce/customer/domain/entities/customer.entity";
-import type { CustomerRepository } from "@core/commerce/customer/domain/repositories/customer.repository";
-import { CustomerNotFoundException } from "@core/commerce/customer/domain/exceptions/customer-not-found.exception";
-import { InternalServerError } from "@core/shared/exceptions/base-exception";
+import type { Customer } from "../../../../commerce/customer/domain/entities/customer.entity";
+import type { CustomerRepository } from "../../../../commerce/customer/domain/repositories/customer.repository";
+import { CustomerNotFoundException } from "../../../../commerce/customer/domain/exceptions/customer-not-found.exception";
+import { InternalServerError } from "../../../../shared/exceptions/base-exception";
 
 /**
  * Disminuye el balance de un customer.

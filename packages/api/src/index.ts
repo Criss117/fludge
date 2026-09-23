@@ -1,11 +1,11 @@
 import { os } from "@orpc/server";
 import type { Context } from "./context";
-import { organizationContainer } from "@core/iam/container";
+import { organizationContainer } from "./core/iam/container";
 import {
   ForbiddenError,
   InternalServerError,
   UnauthorizedError,
-} from "@core/shared/exceptions/base-exception";
+} from "./core/shared/exceptions/base-exception";
 import type { PermissionsRecord } from "@fludge/utils/permissions/data";
 import { env } from "@fludge/env/server";
 

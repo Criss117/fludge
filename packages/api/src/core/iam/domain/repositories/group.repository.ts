@@ -1,7 +1,7 @@
 import type { Result } from "@fludge/utils/trycatch";
 import type { Group } from "../entities/group.entity";
 import type { TransactionService } from "@fludge/db";
-import type { TransactionalRepository } from "@core/shared/repositories/transactional-repository";
+import type { TransactionalRepository } from "../../../shared/repositories/transactional-repository";
 
 export type Options = {
   tx?: TransactionService;

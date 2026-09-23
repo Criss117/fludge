@@ -1,9 +1,9 @@
-import { Customer } from "@core/commerce/customer/domain/entities/customer.entity";
+import { Customer } from "../../../../commerce/customer/domain/entities/customer.entity";
 import type {
   Options,
   CustomerRepository,
-} from "@core/commerce/customer/domain/repositories/customer.repository";
-import { TransactionalRepository } from "@core/shared/repositories/transactional-repository";
+} from "../../../../commerce/customer/domain/repositories/customer.repository";
+import { TransactionalRepository } from "../../../../shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
 import {
   customer,

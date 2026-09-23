@@ -1,9 +1,9 @@
 import type { z } from "zod";
-import { Customer } from "@core/commerce/customer/domain/entities/customer.entity";
-import { CustomerAlreadyExistsException } from "@core/commerce/customer/domain/exceptions/customer-already-exists.exception";
-import type { CustomerRepository } from "@core/commerce/customer/domain/repositories/customer.repository";
-import type { UserAuthContext } from "@core/iam/domain/entities/user-auth-context.entity";
-import { InternalServerError } from "@core/shared/exceptions/base-exception";
+import { Customer } from "../../../../commerce/customer/domain/entities/customer.entity";
+import { CustomerAlreadyExistsException } from "../../../../commerce/customer/domain/exceptions/customer-already-exists.exception";
+import type { CustomerRepository } from "../../../../commerce/customer/domain/repositories/customer.repository";
+import type { UserAuthContext } from "../../../../iam/domain/entities/user-auth-context.entity";
+import { InternalServerError } from "../../../../shared/exceptions/base-exception";
 import { createCustomerValidator } from "@fludge/utils/validators/customer.validators";
 
 export const createCustomerCommand = createCustomerValidator;
