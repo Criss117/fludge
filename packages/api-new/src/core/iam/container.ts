@@ -5,6 +5,7 @@ import { RegisterOrganizationCommand } from "./application/commands/register-org
 import { UpdateOrganizationCommand } from "./application/commands/update-organization.command";
 import { GroupUniquenessValidator } from "./application/services/group-uniqueness-validator.service";
 import { OrganizationUniquenessValidator } from "./application/services/organization-uniqueness-validator.service";
+import { UserAuthContextService } from "./application/services/user-auth-context.service";
 import { SQLiteGroupRepository } from "./infrastructure/repositories/sqlite-group-repository";
 import { SQLiteMemberRepository } from "./infrastructure/repositories/sqlite-member-repository";
 import { SQLiteOrganizationRepository } from "./infrastructure/repositories/sqlite-organization.repository";
@@ -12,13 +13,19 @@ import { SQLiteOrganizationRepository } from "./infrastructure/repositories/sqli
 //Repositories
 const memberRepository = new SQLiteMemberRepository(databaseService);
 const groupRepository = new SQLiteGroupRepository(databaseService);
-const organizationRepository = new SQLiteOrganizationRepository(databaseService);
+const organizationRepository = new SQLiteOrganizationRepository(
+  databaseService,
+);
 
 //Services
 const organizationUniquenessValidator = new OrganizationUniquenessValidator(
   databaseService,
 );
 const groupUniquenessValidator = new GroupUniquenessValidator(databaseService);
+const userAuthContextService = new UserAuthContextService(
+  databaseService,
+  memberRepository,
+);
 
 //Commands
 const registerOrganizationCommand = new RegisterOrganizationCommand(
@@ -36,12 +43,15 @@ const updateOrganizationCommand = new UpdateOrganizationCommand(
 const createGroupCommand = new CreateGroupCommand(
   groupUniquenessValidator,
   groupRepository,
-  memberRepository,
 );
 
 export const organizationContainer = {
   repositories: { organizationRepository },
-  services: { organizationUniquenessValidator, groupUniquenessValidator },
+  services: {
+    organizationUniquenessValidator,
+    groupUniquenessValidator,
+    userAuthContextService,
+  },
   commands: {
     register: registerOrganizationCommand,
     update: updateOrganizationCommand,

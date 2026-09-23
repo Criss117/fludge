@@ -1,14 +1,13 @@
 import type { z } from "zod";
 import type { GroupUniquenessValidator } from "@core/iam/application/services/group-uniqueness-validator.service";
 import { Group } from "@core/iam/domain/entities/group.entity";
-import type { Organization } from "@core/iam/domain/entities/organization.entity";
 import { GroupAlreadyExistsException } from "@core/iam/domain/exceptions/group-already-exists.exception";
-import { MemberNotFoundException } from "@core/iam/domain/exceptions/member-not-found.exception";
 import type { GroupRepository } from "@core/iam/domain/repositories/group.repository";
-import type { MemberRepository } from "@core/iam/domain/repositories/member.repository";
 import { InternalServerError } from "@core/shared/exceptions/base-exception";
 import { Permissions } from "@fludge/utils/permissions/index";
+import { UUID } from "@fludge/utils/uuid";
 import { createGroupValidator } from "@fludge/utils/validators/group.validators";
+import type { UserAuthContext } from "@core/iam/domain/entities/user-auth-context.entity";
 
 export const createGroupCommand = createGroupValidator;
 
@@ -18,38 +17,20 @@ export class CreateGroupCommand {
   constructor(
     private readonly groupUniquenessValidator: GroupUniquenessValidator,
     private readonly groupRepository: GroupRepository,
-    private readonly memberRepository: MemberRepository,
   ) {}
 
-  public async execute(
-    loggedUserId: string,
-    activeOrganization: Organization,
-    cmd: CMD,
-  ) {
-    const [loggedMember, errMember] = await this.memberRepository.findByUserId(
-      loggedUserId,
-      activeOrganization.id.toString(),
-    );
-
-    if (errMember)
-      throw new InternalServerError(
-        errMember,
-        "api_errors.iam.organizations.isr_on_find",
-      );
-
-    if (!loggedMember) throw new MemberNotFoundException();
-
+  public async execute(authContext: UserAuthContext, cmd: CMD) {
     const newGroup = Group.create({
       name: cmd.name,
       description: cmd.description,
       permissions: Permissions.fromList(cmd.permissions),
-      createdBy: loggedMember.id,
-      organizationId: activeOrganization.id,
+      createdBy: authContext.member.id,
+      organizationId: UUID.fromString(authContext.organizationId.toString()),
     });
 
     const [uniqueness, errUniqueness] =
       await this.groupUniquenessValidator.validateUniqueFields(
-        activeOrganization.id.toString(),
+        authContext.organizationId.toString(),
         {
           name: newGroup.values.name,
           slug: newGroup.values.slug,

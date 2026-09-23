@@ -1,7 +1,7 @@
 import type { z } from "zod";
 import type { OrganizationUniquenessValidator } from "@core/iam/application/services/organization-uniqueness-validator.service";
-import type { Organization } from "@core/iam/domain/entities/organization.entity";
 import { OrganizationAlreadyExistsException } from "@core/iam/domain/exceptions/organization-already-exists.exception";
+import { OrganizationNotFoundException } from "@core/iam/domain/exceptions/organization-not-found.exception";
 import type { OrganizationRepository } from "@core/iam/domain/repositories/organization.repository";
 import { InternalServerError } from "@core/shared/exceptions/base-exception";
 import { Slug } from "@fludge/utils/slugify";
@@ -17,7 +17,18 @@ export class UpdateOrganizationCommand {
     private readonly organizationRepository: OrganizationRepository,
   ) {}
 
-  public async execute(activeOrganization: Organization, cmd: CMD) {
+  public async execute(activeOrganizationId: string, cmd: CMD) {
+    const [activeOrganization, errOrganization] =
+      await this.organizationRepository.findById(activeOrganizationId);
+
+    if (errOrganization)
+      throw new InternalServerError(
+        errOrganization,
+        "api_errors.iam.organizations.isr_on_find",
+      );
+
+    if (!activeOrganization) throw new OrganizationNotFoundException();
+
     const [uniqueness, errUniqueness] =
       await this.organizationUniquenessValidator.validateUniqueFields(
         {
