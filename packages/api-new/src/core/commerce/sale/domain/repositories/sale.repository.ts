@@ -1,0 +1,19 @@
+import type { Result } from "@fludge/utils/trycatch";
+import type { TransactionService } from "@fludge/db";
+import type { Sale } from "../entities/sale.entity";
+import type { TransactionalRepository } from "@core/shared/repositories/transactional-repository";
+
+export type Options = {
+  tx?: TransactionService;
+};
+
+export interface SaleRepository extends TransactionalRepository {
+  findById(
+    organizationId: string,
+    saleId: string,
+  ): Promise<Result<Sale | null>>;
+
+  insert(sale: Sale, options?: Options): Promise<Result<void>>;
+
+  update(sale: Sale, options?: Options): Promise<Result<void>>;
+}

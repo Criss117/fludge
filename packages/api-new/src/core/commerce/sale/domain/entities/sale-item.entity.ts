@@ -8,8 +8,8 @@ import { Status } from "@core/shared/value-objects/status";
 import type { StatusEnum } from "@fludge/utils/enums/db-enums";
 
 export interface CreateSaleItem {
-  organizationId: UUID;
   saleId: UUID;
+  organizationId: UUID;
   productId: UUID | null;
   productPresentationId: UUID | null;
   productSnapshot: SaleItemSnapshotValue | null;
