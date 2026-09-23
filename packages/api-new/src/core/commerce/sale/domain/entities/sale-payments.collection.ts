@@ -41,6 +41,14 @@ export class SalePaymentsCollection {
     return Array.from(this._payments.values());
   }
 
+  public get saleIds(): string[] {
+    return [...new Set(Array.from(this._payments.values()).map((p) => p.values.saleId))];
+  }
+
+  public clear() {
+    this._payments.clear();
+  }
+
   public get values() {
     return this._payments;
   }

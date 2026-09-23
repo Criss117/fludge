@@ -163,6 +163,8 @@ export class Sale {
       this._items.update(item);
     }
 
+    this._totalPaid = 0;
+    this._payments.clear();
     this.touch();
   }
 

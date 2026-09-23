@@ -22,4 +22,9 @@ export interface SalePaymentRepository extends TransactionalRepository {
     salePaymentIds: string[],
     options?: Options,
   ): Promise<Result<void>>;
+
+  deleteBySaleId(
+    saleId: string,
+    options?: Options,
+  ): Promise<Result<void>>;
 }
