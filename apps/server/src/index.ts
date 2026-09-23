@@ -1,6 +1,6 @@
 import { cors } from "@elysiajs/cors";
 import { createContext } from "@fludge/api/context";
-import { ValidationDomainException } from "@fludge/api/modules/shared/domain/exceptions/base-exception";
+import { ValidationDomainException } from "@fludge/api/core/shared/exceptions/base-exception";
 import { appRouter } from "@fludge/api/routers/index";
 import { auth, isAvailableEndpoint } from "@fludge/auth";
 import { env } from "@fludge/env/server";

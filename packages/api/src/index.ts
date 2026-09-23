@@ -1,16 +1,13 @@
 import { os } from "@orpc/server";
-
 import type { Context } from "./context";
-import { organizationContainer } from "./modules/iam/organization/container";
-import { UUID } from "@fludge/utils/uuid";
-import { env } from "@fludge/env/server";
-import type { PermissionsRecord } from "@fludge/utils/permissions/data";
+import { organizationContainer } from "@core/iam/container";
 import {
   ForbiddenError,
   InternalServerError,
   UnauthorizedError,
-} from "./modules/shared/domain/exceptions/base-exception";
-import { OrganizationNotFoundException } from "./modules/iam/organization/domain/exceptions/organization-not-found.exception";
+} from "@core/shared/exceptions/base-exception";
+import type { PermissionsRecord } from "@fludge/utils/permissions/data";
+import { env } from "@fludge/env/server";
 
 export const o = os.$context<Context>();
 
@@ -44,52 +41,34 @@ const requireOrganization = requireAuth.concat(async ({ context, next }) => {
   if (!activeOrganizationId)
     throw new ForbiddenError("api_errors.auth.sessions.no_active_organization");
 
-  const [organization, errOrganization] =
-    await organizationContainer.repositories.organizationRepository.findOneById(
+  const [authContext, errAuthContext] =
+    await organizationContainer.services.userAuthContextService.build(
       context.session.user.id,
       activeOrganizationId,
     );
 
-  if (errOrganization)
+  if (errAuthContext)
     throw new InternalServerError(
-      errOrganization,
+      errAuthContext,
       "api_errors.iam.organizations.isr_on_find",
     );
 
-  if (!organization) throw new OrganizationNotFoundException();
-
-  const loggedUserIsMember = organization.members.getMemberByUserId(
-    UUID.fromString(context.session.user.id),
-  );
-
-  if (!loggedUserIsMember)
+  if (!authContext)
     throw new ForbiddenError("api_errors.iam.members.not_member");
 
-  if (loggedUserIsMember.status.isInactive())
+  if (authContext.member.status.isInactive())
     throw new ForbiddenError("api_errors.iam.members.without_permissions");
 
   return next({
     context: {
-      session: { ...context.session, activeOrganization: organization },
+      session: { ...context.session, authContext },
     },
   });
 });
 
 function hasPermission(required: PermissionsRecord) {
   return requireOrganization.concat(({ context, next }) => {
-    const userMember =
-      context.session.activeOrganization.members.getMemberByUserId(
-        UUID.fromString(context.session.user.id),
-      );
-
-    if (!userMember)
-      throw new ForbiddenError("api_errors.iam.members.not_member");
-
-    const hasPermissions =
-      context.session.activeOrganization.memberHasPermission(
-        userMember.id,
-        required,
-      );
+    const hasPermissions = context.session.authContext.hasPermission(required);
 
     if (!hasPermissions)
       throw new ForbiddenError("api_errors.iam.members.without_permissions");
