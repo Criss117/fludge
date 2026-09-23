@@ -9,8 +9,9 @@
     "rootDir": ".",
 
     "paths": {
-      "@fludge-old/api/*": ["./src/*"],
-      "@test/*": ["./test/*"]
+      "@*": ["./src/*"],
+      "@test/*": ["./test/*"],
+      "@core/*": ["./src/core/*"]
     }
   },
   "include": ["src"]

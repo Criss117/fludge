@@ -128,6 +128,33 @@
       },
     },
     "packages/api": {
+      "name": "@fludge/api-old",
+      "dependencies": {
+        "@fludge/auth": "workspace:*",
+        "@fludge/db": "workspace:*",
+        "@fludge/env": "workspace:*",
+        "@fludge/i18n": "workspace:*",
+        "@fludge/sync": "workspace:*",
+        "@fludge/utils": "workspace:*",
+        "@orpc/client": "catalog:",
+        "@orpc/openapi": "catalog:",
+        "@orpc/server": "catalog:",
+        "@orpc/zod": "catalog:",
+        "dotenv": "catalog:",
+        "drizzle-orm": "catalog:",
+        "p-limit": "7.3.1",
+        "uuid": "catalog:",
+        "zod": "catalog:",
+      },
+      "devDependencies": {
+        "@faker-js/faker": "10.6.0",
+        "@fludge/config": "workspace:*",
+        "@types/bun": "catalog:",
+        "elysia": "catalog:",
+        "typescript": "~6.0.3",
+      },
+    },
+    "packages/api-new": {
       "name": "@fludge/api",
       "dependencies": {
         "@fludge/auth": "workspace:*",
@@ -703,7 +730,9 @@
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.12", "", {}, "sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww=="],
 
-    "@fludge/api": ["@fludge/api@workspace:packages/api"],
+    "@fludge/api": ["@fludge/api@workspace:packages/api-new"],
+
+    "@fludge/api-old": ["@fludge/api-old@workspace:packages/api"],
 
     "@fludge/auth": ["@fludge/auth@workspace:packages/auth"],
 
