@@ -6,7 +6,6 @@ import { CustomerPayment } from "./customer-payment.entity";
 import { CustomerPaymentCollection } from "./customer-payment.collection";
 import { CustomerHasNoDebtException } from "../exceptions/customer-has-no-debt.exception";
 import { PaymentExceedsBalanceException } from "../exceptions/payment-exceeds-balance.exception";
-import { CustomerPaymentNotFoundException } from "../exceptions/customer-payment-not-found.exception";
 import type {
   CustomerPaymentSelect,
   CustomerSelect,
@@ -183,14 +182,9 @@ export class Customer {
     return payment;
   }
 
-  public cancelPayment(paymentId: string, reason: string) {
-    const payment = this._payments.findById(paymentId);
+  public cancelPayment(paymentId: string) {
+    const payment = this._payments.remove(paymentId);
 
-    if (!payment) {
-      throw new CustomerPaymentNotFoundException();
-    }
-
-    payment.cancel(reason);
     this._balance = this._balance.increaseBalance(payment.amount);
     this.touch();
 

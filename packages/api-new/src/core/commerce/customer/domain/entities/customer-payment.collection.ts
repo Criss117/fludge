@@ -16,20 +16,18 @@ export class CustomerPaymentCollection {
     this._payments.set(payment.id.toString(), payment);
   }
 
-  public update(payment: CustomerPayment) {
-    const existing = this.findById(payment.id.toString());
+  public remove(id: string): CustomerPayment {
+    const existing = this._payments.get(id);
 
     if (!existing) throw new CustomerPaymentNotFoundException();
 
-    this._payments.set(payment.id.toString(), payment);
+    this._payments.delete(id);
+
+    return existing;
   }
 
   public getAll() {
     return Array.from(this._payments.values());
-  }
-
-  public getActive() {
-    return this.getAll().filter((p) => p.status === "active");
   }
 
   public get length() {

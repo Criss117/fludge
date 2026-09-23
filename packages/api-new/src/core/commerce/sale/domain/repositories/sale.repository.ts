@@ -13,6 +13,11 @@ export interface SaleRepository extends TransactionalRepository {
     saleId: string,
   ): Promise<Result<Sale | null>>;
 
+  findByIds(
+    organizationId: string,
+    saleIds: string[],
+  ): Promise<Result<Sale[]>>;
+
   findOpenByCustomer(
     organizationId: string,
     customerId: string,

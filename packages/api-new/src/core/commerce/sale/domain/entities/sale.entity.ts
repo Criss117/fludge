@@ -210,7 +210,8 @@ export class Sale {
     const paymentsToRevert =
       this._payments.findByCustomerPaymentId(customerPaymentId);
 
-    if (paymentsToRevert.length === 0) throw new SalePaymentNotFoundException();
+    if (paymentsToRevert.length !== customerPaymentId.length)
+      throw new SalePaymentNotFoundException();
 
     const amount = paymentsToRevert.reduce(
       (acc, payment) => acc + payment.amount,
@@ -229,6 +230,8 @@ export class Sale {
     }
 
     this.touch();
+
+    return paymentsToRevert;
   }
 
   public get total() {

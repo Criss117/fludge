@@ -8,8 +8,18 @@ export type Options = {
 };
 
 export interface SalePaymentRepository extends TransactionalRepository {
+  findByCustomerPaymentId(
+    organizationId: string,
+    customerPaymentId: string,
+  ): Promise<Result<SalePayment[]>>;
+
   insertMany(
     salePayments: SalePayment[],
+    options?: Options,
+  ): Promise<Result<void>>;
+
+  deleteMany(
+    salePaymentIds: string[],
     options?: Options,
   ): Promise<Result<void>>;
 }

@@ -21,13 +21,15 @@ export class SalePaymentsCollection {
   }
 
   public findByCustomerPaymentId(customerPaymentId: UUID | UUID[]) {
-    const customerPaymentIdArray = Array.isArray(customerPaymentId)
+    const customerPaymentIds = Array.isArray(customerPaymentId)
       ? customerPaymentId
       : [customerPaymentId];
     const payments: SalePayment[] = [];
 
     for (const payment of this._payments.values()) {
-      if (customerPaymentIdArray.some((id) => id.equals(payment.id))) {
+      if (
+        customerPaymentIds.some((id) => id.equals(payment.customerPaymentId))
+      ) {
         payments.push(payment);
       }
     }

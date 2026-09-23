@@ -12,4 +12,9 @@ export interface CustomerPaymentRepository extends TransactionalRepository {
     customerPayment: CustomerPayment,
     options?: Options,
   ): Promise<Result<void>>;
+
+  delete(
+    customerPaymentId: string,
+    options?: Options,
+  ): Promise<Result<void>>;
 }
