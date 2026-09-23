@@ -3,6 +3,7 @@ import type {
   GroupRepository,
   Options,
 } from "@core/iam/domain/repositories/group.repository";
+import { TransactionalRepository } from "@core/shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
 import {
   group,
@@ -11,10 +12,15 @@ import {
 } from "@fludge/db/schema/iam.schema";
 import { jsonObject } from "@fludge/db/utils/build-queries";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
-import { and, eq, getColumns, sql } from "drizzle-orm";
+import { and, eq, getColumns, inArray, sql } from "drizzle-orm";
 
-export class SQLiteGroupRepository implements GroupRepository {
-  constructor(private readonly db: DatabaseService) {}
+export class SQLiteGroupRepository
+  extends TransactionalRepository
+  implements GroupRepository
+{
+  constructor(private readonly db: DatabaseService) {
+    super(db);
+  }
 
   public async findById(groupId: string) {
     const [rows, errFind] = await tryCatch(
@@ -64,7 +70,9 @@ export class SQLiteGroupRepository implements GroupRepository {
   }
 
   public async update(groupEntity: Group) {
-    const { members, ...rest } = groupEntity.values;
+    // Only the group table is updated. members is NOT persisted here:
+    // groupMember is managed by its own repository.
+    const { members: _members, ...rest } = groupEntity.values;
 
     const [, errUpdate] = await tryCatch(
       this.db
@@ -79,6 +87,29 @@ export class SQLiteGroupRepository implements GroupRepository {
     );
 
     if (errUpdate) return err(errUpdate);
+
+    return ok(undefined);
+  }
+
+  public async delete(
+    organizationId: string,
+    groupIds: string[],
+    options?: Options,
+  ) {
+    const db = options?.tx ?? this.db;
+
+    const [, errDelete] = await tryCatch(
+      db
+        .delete(group)
+        .where(
+          and(
+            eq(group.organizationId, organizationId),
+            inArray(group.id, groupIds),
+          ),
+        ),
+    );
+
+    if (errDelete) return err(errDelete);
 
     return ok(undefined);
   }

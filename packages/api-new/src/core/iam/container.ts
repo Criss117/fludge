@@ -1,11 +1,14 @@
 import { databaseService } from "@fludge/db";
 
 import { CreateGroupCommand } from "./application/commands/create-group.command";
+import { DeleteGroupsCommand } from "./application/commands/delete-groups.command";
 import { RegisterOrganizationCommand } from "./application/commands/register-organization.command";
+import { UpdateGroupCommand } from "./application/commands/update-group.command";
 import { UpdateOrganizationCommand } from "./application/commands/update-organization.command";
 import { GroupUniquenessValidator } from "./application/services/group-uniqueness-validator.service";
 import { OrganizationUniquenessValidator } from "./application/services/organization-uniqueness-validator.service";
 import { UserAuthContextService } from "./application/services/user-auth-context.service";
+import { SQLiteGroupMemberRepository } from "./infrastructure/repositories/sqlite-group-member-repository";
 import { SQLiteGroupRepository } from "./infrastructure/repositories/sqlite-group-repository";
 import { SQLiteMemberRepository } from "./infrastructure/repositories/sqlite-member-repository";
 import { SQLiteOrganizationRepository } from "./infrastructure/repositories/sqlite-organization.repository";
@@ -13,6 +16,7 @@ import { SQLiteOrganizationRepository } from "./infrastructure/repositories/sqli
 //Repositories
 const memberRepository = new SQLiteMemberRepository(databaseService);
 const groupRepository = new SQLiteGroupRepository(databaseService);
+const groupMemberRepository = new SQLiteGroupMemberRepository(databaseService);
 const organizationRepository = new SQLiteOrganizationRepository(
   databaseService,
 );
@@ -45,6 +49,16 @@ const createGroupCommand = new CreateGroupCommand(
   groupRepository,
 );
 
+const updateGroupCommand = new UpdateGroupCommand(
+  groupUniquenessValidator,
+  groupRepository,
+);
+
+const deleteGroupsCommand = new DeleteGroupsCommand(
+  groupRepository,
+  groupMemberRepository,
+);
+
 export const organizationContainer = {
   repositories: { organizationRepository },
   services: {
@@ -57,6 +71,8 @@ export const organizationContainer = {
     update: updateOrganizationCommand,
     group: {
       create: createGroupCommand,
+      update: updateGroupCommand,
+      delete: deleteGroupsCommand,
     },
   },
 } as const;

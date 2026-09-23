@@ -10,4 +10,10 @@ export interface GroupMemberRepository {
   insert(groupMember: GroupMember, options?: Options): Promise<Result<void>>;
 
   delete(groupMember: GroupMember, options?: Options): Promise<Result<void>>;
+
+  deleteByGroupIds(
+    organizationId: string,
+    groupIds: string[],
+    options?: Options,
+  ): Promise<Result<void>>;
 }
