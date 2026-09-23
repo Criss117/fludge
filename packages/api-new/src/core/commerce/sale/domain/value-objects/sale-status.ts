@@ -1,7 +1,8 @@
 import type { SaleStatusEnum } from "@fludge/utils/enums/db-enums";
 
 const VALID_TRANSITIONS: Record<SaleStatusEnum, SaleStatusEnum[]> = {
-  open: ["completed", "cancelled"],
+  open: ["partial", "completed", "cancelled"],
+  partial: ["completed", "open", "cancelled"],
   completed: ["open"],
   cancelled: [],
 };
@@ -25,12 +26,21 @@ export class SaleStatus {
     return this._value === "open";
   }
 
+  public isPartial() {
+    return this._value === "partial";
+  }
+
   public isCompleted() {
     return this._value === "completed";
   }
 
   public isCancelled() {
     return this._value === "cancelled";
+  }
+
+  /** La venta acepta pagos cuando está abierta o parcial. */
+  public isPayable() {
+    return this._value === "open" || this._value === "partial";
   }
 
   public canTransitionTo(next: SaleStatusEnum): boolean {

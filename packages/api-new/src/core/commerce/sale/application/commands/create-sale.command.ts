@@ -149,14 +149,12 @@ export class CreateSaleCommand {
         if (errSavingSale) throw errSavingSale;
 
         if (productsToSave.length > 0) {
-          for (const product of productsToSave) {
-            const [, errUpdateProduct] = await this.productRepository.update(
-              product,
-              { tx },
-            );
+          const [, errProducts] = await this.productRepository.updateMany(
+            productsToSave,
+            { tx },
+          );
 
-            if (errUpdateProduct) throw errUpdateProduct;
-          }
+          if (errProducts) throw errProducts;
         }
 
         // Solo las ventas a crédito cargan el saldo del cliente.

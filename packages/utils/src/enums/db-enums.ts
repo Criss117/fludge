@@ -7,7 +7,7 @@ export const productStatusEnum = [
   "discontinued",
 ] as const;
 export const customerDocumentTypeEnum = ["CC", "NIT", "CE"] as const;
-export const saleStatusEnum = ["open", "completed", "cancelled"] as const;
+export const saleStatusEnum = ["open", "partial", "completed", "cancelled"] as const;
 export const paymentTypeEnum = ["cash", "credit"] as const;
 export const customerPaymentMethodEnum = ["cash", "transfer"] as const;
 export const customerPaymentStatusEnum = ["active", "cancelled"] as const;

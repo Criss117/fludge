@@ -177,7 +177,7 @@ export class Sale {
   public pay(customerPaymentId: UUID, amount: number, createdBy: UUID) {
     if (amount < 0) throw new AmountMustBePositiveException();
 
-    if (this.status.isCompleted()) throw new SaleIsCompletedException();
+    if (!this.status.isPayable()) throw new SaleIsCompletedException();
 
     const remaining = this.remaining;
 
@@ -186,7 +186,9 @@ export class Sale {
     this._totalPaid += amount;
 
     if (this._totalPaid === this._total) {
-      this.complete();
+      this._status = this._status.transitionTo("completed");
+    } else if (this._totalPaid > 0 && this._status.isOpen()) {
+      this._status = new SaleStatus("partial");
     }
 
     const newSalePayment = SalePayment.create({
@@ -217,8 +219,12 @@ export class Sale {
 
     this._totalPaid -= amount;
 
-    if (this._status.isCompleted() && this._totalPaid < this._total) {
+    if (this._totalPaid <= 0) {
+      this._totalPaid = 0;
       this._status = new SaleStatus("open");
+      this._completedAt = null;
+    } else if (this._totalPaid < this._total) {
+      this._status = new SaleStatus("partial");
       this._completedAt = null;
     }
 

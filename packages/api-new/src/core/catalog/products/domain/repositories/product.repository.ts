@@ -21,4 +21,6 @@ export interface ProductRepository extends TransactionalRepository {
   insert(product: Product, options?: Options): Promise<Result<void>>;
 
   update(product: Product, options?: Options): Promise<Result<void>>;
+
+  updateMany(products: Product[], options?: Options): Promise<Result<void>>;
 }

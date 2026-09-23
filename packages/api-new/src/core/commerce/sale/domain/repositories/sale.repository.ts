@@ -13,7 +13,14 @@ export interface SaleRepository extends TransactionalRepository {
     saleId: string,
   ): Promise<Result<Sale | null>>;
 
+  findOpenByCustomer(
+    organizationId: string,
+    customerId: string,
+  ): Promise<Result<Sale[]>>;
+
   insert(sale: Sale, options?: Options): Promise<Result<void>>;
 
   update(sale: Sale, options?: Options): Promise<Result<void>>;
+
+  updateMany(sales: Sale[], options?: Options): Promise<Result<void>>;
 }
