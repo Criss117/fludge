@@ -1,31 +1,22 @@
 import type {
-  LocalGroupMemberSelect,
-  LocalGroupSelect,
-  LocalMemberSelect,
-  LocalOrganizationSelect,
-  LocalUserSelect,
+  LocalUser,
+  LocalOrganization,
+  LocalMember,
+  LocalGroup,
 } from "@fludge/db/local-schemas/shared.schema";
 
-export type IamLastSyncedAtLocal = {
-  user: LocalUserSelect | null;
-  organization: LocalOrganizationSelect | null;
-  group: LocalGroupSelect | null;
-  member: LocalMemberSelect | null;
-  groupMember: LocalGroupMemberSelect | null;
-};
-
-export type IamSyncAllItems = {
-  users: LocalUserSelect[];
-  groups: LocalGroupSelect[];
-  members: LocalMemberSelect[];
-  organizations: LocalOrganizationSelect[];
-  groupMembers: LocalGroupMemberSelect[];
-};
-
-export type IamLastSyncedAtQuery = {
+/** Timestamps más recientes del cliente por entidad. */
+export type IamLastSyncedAt = {
   user: Date | null;
-  group: Date | null;
-  member: Date | null;
   organization: Date | null;
-  groupMember: Date | null;
+  member: Date | null;
+  group: Date | null;
+};
+
+/** Resultado del sync de IAM — entidades agrupadas como el aggregate root. */
+export type IamSyncResult = {
+  users: LocalUser[];
+  organizations: LocalOrganization[];
+  members: LocalMember[];
+  groups: LocalGroup[];
 };

@@ -8,6 +8,7 @@ import {
 } from "./core/shared/exceptions/base-exception";
 import type { PermissionsRecord } from "@fludge/utils/permissions/data";
 import { env } from "@fludge/env/server";
+import { tryCatch } from "@fludge/utils/trycatch";
 
 export const o = os.$context<Context>();
 
@@ -79,6 +80,26 @@ function hasPermission(required: PermissionsRecord) {
   });
 }
 
+const withOrganizationIds = requireAuth.concat(async ({ context, next }) => {
+  const [organizationIds, errorFindingOrganizationIds] = await tryCatch(
+    organizationContainer.services.userOrganizationIdsService.execute(
+      context.session.user.id,
+    ),
+  );
+
+  if (errorFindingOrganizationIds)
+    throw new InternalServerError(
+      errorFindingOrganizationIds,
+      "api_errors.iam.organizations.isr_on_find",
+    );
+
+  return next({
+    context: {
+      session: { ...context.session, organizationIds },
+    },
+  });
+});
+
 const devOnly = o.middleware(({ context, next }) => {
   if (env.NODE_ENV !== "development")
     throw new ForbiddenError("api_errors.auth.users.only_dev");
@@ -92,6 +113,8 @@ export const protectedProcedure = publicProcedure.use(requireAuth);
 export const rootOnlyProcedure = publicProcedure.use(rootOnly);
 export const requireOrganizationProcedure =
   publicProcedure.use(requireOrganization);
+export const withOrganizationIdsProcedure =
+  publicProcedure.use(withOrganizationIds);
 export const devOnlyProcedure = publicProcedure.use(devOnly);
 export function hasPermissionProcedure(permission: PermissionsRecord) {
   return publicProcedure.use(hasPermission(permission));

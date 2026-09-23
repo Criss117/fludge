@@ -13,6 +13,7 @@ import { UpdateOrganizationCommand } from "./application/commands/update-organiz
 import { GroupUniquenessValidator } from "./application/services/group-uniqueness-validator.service";
 import { OrganizationUniquenessValidator } from "./application/services/organization-uniqueness-validator.service";
 import { UserAuthContextService } from "./application/services/user-auth-context.service";
+import { UserOrganizationIdsService } from "./application/services/user-organization-ids.service";
 import { SQLiteGroupMemberRepository } from "./infrastructure/repositories/sqlite-group-member-repository";
 import { SQLiteGroupRepository } from "./infrastructure/repositories/sqlite-group-repository";
 import { SQLiteMemberRepository } from "./infrastructure/repositories/sqlite-member-repository";
@@ -34,6 +35,9 @@ const groupUniquenessValidator = new GroupUniquenessValidator(databaseService);
 const userAuthContextService = new UserAuthContextService(
   databaseService,
   memberRepository,
+);
+const userOrganizationIdsService = new UserOrganizationIdsService(
+  databaseService,
 );
 
 //Commands
@@ -96,6 +100,7 @@ export const organizationContainer = {
     organizationUniquenessValidator,
     groupUniquenessValidator,
     userAuthContextService,
+    userOrganizationIdsService,
   },
   commands: {
     register: registerOrganizationCommand,

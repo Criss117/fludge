@@ -7,10 +7,10 @@ import {
   localOrganization,
   localUser,
 } from "@fludge/db/local-schemas/shared.schema";
-import { desc } from "drizzle-orm";
+import { desc, inArray } from "drizzle-orm";
 import type {
-  IamLastSyncedAtLocal,
-  IamSyncAllItems,
+  IamLastSyncedAt,
+  IamSyncResult,
 } from "@fludge/sync/types/iam.types";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 
@@ -57,35 +57,23 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
     return row.at(0) ?? null;
   }
 
-  private async getLastSyncedGroupMember() {
-    const row = await this.db
-      .select()
-      .from(localGroupMember)
-      .orderBy(desc(localGroupMember.createdAt))
-      .limit(1);
-
-    return row.at(0) ?? null;
-  }
-
-  public async getLastSyncedAt(): Promise<IamLastSyncedAtLocal> {
-    const [user, group, member, organization, groupMember] = await Promise.all([
+  public async getLastSyncedAt(): Promise<IamLastSyncedAt> {
+    const [user, group, member, organization] = await Promise.all([
       this.getLastSyncedUser(),
       this.getLastSyncedGroup(),
       this.getLastSyncedMember(),
       this.getLastSyncedOrganization(),
-      this.getLastSyncedGroupMember(),
     ]);
 
     return {
-      user,
-      group,
-      member,
-      organization,
-      groupMember,
+      user: user?.updatedAt ?? null,
+      group: group?.updatedAt ?? null,
+      member: member?.createdAt ?? null,
+      organization: organization?.updatedAt ?? null,
     };
   }
 
-  public async saveAll(values: IamSyncAllItems): Promise<void> {
+  public async saveAll(values: IamSyncResult): Promise<void> {
     this.db.transaction((tx) => {
       if (values.users.length > 0) {
         tx.insert(localUser)
@@ -111,8 +99,6 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
             set: buildConflictUpdateColumn(localOrganization, [
               "name",
               "slug",
-              "logo",
-              "metadata",
               "legalName",
               "address",
               "phone",
@@ -131,6 +117,15 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
       }
 
       if (values.groups.length > 0) {
+        tx.delete(localGroupMember)
+          .where(
+            inArray(
+              localGroupMember.groupId,
+              values.groups.map((g) => g.id)
+            )
+          )
+          .run();
+
         tx.insert(localGroup)
           .values(values.groups)
           .onConflictDoUpdate({
@@ -145,11 +140,9 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
             ]),
           })
           .run();
-      }
 
-      if (values.groupMembers.length > 0) {
         tx.insert(localGroupMember)
-          .values(values.groupMembers)
+          .values(values.groups.flatMap((g) => g.members.map((m) => m)))
           .onConflictDoNothing()
           .run();
       }
