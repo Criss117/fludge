@@ -57,6 +57,31 @@ export class SQLiteGroupRepository
     );
   }
 
+  public async findByIds(groupIds: string[], organizationId: string) {
+    const [rows, errFind] = await tryCatch(
+      this.db
+        .select({ ...getColumns(group) })
+        .from(group)
+        .where(
+          and(
+            eq(group.organizationId, organizationId),
+            inArray(group.id, groupIds),
+          ),
+        ),
+    );
+
+    if (errFind) return err(errFind);
+
+    return ok(
+      rows.map((groupRecord) =>
+        Group.reconstitute({
+          ...groupRecord,
+          members: [],
+        }),
+      ),
+    );
+  }
+
   public async insert(groupEntity: Group, options?: Options) {
     const db = options?.tx ?? this.db;
 

@@ -26,4 +26,11 @@ export interface GroupMemberRepository {
     memberIds: string[],
     options?: Options,
   ): Promise<Result<void>>;
+
+  deleteByMemberAndGroupIds(
+    organizationId: string,
+    memberId: string,
+    groupIds: string[],
+    options?: Options,
+  ): Promise<Result<void>>;
 }

@@ -102,4 +102,29 @@ export class SQLiteGroupMemberRepository implements GroupMemberRepository {
 
     return ok(undefined);
   }
+
+  public async deleteByMemberAndGroupIds(
+    organizationId: string,
+    memberId: string,
+    groupIds: string[],
+    options?: Options,
+  ) {
+    const db = options?.tx ?? this.db;
+
+    const [, errDelete] = await tryCatch(
+      db
+        .delete(groupMember)
+        .where(
+          and(
+            eq(groupMember.organizationId, organizationId),
+            eq(groupMember.memberId, memberId),
+            inArray(groupMember.groupId, groupIds),
+          ),
+        ),
+    );
+
+    if (errDelete) return err(errDelete);
+
+    return ok(undefined);
+  }
 }

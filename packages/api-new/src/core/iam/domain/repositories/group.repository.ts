@@ -10,6 +10,11 @@ export type Options = {
 export interface GroupRepository extends TransactionalRepository {
   findById(groupId: string): Promise<Result<Group | null>>;
 
+  findByIds(
+    groupIds: string[],
+    organizationId: string,
+  ): Promise<Result<Group[]>>;
+
   insert(group: Group, options?: Options): Promise<Result<void>>;
 
   update(group: Group): Promise<Result<void>>;
