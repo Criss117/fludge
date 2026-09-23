@@ -1,5 +1,6 @@
 import { databaseService } from "@fludge/db";
 
+import { AddMemberCommand } from "./application/commands/add-member.command";
 import { AssignGroupsToMemberCommand } from "./application/commands/assign-groups-to-member.command";
 import { AssignMembersToGroupCommand } from "./application/commands/assign-members-to-group.command";
 import { CreateGroupCommand } from "./application/commands/create-group.command";
@@ -87,6 +88,8 @@ const removeGroupsFromMemberCommand = new RemoveGroupsFromMemberCommand(
   groupMemberRepository,
 );
 
+const addMemberCommand = new AddMemberCommand(memberRepository);
+
 export const organizationContainer = {
   repositories: { organizationRepository },
   services: {
@@ -105,6 +108,7 @@ export const organizationContainer = {
       removeMembers: removeMembersFromGroupCommand,
     },
     member: {
+      add: addMemberCommand,
       assignGroups: assignGroupsToMemberCommand,
       removeGroups: removeGroupsFromMemberCommand,
     },
