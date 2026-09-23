@@ -11,13 +11,20 @@ import { and, eq, inArray } from "drizzle-orm";
 export class SQLiteGroupMemberRepository implements GroupMemberRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  public async insert(groupMemberEntity: GroupMember, options?: Options) {
+  public async insert(
+    groupMemberEntity: GroupMember | GroupMember[],
+    options?: Options,
+  ) {
     const db = options?.tx ?? this.db;
+
+    const groupMembers = Array.isArray(groupMemberEntity)
+      ? groupMemberEntity
+      : [groupMemberEntity];
 
     const [, errInsert] = await tryCatch(
       db
         .insert(groupMember)
-        .values(groupMemberEntity.values)
+        .values(groupMembers.map((gm) => gm.values))
         .onConflictDoNothing(),
     );
 
@@ -62,6 +69,31 @@ export class SQLiteGroupMemberRepository implements GroupMemberRepository {
           and(
             eq(groupMember.organizationId, organizationId),
             inArray(groupMember.groupId, groupIds),
+          ),
+        ),
+    );
+
+    if (errDelete) return err(errDelete);
+
+    return ok(undefined);
+  }
+
+  public async deleteByGroupAndMemberIds(
+    organizationId: string,
+    groupId: string,
+    memberIds: string[],
+    options?: Options,
+  ) {
+    const db = options?.tx ?? this.db;
+
+    const [, errDelete] = await tryCatch(
+      db
+        .delete(groupMember)
+        .where(
+          and(
+            eq(groupMember.organizationId, organizationId),
+            eq(groupMember.groupId, groupId),
+            inArray(groupMember.memberId, memberIds),
           ),
         ),
     );

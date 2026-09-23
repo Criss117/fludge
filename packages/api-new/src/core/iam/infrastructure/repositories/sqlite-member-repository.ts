@@ -6,7 +6,7 @@ import type {
 import type { DatabaseService } from "@fludge/db";
 import { member } from "@fludge/db/schema/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 export class SQLiteMemberRepository implements MemberRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -23,6 +23,24 @@ export class SQLiteMemberRepository implements MemberRepository {
     if (!memberRecord) return ok(null);
 
     return ok(Member.reconstitute(memberRecord));
+  }
+
+  public async findByIds(memberIds: string[], organizationId: string) {
+    const [rows, errFind] = await tryCatch(
+      this.db
+        .select()
+        .from(member)
+        .where(
+          and(
+            eq(member.organizationId, organizationId),
+            inArray(member.id, memberIds),
+          ),
+        ),
+    );
+
+    if (errFind) return err(errFind);
+
+    return ok(rows.map((memberRecord) => Member.reconstitute(memberRecord)));
   }
 
   public async findByUserId(userId: string, organizationId: string) {

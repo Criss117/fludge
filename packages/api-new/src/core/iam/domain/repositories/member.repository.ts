@@ -9,6 +9,11 @@ export type Options = {
 export interface MemberRepository {
   findById(memberId: string): Promise<Result<Member | null>>;
 
+  findByIds(
+    memberIds: string[],
+    organizationId: string,
+  ): Promise<Result<Member[]>>;
+
   findByUserId(
     userId: string,
     organizationId: string,

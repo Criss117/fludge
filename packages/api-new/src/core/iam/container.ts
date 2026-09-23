@@ -1,8 +1,10 @@
 import { databaseService } from "@fludge/db";
 
+import { AssignMembersToGroupCommand } from "./application/commands/assign-members-to-group.command";
 import { CreateGroupCommand } from "./application/commands/create-group.command";
 import { DeleteGroupsCommand } from "./application/commands/delete-groups.command";
 import { RegisterOrganizationCommand } from "./application/commands/register-organization.command";
+import { RemoveMembersFromGroupCommand } from "./application/commands/remove-members-from-group.command";
 import { UpdateGroupCommand } from "./application/commands/update-group.command";
 import { UpdateOrganizationCommand } from "./application/commands/update-organization.command";
 import { GroupUniquenessValidator } from "./application/services/group-uniqueness-validator.service";
@@ -59,6 +61,18 @@ const deleteGroupsCommand = new DeleteGroupsCommand(
   groupMemberRepository,
 );
 
+const assignMembersToGroupCommand = new AssignMembersToGroupCommand(
+  groupRepository,
+  memberRepository,
+  groupMemberRepository,
+);
+
+const removeMembersFromGroupCommand = new RemoveMembersFromGroupCommand(
+  groupRepository,
+  memberRepository,
+  groupMemberRepository,
+);
+
 export const organizationContainer = {
   repositories: { organizationRepository },
   services: {
@@ -73,6 +87,8 @@ export const organizationContainer = {
       create: createGroupCommand,
       update: updateGroupCommand,
       delete: deleteGroupsCommand,
+      assignMembers: assignMembersToGroupCommand,
+      removeMembers: removeMembersFromGroupCommand,
     },
   },
 } as const;
