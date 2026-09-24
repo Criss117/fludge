@@ -1,12 +1,10 @@
 import { UUID } from "@fludge/utils/uuid";
 import { ProductStatus } from "../value-objects/product-status";
 import type { ProductPresentationSelect } from "@fludge/db/schema/catalog.schema";
-import { SearchBlob } from "@fludge/utils/search-blob";
 import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
 
 export type CreateProductPresentation = {
   name: string;
-  productName: string;
   barcode?: string | null;
   conversionFactor: number;
   createdBy: UUID;
@@ -17,12 +15,14 @@ export type CreateProductPresentation = {
   productId: UUID;
 };
 
-export type UpdateProductPresentation = Omit<
-  CreateProductPresentation,
-  "organizationId" | "createdBy" | "productId"
-> & {
+export type UpdateProductPresentation = {
+  name: string;
+  barcode?: string | null;
+  conversionFactor: number;
+  pricePurchase?: number | null;
+  priceSale: number;
+  priceWholesale?: number | null;
   status: ProductStatusEnum;
-  createdBy?: string;
 };
 
 export class ProductPresentation {
@@ -34,7 +34,6 @@ export class ProductPresentation {
     private _barcode: string | null,
     private _conversionFactor: number,
     private _name: string,
-    private _searchBlob: SearchBlob,
 
     private _pricePurchase: number | null,
     private _priceSale: number,
@@ -55,7 +54,6 @@ export class ProductPresentation {
       data.barcode ?? null,
       data.conversionFactor,
       data.name,
-      new SearchBlob(data.productName, data.name, data.barcode ?? ""),
       data.pricePurchase ?? null,
       data.priceSale,
       data.priceWholesale ?? null,
@@ -74,7 +72,6 @@ export class ProductPresentation {
       data.barcode,
       data.conversionFactor,
       data.name,
-      new SearchBlob(data.searchBlob),
       data.pricePurchase,
       data.priceSale,
       data.priceWholesale,
@@ -117,20 +114,7 @@ export class ProductPresentation {
 
     if (data.status) this._status = new ProductStatus(data.status);
 
-    this._searchBlob = new SearchBlob(
-      data.productName,
-      this._name,
-      this._barcode ?? "",
-    );
-
     this.touch();
-  }
-
-  public valuesWithProductId(productId: UUID): ProductPresentationSelect {
-    return {
-      ...this.values,
-      productId: productId.toString(),
-    };
   }
 
   public get values(): ProductPresentationSelect {
@@ -141,7 +125,6 @@ export class ProductPresentation {
       barcode: this._barcode,
       conversionFactor: this._conversionFactor,
       name: this._name,
-      searchBlob: this._searchBlob.value,
       pricePurchase: this._pricePurchase,
       priceSale: this._priceSale,
       priceWholesale: this._priceWholesale,
@@ -150,36 +133,5 @@ export class ProductPresentation {
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
     };
-  }
-
-  public previewUniqueFields(
-    data: Pick<UpdateProductPresentation, "name" | "barcode">,
-  ): { name: string; barcode: string | null } {
-    return {
-      name: data.name !== undefined ? data.name : this._name,
-      barcode: data.barcode !== undefined ? data.barcode : this._barcode,
-    };
-  }
-
-  public checkUniques(other: ProductPresentation) {
-    return (
-      (this._barcode !== null && this._barcode === other._barcode) ||
-      this._name === other._name ||
-      this._conversionFactor === other._conversionFactor
-    );
-  }
-
-  public checkUniquesData(
-    data: Pick<UpdateProductPresentation, "name" | "barcode">,
-  ): boolean {
-    if (data.name !== undefined && this._name === data.name) return true;
-    if (
-      data.barcode !== undefined &&
-      data.barcode !== null &&
-      this._barcode === data.barcode
-    )
-      return true;
-
-    return false;
   }
 }

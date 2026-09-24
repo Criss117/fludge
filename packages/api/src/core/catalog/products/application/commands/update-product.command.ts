@@ -10,6 +10,7 @@ import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { Slug } from "@fludge/utils/slugify";
 import { updateProductValidator } from "@fludge/utils/validators/product.validators";
+import { UUID } from "@fludge/utils/uuid";
 
 export const updateProductCommand = updateProductValidator;
 
@@ -85,7 +86,7 @@ export class UpdateProductCommand {
       allowNegativeStock: cmd.allowNegativeStock,
       minStock: cmd.minStock,
       stock: cmd.stock,
-      categoryId: cmd.categoryId,
+      categoryId: cmd.categoryId ? UUID.fromString(cmd.categoryId) : null,
     });
 
     existing.savePresentations(
@@ -99,7 +100,7 @@ export class UpdateProductCommand {
         status: p.status,
         barcode: p.barcode,
         id: p.id,
-        createdBy: authContext.member.id.toString(),
+        createdBy: authContext.member.id,
       })),
     );
 

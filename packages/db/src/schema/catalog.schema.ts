@@ -114,8 +114,6 @@ export const productPresentation = sqliteTable(
 
     name: text("name").notNull(),
 
-    searchBlob: text("search_blob").notNull(),
-
     barcode: text("barcode"),
 
     /**

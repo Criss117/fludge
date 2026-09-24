@@ -7,9 +7,8 @@ import type {
 } from "@fludge/db/schema/catalog.schema";
 import { Slug } from "@fludge/utils/slugify";
 import {
-  type CreateProductPresentation,
+  type CreateProductPresentation as CPP,
   ProductPresentation,
-  type UpdateProductPresentation,
 } from "./product-presentation.entity";
 import { ProductPresentationCollection } from "./product-presentation.collection";
 import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-presentation-no-has-barcode.exception";
@@ -18,22 +17,31 @@ import { DuplicatedBarcodeException } from "../exceptions/duplicated-barcode.exc
 import { InvalidAmountException } from "../exceptions/invalid-amount.exception";
 import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
 
+type CreateProductPresentation = Omit<
+  CPP,
+  "productId" | "createdBy" | "organizationId"
+>;
+
 type CreateProduct = {
   name: string;
-  categoryId?: string | null;
+  categoryId?: UUID | null;
   description: string;
   stock: number;
   allowNegativeStock: boolean;
   minStock: number;
-  createdBy: string;
-  organizationId: string;
+  createdBy: UUID;
+  organizationId: UUID;
 
-  presentations: Omit<CreateProductPresentation, "productId">[];
+  presentations: CreateProductPresentation[];
 };
 
-type UpdateProduct = Partial<
-  Omit<CreateProduct, "presentations" | "createdBy" | "organizationId">
-> & {
+type UpdateProduct = {
+  name: string;
+  categoryId?: UUID | null;
+  description: string;
+  stock: number;
+  allowNegativeStock: boolean;
+  minStock: number;
   status?: ProductStatusEnum;
 };
 
@@ -46,6 +54,12 @@ type RefundProduct = {
   presentationId: string;
   quantity: number;
   conversionFactor: number;
+};
+
+type SavePresentation = CreateProductPresentation & {
+  id: string;
+  createdBy: UUID;
+  status: ProductStatusEnum;
 };
 
 export class Product {
@@ -90,17 +104,15 @@ export class Product {
 
     const newProduct = new Product(
       productId,
-      UUID.fromString(data.organizationId),
-      data.categoryId && data.categoryId.length > 0
-        ? UUID.fromString(data.categoryId)
-        : null,
+      data.organizationId,
+      data.categoryId ?? null,
       data.name,
       new SearchBlob(data.name),
       new Slug(data.name),
       data.description,
       new ProductStock(data.stock, data.minStock, data.allowNegativeStock),
       new ProductStatus("active"),
-      UUID.fromString(data.createdBy),
+      data.createdBy,
       new Date(),
       new Date(),
       ProductPresentationCollection.create(
@@ -108,6 +120,8 @@ export class Product {
           ProductPresentation.create({
             ...item,
             productId: productId,
+            createdBy: data.createdBy,
+            organizationId: data.organizationId,
           }),
         ),
       ),
@@ -165,10 +179,7 @@ export class Product {
 
     if (data.status) this._status = new ProductStatus(data.status);
 
-    if (data.categoryId !== undefined && data.categoryId !== "")
-      this._categoryId = data.categoryId
-        ? UUID.fromString(data.categoryId)
-        : null;
+    if (data.categoryId !== undefined) this._categoryId = data.categoryId;
 
     if (
       data.allowNegativeStock !== undefined ||
@@ -195,9 +206,7 @@ export class Product {
     return this._presentations.items;
   }
 
-  public savePresentations(
-    data: Array<UpdateProductPresentation & { id: string }>,
-  ) {
+  public savePresentations(data: SavePresentation[]) {
     for (const item of data) {
       const existing = this._presentations.get(item.id);
 
@@ -206,14 +215,11 @@ export class Product {
           productId: this._id,
           conversionFactor: item.conversionFactor,
           name: item.name,
-          productName: this._name,
           pricePurchase: item.pricePurchase,
           priceSale: item.priceSale,
           priceWholesale: item.priceWholesale,
           organizationId: this._organizationId,
-          createdBy: item.createdBy
-            ? UUID.fromString(item.createdBy)
-            : this._createdBy,
+          createdBy: item.createdBy,
           barcode: item.barcode,
         });
 
@@ -224,7 +230,6 @@ export class Product {
       existing.update({
         conversionFactor: item.conversionFactor,
         name: item.name,
-        productName: this._name,
         pricePurchase: item.pricePurchase,
         priceSale: item.priceSale,
         priceWholesale: item.priceWholesale,
@@ -236,12 +241,6 @@ export class Product {
     }
 
     this._presentations.checkBarcodes();
-    this._searchBlob = this.buildSearchBlob();
-    this.touch();
-  }
-
-  public deletePresentations(ids: string[]) {
-    this._presentations.deleteMany(ids);
     this._searchBlob = this.buildSearchBlob();
     this.touch();
   }
@@ -319,9 +318,7 @@ export class Product {
       createdBy: this._createdBy.toString(),
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
-      presentations: this._presentations.items.map((item) =>
-        item.valuesWithProductId(this._id),
-      ),
+      presentations: this._presentations.values,
       ...this._stock.values,
     };
   }

@@ -10,6 +10,7 @@ import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { Slug } from "@fludge/utils/slugify";
 import { createProductValidator } from "@fludge/utils/validators/product.validators";
+import { UUID } from "@fludge/utils/uuid";
 
 export const createProductCommand = createProductValidator;
 
@@ -43,12 +44,12 @@ export class CreateProductCommand {
 
     const product = Product.create({
       allowNegativeStock: cmd.allowNegativeStock,
-      categoryId: cmd.categoryId,
+      categoryId: cmd.categoryId ? UUID.fromString(cmd.categoryId) : null,
       description: cmd.description ?? "",
       minStock: cmd.minStock,
       name: cmd.name,
-      organizationId,
-      createdBy: authContext.member.id.toString(),
+      organizationId: authContext.organizationId,
+      createdBy: authContext.member.id,
       stock: cmd.stock,
       presentations: cmd.presentations.map((item) => ({
         barcode: item.barcode,

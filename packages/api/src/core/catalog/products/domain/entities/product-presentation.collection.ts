@@ -1,9 +1,9 @@
-import type { UUID } from "@fludge/utils/uuid";
 import { DuplicatedBarcodeException } from "../exceptions/duplicated-barcode.exception";
 import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-presentation-no-has-barcode.exception";
 import { ProductPresentationAlreadyExistsException } from "../exceptions/product-presentation-already-exists.exception";
 import { ProductPresentationNotFoundException } from "../exceptions/product-presentation-not-found.exception";
 import type { ProductPresentation } from "./product-presentation.entity";
+import type { UUID } from "@fludge/utils/uuid";
 
 export class ProductPresentationCollection {
   private constructor(
@@ -26,10 +26,15 @@ export class ProductPresentationCollection {
 
   public checkEquals(other: ProductPresentation, excludeId?: UUID) {
     const exists = this.items.some((item) => {
-      if (excludeId && excludeId.toString() === item.id.toString())
-        return false;
+      if (excludeId && item.id.equals(excludeId)) return false;
 
-      return item.checkUniques(other);
+      const values = item.values;
+
+      return (
+        values.name === other.values.name ||
+        values.barcode === other.values.barcode ||
+        values.conversionFactor === other.values.conversionFactor
+      );
     });
 
     if (exists) throw new ProductPresentationAlreadyExistsException();
@@ -55,12 +60,7 @@ export class ProductPresentationCollection {
 
     if (!item) throw new ProductPresentationNotFoundException();
 
-    for (const [id, other] of this._items) {
-      if (id === updated.id.toString()) continue;
-
-      if (updated.checkUniques(other))
-        throw new ProductPresentationAlreadyExistsException();
-    }
+    this.checkEquals(updated, item.id);
 
     this._items.set(updated.id.toString(), updated);
 
@@ -81,13 +81,7 @@ export class ProductPresentationCollection {
     return this.items.map((p) => p.barcode).filter((b) => b !== null);
   }
 
-  public delete(id: string) {
-    if (!this._items.has(id)) throw new ProductPresentationNotFoundException();
-
-    this._items.delete(id);
-  }
-
-  public deleteMany(ids: string[]) {
-    ids.forEach((id) => this.delete(id));
+  public get values() {
+    return this.items.map((p) => p.values);
   }
 }
