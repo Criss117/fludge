@@ -1,7 +1,7 @@
 import type { z } from "zod";
-import { CustomerNotFoundException } from "../../../../commerce/customer/domain/exceptions/customer-not-found.exception";
-import { CustomerAlreadyExistsException } from "../../../../commerce/customer/domain/exceptions/customer-already-exists.exception";
-import type { CustomerRepository } from "../../../../commerce/customer/domain/repositories/customer.repository";
+import { CustomerNotFoundException } from "@fludge/api/core/commerce/customer/domain/exceptions/customer-not-found.exception";
+import { CustomerAlreadyExistsException } from "@fludge/api/core/commerce/customer/domain/exceptions/customer-already-exists.exception";
+import type { CustomerRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
 import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { updateCustomerValidator } from "@fludge/utils/validators/customer.validators";

@@ -4,7 +4,6 @@ import { Product } from "@fludge/api/core/catalog/products/domain/entities/produ
 import { CategoryNotFoundException } from "@fludge/api/core/catalog/categories/domain/exceptions/category-not-found.exception";
 import { ProductAlreadyExistsException } from "@fludge/api/core/catalog/products/domain/exceptions/product-already-exists.exception";
 import { ProductPresentationAlreadyExistsException } from "@fludge/api/core/catalog/products/domain/exceptions/product-presentation-already-exists.exception";
-import type { ProductPresentationRepository } from "@fludge/api/core/catalog/products/domain/repositories/product-presentation.repository";
 import type { ProductRepository } from "@fludge/api/core/catalog/products/domain/repositories/product.repository";
 import type { ProductUniquenessValidator } from "@fludge/api/core/catalog/products/application/services/product-uniqueness-validator.service";
 import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
@@ -21,7 +20,6 @@ export class CreateProductCommand {
     private readonly ensureCategoryExistsService: EnsureCategoryExistsService,
     private readonly productUniquenessValidator: ProductUniquenessValidator,
     private readonly productRepository: ProductRepository,
-    private readonly productPresentationRepository: ProductPresentationRepository,
   ) {}
 
   public async execute(authContext: UserAuthContext, cmd: CMD) {
@@ -60,8 +58,7 @@ export class CreateProductCommand {
         pricePurchase: item.pricePurchase,
         priceSale: item.priceSale,
         priceWholesale: item.priceWholesale,
-        organizationId,
-        createdBy: authContext.member.id.toString(),
+        createdBy: authContext.member.id,
       })),
     });
 
@@ -104,28 +101,13 @@ export class CreateProductCommand {
       );
     }
 
-    const [, errSaving] = await this.productRepository.transaction(
-      async (tx) => {
-        const [, errInsert] = await this.productRepository.insert(product, {
-          tx,
-        });
+    const [, errInsert] = await this.productRepository.save(product);
 
-        if (errInsert) throw errInsert;
+    if (errInsert) throw errInsert;
 
-        const [, errSavePresentations] =
-          await this.productPresentationRepository.save(
-            product.id.toString(),
-            product.presentations,
-            { tx },
-          );
-
-        if (errSavePresentations) throw errSavePresentations;
-      },
-    );
-
-    if (errSaving)
+    if (errInsert)
       throw new InternalServerError(
-        errSaving,
+        errInsert,
         "api_errors.catalog.products.isr_on_save",
       );
 

@@ -1,9 +1,9 @@
 import { hasPermissionProcedure } from "@fludge/api/index";
-import { createCustomerCommand } from "../../../../commerce/customer/application/commands/create-customer.command";
-import { updateCustomerCommand } from "../../../../commerce/customer/application/commands/update-customer.command";
-import { createCustomerPaymentCommand } from "../../../../commerce/customer/application/commands/create-customer-payment.command";
-import { cancelCustomerPaymentCommand } from "../../../../commerce/customer/application/commands/cancel-customer-payment.command";
-import { commerceContainer } from "../../../../commerce/container";
+import { createCustomerCommand } from "@fludge/api/core/commerce/customer/application/commands/create-customer.command";
+import { updateCustomerCommand } from "@fludge/api/core/commerce/customer/application/commands/update-customer.command";
+import { createCustomerPaymentCommand } from "@fludge/api/core/commerce/customer/application/commands/create-customer-payment.command";
+import { cancelCustomerPaymentCommand } from "@fludge/api/core/commerce/customer/application/commands/cancel-customer-payment.command";
+import { commerceContainer } from "@fludge/api/core/commerce/container";
 
 const TAGS = ["Customers"] as const;
 

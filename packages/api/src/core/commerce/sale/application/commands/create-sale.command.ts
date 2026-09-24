@@ -2,17 +2,17 @@ import type { z } from "zod";
 import {
   Sale,
   type CreateSale,
-} from "../../../../commerce/sale/domain/entities/sale.entity";
-import type { SaleRepository } from "../../../../commerce/sale/domain/repositories/sale.repository";
-import type { SaleSequenceRepository } from "../../../../commerce/sale/domain/repositories/sale-sequence.repository";
-import type { CustomerRepository } from "../../../../commerce/customer/domain/repositories/customer.repository";
+} from "@fludge/api/core/commerce/sale/domain/entities/sale.entity";
+import type { SaleRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale.repository";
+import type { SaleSequenceRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale-sequence.repository";
+import type { CustomerRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
 import type { ProductRepository } from "@fludge/api/core/catalog/products/domain/repositories/product.repository";
 import type { SaleProductService } from "@fludge/api/core/catalog/products/application/services/sale-product.service";
-import type { SaleItemSnapshotValue } from "../../../../commerce/sale/domain/value-objects/sale-item-snapshot";
-import type { Customer } from "../../../../commerce/customer/domain/entities/customer.entity";
+import type { SaleItemSnapshotValue } from "@fludge/api/core/commerce/sale/domain/value-objects/sale-item-snapshot";
+import type { Customer } from "@fludge/api/core/commerce/customer/domain/entities/customer.entity";
 import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
-import { CustomerNotFoundException } from "../../../../commerce/customer/domain/exceptions/customer-not-found.exception";
+import { CustomerNotFoundException } from "@fludge/api/core/commerce/customer/domain/exceptions/customer-not-found.exception";
 import { ProductPresentationNotFoundException } from "@fludge/api/core/catalog/products/domain/exceptions/product-presentation-not-found.exception";
 import { UUID } from "@fludge/utils/uuid";
 import { createSaleValidator } from "@fludge/utils/validators/sale.validators";
@@ -149,7 +149,7 @@ export class CreateSaleCommand {
         if (errSavingSale) throw errSavingSale;
 
         if (productsToSave.length > 0) {
-          const [, errProducts] = await this.productRepository.updateMany(
+          const [, errProducts] = await this.productRepository.saveOnlyProduct(
             productsToSave,
             { tx },
           );

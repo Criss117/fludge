@@ -28,7 +28,7 @@ type CreateProduct = {
   createdBy: string;
   organizationId: string;
 
-  presentations: CreateProductPresentation[];
+  presentations: Omit<CreateProductPresentation, "productId">[];
 };
 
 type UpdateProduct = Partial<
@@ -71,6 +71,7 @@ export class Product {
   ) {}
 
   public static create(data: CreateProduct) {
+    const productId = UUID.generate();
     const somePresentationHasBarcode = data.presentations.some(
       (item) => item.barcode && item.barcode.length > 0,
     );
@@ -88,7 +89,7 @@ export class Product {
       throw new DuplicatedBarcodeException();
 
     const newProduct = new Product(
-      UUID.generate(),
+      productId,
       UUID.fromString(data.organizationId),
       data.categoryId && data.categoryId.length > 0
         ? UUID.fromString(data.categoryId)
@@ -103,7 +104,12 @@ export class Product {
       new Date(),
       new Date(),
       ProductPresentationCollection.create(
-        data.presentations.map((item) => ProductPresentation.create(item)),
+        data.presentations.map((item) =>
+          ProductPresentation.create({
+            ...item,
+            productId: productId,
+          }),
+        ),
       ),
     );
 
@@ -185,7 +191,7 @@ export class Product {
     return this._id;
   }
 
-  public get presentations(): readonly ProductPresentation[] {
+  public get presentations(): ProductPresentation[] {
     return this._presentations.items;
   }
 
@@ -197,14 +203,17 @@ export class Product {
 
       if (!existing) {
         const newItem = ProductPresentation.create({
+          productId: this._id,
           conversionFactor: item.conversionFactor,
           name: item.name,
           productName: this._name,
           pricePurchase: item.pricePurchase,
           priceSale: item.priceSale,
           priceWholesale: item.priceWholesale,
-          organizationId: this._organizationId.toString(),
-          createdBy: item.createdBy ?? this._createdBy.toString(),
+          organizationId: this._organizationId,
+          createdBy: item.createdBy
+            ? UUID.fromString(item.createdBy)
+            : this._createdBy,
           barcode: item.barcode,
         });
 

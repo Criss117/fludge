@@ -1,10 +1,10 @@
 import type { z } from "zod";
-import type { CustomerRepository } from "../../../../commerce/customer/domain/repositories/customer.repository";
-import type { CustomerPaymentRepository } from "../../../../commerce/customer/domain/repositories/customer-payment.repository";
-import type { SaleRepository } from "../../../../commerce/sale/domain/repositories/sale.repository";
-import type { SalePaymentRepository } from "../../../../commerce/sale/domain/repositories/sale-payment.repository";
-import type { RevertSalePaymentsService } from "../../../../commerce/sale/application/services/revert-sale-payments.service";
-import { CustomerNotFoundException } from "../../../../commerce/customer/domain/exceptions/customer-not-found.exception";
+import type { CustomerRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
+import type { CustomerPaymentRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer-payment.repository";
+import type { SaleRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale.repository";
+import type { SalePaymentRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale-payment.repository";
+import type { RevertSalePaymentsService } from "@fludge/api/core/commerce/sale/application/services/revert-sale-payments.service";
+import { CustomerNotFoundException } from "@fludge/api/core/commerce/customer/domain/exceptions/customer-not-found.exception";
 import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { cancelCustomerPaymentValidator } from "@fludge/utils/validators/customer-payment.validators";

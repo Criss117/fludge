@@ -18,14 +18,10 @@ export interface ProductRepository extends TransactionalRepository {
     productIds: string[],
   ): Promise<Result<Product[]>>;
 
-  insert(product: Product, options?: Options): Promise<Result<void>>;
+  save(product: Product | Product[], options?: Options): Promise<Result<void>>;
 
-  update(product: Product, options?: Options): Promise<Result<void>>;
-
-  updateMany(products: Product[], options?: Options): Promise<Result<void>>;
-
-  saveOnlyProducts(
-    products: Product[],
+  saveOnlyProduct(
+    products: Product | Product[],
     options?: Options,
   ): Promise<Result<void>>;
 }

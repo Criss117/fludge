@@ -1,8 +1,8 @@
-import { SalePayment } from "../../../../commerce/sale/domain/entities/sale-payment.entity";
+import { SalePayment } from "@fludge/api/core/commerce/sale/domain/entities/sale-payment.entity";
 import type {
   Options,
   SalePaymentRepository,
-} from "../../../../commerce/sale/domain/repositories/sale-payment.repository";
+} from "@fludge/api/core/commerce/sale/domain/repositories/sale-payment.repository";
 import { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
 import { salePayment } from "@fludge/db/schema/sales.schema";

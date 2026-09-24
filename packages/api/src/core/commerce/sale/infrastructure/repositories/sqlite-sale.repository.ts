@@ -1,8 +1,8 @@
-import { Sale } from "../../../../commerce/sale/domain/entities/sale.entity";
+import { Sale } from "@fludge/api/core/commerce/sale/domain/entities/sale.entity";
 import type {
   Options,
   SaleRepository,
-} from "../../../../commerce/sale/domain/repositories/sale.repository";
+} from "@fludge/api/core/commerce/sale/domain/repositories/sale.repository";
 import { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
 import type { DatabaseService, TransactionService } from "@fludge/db";
 import {

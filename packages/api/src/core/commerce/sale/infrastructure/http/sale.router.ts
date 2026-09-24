@@ -1,8 +1,8 @@
 import { hasPermissionProcedure } from "@fludge/api/index";
-import { createSaleCommand } from "../../../../commerce/sale/application/commands/create-sale.command";
-import { cancelSaleCommand } from "../../../../commerce/sale/application/commands/cancel-sale.command";
-import { refundSaleItemsCommand } from "../../../../commerce/sale/application/commands/refund-sale-items.command";
-import { commerceContainer } from "../../../../commerce/container";
+import { createSaleCommand } from "@fludge/api/core/commerce/sale/application/commands/create-sale.command";
+import { cancelSaleCommand } from "@fludge/api/core/commerce/sale/application/commands/cancel-sale.command";
+import { refundSaleItemsCommand } from "@fludge/api/core/commerce/sale/application/commands/refund-sale-items.command";
+import { commerceContainer } from "@fludge/api/core/commerce/container";
 
 const TAGS = ["Sales"] as const;
 

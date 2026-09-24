@@ -8,15 +8,7 @@ export type Options = {
 
 export interface ProductPresentationRepository {
   save(
-    productId: string,
-    presentations: readonly ProductPresentation[],
-    options?: Options,
-  ): Promise<Result<void>>;
-
-  deleteMany(
-    organizationId: string,
-    productId: string,
-    presentationIds: string[],
+    presentations: ProductPresentation[],
     options?: Options,
   ): Promise<Result<void>>;
 }

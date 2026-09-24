@@ -5,13 +5,7 @@ import { UpdateProductCommand } from "./application/commands/update-product.comm
 import { EnsurePresentationsExistsService } from "./application/services/ensure-presentations-exists.service";
 import { ProductUniquenessValidator } from "./application/services/product-uniqueness-validator.service";
 import { SaleProductService } from "./application/services/sale-product.service";
-import { SQLiteProductPresentationRepository } from "./infrastructure/repositories/sqlite-product-presentation.repository";
 import { SQLiteProductRepository } from "./infrastructure/repositories/sqlite-product.repository";
-
-//Repositories
-const productPresentationRepository = new SQLiteProductPresentationRepository(
-  databaseService,
-);
 
 const productRepository = new SQLiteProductRepository(databaseService);
 
@@ -32,14 +26,12 @@ const createProductCommand = new CreateProductCommand(
   categoryContainer.services.ensureCategoryExistsService,
   productUniquenessValidator,
   productRepository,
-  productPresentationRepository,
 );
 
 const updateProductCommand = new UpdateProductCommand(
   categoryContainer.services.ensureCategoryExistsService,
   productUniquenessValidator,
   productRepository,
-  productPresentationRepository,
 );
 
 export const productContainer = {

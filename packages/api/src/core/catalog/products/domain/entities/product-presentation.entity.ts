@@ -9,16 +9,17 @@ export type CreateProductPresentation = {
   productName: string;
   barcode?: string | null;
   conversionFactor: number;
-  createdBy: string;
-  organizationId: string;
+  createdBy: UUID;
+  organizationId: UUID;
   pricePurchase?: number | null;
   priceSale: number;
   priceWholesale?: number | null;
+  productId: UUID;
 };
 
 export type UpdateProductPresentation = Omit<
   CreateProductPresentation,
-  "organizationId" | "createdBy"
+  "organizationId" | "createdBy" | "productId"
 > & {
   status: ProductStatusEnum;
   createdBy?: string;
@@ -28,6 +29,7 @@ export class ProductPresentation {
   private constructor(
     private readonly _id: UUID,
     private readonly _organizationId: UUID,
+    private readonly _productId: UUID,
 
     private _barcode: string | null,
     private _conversionFactor: number,
@@ -48,7 +50,8 @@ export class ProductPresentation {
   public static create(data: CreateProductPresentation) {
     return new ProductPresentation(
       UUID.generate(),
-      UUID.fromString(data.organizationId),
+      data.organizationId,
+      data.productId,
       data.barcode ?? null,
       data.conversionFactor,
       data.name,
@@ -57,7 +60,7 @@ export class ProductPresentation {
       data.priceSale,
       data.priceWholesale ?? null,
       new ProductStatus("active"),
-      UUID.fromString(data.createdBy),
+      data.createdBy,
       new Date(),
       new Date(),
     );
@@ -67,6 +70,7 @@ export class ProductPresentation {
     return new ProductPresentation(
       UUID.fromString(data.id),
       UUID.fromString(data.organizationId),
+      UUID.fromString(data.productId),
       data.barcode,
       data.conversionFactor,
       data.name,
@@ -103,7 +107,8 @@ export class ProductPresentation {
     if (data.conversionFactor !== undefined)
       this._conversionFactor = data.conversionFactor;
 
-    if (data.pricePurchase !== undefined) this._pricePurchase = data.pricePurchase;
+    if (data.pricePurchase !== undefined)
+      this._pricePurchase = data.pricePurchase;
 
     if (data.priceSale !== undefined) this._priceSale = data.priceSale;
 
@@ -128,10 +133,11 @@ export class ProductPresentation {
     };
   }
 
-  public get values(): Omit<ProductPresentationSelect, "productId"> {
+  public get values(): ProductPresentationSelect {
     return {
       id: this._id.toString(),
       organizationId: this._organizationId.toString(),
+      productId: this._productId.toString(),
       barcode: this._barcode,
       conversionFactor: this._conversionFactor,
       name: this._name,

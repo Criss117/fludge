@@ -10,7 +10,10 @@ import {
   productPresentation,
   type ProductPresentationSelect,
 } from "@fludge/db/schema/catalog.schema";
-import { jsonObject } from "@fludge/db/utils/build-queries";
+import {
+  buildConflictUpdateColumn,
+  jsonObject,
+} from "@fludge/db/utils/build-queries";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { and, eq, getColumns, inArray, sql } from "drizzle-orm";
 
@@ -82,13 +85,30 @@ export class SQLiteProductRepository
     return this.find(organizationId, { ids: productIds });
   }
 
-  public async insert(productEntity: Product, options?: Options) {
+  public async save(productEntity: Product, options?: Options) {
     const db = options?.tx ?? this.db;
 
     const { presentations: _presentations, ...rest } = productEntity.values;
 
     const [, errInsert] = await tryCatch(
-      db.insert(product).values(rest).onConflictDoNothing(),
+      db
+        .insert(product)
+        .values(rest)
+        .onConflictDoUpdate({
+          target: product.id,
+          set: {
+            name: rest.name,
+            searchBlob: rest.searchBlob,
+            slug: rest.slug,
+            description: rest.description,
+            stock: rest.stock,
+            minStock: rest.minStock,
+            allowNegativeStock: rest.allowNegativeStock,
+            status: rest.status,
+            updatedAt: rest.updatedAt,
+            categoryId: rest.categoryId,
+          },
+        }),
     );
 
     if (errInsert) return err(errInsert);
@@ -96,81 +116,38 @@ export class SQLiteProductRepository
     return ok(undefined);
   }
 
-  public async update(productEntity: Product, options?: Options) {
+  public async saveOnlyProduct(
+    productEntity: Product | Product[],
+    options?: Options,
+  ) {
+    const products = Array.isArray(productEntity)
+      ? productEntity
+      : [productEntity];
+
     const db = options?.tx ?? this.db;
 
-    const { presentations: _presentations, ...rest } = productEntity.values;
-
-    const [, errUpdate] = await tryCatch(
+    const [, errInsert] = await tryCatch(
       db
-        .update(product)
-        .set(rest)
-        .where(
-          and(
-            eq(product.id, rest.id),
-            eq(product.organizationId, rest.organizationId),
-          ),
-        ),
+        .insert(product)
+        .values(products.map((p) => p.values))
+        .onConflictDoUpdate({
+          target: product.id,
+          set: buildConflictUpdateColumn(product, [
+            "name",
+            "searchBlob",
+            "slug",
+            "description",
+            "stock",
+            "minStock",
+            "allowNegativeStock",
+            "status",
+            "updatedAt",
+            "categoryId",
+          ]),
+        }),
     );
 
-    if (errUpdate) return err(errUpdate);
-
-    return ok(undefined);
-  }
-
-  public async updateMany(products: Product[], options?: Options) {
-    const db = options?.tx ?? this.db;
-
-    for (const productEntity of products) {
-      const { presentations: _presentations, ...rest } = productEntity.values;
-
-      const [, errUpdate] = await tryCatch(
-        db
-          .update(product)
-          .set(rest)
-          .where(
-            and(
-              eq(product.id, rest.id),
-              eq(product.organizationId, rest.organizationId),
-            ),
-          ),
-      );
-
-      if (errUpdate) return err(errUpdate);
-    }
-
-    return ok(undefined);
-  }
-
-  public async saveOnlyProducts(products: Product[], options?: Options) {
-    const db = options?.tx ?? this.db;
-
-    for (const productEntity of products) {
-      const { presentations: _presentations, ...rest } = productEntity.values;
-
-      const [, errInsert] = await tryCatch(
-        db
-          .insert(product)
-          .values(rest)
-          .onConflictDoUpdate({
-            target: product.id,
-            set: {
-              name: rest.name,
-              searchBlob: rest.searchBlob,
-              slug: rest.slug,
-              description: rest.description,
-              stock: rest.stock,
-              minStock: rest.minStock,
-              allowNegativeStock: rest.allowNegativeStock,
-              status: rest.status,
-              updatedAt: rest.updatedAt,
-              categoryId: rest.categoryId,
-            },
-          }),
-      );
-
-      if (errInsert) return err(errInsert);
-    }
+    if (errInsert) return err(errInsert);
 
     return ok(undefined);
   }

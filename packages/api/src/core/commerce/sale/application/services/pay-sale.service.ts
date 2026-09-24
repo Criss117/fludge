@@ -1,6 +1,6 @@
-import type { Sale } from "../../../../commerce/sale/domain/entities/sale.entity";
-import type { SalePayment } from "../../../../commerce/sale/domain/entities/sale-payment.entity";
-import type { SaleRepository } from "../../../../commerce/sale/domain/repositories/sale.repository";
+import type { Sale } from "@fludge/api/core/commerce/sale/domain/entities/sale.entity";
+import type { SalePayment } from "@fludge/api/core/commerce/sale/domain/entities/sale-payment.entity";
+import type { SaleRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale.repository";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { UUID } from "@fludge/utils/uuid";
 

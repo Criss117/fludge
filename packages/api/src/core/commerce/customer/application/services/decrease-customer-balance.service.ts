@@ -1,6 +1,6 @@
-import type { Customer } from "../../../../commerce/customer/domain/entities/customer.entity";
-import type { CustomerRepository } from "../../../../commerce/customer/domain/repositories/customer.repository";
-import { CustomerNotFoundException } from "../../../../commerce/customer/domain/exceptions/customer-not-found.exception";
+import type { Customer } from "@fludge/api/core/commerce/customer/domain/entities/customer.entity";
+import type { CustomerRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
+import { CustomerNotFoundException } from "@fludge/api/core/commerce/customer/domain/exceptions/customer-not-found.exception";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 
 /**

@@ -4,7 +4,6 @@ import { CategoryNotFoundException } from "@fludge/api/core/catalog/categories/d
 import { ProductAlreadyExistsException } from "@fludge/api/core/catalog/products/domain/exceptions/product-already-exists.exception";
 import { ProductNotFoundException } from "@fludge/api/core/catalog/products/domain/exceptions/product-not-found.exception";
 import { ProductPresentationAlreadyExistsException } from "@fludge/api/core/catalog/products/domain/exceptions/product-presentation-already-exists.exception";
-import type { ProductPresentationRepository } from "@fludge/api/core/catalog/products/domain/repositories/product-presentation.repository";
 import type { ProductRepository } from "@fludge/api/core/catalog/products/domain/repositories/product.repository";
 import type { ProductUniquenessValidator } from "@fludge/api/core/catalog/products/application/services/product-uniqueness-validator.service";
 import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
@@ -21,7 +20,6 @@ export class UpdateProductCommand {
     private readonly ensureCategoryExistsService: EnsureCategoryExistsService,
     private readonly productUniquenessValidator: ProductUniquenessValidator,
     private readonly productRepository: ProductRepository,
-    private readonly productPresentationRepository: ProductPresentationRepository,
   ) {}
 
   public async execute(authContext: UserAuthContext, cmd: CMD) {
@@ -90,20 +88,6 @@ export class UpdateProductCommand {
       categoryId: cmd.categoryId,
     });
 
-    // FIX (bug viejo): borrar presentations que ya no vienen en el payload
-    const existingPresentationIds = existing.presentations.map((p) =>
-      p.id.toString(),
-    );
-    const incomingPresentationIds = cmd.presentations
-      .map((p) => p.id)
-      .filter((id): id is string => Boolean(id));
-
-    const presentationsToDelete = existingPresentationIds.filter(
-      (id) => !incomingPresentationIds.includes(id),
-    );
-
-    existing.deletePresentations(presentationsToDelete);
-
     existing.savePresentations(
       cmd.presentations.map((p) => ({
         conversionFactor: p.conversionFactor,
@@ -138,40 +122,11 @@ export class UpdateProductCommand {
       );
     }
 
-    const [, errSaving] = await this.productRepository.transaction(
-      async (tx) => {
-        const [, errUpdate] = await this.productRepository.update(existing, {
-          tx,
-        });
+    const [, errInsert] = await this.productRepository.save(existing);
 
-        if (errUpdate) throw errUpdate;
-
-        const [, errSavePresentations] =
-          await this.productPresentationRepository.save(
-            existing.id.toString(),
-            existing.presentations,
-            { tx },
-          );
-
-        if (errSavePresentations) throw errSavePresentations;
-
-        if (presentationsToDelete.length > 0) {
-          const [, errDeletePresentations] =
-            await this.productPresentationRepository.deleteMany(
-              organizationId,
-              existing.id.toString(),
-              presentationsToDelete,
-              { tx },
-            );
-
-          if (errDeletePresentations) throw errDeletePresentations;
-        }
-      },
-    );
-
-    if (errSaving)
+    if (errInsert)
       throw new InternalServerError(
-        errSaving,
+        errInsert,
         "api_errors.catalog.products.isr_on_save",
       );
 
