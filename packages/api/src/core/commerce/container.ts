@@ -1,5 +1,4 @@
 import { databaseService } from "@fludge/db";
-import { productContainer } from "../catalog/products/container";
 
 // Customer repositories
 import { SQLiteCustomerRepository } from "./customer/infrastructure/repositories/sqlite-customer.repository";
@@ -28,6 +27,7 @@ import { CancelCustomerPaymentCommand } from "./customer/application/commands/ca
 import { CreateSaleCommand } from "./sale/application/commands/create-sale.command";
 import { CancelSaleCommand } from "./sale/application/commands/cancel-sale.command";
 import { RefundSaleItemsCommand } from "./sale/application/commands/refund-sale-items.command";
+import { catalogContainer } from "../catalog/container";
 
 // ── Repositories ──────────────────────────────────────────────────────────────
 
@@ -37,7 +37,9 @@ const customerPaymentRepository = new SQLiteCustomerPaymentRepository(
 );
 const saleRepository = new SQLiteSaleRepository(databaseService);
 const salePaymentRepository = new SQLiteSalePaymentRepository(databaseService);
-const saleSequenceRepository = new SQLiteSaleSequenceRepository(databaseService);
+const saleSequenceRepository = new SQLiteSaleSequenceRepository(
+  databaseService,
+);
 
 // ── Services ─────────────────────────────────────────────────────────────────
 
@@ -50,7 +52,7 @@ const revertSalePaymentsService = new RevertSalePaymentsService(
   saleRepository,
 );
 const refundProductsService = new RefundProductsService(
-  productContainer.repositories.productRepository,
+  catalogContainer.repositories.productRepository,
 );
 
 // ── Commands ─────────────────────────────────────────────────────────────────
@@ -75,22 +77,22 @@ const cancelCustomerPaymentCommand = new CancelCustomerPaymentCommand(
 const createSaleCommand = new CreateSaleCommand(
   saleRepository,
   saleSequenceRepository,
-  productContainer.repositories.productRepository,
-  productContainer.services.saleProductService,
+  catalogContainer.repositories.productRepository,
+  catalogContainer.services.saleProductService,
   customerRepository,
 );
 const cancelSaleCommand = new CancelSaleCommand(
   saleRepository,
   salePaymentRepository,
   customerRepository,
-  productContainer.repositories.productRepository,
+  catalogContainer.repositories.productRepository,
   decreaseCustomerBalanceService,
   refundProductsService,
 );
 const refundSaleItemsCommand = new RefundSaleItemsCommand(
   saleRepository,
   customerRepository,
-  productContainer.repositories.productRepository,
+  catalogContainer.repositories.productRepository,
   decreaseCustomerBalanceService,
   refundProductsService,
 );

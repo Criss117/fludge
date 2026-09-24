@@ -5,8 +5,6 @@ import { EnsurePresentationsExistsService } from "@fludge/api/core/catalog/produ
 import { ProductUniquenessValidator } from "@fludge/api/core/catalog/products/application/services/product-uniqueness-validator.service";
 import { SaleProductService } from "@fludge/api/core/catalog/products/application/services/sale-product.service";
 import { SQLiteProductRepository } from "@fludge/api/core/catalog/products/infrastructure/repositories/sqlite-product.repository";
-import { SqliteSyncCatalogoRepository } from "@fludge/api/core/catalog/products/infrastructure/repositories/sqlite-sync-catalgo.repository";
-import { SyncCatalogQuery } from "@fludge/api/core/catalog/products/application/queries/sync-catalog.query";
 import { SQLiteCategoryRepository } from "./categories/infrastructure/repositories/sqlite-category.repository";
 import { CategoryUniquenessValidator } from "./categories/application/services/category-uniqueness-validator.service";
 import { EnsureCategoryExistsService } from "./categories/application/services/ensure-category-exists.service";
@@ -18,8 +16,6 @@ import { ToggleCategoryStatusCommand } from "./categories/application/commands/t
 const productRepository = new SQLiteProductRepository(databaseService);
 
 const categoryRepository = new SQLiteCategoryRepository(databaseService);
-
-const syncCatalogRepository = new SqliteSyncCatalogoRepository(databaseService);
 
 //Services
 const productUniquenessValidator = new ProductUniquenessValidator(
@@ -65,14 +61,10 @@ const toggleCategoryStatusCommand = new ToggleCategoryStatusCommand(
   categoryRepository,
 );
 
-//Queries
-const syncCatalogQuery = new SyncCatalogQuery(syncCatalogRepository);
-
 export const catalogContainer = {
   repositories: {
     productRepository,
     categoryRepository,
-    syncCatalogRepository,
   },
   services: {
     productUniquenessValidator,
@@ -87,8 +79,5 @@ export const catalogContainer = {
     createCategoryCommand,
     updateCategoryCommand,
     toggleCategoryStatusCommand,
-  },
-  queries: {
-    syncCatalogQuery,
   },
 } as const;

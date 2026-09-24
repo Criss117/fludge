@@ -13,7 +13,7 @@ import type {
 } from "@fludge/sync/types/catalog.types";
 import { and, desc, getColumns, gt, inArray, sql } from "drizzle-orm";
 
-export class SqliteSyncCatalogoRepository implements ServerSyncCatalogRepository {
+export class SqliteSyncCatalogRepository implements ServerSyncCatalogRepository {
   constructor(private readonly db: DatabaseService) {}
 
   private async findCategories(
