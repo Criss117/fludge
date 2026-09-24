@@ -37,12 +37,12 @@ export const localCategory = category;
 export const localProduct = product;
 export const localProductPresentation = productPresentation;
 
-export type LocalCategorySelect = typeof localCategory.$inferSelect;
+export type LocalCategory = typeof localCategory.$inferSelect;
 
-export type LocalProductPresentationSelect =
+export type LocalProductPresentation =
   typeof localProductPresentation.$inferSelect;
-export type LocalProductSelect = typeof localProduct.$inferSelect & {
-  presentations: LocalProductPresentationSelect[];
+export type LocalProduct = typeof localProduct.$inferSelect & {
+  presentations: LocalProductPresentation[];
 };
 
 // Ecommerse
@@ -53,14 +53,14 @@ export const localSale = sale;
 export const localSaleItem = saleItem;
 export const localSalePayment = salePayment;
 
-type LocalCustomerPaymentSelect = typeof localCustomerPayment.$inferSelect;
-export type LocalCustomerSelect = typeof localCustomer.$inferSelect & {
-  payments: LocalCustomerPaymentSelect[];
+type LocalCustomerPayment = typeof localCustomerPayment.$inferSelect;
+export type LocalCustomer = typeof localCustomer.$inferSelect & {
+  payments: LocalCustomerPayment[];
 };
 
-export type LocalSaleItemSelect = typeof localSaleItem.$inferSelect;
-export type LocalSalePaymentSelect = typeof localSalePayment.$inferSelect;
-export type LocalSaleSelect = typeof localSale.$inferSelect & {
-  items: LocalSaleItemSelect[];
-  payments: LocalSalePaymentSelect[];
+export type LocalSaleItem = typeof localSaleItem.$inferSelect;
+export type LocalSalePayment = typeof localSalePayment.$inferSelect;
+export type LocalSale = typeof localSale.$inferSelect & {
+  items: LocalSaleItem[];
+  payments: LocalSalePayment[];
 };

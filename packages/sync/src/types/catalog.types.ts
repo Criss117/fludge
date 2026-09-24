@@ -1,23 +1,16 @@
 import type {
-  LocalCategorySelect,
-  LocalProductPresentationSelect,
-  LocalProductSelect,
+  LocalCategory,
+  LocalProduct,
 } from "@fludge/db/local-schemas/shared.schema";
 
-export type CatalogLastSyncedAtLocal = {
-  product: LocalProductSelect | null;
-  productPresentation: LocalProductPresentationSelect | null;
-  category: LocalCategorySelect | null;
-};
-
-export type CatalogLastSyncedAtQuery = {
-  product: Date | null;
+/** Timestamps más recientes del cliente por entidad. */
+export type CatalogLastSyncedAt = {
   category: Date | null;
-  productPresentation: Date | null;
+  product: Date | null;
 };
 
-export type CatalogSyncAllItems = {
-  products: LocalProductSelect[];
-  categories: LocalCategorySelect[];
-  productPresentations: LocalProductPresentationSelect[];
+/** Resultado del sync de IAM — entidades agrupadas como el aggregate root. */
+export type CatalogSyncResult = {
+  categories: LocalCategory[];
+  products: LocalProduct[];
 };
