@@ -12,7 +12,5 @@ export interface CategoryRepository {
     categoryId: string,
   ): Promise<Result<Category | null>>;
 
-  insert(category: Category, options?: Options): Promise<Result<void>>;
-
-  update(category: Category, options?: Options): Promise<Result<void>>;
+  save(category: Category, options?: Options): Promise<Result<void>>;
 }

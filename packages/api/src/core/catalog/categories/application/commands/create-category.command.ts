@@ -45,7 +45,7 @@ export class CreateCategoryCommand {
         "api_errors.catalog.categories.name_taken",
       );
 
-    const [, errSaving] = await this.categoryRepository.insert(category);
+    const [, errSaving] = await this.categoryRepository.save(category);
 
     if (errSaving)
       throw new InternalServerError(

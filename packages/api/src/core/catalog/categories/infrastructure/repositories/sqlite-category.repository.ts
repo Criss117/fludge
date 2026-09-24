@@ -33,34 +33,27 @@ export class SQLiteCategoryRepository implements CategoryRepository {
     return ok(Category.reconstitute(cat));
   }
 
-  public async insert(categoryEntity: Category, options?: Options) {
+  public async save(categoryEntity: Category, options?: Options) {
     const db = options?.tx ?? this.db;
+    const values = categoryEntity.values;
 
     const [, errInsert] = await tryCatch(
-      db.insert(category).values(categoryEntity.values).onConflictDoNothing(),
+      db
+        .insert(category)
+        .values(values)
+        .onConflictDoUpdate({
+          target: category.id,
+          set: {
+            description: values.description,
+            name: values.name,
+            status: values.status,
+            updatedAt: values.updatedAt,
+            slug: values.slug,
+          },
+        }),
     );
 
     if (errInsert) return err(errInsert);
-
-    return ok(undefined);
-  }
-
-  public async update(categoryEntity: Category, options?: Options) {
-    const db = options?.tx ?? this.db;
-
-    const [, errUpdate] = await tryCatch(
-      db
-        .update(category)
-        .set(categoryEntity.values)
-        .where(
-          and(
-            eq(category.id, categoryEntity.values.id),
-            eq(category.organizationId, categoryEntity.values.organizationId),
-          ),
-        ),
-    );
-
-    if (errUpdate) return err(errUpdate);
 
     return ok(undefined);
   }

@@ -62,8 +62,7 @@ export class UpdateCategoryCommand {
       status: cmd.status ? new Status(cmd.status) : undefined,
     });
 
-    const [, errSaving] =
-      await this.categoryRepository.update(existingCategory);
+    const [, errSaving] = await this.categoryRepository.save(existingCategory);
 
     if (errSaving)
       throw new InternalServerError(

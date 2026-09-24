@@ -30,8 +30,7 @@ export class ToggleCategoryStatusCommand {
 
     existingCategory.toggleStatus();
 
-    const [, errSaving] =
-      await this.categoryRepository.update(existingCategory);
+    const [, errSaving] = await this.categoryRepository.save(existingCategory);
 
     if (errSaving)
       throw new InternalServerError(
