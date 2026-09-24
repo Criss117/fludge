@@ -51,7 +51,7 @@ export class Customer {
     private _status: Status,
     private _updatedAt: Date,
     private readonly _createdAt: Date,
-    private _payments: CustomerPaymentCollection = new CustomerPaymentCollection(),
+    private _payments = new CustomerPaymentCollection(),
   ) {}
 
   public static create(data: CreateCustomer) {
@@ -192,14 +192,16 @@ export class Customer {
   }
 
   public get payments() {
-    return this._payments.getAll();
+    return this._payments.collection;
   }
 
   public get id() {
     return this._id;
   }
 
-  public get values(): CustomerSelect {
+  public get values(): CustomerSelect & {
+    payments: CustomerPaymentSelect[];
+  } {
     const customerBalance = this._balance.value;
     const customerDocument = this._document?.value;
 
@@ -217,6 +219,7 @@ export class Customer {
       documentType: customerDocument?.type ?? "CC",
       documentNumber: customerDocument.number,
       status: this._status.value,
+      payments: this._payments.values,
     };
   }
 }

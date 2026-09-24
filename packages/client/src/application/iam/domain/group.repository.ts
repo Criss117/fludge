@@ -3,7 +3,7 @@ import type { MemberSummary } from "./member.repository";
 
 export type GroupSummary = LocalGroup;
 
-export type GroupDetail = GroupSummary & {
+export type GroupDetail = Omit<GroupSummary, "members"> & {
   members: MemberSummary[];
 };
 
@@ -25,5 +25,5 @@ export interface GroupRepository {
 
   save(group: LocalGroup | LocalGroup[]): Promise<void>;
 
-  delete(organizationId: string, groupId: string | string[]): Promise<void>;
+  delete(group: LocalGroup | LocalGroup[]): Promise<void>;
 }

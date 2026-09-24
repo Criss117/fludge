@@ -48,10 +48,8 @@ export function useRemoveGroupsFromMember() {
 
   return useMutation(
     orpc.member.commands.removeGroups.mutationOptions({
-      onSuccess: async (organization, variables) => {
-        await iamContainer.repositories.organizationRepository.save(
-          organization,
-        );
+      onSuccess: async (groups, variables) => {
+        await iamContainer.repositories.groupRepository.save(groups);
 
         invalidateMembers.invalidateDetail(variables.memberId);
         variables.groupIds.forEach((groupId) =>

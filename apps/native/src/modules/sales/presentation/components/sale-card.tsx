@@ -43,6 +43,12 @@ const SaleStatusConfig = {
     textColor: "text-danger",
     label: "screens.sales.status.cancelled",
   },
+  partial: {
+    icon: "schedule",
+    className: "border-amber-400 bg-amber-100",
+    textColor: "text-amber-600",
+    label: "screens.sales.status.open",
+  },
 } as const;
 
 function SaleStatusChip({ status }: { status: SaleStatusEnum }) {

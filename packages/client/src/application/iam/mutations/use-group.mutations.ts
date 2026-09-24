@@ -11,10 +11,8 @@ export function useCreateGroup() {
 
   return useMutation(
     orpc.group.commands.create.mutationOptions({
-      onSuccess: async (organization) => {
-        await iamContainer.repositories.organizationRepository.save(
-          organization,
-        );
+      onSuccess: async (group) => {
+        await iamContainer.repositories.groupRepository.save(group);
 
         invalidateGroups.invalidateList();
       },
@@ -30,10 +28,8 @@ export function useUpdateGroup() {
 
   return useMutation(
     orpc.group.commands.update.mutationOptions({
-      onSuccess: async (organization, variables) => {
-        await iamContainer.repositories.organizationRepository.save(
-          organization,
-        );
+      onSuccess: async (group, variables) => {
+        await iamContainer.repositories.groupRepository.save(group);
 
         invalidateGroups.invalidateList();
         invalidateGroups.invalidateDetail(variables.id);
@@ -51,11 +47,8 @@ export function useDeleteGroup() {
 
   return useMutation(
     orpc.group.commands.delete.mutationOptions({
-      onSuccess: async (organization, variables) => {
-        await iamContainer.repositories.groupRepository.delete(
-          organization.id,
-          variables.groupIds,
-        );
+      onSuccess: async (groups, variables) => {
+        await iamContainer.repositories.groupRepository.delete(groups);
 
         invalidateGroups.invalidateList();
         variables.groupIds.forEach((groupId) =>
@@ -76,10 +69,8 @@ export function useAssignMembersToGroup() {
 
   return useMutation(
     orpc.group.commands.assignMembers.mutationOptions({
-      onSuccess: async (organization, variables) => {
-        await iamContainer.repositories.organizationRepository.save(
-          organization,
-        );
+      onSuccess: async (group, variables) => {
+        await iamContainer.repositories.groupRepository.save(group);
 
         invalidateGroups.invalidateDetail(variables.groupId);
         variables.memberIds.forEach((memberId) =>
@@ -98,10 +89,8 @@ export function useRemoveMembersFromGroup() {
 
   return useMutation(
     orpc.group.commands.removeMembers.mutationOptions({
-      onSuccess: async (organization, variables) => {
-        await iamContainer.repositories.organizationRepository.save(
-          organization,
-        );
+      onSuccess: async (group, variables) => {
+        await iamContainer.repositories.groupRepository.save(group);
 
         invalidateGroups.invalidateDetail(variables.groupId);
         variables.memberIds.forEach((memberId) =>

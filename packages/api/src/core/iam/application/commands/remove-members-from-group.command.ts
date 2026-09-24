@@ -91,6 +91,6 @@ export class RemoveMembersFromGroupCommand {
         "api_errors.iam.groups.isr_on_save",
       );
 
-    return group;
+    return group.values;
   }
 }

@@ -14,12 +14,16 @@ export function useRegisterOrganization() {
 
   return useMutation(
     orpc.organization.commands.register.mutationOptions({
-      onSuccess: async (organization) => {
+      onSuccess: async ({ organization, group, member }) => {
         await switchOrganization(organization.id);
 
         await iamContainer.repositories.organizationRepository.save(
           organization,
         );
+
+        await iamContainer.repositories.groupRepository.save(group);
+
+        await iamContainer.repositories.memberRepository.save(member);
 
         invalidateOrganizations.invalidateAll();
       },

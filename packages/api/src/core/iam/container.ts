@@ -23,8 +23,11 @@ import { SQLiteSyncIamRepository } from "./infrastructure/repositories/sqlite-sy
 
 //Repositories
 const memberRepository = new SQLiteMemberRepository(databaseService);
-const groupRepository = new SQLiteGroupRepository(databaseService);
 const groupMemberRepository = new SQLiteGroupMemberRepository(databaseService);
+const groupRepository = new SQLiteGroupRepository(
+  databaseService,
+  groupMemberRepository,
+);
 const organizationRepository = new SQLiteOrganizationRepository(
   databaseService,
 );
@@ -66,15 +69,11 @@ const updateGroupCommand = new UpdateGroupCommand(
   groupRepository,
 );
 
-const deleteGroupsCommand = new DeleteGroupsCommand(
-  groupRepository,
-  groupMemberRepository,
-);
+const deleteGroupsCommand = new DeleteGroupsCommand(groupRepository);
 
 const assignMembersToGroupCommand = new AssignMembersToGroupCommand(
   groupRepository,
   memberRepository,
-  groupMemberRepository,
 );
 
 const removeMembersFromGroupCommand = new RemoveMembersFromGroupCommand(

@@ -90,6 +90,6 @@ export class RemoveGroupsFromMemberCommand {
         "api_errors.iam.groups.isr_on_save",
       );
 
-    return groups;
+    return groups.map((g) => g.values);
   }
 }

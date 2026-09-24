@@ -26,11 +26,15 @@ export class CustomerPaymentCollection {
     return existing;
   }
 
-  public getAll() {
-    return Array.from(this._payments.values());
-  }
-
   public get length() {
     return this._payments.size;
+  }
+
+  public get collection() {
+    return this._payments;
+  }
+
+  public get values() {
+    return Array.from(this._payments.values()).map((p) => p.values);
   }
 }
