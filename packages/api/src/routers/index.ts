@@ -9,6 +9,7 @@ import { categoryRouter } from "../core/catalog/categories/infrastructure/http/c
 import { productsRouter } from "../core/catalog/products/infrastructure/http/products.router";
 import { saleRouter } from "../core/commerce/sale/infrastructure/http/sale.router";
 import { customerRouter } from "../core/commerce/customer/infrastructure/http/customer.router";
+import { syncRouter } from "./sync";
 
 export const appRouter = {
   auth: authRouter,
@@ -19,6 +20,8 @@ export const appRouter = {
   product: productsRouter,
   sale: saleRouter,
   customer: customerRouter,
+
+  sync: syncRouter,
 
   ping: publicProcedure.handler(({ context }) => {
     return context;

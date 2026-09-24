@@ -1,4 +1,4 @@
-import { NotFoundError } from "../../../../shared/exceptions/base-exception";
+import { NotFoundError } from "@fludge/api/core/shared/exceptions/base-exception";
 import type { TranslationKey } from "@fludge/i18n/index";
 
 export class CustomerPaymentNotFoundException extends NotFoundError {

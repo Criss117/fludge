@@ -1,8 +1,8 @@
 import type { z } from "zod";
-import type { CategoryRepository } from "../../../../catalog/categories/domain/repositories/category.repository";
-import { CategoryNotFoundException } from "../../../../catalog/categories/domain/exceptions/category-not-found.exception";
-import type { UserAuthContext } from "../../../../iam/domain/entities/user-auth-context.entity";
-import { InternalServerError } from "../../../../shared/exceptions/base-exception";
+import type { CategoryRepository } from "@fludge/api/core/catalog/categories/domain/repositories/category.repository";
+import { CategoryNotFoundException } from "@fludge/api/core/catalog/categories/domain/exceptions/category-not-found.exception";
+import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { updateCategoryValidator } from "@fludge/utils/validators/category.validators";
 
 export const toggleCategoryStatusCommand = updateCategoryValidator.pick({
@@ -30,9 +30,8 @@ export class ToggleCategoryStatusCommand {
 
     existingCategory.toggleStatus();
 
-    const [, errSaving] = await this.categoryRepository.update(
-      existingCategory,
-    );
+    const [, errSaving] =
+      await this.categoryRepository.update(existingCategory);
 
     if (errSaving)
       throw new InternalServerError(

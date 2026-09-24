@@ -1,17 +1,15 @@
-import type { ProductPresentation } from "../../../../catalog/products/domain/entities/product-presentation.entity";
+import type { ProductPresentation } from "@fludge/api/core/catalog/products/domain/entities/product-presentation.entity";
 import type {
   Options,
   ProductPresentationRepository,
-} from "../../../../catalog/products/domain/repositories/product-presentation.repository";
+} from "@fludge/api/core/catalog/products/domain/repositories/product-presentation.repository";
 import type { DatabaseService } from "@fludge/db";
 import { productPresentation } from "@fludge/db/schema/catalog.schema";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { and, eq, inArray } from "drizzle-orm";
 
-export class SQLiteProductPresentationRepository
-  implements ProductPresentationRepository
-{
+export class SQLiteProductPresentationRepository implements ProductPresentationRepository {
   constructor(private readonly db: DatabaseService) {}
 
   public async save(

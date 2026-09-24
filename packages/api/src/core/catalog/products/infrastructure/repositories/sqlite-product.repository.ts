@@ -1,9 +1,9 @@
-import { Product } from "../../../../catalog/products/domain/entities/product.entity";
+import { Product } from "@fludge/api/core/catalog/products/domain/entities/product.entity";
 import type {
   Options,
   ProductRepository,
-} from "../../../../catalog/products/domain/repositories/product.repository";
-import { TransactionalRepository } from "../../../../shared/repositories/transactional-repository";
+} from "@fludge/api/core/catalog/products/domain/repositories/product.repository";
+import { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
 import {
   product,

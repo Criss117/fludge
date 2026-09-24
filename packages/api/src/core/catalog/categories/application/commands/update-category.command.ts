@@ -1,11 +1,11 @@
 import type { z } from "zod";
-import type { CategoryUniquenessValidator } from "../../../../catalog/categories/application/services/category-uniqueness-validator.service";
-import { CategoryAlreadyExistsException } from "../../../../catalog/categories/domain/exceptions/category-already-exists.exception";
-import { CategoryNotFoundException } from "../../../../catalog/categories/domain/exceptions/category-not-found.exception";
-import type { CategoryRepository } from "../../../../catalog/categories/domain/repositories/category.repository";
-import type { UserAuthContext } from "../../../../iam/domain/entities/user-auth-context.entity";
-import { InternalServerError } from "../../../../shared/exceptions/base-exception";
-import { Status } from "../../../../shared/value-objects/status";
+import type { CategoryUniquenessValidator } from "@fludge/api/core/catalog/categories/application/services/category-uniqueness-validator.service";
+import { CategoryAlreadyExistsException } from "@fludge/api/core/catalog/categories/domain/exceptions/category-already-exists.exception";
+import { CategoryNotFoundException } from "@fludge/api/core/catalog/categories/domain/exceptions/category-not-found.exception";
+import type { CategoryRepository } from "@fludge/api/core/catalog/categories/domain/repositories/category.repository";
+import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
+import { Status } from "@fludge/api/core/shared/value-objects/status";
 import { Slug } from "@fludge/utils/slugify";
 import { updateCategoryValidator } from "@fludge/utils/validators/category.validators";
 
@@ -62,7 +62,8 @@ export class UpdateCategoryCommand {
       status: cmd.status ? new Status(cmd.status) : undefined,
     });
 
-    const [, errSaving] = await this.categoryRepository.update(existingCategory);
+    const [, errSaving] =
+      await this.categoryRepository.update(existingCategory);
 
     if (errSaving)
       throw new InternalServerError(

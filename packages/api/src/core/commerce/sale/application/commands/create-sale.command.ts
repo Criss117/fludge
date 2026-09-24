@@ -6,14 +6,14 @@ import {
 import type { SaleRepository } from "../../../../commerce/sale/domain/repositories/sale.repository";
 import type { SaleSequenceRepository } from "../../../../commerce/sale/domain/repositories/sale-sequence.repository";
 import type { CustomerRepository } from "../../../../commerce/customer/domain/repositories/customer.repository";
-import type { ProductRepository } from "../../../../catalog/products/domain/repositories/product.repository";
-import type { SaleProductService } from "../../../../catalog/products/application/services/sale-product.service";
+import type { ProductRepository } from "@fludge/api/core/catalog/products/domain/repositories/product.repository";
+import type { SaleProductService } from "@fludge/api/core/catalog/products/application/services/sale-product.service";
 import type { SaleItemSnapshotValue } from "../../../../commerce/sale/domain/value-objects/sale-item-snapshot";
 import type { Customer } from "../../../../commerce/customer/domain/entities/customer.entity";
-import type { UserAuthContext } from "../../../../iam/domain/entities/user-auth-context.entity";
-import { InternalServerError } from "../../../../shared/exceptions/base-exception";
+import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { CustomerNotFoundException } from "../../../../commerce/customer/domain/exceptions/customer-not-found.exception";
-import { ProductPresentationNotFoundException } from "../../../../catalog/products/domain/exceptions/product-presentation-not-found.exception";
+import { ProductPresentationNotFoundException } from "@fludge/api/core/catalog/products/domain/exceptions/product-presentation-not-found.exception";
 import { UUID } from "@fludge/utils/uuid";
 import { createSaleValidator } from "@fludge/utils/validators/sale.validators";
 

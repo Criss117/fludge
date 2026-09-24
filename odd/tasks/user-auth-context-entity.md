@@ -6,7 +6,7 @@ Feature: Entidad de autorización del usuario logueado, similar al `Organization
 
 - El `Organization` viejo tenía `memberHasPermission(memberId, required, mode)` y `getGroupsOfMember` (filtrando groupMembers). El nuevo diseño plano no carga el aggregate.
 - Necesidad: entidad con `organizationId` (org activa), `member` (miembro loggeado), `groups` (grupos del miembro), y `hasPermission(required, mode)` — owner → true; sino, merge de permisos de grupos ACTIVOS + `checkPermissions`.
-- `Role.isOwner()` y `Status.isActive()` ya existen en `@core/shared/value-objects`. `Permissions.merge` + `checkPermissions` en `@fludge/utils/permissions`.
+- `Role.isOwner()` y `Status.isActive()` ya existen en `@fludge/api/core/shared/value-objects`. `Permissions.merge` + `checkPermissions` en `@fludge/utils/permissions`.
 - Se arma con un SERVICE (máx 3 queries): `memberRepository.findByUserId` (ya existe) + join `group`↔`groupMember` por memberId + organizationId.
 
 ## Tasks

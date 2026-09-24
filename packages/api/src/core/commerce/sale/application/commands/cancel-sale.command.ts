@@ -2,12 +2,15 @@ import type { z } from "zod";
 import type { SaleRepository } from "../../../../commerce/sale/domain/repositories/sale.repository";
 import type { SalePaymentRepository } from "../../../../commerce/sale/domain/repositories/sale-payment.repository";
 import type { CustomerRepository } from "../../../../commerce/customer/domain/repositories/customer.repository";
-import type { ProductRepository } from "../../../../catalog/products/domain/repositories/product.repository";
+import type { ProductRepository } from "@fludge/api/core/catalog/products/domain/repositories/product.repository";
 import type { DecreaseCustomerBalanceService } from "../../../../commerce/customer/application/services/decrease-customer-balance.service";
-import type { RefundProductsService, RefundProductInput } from "../../../../commerce/sale/application/services/refund-products.service";
+import type {
+  RefundProductsService,
+  RefundProductInput,
+} from "../../../../commerce/sale/application/services/refund-products.service";
 import { SaleNotFoundException } from "../../../../commerce/sale/domain/exceptions/sale-not-found.exception";
-import type { UserAuthContext } from "../../../../iam/domain/entities/user-auth-context.entity";
-import { InternalServerError } from "../../../../shared/exceptions/base-exception";
+import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { cancelSaleValidator } from "@fludge/utils/validators/sale.validators";
 
 export const cancelSaleCommand = cancelSaleValidator;
@@ -111,10 +114,12 @@ export class CancelSaleCommand {
 
         // Actualizar productos si hay stock que revertir
         if (productsToSave.length > 0) {
-          const [, errProducts] =
-            await this.productRepository.saveOnlyProducts(productsToSave, {
+          const [, errProducts] = await this.productRepository.saveOnlyProducts(
+            productsToSave,
+            {
               tx,
-            });
+            },
+          );
 
           if (errProducts) throw errProducts;
         }

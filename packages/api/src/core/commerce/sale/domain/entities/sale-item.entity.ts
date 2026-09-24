@@ -4,7 +4,7 @@ import {
   SaleItemSnapshot,
   type SaleItemSnapshotValue,
 } from "../value-objects/sale-item-snapshot";
-import { Status } from "../../../../shared/value-objects/status";
+import { Status } from "@fludge/api/core/shared/value-objects/status";
 import type { StatusEnum } from "@fludge/utils/enums/db-enums";
 
 export interface CreateSaleItem {

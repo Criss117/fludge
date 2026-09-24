@@ -1,7 +1,7 @@
 import type { Sale } from "../../../../commerce/sale/domain/entities/sale.entity";
 import type { SalePayment } from "../../../../commerce/sale/domain/entities/sale-payment.entity";
 import type { SaleRepository } from "../../../../commerce/sale/domain/repositories/sale.repository";
-import { InternalServerError } from "../../../../shared/exceptions/base-exception";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { UUID } from "@fludge/utils/uuid";
 
 export interface PaySaleResult {
@@ -29,10 +29,7 @@ export class PaySaleService {
     );
 
     if (errFind)
-      throw new InternalServerError(
-        errFind,
-        "api_errors.sales.isr_on_find",
-      );
+      throw new InternalServerError(errFind, "api_errors.sales.isr_on_find");
 
     const results: PaySaleResult[] = [];
     let remaining = totalAmount;
@@ -45,11 +42,7 @@ export class PaySaleService {
 
       if (amountToPay <= 0) continue;
 
-      const salePayment = sale.pay(
-        customerPaymentId,
-        amountToPay,
-        createdBy,
-      );
+      const salePayment = sale.pay(customerPaymentId, amountToPay, createdBy);
 
       results.push({ sale, salePayments: [salePayment] });
       remaining -= amountToPay;

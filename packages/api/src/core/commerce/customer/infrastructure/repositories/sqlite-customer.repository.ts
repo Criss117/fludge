@@ -3,7 +3,7 @@ import type {
   Options,
   CustomerRepository,
 } from "../../../../commerce/customer/domain/repositories/customer.repository";
-import { TransactionalRepository } from "../../../../shared/repositories/transactional-repository";
+import { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
 import {
   customer,
@@ -57,13 +57,13 @@ export class SQLiteCustomerRepository
 
     if (!data) return ok(null);
 
-    const payments = (
-      JSON.parse(data.payments) as CustomerPaymentSelect[]
-    ).map((p) => ({
-      ...p,
-      createdAt: new Date(p.createdAt),
-      updatedAt: new Date(p.updatedAt),
-    }));
+    const payments = (JSON.parse(data.payments) as CustomerPaymentSelect[]).map(
+      (p) => ({
+        ...p,
+        createdAt: new Date(p.createdAt),
+        updatedAt: new Date(p.updatedAt),
+      }),
+    );
 
     return ok(Customer.reconstitute({ ...data, payments }));
   }
@@ -72,10 +72,7 @@ export class SQLiteCustomerRepository
     return this.find(organizationId, { id: customerId });
   }
 
-  public async findByDocument(
-    organizationId: string,
-    documentNumber: string,
-  ) {
+  public async findByDocument(organizationId: string, documentNumber: string) {
     return this.find(organizationId, { documentNumber });
   }
 

@@ -21,6 +21,6 @@ Feature: Crear los routers HTTP de IAM para los commands migrados, divididos en 
 
 ## Decisiones
 
-- Routers importan procedures de `@fludge/api/index` (patrón del auth.router) y commands de `@core/iam/...`.
+- Routers importan procedures de `@fludge/api/index` (patrón del auth.router) y commands de `@fludge/api/core/iam/...`.
 - El update usa `hasPermissionProcedure({ organizations: ["update"] })` (como el viejo); register rootOnly; create groups create+read.
 - NO se toca `routers/index.ts` (no pedido) — sigue con los imports viejos.

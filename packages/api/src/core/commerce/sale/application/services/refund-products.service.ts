@@ -1,6 +1,6 @@
-import type { Product } from "../../../../catalog/products/domain/entities/product.entity";
-import type { ProductRepository } from "../../../../catalog/products/domain/repositories/product.repository";
-import { InternalServerError } from "../../../../shared/exceptions/base-exception";
+import type { Product } from "@fludge/api/core/catalog/products/domain/entities/product.entity";
+import type { ProductRepository } from "@fludge/api/core/catalog/products/domain/repositories/product.repository";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 
 export interface RefundProductInput {
   productId: string;

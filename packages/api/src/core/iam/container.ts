@@ -18,6 +18,8 @@ import { SQLiteGroupMemberRepository } from "./infrastructure/repositories/sqlit
 import { SQLiteGroupRepository } from "./infrastructure/repositories/sqlite-group-repository";
 import { SQLiteMemberRepository } from "./infrastructure/repositories/sqlite-member-repository";
 import { SQLiteOrganizationRepository } from "./infrastructure/repositories/sqlite-organization.repository";
+import { SyncIamQuery } from "./application/queries/sync-iam.query";
+import { SQLiteSyncIamRepository } from "./infrastructure/repositories/sqlite-sync-iam.repository";
 
 //Repositories
 const memberRepository = new SQLiteMemberRepository(databaseService);
@@ -26,6 +28,7 @@ const groupMemberRepository = new SQLiteGroupMemberRepository(databaseService);
 const organizationRepository = new SQLiteOrganizationRepository(
   databaseService,
 );
+const syncIamRepository = new SQLiteSyncIamRepository(databaseService);
 
 //Services
 const organizationUniquenessValidator = new OrganizationUniquenessValidator(
@@ -83,7 +86,6 @@ const removeMembersFromGroupCommand = new RemoveMembersFromGroupCommand(
 const assignGroupsToMemberCommand = new AssignGroupsToMemberCommand(
   groupRepository,
   memberRepository,
-  groupMemberRepository,
 );
 
 const removeGroupsFromMemberCommand = new RemoveGroupsFromMemberCommand(
@@ -94,8 +96,16 @@ const removeGroupsFromMemberCommand = new RemoveGroupsFromMemberCommand(
 
 const addMemberCommand = new AddMemberCommand(memberRepository);
 
-export const organizationContainer = {
-  repositories: { organizationRepository },
+//Queries
+const syncIamQuery = new SyncIamQuery(syncIamRepository);
+
+export const iamContainer = {
+  repositories: {
+    organizationRepository,
+    memberRepository,
+    groupRepository,
+    syncIamRepository,
+  },
   services: {
     organizationUniquenessValidator,
     groupUniquenessValidator,
@@ -103,8 +113,10 @@ export const organizationContainer = {
     userOrganizationIdsService,
   },
   commands: {
-    register: registerOrganizationCommand,
-    update: updateOrganizationCommand,
+    organization: {
+      register: registerOrganizationCommand,
+      update: updateOrganizationCommand,
+    },
     group: {
       create: createGroupCommand,
       update: updateGroupCommand,
@@ -117,5 +129,8 @@ export const organizationContainer = {
       assignGroups: assignGroupsToMemberCommand,
       removeGroups: removeGroupsFromMemberCommand,
     },
+  },
+  queries: {
+    syncIam: syncIamQuery,
   },
 } as const;

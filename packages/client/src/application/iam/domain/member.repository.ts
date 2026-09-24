@@ -1,15 +1,15 @@
 import type {
-  LocalGroupSelect,
-  LocalMemberSelect,
-  LocalUserSelect,
+  LocalGroup,
+  LocalMember,
+  LocalUser,
 } from "@fludge/db/local-schemas/shared.schema";
 
-export type MemberSummary = LocalMemberSelect & {
-  user: LocalUserSelect;
+export type MemberSummary = LocalMember & {
+  user: LocalUser;
 };
 
 export type MemberDetail = MemberSummary & {
-  groups: LocalGroupSelect[];
+  groups: LocalGroup[];
 };
 
 export type FindAllMembersFilters = {
@@ -28,7 +28,7 @@ export interface MemberRepository {
     memberId: string,
   ): Promise<MemberDetail | null>;
 
-  save(member: MemberSummary | MemberSummary[]): Promise<void>;
+  save(member: LocalMember | LocalMember[]): Promise<void>;
 
   delete(organizationId: string, memberIds: string | string[]): Promise<void>;
 }

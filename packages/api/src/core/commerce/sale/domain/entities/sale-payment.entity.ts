@@ -1,4 +1,4 @@
-import { Status } from "../../../../shared/value-objects/status";
+import { Status } from "@fludge/api/core/shared/value-objects/status";
 import type { SalePaymentSelect } from "@fludge/db/schema/sales.schema";
 import { UUID } from "@fludge/utils/uuid";
 

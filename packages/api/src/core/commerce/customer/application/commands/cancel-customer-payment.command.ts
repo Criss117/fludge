@@ -5,8 +5,8 @@ import type { SaleRepository } from "../../../../commerce/sale/domain/repositori
 import type { SalePaymentRepository } from "../../../../commerce/sale/domain/repositories/sale-payment.repository";
 import type { RevertSalePaymentsService } from "../../../../commerce/sale/application/services/revert-sale-payments.service";
 import { CustomerNotFoundException } from "../../../../commerce/customer/domain/exceptions/customer-not-found.exception";
-import type { UserAuthContext } from "../../../../iam/domain/entities/user-auth-context.entity";
-import { InternalServerError } from "../../../../shared/exceptions/base-exception";
+import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { cancelCustomerPaymentValidator } from "@fludge/utils/validators/customer-payment.validators";
 
 export const cancelCustomerPaymentCommand = cancelCustomerPaymentValidator;
@@ -69,9 +69,12 @@ export class CancelCustomerPaymentCommand {
 
         // Actualizar ventas afectadas (totalPaid y status revertidos)
         if (sales.length > 0) {
-          const [, errSales] = await this.saleRepository.updateManyOnlySale(sales, {
-            tx,
-          });
+          const [, errSales] = await this.saleRepository.updateManyOnlySale(
+            sales,
+            {
+              tx,
+            },
+          );
 
           if (errSales) throw errSales;
         }

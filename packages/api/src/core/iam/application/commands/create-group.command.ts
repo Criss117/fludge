@@ -1,13 +1,13 @@
 import type { z } from "zod";
-import type { GroupUniquenessValidator } from "../../../iam/application/services/group-uniqueness-validator.service";
-import { Group } from "../../../iam/domain/entities/group.entity";
-import { GroupAlreadyExistsException } from "../../../iam/domain/exceptions/group-already-exists.exception";
-import type { GroupRepository } from "../../../iam/domain/repositories/group.repository";
-import { InternalServerError } from "../../../shared/exceptions/base-exception";
+import type { GroupUniquenessValidator } from "@fludge/api/core/iam/application/services/group-uniqueness-validator.service";
+import { Group } from "@fludge/api/core/iam/domain/entities/group.entity";
+import { GroupAlreadyExistsException } from "@fludge/api/core/iam/domain/exceptions/group-already-exists.exception";
+import type { GroupRepository } from "@fludge/api/core/iam/domain/repositories/group.repository";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
 import { createGroupValidator } from "@fludge/utils/validators/group.validators";
-import type { UserAuthContext } from "../../../iam/domain/entities/user-auth-context.entity";
+import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 
 export const createGroupCommand = createGroupValidator;
 

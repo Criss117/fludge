@@ -1,8 +1,8 @@
 import { hasPermissionProcedure } from "@fludge/api/index";
-import { addMemberCommand } from "../../../iam/application/commands/add-member.command";
-import { assignGroupsToMemberCommand } from "../../../iam/application/commands/assign-groups-to-member.command";
-import { removeGroupsFromMemberCommand } from "../../../iam/application/commands/remove-groups-from-member.command";
-import { organizationContainer } from "../../../iam/container";
+import { addMemberCommand } from "@fludge/api/core/iam/application/commands/add-member.command";
+import { assignGroupsToMemberCommand } from "@fludge/api/core/iam/application/commands/assign-groups-to-member.command";
+import { removeGroupsFromMemberCommand } from "@fludge/api/core/iam/application/commands/remove-groups-from-member.command";
+import { iamContainer } from "@fludge/api/core/iam/container";
 
 const TAGS = ["Members"] as const;
 
@@ -18,7 +18,7 @@ export const memberRouter = {
       })
       .input(addMemberCommand)
       .handler(({ input, context }) =>
-        organizationContainer.commands.member.add.execute(
+        iamContainer.commands.member.add.execute(
           context.session.authContext,
           input,
         ),
@@ -34,7 +34,7 @@ export const memberRouter = {
       })
       .input(assignGroupsToMemberCommand)
       .handler(({ input, context }) =>
-        organizationContainer.commands.member.assignGroups.execute(
+        iamContainer.commands.member.assignGroups.execute(
           context.session.authContext,
           input,
         ),
@@ -50,7 +50,7 @@ export const memberRouter = {
       })
       .input(removeGroupsFromMemberCommand)
       .handler(({ input, context }) =>
-        organizationContainer.commands.member.removeGroups.execute(
+        iamContainer.commands.member.removeGroups.execute(
           context.session.authContext,
           input,
         ),

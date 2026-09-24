@@ -3,7 +3,7 @@ import type {
   Options,
   CustomerPaymentRepository,
 } from "../../../../commerce/customer/domain/repositories/customer-payment.repository";
-import { TransactionalRepository } from "../../../../shared/repositories/transactional-repository";
+import { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
 import { customerPayment } from "@fludge/db/schema/customer.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
@@ -17,10 +17,7 @@ export class SQLiteCustomerPaymentRepository
     super(db);
   }
 
-  public async insert(
-    paymentEntity: CustomerPayment,
-    options?: Options,
-  ) {
+  public async insert(paymentEntity: CustomerPayment, options?: Options) {
     const db = options?.tx ?? this.db;
 
     const values = paymentEntity.values;
@@ -44,14 +41,13 @@ export class SQLiteCustomerPaymentRepository
     return ok(undefined);
   }
 
-  public async delete(
-    customerPaymentId: string,
-    options?: Options,
-  ) {
+  public async delete(customerPaymentId: string, options?: Options) {
     const db = options?.tx ?? this.db;
 
     const [, errDelete] = await tryCatch(
-      db.delete(customerPayment).where(eq(customerPayment.id, customerPaymentId)),
+      db
+        .delete(customerPayment)
+        .where(eq(customerPayment.id, customerPaymentId)),
     );
 
     if (errDelete) return err(errDelete);

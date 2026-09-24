@@ -117,6 +117,18 @@ export class Group {
     this.touch();
   }
 
+  public addMember(member: GroupMember) {
+    this._members.push(member);
+    this.touch();
+  }
+
+  public removeMember(member: GroupMember) {
+    this._members = this._members.filter(
+      (m) => !m.equals(member.groupId, member.memberId),
+    );
+    this.touch();
+  }
+
   public get status() {
     return this._status;
   }
@@ -127,6 +139,10 @@ export class Group {
 
   public get permissions() {
     return this._permissions;
+  }
+
+  public get members() {
+    return this._members;
   }
 
   public get values(): GroupSelect & {

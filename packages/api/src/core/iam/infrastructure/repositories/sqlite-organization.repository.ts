@@ -1,9 +1,9 @@
-import { Organization } from "../../../iam/domain/entities/organization.entity";
+import { Organization } from "@fludge/api/core/iam/domain/entities/organization.entity";
 import type {
   Options,
   OrganizationRepository,
-} from "../../../iam/domain/repositories/organization.repository";
-import { TransactionalRepository } from "../../../shared/repositories/transactional-repository";
+} from "@fludge/api/core/iam/domain/repositories/organization.repository";
+import { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
 import { organization } from "@fludge/db/schema/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";

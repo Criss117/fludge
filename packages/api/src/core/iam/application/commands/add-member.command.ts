@@ -1,8 +1,8 @@
 import type { z } from "zod";
-import type { UserAuthContext } from "../../../iam/domain/entities/user-auth-context.entity";
-import { Member } from "../../../iam/domain/entities/member.entity";
-import { MemberAlreadyExistsException } from "../../../iam/domain/exceptions/member-already-exists.exception";
-import type { MemberRepository } from "../../../iam/domain/repositories/member.repository";
+import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
+import { Member } from "@fludge/api/core/iam/domain/entities/member.entity";
+import { MemberAlreadyExistsException } from "@fludge/api/core/iam/domain/exceptions/member-already-exists.exception";
+import type { MemberRepository } from "@fludge/api/core/iam/domain/repositories/member.repository";
 import { InternalServerError } from "../../../shared/exceptions/base-exception";
 import { UUID } from "@fludge/utils/uuid";
 import { addMemberValidator } from "@fludge/utils/validators/organization.validators";

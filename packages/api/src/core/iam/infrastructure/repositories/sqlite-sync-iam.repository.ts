@@ -91,19 +91,21 @@ export class SQLiteSyncIamRepository implements ServerSyncIamRepository {
       )
       .orderBy(desc(group.updatedAt));
 
-    return rows.map((g) => {
-      const members = (JSON.parse(g.members) as GroupMemberSelect[]).map(
-        (m) => ({
-          ...m,
-          createdAt: new Date(m.createdAt),
-        }),
-      );
+    return rows
+      .map((g) => {
+        const members = (JSON.parse(g.members) as GroupMemberSelect[]).map(
+          (m) => ({
+            ...m,
+            createdAt: new Date(m.createdAt),
+          }),
+        );
 
-      return {
-        ...g,
-        members,
-      };
-    });
+        return {
+          ...g,
+          members,
+        };
+      })
+      .filter((g) => g.id !== null);
   }
 
   public async findAllByUpdatedAt(

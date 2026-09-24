@@ -1,17 +1,17 @@
 import type { z } from "zod";
-import { Group } from "../../../iam/domain/entities/group.entity";
-import { Member } from "../../../iam/domain/entities/member.entity";
-import { Organization } from "../../../iam/domain/entities/organization.entity";
-import { OrganizationAlreadyExistsException } from "../../../iam/domain/exceptions/organization-already-exists.exception";
-import type { GroupRepository } from "../../../iam/domain/repositories/group.repository";
-import type { MemberRepository } from "../../../iam/domain/repositories/member.repository";
-import type { OrganizationRepository } from "../../../iam/domain/repositories/organization.repository";
+import { Group } from "@fludge/api/core/iam/domain/entities/group.entity";
+import { Member } from "@fludge/api/core/iam/domain/entities/member.entity";
+import { Organization } from "@fludge/api/core/iam/domain/entities/organization.entity";
+import { OrganizationAlreadyExistsException } from "@fludge/api/core/iam/domain/exceptions/organization-already-exists.exception";
+import type { GroupRepository } from "@fludge/api/core/iam/domain/repositories/group.repository";
+import type { MemberRepository } from "@fludge/api/core/iam/domain/repositories/member.repository";
+import type { OrganizationRepository } from "@fludge/api/core/iam/domain/repositories/organization.repository";
 import { InternalServerError } from "../../../shared/exceptions/base-exception";
 import { PERMISSIONS } from "@fludge/utils/permissions/data";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { registerOrganizationValidator } from "@fludge/utils/validators/organization.validators";
 import { UUID } from "@fludge/utils/uuid";
-import type { OrganizationUniquenessValidator } from "../../../iam/application/services/organization-uniqueness-validator.service";
+import type { OrganizationUniquenessValidator } from "@fludge/api/core/iam/application/services/organization-uniqueness-validator.service";
 
 export const registerOrganizationCommand = registerOrganizationValidator;
 

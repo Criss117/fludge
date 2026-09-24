@@ -3,7 +3,7 @@ import type {
   Options,
   SalePaymentRepository,
 } from "../../../../commerce/sale/domain/repositories/sale-payment.repository";
-import { TransactionalRepository } from "../../../../shared/repositories/transactional-repository";
+import { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
 import { salePayment } from "@fludge/db/schema/sales.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
@@ -38,27 +38,19 @@ export class SQLiteSalePaymentRepository
     return ok(rows.map((r) => SalePayment.reconstitute(r)));
   }
 
-  public async insertMany(
-    salePayments: SalePayment[],
-    options?: Options,
-  ) {
+  public async insertMany(salePayments: SalePayment[], options?: Options) {
     const db = options?.tx ?? this.db;
 
     const values = salePayments.map((sp) => sp.values);
 
-    const [, errInsert] = await tryCatch(
-      db.insert(salePayment).values(values),
-    );
+    const [, errInsert] = await tryCatch(db.insert(salePayment).values(values));
 
     if (errInsert) return err(errInsert);
 
     return ok(undefined);
   }
 
-  public async deleteMany(
-    salePaymentIds: string[],
-    options?: Options,
-  ) {
+  public async deleteMany(salePaymentIds: string[], options?: Options) {
     const db = options?.tx ?? this.db;
 
     const [, errDelete] = await tryCatch(
@@ -70,10 +62,7 @@ export class SQLiteSalePaymentRepository
     return ok(undefined);
   }
 
-  public async deleteBySaleId(
-    saleId: string,
-    options?: Options,
-  ) {
+  public async deleteBySaleId(saleId: string, options?: Options) {
     const db = options?.tx ?? this.db;
 
     const [, errDelete] = await tryCatch(

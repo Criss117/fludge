@@ -1,11 +1,13 @@
-import type {
-  IamLastSyncedAtQuery,
-  IamSyncAllItems,
-} from "@fludge/sync/types/iam.types";
+import type { IamLastSyncedAt, IamSyncResult } from "@fludge/sync/types/iam.types";
 
+/**
+ * Server-side sync repository for IAM.
+ * Recibe los timestamps más recientes del cliente y retorna
+ * las entidades que cambiaron desde esas fechas.
+ */
 export interface ServerSyncIamRepository {
-  findAllItems: (
+  findAllByUpdatedAt(
     organizationIds: string[],
-    lastSyncedAt: IamLastSyncedAtQuery,
-  ) => Promise<IamSyncAllItems>;
+    lastSyncedAt: IamLastSyncedAt,
+  ): Promise<IamSyncResult>;
 }

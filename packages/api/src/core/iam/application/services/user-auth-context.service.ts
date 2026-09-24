@@ -1,6 +1,6 @@
-import { Group } from "../../../iam/domain/entities/group.entity";
-import { UserAuthContext } from "../../../iam/domain/entities/user-auth-context.entity";
-import type { MemberRepository } from "../../../iam/domain/repositories/member.repository";
+import { Group } from "@fludge/api/core/iam/domain/entities/group.entity";
+import { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
+import type { MemberRepository } from "@fludge/api/core/iam/domain/repositories/member.repository";
 import type { DatabaseService } from "@fludge/db";
 import { group, groupMember, organization } from "@fludge/db/schema/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";

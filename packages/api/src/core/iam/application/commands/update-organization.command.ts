@@ -1,8 +1,8 @@
 import type { z } from "zod";
-import type { OrganizationUniquenessValidator } from "../../../iam/application/services/organization-uniqueness-validator.service";
-import { OrganizationAlreadyExistsException } from "../../../iam/domain/exceptions/organization-already-exists.exception";
-import { OrganizationNotFoundException } from "../../../iam/domain/exceptions/organization-not-found.exception";
-import type { OrganizationRepository } from "../../../iam/domain/repositories/organization.repository";
+import type { OrganizationUniquenessValidator } from "@fludge/api/core/iam/application/services/organization-uniqueness-validator.service";
+import { OrganizationAlreadyExistsException } from "@fludge/api/core/iam/domain/exceptions/organization-already-exists.exception";
+import { OrganizationNotFoundException } from "@fludge/api/core/iam/domain/exceptions/organization-not-found.exception";
+import type { OrganizationRepository } from "@fludge/api/core/iam/domain/repositories/organization.repository";
 import { InternalServerError } from "../../../shared/exceptions/base-exception";
 import { Slug } from "@fludge/utils/slugify";
 import { updateOrganizationValidator } from "@fludge/utils/validators/organization.validators";

@@ -1,7 +1,7 @@
 import type { Result } from "@fludge/utils/trycatch";
 import type { Group } from "../entities/group.entity";
 import type { TransactionService } from "@fludge/db";
-import type { TransactionalRepository } from "../../../shared/repositories/transactional-repository";
+import type { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
 
 export type Options = {
   tx?: TransactionService;
@@ -16,6 +16,8 @@ export interface GroupRepository extends TransactionalRepository {
   ): Promise<Result<Group[]>>;
 
   insert(group: Group, options?: Options): Promise<Result<void>>;
+
+  insertMany(groups: Group[], options?: Options): Promise<Result<void>>;
 
   update(group: Group): Promise<Result<void>>;
 

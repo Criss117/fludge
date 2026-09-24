@@ -1,7 +1,7 @@
 import type { Result } from "@fludge/utils/trycatch";
 import type { TransactionService } from "@fludge/db";
 import type { Sale } from "../entities/sale.entity";
-import type { TransactionalRepository } from "../../../../shared/repositories/transactional-repository";
+import type { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
 
 export type Options = {
   tx?: TransactionService;
@@ -13,10 +13,7 @@ export interface SaleRepository extends TransactionalRepository {
     saleId: string,
   ): Promise<Result<Sale | null>>;
 
-  findByIds(
-    organizationId: string,
-    saleIds: string[],
-  ): Promise<Result<Sale[]>>;
+  findByIds(organizationId: string, saleIds: string[]): Promise<Result<Sale[]>>;
 
   findOpenByCustomer(
     organizationId: string,

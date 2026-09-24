@@ -5,8 +5,8 @@ import type { SaleRepository } from "../../../../commerce/sale/domain/repositori
 import type { SalePaymentRepository } from "../../../../commerce/sale/domain/repositories/sale-payment.repository";
 import type { PaySaleService } from "../../../../commerce/sale/application/services/pay-sale.service";
 import { CustomerNotFoundException } from "../../../../commerce/customer/domain/exceptions/customer-not-found.exception";
-import type { UserAuthContext } from "../../../../iam/domain/entities/user-auth-context.entity";
-import { InternalServerError } from "../../../../shared/exceptions/base-exception";
+import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { createCustomerPaymentValidator } from "@fludge/utils/validators/customer-payment.validators";
 
 export const createCustomerPaymentCommand = createCustomerPaymentValidator;

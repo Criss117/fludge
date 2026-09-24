@@ -1,10 +1,10 @@
-import type { Product } from "../../../../catalog/products/domain/entities/product.entity";
-import type { ProductRepository } from "../../../../catalog/products/domain/repositories/product.repository";
+import type { Product } from "@fludge/api/core/catalog/products/domain/entities/product.entity";
+import type { ProductRepository } from "@fludge/api/core/catalog/products/domain/repositories/product.repository";
 import type { EnsurePresentationsExistsService } from "./ensure-presentations-exists.service";
-import { InternalServerError } from "../../../../shared/exceptions/base-exception";
-import { ProductPresentationNotFoundException } from "../../../../catalog/products/domain/exceptions/product-presentation-not-found.exception";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
+import { ProductPresentationNotFoundException } from "@fludge/api/core/catalog/products/domain/exceptions/product-presentation-not-found.exception";
 import { UUID } from "@fludge/utils/uuid";
-import { ProductNotFoundException } from "../../../../catalog/products/domain/exceptions/product-not-found.exception";
+import { ProductNotFoundException } from "@fludge/api/core/catalog/products/domain/exceptions/product-not-found.exception";
 
 type Item = {
   presentationId: string;

@@ -9,9 +9,8 @@
     "rootDir": ".",
 
     "paths": {
-      "@*": ["./src/*"],
-      "@test/*": ["./test/*"],
-      "@core/*": ["./src/core/*"]
+      "@fludge/api/*": ["./src/*"],
+      "@test/*": ["./test/*"]
     }
   },
   "include": ["src"]

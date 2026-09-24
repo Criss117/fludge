@@ -1,6 +1,6 @@
 import { os } from "@orpc/server";
 import type { Context } from "./context";
-import { organizationContainer } from "./core/iam/container";
+import { iamContainer } from "./core/iam/container";
 import {
   ForbiddenError,
   InternalServerError,
@@ -43,7 +43,7 @@ const requireOrganization = requireAuth.concat(async ({ context, next }) => {
     throw new ForbiddenError("api_errors.auth.sessions.no_active_organization");
 
   const [authContext, errAuthContext] =
-    await organizationContainer.services.userAuthContextService.build(
+    await iamContainer.services.userAuthContextService.build(
       context.session.user.id,
       activeOrganizationId,
     );
@@ -82,7 +82,7 @@ function hasPermission(required: PermissionsRecord) {
 
 const withOrganizationIds = requireAuth.concat(async ({ context, next }) => {
   const [organizationIds, errorFindingOrganizationIds] = await tryCatch(
-    organizationContainer.services.userOrganizationIdsService.execute(
+    iamContainer.services.userOrganizationIdsService.execute(
       context.session.user.id,
     ),
   );

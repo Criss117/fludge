@@ -1,7 +1,7 @@
 import { hasPermissionProcedure, protectedProcedure } from "@fludge/api/index";
-import { signUpMemberCommand } from "../../../auth/application/commands/sign-up-member.command";
-import { updateUserInfoCommand } from "../../../auth/application/commands/update-user-info.command";
-import { authContainer } from "../../../auth/container";
+import { signUpMemberCommand } from "@fludge/api/core/auth/application/commands/sign-up-member.command";
+import { updateUserInfoCommand } from "@fludge/api/core/auth/application/commands/update-user-info.command";
+import { authContainer } from "@fludge/api/core/auth/container";
 
 const TAGS = ["Auth"] as const;
 

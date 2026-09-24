@@ -2,7 +2,7 @@ import type { z } from "zod";
 import type { AuthService } from "@fludge/auth";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { updateUserInfoValidator } from "@fludge/utils/validators/auth.validators";
-import { InternalServerError } from "../../../shared/exceptions/base-exception";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 
 export const updateUserInfoCommand = updateUserInfoValidator;
 

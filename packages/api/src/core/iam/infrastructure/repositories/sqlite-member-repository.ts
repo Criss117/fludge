@@ -1,8 +1,8 @@
-import { Member } from "../../../iam/domain/entities/member.entity";
+import { Member } from "@fludge/api/core/iam/domain/entities/member.entity";
 import type {
   MemberRepository,
   Options,
-} from "../../../iam/domain/repositories/member.repository";
+} from "@fludge/api/core/iam/domain/repositories/member.repository";
 import type { DatabaseService } from "@fludge/db";
 import { member } from "@fludge/db/schema/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";

@@ -3,7 +3,7 @@ import type {
   Options,
   SaleRepository,
 } from "../../../../commerce/sale/domain/repositories/sale.repository";
-import { TransactionalRepository } from "../../../../shared/repositories/transactional-repository";
+import { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
 import type { DatabaseService, TransactionService } from "@fludge/db";
 import {
   sale,
@@ -12,7 +12,10 @@ import {
   type SaleItemSelect,
   type SalePaymentSelect,
 } from "@fludge/db/schema/sales.schema";
-import { buildConflictUpdateColumn, jsonObject } from "@fludge/db/utils/build-queries";
+import {
+  buildConflictUpdateColumn,
+  jsonObject,
+} from "@fludge/db/utils/build-queries";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { and, eq, getColumns, inArray, sql } from "drizzle-orm";
 
@@ -178,10 +181,7 @@ export class SQLiteSaleRepository
     return this.find(organizationId, { ids: saleIds });
   }
 
-  public async findOpenByCustomer(
-    organizationId: string,
-    customerId: string,
-  ) {
+  public async findOpenByCustomer(organizationId: string, customerId: string) {
     const [rows, errFind] = await tryCatch(
       this.db
         .select({
@@ -237,7 +237,9 @@ export class SQLiteSaleRepository
   public async update(saleEntity: Sale, options?: Options) {
     const db = options?.tx ?? this.db;
 
-    const [, errSale] = await tryCatch(this.updateOnlySaleContent(saleEntity, db));
+    const [, errSale] = await tryCatch(
+      this.updateOnlySaleContent(saleEntity, db),
+    );
 
     if (errSale) return err(errSale);
 
@@ -251,7 +253,9 @@ export class SQLiteSaleRepository
   public async updateOnlySale(saleEntity: Sale, options?: Options) {
     const db = options?.tx ?? this.db;
 
-    const [, errSale] = await tryCatch(this.updateOnlySaleContent(saleEntity, db));
+    const [, errSale] = await tryCatch(
+      this.updateOnlySaleContent(saleEntity, db),
+    );
 
     if (errSale) return err(errSale);
 
@@ -262,7 +266,9 @@ export class SQLiteSaleRepository
     const db = options?.tx ?? this.db;
 
     for (const saleEntity of sales) {
-      const [, errSale] = await tryCatch(this.updateOnlySaleContent(saleEntity, db));
+      const [, errSale] = await tryCatch(
+        this.updateOnlySaleContent(saleEntity, db),
+      );
 
       if (errSale) return err(errSale);
 
@@ -278,7 +284,9 @@ export class SQLiteSaleRepository
     const db = options?.tx ?? this.db;
 
     for (const saleEntity of sales) {
-      const [, errSale] = await tryCatch(this.updateOnlySaleContent(saleEntity, db));
+      const [, errSale] = await tryCatch(
+        this.updateOnlySaleContent(saleEntity, db),
+      );
 
       if (errSale) return err(errSale);
     }

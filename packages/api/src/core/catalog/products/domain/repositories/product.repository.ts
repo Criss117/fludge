@@ -1,7 +1,7 @@
 import type { Result } from "@fludge/utils/trycatch";
 import type { TransactionService } from "@fludge/db";
 import type { Product } from "../entities/product.entity";
-import type { TransactionalRepository } from "../../../../shared/repositories/transactional-repository";
+import type { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
 
 export type Options = {
   tx?: TransactionService;
@@ -24,5 +24,8 @@ export interface ProductRepository extends TransactionalRepository {
 
   updateMany(products: Product[], options?: Options): Promise<Result<void>>;
 
-  saveOnlyProducts(products: Product[], options?: Options): Promise<Result<void>>;
+  saveOnlyProducts(
+    products: Product[],
+    options?: Options,
+  ): Promise<Result<void>>;
 }

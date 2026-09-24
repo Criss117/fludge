@@ -2,8 +2,8 @@ import type { z } from "zod";
 import { CustomerNotFoundException } from "../../../../commerce/customer/domain/exceptions/customer-not-found.exception";
 import { CustomerAlreadyExistsException } from "../../../../commerce/customer/domain/exceptions/customer-already-exists.exception";
 import type { CustomerRepository } from "../../../../commerce/customer/domain/repositories/customer.repository";
-import type { UserAuthContext } from "../../../../iam/domain/entities/user-auth-context.entity";
-import { InternalServerError } from "../../../../shared/exceptions/base-exception";
+import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { updateCustomerValidator } from "@fludge/utils/validators/customer.validators";
 
 export const updateCustomerCommand = updateCustomerValidator;
@@ -59,7 +59,8 @@ export class UpdateCustomerCommand {
       status: cmd.status,
     });
 
-    const [, errSaving] = await this.customerRepository.update(existingCustomer);
+    const [, errSaving] =
+      await this.customerRepository.update(existingCustomer);
 
     if (errSaving)
       throw new InternalServerError(

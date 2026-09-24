@@ -1,10 +1,10 @@
+import { assignMembersToGroupCommand } from "@fludge/api/core/iam/application/commands/assign-members-to-group.command";
+import { createGroupCommand } from "@fludge/api/core/iam/application/commands/create-group.command";
+import { deleteGroupsCommand } from "@fludge/api/core/iam/application/commands/delete-groups.command";
+import { removeMembersFromGroupCommand } from "@fludge/api/core/iam/application/commands/remove-members-from-group.command";
+import { updateGroupCommand } from "@fludge/api/core/iam/application/commands/update-group.command";
+import { iamContainer } from "@fludge/api/core/iam/container";
 import { hasPermissionProcedure } from "@fludge/api/index";
-import { assignMembersToGroupCommand } from "../../../iam/application/commands/assign-members-to-group.command";
-import { createGroupCommand } from "../../../iam/application/commands/create-group.command";
-import { deleteGroupsCommand } from "../../../iam/application/commands/delete-groups.command";
-import { removeMembersFromGroupCommand } from "../../../iam/application/commands/remove-members-from-group.command";
-import { updateGroupCommand } from "../../../iam/application/commands/update-group.command";
-import { organizationContainer } from "../../../iam/container";
 
 const TAGS = ["Groups"] as const;
 
@@ -20,7 +20,7 @@ export const groupRouter = {
       })
       .input(createGroupCommand)
       .handler(({ input, context }) =>
-        organizationContainer.commands.group.create.execute(
+        iamContainer.commands.group.create.execute(
           context.session.authContext,
           input,
         ),
@@ -36,7 +36,7 @@ export const groupRouter = {
       })
       .input(updateGroupCommand)
       .handler(({ input, context }) =>
-        organizationContainer.commands.group.update.execute(
+        iamContainer.commands.group.update.execute(
           context.session.authContext,
           input,
         ),
@@ -52,7 +52,7 @@ export const groupRouter = {
       })
       .input(deleteGroupsCommand)
       .handler(({ input, context }) =>
-        organizationContainer.commands.group.delete.execute(
+        iamContainer.commands.group.delete.execute(
           context.session.authContext,
           input,
         ),
@@ -68,7 +68,7 @@ export const groupRouter = {
       })
       .input(assignMembersToGroupCommand)
       .handler(({ input, context }) =>
-        organizationContainer.commands.group.assignMembers.execute(
+        iamContainer.commands.group.assignMembers.execute(
           context.session.authContext,
           input,
         ),
@@ -84,7 +84,7 @@ export const groupRouter = {
       })
       .input(removeMembersFromGroupCommand)
       .handler(({ input, context }) =>
-        organizationContainer.commands.group.removeMembers.execute(
+        iamContainer.commands.group.removeMembers.execute(
           context.session.authContext,
           input,
         ),

@@ -1,9 +1,9 @@
-import { Group } from "../../../iam/domain/entities/group.entity";
+import { Group } from "@fludge/api/core/iam/domain/entities/group.entity";
 import type {
   GroupRepository,
   Options,
-} from "../../../iam/domain/repositories/group.repository";
-import { TransactionalRepository } from "../../../shared/repositories/transactional-repository";
+} from "@fludge/api/core/iam/domain/repositories/group.repository";
+import { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
 import {
   group,
@@ -11,7 +11,7 @@ import {
   type GroupMemberSelect,
 } from "@fludge/db/schema/iam.schema";
 import { jsonObject } from "@fludge/db/utils/build-queries";
-import { err, ok, tryCatch } from "@fludge/utils/trycatch";
+import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
 import { and, eq, getColumns, inArray, sql } from "drizzle-orm";
 
 export class SQLiteGroupRepository
@@ -87,6 +87,23 @@ export class SQLiteGroupRepository
 
     const [, errInsert] = await tryCatch(
       db.insert(group).values(groupEntity.values).onConflictDoNothing(),
+    );
+
+    if (errInsert) return err(errInsert);
+
+    return ok(undefined);
+  }
+
+  public async insertMany(groups: Group[]): Promise<Result<void>> {
+    const [, errInsert] = await tryCatch(
+      this.db.transaction(async (tx) => {
+        await tx.insert(group).values(groups.map((g) => g.values));
+
+        await tx
+          .insert(groupMember)
+          .values(groups.flatMap((g) => g.members.map((m) => m.values)))
+          .onConflictDoNothing();
+      }),
     );
 
     if (errInsert) return err(errInsert);

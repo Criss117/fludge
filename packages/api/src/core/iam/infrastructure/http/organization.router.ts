@@ -1,7 +1,7 @@
 import { hasPermissionProcedure, rootOnlyProcedure } from "@fludge/api/index";
-import { registerOrganizationCommand } from "../../../iam/application/commands/register-organization.command";
-import { updateOrganizationCommand } from "../../../iam/application/commands/update-organization.command";
-import { organizationContainer } from "../../../iam/container";
+import { registerOrganizationCommand } from "@fludge/api/core/iam/application/commands/register-organization.command";
+import { updateOrganizationCommand } from "@fludge/api/core/iam/application/commands/update-organization.command";
+import { iamContainer } from "@fludge/api/core/iam/container";
 
 const TAGS = ["Organizations"] as const;
 
@@ -15,7 +15,7 @@ export const organizationRouter = {
       })
       .input(registerOrganizationCommand)
       .handler(({ input, context }) =>
-        organizationContainer.commands.register.execute(
+        iamContainer.commands.organization.register.execute(
           context.session.user.id,
           input,
         ),
@@ -31,7 +31,7 @@ export const organizationRouter = {
       })
       .input(updateOrganizationCommand)
       .handler(({ input, context }) =>
-        organizationContainer.commands.update.execute(
+        iamContainer.commands.organization.update.execute(
           context.session.authContext.organizationId.toString(),
           input,
         ),

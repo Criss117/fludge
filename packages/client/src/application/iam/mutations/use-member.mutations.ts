@@ -11,10 +11,8 @@ export function useRegisterMember() {
 
   return useMutation(
     orpc.auth.commands.signUpMember.mutationOptions({
-      onSuccess: async (organization) => {
-        await iamContainer.repositories.organizationRepository.save(
-          organization,
-        );
+      onSuccess: async (member) => {
+        await iamContainer.repositories.memberRepository.save(member);
 
         invalidateMembers.invalidateList();
       },
@@ -30,10 +28,8 @@ export function useAssignGroupsToMember() {
 
   return useMutation(
     orpc.member.commands.assignGroups.mutationOptions({
-      onSuccess: async (organization, variables) => {
-        await iamContainer.repositories.organizationRepository.save(
-          organization,
-        );
+      onSuccess: async (groups, variables) => {
+        await iamContainer.repositories.groupRepository.save(groups);
 
         invalidateMembers.invalidateDetail(variables.memberId);
         variables.groupIds.forEach((groupId) =>
