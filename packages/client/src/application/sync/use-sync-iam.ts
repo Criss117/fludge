@@ -22,7 +22,7 @@ function httpClientIamRepository(
 ): HttpClientSyncIamRepository {
   return {
     findLastSyncedAt: async (lastSyncedAt) => {
-      const data = await orpc.sync.iam.find.call(lastSyncedAt);
+      const data = await orpc.sync.syncIam.call(lastSyncedAt);
 
       return data;
     },
@@ -59,13 +59,7 @@ export function useSyncIam() {
         };
 
       const [values, errorFindLastSyncedAt] = await tryCatch(
-        httpRepository.findLastSyncedAt({
-          user: lastSyncedAt.user?.updatedAt ?? null,
-          group: lastSyncedAt.group?.updatedAt ?? null,
-          member: lastSyncedAt.member?.createdAt ?? null,
-          organization: lastSyncedAt.organization?.updatedAt ?? null,
-          groupMember: lastSyncedAt.groupMember?.createdAt ?? null,
-        }),
+        httpRepository.findLastSyncedAt(lastSyncedAt),
       );
 
       if (errorFindLastSyncedAt)

@@ -28,8 +28,7 @@ import {
 import {
   localProduct,
   localProductPresentation,
-  LocalProductPresentationSelect,
-  LocalProductSelect,
+  LocalProduct,
 } from "@fludge/db/local-schemas/shared.schema";
 
 export class NativeProductRepository implements ProductRepository {
@@ -84,7 +83,7 @@ export class NativeProductRepository implements ProductRepository {
     return paginate(
       rows.map((p) => {
         const presentations = (
-          JSON.parse(p.presentations) as LocalProductPresentationSelect[]
+          JSON.parse(p.presentations) as LocalProduct["presentations"]
         ).map((p) => ({
           ...p,
           createdAt: new Date(p.createdAt),
@@ -136,8 +135,8 @@ export class NativeProductRepository implements ProductRepository {
       ? productValues
       : [productValues];
 
-    const productsValues: LocalProductSelect[] = [];
-    const presentationsValues: LocalProductPresentationSelect[] = [];
+    const productsValues: LocalProduct[] = [];
+    const presentationsValues: LocalProduct["presentations"] = [];
 
     for (const product of productsArray) {
       const { presentations, ...productValues } = product;
@@ -172,23 +171,14 @@ export class NativeProductRepository implements ProductRepository {
       }
 
       if (presentationsValues.length > 0) {
-        tx.insert(localProductPresentation)
-          .values(presentationsValues)
-          .onConflictDoUpdate({
-            target: localProductPresentation.id,
-            set: buildConflictUpdateColumn(localProductPresentation, [
-              "barcode",
-              "conversionFactor",
-              "name",
-              "pricePurchase",
-              "priceSale",
-              "priceWholesale",
-              "searchBlob",
-              "status",
-              "updatedAt",
-            ]),
-          })
-          .run();
+        tx.delete(localProductPresentation).where(
+          inArray(
+            localProductPresentation.productId,
+            productsValues.map((p) => p.id)
+          )
+        );
+
+        tx.insert(localProductPresentation).values(presentationsValues).run();
       }
     });
   }

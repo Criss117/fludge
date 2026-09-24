@@ -11,6 +11,7 @@ import {
   localMember,
   localUser,
 } from "@fludge/db/local-schemas/shared.schema";
+import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import {
   and,
   desc,
@@ -107,21 +108,37 @@ export class SqliteMemberRepository implements MemberRepository {
       .orderBy(desc(localMember.createdAt));
   }
 
-  public async save(values: MemberSummary): Promise<void> {
+  public async save(values: MemberSummary | MemberSummary[]): Promise<void> {
+    const membersArray = Array.isArray(values) ? values : [values];
+
+    const members: Omit<MemberSummary, "user">[] = [];
+    const users: MemberSummary["user"][] = [];
+
+    for (const member of membersArray) {
+      const { user: memberUser, ...memberValues } = member;
+
+      members.push(memberValues);
+      users.push(memberUser);
+    }
+
     this.db.transaction((tx) => {
       tx.insert(localUser)
-        .values(values.user)
+        .values(users)
         .onConflictDoUpdate({
           target: localUser.id,
-          set: values.user,
+          set: buildConflictUpdateColumn(localUser, [
+            "name",
+            "phone",
+            "updatedAt",
+          ]),
         })
         .run();
 
       tx.insert(localMember)
-        .values(values)
+        .values(members)
         .onConflictDoUpdate({
           target: localMember.id,
-          set: values,
+          set: buildConflictUpdateColumn(localMember, ["status", "updatedAt"]),
         })
         .run();
     });

@@ -15,30 +15,22 @@ export function useInvalidateSync() {
     });
   };
 
-  const invalidateCustomer = () => {
+  const invalidateCommerce = () => {
     queryClient.invalidateQueries({
-      queryKey: ["sync", "customer"],
-    });
-  };
-
-  const invalidateSale = () => {
-    queryClient.invalidateQueries({
-      queryKey: ["sync", "sale"],
+      queryKey: ["sync", "commerce"],
     });
   };
 
   const invalidateSync = () => {
     invalidateIam();
     invalidateCatalog();
-    invalidateCustomer();
-    invalidateSale();
+    invalidateCommerce();
   };
 
   return {
     invalidateIam,
     invalidateCatalog,
-    invalidateCustomer,
-    invalidateSale,
+    invalidateCommerce,
     invalidateSync,
   };
 }

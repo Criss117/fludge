@@ -9,7 +9,7 @@ export type MemberSummary = LocalMember & {
 };
 
 export type MemberDetail = MemberSummary & {
-  groups: LocalGroup[];
+  groups: Omit<LocalGroup, "members">[];
 };
 
 export type FindAllMembersFilters = {

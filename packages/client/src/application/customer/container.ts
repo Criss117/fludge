@@ -1,16 +1,16 @@
-import type { ClientSyncCustomerRepository } from "@fludge/sync/repositories/customer/client-sync-customer.repository";
+import type { ClientSyncCommerceRepository } from "@fludge/sync/repositories/commerse/client-sync-commerce.repository";
 import type { CustomerRepository } from "./domain/customer.repository";
 
 type Deps = {
   customerRepository: CustomerRepository;
-  syncCustomerRepository: ClientSyncCustomerRepository;
+  syncCommerceRepository: ClientSyncCommerceRepository;
 };
 
 export function generateCustomerContainer(deps: Deps) {
   return {
     repositories: {
       customerRepository: deps.customerRepository,
-      syncCustomerRepository: deps.syncCustomerRepository,
+      syncCommerceRepository: deps.syncCommerceRepository,
     },
   };
 }

@@ -8,10 +8,14 @@ import type {
 import {
   localGroup,
   localGroupMember,
-  LocalGroupSelect,
+  LocalGroup,
   localMember,
   localUser,
 } from "@fludge/db/local-schemas/shared.schema";
+import {
+  buildConflictUpdateColumn,
+  jsonObject,
+} from "@fludge/db/utils/build-queries";
 
 import {
   and,
@@ -21,6 +25,8 @@ import {
   inArray,
   like,
   notInArray,
+  or,
+  sql,
 } from "drizzle-orm";
 
 export class SqliteGroupRepository implements GroupRepository {
@@ -34,8 +40,16 @@ export class SqliteGroupRepository implements GroupRepository {
     const searchQuery = filters?.searchQuery ?? "";
 
     const rows = await this.db
-      .select()
+      .select({
+        ...getColumns(localGroup),
+        members: sql<string>`
+            json_group_array(
+              DISTINCT ${jsonObject(localGroupMember)}
+            ) FILTER (WHERE ${localGroupMember.groupId} IS NOT NULL)
+          `.as("members"),
+      })
       .from(localGroup)
+      .innerJoin(localGroupMember, eq(localGroupMember.groupId, localGroup.id))
       .where(
         and(
           eq(localGroup.organizationId, organizationId),
@@ -46,7 +60,13 @@ export class SqliteGroupRepository implements GroupRepository {
       .groupBy(localGroup.id)
       .orderBy(desc(localGroup.updatedAt));
 
-    return rows;
+    return rows.map((p) => ({
+      ...p,
+      members: (JSON.parse(p.members) as LocalGroup["members"]).map((p) => ({
+        ...p,
+        createdAt: new Date(p.createdAt),
+      })),
+    }));
   }
 
   public async findOneById(
@@ -85,23 +105,61 @@ export class SqliteGroupRepository implements GroupRepository {
     };
   }
 
-  public async save(values: LocalGroupSelect): Promise<void> {
-    await this.db.insert(localGroup).values(values).onConflictDoUpdate({
-      target: localGroup.id,
-      set: values,
+  public async save(values: LocalGroup | LocalGroup[]): Promise<void> {
+    const groupsArray = Array.isArray(values) ? values : [values];
+
+    const groups: Omit<LocalGroup, "members">[] = [];
+    const members: LocalGroup["members"] = [];
+
+    for (const group of groupsArray) {
+      const { members: groupMembers, ...groupValues } = group;
+
+      groups.push(groupValues);
+      members.push(...groupMembers);
+    }
+
+    await this.db.transaction((tx) => {
+      tx.insert(localGroup)
+        .values(groups)
+        .onConflictDoUpdate({
+          target: localGroup.id,
+          set: buildConflictUpdateColumn(localGroup, [
+            "name",
+            "slug",
+            "status",
+            "description",
+          ]),
+        })
+        .run();
+
+      if (members.length > 0) {
+        tx.delete(localGroupMember)
+          .where(
+            inArray(
+              localGroupMember.groupId,
+              groups.map((g) => g.id)
+            )
+          )
+          .run();
+
+        tx.insert(localGroupMember).values(members).run();
+      }
     });
   }
 
-  public async delete(
-    organizationId: string,
-    groupIds: string[]
-  ): Promise<void> {
+  public async delete(group: LocalGroup | LocalGroup[]): Promise<void> {
+    const groups = Array.isArray(group) ? group : [group];
+
     await this.db
       .delete(localGroup)
       .where(
-        and(
-          eq(localGroup.organizationId, organizationId),
-          inArray(localGroup.id, groupIds)
+        or(
+          ...groups.map((g) =>
+            and(
+              eq(localGroup.organizationId, g.organizationId),
+              eq(localGroup.id, g.id)
+            )
+          )
         )
       );
   }

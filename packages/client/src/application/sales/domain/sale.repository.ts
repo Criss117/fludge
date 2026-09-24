@@ -1,12 +1,7 @@
-import type {
-  LocalSaleItemSelect,
-  LocalSaleSelect,
-} from "@fludge/db/local-schemas/shared.schema";
+import type { LocalSale } from "@fludge/db/local-schemas/shared.schema";
 import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
 
-export type SaleDetail = LocalSaleSelect & {
-  items: LocalSaleItemSelect[];
-};
+export type SaleDetail = LocalSale;
 
 export type FindAllSalesFilters = {
   customerId?: string;

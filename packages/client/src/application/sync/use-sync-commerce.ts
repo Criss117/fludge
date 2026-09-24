@@ -9,7 +9,7 @@ import {
 import { tryCatch } from "@fludge/utils/trycatch";
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { MINUTE } from "@fludge/utils/constants";
-import type { HttpClientSyncSaleRepository } from "@fludge/sync/repositories/sale/client-sync-sale.repository";
+import type { HttpClientSyncCommerceRepository } from "@fludge/sync/repositories/commerse/client-sync-commerce.repository";
 
 export type SyncData = {
   error: Error | null;
@@ -17,28 +17,28 @@ export type SyncData = {
   syncedAt: Date | null;
 };
 
-function httpClientSaleRepository(
+function httpClientCommerceRepository(
   orpc: OrpcQueryClient,
-): HttpClientSyncSaleRepository {
+): HttpClientSyncCommerceRepository {
   return {
     findLastSyncedAt: async (lastSyncedAt) => {
-      const data = await orpc.sync.sale.find.call(lastSyncedAt);
+      const data = await orpc.sync.syncCommerce.call(lastSyncedAt);
 
       return data;
     },
   };
 }
 
-export function useSyncSale() {
+export function useSyncCommerce() {
   const orpc = useOrpc();
   const { session } = useAuth();
   const { isInternetReachable } = useNetwork();
-  const { salesContainer } = useContainer();
+  const { customerContainer } = useContainer();
 
-  const httpRepository = httpClientSaleRepository(orpc);
+  const httpRepository = httpClientCommerceRepository(orpc);
 
   return useSuspenseQuery({
-    queryKey: ["sync", "sale"],
+    queryKey: ["sync", "commerce"],
     queryFn: async (): Promise<SyncData> => {
       if (!session.data || !isInternetReachable)
         return {
@@ -48,7 +48,7 @@ export function useSyncSale() {
         };
 
       const [lastSyncedAt, errorGetLastSyncedAt] = await tryCatch(
-        salesContainer.repositories.syncSaleRepository.getLastSyncedAt(),
+        customerContainer.repositories.syncCommerceRepository.getLastSyncedAt(),
       );
 
       if (errorGetLastSyncedAt)
@@ -59,10 +59,7 @@ export function useSyncSale() {
         };
 
       const [values, errorFindLastSyncedAt] = await tryCatch(
-        httpRepository.findLastSyncedAt({
-          sale: lastSyncedAt.sale?.updatedAt ?? null,
-          saleItem: lastSyncedAt.saleItem?.updatedAt ?? null,
-        }),
+        httpRepository.findLastSyncedAt(lastSyncedAt),
       );
 
       if (errorFindLastSyncedAt)
@@ -73,7 +70,7 @@ export function useSyncSale() {
         };
 
       const [, erroSaveAll] = await tryCatch(
-        salesContainer.repositories.syncSaleRepository.saveAll(values),
+        customerContainer.repositories.syncCommerceRepository.saveAll(values),
       );
 
       if (erroSaveAll)

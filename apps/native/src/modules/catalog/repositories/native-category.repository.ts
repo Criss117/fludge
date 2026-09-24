@@ -13,7 +13,7 @@ import {
 } from "@fludge/utils/pagination";
 import {
   localCategory,
-  type LocalCategorySelect,
+  LocalCategory,
 } from "@fludge/db/local-schemas/shared.schema";
 
 export class NativeCategoryRepository implements CategoryRepository {
@@ -61,7 +61,7 @@ export class NativeCategoryRepository implements CategoryRepository {
   }
 
   public async save(
-    categoryValues: LocalCategorySelect | LocalCategorySelect[]
+    categoryValues: LocalCategory | LocalCategory[]
   ): Promise<void> {
     const categoriesArray = Array.isArray(categoryValues)
       ? categoryValues

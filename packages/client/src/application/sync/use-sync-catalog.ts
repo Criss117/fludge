@@ -22,7 +22,7 @@ function httpClientCatalogRepository(
 ): HttpClientSyncCatalogRepository {
   return {
     findLastSyncedAt: async (lastSyncedAt) => {
-      const data = await orpc.sync.catalog.find.call(lastSyncedAt);
+      const data = await orpc.sync.syncCatalog.call(lastSyncedAt);
 
       return data;
     },
@@ -59,12 +59,7 @@ export function useSyncCatalog() {
         };
 
       const [values, errorFindLastSyncedAt] = await tryCatch(
-        httpRepository.findLastSyncedAt({
-          category: lastSyncedAt.category?.updatedAt ?? null,
-          product: lastSyncedAt.product?.updatedAt ?? null,
-          productPresentation:
-            lastSyncedAt.productPresentation?.updatedAt ?? null,
-        }),
+        httpRepository.findLastSyncedAt(lastSyncedAt),
       );
 
       if (errorFindLastSyncedAt)

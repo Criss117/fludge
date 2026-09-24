@@ -35,7 +35,7 @@ export const syncRouter = {
       ),
     ),
 
-  syncSale: withOrganizationIdsProcedure
+  syncCommerce: withOrganizationIdsProcedure
     .route({
       method: "POST",
       path: "/sync-commerce",

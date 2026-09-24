@@ -14,7 +14,8 @@ import {
 } from "@fludge/utils/pagination";
 import {
   localCustomer,
-  type LocalCustomerSelect,
+  localCustomerPayment,
+  type LocalCustomer,
 } from "@fludge/db/local-schemas/shared.schema";
 import type { SaleRepository } from "@fludge/client/application/sales/domain/sale.repository";
 
@@ -81,29 +82,54 @@ export class NativeCustomerRepository implements CustomerRepository {
   }
 
   public async save(
-    customerValues: LocalCustomerSelect | LocalCustomerSelect[]
+    customerValues: LocalCustomer | LocalCustomer[]
   ): Promise<void> {
     const customersArray = Array.isArray(customerValues)
       ? customerValues
       : [customerValues];
 
-    await this.db
-      .insert(localCustomer)
-      .values(customersArray)
-      .onConflictDoUpdate({
-        target: localCustomer.id,
-        set: buildConflictUpdateColumn(localCustomer, [
-          "name",
-          "phone",
-          "email",
-          "creditLimit",
-          "balance",
-          "documentType",
-          "documentNumber",
-          "status",
-          "updatedAt",
-        ]),
-      });
+    const customers: Omit<LocalCustomer, "payments">[] = [];
+    const payments: LocalCustomer["payments"] = [];
+
+    for (const customer of customersArray) {
+      const { payments: customerPayments, ...customerValues } = customer;
+
+      customers.push(customerValues);
+      payments.push(...customerPayments);
+    }
+
+    await this.db.transaction((tx) => {
+      tx.insert(localCustomer)
+        .values(customers)
+        .onConflictDoUpdate({
+          target: localCustomer.id,
+          set: buildConflictUpdateColumn(localCustomer, [
+            "name",
+            "phone",
+            "email",
+            "creditLimit",
+            "balance",
+            "documentType",
+            "documentNumber",
+            "status",
+            "updatedAt",
+          ]),
+        })
+        .run();
+
+      if (payments.length > 0) {
+        tx.delete(localCustomerPayment)
+          .where(
+            inArray(
+              localCustomerPayment.customerId,
+              payments.map((c) => c.id)
+            )
+          )
+          .run();
+
+        tx.insert(localCustomerPayment).values(payments).run();
+      }
+    });
   }
 
   public async delete(

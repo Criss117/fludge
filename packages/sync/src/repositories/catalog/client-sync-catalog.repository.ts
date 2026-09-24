@@ -1,17 +1,16 @@
 import type {
-  CatalogLastSyncedAtLocal,
-  CatalogLastSyncedAtQuery,
-  CatalogSyncAllItems,
+  CatalogLastSyncedAt,
+  CatalogSyncResult,
 } from "@fludge/sync/types/catalog.types";
 
 export interface ClientSyncCatalogRepository {
-  getLastSyncedAt: () => Promise<CatalogLastSyncedAtLocal>;
+  getLastSyncedAt: () => Promise<CatalogLastSyncedAt>;
 
-  saveAll: (values: CatalogSyncAllItems) => Promise<void>;
+  saveAll: (values: CatalogSyncResult) => Promise<void>;
 }
 
 export interface HttpClientSyncCatalogRepository {
   findLastSyncedAt: (
-    lastSyncedAt: CatalogLastSyncedAtQuery,
-  ) => Promise<CatalogSyncAllItems>;
+    lastSyncedAt: CatalogLastSyncedAt,
+  ) => Promise<CatalogSyncResult>;
 }
