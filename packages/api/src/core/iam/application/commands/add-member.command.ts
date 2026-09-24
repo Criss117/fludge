@@ -3,7 +3,7 @@ import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-
 import { Member } from "@fludge/api/core/iam/domain/entities/member.entity";
 import { MemberAlreadyExistsException } from "@fludge/api/core/iam/domain/exceptions/member-already-exists.exception";
 import type { MemberRepository } from "@fludge/api/core/iam/domain/repositories/member.repository";
-import { InternalServerError } from "../../../shared/exceptions/base-exception";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { UUID } from "@fludge/utils/uuid";
 import { addMemberValidator } from "@fludge/utils/validators/organization.validators";
 
@@ -35,7 +35,7 @@ export class AddMemberCommand {
       organizationId: authContext.organizationId,
     });
 
-    const [, errSaving] = await this.memberRepository.insert(newMember);
+    const [, errSaving] = await this.memberRepository.save(newMember);
 
     if (errSaving)
       throw new InternalServerError(

@@ -34,27 +34,30 @@ export class SQLiteOrganizationRepository
     return ok(Organization.reconstitute(org));
   }
 
-  public async insert(org: Organization, options?: Options) {
+  public async save(organizationEntity: Organization, options?: Options) {
     const db = options?.tx ?? this.db;
 
+    const values = organizationEntity.values;
+
     const [, errInsert] = await tryCatch(
-      db.insert(organization).values(org.values).onConflictDoNothing(),
+      db
+        .insert(organization)
+        .values(values)
+        .onConflictDoUpdate({
+          target: organization.id,
+          set: {
+            address: values.address,
+            legalName: values.legalName,
+            name: values.name,
+            phone: values.phone,
+            status: values.status,
+            updatedAt: values.updatedAt,
+            slug: values.slug,
+          },
+        }),
     );
 
     if (errInsert) return err(errInsert);
-
-    return ok(undefined);
-  }
-
-  public async update(org: Organization) {
-    const [, errUpdate] = await tryCatch(
-      this.db
-        .update(organization)
-        .set(org.values)
-        .where(eq(organization.id, org.values.id)),
-    );
-
-    if (errUpdate) return err(errUpdate);
 
     return ok(undefined);
   }

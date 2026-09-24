@@ -8,22 +8,22 @@ export type Options = {
 };
 
 export interface GroupRepository extends TransactionalRepository {
-  findById(groupId: string): Promise<Result<Group | null>>;
+  findById(
+    organizationId: string,
+    groupId: string,
+  ): Promise<Result<Group | null>>;
 
   findByIds(
-    groupIds: string[],
     organizationId: string,
+    groupIds: string[],
   ): Promise<Result<Group[]>>;
 
-  insert(group: Group, options?: Options): Promise<Result<void>>;
-
-  insertMany(groups: Group[], options?: Options): Promise<Result<void>>;
-
-  update(group: Group): Promise<Result<void>>;
-
-  delete(
-    organizationId: string,
-    groupIds: string[],
+  saveOnlyGroup(
+    groups: Group | Group[],
     options?: Options,
   ): Promise<Result<void>>;
+
+  save(group: Group | Group[]): Promise<Result<void>>;
+
+  delete(groups: Group | Group[]): Promise<Result<void>>;
 }

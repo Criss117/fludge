@@ -6,7 +6,7 @@ import { OrganizationAlreadyExistsException } from "@fludge/api/core/iam/domain/
 import type { GroupRepository } from "@fludge/api/core/iam/domain/repositories/group.repository";
 import type { MemberRepository } from "@fludge/api/core/iam/domain/repositories/member.repository";
 import type { OrganizationRepository } from "@fludge/api/core/iam/domain/repositories/organization.repository";
-import { InternalServerError } from "../../../shared/exceptions/base-exception";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { PERMISSIONS } from "@fludge/utils/permissions/data";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { registerOrganizationValidator } from "@fludge/utils/validators/organization.validators";
@@ -87,18 +87,18 @@ export class RegisterOrganizationCommand {
     const [, errSaving] = await this.organizationRepository.transaction(
       async (tx) => {
         const [, errInsertOrganization] =
-          await this.organizationRepository.insert(organization, { tx });
+          await this.organizationRepository.save(organization, { tx });
 
         if (errInsertOrganization) throw errInsertOrganization;
 
-        const [, errInsertMember] = await this.memberRepository.insert(
+        const [, errInsertMember] = await this.memberRepository.save(
           ownerMember,
           { tx },
         );
 
         if (errInsertMember) throw errInsertMember;
 
-        const [, errInsertGroup] = await this.groupRepository.insert(
+        const [, errInsertGroup] = await this.groupRepository.saveOnlyGroup(
           adminGroup,
           {
             tx,
@@ -115,6 +115,10 @@ export class RegisterOrganizationCommand {
         "api_errors.iam.organizations.isr_on_save",
       );
 
-    return organization.values;
+    return {
+      organization: organization.values,
+      member: ownerMember.values,
+      group: adminGroup.values,
+    };
   }
 }

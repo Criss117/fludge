@@ -20,7 +20,10 @@ export class UpdateGroupCommand {
   ) {}
 
   public async execute(authContext: UserAuthContext, cmd: CMD) {
-    const [group, errGroup] = await this.groupRepository.findById(cmd.id);
+    const [group, errGroup] = await this.groupRepository.findById(
+      authContext.organizationId.toString(),
+      cmd.id,
+    );
 
     if (errGroup)
       throw new InternalServerError(
@@ -28,11 +31,7 @@ export class UpdateGroupCommand {
         "api_errors.iam.organizations.isr_on_find",
       );
 
-    if (
-      !group ||
-      group.values.organizationId !== authContext.organizationId.toString()
-    )
-      throw new GroupNotFoundException();
+    if (!group) throw new GroupNotFoundException();
 
     if (cmd.name && cmd.name !== group.values.name) {
       const [uniqueness, errUniqueness] =
@@ -66,7 +65,7 @@ export class UpdateGroupCommand {
       status: cmd.status,
     });
 
-    const [, errSaving] = await this.groupRepository.update(group);
+    const [, errSaving] = await this.groupRepository.saveOnlyGroup(group);
 
     if (errSaving)
       throw new InternalServerError(

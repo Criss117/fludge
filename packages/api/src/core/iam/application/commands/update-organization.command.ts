@@ -3,7 +3,7 @@ import type { OrganizationUniquenessValidator } from "@fludge/api/core/iam/appli
 import { OrganizationAlreadyExistsException } from "@fludge/api/core/iam/domain/exceptions/organization-already-exists.exception";
 import { OrganizationNotFoundException } from "@fludge/api/core/iam/domain/exceptions/organization-not-found.exception";
 import type { OrganizationRepository } from "@fludge/api/core/iam/domain/repositories/organization.repository";
-import { InternalServerError } from "../../../shared/exceptions/base-exception";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { Slug } from "@fludge/utils/slugify";
 import { updateOrganizationValidator } from "@fludge/utils/validators/organization.validators";
 
@@ -52,7 +52,7 @@ export class UpdateOrganizationCommand {
     activeOrganization.update(cmd);
 
     const [, errSaving] =
-      await this.organizationRepository.update(activeOrganization);
+      await this.organizationRepository.save(activeOrganization);
 
     if (errSaving)
       throw new InternalServerError(

@@ -1,6 +1,6 @@
 import { syncIamQuery } from "@fludge/api/core/iam/application/queries/sync-iam.query";
 import { iamContainer } from "@fludge/api/core/iam/container";
-import { withOrganizationIdsProcedure } from "@index";
+import { withOrganizationIdsProcedure } from "..";
 
 const TAGS = ["Sync"] as const;
 

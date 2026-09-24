@@ -10,15 +10,22 @@ import {
   groupMember,
   type GroupMemberSelect,
 } from "@fludge/db/schema/iam.schema";
-import { jsonObject } from "@fludge/db/utils/build-queries";
-import { err, ok, tryCatch, type Result } from "@fludge/utils/trycatch";
+import {
+  buildConflictUpdateColumn,
+  jsonObject,
+} from "@fludge/db/utils/build-queries";
+import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { and, eq, getColumns, inArray, sql } from "drizzle-orm";
+import type { GroupMemberRepository } from "../../domain/repositories/group-member.repository";
 
 export class SQLiteGroupRepository
   extends TransactionalRepository
   implements GroupRepository
 {
-  constructor(private readonly db: DatabaseService) {
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly groupMemberRepository: GroupMemberRepository,
+  ) {
     super(db);
   }
 
@@ -57,7 +64,7 @@ export class SQLiteGroupRepository
     );
   }
 
-  public async findByIds(groupIds: string[], organizationId: string) {
+  public async findByIds(organizationId: string, groupIds: string[]) {
     const [rows, errFind] = await tryCatch(
       this.db
         .select({ ...getColumns(group) })
@@ -82,11 +89,56 @@ export class SQLiteGroupRepository
     );
   }
 
-  public async insert(groupEntity: Group, options?: Options) {
+  public async delete(groupEntity: Group | Group[]) {
+    const groups = Array.isArray(groupEntity) ? groupEntity : [groupEntity];
+
+    const organizationId = groups[0]!.values.organizationId;
+    const groupIdsToDelete = groups.map((g) => g.id.toString());
+
+    const [, errDelete] = await tryCatch(
+      this.db.transaction(async (tx) => {
+        await this.groupMemberRepository.deleteByGroupIds(
+          organizationId,
+          groupIdsToDelete,
+          { tx },
+        );
+
+        await tx
+          .delete(group)
+          .where(
+            and(
+              eq(group.organizationId, organizationId),
+              inArray(group.id, groupIdsToDelete),
+            ),
+          );
+      }),
+    );
+
+    if (errDelete) return err(errDelete);
+
+    return ok(undefined);
+  }
+
+  public async saveOnlyGroup(groupEntity: Group | Group[], options?: Options) {
     const db = options?.tx ?? this.db;
 
+    const groups = Array.isArray(groupEntity) ? groupEntity : [groupEntity];
+
     const [, errInsert] = await tryCatch(
-      db.insert(group).values(groupEntity.values).onConflictDoNothing(),
+      db
+        .insert(group)
+        .values(groups.map((g) => g.values))
+        .onConflictDoUpdate({
+          target: group.id,
+          set: buildConflictUpdateColumn(group, [
+            "name",
+            "slug",
+            "description",
+            "permissions",
+            "status",
+            "updatedAt",
+          ]),
+        }),
     );
 
     if (errInsert) return err(errInsert);
@@ -94,64 +146,34 @@ export class SQLiteGroupRepository
     return ok(undefined);
   }
 
-  public async insertMany(groups: Group[]): Promise<Result<void>> {
+  public async save(groupEntity: Group | Group[]) {
+    const groups = Array.isArray(groupEntity) ? groupEntity : [groupEntity];
+
     const [, errInsert] = await tryCatch(
       this.db.transaction(async (tx) => {
-        await tx.insert(group).values(groups.map((g) => g.values));
+        await tx
+          .insert(group)
+          .values(groups.map((g) => g.values))
+          .onConflictDoUpdate({
+            target: group.id,
+            set: buildConflictUpdateColumn(group, [
+              "name",
+              "slug",
+              "description",
+              "permissions",
+              "status",
+              "updatedAt",
+            ]),
+          });
 
         await tx
           .insert(groupMember)
-          .values(groups.flatMap((g) => g.members.map((m) => m.values)))
+          .values(groups.flatMap((g) => g.values.members))
           .onConflictDoNothing();
       }),
     );
 
     if (errInsert) return err(errInsert);
-
-    return ok(undefined);
-  }
-
-  public async update(groupEntity: Group) {
-    // Only the group table is updated. members is NOT persisted here:
-    // groupMember is managed by its own repository.
-    const { members: _members, ...rest } = groupEntity.values;
-
-    const [, errUpdate] = await tryCatch(
-      this.db
-        .update(group)
-        .set(rest)
-        .where(
-          and(
-            eq(group.id, rest.id),
-            eq(group.organizationId, rest.organizationId),
-          ),
-        ),
-    );
-
-    if (errUpdate) return err(errUpdate);
-
-    return ok(undefined);
-  }
-
-  public async delete(
-    organizationId: string,
-    groupIds: string[],
-    options?: Options,
-  ) {
-    const db = options?.tx ?? this.db;
-
-    const [, errDelete] = await tryCatch(
-      db
-        .delete(group)
-        .where(
-          and(
-            eq(group.organizationId, organizationId),
-            inArray(group.id, groupIds),
-          ),
-        ),
-    );
-
-    if (errDelete) return err(errDelete);
 
     return ok(undefined);
   }

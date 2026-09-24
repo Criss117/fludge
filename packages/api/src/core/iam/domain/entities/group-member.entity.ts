@@ -46,6 +46,10 @@ export class GroupMember {
     return this._memberId;
   }
 
+  public get organizationId() {
+    return this._organizationId;
+  }
+
   public get values(): GroupMemberSelect {
     return {
       organizationId: this._organizationId.toString(),

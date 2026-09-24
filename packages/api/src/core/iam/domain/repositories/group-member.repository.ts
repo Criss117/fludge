@@ -7,29 +7,13 @@ export type Options = {
 };
 
 export interface GroupMemberRepository {
-  insert(
-    groupMembers: GroupMember | GroupMember[],
+  delete(
+    groupMember: GroupMember | GroupMember[],
     options?: Options,
   ): Promise<Result<void>>;
-
-  delete(groupMember: GroupMember, options?: Options): Promise<Result<void>>;
 
   deleteByGroupIds(
     organizationId: string,
-    groupIds: string[],
-    options?: Options,
-  ): Promise<Result<void>>;
-
-  deleteByGroupAndMemberIds(
-    organizationId: string,
-    groupId: string,
-    memberIds: string[],
-    options?: Options,
-  ): Promise<Result<void>>;
-
-  deleteByMemberAndGroupIds(
-    organizationId: string,
-    memberId: string,
     groupIds: string[],
     options?: Options,
   ): Promise<Result<void>>;

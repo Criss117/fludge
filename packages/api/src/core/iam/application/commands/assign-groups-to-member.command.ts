@@ -6,7 +6,7 @@ import { MemberIsOwnerException } from "@fludge/api/core/iam/domain/exceptions/m
 import { MemberNotFoundException } from "@fludge/api/core/iam/domain/exceptions/member-not-found.exception";
 import type { GroupRepository } from "@fludge/api/core/iam/domain/repositories/group.repository";
 import type { MemberRepository } from "@fludge/api/core/iam/domain/repositories/member.repository";
-import { InternalServerError } from "../../../shared/exceptions/base-exception";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { assignGroupsToMemberValidator } from "@fludge/utils/validators/member.validators";
 
 export const assignGroupsToMemberCommand = assignGroupsToMemberValidator;
@@ -23,8 +23,8 @@ export class AssignGroupsToMemberCommand {
     const organizationId = authContext.organizationId.toString();
 
     const [groups, errGroups] = await this.groupRepository.findByIds(
-      cmd.groupIds,
       organizationId,
+      cmd.groupIds,
     );
 
     if (errGroups)
@@ -33,24 +33,19 @@ export class AssignGroupsToMemberCommand {
         "api_errors.iam.organizations.isr_on_find",
       );
 
-    const missingGroup = cmd.groupIds.some(
-      (groupId) => !groups.some((group) => group.id.toString() === groupId),
-    );
+    if (groups.length !== cmd.groupIds.length)
+      throw new GroupNotFoundException();
 
-    if (missingGroup) throw new GroupNotFoundException();
-
-    const [members, errMembers] = await this.memberRepository.findByIds(
-      [cmd.memberId],
+    const [member, errMember] = await this.memberRepository.findById(
       organizationId,
+      cmd.memberId,
     );
 
-    if (errMembers)
+    if (errMember)
       throw new InternalServerError(
-        errMembers,
+        errMember,
         "api_errors.iam.organizations.isr_on_find",
       );
-
-    const member = members.at(0);
 
     if (!member) throw new MemberNotFoundException();
 
@@ -64,12 +59,12 @@ export class AssignGroupsToMemberCommand {
         organizationId,
       });
 
-      group.addMember(groupMember);
+      group.addGroupMember(groupMember);
 
       return group;
     });
 
-    const [, errSaving] = await this.groupRepository.insertMany(groups);
+    const [, errSaving] = await this.groupRepository.save(groupsToSave);
 
     if (errSaving)
       throw new InternalServerError(

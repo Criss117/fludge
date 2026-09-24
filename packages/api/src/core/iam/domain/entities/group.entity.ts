@@ -1,4 +1,4 @@
-import { Status } from "../../../shared/value-objects/status";
+import { Status } from "@fludge/api/core/shared/value-objects/status";
 import type {
   GroupMemberSelect,
   GroupSelect,
@@ -8,6 +8,7 @@ import { Permissions } from "@fludge/utils/permissions/index";
 import { Slug } from "@fludge/utils/slugify";
 import { UUID } from "@fludge/utils/uuid";
 import { GroupMember } from "./group-member.entity";
+import { GroupMemberAlreadyExistsException } from "../exceptions/group-member-already-exists.exception";
 
 export type CreateGroup = {
   name: string;
@@ -20,6 +21,14 @@ export type CreateGroup = {
 export type UpdateGroup = Partial<Omit<CreateGroup, "createdBy">> & {
   status?: StatusEnum;
 };
+
+function generateGroupMemberKey(groupId: UUID, memberId: UUID) {
+  return `${groupId.toString()}-${memberId.toString()}`;
+}
+
+function getGroupMemberKey(groupMember: GroupMember) {
+  return `${groupMember.groupId.toString()}-${groupMember.memberId.toString()}`;
+}
 
 export class Group {
   private constructor(
@@ -36,7 +45,7 @@ export class Group {
     private _updatedAt: Date,
     private _status: Status,
 
-    private _members: GroupMember[],
+    private _members: Map<string, GroupMember>,
   ) {}
 
   public static create(values: CreateGroup) {
@@ -52,7 +61,7 @@ export class Group {
       now,
       now,
       new Status("active"),
-      [],
+      new Map(),
     );
   }
 
@@ -61,6 +70,20 @@ export class Group {
       members: GroupMemberSelect[];
     },
   ) {
+    const groupMembers = new Map(
+      values.members.map((member) => {
+        const entity = GroupMember.reconstitute(member);
+
+        return [
+          generateGroupMemberKey(
+            UUID.fromString(member.groupId),
+            UUID.fromString(member.memberId),
+          ),
+          entity,
+        ];
+      }),
+    );
+
     return new Group(
       UUID.fromString(values.id),
       UUID.fromString(values.organizationId),
@@ -72,7 +95,7 @@ export class Group {
       new Date(values.createdAt),
       values.updatedAt,
       new Status(values.status),
-      values.members.map((member) => GroupMember.reconstitute(member)),
+      groupMembers,
     );
   }
 
@@ -117,16 +140,32 @@ export class Group {
     this.touch();
   }
 
-  public addMember(member: GroupMember) {
-    this._members.push(member);
+  public addGroupMember(member: GroupMember) {
+    const key = getGroupMemberKey(member);
+
+    if (this._members.has(key)) throw new GroupMemberAlreadyExistsException();
+
+    this._members.set(key, member);
+
     this.touch();
   }
 
-  public removeMember(member: GroupMember) {
-    this._members = this._members.filter(
-      (m) => !m.equals(member.groupId, member.memberId),
+  public removeGroupMember(member: GroupMember | GroupMember[]) {
+    const membersToRemove = Array.isArray(member) ? member : [member];
+
+    const membersToRemoveKeys = membersToRemove.map((m) =>
+      getGroupMemberKey(m),
     );
+
+    membersToRemoveKeys.forEach((key) => this._members.delete(key));
+
     this.touch();
+  }
+
+  public getGroupMemberByMemberId(memberId: UUID) {
+    const key = generateGroupMemberKey(this._id, memberId);
+
+    return this._members.get(key) ?? null;
   }
 
   public get status() {
@@ -159,7 +198,9 @@ export class Group {
       updatedAt: this._updatedAt,
       status: this._status.value,
       organizationId: this._organizationId.toString(),
-      members: this._members.map((member) => member.values),
+      members: Array.from(this._members.values()).map(
+        (member) => member.values,
+      ),
     };
   }
 }

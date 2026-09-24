@@ -5,15 +5,24 @@ import type {
 } from "@fludge/api/core/iam/domain/repositories/member.repository";
 import type { DatabaseService } from "@fludge/db";
 import { member } from "@fludge/db/schema/iam.schema";
+import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { and, eq, inArray } from "drizzle-orm";
 
 export class SQLiteMemberRepository implements MemberRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  public async findById(memberId: string) {
+  public async findById(organizationId: string, memberId: string) {
     const [rows, errFind] = await tryCatch(
-      this.db.select().from(member).where(eq(member.id, memberId)),
+      this.db
+        .select()
+        .from(member)
+        .where(
+          and(
+            eq(member.organizationId, organizationId),
+            eq(member.id, memberId),
+          ),
+        ),
     );
 
     if (errFind) return err(errFind);
@@ -25,7 +34,7 @@ export class SQLiteMemberRepository implements MemberRepository {
     return ok(Member.reconstitute(memberRecord));
   }
 
-  public async findByIds(memberIds: string[], organizationId: string) {
+  public async findByIds(organizationId: string, memberIds: string[]) {
     const [rows, errFind] = await tryCatch(
       this.db
         .select()
@@ -43,7 +52,7 @@ export class SQLiteMemberRepository implements MemberRepository {
     return ok(rows.map((memberRecord) => Member.reconstitute(memberRecord)));
   }
 
-  public async findByUserId(userId: string, organizationId: string) {
+  public async findByUserId(organizationId: string, userId: string) {
     const [rows, errFind] = await tryCatch(
       this.db
         .select()
@@ -65,34 +74,22 @@ export class SQLiteMemberRepository implements MemberRepository {
     return ok(Member.reconstitute(memberRecord));
   }
 
-  public async insert(memberEntity: Member, options?: Options) {
+  public async save(memberEntity: Member | Member[], options?: Options) {
+    const members = Array.isArray(memberEntity) ? memberEntity : [memberEntity];
+
     const db = options?.tx ?? this.db;
 
     const [, errInsert] = await tryCatch(
-      db.insert(member).values(memberEntity.values).onConflictDoNothing(),
+      db
+        .insert(member)
+        .values(members.map((m) => m.values))
+        .onConflictDoUpdate({
+          target: member.id,
+          set: buildConflictUpdateColumn(member, ["status", "updatedAt"]),
+        }),
     );
 
     if (errInsert) return err(errInsert);
-
-    return ok(undefined);
-  }
-
-  public async update(memberEntity: Member) {
-    const values = memberEntity.values;
-
-    const [, errUpdate] = await tryCatch(
-      this.db
-        .update(member)
-        .set(values)
-        .where(
-          and(
-            eq(member.id, values.id),
-            eq(member.organizationId, values.organizationId),
-          ),
-        ),
-    );
-
-    if (errUpdate) return err(errUpdate);
 
     return ok(undefined);
   }

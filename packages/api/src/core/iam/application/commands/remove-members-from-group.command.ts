@@ -8,6 +8,7 @@ import type { GroupRepository } from "@fludge/api/core/iam/domain/repositories/g
 import type { MemberRepository } from "@fludge/api/core/iam/domain/repositories/member.repository";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { assignMembersToGroupValidator } from "@fludge/utils/validators/group.validators";
+import type { GroupMember } from "@fludge/api/core/iam/domain/entities/group-member.entity";
 
 export const removeMembersFromGroupCommand = assignMembersToGroupValidator;
 
@@ -23,7 +24,10 @@ export class RemoveMembersFromGroupCommand {
   public async execute(authContext: UserAuthContext, cmd: CMD) {
     const organizationId = authContext.organizationId.toString();
 
-    const [group, errGroup] = await this.groupRepository.findById(cmd.groupId);
+    const [group, errGroup] = await this.groupRepository.findById(
+      organizationId,
+      cmd.groupId,
+    );
 
     if (errGroup)
       throw new InternalServerError(
@@ -31,12 +35,11 @@ export class RemoveMembersFromGroupCommand {
         "api_errors.iam.organizations.isr_on_find",
       );
 
-    if (!group || group.values.organizationId !== organizationId)
-      throw new GroupNotFoundException();
+    if (!group) throw new GroupNotFoundException();
 
     const [members, errMembers] = await this.memberRepository.findByIds(
-      cmd.memberIds,
       organizationId,
+      cmd.memberIds,
     );
 
     if (errMembers)
@@ -45,27 +48,49 @@ export class RemoveMembersFromGroupCommand {
         "api_errors.iam.organizations.isr_on_find",
       );
 
-    const missingMember = cmd.memberIds.some(
-      (memberId) =>
-        !members.some((member) => member.id.toString() === memberId),
-    );
-
-    if (missingMember) throw new MemberNotFoundException();
+    if (cmd.memberIds.length !== members.length)
+      throw new MemberNotFoundException();
 
     if (members.some((member) => member.role.isOwner()))
       throw new MemberIsOwnerException();
 
-    const [, errSaving] =
-      await this.groupMemberRepository.deleteByGroupAndMemberIds(
-        organizationId,
-        cmd.groupId,
-        cmd.memberIds,
+    const groupMembersToRemove: GroupMember[] = [];
+
+    for (const member of members) {
+      const groupMembers = group.getGroupMemberByMemberId(member.id);
+
+      if (!groupMembers) continue;
+
+      group.removeGroupMember(groupMembers);
+
+      groupMembersToRemove.push(groupMembers);
+    }
+
+    const [, errTransaction] = await this.groupRepository.transaction(
+      async (tx) => {
+        const [, errDelete] = await this.groupMemberRepository.delete(
+          groupMembersToRemove,
+          {
+            tx,
+          },
+        );
+
+        if (errDelete) throw errDelete;
+
+        const [, errUpdate] = await this.groupRepository.saveOnlyGroup(group, {
+          tx,
+        });
+
+        if (errUpdate) throw errUpdate;
+      },
+    );
+
+    if (errTransaction)
+      throw new InternalServerError(
+        errTransaction,
+        "api_errors.iam.groups.isr_on_save",
       );
 
-    if (errSaving)
-      throw new InternalServerError(
-        errSaving,
-        "api_errors.iam.groups.isr_on_unassign_member",
-      );
+    return group;
   }
 }

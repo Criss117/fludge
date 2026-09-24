@@ -1,5 +1,5 @@
-import { Role } from "../../../shared/value-objects/role";
-import { Status } from "../../../shared/value-objects/status";
+import { Role } from "@fludge/api/core/shared/value-objects/role";
+import { Status } from "@fludge/api/core/shared/value-objects/status";
 import type { MemberSelect } from "@fludge/db/schema/iam.schema";
 import type { RoleEnum } from "@fludge/utils/enums/db-enums";
 import { UUID } from "@fludge/utils/uuid";

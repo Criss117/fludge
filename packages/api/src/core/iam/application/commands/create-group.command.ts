@@ -46,7 +46,7 @@ export class CreateGroupCommand {
     if (uniqueness.nameTaken || uniqueness.slugTaken)
       throw new GroupAlreadyExistsException("api_errors.iam.groups.name_taken");
 
-    const [, errSaving] = await this.groupRepository.insert(newGroup);
+    const [, errSaving] = await this.groupRepository.save(newGroup);
 
     if (errSaving)
       throw new InternalServerError(

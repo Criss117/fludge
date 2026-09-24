@@ -7,19 +7,20 @@ export type Options = {
 };
 
 export interface MemberRepository {
-  findById(memberId: string): Promise<Result<Member | null>>;
+  findById(
+    organizationId: string,
+    memberId: string,
+  ): Promise<Result<Member | null>>;
 
   findByIds(
-    memberIds: string[],
     organizationId: string,
+    memberIds: string[],
   ): Promise<Result<Member[]>>;
 
   findByUserId(
-    userId: string,
     organizationId: string,
+    userId: string,
   ): Promise<Result<Member | null>>;
 
-  insert(member: Member, options?: Options): Promise<Result<void>>;
-
-  update(member: Member): Promise<Result<void>>;
+  save(member: Member | Member[], options?: Options): Promise<Result<void>>;
 }
