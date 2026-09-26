@@ -10,6 +10,7 @@ import { productsRouter } from "@fludge/api/core/catalog/products/infrastructure
 import { saleRouter } from "@fludge/api/core/commerce/sale/infrastructure/http/sale.router";
 import { customerRouter } from "@fludge/api/core/commerce/customer/infrastructure/http/customer.router";
 import { syncRouter } from "@fludge/api/core/sync/http/sync.router";
+import { seedRouter } from "@fludge/api/core/seed/http/seed.router";
 
 export const appRouter = {
   auth: authRouter,
@@ -22,6 +23,7 @@ export const appRouter = {
   customer: customerRouter,
 
   sync: syncRouter,
+  seed: seedRouter,
 
   ping: publicProcedure.handler(({ context }) => {
     return context;
