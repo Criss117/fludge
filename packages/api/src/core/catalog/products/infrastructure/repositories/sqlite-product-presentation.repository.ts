@@ -24,7 +24,6 @@ export class SQLiteProductPresentationRepository implements ProductPresentationR
             "barcode",
             "conversionFactor",
             "name",
-            "searchBlob",
             "pricePurchase",
             "priceSale",
             "priceWholesale",
