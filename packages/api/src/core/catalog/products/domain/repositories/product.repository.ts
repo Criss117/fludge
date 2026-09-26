@@ -18,7 +18,7 @@ export interface ProductRepository extends TransactionalRepository {
     productIds: string[],
   ): Promise<Result<Product[]>>;
 
-  save(product: Product | Product[], options?: Options): Promise<Result<void>>;
+  save(product: Product | Product[]): Promise<Result<void>>;
 
   saveOnlyProduct(
     products: Product | Product[],

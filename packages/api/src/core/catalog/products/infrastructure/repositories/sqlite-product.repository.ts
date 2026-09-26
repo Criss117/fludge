@@ -85,30 +85,49 @@ export class SQLiteProductRepository
     return this.find(organizationId, { ids: productIds });
   }
 
-  public async save(productEntity: Product, options?: Options) {
-    const db = options?.tx ?? this.db;
-
+  public async save(productEntity: Product) {
     const { presentations: _presentations, ...rest } = productEntity.values;
 
     const [, errInsert] = await tryCatch(
-      db
-        .insert(product)
-        .values(rest)
-        .onConflictDoUpdate({
-          target: product.id,
-          set: {
-            name: rest.name,
-            searchBlob: rest.searchBlob,
-            slug: rest.slug,
-            description: rest.description,
-            stock: rest.stock,
-            minStock: rest.minStock,
-            allowNegativeStock: rest.allowNegativeStock,
-            status: rest.status,
-            updatedAt: rest.updatedAt,
-            categoryId: rest.categoryId,
-          },
-        }),
+      this.db.transaction(async (tx) => {
+        await tx
+          .insert(product)
+          .values(rest)
+          .onConflictDoUpdate({
+            target: product.id,
+            set: {
+              name: rest.name,
+              searchBlob: rest.searchBlob,
+              slug: rest.slug,
+              description: rest.description,
+              stock: rest.stock,
+              minStock: rest.minStock,
+              allowNegativeStock: rest.allowNegativeStock,
+              status: rest.status,
+              updatedAt: rest.updatedAt,
+              categoryId: rest.categoryId,
+            },
+          });
+
+        if (_presentations.length > 0) {
+          await tx
+            .insert(productPresentation)
+            .values(_presentations)
+            .onConflictDoUpdate({
+              target: productPresentation.id,
+              set: buildConflictUpdateColumn(productPresentation, [
+                "barcode",
+                "conversionFactor",
+                "name",
+                "pricePurchase",
+                "priceSale",
+                "priceWholesale",
+                "status",
+                "updatedAt",
+              ]),
+            });
+        }
+      }),
     );
 
     if (errInsert) return err(errInsert);
