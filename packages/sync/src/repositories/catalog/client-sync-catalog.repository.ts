@@ -4,13 +4,13 @@ import type {
 } from "@fludge/sync/types/catalog.types";
 
 export interface ClientSyncCatalogRepository {
-  getLastSyncedAt: () => Promise<CatalogLastSyncedAt>;
+  getLastSyncedAt(): Promise<CatalogLastSyncedAt>;
 
-  saveAll: (values: CatalogSyncResult) => Promise<void>;
+  saveAll(values: CatalogSyncResult): Promise<void>;
 }
 
 export interface HttpClientSyncCatalogRepository {
-  findLastSyncedAt: (
+  findLastSyncedAt(
     lastSyncedAt: CatalogLastSyncedAt,
-  ) => Promise<CatalogSyncResult>;
+  ): Promise<CatalogSyncResult>;
 }

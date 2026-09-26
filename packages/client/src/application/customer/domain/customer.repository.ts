@@ -1,8 +1,8 @@
-import type { LocalCustomerSelect } from "@fludge/db/local-schemas/shared.schema";
 import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
 import type { SaleDetail } from "@fludge/client/application/sales/domain/sale.repository";
+import type { LocalCustomer } from "@fludge/db/local-schemas/shared.schema";
 
-export type CustomerSummary = LocalCustomerSelect;
+export type CustomerSummary = LocalCustomer;
 
 export type CustomerDetail = CustomerSummary & {
   sales: SaleDetail[];
@@ -24,7 +24,7 @@ export interface CustomerRepository {
     customerId: string,
   ): Promise<CustomerDetail | null>;
 
-  save(customer: LocalCustomerSelect | LocalCustomerSelect[]): Promise<void>;
+  save(customer: LocalCustomer | LocalCustomer[]): Promise<void>;
 
   delete(organizationId: string, customerId: string | string[]): Promise<void>;
 }
