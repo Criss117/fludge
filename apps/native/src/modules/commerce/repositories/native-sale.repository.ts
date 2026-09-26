@@ -3,7 +3,7 @@ import type {
   SaleDetail,
   SaleRepository,
   FindAllSalesFilters,
-} from "@fludge/client/application/commerce/domain/sale.repository";
+} from "@fludge/client/commerce/domain/sale.repository";
 import {
   buildConflictUpdateColumn,
   jsonObject,

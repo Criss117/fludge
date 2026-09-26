@@ -1,4 +1,4 @@
-import { useFindSales } from "@fludge/client/application/commerce/queries/use-find-sales";
+import { useFindSales } from "@fludge/client/commerce/queries/use-find-sales";
 import { useMemo } from "react";
 import { FlatList, View } from "react-native";
 import {
@@ -8,7 +8,7 @@ import {
 } from "../components/sale-card";
 import { useTranslation } from "react-i18next";
 import { Typography } from "heroui-native/text";
-import { FindAllSalesFilters } from "@fludge/client/application/commerce/domain/sale.repository";
+import { FindAllSalesFilters } from "@fludge/client/commerce/domain/sale.repository";
 
 const ITEM_SEPARATOR_HEIGHT = 12;
 

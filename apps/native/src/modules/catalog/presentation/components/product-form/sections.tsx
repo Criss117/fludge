@@ -1,9 +1,9 @@
-import type { useProductForm } from "@fludge/client/presentation/catalog/product.form";
+import type { useProductForm } from "@fludge/client/catalog/product.form";
 import {
   CreatePresentationForm,
   UpdatePresentationForm,
 } from "./presentation-form";
-import { ProductFormSchema } from "@fludge/client/application/catalog/form/product-form";
+import { ProductFormSchema } from "@fludge/client/catalog/product.form";
 import { Card } from "heroui-native/card";
 import { Separator } from "heroui-native/separator";
 import { ProductFormInputs } from "./shared";

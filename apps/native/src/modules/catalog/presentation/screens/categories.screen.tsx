@@ -1,4 +1,4 @@
-import { useFindCategories } from "@fludge/client/application/catalog/queries/use-find-categories";
+import { useFindCategories } from "@fludge/client/catalog/queries/use-find-categories";
 import { FlatList, View } from "react-native";
 import {
   CARD_HEIGHT,
@@ -15,7 +15,7 @@ import {
 import { useMemo, useState } from "react";
 import { DeleteCategoryDialog } from "../components/delete-category-dialog";
 import { SearchInput } from "@/modules/shared/components/search-input";
-import type { CategorySummary } from "@fludge/client/application/catalog/domain/category.repository";
+import type { CategorySummary } from "@fludge/client/catalog/domain/category.repository";
 
 const ITEM_SEPARATOR_HEIGHT = 16;
 

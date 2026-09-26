@@ -1,5 +1,5 @@
 import { AssignGroupsToMember } from "@/modules/iam/organizations/presentation/screens/assign-groups-to-member.screen";
-import { useFindMemberDetail } from "@fludge/client/application/iam/queries/use-find-members";
+import { useFindMemberDetail } from "@fludge/client/iam/queries/use-find-members";
 import { Redirect, useLocalSearchParams } from "expo-router";
 
 function Screen({ memberid }: { memberid: string }) {

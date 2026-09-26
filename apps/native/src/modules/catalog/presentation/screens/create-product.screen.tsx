@@ -4,10 +4,10 @@ import { View } from "react-native";
 import { Button } from "heroui-native/button";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useState } from "react";
-import { useProductForm } from "@fludge/client/presentation/catalog/product.form";
-import { useCreateProductMutation } from "@fludge/client/application/catalog/mutations/use-product.mutations";
+import { useProductForm } from "@fludge/client/catalog/product.form";
+import { useCreateProductMutation } from "@fludge/client/catalog/mutations/use-product.mutations";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
-import type { ProductFormSchema } from "@fludge/client/application/catalog/form/product-form";
+import type { ProductFormSchema } from "@fludge/client/catalog/product.form";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useRouter } from "expo-router";
 import {

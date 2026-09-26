@@ -3,7 +3,7 @@ import { useThemeColor } from "heroui-native";
 import { ExpoDevMenuItem, registerDevMenuItems } from "expo-dev-menu";
 
 import { useEffect } from "react";
-import { RemountBoundary } from "@fludge/client/presentation/shared/remount-boundary";
+import { RemountBoundary } from "@fludge/client/providers/remount-boundary";
 import { bumpRemount } from "@fludge/client/shared/use-remount-epoch";
 
 export default function DashboardLayout() {

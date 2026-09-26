@@ -1,4 +1,3 @@
-import type { LocalCategory } from "@fludge/db/local-schemas/shared.schema";
 import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
 import type { CategorySummary } from "./entities";
 

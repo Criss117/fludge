@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { Ticket } from "@fludge/client/application/commerce/domain/local-ticket.repository";
+import type { Ticket } from "@fludge/client/commerce/domain/local-ticket.repository";
 import { formatPrice } from "@fludge/utils/currency";
 import { Card } from "heroui-native/card";
 import { PressableFeedback } from "heroui-native/pressable-feedback";

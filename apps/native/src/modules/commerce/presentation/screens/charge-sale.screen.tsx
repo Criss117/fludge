@@ -6,14 +6,14 @@ import { AmountReceivedSection } from "../sections/amount-received.section";
 import { Button } from "heroui-native/button";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { formatPrice } from "@fludge/utils/currency";
-import { useCreateSaleMutation } from "@fludge/client/application/commerce/mutations/use-sale.mutations";
+import { useCreateSaleMutation } from "@fludge/client/commerce/mutations/use-sale.mutations";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useRouter } from "expo-router";
-import { useTicketStore } from "@fludge/client/application/commerce/store/use-ticket.store";
+import { useTicketStore } from "@fludge/client/commerce/store/use-ticket.store";
 import { CustomerSelectorSection } from "../sections/customer-selector.section";
 import { PaymentTypeSection } from "../sections/payment-type.section";
-import { useChargeSale } from "@fludge/client/application/commerce/hooks/use-charge-sale";
+import { useChargeSale } from "@fludge/client/commerce/hooks/use-charge-sale";
 
 export function ChargeSaleScreen() {
   const { activeTicket, removeTicket } = useTicketStore();

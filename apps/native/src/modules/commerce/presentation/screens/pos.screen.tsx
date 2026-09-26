@@ -5,7 +5,7 @@ import { useState } from "react";
 import { TicketSelector } from "../components/ticket-selector";
 import { SalesSummary } from "../components/sale-summary";
 import { SaleProductsListSection } from "../sections/sale-products-list.section";
-import { ProductPresentationSelectorProvider } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
+import { ProductPresentationSelectorProvider } from "@fludge/client/providers/product-presentation-selector.provider";
 import { ProductPresentationSelector } from "../components/product-presentation-selector";
 
 export function POSScreen() {

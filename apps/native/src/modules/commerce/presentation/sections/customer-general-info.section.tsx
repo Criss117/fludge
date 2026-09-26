@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { CustomerDetail } from "@fludge/client/application/commerce/domain/customer.repository";
+import type { CustomerDetail } from "@fludge/client/commerce/domain/customer.repository";
 import { Button } from "heroui-native/button";
 import { Card } from "heroui-native/card";
 import { Typography } from "heroui-native/text";

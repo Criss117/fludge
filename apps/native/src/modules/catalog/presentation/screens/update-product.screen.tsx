@@ -4,11 +4,11 @@ import { View } from "react-native";
 import { Button } from "heroui-native/button";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useState } from "react";
-import { useProductForm } from "@fludge/client/presentation/catalog/product.form";
-import { useUpdateProductMutation } from "@fludge/client/application/catalog/mutations/use-product.mutations";
+import { useProductForm } from "@fludge/client/catalog/product.form";
+import { useUpdateProductMutation } from "@fludge/client/catalog/mutations/use-product.mutations";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import { useRouter } from "expo-router";
-import type { ProductFormSchema } from "@fludge/client/application/catalog/form/product-form";
+import type { ProductFormSchema } from "@fludge/client/catalog/product.form";
 import type { TranslationKey } from "@fludge/i18n/index";
 import {
   BasicInformationSection,
@@ -16,7 +16,7 @@ import {
   PresentationsSection,
   StockSection,
 } from "../components/product-form/sections";
-import type { ProductDetail } from "@fludge/client/application/catalog/domain/product.repository";
+import type { ProductDetail } from "@fludge/client/catalog/domain/product.repository";
 
 interface Props {
   product: ProductDetail;

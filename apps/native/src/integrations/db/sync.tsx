@@ -2,9 +2,9 @@ import { Suspense } from "react";
 import { LoadingScreen } from "@/modules/shared/components/loading-screen";
 import { View } from "react-native";
 import { Text } from "@/modules/shared/components/app-text";
-import { useSyncIam } from "@fludge/client/application/sync/use-sync-iam";
-import { useSyncCatalog } from "@fludge/client/application/sync/use-sync-catalog";
-import { useSyncCommerce } from "@fludge/client/application/sync/use-sync-commerce";
+import { useSyncIam } from "@fludge/client/sync/use-sync-iam";
+import { useSyncCatalog } from "@fludge/client/sync/use-sync-catalog";
+import { useSyncCommerce } from "@fludge/client/sync/use-sync-commerce";
 
 function SyncIamSuspense({ children }: { children: React.ReactNode }) {
   const { data } = useSyncIam();

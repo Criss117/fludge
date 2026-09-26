@@ -3,10 +3,10 @@ import {
   SalesProductCard,
   SALES_CARD_HEIGHT,
 } from "../components/sales-product-card";
-import { useFindProducts } from "@fludge/client/application/catalog/queries/use-find-products";
+import { useFindProducts } from "@fludge/client/catalog/queries/use-find-products";
 import { Typography } from "heroui-native";
 import { useTranslation } from "react-i18next";
-import { useProductPresentationSelector } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
+import { useProductPresentationSelector } from "@fludge/client/providers/product-presentation-selector.provider";
 
 interface Props {
   query: string;

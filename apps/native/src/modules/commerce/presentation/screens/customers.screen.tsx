@@ -1,4 +1,4 @@
-import { useFindCustomers } from "@fludge/client/application/commerce/queries/use-find-customers";
+import { useFindCustomers } from "@fludge/client/commerce/queries/use-find-customers";
 import { FlatList, View } from "react-native";
 import {
   CARD_HEIGHT,

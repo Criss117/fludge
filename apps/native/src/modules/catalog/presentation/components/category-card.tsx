@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Button } from "heroui-native/button";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { useTranslation } from "react-i18next";
-import type { CategorySummary } from "@fludge/client/application/catalog/domain/category.repository";
+import type { CategorySummary } from "@fludge/client/catalog/domain/category.repository";
 
 export const CARD_HEIGHT = 120;
 

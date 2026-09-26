@@ -5,8 +5,8 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { ScrollView, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import type { TranslationKey } from "@fludge/i18n/index";
-import { useCreateCustomerForm } from "@fludge/client/application/commerce/form/customer-form";
-import { useCreateCustomerMutation } from "@fludge/client/application/commerce/mutations/use-customer.mutations";
+import { useCreateCustomerForm } from "@fludge/client/commerce/customer.form";
+import { useCreateCustomerMutation } from "@fludge/client/commerce/mutations/use-customer.mutations";
 import { Button } from "heroui-native/button";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import {

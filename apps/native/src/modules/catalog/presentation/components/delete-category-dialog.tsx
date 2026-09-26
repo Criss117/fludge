@@ -1,6 +1,6 @@
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
-import type { CategorySummary } from "@fludge/client/application/catalog/domain/category.repository";
-import { useToggleCategoryStatusMutation } from "@fludge/client/application/catalog/mutations/use-category.mutations";
+import type { CategorySummary } from "@fludge/client/catalog/domain/category.repository";
+import { useToggleCategoryStatusMutation } from "@fludge/client/catalog/mutations/use-category.mutations";
 import { TranslationKey } from "@fludge/i18n/index";
 import { Button } from "heroui-native/button";
 import { Dialog } from "heroui-native/dialog";

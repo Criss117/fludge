@@ -1,6 +1,6 @@
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
-import type { ProductDetail } from "@fludge/client/application/catalog/domain/product.repository";
-import { useUpdateProductMutation } from "@fludge/client/application/catalog/mutations/use-product.mutations";
+import type { ProductDetail } from "@fludge/client/catalog/domain/product.repository";
+import { useUpdateProductMutation } from "@fludge/client/catalog/mutations/use-product.mutations";
 import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { Button } from "heroui-native/button";

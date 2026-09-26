@@ -1,6 +1,6 @@
 import { CameraDialog } from "@/modules/shared/components/camera-dialog";
 import { CommonInputs } from "@/modules/shared/components/common-inputs";
-import { useFindCategories } from "@fludge/client/application/catalog/queries/use-find-categories";
+import { useFindCategories } from "@fludge/client/catalog/queries/use-find-categories";
 import type { MinimalField } from "@fludge/client/shared/field-api";
 import { useMemo, useState } from "react";
 import { type FocusEvent, View } from "react-native";

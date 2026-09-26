@@ -14,7 +14,7 @@ import { View } from "react-native";
 import { TicketProductItem } from "./ticket-item";
 import { KeyboardController } from "react-native-keyboard-controller";
 import { Link } from "expo-router";
-import { useTicketStore } from "@fludge/client/application/commerce/store/use-ticket.store";
+import { useTicketStore } from "@fludge/client/commerce/store/use-ticket.store";
 
 interface Props {
   isOpen: boolean;

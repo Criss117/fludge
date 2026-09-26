@@ -3,7 +3,7 @@ import type {
   CategoryRepository,
   CategorySummary,
   FindAllCategoriesFilters,
-} from "@fludge/client/application/catalog/domain/category.repository";
+} from "@fludge/client/catalog/domain/category.repository";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import { and, desc, eq, inArray, like } from "drizzle-orm";
 import {

@@ -13,9 +13,9 @@ import { MaterialIcons } from "@/modules/shared/components/icons";
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { Separator } from "heroui-native/separator";
 import { Typography } from "heroui-native/text";
-import { useFindCustomers } from "@fludge/client/application/commerce/queries/use-find-customers";
+import { useFindCustomers } from "@fludge/client/commerce/queries/use-find-customers";
 import type { TranslationKey } from "@fludge/i18n/index";
-import type { CustomerSummary } from "@fludge/client/application/commerce/domain/customer.repository";
+import type { CustomerSummary } from "@fludge/client/commerce/domain/customer.repository";
 
 interface Props {
   isOpen: boolean;

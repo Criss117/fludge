@@ -5,8 +5,8 @@ import type { TranslationKey } from "@fludge/i18n/index";
 import type {
   TicketProduct,
   TicketProductPresentation,
-} from "@fludge/client/application/commerce/domain/local-ticket.repository";
-import type { useTicketStore } from "@fludge/client/application/commerce/store/use-ticket.store";
+} from "@fludge/client/commerce/domain/local-ticket.repository";
+import type { useTicketStore } from "@fludge/client/commerce/store/use-ticket.store";
 import { formatPrice } from "@fludge/utils/currency";
 import { useBottomSheetAwareHandlers } from "heroui-native";
 import { Button } from "heroui-native/button";

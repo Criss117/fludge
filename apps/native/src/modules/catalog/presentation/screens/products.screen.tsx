@@ -1,4 +1,4 @@
-import { useFindProducts } from "@fludge/client/application/catalog/queries/use-find-products";
+import { useFindProducts } from "@fludge/client/catalog/queries/use-find-products";
 import { FlatList, View } from "react-native";
 import {
   CARD_HEIGHT,
@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { Suspense, useMemo, useState } from "react";
 import { CameraDialog } from "@/modules/shared/components/camera-dialog";
-import type { FindAllProductsFilters } from "@fludge/client/application/catalog/domain/product.repository";
+import type { FindAllProductsFilters } from "@fludge/client/catalog/domain/product.repository";
 import { ProductFiltersBottomSheet } from "../components/product-filters-bottom-sheet";
 import { Button } from "heroui-native/button";
 import { MaterialIcons } from "@/modules/shared/components/icons";

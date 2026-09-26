@@ -1,5 +1,5 @@
 import { UpdateProductScreen } from "@/modules/catalog/presentation/screens/update-product.screen";
-import { useFindProduct } from "@fludge/client/application/catalog/queries/use-find-products";
+import { useFindProduct } from "@fludge/client/catalog/queries/use-find-products";
 import { Link, Redirect, useLocalSearchParams } from "expo-router";
 import { Button } from "heroui-native/button";
 import { Suspense } from "react";

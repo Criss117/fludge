@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { SalesSummaryContent } from "./content";
-import { useTicketStore } from "@fludge/client/application/commerce/store/use-ticket.store";
+import { useTicketStore } from "@fludge/client/commerce/store/use-ticket.store";
 
 export function SalesSummary() {
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);

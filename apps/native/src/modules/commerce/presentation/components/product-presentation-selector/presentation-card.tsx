@@ -3,9 +3,9 @@ import { Card } from "heroui-native/card";
 import { Checkbox } from "heroui-native/checkbox";
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
-import { useProductPresentationSelector } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
+import { useProductPresentationSelector } from "@fludge/client/providers/product-presentation-selector.provider";
 
-import type { SelectedProduct } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
+import type { SelectedProduct } from "@fludge/client/providers/product-presentation-selector.provider";
 
 interface Props {
   presentation: SelectedProduct["presentations"][number];

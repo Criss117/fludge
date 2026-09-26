@@ -4,8 +4,8 @@ import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import { useTicketStore } from "@fludge/client/application/commerce/store/use-ticket.store";
-import { Ticket } from "@fludge/client/application/commerce/domain/local-ticket.repository";
+import { useTicketStore } from "@fludge/client/commerce/store/use-ticket.store";
+import { Ticket } from "@fludge/client/commerce/domain/local-ticket.repository";
 
 type TicketOption = { label: string; value: string };
 

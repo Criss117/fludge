@@ -8,7 +8,7 @@ import { Button } from "heroui-native/button";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { Link } from "expo-router";
 import { formatCurrency } from "@fludge/utils/format-currency";
-import type { ProductDetail } from "@fludge/client/application/catalog/domain/product.repository";
+import type { ProductDetail } from "@fludge/client/catalog/domain/product.repository";
 import { SkeletonGroup } from "heroui-native/skeleton-group";
 import { Skeleton } from "heroui-native/skeleton";
 

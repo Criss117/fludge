@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { SaleDetail } from "@fludge/client/application/commerce/domain/sale.repository";
+import type { SaleDetail } from "@fludge/client/commerce/domain/sale.repository";
 import type { SaleStatusEnum } from "@fludge/utils/enums/db-enums";
 import { formatPrice } from "@fludge/utils/currency";
 import { cn } from "heroui-native";

@@ -2,7 +2,7 @@ import { MaterialIcons } from "@/modules/shared/components/icons";
 import {
   useCreateCategoryForm,
   useUpdateCategoryForm,
-} from "@fludge/client/application/catalog/form/category-form";
+} from "@fludge/client/catalog/category.form";
 import {
   BottomSheetFooter,
   BottomSheetFooterProps,
@@ -17,13 +17,13 @@ import { CategoryFormInputs } from "./category-form-input";
 import {
   useCreateCategoryMutation,
   useUpdateCategoryMutation,
-} from "@fludge/client/application/catalog/mutations/use-category.mutations";
+} from "@fludge/client/catalog/mutations/use-category.mutations";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { KeyboardController } from "react-native-keyboard-controller";
 import { useBottomSheetAwareHandlers } from "heroui-native";
 import { Separator } from "heroui-native/separator";
-import { CategorySummary } from "@fludge/client/application/catalog/domain/category.repository";
+import { CategorySummary } from "@fludge/client/catalog/domain/category.repository";
 
 type Form =
   | ReturnType<typeof useCreateCategoryForm>

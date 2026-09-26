@@ -1,0 +1,168 @@
+import { MaterialIcons } from "@/modules/shared/components/icons";
+
+import { Card } from "heroui-native/card";
+import { Chip } from "heroui-native/chip";
+import { Separator } from "heroui-native/separator";
+import { Typography } from "heroui-native/text";
+import { View } from "react-native";
+import { StatusChip } from "@/modules/shared/components/status-chip";
+import { PressableFeedback } from "heroui-native/pressable-feedback";
+import { useRouter } from "expo-router";
+import { GroupsOptions } from "./options";
+
+import { Checkbox, cn, Skeleton } from "heroui-native";
+import { useTranslation } from "react-i18next";
+import type { ActionFor, Resource } from "@fludge/utils/permissions/data";
+import type { TranslationKey } from "@fludge/i18n/index";
+import type { GroupSummary } from "@fludge/client/iam/domain/entities";
+import { SkeletonGroup } from "heroui-native/skeleton-group";
+
+interface Props {
+  group: GroupSummary;
+  asMemberGroup?: {
+    onPress: (groupId: string, close: () => void) => void;
+  };
+  hideOptions?: boolean;
+}
+
+export function GroupCard(props: Props) {
+  const router = useRouter();
+
+  return (
+    <PressableFeedback
+      onPress={() => {
+        router.push({
+          pathname: "/(private)/dashboard/groups/[groupid]",
+          params: { groupid: props.group.id },
+        });
+      }}
+      className="rounded-3xl shadow"
+    >
+      <GroupCardBase {...props} />
+    </PressableFeedback>
+  );
+}
+
+interface SelectableGroupCardProps extends Props {
+  onPress?: (group: GroupSummary) => void;
+  onLongPress?: (group: GroupSummary) => void;
+  isSelected?: boolean;
+}
+
+export function SelectableGroupCard({
+  onLongPress,
+  onPress,
+  isSelected,
+  ...props
+}: SelectableGroupCardProps) {
+  return (
+    <PressableFeedback
+      onPress={() => onPress?.(props.group)}
+      onLongPress={() => onLongPress?.(props.group)}
+    >
+      <View
+        className={cn(
+          "relative rounded-3xl border",
+          isSelected ? "border-foreground" : "border-transparent"
+        )}
+      >
+        <Checkbox
+          onPress={() => onPress?.(props.group)}
+          className="bg-accent absolute top-4 right-4 z-50"
+          isSelected={isSelected}
+        />
+        <GroupCardBase {...props} hideOptions />
+      </View>
+    </PressableFeedback>
+  );
+}
+
+export function GroupCardBase({ group, asMemberGroup, hideOptions }: Props) {
+  const { t } = useTranslation();
+
+  return (
+    <Card className="gap-y-2">
+      <Card.Header className="gap-y-2">
+        <View className="w-full flex-row items-start">
+          <View className="flex-1 gap-y-1">
+            <Card.Title className="line-clamp-1 flex-1">
+              {group.name}
+            </Card.Title>
+            <StatusChip status={group.status} />
+          </View>
+          {!hideOptions && (
+            <GroupsOptions group={group} asMemberGroup={asMemberGroup} />
+          )}
+        </View>
+
+        <Card.Description className="line-clamp-2">
+          {group.description}
+        </Card.Description>
+      </Card.Header>
+      <Card.Body className="flex-row flex-wrap gap-2">
+        {group.permissions.slice(0, 3).map((p) => {
+          const [resource, action] = p.split(":") as [
+            Resource,
+            ActionFor<Resource>,
+          ];
+
+          const nameKey =
+            `permissions.${resource}.${action}.name` as TranslationKey;
+          const descriptionKey =
+            `permissions.${resource}.${action}.description` as TranslationKey;
+
+          return (
+            <Chip key={p} variant="secondary">
+              <Chip.Label>
+                {t(nameKey)}: {t(descriptionKey)}
+              </Chip.Label>
+            </Chip>
+          );
+        })}
+        {group.permissions.length > 3 && (
+          <Chip variant="secondary">
+            <Chip.Label>{group.permissions.length - 3} más</Chip.Label>
+          </Chip>
+        )}
+      </Card.Body>
+
+      <Separator />
+      <Card.Footer className="flex-row items-center justify-between">
+        <View>
+          <Typography color="muted" type="body-sm">
+            Creado el: {group.createdAt.toLocaleDateString()}
+          </Typography>
+        </View>
+      </Card.Footer>
+    </Card>
+  );
+}
+
+export function GroupCardSkeleton() {
+  return (
+    <Card className="gap-y-2">
+      <Card.Header className="gap-y-2">
+        <View className="w-full flex-row items-start">
+          <View className="flex-1 gap-y-1">
+            <Skeleton className="h-7 w-1/2 rounded-full" />
+            <Skeleton className="h-7 w-1/3 rounded-full" />
+          </View>
+          <Skeleton className="size-12 rounded-full" />
+        </View>
+
+        <Skeleton className="h-6 w-1/2 rounded-full" />
+      </Card.Header>
+      <SkeletonGroup className="flex-row flex-wrap gap-2">
+        <SkeletonGroup.Item className="h-7 w-2/3 rounded-full" />
+        <SkeletonGroup.Item className="h-7 w-4/5 rounded-full" />
+        <SkeletonGroup.Item className="h-7 w-4/5 rounded-full" />
+        <SkeletonGroup.Item className="h-7 w-2/3 rounded-full" />
+      </SkeletonGroup>
+
+      <Separator />
+      <Card.Footer className="flex-row items-center justify-between">
+        <Skeleton className="h-6 w-3/4 rounded-full" />
+      </Card.Footer>
+    </Card>
+  );
+}

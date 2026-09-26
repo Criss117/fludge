@@ -1,5 +1,5 @@
 import { NativeCategoryRepository } from "@/modules/catalog/repositories/native-category.repository";
-import { generateCatalogContainer } from "@fludge/client/application/catalog/container";
+import { generateCatalogContainer } from "@fludge/client/catalog/container";
 import { databaseService } from "../db";
 import { NativeProductRepository } from "@/modules/catalog/repositories/native-product.repository";
 import { NativeSyncCatalogRepository } from "../db/repositories/native-sync-catalog.repository";

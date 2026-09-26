@@ -10,7 +10,7 @@ import { Typography } from "heroui-native/text";
 import { Button } from "heroui-native/button";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import type { CustomerSummary } from "@fludge/client/application/commerce/domain/customer.repository";
+import type { CustomerSummary } from "@fludge/client/commerce/domain/customer.repository";
 import { cn } from "heroui-native";
 
 interface Props {

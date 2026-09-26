@@ -1,4 +1,4 @@
-import type { SaleDetail } from "@fludge/client/application/commerce/domain/sale.repository";
+import type { SaleDetail } from "@fludge/client/commerce/domain/sale.repository";
 import { formatPrice } from "@fludge/utils/currency";
 import { Dialog } from "heroui-native/dialog";
 import { Separator } from "heroui-native/separator";

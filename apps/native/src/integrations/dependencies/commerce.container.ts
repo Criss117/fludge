@@ -1,4 +1,4 @@
-import { generateCommerceContainer } from "@fludge/client/application/commerce/container";
+import { generateCommerceContainer } from "@fludge/client/commerce/container";
 import { databaseService } from "@/integrations/db";
 import { NativeCustomerRepository } from "@/modules/commerce/repositories/native-customer.repository";
 import { NativeSaleRepository } from "@/modules/commerce/repositories/native-sale.repository";

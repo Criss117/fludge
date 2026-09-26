@@ -2,7 +2,7 @@ import {
   ProductScreen,
   ProductScreenSkeleton,
 } from "@/modules/catalog/presentation/screens/product.screen";
-import { useFindProduct } from "@fludge/client/application/catalog/queries/use-find-products";
+import { useFindProduct } from "@fludge/client/catalog/queries/use-find-products";
 import { Redirect, Stack, useLocalSearchParams } from "expo-router";
 import { Suspense } from "react";
 import { ProductMenuOptions } from "@/modules/catalog/presentation/components/product-menu-options";

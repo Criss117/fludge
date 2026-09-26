@@ -3,7 +3,7 @@ import type {
   FindAllProductsFilters,
   ProductRepository,
   ProductDetail,
-} from "@fludge/client/application/catalog/domain/product.repository";
+} from "@fludge/client/catalog/domain/product.repository";
 import {
   buildConflictUpdateColumn,
   jsonObject,

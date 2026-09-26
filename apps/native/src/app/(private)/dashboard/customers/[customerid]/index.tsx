@@ -2,7 +2,7 @@ import {
   CustomerDetailScreen,
   CustomerDetailSkeleton,
 } from "@/modules/commerce/presentation/screens/customer-detail.screen";
-import { useFindCustomer } from "@fludge/client/application/commerce/queries/use-find-customers";
+import { useFindCustomer } from "@fludge/client/commerce/queries/use-find-customers";
 import { Redirect, Stack, useLocalSearchParams } from "expo-router";
 import { Suspense } from "react";
 import { useTranslation } from "react-i18next";

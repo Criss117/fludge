@@ -16,7 +16,7 @@ import { useBottomSheetAwareHandlers } from "heroui-native";
 import {
   useProductPresentationForm,
   type ProductFormSchema,
-} from "@fludge/client/application/catalog/form/product-form";
+} from "@fludge/client/catalog/product.form";
 
 type Presentation = ProductFormSchema["presentations"][number];
 

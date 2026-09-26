@@ -1,4 +1,3 @@
-import type { LocalSale } from "@fludge/db/local-schemas/shared.schema";
 import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
 import type { SaleDetail } from "./entities";
 

@@ -1,5 +1,5 @@
 import { useReducer } from "react";
-import type { CustomerSummary } from "@fludge/client/application/commerce/domain/customer.repository";
+import type { CustomerSummary } from "@fludge/client/commerce/domain/entities";
 
 type State = {
   selectedCustomer: CustomerSummary | null;

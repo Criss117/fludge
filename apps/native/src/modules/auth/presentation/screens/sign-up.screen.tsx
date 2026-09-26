@@ -1,0 +1,84 @@
+import { Link } from "expo-router";
+import { View } from "react-native";
+import { Button } from "heroui-native/button";
+import { Card } from "heroui-native/card";
+import { Separator } from "heroui-native/separator";
+import { PressableFeedback } from "heroui-native/pressable-feedback";
+import { Typography } from "heroui-native/text";
+import { useState } from "react";
+import { useAuth } from "@fludge/client/providers/auth.provider";
+import { FieldError } from "heroui-native/field-error";
+import { useTranslation } from "react-i18next";
+import { useSignUpForm } from "@fludge/client/iam/sign-in-form";
+import { AuthFormInputs } from "../components/auth-form-inputs";
+
+export function SignUpScreen() {
+  const { t } = useTranslation();
+  const { signUpEmail } = useAuth();
+  const [rootError, setRootError] = useState<string | null>(null);
+
+  const form = useSignUpForm({
+    onSubmit: ({ value, resetForm }) => {
+      setRootError(null);
+      signUpEmail.mutate(value, {
+        onSuccess: () => {
+          resetForm();
+        },
+        onError: (error) => {
+          setRootError(error.message);
+        },
+      });
+    },
+  });
+
+  return (
+    <View className="flex-1 justify-center px-3">
+      <Card>
+        <Card.Header className="pb-4">
+          <View className="flex w-full items-center justify-center">
+            <Card.Title className="text-3xl font-bold">
+              {t("app.title")}
+            </Card.Title>
+          </View>
+          <Card.Description>
+            {t("screens.sign_up.description")}
+          </Card.Description>
+        </Card.Header>
+        <Separator />
+        <Card.Body className="gap-y-4 py-4">
+          {rootError && (
+            <FieldError isInvalid={!!rootError}>{rootError}</FieldError>
+          )}
+          <form.Field name="name">
+            {(field) => <AuthFormInputs.NameInput field={field} />}
+          </form.Field>
+          <form.Field name="phone">
+            {(field) => <AuthFormInputs.PhoneInput field={field} />}
+          </form.Field>
+          <form.Field name="email">
+            {(field) => <AuthFormInputs.EmailInput field={field} />}
+          </form.Field>
+          <form.Field name="password">
+            {(field) => <AuthFormInputs.PasswordInput field={field} />}
+          </form.Field>
+          <Button onPress={form.handleSubmit}>
+            {t("screens.sign_up.button")}
+          </Button>
+        </Card.Body>
+        <Separator />
+        <Card.Footer>
+          <Link href="/auth/sign-in" replace asChild>
+            <PressableFeedback className="w-full py-2">
+              <Typography className="text-muted">
+                {t("screens.sign_up.already_account")}{" "}
+                <Typography className="underline">
+                  {t("screens.sign_up.sign_in")}
+                </Typography>
+              </Typography>
+            </PressableFeedback>
+          </Link>
+        </Card.Footer>
+      </Card>
+    </View>
+  );
+}

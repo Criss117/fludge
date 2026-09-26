@@ -4,7 +4,7 @@ import type {
   CustomerRepository,
   CustomerSummary,
   FindAllCustomersFilters,
-} from "@fludge/client/application/commerce/domain/customer.repository";
+} from "@fludge/client/commerce/domain/customer.repository";
 import {
   buildConflictUpdateColumn,
   jsonObject,
@@ -20,7 +20,7 @@ import {
   localCustomerPayment,
   type LocalCustomer,
 } from "@fludge/db/local-schemas/shared.schema";
-import type { SaleRepository } from "@fludge/client/application/commerce/domain/sale.repository";
+import type { SaleRepository } from "@fludge/client/commerce/domain/sale.repository";
 
 export class NativeCustomerRepository implements CustomerRepository {
   constructor(

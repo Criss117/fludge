@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { ProductDetail } from "@fludge/client/application/catalog/domain/product.repository";
+import type { ProductDetail } from "@fludge/client/catalog/domain/product.repository";
 import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
 import { Link } from "expo-router";
 import { cn } from "heroui-native";

@@ -9,11 +9,11 @@ import {
 } from "@gorhom/bottom-sheet";
 import { Typography } from "heroui-native/text";
 import { SalePresentationCard } from "./presentation-card";
-import { useProductPresentationSelector } from "@fludge/client/presentation/sales/product-presentation-selector.provider";
+import { useProductPresentationSelector } from "@fludge/client/providers/product-presentation-selector.provider";
 import { useCallback } from "react";
 import { Button } from "heroui-native/button";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
-import { useTicketStore } from "@fludge/client/application/commerce/store/use-ticket.store";
+import { useTicketStore } from "@fludge/client/commerce/store/use-ticket.store";
 import type { TranslationKey } from "@fludge/i18n/index";
 
 const SNAP_POINTS = ["70%"];
