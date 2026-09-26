@@ -4,7 +4,7 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { createContext, use, useEffect, useState } from "react";
-import type { OrganizationRepository } from "../application/iam/domain/organization.repository";
+import type { OrganizationRepository } from "../iam/domain/organization.repository";
 import { tryCatch } from "@fludge/utils/trycatch";
 import type { LocalOrganization } from "@fludge/db/local-schemas/shared.schema";
 

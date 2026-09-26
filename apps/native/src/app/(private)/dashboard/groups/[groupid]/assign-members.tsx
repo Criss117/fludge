@@ -1,4 +1,4 @@
-import { AssignMembersToGroup } from "@/modules/iam/organizations/presentation/screens/assign-members-to-group.screen";
+import { AssignMembersToGroup } from "@/modules/iam/presentation/screens/assign-members-to-group.screen";
 import { useFindGroupDetail } from "@fludge/client/iam/queries/use-find-groups";
 import { Redirect, useLocalSearchParams } from "expo-router";
 

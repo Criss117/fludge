@@ -1,7 +1,7 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrganization } from "@fludge/client/providers/organization.provider";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
-import type { FindAllSalesFilters } from "@fludge/client/application/commerce/domain/sale.repository";
+import type { FindAllSalesFilters } from "../domain/sale.repository";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 

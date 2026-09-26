@@ -3,7 +3,7 @@ import {
   MemberCard,
   CARD_HEIGHT,
   MemberCardSkeleton,
-} from "@/modules/iam/organizations/presentation/components/member-card";
+} from "@/modules/iam/presentation/components/member-card";
 import { FloatingLink } from "@/modules/shared/components/floating-link";
 import { DEFAULT_CARD_PADDING } from "@/modules/shared/utils/constanst";
 import {

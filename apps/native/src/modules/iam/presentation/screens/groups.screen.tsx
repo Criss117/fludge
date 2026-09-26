@@ -2,7 +2,7 @@ import { FlatList, View } from "react-native";
 import {
   GroupCard,
   GroupCardSkeleton,
-} from "@/modules/iam/organizations/presentation/components/group-card";
+} from "@/modules/iam/presentation/components/group-card";
 import { useFindAllGroups } from "@fludge/client/iam/queries/use-find-groups";
 import { FloatingLink } from "@/modules/shared/components/floating-link";
 import {

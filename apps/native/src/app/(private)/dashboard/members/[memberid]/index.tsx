@@ -1,4 +1,4 @@
-import { MemberScreen } from "@/modules/iam/organizations/presentation/screens/member.screen";
+import { MemberScreen } from "@/modules/iam/presentation/screens/member.screen";
 import { useFindMemberDetail } from "@fludge/client/iam/queries/use-find-members";
 import { Redirect, Stack, useLocalSearchParams } from "expo-router";
 

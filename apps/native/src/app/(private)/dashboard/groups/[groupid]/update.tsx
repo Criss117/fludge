@@ -1,7 +1,7 @@
 import {
   UpdateGroupScreen,
   UpdateGroupScreenSkeleton,
-} from "@/modules/iam/organizations/presentation/screens/update-group.screen";
+} from "@/modules/iam/presentation/screens/update-group.screen";
 import { useFindGroupDetail } from "@fludge/client/iam/queries/use-find-groups";
 import {
   type ErrorBoundaryProps,

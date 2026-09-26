@@ -1,4 +1,4 @@
-import type { ProductDetail } from "@fludge/client/application/catalog/domain/product.repository";
+import type { ProductDetail } from "../catalog/domain/entities";
 import { createContext, use, useState } from "react";
 
 export interface ProductPresentationSelectorRef {

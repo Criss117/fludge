@@ -6,7 +6,7 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
-import type { FindAllCustomersFilters } from "@fludge/client/application/commerce/domain/customer.repository";
+import type { FindAllCustomersFilters } from "../domain/customer.repository";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 
 function normalizeFilters(filters?: FindAllCustomersFilters) {

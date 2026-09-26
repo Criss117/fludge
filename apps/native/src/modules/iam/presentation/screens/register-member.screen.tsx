@@ -7,7 +7,7 @@ import { ScrollView, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useRegisterMember } from "@fludge/client/iam/mutations/use-member.mutations";
 import { useRegisterMemberForm } from "@fludge/client/iam/member.form";
-import { AuthFormInputs } from "@/modules/iam/auth/presentation/components/auth-form-inputs";
+import { AuthFormInputs } from "@/modules/auth/presentation/components/auth-form-inputs";
 
 const PADDING_BOTTOM = 20;
 

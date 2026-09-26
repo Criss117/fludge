@@ -1,9 +1,9 @@
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
 import { useMutation } from "@tanstack/react-query";
-import { useInvalidateProducts } from "@fludge/client/application/catalog/queries/use-find-products";
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useInvalidateCustomers } from "../queries/use-find-customers";
 import { useInvalidateSales } from "../queries/use-find-sales";
+import { useInvalidateProducts } from "@fludge/client/catalog/queries/use-find-products";
 
 export function useCreateSaleMutation() {
   const orpc = useOrpc();

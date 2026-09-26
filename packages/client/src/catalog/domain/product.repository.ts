@@ -1,6 +1,8 @@
 import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
 import type { ProductDetail } from "./entities";
 
+export type { ProductDetail } from "./entities";
+
 export type FindAllProductsFilters = {
   searchQuery: string;
   status: "active" | "inactive" | "discontinued" | "all";

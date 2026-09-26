@@ -1,6 +1,6 @@
 import { Card } from "heroui-native/card";
 import { View } from "react-native";
-import { OrganizationFormInputs } from "@/modules/iam/organizations/presentation/components/organization-form-inputs";
+import { OrganizationFormInputs } from "@/modules/iam/presentation/components/organization-form-inputs";
 import { Button } from "heroui-native/button";
 import { Link, useRouter } from "expo-router";
 import { MaterialIcons } from "@/modules/shared/components/icons";
