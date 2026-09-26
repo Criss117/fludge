@@ -1,10 +1,15 @@
-import type { LocalGroup } from "@fludge/db/local-schemas/shared.schema";
-import type { MemberSummary } from "./member.repository";
+import type {
+  LocalGroup,
+  LocalMember,
+  LocalUser,
+} from "@fludge/db/local-schemas/shared.schema";
 
 export type GroupSummary = LocalGroup;
 
 export type GroupDetail = Omit<GroupSummary, "members"> & {
-  members: MemberSummary[];
+  members: (LocalMember & {
+    user: LocalUser;
+  })[];
 };
 
 export type FindAllGroupsFilters = {

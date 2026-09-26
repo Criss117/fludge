@@ -6,9 +6,9 @@ import type { Resource } from "@fludge/utils/permissions/data";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { useTranslation } from "react-i18next";
 import { TranslationKey } from "@fludge/i18n/index";
-import type { GroupSummary } from "@fludge/client/application/iam/domain/group.repository";
+import type { GroupDetail } from "@fludge/client/application/iam/domain/group.repository";
 
-export function GroupPermissionsSection({ group }: { group: GroupSummary }) {
+export function GroupPermissionsSection({ group }: { group: GroupDetail }) {
   const { t } = useTranslation();
 
   if (group.permissions.length === 0) {

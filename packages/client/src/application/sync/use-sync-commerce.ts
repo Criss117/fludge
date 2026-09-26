@@ -33,7 +33,7 @@ export function useSyncCommerce() {
   const orpc = useOrpc();
   const { session } = useAuth();
   const { isInternetReachable } = useNetwork();
-  const { customerContainer } = useContainer();
+  const { commerceContainer } = useContainer();
 
   const httpRepository = httpClientCommerceRepository(orpc);
 
@@ -48,7 +48,7 @@ export function useSyncCommerce() {
         };
 
       const [lastSyncedAt, errorGetLastSyncedAt] = await tryCatch(
-        customerContainer.repositories.syncCommerceRepository.getLastSyncedAt(),
+        commerceContainer.repositories.syncCommerceRepository.getLastSyncedAt(),
       );
 
       if (errorGetLastSyncedAt)
@@ -70,7 +70,7 @@ export function useSyncCommerce() {
         };
 
       const [, erroSaveAll] = await tryCatch(
-        customerContainer.repositories.syncCommerceRepository.saveAll(values),
+        commerceContainer.repositories.syncCommerceRepository.saveAll(values),
       );
 
       if (erroSaveAll)

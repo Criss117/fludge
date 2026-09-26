@@ -135,7 +135,7 @@ export class NativeProductRepository implements ProductRepository {
       ? productValues
       : [productValues];
 
-    const productsValues: LocalProduct[] = [];
+    const productsValues: Omit<LocalProduct, "presentations">[] = [];
     const presentationsValues: LocalProduct["presentations"] = [];
 
     for (const product of productsArray) {

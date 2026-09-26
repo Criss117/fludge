@@ -7,7 +7,11 @@ import { NativeSyncCatalogRepository } from "../db/repositories/native-sync-cata
 const productRepository = new NativeProductRepository(databaseService);
 const categoryRepository = new NativeCategoryRepository(databaseService);
 
-const syncCatalogRepository = new NativeSyncCatalogRepository(databaseService);
+const syncCatalogRepository = new NativeSyncCatalogRepository(
+  databaseService,
+  productRepository,
+  categoryRepository
+);
 
 export const catalogContainer = generateCatalogContainer({
   categoryRepository,

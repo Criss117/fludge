@@ -1,8 +1,8 @@
 import {
   CustomerDetailScreen,
   CustomerDetailSkeleton,
-} from "@/modules/customer/presentation/screens/customer-detail.screen";
-import { useFindCustomer } from "@fludge/client/application/customer/queries/use-find-customers";
+} from "@/modules/commerce/presentation/screens/customer-detail.screen";
+import { useFindCustomer } from "@fludge/client/application/commerce/queries/use-find-customers";
 import { Redirect, Stack, useLocalSearchParams } from "expo-router";
 import { Suspense } from "react";
 import { useTranslation } from "react-i18next";

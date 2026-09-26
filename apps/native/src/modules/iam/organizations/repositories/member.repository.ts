@@ -11,7 +11,10 @@ import {
   localMember,
   localUser,
 } from "@fludge/db/local-schemas/shared.schema";
-import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
+import {
+  buildConflictUpdateColumn,
+  jsonObject,
+} from "@fludge/db/utils/build-queries";
 import {
   and,
   desc,
@@ -20,6 +23,7 @@ import {
   inArray,
   like,
   notInArray,
+  sql,
 } from "drizzle-orm";
 
 export class SqliteMemberRepository implements MemberRepository {
@@ -67,6 +71,11 @@ export class SqliteMemberRepository implements MemberRepository {
     const memberGroups = await this.db
       .select({
         ...getColumns(localGroup),
+        members: sql<string>`
+            json_group_array(
+              DISTINCT ${jsonObject(localGroupMember)}
+            ) FILTER (WHERE ${localGroupMember.groupId} IS NOT NULL)
+          `.as("members"),
       })
       .from(localGroupMember)
       .innerJoin(localGroup, eq(localGroup.id, localGroupMember.groupId))

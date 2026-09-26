@@ -49,7 +49,7 @@ export class SqliteGroupRepository implements GroupRepository {
           `.as("members"),
       })
       .from(localGroup)
-      .innerJoin(localGroupMember, eq(localGroupMember.groupId, localGroup.id))
+      .leftJoin(localGroupMember, eq(localGroupMember.groupId, localGroup.id))
       .where(
         and(
           eq(localGroup.organizationId, organizationId),

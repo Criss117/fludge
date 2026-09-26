@@ -1,4 +1,4 @@
-import { CustomersScreen } from "@/modules/customer/presentation/screens/customers.screen";
+import { CustomersScreen } from "@/modules/commerce/presentation/screens/customers.screen";
 
 export default function DashboardCustomers() {
   return <CustomersScreen />;

@@ -4,8 +4,7 @@ import { View } from "react-native";
 import { Text } from "@/modules/shared/components/app-text";
 import { useSyncIam } from "@fludge/client/application/sync/use-sync-iam";
 import { useSyncCatalog } from "@fludge/client/application/sync/use-sync-catalog";
-import { useSyncCustomer } from "@fludge/client/application/sync/use-sync-customer";
-import { useSyncSale } from "@fludge/client/application/sync/use-sync-sale";
+import { useSyncCommerce } from "@fludge/client/application/sync/use-sync-commerce";
 
 function SyncIamSuspense({ children }: { children: React.ReactNode }) {
   const { data } = useSyncIam();
@@ -33,26 +32,13 @@ function SyncCatalogSuspense({ children }: { children: React.ReactNode }) {
   return children;
 }
 
-function SyncCustomerSuspense({ children }: { children: React.ReactNode }) {
-  const { data } = useSyncCustomer();
+function SyncCommerceSuspense({ children }: { children: React.ReactNode }) {
+  const { data } = useSyncCommerce();
 
   if (data.error)
     return (
       <View>
-        <Text>Retrying Customer {data.error.message}</Text>
-      </View>
-    );
-
-  return children;
-}
-
-function SyncSaleSuspense({ children }: { children: React.ReactNode }) {
-  const { data } = useSyncSale();
-
-  if (data.error)
-    return (
-      <View>
-        <Text>Retrying Sale</Text>
+        <Text>Retrying Commerce {data.error.message}</Text>
       </View>
     );
 
@@ -66,15 +52,9 @@ export function SyncDatabase({ children }: { children: React.ReactNode }) {
         <Suspense fallback={<LoadingScreen message="app.loading_catalog" />}>
           <SyncCatalogSuspense>
             <Suspense
-              fallback={<LoadingScreen message="app.loading_customer" />}
+              fallback={<LoadingScreen message="app.loading_commerce" />}
             >
-              <SyncCustomerSuspense>
-                <Suspense
-                  fallback={<LoadingScreen message="app.loading_sale" />}
-                >
-                  <SyncSaleSuspense>{children}</SyncSaleSuspense>
-                </Suspense>
-              </SyncCustomerSuspense>
+              <SyncCommerceSuspense>{children}</SyncCommerceSuspense>
             </Suspense>
           </SyncCatalogSuspense>
         </Suspense>

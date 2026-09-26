@@ -1,0 +1,66 @@
+import { useContainer } from "@fludge/client/providers/container.provider";
+import { useOrganization } from "@fludge/client/providers/organization.provider";
+import { SearchBlob } from "@fludge/utils/search-blob";
+import {
+  useSuspenseInfiniteQuery,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
+import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
+import type { FindAllCustomersFilters } from "@fludge/client/application/commerce/domain/customer.repository";
+import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
+
+function normalizeFilters(filters?: FindAllCustomersFilters) {
+  return {
+    searchQuery: filters?.searchQuery
+      ? SearchBlob.normalize(filters.searchQuery)
+      : undefined,
+  };
+}
+
+export const {
+  keys: customerKeys,
+  useInvalidateQueries: useInvalidateCustomers,
+} = keysGenerator({
+  module: "commerce",
+  resource: "customers",
+  normalizeFilters,
+});
+
+export function useFindCustomers(filters?: FindAllCustomersFilters) {
+  const { commerceContainer } = useContainer();
+  const { activeOrganization } = useOrganization();
+
+  if (!activeOrganization) throw new Error("Active organization not found");
+
+  const normalizedQuery = SearchBlob.normalize(filters?.searchQuery ?? "");
+
+  return useSuspenseInfiniteQuery({
+    queryKey: customerKeys.filteredList(activeOrganization.id, filters),
+    initialPageParam: DEFAULT_CURSOR,
+    queryFn: ({ pageParam }) =>
+      commerceContainer.repositories.customerRepository.findAll(
+        activeOrganization.id,
+        pageParam,
+        {
+          searchQuery: normalizedQuery,
+        },
+      ),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
+}
+
+export function useFindCustomer(customerId: string) {
+  const { commerceContainer } = useContainer();
+  const { activeOrganization } = useOrganization();
+
+  if (!activeOrganization) throw new Error("Active organization not found");
+
+  return useSuspenseQuery({
+    queryKey: customerKeys.detail(activeOrganization.id, customerId),
+    queryFn: () =>
+      commerceContainer.repositories.customerRepository.findOneById(
+        activeOrganization.id,
+        customerId,
+      ),
+  });
+}
