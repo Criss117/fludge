@@ -44,8 +44,8 @@ const requireOrganization = requireAuth.concat(async ({ context, next }) => {
 
   const [authContext, errAuthContext] =
     await iamContainer.services.userAuthContextService.build(
-      context.session.user.id,
       activeOrganizationId,
+      context.session.user.id,
     );
 
   if (errAuthContext)

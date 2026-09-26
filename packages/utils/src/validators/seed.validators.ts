@@ -12,7 +12,7 @@ export const seedIamValidator = z.object({
 
 export const seedCatalogValidator = z.object({
   categoriesPerOrganization: z.number().int().min(0).default(10),
-  productsPerCategory: z.number().int().min(0).default(100),
+  productsPerOrganization: z.number().int().min(0).default(100),
   presentationsPerProduct: z.number().int().min(1).default(5),
 });
 

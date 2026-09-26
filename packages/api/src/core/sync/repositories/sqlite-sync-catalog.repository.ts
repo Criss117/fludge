@@ -11,7 +11,7 @@ import type {
   CatalogLastSyncedAt,
   CatalogSyncResult,
 } from "@fludge/sync/types/catalog.types";
-import { and, desc, getColumns, gt, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, getColumns, gt, inArray, sql } from "drizzle-orm";
 
 export class SqliteSyncCatalogRepository implements ServerSyncCatalogRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -46,6 +46,13 @@ export class SqliteSyncCatalogRepository implements ServerSyncCatalogRepository 
           `.as("presentations"),
       })
       .from(product)
+      .leftJoin(
+        productPresentation,
+        and(
+          eq(productPresentation.productId, product.id),
+          eq(productPresentation.organizationId, product.organizationId),
+        ),
+      )
       .where(
         and(
           inArray(product.organizationId, organizationIds),

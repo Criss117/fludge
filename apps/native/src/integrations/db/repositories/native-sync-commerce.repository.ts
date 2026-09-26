@@ -76,9 +76,13 @@ export class NativeSyncCommerceRepository implements ClientSyncCommerceRepositor
           })
           .run();
 
-        tx.insert(localCustomerPayment)
-          .values(values.customers.flatMap((c) => c.payments))
-          .run();
+        const payments = values.customers.flatMap((c) => c.payments);
+
+        if (payments.length > 0) {
+          tx.insert(localCustomerPayment)
+            .values(values.customers.flatMap((c) => c.payments))
+            .run();
+        }
       }
 
       if (values.sales.length > 0) {
@@ -121,13 +125,20 @@ export class NativeSyncCommerceRepository implements ClientSyncCommerceRepositor
           })
           .run();
 
-        tx.insert(localSalePayment)
-          .values(values.sales.flatMap((s) => s.payments))
-          .run();
+        const payments = values.sales.flatMap((s) => s.payments);
+        const items = values.sales.flatMap((s) => s.items);
 
-        tx.insert(localSaleItem)
-          .values(values.sales.flatMap((s) => s.items))
-          .run();
+        if (payments.length > 0) {
+          tx.insert(localSalePayment)
+            .values(values.sales.flatMap((s) => s.payments))
+            .run();
+        }
+
+        if (items.length > 0) {
+          tx.insert(localSaleItem)
+            .values(values.sales.flatMap((s) => s.items))
+            .run();
+        }
       }
     });
   }

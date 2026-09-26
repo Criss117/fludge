@@ -35,6 +35,22 @@ CREATE TABLE `customer` (
 	CONSTRAINT "customer_credit_limit_non_negative_check" CHECK("credit_limit" >= 0)
 );
 --> statement-breakpoint
+CREATE TABLE `customer_payment` (
+	`id` text PRIMARY KEY,
+	`customer_id` text NOT NULL,
+	`amount` integer NOT NULL,
+	`method` text NOT NULL,
+	`notes` text,
+	`organization_id` text NOT NULL,
+	`created_by` text NOT NULL,
+	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	CONSTRAINT `fk_customer_payment_customer_id_customer_id_fk` FOREIGN KEY (`customer_id`) REFERENCES `customer`(`id`) ON DELETE RESTRICT,
+	CONSTRAINT `fk_customer_payment_organization_id_organization_id_fk` FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `fk_customer_payment_created_by_member_id_fk` FOREIGN KEY (`created_by`) REFERENCES `member`(`id`),
+	CONSTRAINT "customer_payment_amount_positive" CHECK("amount" > 0)
+);
+--> statement-breakpoint
 CREATE TABLE `group` (
 	`id` text PRIMARY KEY,
 	`name` text NOT NULL,
@@ -81,8 +97,6 @@ CREATE TABLE `organization` (
 	`id` text PRIMARY KEY,
 	`name` text NOT NULL,
 	`slug` text NOT NULL,
-	`logo` text,
-	`metadata` text,
 	`legal_name` text NOT NULL,
 	`tax_id` text NOT NULL,
 	`address` text NOT NULL,
@@ -118,7 +132,6 @@ CREATE TABLE `product_presentation` (
 	`id` text PRIMARY KEY,
 	`product_id` text NOT NULL,
 	`name` text NOT NULL,
-	`search_blob` text NOT NULL,
 	`barcode` text,
 	`conversion_factor` integer NOT NULL,
 	`price_sale` integer NOT NULL,
@@ -152,6 +165,7 @@ CREATE TABLE `sale` (
 	`completed_at` integer,
 	`cancelled_at` integer,
 	`total` integer NOT NULL,
+	`total_paid` integer DEFAULT 0 NOT NULL,
 	`cancel_reason` text,
 	`notes` text,
 	`status` text NOT NULL,
@@ -182,6 +196,22 @@ CREATE TABLE `sale_item` (
 	CONSTRAINT `fk_sale_item_product_id_product_id_fk` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`) ON DELETE SET NULL,
 	CONSTRAINT `fk_sale_item_product_presentation_id_product_presentation_id_fk` FOREIGN KEY (`product_presentation_id`) REFERENCES `product_presentation`(`id`) ON DELETE SET NULL,
 	CONSTRAINT `fk_sale_item_organization_id_organization_id_fk` FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON DELETE CASCADE
+);
+--> statement-breakpoint
+CREATE TABLE `sale_payment` (
+	`id` text PRIMARY KEY,
+	`customer_payment_id` text NOT NULL,
+	`sale_id` text NOT NULL,
+	`amount` integer NOT NULL,
+	`organization_id` text NOT NULL,
+	`created_by` text NOT NULL,
+	`status` text DEFAULT 'active' NOT NULL,
+	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	CONSTRAINT `fk_sale_payment_customer_payment_id_customer_payment_id_fk` FOREIGN KEY (`customer_payment_id`) REFERENCES `customer_payment`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `fk_sale_payment_sale_id_sale_id_fk` FOREIGN KEY (`sale_id`) REFERENCES `sale`(`id`) ON DELETE RESTRICT,
+	CONSTRAINT `fk_sale_payment_organization_id_organization_id_fk` FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `fk_sale_payment_created_by_member_id_fk` FOREIGN KEY (`created_by`) REFERENCES `member`(`id`)
 );
 --> statement-breakpoint
 CREATE TABLE `user` (
@@ -237,6 +267,8 @@ CREATE INDEX `category_name_idx` ON `category` (`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `customer_org_document_unique` ON `customer` (`organization_id`,`document_number`);--> statement-breakpoint
 CREATE INDEX `customer_org_status_idx` ON `customer` (`organization_id`,`status`);--> statement-breakpoint
 CREATE INDEX `customer_org_name_idx` ON `customer` (`organization_id`,`name`);--> statement-breakpoint
+CREATE INDEX `customer_payment_org_customer_idx` ON `customer_payment` (`organization_id`,`customer_id`);--> statement-breakpoint
+CREATE INDEX `customer_payment_created_at_idx` ON `customer_payment` (`created_at`);--> statement-breakpoint
 CREATE INDEX `group_slug_idx` ON `group` (`slug`);--> statement-breakpoint
 CREATE INDEX `group_name_idx` ON `group` (`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `group_organization_id_slug_unique` ON `group` (`organization_id`,`slug`);--> statement-breakpoint
@@ -258,6 +290,7 @@ CREATE UNIQUE INDEX `presentation_product_factor_unique` ON `product_presentatio
 CREATE UNIQUE INDEX `presentation_organization_barcode_unique` ON `product_presentation` (`organization_id`,`barcode`) WHERE "product_presentation"."barcode" IS NOT NULL;--> statement-breakpoint
 CREATE INDEX `presentation_organization_product_idx` ON `product_presentation` (`organization_id`,`product_id`);--> statement-breakpoint
 CREATE INDEX `presentation_organization_status_idx` ON `product_presentation` (`organization_id`,`status`);--> statement-breakpoint
+CREATE UNIQUE INDEX `sale_payments_org_customer_payment_idx` ON `sale_payment` (`sale_id`,`customer_payment_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `ticket_organization_name_unique` ON `ticket` (`organization_id`,`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `ticket_organization_active_unique` ON `ticket` (`organization_id`,`is_active`) WHERE "ticket"."is_active" = 1;--> statement-breakpoint
 CREATE UNIQUE INDEX `ticket_product_unique_idx` ON `ticket_product` (`ticket_id`,`product_id`);--> statement-breakpoint

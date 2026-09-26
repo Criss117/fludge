@@ -13,7 +13,7 @@ export class UserAuthContextService {
     private readonly memberRepository: MemberRepository,
   ) {}
 
-  public async build(loggedUserId: string, activeOrganizationId: string) {
+  public async build(activeOrganizationId: string, loggedUserId: string) {
     const [organizationExists, errOrganization] = await tryCatch(
       this.db
         .select({ id: organization.id })
@@ -26,8 +26,8 @@ export class UserAuthContextService {
     if (organizationExists.length === 0) return ok(null);
 
     const [member, errMember] = await this.memberRepository.findByUserId(
-      loggedUserId,
       activeOrganizationId,
+      loggedUserId,
     );
 
     if (errMember) return err(errMember);

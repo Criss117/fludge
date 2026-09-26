@@ -1,8 +1,5 @@
 import { DatabaseService } from "@/integrations/db";
-import {
-  GroupDetail,
-  GroupSummary,
-} from "@fludge/client/iam/domain/entities";
+import { GroupDetail, GroupSummary } from "@fludge/client/iam/domain/entities";
 import type {
   FindAllGroupsFilters,
   GroupRepository,
@@ -29,7 +26,6 @@ import {
   like,
   notInArray,
   or,
-  sql,
 } from "drizzle-orm";
 
 export class SqliteGroupRepository implements GroupRepository {

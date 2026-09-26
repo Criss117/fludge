@@ -62,7 +62,8 @@ export class SQLiteMemberRepository implements MemberRepository {
             eq(member.userId, userId),
             eq(member.organizationId, organizationId),
           ),
-        ),
+        )
+        .limit(1),
     );
 
     if (errFind) return err(errFind);

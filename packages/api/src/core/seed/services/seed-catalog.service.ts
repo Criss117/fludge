@@ -78,49 +78,45 @@ export class SeedCatalogService {
 
     // 4. Preparar productos
     const productsToInsert: (typeof product.$inferInsert)[] = [];
-    const productsByCategory = new Map<
-      string,
-      (typeof product.$inferInsert)[]
-    >();
+    const productsByOrg = new Map<string, (typeof product.$inferInsert)[]>();
     let barcodeCounter = 1_000_000_000_000;
 
     for (const [orgIdx, org] of orgsWithOwners.entries()) {
       const orgCats = categoriesByOrg.get(org.orgId) ?? [];
+      const orgProducts: (typeof product.$inferInsert)[] = [];
 
-      for (const [catIdx, cat] of orgCats.entries()) {
-        const catProducts: (typeof product.$inferInsert)[] = [];
+      for (let i = 0; i < input.productsPerOrganization; i++) {
+        const productId = UUID.generate().toString();
+        const productName = `Producto ${orgIdx}-${i}`;
 
-        for (let i = 0; i < input.productsPerCategory; i++) {
-          const productId = UUID.generate().toString();
-          const productName = `Producto ${orgIdx}-${catIdx}-${i}`;
+        const barcodes = Array.from(
+          { length: input.presentationsPerProduct },
+          () => String(barcodeCounter++).padStart(13, "0"),
+        );
 
-          const barcodes = Array.from(
-            { length: input.presentationsPerProduct },
-            () => String(barcodeCounter++).padStart(13, "0"),
-          );
+        const searchBlob = new SearchBlob(productName, ...barcodes).value;
 
-          const searchBlob = new SearchBlob(productName, ...barcodes).value;
+        const categoryId = orgCats.length > 0 ? orgCats[i % orgCats.length].id : null;
 
-          const productRow = {
-            id: productId,
-            name: productName,
-            slug: new Slug(productName).toString(),
-            searchBlob,
-            description: faker.commerce.productDescription(),
-            stock: faker.number.int({ min: 10, max: 500 }),
-            minStock: faker.number.int({ min: 1, max: 20 }),
-            allowNegativeStock: false,
-            categoryId: cat.id,
-            createdBy: org.ownerMemberId,
-            organizationId: org.orgId,
-          };
+        const productRow = {
+          id: productId,
+          name: productName,
+          slug: new Slug(productName).toString(),
+          searchBlob,
+          description: faker.commerce.productDescription(),
+          stock: faker.number.int({ min: 10, max: 500 }),
+          minStock: faker.number.int({ min: 1, max: 20 }),
+          allowNegativeStock: false,
+          categoryId,
+          createdBy: org.ownerMemberId,
+          organizationId: org.orgId,
+        };
 
-          productsToInsert.push(productRow);
-          catProducts.push(productRow);
-        }
-
-        productsByCategory.set(cat.id!, catProducts);
+        productsToInsert.push(productRow);
+        orgProducts.push(productRow);
       }
+
+      productsByOrg.set(org.orgId, orgProducts);
     }
 
     // 5. Batch insert productos
@@ -138,28 +134,24 @@ export class SeedCatalogService {
     let presBarcodeCounter = 1_000_000_000_000;
 
     for (const [orgIdx, org] of orgsWithOwners.entries()) {
-      const orgCats = categoriesByOrg.get(org.orgId) ?? [];
+      const orgProducts = productsByOrg.get(org.orgId) ?? [];
 
-      for (const [catIdx, cat] of orgCats.entries()) {
-        const catProducts = productsByCategory.get(cat.id!) ?? [];
+      for (const [prodIdx, prod] of orgProducts.entries()) {
+        for (let i = 0; i < input.presentationsPerProduct; i++) {
+          const presentationName = i === 0 ? "Unidad" : `Presentación ${i + 1}`;
 
-        for (const [prodIdx, prod] of catProducts.entries()) {
-          for (let i = 0; i < input.presentationsPerProduct; i++) {
-            const presentationName = i === 0 ? "Unidad" : `Presentación ${i + 1}`;
-
-            presentationsToInsert.push({
-              id: UUID.generate().toString(),
-              productId: prod.id!,
-              name: `${presentationName} ${orgIdx}-${catIdx}-${prodIdx}-${i}`,
-              barcode: String(presBarcodeCounter++).padStart(13, "0"),
-              conversionFactor: i + 1,
-              priceSale: faker.number.int({ min: 1000, max: 500_000 }),
-              pricePurchase: faker.number.int({ min: 500, max: 400_000 }),
-              priceWholesale: faker.number.int({ min: 800, max: 450_000 }),
-              createdBy: org.ownerMemberId,
-              organizationId: org.orgId,
-            });
-          }
+          presentationsToInsert.push({
+            id: UUID.generate().toString(),
+            productId: prod.id!,
+            name: `${presentationName} ${orgIdx}-${prodIdx}-${i}`,
+            barcode: String(presBarcodeCounter++).padStart(13, "0"),
+            conversionFactor: i + 1,
+            priceSale: faker.number.int({ min: 1000, max: 500_000 }),
+            pricePurchase: faker.number.int({ min: 500, max: 400_000 }),
+            priceWholesale: faker.number.int({ min: 800, max: 450_000 }),
+            createdBy: org.ownerMemberId,
+            organizationId: org.orgId,
+          });
         }
       }
     }

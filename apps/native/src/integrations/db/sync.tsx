@@ -11,8 +11,8 @@ function SyncIamSuspense({ children }: { children: React.ReactNode }) {
 
   if (data.error)
     return (
-      <View>
-        <Text>Retrying Iam</Text>
+      <View className="flex-1 items-center justify-center">
+        <Text>Retrying Iam {data.error.message}</Text>
       </View>
     );
 
@@ -24,8 +24,10 @@ function SyncCatalogSuspense({ children }: { children: React.ReactNode }) {
 
   if (data.error)
     return (
-      <View>
-        <Text>Retrying Catalog</Text>
+      <View className="flex-1 items-center justify-center">
+        <Text>
+          Retrying Catalog {JSON.stringify(data.error.message, null, 2)}
+        </Text>
       </View>
     );
 
@@ -37,8 +39,8 @@ function SyncCommerceSuspense({ children }: { children: React.ReactNode }) {
 
   if (data.error)
     return (
-      <View>
-        <Text>Retrying Commerce {data.error.message}</Text>
+      <View className="flex-1 items-center justify-center">
+        <Text>Retrying Commerce {JSON.stringify(data.error, null, 2)}</Text>
       </View>
     );
 

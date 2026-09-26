@@ -89,7 +89,8 @@ export class SQLiteSyncIamRepository implements ServerSyncIamRepository {
           lastSyncedAt ? gt(group.updatedAt, lastSyncedAt) : undefined,
         ),
       )
-      .orderBy(desc(group.updatedAt));
+      .orderBy(desc(group.updatedAt))
+      .groupBy(group.id);
 
     return rows
       .map((g) => {

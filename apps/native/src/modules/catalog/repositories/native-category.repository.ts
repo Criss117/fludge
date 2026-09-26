@@ -67,6 +67,8 @@ export class NativeCategoryRepository implements CategoryRepository {
       ? categoryValues
       : [categoryValues];
 
+    if (categoriesArray.length === 0) return;
+
     await this.db
       .insert(localCategory)
       .values(categoriesArray)

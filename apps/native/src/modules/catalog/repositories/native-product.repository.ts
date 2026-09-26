@@ -148,7 +148,7 @@ export class NativeProductRepository implements ProductRepository {
       }
     }
 
-    this.db.transaction((tx) => {
+    await this.db.transaction((tx) => {
       if (productsValues.length > 0) {
         tx.insert(localProduct)
           .values(productsValues)
@@ -171,12 +171,14 @@ export class NativeProductRepository implements ProductRepository {
       }
 
       if (presentationsValues.length > 0) {
-        tx.delete(localProductPresentation).where(
-          inArray(
-            localProductPresentation.productId,
-            productsValues.map((p) => p.id)
+        tx.delete(localProductPresentation)
+          .where(
+            inArray(
+              localProductPresentation.productId,
+              productsValues.map((p) => p.id)
+            )
           )
-        );
+          .run();
 
         tx.insert(localProductPresentation).values(presentationsValues).run();
       }
