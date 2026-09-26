@@ -1,9 +1,6 @@
 import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
 import type { LocalCustomer } from "@fludge/db/local-schemas/shared.schema";
-
-export type CustomerSummary = Omit<LocalCustomer, "payments">;
-
-export type CustomerDetail = LocalCustomer;
+import type { CustomerSummary, CustomerDetail } from "./entities";
 
 export type FindAllCustomersFilters = {
   searchQuery?: string;

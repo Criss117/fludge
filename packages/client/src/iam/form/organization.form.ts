@@ -13,7 +13,7 @@ export type OnRegisterSubmit = {
   }) => void;
 };
 
-export function registerFormOptions(options: OnRegisterSubmit) {
+export function registerOrganizationFormOptions(options: OnRegisterSubmit) {
   return formOptions({
     defaultValues: {
       name: "",
@@ -32,7 +32,7 @@ export function registerFormOptions(options: OnRegisterSubmit) {
 }
 
 export function useRegisterOrganizationForm(options: OnRegisterSubmit) {
-  return useForm(registerFormOptions(options));
+  return useForm(registerOrganizationFormOptions(options));
 }
 
 type FieldComponent = ReturnType<typeof useRegisterOrganizationForm>["Field"];

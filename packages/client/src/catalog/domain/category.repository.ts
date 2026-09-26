@@ -1,7 +1,6 @@
 import type { LocalCategory } from "@fludge/db/local-schemas/shared.schema";
 import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
-
-export type CategorySummary = LocalCategory;
+import type { CategorySummary } from "./entities";
 
 export type FindAllCategoriesFilters = {
   searchQuery?: string;

@@ -1,7 +1,6 @@
 import type { LocalProduct } from "@fludge/db/local-schemas/shared.schema";
 import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
-
-export type ProductDetail = LocalProduct;
+import type { ProductDetail } from "./entities";
 
 export type FindAllProductsFilters = {
   searchQuery: string;

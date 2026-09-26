@@ -5,11 +5,20 @@
     "./providers/*": {
       "default": "./src/providers/*.tsx"
     },
-    "./presentation/*": {
-      "default": "./src/presentation/*.ts"
+    "./iam/*": {
+      "default": "./src/iam/*.ts"
     },
-    "./application/*": {
-      "default": "./src/application/*.ts"
+    "./catalog/*": {
+      "default": "./src/catalog/*.ts"
+    },
+    "./commerce/*": {
+      "default": "./src/commerce/*.ts"
+    },
+    "./sync/*": {
+      "default": "./src/sync/*.ts"
+    },
+    "./shared/*": {
+      "default": "./src/shared/*.ts"
     }
   },
   "scripts": {

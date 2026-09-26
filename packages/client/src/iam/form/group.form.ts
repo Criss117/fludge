@@ -1,8 +1,9 @@
+import { createGroupValidator } from "@fludge/utils/validators/group.validators";
 import {
-  groupFormOptions,
-  type GroupSchema,
-  type OnGroupSubmit,
-} from "@fludge/client/application/iam/form/group-form";
+  formOptions,
+  createFormHook,
+  createFormHookContexts,
+} from "@tanstack/react-form";
 import {
   getPermissionsByResource,
   PERMISSIONS,
@@ -11,8 +12,33 @@ import {
   type Resource,
 } from "@fludge/utils/permissions/data";
 import { Permissions } from "@fludge/utils/permissions/index";
-import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 import { useMemo } from "react";
+import type { z } from "zod";
+
+export type GroupSchema = z.infer<typeof createGroupValidator>;
+
+export type OnGroupSubmit = {
+  onSubmit: (options: { value: GroupSchema; resetForm: () => void }) => void;
+};
+
+export function groupFormOptions(
+  options: OnGroupSubmit,
+  defaultValues?: GroupSchema,
+) {
+  return formOptions({
+    defaultValues: {
+      name: defaultValues?.name ?? "",
+      description: defaultValues?.description ?? "",
+      permissions: defaultValues?.permissions ?? [],
+    },
+    validators: {
+      onChange: createGroupValidator,
+    },
+    onSubmit: ({ value, formApi }) => {
+      options.onSubmit({ value, resetForm: formApi.reset });
+    },
+  });
+}
 
 const { fieldContext, formContext, useFieldContext } = createFormHookContexts();
 

@@ -1,7 +1,7 @@
 import { createContext, use } from "react";
-import type { IAMContainer } from "../application/iam/container";
-import type { CatalogContainer } from "../application/catalog/container";
-import type { CommerceContainer } from "../application/commerce/container";
+import type { IAMContainer } from "../iam/container";
+import type { CatalogContainer } from "../catalog/container";
+import type { CommerceContainer } from "../commerce/container";
 
 type Context = {
   iamContainer: IAMContainer;
