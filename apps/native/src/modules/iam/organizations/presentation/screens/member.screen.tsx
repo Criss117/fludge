@@ -6,7 +6,7 @@ import { ScrollView, View } from "react-native";
 import { MemberGroupsSection } from "../sections/member-groups.section";
 import { UserAvatar } from "@/modules/shared/components/user-avatar";
 import { useTranslation } from "react-i18next";
-import { MemberDetail } from "@fludge/client/application/iam/domain/member.repository";
+import { MemberDetail } from "@fludge/client/application/iam/domain/entities";
 
 interface Props {
   member: MemberDetail;

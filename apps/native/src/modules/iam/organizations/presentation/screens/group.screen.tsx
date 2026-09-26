@@ -11,7 +11,7 @@ import { ScrollView, View } from "react-native";
 import { GroupMembersSection } from "../sections/group-members.section";
 import { GroupPermissionsSection } from "../sections/group-permissions.section";
 import { useTranslation } from "react-i18next";
-import type { GroupDetail } from "@fludge/client/application/iam/domain/group.repository";
+import { GroupDetail } from "@fludge/client/application/iam/domain/entities";
 
 export function GroupScreen({ group }: { group: GroupDetail }) {
   const [tab, setTab] = useState("members");

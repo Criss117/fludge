@@ -1,9 +1,11 @@
 import { DatabaseService } from "@/integrations/db";
+import {
+  GroupDetail,
+  GroupSummary,
+} from "@fludge/client/application/iam/domain/entities";
 import type {
   FindAllGroupsFilters,
-  GroupDetail,
   GroupRepository,
-  GroupSummary,
 } from "@fludge/client/application/iam/domain/group.repository";
 import {
   localGroup,
@@ -19,6 +21,7 @@ import {
 
 import {
   and,
+  count,
   desc,
   eq,
   getColumns,
@@ -42,11 +45,7 @@ export class SqliteGroupRepository implements GroupRepository {
     const rows = await this.db
       .select({
         ...getColumns(localGroup),
-        members: sql<string>`
-            json_group_array(
-              DISTINCT ${jsonObject(localGroupMember)}
-            ) FILTER (WHERE ${localGroupMember.groupId} IS NOT NULL)
-          `.as("members"),
+        totalMembers: count(localGroupMember.groupId),
       })
       .from(localGroup)
       .leftJoin(localGroupMember, eq(localGroupMember.groupId, localGroup.id))
@@ -60,13 +59,7 @@ export class SqliteGroupRepository implements GroupRepository {
       .groupBy(localGroup.id)
       .orderBy(desc(localGroup.updatedAt));
 
-    return rows.map((p) => ({
-      ...p,
-      members: (JSON.parse(p.members) as LocalGroup["members"]).map((p) => ({
-        ...p,
-        createdAt: new Date(p.createdAt),
-      })),
-    }));
+    return rows;
   }
 
   public async findOneById(
@@ -94,9 +87,20 @@ export class SqliteGroupRepository implements GroupRepository {
         user: getColumns(localUser),
       })
       .from(localGroupMember)
-      .innerJoin(localMember, eq(localMember.id, localGroupMember.memberId))
+      .innerJoin(
+        localMember,
+        and(
+          eq(localMember.id, localGroupMember.memberId),
+          eq(localMember.organizationId, organizationId)
+        )
+      )
       .innerJoin(localUser, eq(localUser.id, localMember.userId))
-      .where(eq(localGroupMember.groupId, groupId))
+      .where(
+        and(
+          eq(localGroupMember.organizationId, organizationId),
+          eq(localGroupMember.groupId, groupId)
+        )
+      )
       .orderBy(desc(localMember.createdAt));
 
     return {

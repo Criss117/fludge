@@ -8,8 +8,10 @@ import { useRemoveGroupsFromMember } from "@fludge/client/application/iam/mutati
 
 import { SearchInput } from "@/modules/shared/components/search-input";
 import { useTranslation } from "react-i18next";
-import type { MemberDetail } from "@fludge/client/application/iam/domain/member.repository";
-import type { GroupSummary } from "@fludge/client/application/iam/domain/group.repository";
+import type {
+  GroupSummary,
+  MemberDetail,
+} from "@fludge/client/application/iam/domain/entities";
 
 interface Props {
   member: MemberDetail;

@@ -8,8 +8,10 @@ import { useRemoveMembersFromGroup } from "@fludge/client/application/iam/mutati
 import { Dialog } from "heroui-native/dialog";
 import { Button } from "heroui-native/button";
 import { useTranslation } from "react-i18next";
-import type { MemberSummary } from "@fludge/client/application/iam/domain/member.repository";
-import type { GroupDetail } from "@fludge/client/application/iam/domain/group.repository";
+import type {
+  GroupDetail,
+  MemberSummary,
+} from "@fludge/client/application/iam/domain/entities";
 
 export function GroupMembersSection({ group }: { group: GroupDetail }) {
   const removeMembersFromGroup = useRemoveMembersFromGroup();

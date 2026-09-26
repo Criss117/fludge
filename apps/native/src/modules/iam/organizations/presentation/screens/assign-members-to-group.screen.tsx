@@ -18,8 +18,10 @@ import {
 import { useTranslation } from "react-i18next";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
-import type { GroupDetail } from "@fludge/client/application/iam/domain/group.repository";
-import type { MemberSummary } from "@fludge/client/application/iam/domain/member.repository";
+import {
+  GroupDetail,
+  MemberSummary,
+} from "@fludge/client/application/iam/domain/entities";
 
 interface Props {
   group: GroupDetail;

@@ -14,7 +14,7 @@ import { Checkbox, cn, Skeleton } from "heroui-native";
 import { useTranslation } from "react-i18next";
 import type { ActionFor, Resource } from "@fludge/utils/permissions/data";
 import type { TranslationKey } from "@fludge/i18n/index";
-import type { GroupSummary } from "@fludge/client/application/iam/domain/group.repository";
+import type { GroupSummary } from "@fludge/client/application/iam/domain/entities";
 import { SkeletonGroup } from "heroui-native/skeleton-group";
 
 interface Props {

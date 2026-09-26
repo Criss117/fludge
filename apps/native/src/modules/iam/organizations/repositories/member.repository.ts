@@ -1,9 +1,11 @@
 import { DatabaseService } from "@/integrations/db";
+import {
+  MemberDetail,
+  MemberSummary,
+} from "@fludge/client/application/iam/domain/entities";
 import type {
   FindAllMembersFilters,
-  MemberDetail,
   MemberRepository,
-  MemberSummary,
 } from "@fludge/client/application/iam/domain/member.repository";
 import {
   localGroup,
@@ -11,20 +13,24 @@ import {
   localMember,
   localUser,
 } from "@fludge/db/local-schemas/shared.schema";
+import { groupMember } from "@fludge/db/schema/iam.schema";
 import {
   buildConflictUpdateColumn,
   jsonObject,
 } from "@fludge/db/utils/build-queries";
 import {
   and,
+  count,
   desc,
   eq,
   getColumns,
   inArray,
   like,
   notInArray,
-  sql,
 } from "drizzle-orm";
+import { alias } from "drizzle-orm/sqlite-core";
+
+const countGroupMembersAlias = alias(groupMember, "count_group_members");
 
 export class SqliteMemberRepository implements MemberRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -71,21 +77,22 @@ export class SqliteMemberRepository implements MemberRepository {
     const memberGroups = await this.db
       .select({
         ...getColumns(localGroup),
-        members: sql<string>`
-            json_group_array(
-              DISTINCT ${jsonObject(localGroupMember)}
-            ) FILTER (WHERE ${localGroupMember.groupId} IS NOT NULL)
-          `.as("members"),
+        totalMembers: count(countGroupMembersAlias.groupId),
       })
       .from(localGroupMember)
       .innerJoin(localGroup, eq(localGroup.id, localGroupMember.groupId))
+      .leftJoin(
+        countGroupMembersAlias,
+        eq(countGroupMembersAlias.groupId, localGroup.id)
+      )
       .where(
         and(
           eq(localGroupMember.memberId, memberId),
           eq(localGroupMember.organizationId, organizationId)
         )
       )
-      .orderBy(desc(localGroupMember.createdAt));
+      .orderBy(desc(localGroup.createdAt))
+      .groupBy(localGroup.id);
 
     return {
       ...memberData,

@@ -1,8 +1,6 @@
 import type { DatabaseService } from "@/integrations/db";
-import type {
-  OrganizationSummary,
-  OrganizationRepository,
-} from "@fludge/client/application/iam/domain/organization.repository";
+import { OrganizationSummary } from "@fludge/client/application/iam/domain/entities";
+import type { OrganizationRepository } from "@fludge/client/application/iam/domain/organization.repository";
 import { localOrganization } from "@fludge/db/local-schemas/shared.schema";
 
 import { inArray } from "drizzle-orm";

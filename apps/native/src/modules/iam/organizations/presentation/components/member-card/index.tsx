@@ -14,7 +14,7 @@ import { UserAvatar } from "@/modules/shared/components/user-avatar";
 import { cn } from "heroui-native";
 import { Checkbox } from "heroui-native/checkbox";
 import { useTranslation } from "react-i18next";
-import type { MemberSummary } from "@fludge/client/application/iam/domain/member.repository";
+import type { MemberSummary } from "@fludge/client/application/iam/domain/entities";
 
 export interface MemberCardProps {
   member: MemberSummary;

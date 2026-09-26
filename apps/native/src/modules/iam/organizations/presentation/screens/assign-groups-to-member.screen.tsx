@@ -12,9 +12,11 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
-import type { MemberDetail } from "@fludge/client/application/iam/domain/member.repository";
-import { GroupSummary } from "@fludge/client/application/iam/domain/group.repository";
 import { useFindAllGroups } from "@fludge/client/application/iam/queries/use-find-groups";
+import {
+  GroupSummary,
+  MemberDetail,
+} from "@fludge/client/application/iam/domain/entities";
 
 interface Props {
   member: MemberDetail;

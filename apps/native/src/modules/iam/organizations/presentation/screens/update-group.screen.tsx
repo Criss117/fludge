@@ -11,7 +11,7 @@ import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { Card } from "heroui-native/card";
 import { Button } from "heroui-native/button";
-import { GroupDetail } from "@fludge/client/application/iam/domain/group.repository";
+import { GroupDetail } from "@fludge/client/application/iam/domain/entities";
 
 const PADDING_BOTTOM = 20;
 

@@ -1,16 +1,5 @@
-import type {
-  LocalGroup,
-  LocalMember,
-  LocalUser,
-} from "@fludge/db/local-schemas/shared.schema";
-
-export type MemberSummary = LocalMember & {
-  user: LocalUser;
-};
-
-export type MemberDetail = MemberSummary & {
-  groups: LocalGroup[];
-};
+import type { LocalMember } from "@fludge/db/local-schemas/shared.schema";
+import type { MemberDetail, MemberSummary } from "./entities";
 
 export type FindAllMembersFilters = {
   searchQuery?: string;
