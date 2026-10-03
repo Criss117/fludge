@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { ProductFormSchema } from "@fludge/client/catalog/product.form";
+import type { ProductFormSchema } from "@fludge/client/catalog/forms/product.form";
 import { formatCurrency } from "@fludge/utils/format-currency";
 import { cn } from "heroui-native";
 import { Button } from "heroui-native/button";

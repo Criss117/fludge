@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { FieldError } from "heroui-native/field-error";
 import { useTranslation } from "react-i18next";
-import { useSignUpForm } from "@fludge/client/iam/sign-in-form";
+import { useSignUpForm } from "@fludge/client/iam/forms/sign-in-form";
 import { AuthFormInputs } from "../components/auth-form-inputs";
 
 export function SignUpScreen() {

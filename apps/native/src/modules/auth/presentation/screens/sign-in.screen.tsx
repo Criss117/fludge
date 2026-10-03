@@ -10,7 +10,7 @@ import { Typography } from "heroui-native/text";
 import { useAuth } from "@fludge/client/providers/auth.provider";
 import { FieldError } from "heroui-native/field-error";
 import { useTranslation } from "react-i18next";
-import { useSignInForm } from "@fludge/client/iam/sign-in-form";
+import { useSignInForm } from "@fludge/client/iam/forms/sign-in-form";
 import { AuthFormInputs } from "../components/auth-form-inputs";
 import { useInvalidateSync } from "@fludge/client/sync/use-invalidate-sync";
 

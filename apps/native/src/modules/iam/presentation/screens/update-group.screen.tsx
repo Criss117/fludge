@@ -6,7 +6,7 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { ScrollView, View } from "react-native";
 import { GroupFormInputs } from "../components/group-form-inputs";
 import { useTranslation } from "react-i18next";
-import { useGroupForm } from "@fludge/client/iam/group.form";
+import { useGroupForm } from "@fludge/client/iam/forms/group.form";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { Card } from "heroui-native/card";

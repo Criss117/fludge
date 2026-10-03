@@ -6,7 +6,7 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { ScrollView, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useRegisterMember } from "@fludge/client/iam/mutations/use-member.mutations";
-import { useRegisterMemberForm } from "@fludge/client/iam/member.form";
+import { useRegisterMemberForm } from "@fludge/client/iam/forms/member.form";
 import { AuthFormInputs } from "@/modules/auth/presentation/components/auth-form-inputs";
 
 const PADDING_BOTTOM = 20;

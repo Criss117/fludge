@@ -96,7 +96,8 @@ export class SeedCatalogService {
 
         const searchBlob = new SearchBlob(productName, ...barcodes).value;
 
-        const categoryId = orgCats.length > 0 ? orgCats[i % orgCats.length].id : null;
+        const categoryId =
+          orgCats.length > 0 ? orgCats[i % orgCats.length]?.id : null;
 
         const productRow = {
           id: productId,
@@ -184,9 +185,6 @@ export class SeedCatalogService {
       }),
     );
 
-    if (err)
-      throw new Error("Error clearing catalog tables", { cause: err });
+    if (err) throw new Error("Error clearing catalog tables", { cause: err });
   }
-
-
 }

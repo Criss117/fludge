@@ -5,7 +5,7 @@ import { Separator } from "heroui-native/separator";
 import {
   useCreateCustomerForm,
   useUpdateCustomerForm,
-} from "@fludge/client/commerce/customer.form";
+} from "@fludge/client/commerce/forms/customer.form";
 import { CustomerFormInputs } from "./customer-form-inputs";
 
 type Form =

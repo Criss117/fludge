@@ -5,7 +5,7 @@ import { FieldError } from "@/modules/shared/components/field-error";
 import type { MinimalField } from "@fludge/client/shared/field-api";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import type { CustomerFormSchema } from "@fludge/client/commerce/customer.form";
+import type { CustomerFormSchema } from "@fludge/client/commerce/forms/customer.form";
 import { customerDocumentTypeEnum } from "@fludge/utils/enums/db-enums";
 import { Label } from "heroui-native/label";
 import { TextField } from "heroui-native/text-field";

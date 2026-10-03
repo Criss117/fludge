@@ -7,7 +7,7 @@ import { GroupFormInputs } from "../components/group-form-inputs";
 import { useTranslation } from "react-i18next";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useCreateGroup } from "@fludge/client/iam/mutations/use-group.mutations";
-import { useGroupForm } from "@fludge/client/iam/group.form";
+import { useGroupForm } from "@fludge/client/iam/forms/group.form";
 import { Card } from "heroui-native/card";
 import { Button } from "heroui-native/button";
 import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";

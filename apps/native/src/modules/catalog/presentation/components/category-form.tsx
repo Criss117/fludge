@@ -2,7 +2,7 @@ import { MaterialIcons } from "@/modules/shared/components/icons";
 import {
   useCreateCategoryForm,
   useUpdateCategoryForm,
-} from "@fludge/client/catalog/category.form";
+} from "@fludge/client/catalog/forms/category.form";
 import {
   BottomSheetFooter,
   BottomSheetFooterProps,

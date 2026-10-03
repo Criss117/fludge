@@ -8,7 +8,7 @@ import { useRegisterOrganization } from "@fludge/client/iam/mutations/use-organi
 import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
-import { useRegisterOrganizationForm } from "@fludge/client/iam/organization.form";
+import { useRegisterOrganizationForm } from "@fludge/client/iam/forms/organization.form";
 import { KeyboardScrollView } from "@/modules/shared/components/keyboard-scroll-view";
 import { useOrganization } from "@fludge/client/providers/organization.provider";
 
