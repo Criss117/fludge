@@ -174,8 +174,8 @@ function useAuthState(
       catalogContainer.repositories.productRepository.clearAll();
       catalogContainer.repositories.categoryRepository.clearAll();
 
-      iamContainer.repositories.memberRepository.clearAll();
       iamContainer.repositories.groupRepository.clearAll();
+      iamContainer.repositories.memberRepository.clearAll();
       iamContainer.repositories.organizationRepository.clearAll();
     },
   });

@@ -34,7 +34,6 @@ export class NativeMemberRepository implements MemberRepository {
 
   public async clearAll(): Promise<void> {
     this.db.transaction((tx) => {
-      tx.delete(localGroupMember).run();
       tx.delete(localMember).run();
     });
   }
