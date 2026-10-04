@@ -1,106 +1,107 @@
 import {
-  queryOptions,
+  useMutation,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { createContext, use, useEffect, useState } from "react";
-import type { OrganizationRepository } from "../iam/domain/organization.repository";
-import { tryCatch } from "@fludge/utils/trycatch";
-import type { LocalOrganization } from "@fludge/db/local-schemas/shared.schema";
+import { createContext, use } from "react";
+import { useContainer } from "./container.provider";
+import { useApp } from "../iam/hooks/use-app";
 
-const organizationsKeys = {
-  all: ["iam", "organizations"] as const,
-};
+const QUERY_KEY = ["iam", "organizations"] as const;
 
-function findAllOrganizationsOptions(
-  organizationRepository: OrganizationRepository,
-) {
-  return queryOptions({
-    queryKey: organizationsKeys.all,
+function useGenerateContext() {
+  const { iamContainer } = useContainer();
+  const queryClient = useQueryClient();
+  const { data: appData, setActiveOrganization } = useApp();
+
+  const organizationStorage = useSuspenseQuery({
+    queryKey: QUERY_KEY,
     queryFn: async () => {
-      return organizationRepository.findAll();
+      const data =
+        await iamContainer.repositories.organizationRepository.findAll();
+
+      const activeOrganization = appData?.activeOrganizationId
+        ? data.find((o) => o.id === appData.activeOrganizationId)
+        : null;
+
+      return {
+        list: data,
+        activeOrganization: activeOrganization ?? null,
+      };
     },
   });
-}
 
-function useGenerateContext(organizationRepository: OrganizationRepository) {
-  const organizationsQuery = useSuspenseQuery(
-    findAllOrganizationsOptions(organizationRepository),
-  );
+  const switchOrganization = useMutation({
+    mutationKey: ["iam", "organizations", "switch"],
+    mutationFn: async (organizationId: string) => {
+      const existingOrganization = organizationStorage.data.list.find(
+        (o) => o.id === organizationId,
+      );
+
+      if (!existingOrganization) return;
+
+      await setActiveOrganization.mutateAsync({
+        activeOrganizationId: existingOrganization.id,
+      });
+
+      queryClient.setQueryData(QUERY_KEY, {
+        list: organizationStorage.data.list,
+        activeOrganization: existingOrganization,
+      });
+    },
+  });
 
   return {
-    organizations: organizationsQuery,
+    organizationStorage,
+    switchOrganization,
   };
 }
 
-type Context = ReturnType<typeof useGenerateContext> & {
-  activeOrganization: LocalOrganization | null;
-  switchOrganization: (organizationId: string) => Promise<void>;
+export function useInvalidateOrganizations() {
+  const queryClient = useQueryClient();
+
+  const invalidateAll = () => {
+    queryClient.invalidateQueries({
+      queryKey: QUERY_KEY,
+    });
+  };
+
+  return { invalidateAll };
+}
+
+type Context = {
+  organizations: ReturnType<
+    typeof useGenerateContext
+  >["organizationStorage"]["data"]["list"];
+  activeOrganization: ReturnType<
+    typeof useGenerateContext
+  >["organizationStorage"]["data"]["activeOrganization"];
+  switchOrganization: ReturnType<
+    typeof useGenerateContext
+  >["switchOrganization"];
+  hasOrganizations: boolean;
 };
 
 const OrganizationContext = createContext<Context | null>(null);
 
-type OrganizationData = {
-  activeOrganizationId: string | null;
-};
-
-export interface IOrganizationStorage {
-  save(data: OrganizationData): Promise<void>;
-  load(): Promise<OrganizationData | null>;
-  clear(): Promise<void>;
-}
-
 interface Props {
   children: React.ReactNode;
-  organizationRepository: OrganizationRepository;
-  organizationStorage: IOrganizationStorage;
   fallback: React.ReactNode;
 }
 
-export function OrganizationProvider({
-  children,
-  organizationRepository,
-  organizationStorage,
-  fallback,
-}: Props) {
-  const [isPending, setIsPending] = useState(true);
-  const [activeOrganization, setActiveOrganization] =
-    useState<LocalOrganization | null>(null);
-  const context = useGenerateContext(organizationRepository);
+export function OrganizationProvider({ children, fallback }: Props) {
+  const { organizationStorage, switchOrganization } = useGenerateContext();
 
-  const switchOrganization = async (organizationId: string) => {
-    const existingOrganization = context.organizations.data.find(
-      (o) => o.id === organizationId,
-    );
-
-    await organizationStorage.save({
-      activeOrganizationId: existingOrganization?.id ?? null,
-    });
-
-    setActiveOrganization(existingOrganization ?? null);
-  };
-
-  useEffect(() => {
-    async function handleActiveOrganizationChange() {
-      const [saved, errorLoading] = await tryCatch(organizationStorage.load());
-
-      if (errorLoading) return;
-
-      if (!saved?.activeOrganizationId) return;
-
-      await switchOrganization(saved.activeOrganizationId);
-    }
-
-    handleActiveOrganizationChange().finally(() => setIsPending(false));
-  }, []);
-
-  if (isPending) {
-    return fallback;
-  }
+  if (switchOrganization.isPending) return fallback;
 
   return (
     <OrganizationContext.Provider
-      value={{ ...context, activeOrganization, switchOrganization }}
+      value={{
+        organizations: organizationStorage.data.list,
+        activeOrganization: organizationStorage.data.activeOrganization,
+        switchOrganization,
+        hasOrganizations: organizationStorage.data.list.length > 0,
+      }}
     >
       {children}
     </OrganizationContext.Provider>
@@ -114,16 +115,4 @@ export function useOrganization() {
       "useOrganization must be used within an OrganizationProvider",
     );
   return context;
-}
-
-export function useInvalidateOrganizations() {
-  const queryClient = useQueryClient();
-
-  const invalidateAll = () => {
-    queryClient.invalidateQueries({
-      queryKey: organizationsKeys.all,
-    });
-  };
-
-  return { invalidateAll };
 }

@@ -9,8 +9,6 @@ import {
 import type { createAuthClient } from "better-auth/client";
 import { createContext, use, useMemo, Suspense, type ReactNode } from "react";
 import { useNetwork } from "./network-status.provider";
-import { useInvalidateSync } from "../sync/use-invalidate-sync";
-import { useContainer } from "./container.provider";
 
 type AuthClient = ReturnType<typeof createAuthClient>;
 
@@ -56,9 +54,7 @@ function authOptions(
   const session = queryOptions({
     queryKey: ["session"],
     queryFn: async () => {
-      if (!isInternetReachable) {
-        return sessionStorage.load();
-      }
+      if (!isInternetReachable) return sessionStorage.load();
 
       try {
         const { data, error } = await authClient.getSession();
@@ -112,7 +108,7 @@ function authOptions(
 
       if (error) throw new Error(error.message, { cause: error });
 
-      await queryClient.invalidateQueries({ queryKey: session.queryKey });
+      await queryClient.invalidateQueries(session);
     },
   });
 
@@ -139,8 +135,6 @@ function useAuthState(
   queryClient: QueryClient,
   sessionStorage: ISessionStorage,
 ) {
-  const { catalogContainer, commerceContainer, iamContainer } = useContainer();
-  const { invalidateSync } = useInvalidateSync();
   const { isInternetReachable } = useNetwork();
   const options = useMemo(
     () =>
@@ -150,35 +144,11 @@ function useAuthState(
 
   const session = useSuspenseQuery(options.session);
 
-  const signUpEmail = useMutation({
-    ...options.signUpEmail,
-    onSuccess: () => {
-      invalidateSync();
-    },
-  });
+  const signUpEmail = useMutation(options.signUpEmail);
 
-  const signInEmail = useMutation({
-    ...options.signInEmail,
-    onSuccess: () => {
-      invalidateSync();
-    },
-  });
+  const signInEmail = useMutation(options.signInEmail);
 
-  const signOut = useMutation({
-    ...options.signOut,
-    onSuccess: () => {
-      commerceContainer.repositories.localTicketRepository.clearAll();
-      commerceContainer.repositories.saleRepository.clearAll();
-      commerceContainer.repositories.customerRepository.clearAll();
-
-      catalogContainer.repositories.productRepository.clearAll();
-      catalogContainer.repositories.categoryRepository.clearAll();
-
-      iamContainer.repositories.groupRepository.clearAll();
-      iamContainer.repositories.memberRepository.clearAll();
-      iamContainer.repositories.organizationRepository.clearAll();
-    },
-  });
+  const signOut = useMutation(options.signOut);
 
   return useMemo(
     () => ({

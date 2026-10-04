@@ -15,7 +15,7 @@ export function useRegisterOrganization() {
   return useMutation(
     orpc.organization.commands.register.mutationOptions({
       onSuccess: async ({ organization, group, member }) => {
-        await switchOrganization(organization.id);
+        await switchOrganization.mutateAsync(organization.id);
 
         await iamContainer.repositories.organizationRepository.save(
           organization,

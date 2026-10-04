@@ -18,21 +18,21 @@ export function SelectOrganizationScreen() {
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const { session } = useAuth();
-  const { organizations, activeOrganization, switchOrganization } =
+  const { organizations, switchOrganization, activeOrganization } =
     useOrganization();
 
   const userIsRoot = !!session.data?.user.isRoot;
 
   const allOrganizations = useMemo(() => {
-    if (!query) return organizations.data;
+    if (!query) return organizations;
 
-    return organizations.data.filter(
+    return organizations.filter(
       (d) =>
         d.name.toLowerCase().includes(query.toLowerCase()) ||
         d.taxId.toLowerCase().includes(query.toLowerCase()) ||
         d.legalName.toLowerCase().includes(query.toLowerCase())
     );
-  }, [organizations.data, query]);
+  }, [organizations, query]);
 
   const onChangeText = (text: string) => setQuery(text.trim());
 
@@ -45,7 +45,7 @@ export function SelectOrganizationScreen() {
       return;
     }
 
-    await switchOrganization(organizationId);
+    await switchOrganization.mutateAsync(organizationId);
     router.replace({ pathname: "/(private)/dashboard/(tabs)" });
   };
 

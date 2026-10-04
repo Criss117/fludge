@@ -5,12 +5,11 @@ import { useThemeColor } from "heroui-native";
 
 export default function OrganizationLayout() {
   const { session } = useAuth();
-  const { organizations } = useOrganization();
+  const { hasOrganizations } = useOrganization();
 
   const [background, foreground] = useThemeColor(["background", "foreground"]);
 
   const userIsRoot = !!session.data?.user.isRoot;
-  const hasOrganizations = organizations.data.length > 0;
 
   return (
     <Stack

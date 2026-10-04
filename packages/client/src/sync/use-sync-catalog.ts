@@ -37,7 +37,7 @@ export function useSyncCatalog() {
 
   const httpRepository = httpClientCatalogRepository(orpc);
 
-  return useSuspenseQuery({
+  const query = useSuspenseQuery({
     queryKey: ["sync", "catalog"],
     queryFn: async (): Promise<SyncData> => {
       if (!session.data || !isInternetReachable)
@@ -88,4 +88,6 @@ export function useSyncCatalog() {
     },
     refetchInterval: MINUTE * 5,
   });
+
+  return query;
 }

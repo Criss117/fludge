@@ -26,9 +26,7 @@ function NetworkProviders({ children }: { children: React.ReactNode }) {
         <DependenciesProvider>
           <QueryClientProvider>
             <AuthProvider>
-              <ORPCProvider>
-                <SyncDatabase>{children}</SyncDatabase>
-              </ORPCProvider>
+              <ORPCProvider>{children}</ORPCProvider>
             </AuthProvider>
           </QueryClientProvider>
         </DependenciesProvider>

@@ -2,8 +2,8 @@ import { createOrpcProvider } from "@fludge/client/providers/orpc.provider";
 import { env } from "@fludge/env/native";
 import { Platform } from "react-native";
 import { authClient } from "../auth";
-import { OrganizationStore } from "@/modules/shared/utils/organization-store";
 import { ORGANIZATION_HEADER_KEY } from "@fludge/utils/constants";
+import { iamContainer } from "../dependencies/iam.container";
 
 export const ORPCProvider = createOrpcProvider({
   url: `${env.EXPO_PUBLIC_SERVER_URL}/rpc`,
@@ -17,9 +17,9 @@ export const ORPCProvider = createOrpcProvider({
     let activeOrganizationId: string | null = null;
 
     try {
-      const organizationStore = await OrganizationStore.load();
+      const appStore = await iamContainer.repositories.appRepository.find();
 
-      activeOrganizationId = organizationStore?.activeOrganizationId ?? null;
+      activeOrganizationId = appStore?.activeOrganizationId ?? null;
     } catch (error) {
       console.warn("Error obtaining organization cookie:", error);
     }

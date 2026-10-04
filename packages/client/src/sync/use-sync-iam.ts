@@ -37,7 +37,7 @@ export function useSyncIam() {
 
   const httpRepository = httpClientIamRepository(orpc);
 
-  return useSuspenseQuery({
+  const query = useSuspenseQuery({
     queryKey: ["sync", "iam"],
     queryFn: async (): Promise<SyncData> => {
       if (!session.data || !isInternetReachable)
@@ -88,4 +88,6 @@ export function useSyncIam() {
     },
     refetchInterval: MINUTE * 5,
   });
+
+  return query;
 }

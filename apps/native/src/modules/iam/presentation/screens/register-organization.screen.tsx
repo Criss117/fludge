@@ -15,7 +15,7 @@ import { useOrganization } from "@fludge/client/providers/organization.provider"
 export function RegisterOrganizationScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { organizations } = useOrganization();
+  const { hasOrganizations } = useOrganization();
   const registerOrganization = useRegisterOrganization();
 
   const form = useRegisterOrganizationForm({
@@ -30,8 +30,6 @@ export function RegisterOrganizationScreen() {
       });
     },
   });
-
-  const hasOrganizations = organizations.data.length > 0;
 
   return (
     <View className="relative flex-1">

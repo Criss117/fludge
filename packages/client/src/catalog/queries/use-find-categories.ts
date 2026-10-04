@@ -36,7 +36,7 @@ export function useFindCategories(filters?: FindAllGroupsFilters) {
     initialPageParam: DEFAULT_CURSOR,
     queryFn: ({ pageParam }) =>
       catalogContainer.repositories.categoryRepository.findAll(
-        activeOrganization.id,
+        activeOrganization!.id,
         pageParam,
         {
           searchQuery: normalizedQuery,
