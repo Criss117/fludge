@@ -20,4 +20,6 @@ export interface GroupRepository {
   save(group: LocalGroup | LocalGroup[]): Promise<void>;
 
   delete(group: LocalGroup | LocalGroup[]): Promise<void>;
+
+  clearAll(): Promise<void>;
 }

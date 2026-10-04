@@ -34,6 +34,13 @@ import {
 export class NativeProductRepository implements ProductRepository {
   constructor(private readonly db: DatabaseService) {}
 
+  public async clearAll(): Promise<void> {
+    this.db.transaction((tx) => {
+      tx.delete(localProductPresentation).run();
+      tx.delete(localProduct).run();
+    });
+  }
+
   public async findAll(
     organizationId: string,
     cursor: Cursor,
@@ -49,7 +56,7 @@ export class NativeProductRepository implements ProductRepository {
       sortBy(localProduct.createdAt, filters.orderBy.createdAt)
     );
 
-    const rows = await this.db
+    const rows = this.db
       .select({
         ...getColumns(localProduct),
         presentations: sql<string>`
@@ -78,7 +85,8 @@ export class NativeProductRepository implements ProductRepository {
       .limit(cursor.limit + 1)
       .offset(cursor.limit * cursor.page)
       .groupBy(localProduct.id)
-      .orderBy(...orderByFilters);
+      .orderBy(...orderByFilters)
+      .all();
 
     return paginate(
       rows.map((p) => {
@@ -103,7 +111,7 @@ export class NativeProductRepository implements ProductRepository {
     organizationId: string,
     productId: string
   ): Promise<ProductDetail | null> {
-    const rows = await this.db
+    const row = this.db
       .select()
       .from(localProduct)
       .where(
@@ -112,20 +120,20 @@ export class NativeProductRepository implements ProductRepository {
           eq(localProduct.id, productId)
         )
       )
-      .limit(1);
+      .limit(1)
+      .get();
 
-    const product = rows.at(0);
+    if (!row) return null;
 
-    if (!product) return null;
-
-    const presentations = await this.db
+    const presentations = this.db
       .select()
       .from(localProductPresentation)
       .where(eq(localProductPresentation.productId, productId))
-      .orderBy(desc(localProductPresentation.createdAt));
+      .orderBy(desc(localProductPresentation.createdAt))
+      .all();
 
     return {
-      ...product,
+      ...row,
       presentations,
     };
   }
@@ -148,7 +156,7 @@ export class NativeProductRepository implements ProductRepository {
       }
     }
 
-    await this.db.transaction((tx) => {
+    this.db.transaction((tx) => {
       if (productsValues.length > 0) {
         tx.insert(localProduct)
           .values(productsValues)
@@ -191,7 +199,7 @@ export class NativeProductRepository implements ProductRepository {
   ): Promise<void> {
     const productIds = Array.isArray(productId) ? productId : [productId];
 
-    await this.db.transaction((tx) => {
+    this.db.transaction((tx) => {
       tx.delete(localProductPresentation)
         .where(
           and(

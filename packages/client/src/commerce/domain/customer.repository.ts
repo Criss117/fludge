@@ -23,4 +23,6 @@ export interface CustomerRepository {
   save(customer: LocalCustomer | LocalCustomer[]): Promise<void>;
 
   delete(organizationId: string, customerId: string | string[]): Promise<void>;
+
+  clearAll(): Promise<void>;
 }

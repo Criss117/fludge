@@ -15,4 +15,6 @@ export interface SaleRepository {
   ): Promise<PaginatedResponse<SaleDetail>>;
 
   save(sale: SaleDetail | SaleDetail[]): Promise<void>;
+
+  clearAll(): Promise<void>;
 }

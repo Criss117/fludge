@@ -23,12 +23,20 @@ import {
 export class NativeSaleRepository implements SaleRepository {
   constructor(private readonly db: DatabaseService) {}
 
+  public async clearAll(): Promise<void> {
+    this.db.transaction((tx) => {
+      tx.delete(localSalePayment).run();
+      tx.delete(localSaleItem).run();
+      tx.delete(localSale).run();
+    });
+  }
+
   public async findAll(
     organizationId: string,
     cursor: Cursor,
     filters?: FindAllSalesFilters
   ): Promise<PaginatedResponse<SaleDetail>> {
-    const rows = await this.db
+    const rows = this.db
       .select({
         ...getColumns(localSale),
         items: sql<string>`
@@ -56,7 +64,8 @@ export class NativeSaleRepository implements SaleRepository {
       .groupBy(localSale.id)
       .orderBy(desc(localSale.createdAt))
       .limit(cursor.limit + 1)
-      .offset(cursor.limit * cursor.page);
+      .offset(cursor.limit * cursor.page)
+      .all();
 
     return paginate(
       rows
@@ -97,7 +106,7 @@ export class NativeSaleRepository implements SaleRepository {
       items.push(...saleItems);
     }
 
-    await this.db.transaction((tx) => {
+    this.db.transaction((tx) => {
       if (sales.length > 0) {
         tx.insert(localSale)
           .values(sales)

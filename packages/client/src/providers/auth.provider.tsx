@@ -9,6 +9,8 @@ import {
 import type { createAuthClient } from "better-auth/client";
 import { createContext, use, useMemo, Suspense, type ReactNode } from "react";
 import { useNetwork } from "./network-status.provider";
+import { useInvalidateSync } from "../sync/use-invalidate-sync";
+import { useContainer } from "./container.provider";
 
 type AuthClient = ReturnType<typeof createAuthClient>;
 
@@ -123,7 +125,9 @@ function authOptions(
 
       await sessionStorage.clear();
 
-      await queryClient.invalidateQueries({ queryKey: session.queryKey });
+      queryClient.setQueryData(session.queryKey, null);
+
+      await queryClient.invalidateQueries();
     },
   });
 
@@ -135,6 +139,8 @@ function useAuthState(
   queryClient: QueryClient,
   sessionStorage: ISessionStorage,
 ) {
+  const { catalogContainer, commerceContainer, iamContainer } = useContainer();
+  const { invalidateSync } = useInvalidateSync();
   const { isInternetReachable } = useNetwork();
   const options = useMemo(
     () =>
@@ -144,9 +150,35 @@ function useAuthState(
 
   const session = useSuspenseQuery(options.session);
 
-  const signUpEmail = useMutation(options.signUpEmail);
-  const signInEmail = useMutation(options.signInEmail);
-  const signOut = useMutation(options.signOut);
+  const signUpEmail = useMutation({
+    ...options.signUpEmail,
+    onSuccess: () => {
+      invalidateSync();
+    },
+  });
+
+  const signInEmail = useMutation({
+    ...options.signInEmail,
+    onSuccess: () => {
+      invalidateSync();
+    },
+  });
+
+  const signOut = useMutation({
+    ...options.signOut,
+    onSuccess: () => {
+      commerceContainer.repositories.localTicketRepository.clearAll();
+      commerceContainer.repositories.saleRepository.clearAll();
+      commerceContainer.repositories.customerRepository.clearAll();
+
+      catalogContainer.repositories.productRepository.clearAll();
+      catalogContainer.repositories.categoryRepository.clearAll();
+
+      iamContainer.repositories.memberRepository.clearAll();
+      iamContainer.repositories.groupRepository.clearAll();
+      iamContainer.repositories.organizationRepository.clearAll();
+    },
+  });
 
   return useMemo(
     () => ({

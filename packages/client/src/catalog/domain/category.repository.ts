@@ -22,4 +22,6 @@ export interface CategoryRepository {
   save(category: CategorySummary | CategorySummary[]): Promise<void>;
 
   delete(organizationId: string, categoryId: string | string[]): Promise<void>;
+
+  clearAll(): Promise<void>;
 }

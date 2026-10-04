@@ -28,8 +28,15 @@ import {
   or,
 } from "drizzle-orm";
 
-export class SqliteGroupRepository implements GroupRepository {
+export class NativeGroupRepository implements GroupRepository {
   constructor(private readonly db: DatabaseService) {}
+
+  public async clearAll(): Promise<void> {
+    this.db.transaction((tx) => {
+      tx.delete(localGroupMember).run();
+      tx.delete(localGroup).run();
+    });
+  }
 
   public async findAll(
     organizationId: string,
@@ -38,7 +45,7 @@ export class SqliteGroupRepository implements GroupRepository {
     const excludeIds = filters?.excludeIds;
     const searchQuery = filters?.searchQuery ?? "";
 
-    const rows = await this.db
+    return this.db
       .select({
         ...getColumns(localGroup),
         totalMembers: count(localGroupMember.groupId),
@@ -53,16 +60,15 @@ export class SqliteGroupRepository implements GroupRepository {
         )
       )
       .groupBy(localGroup.id)
-      .orderBy(desc(localGroup.updatedAt));
-
-    return rows;
+      .orderBy(desc(localGroup.updatedAt))
+      .all();
   }
 
   public async findOneById(
     organizationId: string,
     groupId: string
   ): Promise<GroupDetail | null> {
-    const rows = await this.db
+    const groupData = this.db
       .select()
       .from(localGroup)
       .where(
@@ -71,13 +77,12 @@ export class SqliteGroupRepository implements GroupRepository {
           eq(localGroup.id, groupId)
         )
       )
-      .limit(1);
-
-    const groupData = rows.at(0);
+      .limit(1)
+      .get();
 
     if (!groupData) return null;
 
-    const memberRows = await this.db
+    const memberRows = this.db
       .select({
         ...getColumns(localMember),
         user: getColumns(localUser),
@@ -97,7 +102,8 @@ export class SqliteGroupRepository implements GroupRepository {
           eq(localGroupMember.groupId, groupId)
         )
       )
-      .orderBy(desc(localMember.createdAt));
+      .orderBy(desc(localMember.createdAt))
+      .all();
 
     return {
       ...groupData,
@@ -118,7 +124,7 @@ export class SqliteGroupRepository implements GroupRepository {
       members.push(...groupMembers);
     }
 
-    await this.db.transaction((tx) => {
+    this.db.transaction((tx) => {
       tx.insert(localGroup)
         .values(groups)
         .onConflictDoUpdate({
@@ -150,7 +156,7 @@ export class SqliteGroupRepository implements GroupRepository {
   public async delete(group: LocalGroup | LocalGroup[]): Promise<void> {
     const groups = Array.isArray(group) ? group : [group];
 
-    await this.db
+    this.db
       .delete(localGroup)
       .where(
         or(
@@ -161,6 +167,7 @@ export class SqliteGroupRepository implements GroupRepository {
             )
           )
         )
-      );
+      )
+      .run();
   }
 }

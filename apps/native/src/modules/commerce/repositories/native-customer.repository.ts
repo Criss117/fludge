@@ -1,4 +1,4 @@
-import { DatabaseService } from "@/integrations/db";
+import type { DatabaseService } from "@/integrations/db";
 import type {
   CustomerDetail,
   CustomerRepository,
@@ -20,20 +20,22 @@ import {
   localCustomerPayment,
   type LocalCustomer,
 } from "@fludge/db/local-schemas/shared.schema";
-import type { SaleRepository } from "@fludge/client/commerce/domain/sale.repository";
 
 export class NativeCustomerRepository implements CustomerRepository {
-  constructor(
-    private readonly db: DatabaseService,
-    private readonly saleRepository: SaleRepository
-  ) {}
+  constructor(private readonly db: DatabaseService) {}
+  public async clearAll(): Promise<void> {
+    this.db.transaction((tx) => {
+      tx.delete(localCustomerPayment).run();
+      tx.delete(localCustomer).run();
+    });
+  }
 
   public async findAll(
     organizationId: string,
     cursor: Cursor,
     filters?: FindAllCustomersFilters
   ): Promise<PaginatedResponse<CustomerSummary>> {
-    const rows = await this.db
+    const rows = this.db
       .select()
       .from(localCustomer)
       .where(
@@ -46,7 +48,8 @@ export class NativeCustomerRepository implements CustomerRepository {
       )
       .limit(cursor.limit + 1)
       .offset(cursor.limit * cursor.page)
-      .orderBy(desc(localCustomer.createdAt));
+      .orderBy(desc(localCustomer.createdAt))
+      .all();
 
     return paginate(rows, cursor);
   }
@@ -55,7 +58,7 @@ export class NativeCustomerRepository implements CustomerRepository {
     organizationId: string,
     customerId: string
   ): Promise<CustomerDetail | null> {
-    const rows = await this.db
+    const customer = this.db
       .select({
         ...getColumns(localCustomer),
         payments: sql<string>`
@@ -75,9 +78,8 @@ export class NativeCustomerRepository implements CustomerRepository {
           eq(localCustomer.id, customerId)
         )
       )
-      .limit(1);
-
-    const customer = rows.at(0);
+      .limit(1)
+      .get();
 
     if (!customer) return null;
 
@@ -110,7 +112,7 @@ export class NativeCustomerRepository implements CustomerRepository {
       payments.push(...customerPayments);
     }
 
-    await this.db.transaction((tx) => {
+    this.db.transaction((tx) => {
       tx.insert(localCustomer)
         .values(customers)
         .onConflictDoUpdate({
@@ -150,13 +152,14 @@ export class NativeCustomerRepository implements CustomerRepository {
   ): Promise<void> {
     const customerIds = Array.isArray(customerId) ? customerId : [customerId];
 
-    await this.db
+    this.db
       .delete(localCustomer)
       .where(
         and(
           eq(localCustomer.organizationId, organizationId),
           inArray(localCustomer.id, customerIds)
         )
-      );
+      )
+      .run();
   }
 }

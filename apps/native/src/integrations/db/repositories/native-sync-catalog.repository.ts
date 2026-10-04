@@ -22,8 +22,8 @@ export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository 
   ) {}
 
   public async saveAll(values: CatalogSyncResult): Promise<void> {
-    await this.productRepository.save(values.products);
     await this.categoryRepository.save(values.categories);
+    await this.productRepository.save(values.products);
   }
 
   private async getLastSyncedProduct() {

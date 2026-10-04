@@ -14,13 +14,21 @@ export const expoDb = openDatabaseSync(DATABASE_NAME, {
   enableChangeListener: true,
 });
 
+expoDb.execSync("PRAGMA foreign_keys = ON");
+expoDb.execSync("PRAGMA journal_mode = WAL");
+
 export const databaseService = drizzle(expoDb);
 
 export type DatabaseService = typeof databaseService;
 
+function DrizzleStudio() {
+  useDrizzleStudio(expoDb);
+
+  return null;
+}
+
 export function DatabaseProvider({ children }: { children: React.ReactNode }) {
   const { success, error } = useMigrations(databaseService, migrations as any);
-  useDrizzleStudio(expoDb);
 
   if (error)
     return (
@@ -33,5 +41,10 @@ export function DatabaseProvider({ children }: { children: React.ReactNode }) {
 
   if (!success) return <LoadingScreen message="app.loading_database" />;
 
-  return children;
+  return (
+    <>
+      {__DEV__ && <DrizzleStudio />}
+      {children}
+    </>
+  );
 }

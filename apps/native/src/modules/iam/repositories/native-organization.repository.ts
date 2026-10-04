@@ -5,21 +5,28 @@ import { localOrganization } from "@fludge/db/local-schemas/shared.schema";
 
 import { inArray } from "drizzle-orm";
 
-export class SqliteOrganizationRepository implements OrganizationRepository {
+export class NativeOrganizationRepository implements OrganizationRepository {
   constructor(private readonly db: DatabaseService) {}
+
+  public async clearAll(): Promise<void> {
+    this.db.transaction((tx) => {
+      tx.delete(localOrganization).run();
+    });
+  }
 
   public async delete(organizationId: string | string[]): Promise<void> {
     const organizationIds = Array.isArray(organizationId)
       ? organizationId
       : [organizationId];
 
-    await this.db
+    this.db
       .delete(localOrganization)
-      .where(inArray(localOrganization.id, organizationIds));
+      .where(inArray(localOrganization.id, organizationIds))
+      .run();
   }
 
   public async findAll(): Promise<OrganizationSummary[]> {
-    return this.db.select().from(localOrganization);
+    return this.db.select().from(localOrganization).all();
   }
 
   public async save(data: OrganizationSummary): Promise<void> {

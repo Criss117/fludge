@@ -19,12 +19,18 @@ import {
 export class NativeCategoryRepository implements CategoryRepository {
   constructor(private readonly db: DatabaseService) {}
 
+  public async clearAll(): Promise<void> {
+    this.db.transaction((tx) => {
+      tx.delete(localCategory).run();
+    });
+  }
+
   public async findAll(
     organizationId: string,
     cursor: Cursor,
     filters?: FindAllCategoriesFilters
   ): Promise<PaginatedResponse<CategorySummary>> {
-    const rows = await this.db
+    const rows = this.db
       .select()
       .from(localCategory)
       .where(
@@ -37,7 +43,8 @@ export class NativeCategoryRepository implements CategoryRepository {
       )
       .limit(cursor.limit + 1)
       .offset(cursor.limit * cursor.page)
-      .orderBy(desc(localCategory.createdAt));
+      .orderBy(desc(localCategory.createdAt))
+      .all();
 
     return paginate(rows, cursor);
   }
@@ -46,7 +53,7 @@ export class NativeCategoryRepository implements CategoryRepository {
     organizationId: string,
     categoryId: string
   ): Promise<CategorySummary | null> {
-    const rows = await this.db
+    const row = this.db
       .select()
       .from(localCategory)
       .where(
@@ -55,9 +62,10 @@ export class NativeCategoryRepository implements CategoryRepository {
           eq(localCategory.id, categoryId)
         )
       )
-      .limit(0);
+      .limit(0)
+      .get();
 
-    return rows.at(0) || null;
+    return row || null;
   }
 
   public async save(
@@ -69,7 +77,7 @@ export class NativeCategoryRepository implements CategoryRepository {
 
     if (categoriesArray.length === 0) return;
 
-    await this.db
+    this.db
       .insert(localCategory)
       .values(categoriesArray)
       .onConflictDoUpdate({
@@ -80,7 +88,8 @@ export class NativeCategoryRepository implements CategoryRepository {
           "status",
           "description",
         ]),
-      });
+      })
+      .run();
   }
 
   public async delete(
@@ -89,13 +98,14 @@ export class NativeCategoryRepository implements CategoryRepository {
   ): Promise<void> {
     const categoryIds = Array.isArray(categoryId) ? categoryId : [categoryId];
 
-    await this.db
+    this.db
       .delete(localCategory)
       .where(
         and(
           eq(localCategory.organizationId, organizationId),
           inArray(localCategory.id, categoryIds)
         )
-      );
+      )
+      .run();
   }
 }

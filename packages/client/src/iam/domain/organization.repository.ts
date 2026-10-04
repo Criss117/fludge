@@ -7,4 +7,6 @@ export interface OrganizationRepository {
   save(organization: LocalOrganization | LocalOrganization[]): Promise<void>;
 
   delete(organizationId: string | string[]): Promise<void>;
+
+  clearAll(): Promise<void>;
 }

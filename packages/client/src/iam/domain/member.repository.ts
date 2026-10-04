@@ -20,4 +20,6 @@ export interface MemberRepository {
   save(member: LocalMember | LocalMember[]): Promise<void>;
 
   delete(organizationId: string, memberIds: string | string[]): Promise<void>;
+
+  clearAll(): Promise<void>;
 }

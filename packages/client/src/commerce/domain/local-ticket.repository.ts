@@ -56,4 +56,6 @@ export interface LocalTicketRepository {
   save(organizationId: string, tickets: Ticket[]): Promise<void>;
 
   clear(organizationId: string): Promise<void>;
+
+  clearAll(): Promise<void>;
 }

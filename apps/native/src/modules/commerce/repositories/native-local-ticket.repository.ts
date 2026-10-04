@@ -17,15 +17,6 @@ import {
 import { localProduct } from "@fludge/db/local-schemas/shared.schema";
 import { and, eq, getColumns, inArray } from "drizzle-orm";
 
-type ProductRow = TicketProductSelect & {
-  productName: string | null;
-  productStock: number | null;
-  productMinStock: number | null;
-  productallowNegativeStock: boolean | null;
-};
-
-type PresentationRow = TicketProductPresentationSelect;
-
 function createDefaultTicket(organizationId: string): Ticket {
   return {
     id: crypto.randomUUID(),
@@ -36,24 +27,33 @@ function createDefaultTicket(organizationId: string): Ticket {
   };
 }
 
-export class SqliteLocalTicketRepository implements LocalTicketRepository {
+export class NativeLocalTicketRepository implements LocalTicketRepository {
   constructor(private readonly db: DatabaseService) {}
 
+  public async clearAll(): Promise<void> {
+    this.db.transaction((tx) => {
+      tx.delete(ticketProductPresentation).run();
+      tx.delete(ticketProduct).run();
+      tx.delete(ticket).run();
+    });
+  }
+
   public async load(organizationId: string): Promise<Ticket[]> {
-    const tickets = await this.db
+    const tickets = this.db
       .select()
       .from(ticket)
-      .where(eq(ticket.organizationId, organizationId));
+      .where(eq(ticket.organizationId, organizationId))
+      .all();
 
     if (tickets.length === 0) {
       const defaultTicket = createDefaultTicket(organizationId);
 
-      await this.db.insert(ticket).values(defaultTicket);
+      this.db.insert(ticket).values(defaultTicket).run();
 
       return [defaultTicket];
     }
 
-    const productRows = await this.db
+    const productRows = this.db
       .select({
         ...getColumns(ticketProduct),
         product: getColumns(localProduct),
@@ -68,9 +68,10 @@ export class SqliteLocalTicketRepository implements LocalTicketRepository {
             tickets.map((t) => t.id)
           )
         )
-      );
+      )
+      .all();
 
-    const presentationRows = await this.db
+    const presentationRows = this.db
       .select()
       .from(ticketProductPresentation)
       .where(
@@ -81,7 +82,8 @@ export class SqliteLocalTicketRepository implements LocalTicketRepository {
             productRows.map((p) => p.id)
           )
         )
-      );
+      )
+      .all();
 
     const products: TicketProduct[] = productRows.map((p) => {
       const presentations = presentationRows.filter(
@@ -117,10 +119,11 @@ export class SqliteLocalTicketRepository implements LocalTicketRepository {
     if (!someTicketIsActive) {
       allTickets[0]!.isActive = true;
 
-      await this.db
+      this.db
         .update(ticket)
         .set({ isActive: true })
-        .where(eq(ticket.id, allTickets[0]!.id));
+        .where(eq(ticket.id, allTickets[0]!.id))
+        .run();
     }
 
     return allTickets;
@@ -150,7 +153,7 @@ export class SqliteLocalTicketRepository implements LocalTicketRepository {
       }
     }
 
-    await this.db.transaction((tx) => {
+    this.db.transaction((tx) => {
       tx.delete(ticketProductPresentation)
         .where(eq(ticketProductPresentation.organizationId, organizationId))
         .run();
@@ -174,8 +177,9 @@ export class SqliteLocalTicketRepository implements LocalTicketRepository {
   }
 
   public async clear(organizationId: string): Promise<void> {
-    await this.db
+    this.db
       .delete(ticket)
-      .where(eq(ticket.organizationId, organizationId));
+      .where(eq(ticket.organizationId, organizationId))
+      .run();
   }
 }

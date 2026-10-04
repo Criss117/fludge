@@ -55,6 +55,7 @@ export const screens = {
       commerce: {
         title: "Comercio",
         refetching: "Sincronizando Comercio...",
+        last_synced_at: "Última sincronización",
         on_success: {
           title: "Sincronización realizada con éxito",
           description: "Se han sincronizado todos los datos de Comercio",

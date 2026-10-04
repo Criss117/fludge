@@ -2,7 +2,6 @@ import "./i18n";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { FontsProvider } from "./fonts";
-import { HeroUIProvider } from "./heroui";
 import { QueryClientProvider } from "./query";
 import { ORPCProvider } from "./orpc";
 import { AuthProvider } from "./auth";
@@ -24,15 +23,15 @@ function NetworkProviders({ children }: { children: React.ReactNode }) {
   return (
     <NetworkProvider>
       <DatabaseProvider>
-        <QueryClientProvider>
-          <AuthProvider>
-            <ORPCProvider>
-              <DependenciesProvider>
+        <DependenciesProvider>
+          <QueryClientProvider>
+            <AuthProvider>
+              <ORPCProvider>
                 <SyncDatabase>{children}</SyncDatabase>
-              </DependenciesProvider>
-            </ORPCProvider>
-          </AuthProvider>
-        </QueryClientProvider>
+              </ORPCProvider>
+            </AuthProvider>
+          </QueryClientProvider>
+        </DependenciesProvider>
       </DatabaseProvider>
     </NetworkProvider>
   );

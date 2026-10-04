@@ -1,15 +1,15 @@
-import { SqliteOrganizationRepository } from "@/modules/iam/repositories/organization.repository";
+import { NativeOrganizationRepository } from "@/modules/iam/repositories/native-organization.repository";
 import { generateIamContainer } from "@fludge/client/iam/container";
 import { databaseService } from "../db";
-import { SqliteMemberRepository } from "@/modules/iam/repositories/member.repository";
-import { SqliteGroupRepository } from "@/modules/iam/repositories/group.repository";
+import { NativeMemberRepository } from "@/modules/iam/repositories/native-member.repository";
+import { NativeGroupRepository } from "@/modules/iam/repositories/native-group.repository";
 import { NativeSyncIamRepository } from "../db/repositories/native-sync-iam.repository";
 
-const organizationRepository = new SqliteOrganizationRepository(
+const organizationRepository = new NativeOrganizationRepository(
   databaseService
 );
-const memberRepository = new SqliteMemberRepository(databaseService);
-const groupRepository = new SqliteGroupRepository(databaseService);
+const memberRepository = new NativeMemberRepository(databaseService);
+const groupRepository = new NativeGroupRepository(databaseService);
 
 const syncIamRepository = new NativeSyncIamRepository(databaseService);
 

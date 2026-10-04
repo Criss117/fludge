@@ -1,5 +1,5 @@
 import { DatabaseService } from "@/integrations/db";
-import {
+import type {
   MemberDetail,
   MemberSummary,
 } from "@fludge/client/iam/domain/entities";
@@ -14,10 +14,7 @@ import {
   localUser,
 } from "@fludge/db/local-schemas/shared.schema";
 import { groupMember } from "@fludge/db/schema/iam.schema";
-import {
-  buildConflictUpdateColumn,
-  jsonObject,
-} from "@fludge/db/utils/build-queries";
+import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import {
   and,
   count,
@@ -32,8 +29,15 @@ import { alias } from "drizzle-orm/sqlite-core";
 
 const countGroupMembersAlias = alias(groupMember, "count_group_members");
 
-export class SqliteMemberRepository implements MemberRepository {
+export class NativeMemberRepository implements MemberRepository {
   constructor(private readonly db: DatabaseService) {}
+
+  public async clearAll(): Promise<void> {
+    this.db.transaction((tx) => {
+      tx.delete(localGroupMember).run();
+      tx.delete(localMember).run();
+    });
+  }
 
   public async delete(
     organizationId: string,
@@ -41,21 +45,22 @@ export class SqliteMemberRepository implements MemberRepository {
   ): Promise<void> {
     const memberIds = Array.isArray(memberId) ? memberId : [memberId];
 
-    await this.db
+    this.db
       .delete(localMember)
       .where(
         and(
           eq(localMember.organizationId, organizationId),
           inArray(localMember.id, memberIds)
         )
-      );
+      )
+      .run();
   }
 
   public async findOneById(
     organizationId: string,
     memberId: string
   ): Promise<MemberDetail | null> {
-    const rows = await this.db
+    const memberData = this.db
       .select({
         ...getColumns(localMember),
         user: getColumns(localUser),
@@ -68,9 +73,8 @@ export class SqliteMemberRepository implements MemberRepository {
           eq(localMember.id, memberId)
         )
       )
-      .limit(1);
-
-    const memberData = rows.at(0);
+      .limit(1)
+      .get();
 
     if (!memberData) return null;
 
@@ -121,7 +125,8 @@ export class SqliteMemberRepository implements MemberRepository {
           like(localUser.name, "%" + searchQuery + "%")
         )
       )
-      .orderBy(desc(localMember.createdAt));
+      .orderBy(desc(localMember.createdAt))
+      .all();
   }
 
   public async save(values: MemberSummary | MemberSummary[]): Promise<void> {
