@@ -12,10 +12,10 @@ export class NativeAppRepository implements AppRepository {
   constructor(private readonly db: DatabaseService) {}
 
   public async find(): Promise<AppSelect> {
-    let appData = this.db.select().from(app).get();
+    let [appData] = this.db.select().from(app).limit(1).all();
 
     if (!appData) {
-      appData = this.db
+      [appData] = this.db
         .insert(app)
         .values({
           theme: "light",
@@ -26,7 +26,7 @@ export class NativeAppRepository implements AppRepository {
           updatedAt: new Date(),
         })
         .returning()
-        .get();
+        .all();
     }
 
     return appData;
@@ -40,7 +40,7 @@ export class NativeAppRepository implements AppRepository {
       activeOrganizationId: string | null;
     }>
   ): Promise<AppSelect> {
-    const appData = this.db
+    const [appData] = this.db
       .insert(app)
       .values({
         ...values,
@@ -49,16 +49,16 @@ export class NativeAppRepository implements AppRepository {
       })
       .onConflictDoUpdate({
         target: app.id,
-        set: values,
+        set: { ...values, updatedAt: new Date() },
       })
       .returning()
-      .get();
+      .all();
 
     return appData;
   }
 
   public async clear(): Promise<AppSelect> {
-    const appData = this.db
+    const [appData] = this.db
       .update(app)
       .set({
         theme: "light",
@@ -69,7 +69,7 @@ export class NativeAppRepository implements AppRepository {
       })
       .where(eq(app.id, APP_ID))
       .returning()
-      .get();
+      .all();
 
     return appData;
   }

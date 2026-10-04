@@ -1,3 +1,13 @@
+CREATE TABLE `app` (
+	`id` text PRIMARY KEY DEFAULT 'app',
+	`theme` text DEFAULT 'light' NOT NULL,
+	`logged_user_id` text,
+	`last_logged_user_id` text,
+	`active_organization_id` text,
+	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE `category` (
 	`id` text PRIMARY KEY,
 	`name` text NOT NULL,

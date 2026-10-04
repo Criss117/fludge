@@ -1,5 +1,6 @@
 import { SyncDatabase } from "@/integrations/db/sync";
 import { HeroUIProvider } from "@/integrations/heroui";
+import { Text } from "@/modules/shared/components/app-text";
 import { LoadingScreen } from "@/modules/shared/components/loading-screen";
 import {
   OrganizationProvider,
@@ -42,11 +43,7 @@ export default function PrivateLayout() {
         fallback={<LoadingScreen message="app.loading_organization" />}
       >
         <HeroUIProvider>
-          <Suspense
-            fallback={<LoadingScreen message="app.loading_organization" />}
-          >
-            <StackOptions />
-          </Suspense>
+          <StackOptions />
         </HeroUIProvider>
       </OrganizationProvider>
     </SyncDatabase>

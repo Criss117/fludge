@@ -1,9 +1,12 @@
 import type { DatabaseService } from "@/integrations/db";
 import { OrganizationSummary } from "@fludge/client/iam/domain/entities";
 import type { OrganizationRepository } from "@fludge/client/iam/domain/organization.repository";
-import { localOrganization } from "@fludge/db/local-schemas/shared.schema";
+import {
+  localOrganization,
+  localUser,
+} from "@fludge/db/local-schemas/shared.schema";
 
-import { inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 export class NativeOrganizationRepository implements OrganizationRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -11,6 +14,8 @@ export class NativeOrganizationRepository implements OrganizationRepository {
   public async clearAll(): Promise<void> {
     this.db.transaction((tx) => {
       tx.delete(localOrganization).run();
+
+      tx.delete(localUser).where(eq(localUser.isRoot, true)).run();
     });
   }
 

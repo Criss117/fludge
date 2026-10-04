@@ -38,7 +38,7 @@ export function useSyncCommerce() {
   const httpRepository = httpClientCommerceRepository(orpc);
 
   return useSuspenseQuery({
-    queryKey: ["sync", "commerce"],
+    queryKey: ["sync", "commerce", session.data?.user.id],
     queryFn: async (): Promise<SyncData> => {
       if (!session.data || !isInternetReachable)
         return {

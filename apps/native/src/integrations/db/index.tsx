@@ -5,19 +5,30 @@ import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { openDatabaseSync } from "expo-sqlite";
 import { LoadingScreen } from "@/modules/shared/components/loading-screen";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-import { Text } from "@/modules/shared/components/app-text";
 import { FatalErrorScreen } from "@/modules/shared/components/fatal-error";
+import { Logger } from "drizzle-orm";
+
+class QueryCounterLogger implements Logger {
+  public count = 0;
+
+  logQuery(query: string): void {
+    this.count++;
+    console.log(`[Consulta #${this.count}]`, query);
+  }
+}
+
+export const queryLogger = new QueryCounterLogger();
 
 export const DATABASE_NAME = "local.db";
 
-export const expoDb = openDatabaseSync(DATABASE_NAME, {
-  enableChangeListener: true,
-});
+export const expoDb = openDatabaseSync(DATABASE_NAME);
 
 expoDb.execSync("PRAGMA foreign_keys = ON");
 expoDb.execSync("PRAGMA journal_mode = WAL");
 
-export const databaseService = drizzle(expoDb);
+export const databaseService = drizzle(expoDb, {
+  logger: queryLogger,
+});
 
 export type DatabaseService = typeof databaseService;
 

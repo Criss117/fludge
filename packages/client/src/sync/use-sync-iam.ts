@@ -38,7 +38,7 @@ export function useSyncIam() {
   const httpRepository = httpClientIamRepository(orpc);
 
   const query = useSuspenseQuery({
-    queryKey: ["sync", "iam"],
+    queryKey: ["sync", "iam", session.data?.user.id],
     queryFn: async (): Promise<SyncData> => {
       if (!session.data || !isInternetReachable)
         return {
@@ -72,6 +72,8 @@ export function useSyncIam() {
       const [, erroSaveAll] = await tryCatch(
         iamContainer.repositories.syncIamRepository.saveAll(values),
       );
+
+      console.log("erroSaveAll", erroSaveAll);
 
       if (erroSaveAll)
         return {

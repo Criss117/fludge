@@ -8,7 +8,11 @@ export function SyncDatabase({ children }: { children: React.ReactNode }) {
       IamFallback={<LoadingScreen message="app.loading_iam" />}
       CatalogFallback={<LoadingScreen message="app.loading_catalog" />}
       CommerceFallback={<LoadingScreen message="app.loading_commerce" />}
+      UserScopeFallback={<LoadingScreen message="app.loading_user_scope" />}
 
+      UserScopeErrorComponent={({ error }) => (
+        <Text>Retrying UserScope {JSON.stringify(error, null, 2)}</Text>
+      )}
       IamErrorComponent={({ error }) => (
         <Text>Retrying Iam {JSON.stringify(error, null, 2)}</Text>
       )}

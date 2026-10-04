@@ -1,11 +1,15 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "069ad464-9b16-4ecd-807a-45555cf17e33",
+  "id": "38e84b9d-8319-42a8-ab23-f22fbb1cdd76",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
   "ddl": [
+    {
+      "name": "app",
+      "entityType": "tables"
+    },
     {
       "name": "category",
       "entityType": "tables"
@@ -69,6 +73,76 @@
     {
       "name": "ticket_product_presentation",
       "entityType": "tables"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "'app'",
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "app"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'light'",
+      "generated": null,
+      "name": "theme",
+      "entityType": "columns",
+      "table": "app"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "logged_user_id",
+      "entityType": "columns",
+      "table": "app"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "last_logged_user_id",
+      "entityType": "columns",
+      "table": "app"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "active_organization_id",
+      "entityType": "columns",
+      "table": "app"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "table": "app"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "app"
     },
     {
       "type": "text",
@@ -2239,6 +2313,15 @@
       "name": "group_member_pk",
       "entityType": "pks",
       "table": "group_member"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "app_pk",
+      "table": "app",
+      "entityType": "pks"
     },
     {
       "columns": [

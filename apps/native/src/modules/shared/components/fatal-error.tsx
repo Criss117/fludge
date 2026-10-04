@@ -22,6 +22,8 @@ export function FatalErrorScreen({
   const accent = useCSSVariable("accent");
   const danger = useCSSVariable("danger");
 
+  console.error(error);
+
   return (
     <View className="bg-background flex-1 items-center justify-center gap-6 px-6">
       <View className="items-center gap-2">

@@ -6,6 +6,7 @@ import {
 import { createContext, use } from "react";
 import { useContainer } from "./container.provider";
 import { useApp } from "../iam/hooks/use-app";
+import type { OrganizationSummary } from "../iam/domain/entities";
 
 const QUERY_KEY = ["iam", "organizations"] as const;
 
@@ -70,12 +71,8 @@ export function useInvalidateOrganizations() {
 }
 
 type Context = {
-  organizations: ReturnType<
-    typeof useGenerateContext
-  >["organizationStorage"]["data"]["list"];
-  activeOrganization: ReturnType<
-    typeof useGenerateContext
-  >["organizationStorage"]["data"]["activeOrganization"];
+  organizations: OrganizationSummary[];
+  activeOrganization: OrganizationSummary | null;
   switchOrganization: ReturnType<
     typeof useGenerateContext
   >["switchOrganization"];

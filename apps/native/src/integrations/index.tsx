@@ -7,7 +7,6 @@ import { ORPCProvider } from "./orpc";
 import { AuthProvider } from "./auth";
 import { AppThemeProvider } from "@/modules/shared/context/app-theme-context";
 import { DatabaseProvider } from "./db";
-import { SyncDatabase } from "./db/sync";
 import { NetworkProvider } from "./network";
 import { DependenciesProvider } from "./dependencies";
 

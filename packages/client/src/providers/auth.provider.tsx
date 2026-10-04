@@ -9,6 +9,7 @@ import {
 import type { createAuthClient } from "better-auth/client";
 import { createContext, use, useMemo, Suspense, type ReactNode } from "react";
 import { useNetwork } from "./network-status.provider";
+import { useApp } from "../iam/hooks/use-app";
 
 type AuthClient = ReturnType<typeof createAuthClient>;
 
@@ -50,37 +51,47 @@ function authOptions(
   queryClient: QueryClient,
   sessionStorage: ISessionStorage,
   isInternetReachable: boolean | null,
+  setLoggedUserId: (userId: string | null) => Promise<void>,
 ) {
+  const getSession = async () => {
+    if (!isInternetReachable) return sessionStorage.load();
+
+    try {
+      const { data, error } = await authClient.getSession();
+
+      if (error) {
+        if (error.status === 401 || error.status === 403) {
+          await sessionStorage.clear();
+          return null;
+        }
+
+        return sessionStorage.load();
+      }
+
+      if (!data) return null;
+
+      const sessionData = data.session as typeof data.session;
+      const userData = data.user as typeof data.user & { isRoot: boolean };
+
+      const result = { ...sessionData, user: userData } satisfies SessionData;
+      await sessionStorage.save(result);
+      return result;
+    } catch (networkError) {
+      // La request nunca completó (sin red, timeout, DNS, etc.)
+      return sessionStorage.load();
+    }
+  };
+
   const session = queryOptions({
     queryKey: ["session"],
     queryFn: async () => {
-      if (!isInternetReachable) return sessionStorage.load();
+      const session = await getSession();
 
-      try {
-        const { data, error } = await authClient.getSession();
+      await setLoggedUserId(session?.user.id ?? null);
 
-        if (error) {
-          if (error.status === 401 || error.status === 403) {
-            await sessionStorage.clear();
-            return null;
-          }
-
-          return sessionStorage.load();
-        }
-
-        if (!data) return null;
-
-        const sessionData = data.session as typeof data.session;
-        const userData = data.user as typeof data.user & { isRoot: boolean };
-
-        const result = { ...sessionData, user: userData } satisfies SessionData;
-        await sessionStorage.save(result);
-        return result;
-      } catch (networkError) {
-        // La request nunca completó (sin red, timeout, DNS, etc.)
-        return sessionStorage.load();
-      }
+      return session;
     },
+
     refetchOnReconnect: true,
   });
 
@@ -123,7 +134,7 @@ function authOptions(
 
       queryClient.setQueryData(session.queryKey, null);
 
-      await queryClient.invalidateQueries();
+      queryClient.clear();
     },
   });
 
@@ -135,10 +146,17 @@ function useAuthState(
   queryClient: QueryClient,
   sessionStorage: ISessionStorage,
 ) {
+  const { setLoggedUser } = useApp();
   const { isInternetReachable } = useNetwork();
   const options = useMemo(
     () =>
-      authOptions(authClient, queryClient, sessionStorage, isInternetReachable),
+      authOptions(
+        authClient,
+        queryClient,
+        sessionStorage,
+        isInternetReachable,
+        (userId) => setLoggedUser.mutateAsync({ loggedUserId: userId }),
+      ),
     [authClient, queryClient, sessionStorage, isInternetReachable],
   );
 

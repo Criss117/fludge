@@ -10,6 +10,7 @@ export const app = {
   loading_catalog: "Cargando catálogo...",
   loading_commerce: "Cargando comercio...",
   loading_ticket: "Cargando ticket...",
+  loading_user_scope: "Cargando ámbito de usuario...",
 
   errors: {
     fatal: {

@@ -1,3 +1,4 @@
+import { useApp } from "@fludge/client/iam/hooks/use-app";
 import React, {
   createContext,
   useCallback,
@@ -6,7 +7,6 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Uniwind, useUniwind } from "uniwind";
 
 type ThemeName = "light" | "dark";
@@ -20,8 +20,6 @@ type AppThemeContextType = {
   toggleTheme: () => void;
 };
 
-const THEME_STORAGE_KEY = "@app_theme";
-
 const AppThemeContext = createContext<AppThemeContextType | undefined>(
   undefined
 );
@@ -31,6 +29,7 @@ export const AppThemeProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { data, setTheme: setAppTheme } = useApp();
   const { theme } = useUniwind();
   const [isThemeLoaded, setIsThemeLoaded] = useState(false);
 
@@ -40,7 +39,7 @@ export const AppThemeProvider = ({
 
     const loadStoredTheme = async () => {
       try {
-        const storedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+        const storedTheme = data.theme;
         if (isMounted && (storedTheme === "light" || storedTheme === "dark")) {
           Uniwind.setTheme(storedTheme);
         }
@@ -62,7 +61,7 @@ export const AppThemeProvider = ({
 
   const persistTheme = useCallback(async (newTheme: ThemeName) => {
     try {
-      await AsyncStorage.setItem(THEME_STORAGE_KEY, newTheme);
+      await setAppTheme.mutateAsync({ theme: newTheme });
     } catch (error) {
       console.warn("Error al guardar el tema:", error);
     }
