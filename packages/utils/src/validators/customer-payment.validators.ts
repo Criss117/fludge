@@ -12,7 +12,7 @@ export const createCustomerPaymentValidator = z.object({
     .number()
     .positive("api_errors.customer_payments.amount_must_be_positive"),
   method: customerPaymentMethodSchema,
-  notes: z.string().optional().nullable(),
+  notes: z.string().or(z.literal("")),
 });
 
 export const cancelCustomerPaymentValidator = z.object({

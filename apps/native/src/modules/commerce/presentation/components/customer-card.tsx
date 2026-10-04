@@ -7,11 +7,11 @@ import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Skeleton } from "heroui-native/skeleton";
 import { SkeletonGroup } from "heroui-native/skeleton-group";
 import { Typography } from "heroui-native/text";
-import { Button } from "heroui-native/button";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import type { CustomerSummary } from "@fludge/client/commerce/domain/customer.repository";
 import { cn } from "heroui-native";
+import { CreateCustomerPayment } from "./create-customer-payment";
+import type { CustomerSummary } from "@fludge/client/commerce/domain/entities";
 
 interface Props {
   customer: CustomerSummary;
@@ -84,12 +84,7 @@ function DebtProgress({ customer }: { customer: CustomerSummary }) {
         </View>
       </Card.Body>
       <Card.Footer>
-        <Button size="sm" className="w-full">
-          <MaterialIcons name="payments" size={18} className="text-eclipse" />
-          <Button.Label className="text-eclipse">
-            {t("screens.customers.card.pay")}
-          </Button.Label>
-        </Button>
+        <CreateCustomerPayment customer={customer} />
       </Card.Footer>
     </Card>
   );

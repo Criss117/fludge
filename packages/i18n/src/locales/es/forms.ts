@@ -219,4 +219,19 @@ export const forms = {
     create: "Crear Cliente",
     update: "Actualizar Cliente",
   },
+  customer_payment: {
+    title: "Registrar Abono",
+    amount: {
+      label: "Monto del Abono",
+    },
+    method: {
+      label: "Método de Pago",
+      transfer: "Transferencia",
+      cash: "Efectivo",
+    },
+    notes: {
+      label: "Notas / Observaciones",
+      placeholder: "Notas",
+    },
+  },
 };

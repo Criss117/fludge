@@ -99,8 +99,7 @@ export class CancelCustomerPaymentCommand {
 
     return {
       customer: customer.values,
-      payment: removedPayment.values,
-      affectedSales: sales.map((s) => s.values),
+      sales: sales.map((s) => s.values),
     };
   }
 }

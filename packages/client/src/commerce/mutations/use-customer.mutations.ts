@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useInvalidateCustomers } from "../queries/use-find-customers";
+import { useInvalidateSales } from "../queries/use-find-sales";
 
 export function useCreateCustomerMutation() {
   const orpc = useOrpc();
@@ -35,6 +36,58 @@ export function useUpdateCustomerMutation() {
 
         invalidateCustomers.invalidateList();
         invalidateCustomers.invalidateDetail(updatedCustomer.id);
+      },
+    }),
+  );
+}
+
+export function useCreateCustomerPaymentMutation() {
+  const orpc = useOrpc();
+  const invalidateCustomers = useInvalidateCustomers();
+  const invalidateSales = useInvalidateSales();
+  const { commerceContainer } = useContainer();
+
+  return useMutation(
+    orpc.customer.commands.createPayment.mutationOptions({
+      onSuccess: async ({ customer, sales }) => {
+        console.log(customer, sales);
+
+        await commerceContainer.repositories.customerRepository.save(customer);
+
+        await commerceContainer.repositories.saleRepository.save(sales);
+
+        invalidateCustomers.invalidateList();
+        invalidateCustomers.invalidateDetail(customer.id);
+
+        invalidateSales.invalidateList();
+        sales.forEach((sale) => {
+          invalidateSales.invalidateDetail(sale.id);
+        });
+      },
+    }),
+  );
+}
+
+export function useCancelCustomerPaymentMutation() {
+  const orpc = useOrpc();
+  const invalidateCustomers = useInvalidateCustomers();
+  const invalidateSales = useInvalidateSales();
+  const { commerceContainer } = useContainer();
+
+  return useMutation(
+    orpc.customer.commands.cancelPayment.mutationOptions({
+      onSuccess: async ({ customer, sales }) => {
+        await commerceContainer.repositories.customerRepository.save(customer);
+
+        await commerceContainer.repositories.saleRepository.save(sales);
+
+        invalidateCustomers.invalidateList();
+        invalidateCustomers.invalidateDetail(customer.id);
+
+        invalidateSales.invalidateList();
+        sales.forEach((sale) => {
+          invalidateSales.invalidateDetail(sale.id);
+        });
       },
     }),
   );

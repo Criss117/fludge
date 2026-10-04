@@ -1,8 +1,6 @@
 import type { DatabaseService } from "@/integrations/db";
 import type {
-  CustomerDetail,
   CustomerRepository,
-  CustomerSummary,
   FindAllCustomersFilters,
 } from "@fludge/client/commerce/domain/customer.repository";
 import {
@@ -20,6 +18,10 @@ import {
   localCustomerPayment,
   type LocalCustomer,
 } from "@fludge/db/local-schemas/shared.schema";
+import type {
+  CustomerDetail,
+  CustomerSummary,
+} from "@fludge/client/commerce/domain/entities";
 
 export class NativeCustomerRepository implements CustomerRepository {
   constructor(private readonly db: DatabaseService) {}

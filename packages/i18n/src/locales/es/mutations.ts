@@ -127,13 +127,22 @@ export const mutations = {
       error: "Algo salió mal al actualizar el cliente",
     },
   },
+  customer_payment: {
+    create: {
+      is_pending: "Creando Abono",
+      success: {
+        title: "Abono Creado",
+        description: "El abono se ha creado correctamente.",
+      },
+      error: "Algo salió mal al crear el abono",
+    },
+  },
   tickets: {
     error: "Error en el ticket",
     errors: {
       ticket_not_found: "No se encontró el ticket activo",
       product_not_found: "No se encontró el producto en el ticket",
-      presentation_not_found:
-        "No se encontró la presentación del producto",
+      presentation_not_found: "No se encontró la presentación del producto",
       insufficient_stock: "Stock insuficiente para el producto",
     },
   },

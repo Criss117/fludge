@@ -15,7 +15,7 @@ import { Separator } from "heroui-native/separator";
 import { Typography } from "heroui-native/text";
 import { useFindCustomers } from "@fludge/client/commerce/queries/use-find-customers";
 import type { TranslationKey } from "@fludge/i18n/index";
-import type { CustomerSummary } from "@fludge/client/commerce/domain/customer.repository";
+import type { CustomerSummary } from "@fludge/client/commerce/domain/entities";
 
 interface Props {
   isOpen: boolean;

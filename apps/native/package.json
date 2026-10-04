@@ -14,7 +14,6 @@
     "@fludge/i18n": "workspace:*",
     "@fludge/utils": "workspace:*",
     "@gorhom/bottom-sheet": "5.2.14",
-    "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/netinfo": "12.0.1",
     "@react-native-vector-icons/material-icons": "13.1.3",
     "@tanstack/react-query": "catalog:",

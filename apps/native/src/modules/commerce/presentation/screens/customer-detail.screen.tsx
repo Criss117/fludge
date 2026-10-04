@@ -1,4 +1,4 @@
-import type { CustomerDetail } from "@fludge/client/commerce/domain/customer.repository";
+import type { CustomerDetail } from "@fludge/client/commerce/domain/entities";
 import { Card } from "heroui-native/card";
 import { Skeleton } from "heroui-native/skeleton";
 import { ScrollView, View } from "react-native";

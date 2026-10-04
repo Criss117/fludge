@@ -2,7 +2,7 @@ import { SaleCard } from "@/modules/commerce/presentation/components/sale-card";
 import { SalesScreenSkeleton } from "@/modules/commerce/presentation/screens/sale.screen";
 import { SalesListSection } from "@/modules/commerce/presentation/sections/sale-list.section";
 import { MaterialIcons } from "@/modules/shared/components/icons";
-import type { CustomerDetail } from "@fludge/client/commerce/domain/customer.repository";
+import type { CustomerDetail } from "@fludge/client/commerce/domain/entities";
 import { useFindSales } from "@fludge/client/commerce/queries/use-find-sales";
 import { Tabs } from "heroui-native/tabs";
 import { Typography } from "heroui-native/text";

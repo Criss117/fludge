@@ -6,7 +6,7 @@ import { View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { cn } from "heroui-native";
 import { formatCurrency } from "@fludge/utils/format-currency";
-import type { CustomerSummary } from "@fludge/client/commerce/domain/customer.repository";
+import type { CustomerSummary } from "@fludge/client/commerce/domain/entities";
 
 interface Props {
   customer: CustomerSummary;

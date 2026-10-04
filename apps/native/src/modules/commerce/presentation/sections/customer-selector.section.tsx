@@ -7,7 +7,7 @@ import { Button } from "heroui-native/button";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import { CustomerSelectorBottomSheet } from "@/modules/commerce/presentation/components/customer-selector-bottom-sheet";
 import { CustomerSaleCard } from "@/modules/commerce/presentation/components/customer-sale-card";
-import type { CustomerSummary } from "@fludge/client/commerce/domain/customer.repository";
+import type { CustomerSummary } from "@fludge/client/commerce/domain/entities";
 import { Typography } from "heroui-native/text";
 
 interface Props {
@@ -34,7 +34,9 @@ export function CustomerSelectorSection({
       <Card.Body>
         <Tabs
           value={tab}
-          onValueChange={(value) => onTabChange(value as "walk-in" | "customer")}
+          onValueChange={(value) =>
+            onTabChange(value as "walk-in" | "customer")
+          }
         >
           <Tabs.List className="flex-1">
             <Tabs.Indicator />

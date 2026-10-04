@@ -36,3 +36,71 @@ export function useCreateSaleMutation() {
     }),
   );
 }
+
+export function useCancelSaleMutation() {
+  const orpc = useOrpc();
+  const invalidateCustomers = useInvalidateCustomers();
+  const invalidateSales = useInvalidateSales();
+  const invalidateProducts = useInvalidateProducts();
+  const { commerceContainer, catalogContainer } = useContainer();
+
+  return useMutation(
+    orpc.sale.commands.cancel.mutationOptions({
+      onSuccess: async ({ customer, products, sale }) => {
+        await catalogContainer.repositories.productRepository.save(products);
+        await commerceContainer.repositories.saleRepository.save(sale);
+
+        if (customer) {
+          await commerceContainer.repositories.customerRepository.save(
+            customer,
+          );
+        }
+
+        if (customer) {
+          invalidateCustomers.invalidateList();
+          invalidateCustomers.invalidateDetail(customer.id);
+        }
+
+        invalidateSales.invalidateList();
+        invalidateSales.invalidateDetail(sale.id);
+
+        invalidateProducts.invalidateList();
+        products.forEach((p) => invalidateProducts.invalidateDetail(p.id));
+      },
+    }),
+  );
+}
+
+export function useRefundSaleItemsMutation() {
+  const orpc = useOrpc();
+  const invalidateCustomers = useInvalidateCustomers();
+  const invalidateSales = useInvalidateSales();
+  const invalidateProducts = useInvalidateProducts();
+  const { commerceContainer, catalogContainer } = useContainer();
+
+  return useMutation(
+    orpc.sale.commands.refundItems.mutationOptions({
+      onSuccess: async ({ customer, products, sale }) => {
+        await catalogContainer.repositories.productRepository.save(products);
+        await commerceContainer.repositories.saleRepository.save(sale);
+
+        if (customer) {
+          await commerceContainer.repositories.customerRepository.save(
+            customer,
+          );
+        }
+
+        if (customer) {
+          invalidateCustomers.invalidateList();
+          invalidateCustomers.invalidateDetail(customer.id);
+        }
+
+        invalidateSales.invalidateList();
+        invalidateSales.invalidateDetail(sale.id);
+
+        invalidateProducts.invalidateList();
+        products.forEach((p) => invalidateProducts.invalidateDetail(p.id));
+      },
+    }),
+  );
+}

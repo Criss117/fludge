@@ -103,8 +103,7 @@ export class CreateCustomerPaymentCommand {
 
     return {
       customer: customer.values,
-      payment: newPayment.values,
-      salePayments: salePaymentsToInsert.map((sp) => sp.values),
+      sales: salesToUpdate.map((s) => s.values),
     };
   }
 }
