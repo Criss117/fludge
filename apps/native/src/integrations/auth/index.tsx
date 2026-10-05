@@ -8,8 +8,8 @@ import {
   type ISessionStorage,
   type AuthContextAdapter,
 } from "@fludge/client/providers/auth.provider";
-import { LoadingScreen } from "@/modules/shared/components/loading-screen";
-import { SESSION_LOCAL_STORAGE_KEY } from "@/modules/shared/utils/constanst";
+import { SESSION_LOCAL_STORAGE_KEY } from "@/lib/constants";
+import { LoadingScreen } from "@/core/shared/components/loading-screen";
 
 export const authClient = createAuthClient({
   baseURL: env.EXPO_PUBLIC_SERVER_URL,
@@ -30,7 +30,7 @@ const sessionStorage: ISessionStorage = {
   save: async (session) => {
     await SecureStore.setItemAsync(
       SESSION_LOCAL_STORAGE_KEY,
-      JSON.stringify(session)
+      JSON.stringify(session),
     );
   },
   clear: async () => {
@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AProvider
       sessionStorage={sessionStorage}
       authClient={authAdapter}
-      fallback={<LoadingScreen message="app.loading_session" />}
+      fallback={<LoadingScreen message="app.loading.session" />}
     >
       {children}
     </AProvider>

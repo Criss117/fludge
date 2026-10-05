@@ -3,10 +3,10 @@ import migrations from "../../../drizzle/migrations";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { openDatabaseSync } from "expo-sqlite";
-import { LoadingScreen } from "@/modules/shared/components/loading-screen";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-import { FatalErrorScreen } from "@/modules/shared/components/fatal-error";
 import { Logger } from "drizzle-orm";
+import { LoadingScreen } from "@/core/shared/components/loading-screen";
+import { FatalErrorScreen } from "@/core/shared/components/fatal-error-screen";
 
 class QueryCounterLogger implements Logger {
   public count = 0;
@@ -50,7 +50,7 @@ export function DatabaseProvider({ children }: { children: React.ReactNode }) {
       />
     );
 
-  if (!success) return <LoadingScreen message="app.loading_database" />;
+  if (!success) return <LoadingScreen message="app.loading.database" />;
 
   return (
     <>

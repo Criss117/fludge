@@ -1,6 +1,6 @@
 {
   "cli": {
-    "version": ">= 22.4.0",
+    "version": ">= 24.10.0",
     "appVersionSource": "remote"
   },
   "build": {
@@ -9,10 +9,7 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal",
-      "env": {
-        "EXPO_PUBLIC_SERVER_URL": "http://192.168.0.102:3000"
-      }
+      "distribution": "internal"
     },
     "production": {
       "autoIncrement": true

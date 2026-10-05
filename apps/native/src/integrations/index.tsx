@@ -3,53 +3,36 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { FontsProvider } from "./fonts";
 import { QueryClientProvider } from "./query";
-import { ORPCProvider } from "./orpc";
-import { AuthProvider } from "./auth";
-import { AppThemeProvider } from "@/modules/shared/context/app-theme-context";
 import { DatabaseProvider } from "./db";
 import { NetworkProvider } from "./network";
+import { AuthProvider } from "./auth";
+import { ORPCProvider } from "./orpc";
 import { DependenciesProvider } from "./dependencies";
 
-function UiProviders({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <AppThemeProvider>{children}</AppThemeProvider>
-    </>
-  );
-}
-
-function NetworkProviders({ children }: { children: React.ReactNode }) {
+function NetProvider({ children }: { children: React.ReactNode }) {
   return (
     <NetworkProvider>
-      <DatabaseProvider>
-        <DependenciesProvider>
-          <QueryClientProvider>
+      <QueryClientProvider>
+        <DatabaseProvider>
+          <DependenciesProvider>
             <AuthProvider>
               <ORPCProvider>{children}</ORPCProvider>
             </AuthProvider>
-          </QueryClientProvider>
-        </DependenciesProvider>
-      </DatabaseProvider>
+          </DependenciesProvider>
+        </DatabaseProvider>
+      </QueryClientProvider>
     </NetworkProvider>
-  );
-}
-
-function MiscellaneousProviders({ children }: { children: React.ReactNode }) {
-  return (
-    <GestureHandlerRootView>
-      <KeyboardProvider>
-        <FontsProvider>{children}</FontsProvider>
-      </KeyboardProvider>
-    </GestureHandlerRootView>
   );
 }
 
 export function Integrations({ children }: { children: React.ReactNode }) {
   return (
-    <MiscellaneousProviders>
-      <NetworkProviders>
-        <UiProviders>{children}</UiProviders>
-      </NetworkProviders>
-    </MiscellaneousProviders>
+    <GestureHandlerRootView>
+      <KeyboardProvider statusBarTranslucent={true}>
+        <FontsProvider>
+          <NetProvider>{children}</NetProvider>
+        </FontsProvider>
+      </KeyboardProvider>
+    </GestureHandlerRootView>
   );
 }

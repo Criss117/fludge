@@ -1,50 +1,42 @@
-import "../globals.css";
-import "react-native-random-uuid";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { Integrations } from "@/integrations";
-import { Stack } from "expo-router";
-import { useThemeColor } from "heroui-native";
 import { useAuth } from "@fludge/client/providers/auth.provider";
-import { useNetworkActivityDevTools } from "@rozenite/network-activity-plugin";
-import { useAppTheme } from "@/modules/shared/context/app-theme-context";
+import { Stack } from "expo-router";
 
-function StackConfig() {
-  const background = useThemeColor("background");
+function StackScreen() {
   const { session } = useAuth();
-  const { isDark } = useAppTheme();
+  const colors = useThemeColor();
 
-  const isLogged = session.data !== null;
+  const hasSession = session.data !== null;
 
   return (
     <Stack
       screenOptions={{
-        contentStyle: {
-          backgroundColor: background,
-        },
-        statusBarStyle: isDark ? "light" : "dark",
         headerShown: false,
+        contentStyle: {
+          backgroundColor: colors.primaryContainer,
+        },
       }}
     >
-      <Stack.Screen name="index" />
-      <Stack.Protected guard={!isLogged}>
-        <Stack.Screen name="auth" />
+      <Stack.Protected guard={!hasSession}>
+        <Stack.Screen name="(auth)/index" />
       </Stack.Protected>
-      <Stack.Protected guard={isLogged}>
-        <Stack.Screen name="(private)" />
+
+      <Stack.Protected guard={!hasSession}>
+        <Stack.Screen name="(auth)/sign-up" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={hasSession}>
+        <Stack.Screen name="dashboard" />
       </Stack.Protected>
     </Stack>
   );
 }
 
-function NetworkDevTools() {
-  useNetworkActivityDevTools();
-  return null;
-}
-
-export default function RootLayout() {
+export default function TabLayout() {
   return (
     <Integrations>
-      {__DEV__ && <NetworkDevTools />}
-      <StackConfig />
+      <StackScreen />
     </Integrations>
   );
 }

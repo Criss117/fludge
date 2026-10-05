@@ -1,4 +1,3 @@
-// mobile/infrastructure/RNNetworkService.ts
 import {
   NetworkProvider as NP,
   type INetworkService,

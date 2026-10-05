@@ -1,6 +1,5 @@
 import { DatabaseService } from "..";
 import { desc } from "drizzle-orm";
-import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import type { ClientSyncCatalogRepository } from "@fludge/sync/repositories/catalog/client-sync-catalog.repository";
 import {
   localCategory,
@@ -11,19 +10,12 @@ import {
   CatalogSyncResult,
   CatalogLastSyncedAt,
 } from "@fludge/sync/types/catalog.types";
-import { NativeProductRepository } from "@/modules/catalog/repositories/native-product.repository";
-import { NativeCategoryRepository } from "@/modules/catalog/repositories/native-category.repository";
 
 export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository {
-  constructor(
-    private readonly db: DatabaseService,
-    private readonly productRepository: NativeProductRepository,
-    private readonly categoryRepository: NativeCategoryRepository
-  ) {}
+  constructor(private readonly db: DatabaseService) {}
 
   public async saveAll(values: CatalogSyncResult): Promise<void> {
-    await this.categoryRepository.save(values.categories);
-    await this.productRepository.save(values.products);
+    throw new Error("Method not implemented.");
   }
 
   private async getLastSyncedProduct() {

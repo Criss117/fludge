@@ -28,7 +28,9 @@ export function createAuth() {
     basePath: "/api/auth",
     trustedOrigins: [
       env.CORS_ORIGIN,
+      "native://",
       "fludge://",
+      "wails://",
       "exp://",
       "http://localhost:8081",
     ],

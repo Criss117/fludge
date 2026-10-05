@@ -2,10 +2,10 @@
   "expo": {
     "name": "Fludge",
     "slug": "fludge",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "fludge",
+    "scheme": "native",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
@@ -18,8 +18,12 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.crviveros.fludge",
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.crviveros.fludge"
     },
     "web": {
       "output": "static",
@@ -48,7 +52,6 @@
       "expo-status-bar",
       "expo-web-browser",
       "expo-secure-store",
-      "@react-native-vector-icons/material-icons",
       [
         "expo-build-properties",
         {
@@ -68,7 +71,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "e3a8a67c-6755-402f-9d97-5e9bf7714f63"
+        "projectId": "effb7328-fe81-4b14-b0ce-528198137009"
       }
     }
   }

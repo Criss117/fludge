@@ -1,16 +1,18 @@
 export const app = {
   title: "Fludge",
-  loading: "Cargando...",
-  loading_organization: "Cargando organización...",
-  loading_fonts: "Cargando fuentes...",
-  loading_data: "Cargando datos...",
-  loading_session: "Cargando sesión...",
-  loading_database: "Cargando base de datos...",
-  loading_iam: "Obteniendo datos de la IAM...",
-  loading_catalog: "Cargando catálogo...",
-  loading_commerce: "Cargando comercio...",
-  loading_ticket: "Cargando ticket...",
-  loading_user_scope: "Cargando ámbito de usuario...",
+
+  loading: {
+    organization: "Cargando organización...",
+    fonts: "Cargando fuentes...",
+    data: "Cargando datos...",
+    session: "Cargando sesión...",
+    database: "Cargando base de datos...",
+    iam: "Obteniendo datos de la IAM...",
+    catalog: "Cargando catálogo...",
+    commerce: "Cargando comercio...",
+    ticket: "Cargando ticket...",
+    user_scope: "Cargando ámbito de usuario...",
+  },
 
   errors: {
     fatal: {

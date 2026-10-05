@@ -13,8 +13,6 @@ import {
   Geist_800ExtraBold,
   Geist_900Black,
 } from "@expo-google-fonts/geist";
-import { Button, View } from "react-native";
-import { LoadingScreen } from "@/modules/shared/components/loading-screen";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -54,7 +52,7 @@ export function FontsProvider({ children }: { children: React.ReactNode }) {
   }, [loaded, error]);
 
   if (!loaded && !error) {
-    return <LoadingScreen message="app.loading_fonts" />;
+    return null;
   }
 
   return children;

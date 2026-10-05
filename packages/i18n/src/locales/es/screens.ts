@@ -1,7 +1,6 @@
 export const screens = {
   sign_in: {
     description: "Completa tus datos para iniciar sesión",
-    button: "Iniciar sesión",
     no_account: "No tienes cuenta?",
     sign_up: "Regístrate",
   },

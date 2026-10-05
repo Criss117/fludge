@@ -100,9 +100,12 @@ function authOptions(
     mutationFn: async (
       values: Parameters<AuthContextAdapter["signUpEmail"]>[0],
     ) => {
-      const { error } = await authClient.signUpEmail(values, {
-        query: { disableCookieCache: true },
-      });
+      const { error } = await authClient.signUpEmail(
+        { ...values, isRoot: true } as any,
+        {
+          query: { disableCookieCache: true },
+        },
+      );
 
       if (error) throw new Error(error.message, { cause: error });
 
