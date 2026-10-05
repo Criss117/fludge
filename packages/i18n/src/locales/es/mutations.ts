@@ -136,6 +136,21 @@ export const mutations = {
       },
       error: "Algo salió mal al crear el abono",
     },
+    cancel: {
+      is_pending: "Cancelando Abono",
+      success: {
+        title: "Abono Cancelado",
+        description: "El abono se canceló correctamente.",
+      },
+      error: "Algo salió mal al cancelar el abono",
+      dialog: {
+        title: "Cancelar Abono",
+        description:
+          "¿Estás seguro de que querés cancelar este abono? Esta acción revertirá el saldo del cliente.",
+        reason_label: "Motivo de cancelación",
+        reason_placeholder: "Ej: Error en el monto registrado",
+      },
+    },
   },
   tickets: {
     error: "Error en el ticket",

@@ -224,6 +224,7 @@ export const screens = {
       payment_method_transfer: "Transferencia",
       applied_to_balance: "Aplicado a saldo",
       receipt: "Comprobante",
+      cancel_payment: "Cancelar abono",
     },
   },
   iam: {
