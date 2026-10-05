@@ -4,7 +4,8 @@
   "workspaces": {
     "packages": [
       "apps/*",
-      "packages/*"
+      "packages/*",
+      "apps/desktop/frontend"
     ],
     "catalog": {
       "dotenv": "17.4.2",
@@ -47,8 +48,8 @@
     "build": "turbo run build",
     "check-types": "turbo run check-types",
     "dev:native": "turbo run dev -F native --",
-    "dev:web": "turbo run dev -F web --",
     "dev:server": "turbo run dev -F server --",
+    "dev:desktop": "turbo run dev -F desktop --",
     "db:remove": "rm local.db local.db-shm local.db-wal",
     "db:init": "turso dev -f local.db",
     "db:reset": "bun run db:remove && bun run db:init",

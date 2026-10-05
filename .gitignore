@@ -60,3 +60,5 @@ temp
 .agents
 # Local Pi runtime state
 .atl/
+
+templates
