@@ -34,8 +34,6 @@ export function useSyncUserScope() {
         };
 
       const [, erroDeleting] = await tryCatch(async () => {
-        console.log("Deleting user_scope");
-
         await commerceContainer.repositories.localTicketRepository.clearAll();
         await commerceContainer.repositories.saleRepository.clearAll();
         await commerceContainer.repositories.customerRepository.clearAll();

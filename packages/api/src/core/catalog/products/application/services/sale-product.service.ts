@@ -20,8 +20,6 @@ export class SaleProductService {
   public async execute(organizationId: string, items: Item[]) {
     const productsToSave: Product[] = [];
 
-    console.log(items);
-
     if (items.length === 0) return productsToSave;
 
     const [exists, errExists] =

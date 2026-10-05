@@ -37,10 +37,25 @@ const apiHandler = new OpenAPIHandler(appRouter, {
   ],
 });
 
+const allowedOrigins = new Set(
+  (env.CORS_ORIGIN ?? "")
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean),
+);
+
+const isWailsOrigin = (origin: string) =>
+  origin.startsWith("wails://") || // dev en Linux/macOS y build
+  origin.startsWith("http://wails.localhost"); // build en Windows
+
 new Elysia()
   .use(
     cors({
-      origin: env.CORS_ORIGIN,
+      origin: (request) => {
+        const origin = request.headers.get("origin");
+        if (!origin) return false;
+        return allowedOrigins.has(origin) || isWailsOrigin(origin);
+      },
       methods: ["GET", "POST", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"],
       credentials: true,

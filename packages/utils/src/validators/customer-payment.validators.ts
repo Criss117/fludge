@@ -8,8 +8,8 @@ export const customerPaymentMethodSchema = z.enum(customerPaymentMethodEnum, {
 
 export const createCustomerPaymentValidator = z.object({
   customerId: uuidSchema,
-  amount: z
-    .number()
+  amount: z.coerce
+    .number<number>()
     .positive("api_errors.customer_payments.amount_must_be_positive"),
   method: customerPaymentMethodSchema,
   notes: z.string().or(z.literal("")),

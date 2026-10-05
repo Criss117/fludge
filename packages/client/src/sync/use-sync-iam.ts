@@ -73,8 +73,6 @@ export function useSyncIam() {
         iamContainer.repositories.syncIamRepository.saveAll(values),
       );
 
-      console.log("erroSaveAll", erroSaveAll);
-
       if (erroSaveAll)
         return {
           error: erroSaveAll,

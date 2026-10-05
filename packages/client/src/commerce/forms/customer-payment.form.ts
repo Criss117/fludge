@@ -21,14 +21,11 @@ const defaultCustomerPaymentValues: CustomerPaymentFormSchema = {
   notes: "",
 };
 
-export function customerPaymentFormOptions(
-  options: OnCustomerPaymentSubmit,
-  defaultValues?: CustomerPaymentFormSchema,
-) {
+export function customerPaymentFormOptions(options: OnCustomerPaymentSubmit) {
   return formOptions({
-    defaultValues: defaultValues ?? defaultCustomerPaymentValues,
+    defaultValues: defaultCustomerPaymentValues,
     validators: {
-      onChange: createCustomerPaymentValidator,
+      onChange: createCustomerPayment,
     },
     onSubmit: ({ value, formApi }) => {
       options.onSubmit({ value, resetForm: formApi.reset });

@@ -137,8 +137,8 @@ export class NativeCustomerRepository implements CustomerRepository {
         tx.delete(localCustomerPayment)
           .where(
             inArray(
-              localCustomerPayment.customerId,
-              payments.map((c) => c.id)
+              localCustomerPayment.id,
+              payments.map((p) => p.id)
             )
           )
           .run();

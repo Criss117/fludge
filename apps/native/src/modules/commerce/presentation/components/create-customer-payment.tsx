@@ -14,7 +14,7 @@ import { BottomSheet } from "heroui-native/bottom-sheet";
 import { Button } from "heroui-native/button";
 import { Separator } from "heroui-native/separator";
 import { Typography } from "heroui-native/text";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { KeyboardController } from "react-native-keyboard-controller";
@@ -164,6 +164,9 @@ export function CreateCustomerPayment({ customer }: Props) {
 
   const form = useCreateCustomerPaymentForm({
     onSubmit: ({ value, resetForm }) => {
+      mutationToast.showIsPendingToast(
+        "mutations.customer_payment.create.is_pending"
+      );
       createCustomerPayment.mutate(
         {
           customerId: customer.id,
@@ -175,6 +178,10 @@ export function CreateCustomerPayment({ customer }: Props) {
           onSuccess: () => {
             resetForm();
             isOpen(false);
+            mutationToast.showSuccessToast(
+              "mutations.customer_payment.create.success.title",
+              "mutations.customer_payment.create.success.description"
+            );
           },
           onError: (error) => {
             mutationToast.showErrorToast(
@@ -186,6 +193,17 @@ export function CreateCustomerPayment({ customer }: Props) {
       );
     },
   });
+
+  const Footer = useCallback(
+    (props: BottomSheetFooterProps) => (
+      <SheetFooter
+        {...props}
+        isPending={createCustomerPayment.isPending}
+        onSubmit={form.handleSubmit}
+      />
+    ),
+    [form, createCustomerPayment.isPending]
+  );
 
   return (
     <BottomSheet isOpen={open} onOpenChange={isOpen}>
@@ -208,13 +226,7 @@ export function CreateCustomerPayment({ customer }: Props) {
             KeyboardController.dismiss();
             form.reset();
           }}
-          footerComponent={(props) => (
-            <SheetFooter
-              onSubmit={form.handleSubmit}
-              isPending={createCustomerPayment.isPending}
-              {...props}
-            />
-          )}
+          footerComponent={Footer}
         >
           <SheetContent form={form} />
         </BottomSheet.Content>
