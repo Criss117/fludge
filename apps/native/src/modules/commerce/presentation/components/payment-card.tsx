@@ -9,6 +9,9 @@ import { PressableFeedback } from "heroui-native/pressable-feedback";
 import { Typography } from "heroui-native/text";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
+import { useCancelCustomerPaymentMutation } from "@fludge/client/commerce/mutations/use-customer.mutations";
+import { useMutationToast } from "@/modules/shared/hooks/use-mutation-toast";
+import type { TranslationKey } from "@fludge/i18n/index";
 
 interface Props {
   payment: CustomerDetail["payments"][number];
@@ -27,7 +30,36 @@ const MethodConfig = {
 
 export function PaymentCard({ payment }: Props) {
   const { t } = useTranslation();
+  const cancelPayment = useCancelCustomerPaymentMutation();
   const method = MethodConfig[payment.method];
+  const mutationToast = useMutationToast("screens.customers.cancel_payment");
+
+  const onCancelPayment = () => {
+    mutationToast.showIsPendingToast(
+      "mutations.customer_payment.cancel.is_pending"
+    );
+    cancelPayment.mutate(
+      {
+        customerId: payment.customerId,
+        paymentId: payment.id,
+        reason: "payment_cancelled",
+      },
+      {
+        onSuccess: () => {
+          mutationToast.showSuccessToast(
+            "mutations.customer_payment.cancel.success.title",
+            "mutations.customer_payment.cancel.success.description"
+          );
+        },
+        onError: (erre) => {
+          mutationToast.showErrorToast(
+            "mutations.customer_payment.cancel.error",
+            erre.message as TranslationKey
+          );
+        },
+      }
+    );
+  };
 
   const dateStr = payment.createdAt.toLocaleDateString("es-CO", {
     day: "2-digit",
@@ -86,12 +118,6 @@ export function PaymentCard({ payment }: Props) {
         <Typography type="body-sm" color="muted" className="flex-1">
           {t("screens.customers.detail.applied_to_balance")}
         </Typography>
-
-        <Button size="sm" variant="outline">
-          <MaterialIcons name="share" size={14} className="text-foreground" />
-          <Button.Label>{t("screens.customers.detail.receipt")}</Button.Label>
-        </Button>
-
         <Popover presentation="popover">
           <Popover.Trigger asChild>
             <PressableFeedback className="pl-1">
@@ -104,7 +130,18 @@ export function PaymentCard({ payment }: Props) {
           </Popover.Trigger>
           <Popover.Portal>
             <Popover.Overlay className="bg-default-soft" />
-            <Popover.Content presentation="popover" width={120} />
+            <Popover.Content presentation="popover">
+              <Button variant="danger-soft" onPress={onCancelPayment}>
+                <MaterialIcons
+                  name="delete"
+                  size={24}
+                  className="text-danger"
+                />
+                <Button.Label>
+                  {t("screens.customers.cancel_payment")}
+                </Button.Label>
+              </Button>
+            </Popover.Content>
           </Popover.Portal>
         </Popover>
       </Card.Footer>

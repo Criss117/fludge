@@ -196,6 +196,7 @@ export const screens = {
     not_found: "No se encontraron clientes",
     no_more: "No hay más clientes",
     loading: "Cargando...",
+    cancel_payment: "Cancelar Abono",
     create: {
       title: "Crear cliente",
     },
