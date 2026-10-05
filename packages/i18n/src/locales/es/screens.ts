@@ -220,6 +220,10 @@ export const screens = {
       tab_sales: "Ventas",
       tab_payments: "Historial de Abonos",
       no_payments: "No hay abonos registrados",
+      payment_method_cash: "Efectivo",
+      payment_method_transfer: "Transferencia",
+      applied_to_balance: "Aplicado a saldo",
+      receipt: "Comprobante",
     },
   },
   iam: {

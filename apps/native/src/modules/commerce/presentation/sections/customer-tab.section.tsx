@@ -1,14 +1,13 @@
 import { SaleCard } from "@/modules/commerce/presentation/components/sale-card";
-import { SalesScreenSkeleton } from "@/modules/commerce/presentation/screens/sale.screen";
-import { SalesListSection } from "@/modules/commerce/presentation/sections/sale-list.section";
 import { MaterialIcons } from "@/modules/shared/components/icons";
 import type { CustomerDetail } from "@fludge/client/commerce/domain/entities";
 import { useFindSales } from "@fludge/client/commerce/queries/use-find-sales";
 import { Tabs } from "heroui-native/tabs";
 import { Typography } from "heroui-native/text";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
+import { PaymentCard } from "../components/payment-card";
 
 function PaymentHistorySection() {
   const { t } = useTranslation();
@@ -51,12 +50,22 @@ export function CustomerTabsSection({
           </Tabs.Trigger>
         </Tabs.List>
         <Tabs.Content value="sales">
-          {sales.map((s) => (
-            <SaleCard sale={s} key={s.id} />
-          ))}
+          <View className="flex-1 gap-y-2">
+            {sales.map((s) => (
+              <SaleCard sale={s} key={s.id} />
+            ))}
+          </View>
         </Tabs.Content>
         <Tabs.Content value="payments">
-          <PaymentHistorySection />
+          {customer.payments.length === 0 ? (
+            <PaymentHistorySection />
+          ) : (
+            <View className="flex-1 gap-y-2">
+              {customer.payments.map((p) => (
+                <PaymentCard payment={p} key={p.id} />
+              ))}
+            </View>
+          )}
         </Tabs.Content>
       </Tabs>
     </View>
