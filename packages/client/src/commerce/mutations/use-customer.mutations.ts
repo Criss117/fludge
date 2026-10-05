@@ -50,9 +50,8 @@ export function useCreateCustomerPaymentMutation() {
   return useMutation(
     orpc.customer.commands.createPayment.mutationOptions({
       onSuccess: async ({ customer, sales }) => {
-        await commerceContainer.repositories.customerRepository.save(customer);
-
         await commerceContainer.repositories.saleRepository.save(sales);
+        await commerceContainer.repositories.customerRepository.save(customer);
 
         invalidateCustomers.invalidateList();
         invalidateCustomers.invalidateDetail(customer.id);
@@ -75,9 +74,8 @@ export function useCancelCustomerPaymentMutation() {
   return useMutation(
     orpc.customer.commands.cancelPayment.mutationOptions({
       onSuccess: async ({ customer, sales }) => {
-        await commerceContainer.repositories.customerRepository.save(customer);
-
         await commerceContainer.repositories.saleRepository.save(sales);
+        await commerceContainer.repositories.customerRepository.save(customer);
 
         invalidateCustomers.invalidateList();
         invalidateCustomers.invalidateDetail(customer.id);
