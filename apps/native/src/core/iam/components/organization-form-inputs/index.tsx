@@ -12,46 +12,9 @@ function NameInput({ field }: FieldProps<string>) {
   return (
     <TextInput
       value={field.state.value}
-      label="forms.auth.name.label"
-      placeholder="forms.auth.name.placeholder"
-      iconName="badge"
-      modifiers={[fillMaxWidth()]}
-      isError={isInvalid}
-      onValueChange={field.handleChange}
-      errors={field.state.meta.errors}
-    />
-  );
-}
-
-function PasswordInput({ field }: FieldProps<string>) {
-  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-  return (
-    <TextInput
-      value={field.state.value}
-      label="forms.auth.password.label"
-      placeholder="forms.auth.password.placeholder"
-      iconName="password"
-      modifiers={[fillMaxWidth()]}
-      isError={isInvalid}
-      onValueChange={field.handleChange}
-      errors={field.state.meta.errors}
-    />
-  );
-}
-
-function EmailInput({ field }: FieldProps<string>) {
-  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-  return (
-    <TextInput
-      value={field.state.value}
-      keyboardOptions={{
-        keyboardType: "email",
-      }}
-      iconName="mail"
-      label="forms.auth.email.label"
-      placeholder="forms.auth.email.placeholder"
+      label="forms.organization.name.label"
+      placeholder="forms.organization.name.placeholder"
+      iconName="add-business"
       modifiers={[fillMaxWidth()]}
       isError={isInvalid}
       onValueChange={field.handleChange}
@@ -66,12 +29,29 @@ function PhoneInput({ field }: FieldProps<string>) {
   return (
     <TextInput
       value={field.state.value}
+      label="forms.organization.phone.label"
+      placeholder="forms.organization.phone.placeholder"
+      iconName="call"
+      modifiers={[fillMaxWidth()]}
+      isError={isInvalid}
+      onValueChange={field.handleChange}
+      errors={field.state.meta.errors}
       keyboardOptions={{
         keyboardType: "phone",
       }}
-      iconName="call"
-      label="forms.auth.phone.label"
-      placeholder="forms.auth.phone.placeholder"
+    />
+  );
+}
+
+function LegalNameInput({ field }: FieldProps<string>) {
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+  return (
+    <TextInput
+      value={field.state.value}
+      label="forms.organization.legal_name.label"
+      placeholder="forms.organization.legal_name.placeholder"
+      iconName="apartment"
       modifiers={[fillMaxWidth()]}
       isError={isInvalid}
       onValueChange={field.handleChange}
@@ -80,9 +60,44 @@ function PhoneInput({ field }: FieldProps<string>) {
   );
 }
 
-export const AuthFormInputs = {
+function TaxIdInput({ field }: FieldProps<string>) {
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+  return (
+    <TextInput
+      value={field.state.value}
+      label="forms.organization.tax_id.label"
+      placeholder="forms.organization.tax_id.placeholder"
+      iconName="badge"
+      modifiers={[fillMaxWidth()]}
+      isError={isInvalid}
+      onValueChange={field.handleChange}
+      errors={field.state.meta.errors}
+    />
+  );
+}
+
+function AddressInput({ field }: FieldProps<string>) {
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+  return (
+    <TextInput
+      value={field.state.value}
+      label="forms.organization.address.label"
+      placeholder="forms.organization.address.placeholder"
+      iconName="apartment"
+      modifiers={[fillMaxWidth()]}
+      isError={isInvalid}
+      onValueChange={field.handleChange}
+      errors={field.state.meta.errors}
+    />
+  );
+}
+
+export const OrganizationFormInputs = {
   NameInput,
-  PasswordInput,
-  EmailInput,
   PhoneInput,
+  LegalNameInput,
+  TaxIdInput,
+  AddressInput,
 };

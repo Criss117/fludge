@@ -3,6 +3,7 @@ import {
   OutlinedTextField,
   OutlinedTextFieldProps,
   Shape,
+  TextButton,
   useNativeState,
 } from "@expo/ui/jetpack-compose";
 import { ThemedNativeText } from "./themed-text";
@@ -13,6 +14,8 @@ import { SPACING } from "@/lib/sp";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useTranslation } from "react-i18next";
 import { NativeFieldError } from "./field-error";
+import { Icon, type IconName } from "./icon";
+import { height, width } from "@expo/ui/jetpack-compose/modifiers";
 
 interface Props extends Omit<
   OutlinedTextFieldProps,
@@ -20,8 +23,10 @@ interface Props extends Omit<
 > {
   value?: string;
   placeholder: TranslationKey;
+  label: TranslationKey;
   onValueChange?: (value: string) => void;
   errors?: Array<{ message?: string } | undefined>;
+  iconName?: IconName;
 }
 
 const FIELD_SHAPE = Shape.RoundedCorner({
@@ -36,9 +41,11 @@ const FIELD_SHAPE = Shape.RoundedCorner({
 export function TextInput({
   colors,
   placeholder,
+  label,
   onValueChange,
   errors,
   value,
+  iconName,
   ...props
 }: Props) {
   const { t } = useTranslation();
@@ -68,14 +75,23 @@ export function TextInput({
           colors ?? {
             cursorColor: themeColors.primary,
             focusedIndicatorColor: themeColors.primary,
-            focusedLabelColor: themeColors.primary,
-            errorLabelColor: themeColors.error,
           }
         }
       >
         <OutlinedTextField.Label>
-          <ThemedNativeText>{t(placeholder)}</ThemedNativeText>
+          <ThemedNativeText>{t(label)}</ThemedNativeText>
         </OutlinedTextField.Label>
+        <OutlinedTextField.Placeholder>
+          <ThemedNativeText variant="muted">{t(placeholder)}</ThemedNativeText>
+        </OutlinedTextField.Placeholder>
+        {iconName !== undefined && (
+          <OutlinedTextField.LeadingIcon>
+            <Icon name={iconName} />
+          </OutlinedTextField.LeadingIcon>
+        )}
+        <OutlinedTextField.Suffix>
+          <Icon name="close" size={18} onPress={() => handleValueChange("")} />
+        </OutlinedTextField.Suffix>
       </OutlinedTextField>
       {props.isError && <NativeFieldError errors={errors} />}
     </Column>
