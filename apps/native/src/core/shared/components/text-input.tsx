@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import { NativeFieldError } from "./field-error";
 import { Icon, type IconName } from "./icon";
 import { height, width } from "@expo/ui/jetpack-compose/modifiers";
+import { useDebouncedCallback } from "../hooks/use-debounce";
 
 interface Props extends Omit<
   OutlinedTextFieldProps,
@@ -27,6 +28,7 @@ interface Props extends Omit<
   onValueChange?: (value: string) => void;
   errors?: Array<{ message?: string } | undefined>;
   iconName?: IconName;
+  withDebounce?: number;
 }
 
 const FIELD_SHAPE = Shape.RoundedCorner({
@@ -46,11 +48,16 @@ export function TextInput({
   errors,
   value,
   iconName,
+  withDebounce,
   ...props
 }: Props) {
   const { t } = useTranslation();
   const themeColors = useThemeColor();
   const text = useNativeState(value ?? "");
+
+  const debouncedChange = useDebouncedCallback((v: string) => {
+    onValueChange?.(v);
+  }, withDebounce ?? 400);
 
   const handleValueChange = useCallback(
     (value: string) => {
@@ -58,6 +65,11 @@ export function TextInput({
       text.set(value);
 
       if (onValueChange !== undefined) {
+        if (withDebounce !== undefined) {
+          scheduleOnRN(debouncedChange, value);
+          return;
+        }
+
         scheduleOnRN(onValueChange, value);
       }
     },

@@ -23,7 +23,9 @@ export const resources = {
     name: "Movimientos",
   },
   members: {
-    name: "Miembros",
+    plural: "Miembros",
+    single: "Miembro",
+    root: "Propietario",
   },
   permissions: {
     name: "Permisos",

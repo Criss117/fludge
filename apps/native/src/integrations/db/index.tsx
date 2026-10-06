@@ -2,11 +2,12 @@ import migrations from "../../../drizzle/migrations";
 
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
-import { openDatabaseSync } from "expo-sqlite";
+import { openDatabaseSync, type SQLiteRunResult } from "expo-sqlite";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-import { Logger } from "drizzle-orm";
+import { type EmptyRelations, Logger } from "drizzle-orm";
 import { LoadingScreen } from "@/core/shared/components/loading-screen";
 import { FatalErrorScreen } from "@/core/shared/components/fatal-error-screen";
+import type { SQLiteAsyncTransaction } from "drizzle-orm/sqlite-core";
 
 class QueryCounterLogger implements Logger {
   public count = 0;
@@ -31,6 +32,11 @@ export const databaseService = drizzle(expoDb, {
 });
 
 export type DatabaseService = typeof databaseService;
+export type TransactionService = SQLiteAsyncTransaction<
+  "sync",
+  SQLiteRunResult,
+  EmptyRelations
+>;
 
 function DrizzleStudio() {
   useDrizzleStudio(expoDb);

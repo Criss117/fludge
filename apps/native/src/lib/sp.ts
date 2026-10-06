@@ -7,7 +7,7 @@ const STEPS = [
 
 export type Step = (typeof STEPS)[number];
 
-export const sp = (step: Step): number => step * UNIT;
+export const sp = (step: Step = 0): number => step * UNIT;
 export const px = 1;
 
 export const SIZE = {

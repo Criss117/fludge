@@ -87,6 +87,7 @@ export function SelectOrganizationScreen() {
 
       <ScrollView
         style={styles.listContainer}
+        contentContainerStyle={styles.listContentContainer}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
@@ -107,7 +108,7 @@ export function SelectOrganizationScreen() {
               <ElevatedCard
                 modifiers={[fillMaxWidth()]}
                 colors={{
-                  containerColor: colors.onSecondary,
+                  containerColor: colors.secondaryContainer,
                 }}
               >
                 <Row
@@ -203,6 +204,9 @@ const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
     paddingHorizontal: SPACING.sm,
+  },
+  listContentContainer: {
+    flex: 1,
     rowGap: SPACING.md,
   },
   footerContainer: {

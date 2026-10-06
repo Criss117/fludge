@@ -25,4 +25,43 @@ export const screens = {
       to_select: "Cancelar e ir a la Selección de Organizaciones",
     },
   },
+  iam: {
+    label: "IAM",
+    groups: {
+      label: "Grupos",
+      search: {
+        placeholder: "Ej: Caja",
+        label: "Buscar grupos",
+      },
+      empty: "No hay grupos disponibles",
+    },
+    members: {
+      label: "Miembros",
+      search: {
+        placeholder: "Ej: Juan Perez",
+        label: "Buscar miembros",
+      },
+      empty: "No hay miembros disponibles",
+    },
+  },
+  groups: {
+    create: {
+      label: "Crear Grupo",
+    },
+    update: {
+      label: "Editar Grupo",
+    },
+    detail: {
+      loading: "Cargando grupo",
+    },
+  },
+  catalog: {
+    label: "Catálogo",
+  },
+  customer: {
+    label: "Cliente",
+  },
+  sales: {
+    label: "Ventas",
+  },
 };

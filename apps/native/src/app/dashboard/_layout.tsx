@@ -1,5 +1,6 @@
 import { LoadingScreen } from "@/core/shared/components/loading-screen";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { SyncDatabase } from "@/integrations/db/sync";
 import {
   OrganizationProvider,
   useOrganization,
@@ -16,10 +17,10 @@ function StackScreen() {
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: colors.primaryContainer,
+          backgroundColor: colors.background,
         },
         contentStyle: {
-          backgroundColor: colors.primaryContainer,
+          backgroundColor: colors.background,
         },
         headerShadowVisible: false,
         headerShown: false,
@@ -32,16 +33,26 @@ function StackScreen() {
       <Stack.Protected guard={hasActiveOrganization}>
         <Stack.Screen name="(tabs)" />
       </Stack.Protected>
+
+      <Stack.Protected guard={hasActiveOrganization}>
+        <Stack.Screen name="members" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={hasActiveOrganization}>
+        <Stack.Screen name="groups" />
+      </Stack.Protected>
     </Stack>
   );
 }
 
 export default function DashboardLayout() {
   return (
-    <OrganizationProvider
-      fallback={<LoadingScreen message="app.loading.organization" />}
-    >
-      <StackScreen />
-    </OrganizationProvider>
+    <SyncDatabase>
+      <OrganizationProvider
+        fallback={<LoadingScreen message="app.loading.organization" />}
+      >
+        <StackScreen />
+      </OrganizationProvider>
+    </SyncDatabase>
   );
 }

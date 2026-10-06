@@ -8,7 +8,7 @@ export function ThemedView({ style, ...otherProps }: ViewProps) {
 
   return (
     <View
-      style={[{ backgroundColor: colors.primaryContainer }, style]}
+      style={[{ backgroundColor: colors.background }, style]}
       {...otherProps}
     />
   );
@@ -19,7 +19,7 @@ export function ThemedScrollView({ style, ...otherProps }: ScrollViewProps) {
 
   return (
     <ScrollView
-      style={[{ backgroundColor: colors.primaryContainer }, style]}
+      style={[{ backgroundColor: colors.background }, style]}
       {...otherProps}
     />
   );

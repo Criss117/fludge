@@ -48,6 +48,9 @@ export interface Colors {
   surfaceContainer: string;
   surfaceContainerHigh: string;
   surfaceContainerHighest: string;
+
+  success: string;
+  onSuccess: string;
 }
 
 export type Theme = "light" | "dark";
@@ -103,6 +106,8 @@ export const APP_COLORS: Record<Theme, Colors> = {
     surfaceContainer: "#E9E4D8",
     surfaceContainerHigh: "#E3DDCF",
     surfaceContainerHighest: "#D8D2C4",
+    success: "#cdeda3",
+    onSuccess: "#354e16",
   },
   dark: {
     primary: "#D1CFC0",
@@ -154,5 +159,7 @@ export const APP_COLORS: Record<Theme, Colors> = {
     surfaceContainer: "#1C1C1C",
     surfaceContainerHigh: "#222222",
     surfaceContainerHighest: "#2A2A2A",
+    success: "#354e16",
+    onSuccess: "#cdeda3",
   },
 } as const;

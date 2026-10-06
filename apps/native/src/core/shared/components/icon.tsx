@@ -8,6 +8,14 @@ import MailIcon from "@expo/material-symbols/mail.xml";
 import CloseIcon from "@expo/material-symbols/close.xml";
 import SearchIcon from "@expo/material-symbols/search.xml";
 import LocationOnIcon from "@expo/material-symbols/location_on.xml";
+import AddIcon from "@expo/material-symbols/add.xml";
+import MoreVertIcon from "@expo/material-symbols/more_vert.xml";
+import PersonIcon from "@expo/material-symbols/person.xml";
+import CheckIcon from "@expo/material-symbols/check.xml";
+import CheckCircleIcon from "@expo/material-symbols/check_circle.xml";
+import VisibilityIcon from "@expo/material-symbols/visibility.xml";
+import EditIcon from "@expo/material-symbols/edit.xml";
+
 import { Icon as ExpoIcon, type IconProps as ExpoIconProps } from "@expo/ui";
 
 export const ICONS = {
@@ -21,6 +29,13 @@ export const ICONS = {
   close: CloseIcon,
   search: SearchIcon,
   "location-on": LocationOnIcon,
+  "more-vert": MoreVertIcon,
+  add: AddIcon,
+  person: PersonIcon,
+  check: CheckIcon,
+  "check-circle": CheckCircleIcon,
+  visibility: VisibilityIcon,
+  edit: EditIcon,
 } as const;
 
 export type IconName = keyof typeof ICONS;

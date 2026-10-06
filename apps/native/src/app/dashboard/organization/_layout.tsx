@@ -17,7 +17,7 @@ export default function OrganizationLayout() {
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: colors.primaryContainer,
+          backgroundColor: colors.background,
         },
         headerTitleStyle: {
           color: colors.onPrimaryContainer,
@@ -25,7 +25,7 @@ export default function OrganizationLayout() {
         },
         headerShadowVisible: false,
         contentStyle: {
-          backgroundColor: colors.primaryContainer,
+          backgroundColor: colors.background,
         },
         animation: "fade",
       }}
