@@ -9,6 +9,7 @@ import {
   group,
   groupMember,
   type GroupMemberSelect,
+  type GroupSelect,
 } from "@fludge/db/schema/iam.schema";
 import {
   buildConflictUpdateColumn,
@@ -147,13 +148,25 @@ export class SQLiteGroupRepository
   }
 
   public async save(groupEntity: Group | Group[]) {
-    const groups = Array.isArray(groupEntity) ? groupEntity : [groupEntity];
+    const groupArray = Array.isArray(groupEntity) ? groupEntity : [groupEntity];
+
+    const groups: GroupSelect[] = [];
+    const groupMembers: GroupMemberSelect[] = [];
+
+    for (const group of groupArray) {
+      const { members, ...g } = group.values;
+
+      groups.push(g);
+      groupMembers.push(...members);
+    }
+
+    console.log({ groups, groupMembers });
 
     const [, errInsert] = await tryCatch(
       this.db.transaction(async (tx) => {
         await tx
           .insert(group)
-          .values(groups.map((g) => g.values))
+          .values(groups)
           .onConflictDoUpdate({
             target: group.id,
             set: buildConflictUpdateColumn(group, [
@@ -166,10 +179,12 @@ export class SQLiteGroupRepository
             ]),
           });
 
-        await tx
-          .insert(groupMember)
-          .values(groups.flatMap((g) => g.values.members))
-          .onConflictDoNothing();
+        if (groupMembers.length > 0) {
+          await tx
+            .insert(groupMember)
+            .values(groupMembers)
+            .onConflictDoNothing();
+        }
       }),
     );
 

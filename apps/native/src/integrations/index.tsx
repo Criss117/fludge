@@ -8,6 +8,11 @@ import { NetworkProvider } from "./network";
 import { AuthProvider } from "./auth";
 import { ORPCProvider } from "./orpc";
 import { DependenciesProvider } from "./dependencies";
+import { ToastProvider } from "@/core/shared/components/toast-provider";
+
+function UIProvider({ children }: { children: React.ReactNode }) {
+  return <ToastProvider>{children}</ToastProvider>;
+}
 
 function NetProvider({ children }: { children: React.ReactNode }) {
   return (
@@ -30,7 +35,9 @@ export function Integrations({ children }: { children: React.ReactNode }) {
     <GestureHandlerRootView>
       <KeyboardProvider statusBarTranslucent={true}>
         <FontsProvider>
-          <NetProvider>{children}</NetProvider>
+          <NetProvider>
+            <UIProvider>{children}</UIProvider>
+          </NetProvider>
         </FontsProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>

@@ -46,4 +46,26 @@ export const forms = {
     },
     submit: "Registrar",
   },
+  group: {
+    create: {
+      success: "Grupo creado con éxito",
+      submit: "Crear Grupo",
+    },
+    update: "Editar Grupo",
+
+    details: {
+      title: "Detalles del Grupo",
+    },
+    name: {
+      label: "Nombre del Grupo",
+      placeholder: "Ej: Caja",
+    },
+    description: {
+      label: "Descripción del Grupo",
+      placeholder: "Ej: Caja de Cajas",
+    },
+    permissions: {
+      label: "Permisos del Grupo",
+    },
+  },
 };

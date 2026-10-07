@@ -15,6 +15,10 @@ import CheckIcon from "@expo/material-symbols/check.xml";
 import CheckCircleIcon from "@expo/material-symbols/check_circle.xml";
 import VisibilityIcon from "@expo/material-symbols/visibility.xml";
 import EditIcon from "@expo/material-symbols/edit.xml";
+import GroupAddIcon from "@expo/material-symbols/group_add.xml";
+import LabelIcon from "@expo/material-symbols/label.xml";
+import DescriptionIcon from "@expo/material-symbols/description.xml";
+import ArrowDropDownIcon from "@expo/material-symbols/arrow_drop_down.xml";
 
 import { Icon as ExpoIcon, type IconProps as ExpoIconProps } from "@expo/ui";
 
@@ -36,6 +40,10 @@ export const ICONS = {
   "check-circle": CheckCircleIcon,
   visibility: VisibilityIcon,
   edit: EditIcon,
+  "group-add": GroupAddIcon,
+  label: LabelIcon,
+  description: DescriptionIcon,
+  "arrow-drop-down": ArrowDropDownIcon,
 } as const;
 
 export type IconName = keyof typeof ICONS;
