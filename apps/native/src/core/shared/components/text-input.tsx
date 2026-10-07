@@ -64,14 +64,14 @@ export function TextInput({
       "worklet";
       text.set(value);
 
-      if (onValueChange !== undefined) {
-        if (withDebounce !== undefined) {
-          scheduleOnRN(debouncedChange, value);
-          return;
-        }
+      if (!onValueChange) return;
 
-        scheduleOnRN(onValueChange, value);
+      if (withDebounce !== undefined) {
+        scheduleOnRN(debouncedChange, value);
+        return;
       }
+
+      scheduleOnRN(onValueChange, value);
     },
     [text],
   );

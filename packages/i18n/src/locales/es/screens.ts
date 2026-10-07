@@ -61,6 +61,7 @@ export const screens = {
     },
     detail: {
       loading: "Cargando miembro",
+      unassign: "Desasignar Grupo",
     },
   },
   catalog: {

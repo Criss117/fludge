@@ -70,8 +70,14 @@ export const forms = {
       label: "Permisos del Grupo",
     },
   },
-  register_member: {
-    success: "Miembro registrado con éxito",
+  member: {
+    assign_groups: "Asignar Grupos",
+    success: {
+      create: "Miembro registrado con éxito",
+      assing_groups: "Grupos asignados con éxito",
+      unassign_groups: "Grupos desasignados con éxito",
+    },
+
     sections: {
       personal_data: "Datos personales",
       access_data: "Datos de acceso",

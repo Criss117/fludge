@@ -30,7 +30,7 @@ export function RegisterMemberScreen() {
           resetForm();
           router.back();
           toast.show({
-            message: "forms.register_member.success",
+            message: "forms.member.success",
             duration: "short",
           });
         },
@@ -53,7 +53,7 @@ export function RegisterMemberScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Host matchContents={{ vertical: true }} style={styles.hostContainer}>
-          <SectionCard title="forms.register_member.sections.personal_data">
+          <SectionCard title="forms.member.sections.personal_data">
             <form.Field name="name">
               {(field) => <AuthFormInputs.NameInput field={field} />}
             </form.Field>
@@ -63,7 +63,7 @@ export function RegisterMemberScreen() {
           </SectionCard>
         </Host>
         <Host matchContents={{ vertical: true }} style={styles.hostContainer}>
-          <SectionCard title="forms.register_member.sections.access_data">
+          <SectionCard title="forms.member.sections.access_data">
             <form.Field name="email">
               {(field) => <AuthFormInputs.EmailInput field={field} />}
             </form.Field>
@@ -82,7 +82,7 @@ export function RegisterMemberScreen() {
             onClick={form.handleSubmit}
           >
             <ThemedNativeText color={colors.onPrimary}>
-              {t("forms.register_member.submit")}
+              {t("forms.member.submit")}
             </ThemedNativeText>
           </Button>
         </Host>

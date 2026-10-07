@@ -19,6 +19,7 @@ import GroupAddIcon from "@expo/material-symbols/group_add.xml";
 import LabelIcon from "@expo/material-symbols/label.xml";
 import DescriptionIcon from "@expo/material-symbols/description.xml";
 import ArrowDropDownIcon from "@expo/material-symbols/arrow_drop_down.xml";
+import BlockIcon from "@expo/material-symbols/block.xml";
 
 import { Icon as ExpoIcon, type IconProps as ExpoIconProps } from "@expo/ui";
 
@@ -44,6 +45,7 @@ export const ICONS = {
   label: LabelIcon,
   description: DescriptionIcon,
   "arrow-drop-down": ArrowDropDownIcon,
+  block: BlockIcon,
 } as const;
 
 export type IconName = keyof typeof ICONS;

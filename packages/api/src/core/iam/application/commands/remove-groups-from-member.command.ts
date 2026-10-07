@@ -24,20 +24,6 @@ export class RemoveGroupsFromMemberCommand {
   public async execute(authContext: UserAuthContext, cmd: CMD) {
     const organizationId = authContext.organizationId.toString();
 
-    const [groups, errGroups] = await this.groupRepository.findByIds(
-      organizationId,
-      cmd.groupIds,
-    );
-
-    if (errGroups)
-      throw new InternalServerError(
-        errGroups,
-        "api_errors.iam.organizations.isr_on_find",
-      );
-
-    if (groups.length !== cmd.groupIds.length)
-      throw new GroupNotFoundException();
-
     const [member, errMember] = await this.memberRepository.findById(
       organizationId,
       cmd.memberId,
@@ -52,6 +38,20 @@ export class RemoveGroupsFromMemberCommand {
     if (!member) throw new MemberNotFoundException();
 
     if (member.role.isOwner()) throw new MemberIsOwnerException();
+
+    const [groups, errGroups] = await this.groupRepository.findByIds(
+      organizationId,
+      cmd.groupIds,
+    );
+
+    if (errGroups)
+      throw new InternalServerError(
+        errGroups,
+        "api_errors.iam.organizations.isr_on_find",
+      );
+
+    if (groups.length !== cmd.groupIds.length)
+      throw new GroupNotFoundException();
 
     const groupMembersToRemove: GroupMember[] = [];
 

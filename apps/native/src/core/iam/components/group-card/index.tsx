@@ -18,15 +18,21 @@ import {
 } from "@expo/ui/jetpack-compose/modifiers";
 import { GroupSummary } from "@fludge/client/iam/domain/entities";
 import { useTranslation } from "react-i18next";
-import { GroupCardOptions } from "./options";
+import { type GroupCardMenuItems, GroupCardOptions } from "./options";
 import type { ActionFor, Resource } from "@fludge/utils/permissions/data";
 import type { TranslationKey } from "@fludge/i18n/index";
 
+export type MenuOptions = {
+  hide?: boolean;
+  items?: GroupCardMenuItems;
+};
+
 interface Props {
   group: GroupSummary;
+  menuOptions?: MenuOptions;
 }
 
-export function GroupCard({ group }: Props) {
+export function GroupCard({ group, menuOptions }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColor();
   return (
@@ -58,7 +64,9 @@ export function GroupCard({ group }: Props) {
                 <StatusChip status={group.status} />
               </Row>
 
-              <GroupCardOptions group={group} />
+              {!menuOptions?.hide && (
+                <GroupCardOptions group={group} items={menuOptions?.items} />
+              )}
             </Row>
             <ThemedNativeText>{group.description}</ThemedNativeText>
           </Column>

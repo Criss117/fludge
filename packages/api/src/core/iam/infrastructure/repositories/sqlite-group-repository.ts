@@ -71,14 +71,23 @@ export class SQLiteGroupRepository
   public async findByIds(organizationId: string, groupIds: string[]) {
     const [rows, errFind] = await tryCatch(
       this.db
-        .select({ ...getColumns(group) })
+        .select({
+          ...getColumns(group),
+          members: sql<string>`
+            json_group_array(
+              DISTINCT ${jsonObject(groupMember)}
+            ) FILTER (WHERE ${groupMember.groupId} IS NOT NULL)
+          `.as("members"),
+        })
         .from(group)
+        .leftJoin(groupMember, eq(group.id, groupMember.groupId))
         .where(
           and(
             eq(group.organizationId, organizationId),
             inArray(group.id, groupIds),
           ),
-        ),
+        )
+        .groupBy(group.id),
     );
 
     if (errFind) return err(errFind);
@@ -87,7 +96,12 @@ export class SQLiteGroupRepository
       rows.map((groupRecord) =>
         Group.reconstitute({
           ...groupRecord,
-          members: [],
+          members: (JSON.parse(groupRecord.members) as GroupMemberSelect[]).map(
+            (member) => ({
+              ...member,
+              createdAt: new Date(member.createdAt),
+            }),
+          ),
         }),
       ),
     );
