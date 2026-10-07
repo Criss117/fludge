@@ -55,6 +55,14 @@ export const screens = {
       loading: "Cargando grupo",
     },
   },
+  members: {
+    register: {
+      label: "Registrar Miembro",
+    },
+    detail: {
+      loading: "Cargando miembro",
+    },
+  },
   catalog: {
     label: "Catálogo",
   },

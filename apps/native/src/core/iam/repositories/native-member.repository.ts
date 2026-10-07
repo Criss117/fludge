@@ -42,7 +42,7 @@ export class NativeMemberRepository implements MemberRepository {
 
   public async delete(
     organizationId: string,
-    memberId: string | string[]
+    memberId: string | string[],
   ): Promise<void> {
     const memberIds = Array.isArray(memberId) ? memberId : [memberId];
 
@@ -51,15 +51,15 @@ export class NativeMemberRepository implements MemberRepository {
       .where(
         and(
           eq(localMember.organizationId, organizationId),
-          inArray(localMember.id, memberIds)
-        )
+          inArray(localMember.id, memberIds),
+        ),
       )
       .run();
   }
 
   public async findOneById(
     organizationId: string,
-    memberId: string
+    memberId: string,
   ): Promise<MemberDetail | null> {
     const memberData = this.db
       .select({
@@ -71,8 +71,8 @@ export class NativeMemberRepository implements MemberRepository {
       .where(
         and(
           eq(localMember.organizationId, organizationId),
-          eq(localMember.id, memberId)
-        )
+          eq(localMember.id, memberId),
+        ),
       )
       .limit(1)
       .get();
@@ -88,13 +88,13 @@ export class NativeMemberRepository implements MemberRepository {
       .innerJoin(localGroup, eq(localGroup.id, localGroupMember.groupId))
       .leftJoin(
         countGroupMembersAlias,
-        eq(countGroupMembersAlias.groupId, localGroup.id)
+        eq(countGroupMembersAlias.groupId, localGroup.id),
       )
       .where(
         and(
           eq(localGroupMember.memberId, memberId),
-          eq(localGroupMember.organizationId, organizationId)
-        )
+          eq(localGroupMember.organizationId, organizationId),
+        ),
       )
       .orderBy(desc(localGroup.createdAt))
       .groupBy(localGroup.id);
@@ -107,7 +107,7 @@ export class NativeMemberRepository implements MemberRepository {
 
   public async findAll(
     organizationId: string,
-    filters?: FindAllMembersFilters
+    filters?: FindAllMembersFilters,
   ): Promise<MemberSummary[]> {
     const excludeIds = filters?.excludeIds;
     const searchQuery = filters?.searchQuery ?? "";
@@ -123,14 +123,16 @@ export class NativeMemberRepository implements MemberRepository {
         and(
           eq(localMember.organizationId, organizationId),
           excludeIds ? notInArray(localMember.id, excludeIds) : undefined,
-          like(localUser.name, "%" + searchQuery + "%")
-        )
+          like(localUser.name, "%" + searchQuery + "%"),
+        ),
       )
       .orderBy(desc(localMember.createdAt))
       .all();
   }
 
   public async save(values: MemberSummary | MemberSummary[]): Promise<void> {
+    console.log(values);
+
     const membersArray = Array.isArray(values) ? values : [values];
 
     const members: Omit<MemberSummary, "user">[] = [];

@@ -10,6 +10,7 @@ export type OrganizationSummary = LocalOrganization;
 export type MemberSummary = LocalMember & {
   user: LocalUser;
 };
+
 export type GroupSummary = Omit<LocalGroup, "members"> & {
   totalMembers: number;
 };

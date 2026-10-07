@@ -35,7 +35,7 @@ export function MembersScreen() {
       </View>
 
       <LinkFabButton
-        action={{ type: "push", href: "/dashboard/members/create" }}
+        action={{ type: "push", href: "/dashboard/members/register" }}
       />
     </ThemedView>
   );

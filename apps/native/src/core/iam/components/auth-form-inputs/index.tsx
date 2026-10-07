@@ -32,8 +32,11 @@ function PasswordInput({ field }: FieldProps<string>) {
       label="forms.auth.password.label"
       placeholder="forms.auth.password.placeholder"
       iconName="password"
+      visualTransformation="password"
       keyboardOptions={{
         keyboardType: "password",
+        autoCorrectEnabled: false,
+        capitalization: "none",
       }}
       modifiers={[fillMaxWidth()]}
       isError={isInvalid}

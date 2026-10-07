@@ -3,7 +3,6 @@ import {
   OutlinedTextField,
   OutlinedTextFieldProps,
   Shape,
-  TextButton,
   useNativeState,
 } from "@expo/ui/jetpack-compose";
 import { ThemedNativeText } from "./themed-text";
@@ -15,8 +14,8 @@ import type { TranslationKey } from "@fludge/i18n/index";
 import { useTranslation } from "react-i18next";
 import { NativeFieldError } from "./field-error";
 import { Icon, type IconName } from "./icon";
-import { height, width } from "@expo/ui/jetpack-compose/modifiers";
 import { useDebouncedCallback } from "../hooks/use-debounce";
+import { GeistFonts } from "@/integrations/fonts";
 
 interface Props extends Omit<
   OutlinedTextFieldProps,
@@ -49,6 +48,7 @@ export function TextInput({
   value,
   iconName,
   withDebounce,
+  textStyle,
   ...props
 }: Props) {
   const { t } = useTranslation();
@@ -80,6 +80,10 @@ export function TextInput({
     <Column>
       <OutlinedTextField
         {...props}
+        textStyle={{
+          ...textStyle,
+          fontFamily: GeistFonts.Regular,
+        }}
         value={text}
         onValueChange={handleValueChange}
         shape={FIELD_SHAPE}
