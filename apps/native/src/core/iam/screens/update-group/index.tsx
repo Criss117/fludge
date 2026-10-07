@@ -6,7 +6,7 @@ import { SPACING } from "@/lib/sp";
 import { Button, Column, Host, Spacer } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, width } from "@expo/ui/jetpack-compose/modifiers";
 import { useGroupForm } from "@fludge/client/iam/forms/group.form";
-import { useCreateGroup } from "@fludge/client/iam/mutations/use-group.mutations";
+import { useUpdateGroup } from "@fludge/client/iam/mutations/use-group.mutations";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -14,39 +14,56 @@ import { GroupFormInputs } from "@/core/iam/components/group-form-input";
 import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import Animated from "react-native-reanimated";
 import { useToast } from "@/core/shared/components/toast-provider";
+import type { GroupDetail } from "@fludge/client/iam/domain/entities";
+import type { TranslationKey } from "@fludge/i18n/index";
 
-export function CreateGroupScreen() {
+interface Props {
+  group: GroupDetail;
+}
+
+export function UpdateGroupScreen({ group }: Props) {
   const spacer = useKeyboardSpacer();
   const { t } = useTranslation();
-  const mutation = useCreateGroup();
+  const mutation = useUpdateGroup();
   const colors = useThemeColor();
   const { show } = useToast();
 
   const router = useRouter();
 
-  const form = useGroupForm({
-    onSubmit: ({ value }) => {
-      mutation.mutate(
-        {
-          name: value.name,
-          description: value.description,
-          permissions: value.permissions,
-        },
-        {
-          onSuccess: () => {
-            show({
-              message: "forms.group.create.success",
-              duration: "short",
-            });
-            router.back();
+  const form = useGroupForm(
+    {
+      onSubmit: ({ value }) => {
+        mutation.mutate(
+          {
+            id: group.id,
+            name: value.name,
+            description: value.description,
+            permissions: value.permissions,
           },
-          onError: (e) => {
-            console.log(e);
+          {
+            onSuccess: () => {
+              show({
+                message: "forms.group.update.success",
+                duration: "short",
+              });
+              router.back();
+            },
+            onError: (e) => {
+              show({
+                message: e.message as TranslationKey,
+                duration: "short",
+              });
+            },
           },
-        },
-      );
+        );
+      },
     },
-  });
+    {
+      name: group.name,
+      description: group.description ?? "",
+      permissions: group.permissions,
+    },
+  );
 
   return (
     <View style={styles.container}>
@@ -98,7 +115,7 @@ export function CreateGroupScreen() {
             <Icon name="group-add" size={SPACING.lg} color={colors.onPrimary} />
             <Spacer modifiers={[width(SPACING.sm)]} />
             <ThemedNativeText color={colors.onPrimary}>
-              {t("forms.group.create.submit")}
+              {t("forms.group.update.submit")}
             </ThemedNativeText>
           </Button>
         </Host>

@@ -51,8 +51,10 @@ export const forms = {
       success: "Grupo creado con éxito",
       submit: "Crear Grupo",
     },
-    update: "Editar Grupo",
-
+    update: {
+      submit: "Editar Grupo",
+      success: "Grupo actualizado con éxito",
+    },
     details: {
       title: "Detalles del Grupo",
     },

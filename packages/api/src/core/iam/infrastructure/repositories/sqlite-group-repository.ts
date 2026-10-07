@@ -30,7 +30,7 @@ export class SQLiteGroupRepository
     super(db);
   }
 
-  public async findById(groupId: string) {
+  public async findById(organizationId: string, groupId: string) {
     const [rows, errFind] = await tryCatch(
       this.db
         .select({
@@ -43,7 +43,10 @@ export class SQLiteGroupRepository
         })
         .from(group)
         .leftJoin(groupMember, eq(group.id, groupMember.groupId))
-        .where(eq(group.id, groupId)),
+        .where(
+          and(eq(group.organizationId, organizationId), eq(group.id, groupId)),
+        )
+        .groupBy(group.id),
     );
 
     if (errFind) return err(errFind);

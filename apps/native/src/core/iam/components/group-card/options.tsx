@@ -59,6 +59,25 @@ export function GroupCardOptions({ group }: Props) {
             </ThemedNativeText>
           </DropdownMenuItem.Text>
         </DropdownMenuItem>
+
+        <DropdownMenuItem
+          onClick={() => {
+            setIsExpanded(false);
+            router.push({
+              pathname: "/dashboard/groups/[groupid]/update",
+              params: { groupid: group.id },
+            });
+          }}
+        >
+          <DropdownMenuItem.LeadingIcon>
+            <Icon name="edit" size={24} color={colors.onSecondaryContainer} />
+          </DropdownMenuItem.LeadingIcon>
+          <DropdownMenuItem.Text>
+            <ThemedNativeText color={colors.onSecondaryContainer}>
+              {t("helpers.navigation.update")}
+            </ThemedNativeText>
+          </DropdownMenuItem.Text>
+        </DropdownMenuItem>
       </DropdownMenu.Items>
     </DropdownMenu>
   );
