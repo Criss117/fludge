@@ -63,6 +63,9 @@ export const screens = {
       loading: "Cargando miembro",
       unassign: "Desasignar Grupo",
     },
+    assign_groups: {
+      title: "Asignar Grupos",
+    },
   },
   catalog: {
     label: "Catálogo",

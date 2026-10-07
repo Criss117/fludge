@@ -1,7 +1,7 @@
-import { MemberDetailScreen } from "@/core/iam/screens/members/member-detail.screen";
+import { AssignGroupsScreen } from "@/core/iam/screens/members/assign-groups.screen";
 import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { useFindMemberDetail } from "@fludge/client/iam/queries/use-find-members";
-import { Redirect, Stack, useLocalSearchParams } from "expo-router";
+import { Redirect, useLocalSearchParams } from "expo-router";
 import { Suspense } from "react";
 
 function Screen({ memberid }: { memberid: string }) {
@@ -9,19 +9,10 @@ function Screen({ memberid }: { memberid: string }) {
 
   if (!data) return <Redirect href="/dashboard/iam" />;
 
-  return (
-    <>
-      <Stack.Screen
-        options={{
-          title: data.user.name,
-        }}
-      />
-      <MemberDetailScreen member={data} />
-    </>
-  );
+  return <AssignGroupsScreen member={data} />;
 }
 
-export default function MemberDetails() {
+export default function AssingGroups() {
   const { memberid } = useLocalSearchParams<{
     memberid?: string;
   }>();

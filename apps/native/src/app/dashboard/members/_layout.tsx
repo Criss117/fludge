@@ -31,6 +31,12 @@ export default function MembersLayout() {
         }}
       />
       <Stack.Screen
+        name="[memberid]/assign-groups"
+        options={{
+          title: t("screens.members.assign_groups.title"),
+        }}
+      />
+      <Stack.Screen
         name="register"
         options={{
           title: t("screens.members.register.label"),

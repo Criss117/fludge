@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { type GroupCardMenuItems, GroupCardOptions } from "./options";
 import type { ActionFor, Resource } from "@fludge/utils/permissions/data";
 import type { TranslationKey } from "@fludge/i18n/index";
+import { PressableScale } from "pressto";
 
 export type MenuOptions = {
   hide?: boolean;
@@ -32,9 +33,39 @@ interface Props {
   menuOptions?: MenuOptions;
 }
 
+interface SelectableGroupCardProps extends Props {
+  isSelected: boolean;
+  onPress: (group: GroupSummary) => void;
+}
+
+export function SelectableGroupCard({
+  group,
+  menuOptions,
+  isSelected,
+  onPress,
+}: SelectableGroupCardProps) {
+  const colors = useThemeColor();
+
+  return (
+    <PressableScale
+      onPress={() => onPress(group)}
+      style={[
+        {
+          borderWidth: 2,
+          borderRadius: SPACING.md,
+          borderColor: isSelected ? colors.primary : "transparent",
+        },
+      ]}
+    >
+      <GroupCard group={group} menuOptions={menuOptions} />
+    </PressableScale>
+  );
+}
+
 export function GroupCard({ group, menuOptions }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColor();
+
   return (
     <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
       <ElevatedCard

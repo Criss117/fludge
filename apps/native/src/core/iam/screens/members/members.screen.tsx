@@ -2,7 +2,6 @@ import { MemberListSection } from "@/core/iam/sections/member-list";
 import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { LinkFabButton } from "@/core/shared/components/link-fab-button";
 import { TextInput } from "@/core/shared/components/text-input";
-import { ThemedText } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
 import { SPACING } from "@/lib/sp";
 import { Host } from "@expo/ui";

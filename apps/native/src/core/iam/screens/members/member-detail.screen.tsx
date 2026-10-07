@@ -20,14 +20,16 @@ import type { MemberDetail } from "@fludge/client/iam/domain/entities";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { MemberGroupsSection } from "@/core/iam/sections/member-groups";
+import { useRouter } from "expo-router";
 
 interface Props {
   member: MemberDetail;
 }
 
-export function MemberScreen({ member }: Props) {
+export function MemberDetailScreen({ member }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColor();
+  const router = useRouter();
 
   return (
     <View style={styles.container}>
@@ -69,11 +71,17 @@ export function MemberScreen({ member }: Props) {
             colors={{
               containerColor: colors.primary,
             }}
+            onClick={() =>
+              router.push({
+                pathname: "/dashboard/members/[memberid]/assign-groups",
+                params: { memberid: member.id },
+              })
+            }
           >
             <Icon name="group-add" size={SPACING.lg} color={colors.onPrimary} />
             <Spacer modifiers={[width(SPACING.sm)]} />
             <ThemedNativeText color={colors.onPrimary}>
-              {t("forms.member.assign_groups")}
+              {t("screens.members.assign_groups.title")}
             </ThemedNativeText>
           </Button>
         </Host>

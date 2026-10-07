@@ -71,7 +71,7 @@ export const forms = {
     },
   },
   member: {
-    assign_groups: "Asignar Grupos",
+    assign_groups: "Asignar ({{quantity}}) Grupos",
     success: {
       create: "Miembro registrado con éxito",
       assing_groups: "Grupos asignados con éxito",
