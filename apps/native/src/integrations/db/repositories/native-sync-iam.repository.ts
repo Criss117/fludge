@@ -117,15 +117,6 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
       }
 
       if (values.groups.length > 0) {
-        tx.delete(localGroupMember)
-          .where(
-            inArray(
-              localGroupMember.groupId,
-              values.groups.map((g) => g.id)
-            )
-          )
-          .run();
-
         tx.insert(localGroup)
           .values(values.groups)
           .onConflictDoUpdate({
@@ -141,10 +132,25 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
           })
           .run();
 
-        tx.insert(localGroupMember)
-          .values(values.groups.flatMap((g) => g.members.map((m) => m)))
-          .onConflictDoNothing()
-          .run();
+        const groupMembers = values.groups.flatMap((g) =>
+          g.members.map((m) => m),
+        );
+
+        if (groupMembers.length > 0) {
+          tx.delete(localGroupMember)
+            .where(
+              inArray(
+                localGroupMember.groupId,
+                values.groups.map((g) => g.id),
+              ),
+            )
+            .run();
+
+          tx.insert(localGroupMember)
+            .values(values.groups.flatMap((g) => g.members.map((m) => m)))
+            .onConflictDoNothing()
+            .run();
+        }
       }
     });
   }
