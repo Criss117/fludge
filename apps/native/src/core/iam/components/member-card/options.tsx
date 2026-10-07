@@ -6,12 +6,12 @@ import {
   DropdownMenuItem,
   IconButton,
 } from "@expo/ui/jetpack-compose";
-import { MemberSummary } from "@fludge/client/iam/domain/entities";
+import { LocalMember } from "@fludge/client/iam/domain/entities";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-export function MemberCardOptions({ member }: { member: MemberSummary }) {
+export function MemberCardOptions({ member }: { member: LocalMember }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { t } = useTranslation();
   const colors = useThemeColor();

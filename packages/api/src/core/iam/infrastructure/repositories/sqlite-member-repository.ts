@@ -4,19 +4,38 @@ import type {
   Options,
 } from "@fludge/api/core/iam/domain/repositories/member.repository";
 import type { DatabaseService } from "@fludge/db";
+import { user } from "@fludge/db/schema/auth.schema";
 import { member } from "@fludge/db/schema/iam.schema";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, getColumns, inArray } from "drizzle-orm";
 
 export class SQLiteMemberRepository implements MemberRepository {
   constructor(private readonly db: DatabaseService) {}
 
+  public async findUser(userId: string) {
+    const [rows, errFind] = await tryCatch(
+      this.db.select().from(user).where(eq(user.id, userId)).limit(1),
+    );
+
+    if (errFind) return err(errFind);
+
+    const userRow = rows.at(0);
+
+    if (!userRow) return ok(null);
+
+    return ok(userRow);
+  }
+
   public async findById(organizationId: string, memberId: string) {
     const [rows, errFind] = await tryCatch(
       this.db
-        .select()
+        .select({
+          ...getColumns(member),
+          user: getColumns(user),
+        })
         .from(member)
+        .innerJoin(user, eq(member.userId, user.id))
         .where(
           and(
             eq(member.organizationId, organizationId),
@@ -37,8 +56,12 @@ export class SQLiteMemberRepository implements MemberRepository {
   public async findByIds(organizationId: string, memberIds: string[]) {
     const [rows, errFind] = await tryCatch(
       this.db
-        .select()
+        .select({
+          ...getColumns(member),
+          user: getColumns(user),
+        })
         .from(member)
+        .innerJoin(user, eq(member.userId, user.id))
         .where(
           and(
             eq(member.organizationId, organizationId),
@@ -55,8 +78,12 @@ export class SQLiteMemberRepository implements MemberRepository {
   public async findByUserId(organizationId: string, userId: string) {
     const [rows, errFind] = await tryCatch(
       this.db
-        .select()
+        .select({
+          ...getColumns(member),
+          user: getColumns(user),
+        })
         .from(member)
+        .innerJoin(user, eq(member.userId, user.id))
         .where(
           and(
             eq(member.userId, userId),

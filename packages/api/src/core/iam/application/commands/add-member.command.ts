@@ -6,6 +6,7 @@ import type { MemberRepository } from "@fludge/api/core/iam/domain/repositories/
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { UUID } from "@fludge/utils/uuid";
 import { addMemberValidator } from "@fludge/utils/validators/organization.validators";
+import { UserNotFoundException } from "@fludge/api/core/iam/domain/exceptions/user-not-found.exeption";
 
 export const addMemberCommand = addMemberValidator;
 
@@ -28,11 +29,22 @@ export class AddMemberCommand {
 
     if (existingMember) throw new MemberAlreadyExistsException();
 
+    const [user, errUser] = await this.memberRepository.findUser(cmd.userId);
+
+    if (errUser)
+      throw new InternalServerError(
+        errUser,
+        "api_errors.iam.organizations.isr_on_find",
+      );
+
+    if (!user) throw new UserNotFoundException();
+
     const newMember = Member.create({
       userId: UUID.fromString(cmd.userId),
       role: "member",
       assignedBy: authContext.member.id,
       organizationId: authContext.organizationId,
+      user,
     });
 
     const [, errSaving] = await this.memberRepository.save(newMember);

@@ -18,25 +18,6 @@ import { and, desc, eq, getColumns, gt, inArray, sql } from "drizzle-orm";
 export class SQLiteSyncIamRepository implements ServerSyncIamRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  private async findUsers(
-    organizationIds: string[],
-    lastSyncedAt: IamLastSyncedAt["user"],
-  ) {
-    return this.db
-      .select({
-        ...getColumns(user),
-      })
-      .from(member)
-      .innerJoin(user, eq(member.userId, user.id))
-      .where(
-        and(
-          inArray(member.organizationId, organizationIds),
-          lastSyncedAt ? gt(user.updatedAt, lastSyncedAt) : undefined,
-        ),
-      )
-      .orderBy(desc(user.updatedAt));
-  }
-
   private async findOrganizations(
     organizationIds: string[],
     lastSyncedAt: IamLastSyncedAt["organization"],
@@ -57,8 +38,12 @@ export class SQLiteSyncIamRepository implements ServerSyncIamRepository {
     lastSyncedAt: IamLastSyncedAt["member"],
   ) {
     return this.db
-      .select()
+      .select({
+        ...getColumns(member),
+        user: getColumns(user),
+      })
       .from(member)
+      .innerJoin(user, eq(member.userId, user.id))
       .where(
         and(
           inArray(member.organizationId, organizationIds),
@@ -113,15 +98,13 @@ export class SQLiteSyncIamRepository implements ServerSyncIamRepository {
     organizationIds: string[],
     lastSyncedAt: IamLastSyncedAt,
   ): Promise<IamSyncResult> {
-    const [users, organizations, members, groups] = await Promise.all([
-      this.findUsers(organizationIds, lastSyncedAt.user),
+    const [organizations, members, groups] = await Promise.all([
       this.findOrganizations(organizationIds, lastSyncedAt.organization),
       this.findMembers(organizationIds, lastSyncedAt.member),
       this.findGroups(organizationIds, lastSyncedAt.group),
     ]);
 
     return {
-      users,
       organizations,
       members,
       groups,

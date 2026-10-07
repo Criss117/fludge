@@ -1,5 +1,6 @@
 import { Role } from "@fludge/api/core/shared/value-objects/role";
 import { Status } from "@fludge/api/core/shared/value-objects/status";
+import type { UserSelect } from "@fludge/db/schema/auth.schema";
 import type { MemberSelect } from "@fludge/db/schema/iam.schema";
 import type { RoleEnum } from "@fludge/utils/enums/db-enums";
 import { UUID } from "@fludge/utils/uuid";
@@ -9,6 +10,7 @@ export type CreateMember = {
   assignedBy: UUID | null;
   role: RoleEnum;
   organizationId: UUID;
+  user: UserSelect;
 };
 
 export class Member {
@@ -21,6 +23,7 @@ export class Member {
     private _status: Status,
     private readonly _createdAt: Date,
     private _updatedAt: Date,
+    private readonly user: UserSelect,
   ) {}
 
   public static create(values: CreateMember) {
@@ -34,10 +37,15 @@ export class Member {
       Status.active(),
       now,
       now,
+      values.user,
     );
   }
 
-  public static reconstitute(values: MemberSelect) {
+  public static reconstitute(
+    values: MemberSelect & {
+      user: UserSelect;
+    },
+  ) {
     return new Member(
       UUID.fromString(values.id),
       UUID.fromString(values.userId),
@@ -47,6 +55,7 @@ export class Member {
       new Status(values.status),
       new Date(values.createdAt),
       new Date(values.updatedAt),
+      values.user,
     );
   }
 
@@ -85,7 +94,9 @@ export class Member {
     this.touch();
   }
 
-  public get values(): MemberSelect {
+  public get values(): MemberSelect & {
+    user: UserSelect;
+  } {
     return {
       organizationId: this._organizationId.toString(),
       id: this._id.toString(),
@@ -95,6 +106,7 @@ export class Member {
       role: this._role.value,
       status: this._status.value,
       updatedAt: this._updatedAt,
+      user: this.user,
     };
   }
 

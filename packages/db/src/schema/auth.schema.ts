@@ -129,3 +129,5 @@ export const authRelations = defineRelationsPart(
     },
   }),
 );
+
+export type UserSelect = typeof user.$inferSelect;

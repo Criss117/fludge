@@ -5,7 +5,6 @@ import { z } from "zod";
 
 export const syncIamQuery = z.object({
   organization: z.coerce.date().nullable().default(new Date()),
-  user: z.coerce.date().nullable(),
   member: z.coerce.date().nullable(),
   group: z.coerce.date().nullable(),
 });

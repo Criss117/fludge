@@ -1,5 +1,4 @@
 import type {
-  LocalUser,
   LocalOrganization,
   LocalMember,
   LocalGroup,
@@ -7,7 +6,6 @@ import type {
 
 /** Timestamps más recientes del cliente por entidad. */
 export type IamLastSyncedAt = {
-  user: Date | null;
   organization: Date | null;
   member: Date | null;
   group: Date | null;
@@ -15,7 +13,6 @@ export type IamLastSyncedAt = {
 
 /** Resultado del sync de IAM — entidades agrupadas como el aggregate root. */
 export type IamSyncResult = {
-  users: LocalUser[];
   organizations: LocalOrganization[];
   members: LocalMember[];
   groups: LocalGroup[];

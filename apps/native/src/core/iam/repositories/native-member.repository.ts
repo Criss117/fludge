@@ -10,6 +10,7 @@ import type {
 import {
   localGroup,
   localGroupMember,
+  LocalMember,
   localMember,
   localUser,
 } from "@fludge/db/local-schemas/shared.schema";
@@ -130,13 +131,11 @@ export class NativeMemberRepository implements MemberRepository {
       .all();
   }
 
-  public async save(values: MemberSummary | MemberSummary[]): Promise<void> {
-    console.log(values);
-
+  public async save(values: LocalMember | LocalMember[]): Promise<void> {
     const membersArray = Array.isArray(values) ? values : [values];
 
-    const members: Omit<MemberSummary, "user">[] = [];
-    const users: MemberSummary["user"][] = [];
+    const members: Omit<LocalMember, "user">[] = [];
+    const users: LocalMember["user"][] = [];
 
     for (const member of membersArray) {
       const { user: memberUser, ...memberValues } = member;

@@ -6,6 +6,7 @@ import {
   localMember,
   localOrganization,
   localUser,
+  type LocalMember,
 } from "@fludge/db/local-schemas/shared.schema";
 import { desc, inArray } from "drizzle-orm";
 import type {
@@ -16,16 +17,6 @@ import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 
 export class NativeSyncIamRepository implements ClientSyncIamRepository {
   constructor(private readonly db: DatabaseService) {}
-
-  private async getLastSyncedUser() {
-    const row = await this.db
-      .select()
-      .from(localUser)
-      .orderBy(desc(localUser.updatedAt))
-      .limit(1);
-
-    return row.at(0) ?? null;
-  }
 
   private async getLastSyncedGroup() {
     const row = await this.db
@@ -58,15 +49,13 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
   }
 
   public async getLastSyncedAt(): Promise<IamLastSyncedAt> {
-    const [user, group, member, organization] = await Promise.all([
-      this.getLastSyncedUser(),
+    const [group, member, organization] = await Promise.all([
       this.getLastSyncedGroup(),
       this.getLastSyncedMember(),
       this.getLastSyncedOrganization(),
     ]);
 
     return {
-      user: user?.updatedAt ?? null,
       group: group?.updatedAt ?? null,
       member: member?.createdAt ?? null,
       organization: organization?.updatedAt ?? null,
@@ -75,22 +64,6 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
 
   public async saveAll(values: IamSyncResult): Promise<void> {
     this.db.transaction((tx) => {
-      if (values.users.length > 0) {
-        tx.insert(localUser)
-          .values(values.users)
-          .onConflictDoUpdate({
-            target: localUser.id,
-            set: buildConflictUpdateColumn(localUser, [
-              "name",
-              "email",
-              "image",
-              "updatedAt",
-              "phone",
-            ]),
-          })
-          .run();
-      }
-
       if (values.organizations.length > 0) {
         tx.insert(localOrganization)
           .values(values.organizations)
@@ -110,6 +83,30 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
       }
 
       if (values.members.length > 0) {
+        const members: Omit<LocalMember, "user">[] = [];
+        const users: LocalMember["user"][] = [];
+
+        for (const member of values.members) {
+          const { user: memberUser, ...memberValues } = member;
+
+          members.push(memberValues);
+          users.push(memberUser);
+        }
+
+        tx.insert(localUser)
+          .values(users)
+          .onConflictDoUpdate({
+            target: localUser.id,
+            set: buildConflictUpdateColumn(localUser, [
+              "name",
+              "email",
+              "image",
+              "updatedAt",
+              "phone",
+            ]),
+          })
+          .run();
+
         tx.insert(localMember)
           .values(values.members)
           .onConflictDoNothing()

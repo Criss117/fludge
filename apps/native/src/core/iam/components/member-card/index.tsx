@@ -19,11 +19,11 @@ import {
   weight,
   width,
 } from "@expo/ui/jetpack-compose/modifiers";
-import { MemberSummary } from "@fludge/client/iam/domain/entities";
+import { LocalMember } from "@fludge/client/iam/domain/entities";
 import { useTranslation } from "react-i18next";
 import { MemberCardOptions } from "./options";
 
-export function MemberCard({ member }: { member: MemberSummary }) {
+export function MemberCard({ member }: { member: LocalMember }) {
   const { t } = useTranslation();
   const colors = useThemeColor();
 

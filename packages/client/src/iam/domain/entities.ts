@@ -2,23 +2,19 @@ import type {
   LocalGroup,
   LocalMember,
   LocalOrganization,
-  LocalUser,
 } from "@fludge/db/local-schemas/shared.schema";
 
 export type OrganizationSummary = LocalOrganization;
-
-export type MemberSummary = LocalMember & {
-  user: LocalUser;
-};
+export type MemberSummary = LocalMember;
 
 export type GroupSummary = Omit<LocalGroup, "members"> & {
   totalMembers: number;
 };
 
 export type GroupDetail = Omit<LocalGroup, "members"> & {
-  members: MemberSummary[];
+  members: LocalMember[];
 };
 
-export type MemberDetail = MemberSummary & {
+export type MemberDetail = LocalMember & {
   groups: GroupSummary[];
 };

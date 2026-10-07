@@ -21,11 +21,13 @@ export const localMember = member;
 export const localGroup = group;
 export const localGroupMember = groupMember;
 
-export type LocalUser = typeof localUser.$inferSelect;
+type LocalUser = typeof localUser.$inferSelect;
 
 export type LocalOrganization = typeof localOrganization.$inferSelect;
 
-export type LocalMember = typeof localMember.$inferSelect;
+export type LocalMember = typeof localMember.$inferSelect & {
+  user: LocalUser;
+};
 
 type LocalGroupMemberSelect = typeof localGroupMember.$inferSelect;
 export type LocalGroup = typeof localGroup.$inferSelect & {
