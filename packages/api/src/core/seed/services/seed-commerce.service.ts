@@ -2,6 +2,7 @@ import type { DatabaseService } from "@fludge/db";
 import {
   sale,
   saleItem,
+  salePayment,
   saleSequences,
 } from "@fludge/db/schema/sales.schema";
 import { customer, customerPayment } from "@fludge/db/schema/customer.schema";
@@ -307,6 +308,7 @@ export class SeedCommerceService {
   public async clearCommerceTables(): Promise<void> {
     const [, err] = await tryCatch(
       this.db.transaction(async (tx) => {
+        await tx.delete(salePayment);
         await tx.delete(saleItem);
         await tx.delete(sale);
         await tx.delete(customerPayment);
@@ -315,7 +317,6 @@ export class SeedCommerceService {
       }),
     );
 
-    if (err)
-      throw new Error("Error clearing commerce tables", { cause: err });
+    if (err) throw new Error("Error clearing commerce tables", { cause: err });
   }
 }

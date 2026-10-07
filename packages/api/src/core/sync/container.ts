@@ -1,5 +1,5 @@
 import { databaseService } from "@fludge/db";
-import { SqliteSyncCommerceRepository } from "./repositories/sqlite-sync-sale.repository";
+import { SqliteSyncCommerceRepository } from "./repositories/sqlite-sync-commerce.repository";
 import { SqliteSyncCatalogRepository } from "./repositories/sqlite-sync-catalog.repository";
 import { SQLiteSyncIamRepository } from "./repositories/sqlite-sync-iam.repository";
 import { SyncCommerceQuery } from "./queries/sync-sale.query";

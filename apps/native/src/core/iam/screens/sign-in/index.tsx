@@ -116,7 +116,7 @@ export function SignInScreen() {
           <Column horizontalAlignment="center" modifiers={[fillMaxWidth()]}>
             <RNHostView modifiers={[fillMaxWidth()]} matchContents>
               <View style={styles.footer}>
-                <Link href="/sign-up" replace asChild>
+                <Link href="/sign-up" push asChild>
                   <PressableScale>
                     <ThemedText variant="muted">
                       {t("screens.sign_in.no_account")}{" "}

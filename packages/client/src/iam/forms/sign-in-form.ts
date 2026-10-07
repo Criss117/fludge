@@ -19,10 +19,10 @@ export type OnSignInSubmit = {
 export function signUpFormOptions(options: OnSignUpSubmit) {
   return formOptions({
     defaultValues: {
-      name: "cristian viveros",
-      email: "email@email.com",
-      password: "holiwis123",
-      phone: "3206247918",
+      name: "",
+      email: "",
+      password: "",
+      phone: "",
     },
     validators: {
       onChange: signUpValidator,

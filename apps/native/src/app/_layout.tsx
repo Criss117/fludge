@@ -14,16 +14,12 @@ function StackScreen() {
       screenOptions={{
         headerShown: false,
         contentStyle: {
-          backgroundColor: colors.primaryContainer,
+          backgroundColor: colors.background,
         },
       }}
     >
       <Stack.Protected guard={!hasSession}>
-        <Stack.Screen name="(auth)/index" />
-      </Stack.Protected>
-
-      <Stack.Protected guard={!hasSession}>
-        <Stack.Screen name="(auth)/sign-up" />
+        <Stack.Screen name="(auth)" />
       </Stack.Protected>
 
       <Stack.Protected guard={hasSession}>

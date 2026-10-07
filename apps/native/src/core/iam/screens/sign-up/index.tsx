@@ -26,7 +26,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { AuthFormInputs } from "@/core/iam/components/auth-form-inputs";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { PressableScale } from "pressto";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
@@ -37,6 +37,7 @@ export function SignUpScreen() {
   const { t } = useTranslation();
   const { signUpEmail } = useAuth();
   const [rootError, setRootError] = useState<string | null>(null);
+  const router = useRouter();
 
   const form = useSignUpForm({
     onSubmit: ({ value, resetForm }) => {
@@ -124,14 +125,12 @@ export function SignUpScreen() {
             <Column horizontalAlignment="center" modifiers={[fillMaxWidth()]}>
               <RNHostView modifiers={[fillMaxWidth()]} matchContents>
                 <View style={styles.footer}>
-                  <Link href="/" replace asChild>
-                    <PressableScale>
-                      <ThemedText variant="muted">
-                        {t("screens.sign_up.already_account")}{" "}
-                        <ThemedText>{t("screens.sign_up.sign_in")}</ThemedText>
-                      </ThemedText>
-                    </PressableScale>
-                  </Link>
+                  <PressableScale onPress={() => router.back()}>
+                    <ThemedText variant="muted">
+                      {t("screens.sign_up.already_account")}{" "}
+                      <ThemedText>{t("screens.sign_up.sign_in")}</ThemedText>
+                    </ThemedText>
+                  </PressableScale>
                 </View>
               </RNHostView>
             </Column>

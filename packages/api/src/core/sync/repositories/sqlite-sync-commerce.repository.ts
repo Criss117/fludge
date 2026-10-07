@@ -72,21 +72,18 @@ export class SqliteSyncCommerceRepository implements ServerSyncCommerceRepositor
     const rows = await this.db
       .select({
         ...getColumns(sale),
-        payments: sql<string>`
-            json_group_array(
-              DISTINCT ${jsonObject(salePayment)}
-            ) FILTER (WHERE ${salePayment.id} IS NOT NULL)
-          `.as("payments"),
-
-        items: sql<string>`
-            json_group_array(
-              DISTINCT ${jsonObject(saleItem)}
-            ) FILTER (WHERE ${saleItem.id} IS NOT NULL)
-          `.as("payments"),
+        payments: sql<string>`(
+          SELECT json_group_array(${jsonObject(salePayment)})
+          FROM ${salePayment}
+          WHERE ${salePayment.saleId} = ${sale.id}
+        )`.as("payments"),
+        items: sql<string>`(
+          SELECT json_group_array(${jsonObject(saleItem)})
+          FROM ${saleItem}
+          WHERE ${saleItem.saleId} = ${sale.id}
+        )`.as("items"),
       })
       .from(sale)
-      .leftJoin(salePayment, eq(salePayment.saleId, sale.id))
-      .leftJoin(saleItem, eq(saleItem.saleId, sale.id))
       .where(
         and(
           inArray(sale.organizationId, organizationIds),
@@ -96,29 +93,27 @@ export class SqliteSyncCommerceRepository implements ServerSyncCommerceRepositor
       .orderBy(desc(sale.updatedAt))
       .groupBy(sale.id);
 
-    return rows
-      .map((p) => {
-        const payments = (JSON.parse(p.payments) as SalePaymentSelect[]).map(
-          (p) => ({
-            ...p,
-            createdAt: new Date(p.createdAt),
-            updatedAt: new Date(p.updatedAt),
-          }),
-        );
-
-        const items = (JSON.parse(p.items) as SaleItemSelect[]).map((p) => ({
+    return rows.map((p) => {
+      const payments = (JSON.parse(p.payments) as SalePaymentSelect[]).map(
+        (p) => ({
           ...p,
           createdAt: new Date(p.createdAt),
           updatedAt: new Date(p.updatedAt),
-        }));
+        }),
+      );
 
-        return {
-          ...p,
-          payments,
-          items,
-        };
-      })
-      .filter((p) => p.id !== null);
+      const items = (JSON.parse(p.items) as SaleItemSelect[]).map((p) => ({
+        ...p,
+        createdAt: new Date(p.createdAt),
+        updatedAt: new Date(p.updatedAt),
+      }));
+
+      return {
+        ...p,
+        payments,
+        items,
+      };
+    });
   }
 
   public async findAllItems(

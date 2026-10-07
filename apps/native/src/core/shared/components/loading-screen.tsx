@@ -18,13 +18,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useCSSVariable } from "uniwind";
 import { ThemedText } from "./themed-text";
-
-// TODO: reemplazar por los tokens reales de tu tema (mismos que en
-// FatalErrorScreen). Sustituyen a bg-background y text-muted.
-const colors = {
-  background: "#ffffff",
-  muted: "#6b7280",
-};
+import { useThemeColor } from "../hooks/use-theme-color";
 
 type LoadingScreenProps = {
   message?: TranslationKey;
@@ -34,6 +28,7 @@ export function LoadingScreen({ message }: LoadingScreenProps) {
   const { t } = useTranslation();
   const accent = useCSSVariable("accent");
   const isDark = useColorScheme() === "dark";
+  const colors = useThemeColor();
 
   const opacity = useSharedValue(0);
   const entryScale = useSharedValue(0.92);
@@ -74,7 +69,14 @@ export function LoadingScreen({ message }: LoadingScreenProps) {
   }));
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <Animated.View style={[styles.logo, logoStyle]}>
         <ThemedText
           style={[styles.title, isDark && { color: accent?.toString() }]}
@@ -82,7 +84,9 @@ export function LoadingScreen({ message }: LoadingScreenProps) {
           {t("app.title")}
         </ThemedText>
         {message ? (
-          <ThemedText style={styles.message}>{t(message)}</ThemedText>
+          <ThemedText style={styles.message} variant="muted">
+            {t(message)}
+          </ThemedText>
         ) : null}
       </Animated.View>
 
@@ -99,7 +103,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 24,
     paddingHorizontal: 24,
-    backgroundColor: colors.background,
   },
   // items-center gap-2
   logo: {
@@ -114,7 +117,6 @@ const styles = StyleSheet.create({
   },
   // text-muted text-center text-sm
   message: {
-    color: colors.muted,
     textAlign: "center",
     fontSize: 14,
     lineHeight: 20,

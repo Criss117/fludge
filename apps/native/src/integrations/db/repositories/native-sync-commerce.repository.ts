@@ -53,8 +53,8 @@ export class NativeSyncCommerceRepository implements ClientSyncCommerceRepositor
           .where(
             inArray(
               localCustomerPayment.customerId,
-              values.customers.map((c) => c.id)
-            )
+              values.customers.map((c) => c.id),
+            ),
           )
           .run();
 
@@ -90,8 +90,8 @@ export class NativeSyncCommerceRepository implements ClientSyncCommerceRepositor
           .where(
             inArray(
               localSalePayment.saleId,
-              values.sales.map((s) => s.id)
-            )
+              values.sales.map((s) => s.id),
+            ),
           )
           .run();
 
@@ -99,8 +99,8 @@ export class NativeSyncCommerceRepository implements ClientSyncCommerceRepositor
           .where(
             inArray(
               localSaleItem.saleId,
-              values.sales.map((s) => s.id)
-            )
+              values.sales.map((s) => s.id),
+            ),
           )
           .run();
 
@@ -120,6 +120,8 @@ export class NativeSyncCommerceRepository implements ClientSyncCommerceRepositor
               "status",
               "organizationId",
               "createdBy",
+              "totalPaid",
+              "cancelReason",
               "updatedAt",
             ]),
           })

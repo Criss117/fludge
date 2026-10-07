@@ -20,6 +20,8 @@ export class SyncCommerceQuery {
       this.syncSaleRepository.findAllItems(organizationIds, lastSyncedAt),
     );
 
+    console.log(error);
+
     if (error) throw new InternalServerError(error);
 
     return values;

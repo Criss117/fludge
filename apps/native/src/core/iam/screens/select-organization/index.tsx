@@ -178,13 +178,10 @@ export function SelectOrganizationScreen() {
               <Icon name="add-business" size={20} />
               <Spacer modifiers={[width(SPACING.sm)]} />
               <ThemedNativeText color={colors.primaryContainer}>
-                {t("helpers.register_organization")}
+                {t("screens.organization.register.title")}
               </ThemedNativeText>
             </LinkButton>
           </Host>
-          <ThemedText variant="muted" style={{ textAlign: "center" }}>
-            {t("helpers.switch_organization_hint")}
-          </ThemedText>
         </View>
       )}
       <Animated.View style={spacer} />

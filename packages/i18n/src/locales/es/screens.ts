@@ -8,7 +8,7 @@ export const screens = {
     description: "Completa tus datos para registrarte",
     button: "Registrarse",
     already_account: "¿Ya tienes una cuenta?",
-    sign_in: "Iniciar sesión",
+    sign_in: "Inicia sesión",
   },
   organization: {
     select: {
