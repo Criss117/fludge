@@ -47,6 +47,8 @@ export const forms = {
     submit: "Registrar",
   },
   group: {
+    assign_members: "Asignar ({{quantity}}) Miembros",
+
     create: {
       success: "Grupo creado con éxito",
       submit: "Crear Grupo",

@@ -27,6 +27,7 @@ import {
 } from "@/core/shared/components/menu-options";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
+import { PressableScale } from "pressto";
 export type MenuOptions = {
   hide?: boolean;
   items?: MenuOptionItem[];
@@ -34,6 +35,35 @@ export type MenuOptions = {
 interface Props {
   member: MemberSummary;
   menuOptions?: MenuOptions;
+}
+
+interface SelectableMemberCardProps extends Props {
+  isSelected: boolean;
+  onPress: (member: MemberSummary) => void;
+}
+
+export function SelectableMemberCard({
+  member,
+  menuOptions,
+  isSelected,
+  onPress,
+}: SelectableMemberCardProps) {
+  const colors = useThemeColor();
+
+  return (
+    <PressableScale
+      onPress={() => onPress(member)}
+      style={[
+        {
+          borderWidth: 2,
+          borderRadius: SPACING.md,
+          borderColor: isSelected ? colors.primary : "transparent",
+        },
+      ]}
+    >
+      <MemberCard member={member} menuOptions={menuOptions} />
+    </PressableScale>
+  );
 }
 
 export function MemberCard({ member, menuOptions }: Props) {
