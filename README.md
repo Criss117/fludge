@@ -7,12 +7,12 @@ Sistema POS (Point of Sale) construido con TypeScript full-stack. Monorepo con a
 - **Runtime**: Bun
 - **Monorepo**: Turborepo
 - **Backend**: Elysia + oRPC (APIs type-safe end-to-end)
-- **Mobile**: React Native + Expo + HeroUI Native
+- **Mobile**: React Native + Expo + @expo/ui (Jetpack Compose en Android, SwiftUI en iOS)
 - **Database**: SQLite (LibSQL) + Drizzle ORM
 - **Auth**: Better Auth
 - **Forms**: TanStack Form + Zod 4.x
 - **State**: TanStack Query + oRPC client
-- **Styles**: Tailwind CSS v4 + Uniwind
+- **Styles**: Theming manual con tokens de color + componentes y modifiers de @expo/ui
 
 ## Estructura del proyecto
 
