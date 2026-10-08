@@ -16,7 +16,6 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { useCSSVariable } from "uniwind";
 import { ThemedText } from "./themed-text";
 import { useThemeColor } from "../hooks/use-theme-color";
 
@@ -26,7 +25,6 @@ type LoadingScreenProps = {
 
 export function LoadingScreen({ message }: LoadingScreenProps) {
   const { t } = useTranslation();
-  const accent = useCSSVariable("accent");
   const isDark = useColorScheme() === "dark";
   const colors = useThemeColor();
 
@@ -79,7 +77,7 @@ export function LoadingScreen({ message }: LoadingScreenProps) {
     >
       <Animated.View style={[styles.logo, logoStyle]}>
         <ThemedText
-          style={[styles.title, isDark && { color: accent?.toString() }]}
+          style={[styles.title, isDark && { color: colors.onBackground }]}
         >
           {t("app.title")}
         </ThemedText>
@@ -90,7 +88,7 @@ export function LoadingScreen({ message }: LoadingScreenProps) {
         ) : null}
       </Animated.View>
 
-      <ActivityIndicator color={accent?.toString()} size="small" />
+      <ActivityIndicator color={colors.onBackground} size="small" />
     </View>
   );
 }
