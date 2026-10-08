@@ -44,6 +44,31 @@ export const screens = {
       empty: "No hay miembros disponibles",
     },
   },
+  catalog: {
+    label: "Catálogo",
+    products: {
+      label: "Productos",
+      search: {
+        placeholder: "Ej: Televisor",
+        label: "Buscar productos",
+      },
+      empty: "No hay productos disponibles",
+      no_more: "No hay más productos disponibles",
+      total_presentations: "{{quantity}} Presentaciones",
+      stock: "Stock: {{quantity}}",
+      min_stock: "Stock mínimo: {{quantity}}",
+      allow_negative_stock: "Permite stock negativo",
+      not_allow_negative_stock: "No permite stock negativo",
+    },
+    categories: {
+      label: "Categorías",
+      search: {
+        placeholder: "Ej: Lacteos",
+        label: "Buscar categorías",
+      },
+      empty: "No hay categorías disponibles",
+    },
+  },
   groups: {
     create: {
       title: "Crear Grupo",
@@ -70,9 +95,6 @@ export const screens = {
     assign_groups: {
       title: "Asignar Grupos",
     },
-  },
-  catalog: {
-    label: "Catálogo",
   },
   customer: {
     label: "Cliente",

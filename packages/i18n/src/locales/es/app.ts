@@ -31,6 +31,8 @@ export const app = {
     camera: {
       required: "Necesitamos permisos para usar la cámara",
       request: "Permitir acceso a la cámara",
+      confirm: "Permitir",
+      cancel: "Cancelar",
     },
   },
 };

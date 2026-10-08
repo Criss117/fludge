@@ -20,6 +20,9 @@ import LabelIcon from "@expo/material-symbols/label.xml";
 import DescriptionIcon from "@expo/material-symbols/description.xml";
 import ArrowDropDownIcon from "@expo/material-symbols/arrow_drop_down.xml";
 import BlockIcon from "@expo/material-symbols/block.xml";
+import BarcodeScannerIcon from "@expo/material-symbols/barcode_scanner.xml";
+import ConveyorBeltIcon from "@expo/material-symbols/conveyor_belt.xml";
+import DoNotDisturbOnIcon from "@expo/material-symbols/do_not_disturb_on.xml";
 
 import { Icon as ExpoIcon, type IconProps as ExpoIconProps } from "@expo/ui";
 
@@ -46,6 +49,9 @@ export const ICONS = {
   description: DescriptionIcon,
   "arrow-drop-down": ArrowDropDownIcon,
   block: BlockIcon,
+  "barcode-scanner": BarcodeScannerIcon,
+  "conveyor-belt": ConveyorBeltIcon,
+  "do-not-disturb-on": DoNotDisturbOnIcon,
 } as const;
 
 export type IconName = keyof typeof ICONS;

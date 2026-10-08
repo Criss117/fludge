@@ -177,8 +177,6 @@ export class SQLiteGroupRepository
       groupMembers.push(...members);
     }
 
-    console.log({ groups, groupMembers });
-
     const [, errInsert] = await tryCatch(
       this.db.transaction(async (tx) => {
         await tx

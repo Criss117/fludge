@@ -16,6 +16,7 @@ import { NativeFieldError } from "./field-error";
 import { Icon, type IconName } from "./icon";
 import { useDebouncedCallback } from "../hooks/use-debounce";
 import { GeistFonts } from "@/integrations/fonts";
+import { height } from "@expo/ui/jetpack-compose/modifiers";
 
 interface Props extends Omit<
   OutlinedTextFieldProps,
@@ -39,6 +40,8 @@ const FIELD_SHAPE = Shape.RoundedCorner({
   },
 });
 
+export const TEXT_INPUT_HEIGHT = 64;
+
 export function TextInput({
   colors,
   placeholder,
@@ -49,6 +52,7 @@ export function TextInput({
   iconName,
   withDebounce,
   textStyle,
+  modifiers,
   ...props
 }: Props) {
   const { t } = useTranslation();
@@ -80,6 +84,7 @@ export function TextInput({
     <Column>
       <OutlinedTextField
         {...props}
+        modifiers={[height(TEXT_INPUT_HEIGHT), ...(modifiers ?? [])]}
         textStyle={{
           ...textStyle,
           fontFamily: GeistFonts.Regular,

@@ -5,7 +5,7 @@ import {
   type SnackbarHostRef,
   SnackbarDuration,
 } from "@expo/ui/jetpack-compose";
-import { createContext, use, useRef } from "react";
+import { createContext, use, useRef, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColor } from "../hooks/use-theme-color";
 import type { TranslationKey } from "@fludge/i18n/index";

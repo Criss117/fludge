@@ -42,7 +42,6 @@ export function SignUpScreen() {
   const form = useSignUpForm({
     onSubmit: ({ value, resetForm }) => {
       setRootError(null);
-      console.log(value);
       signUpEmail.mutate(value, {
         onSuccess: () => {
           resetForm();

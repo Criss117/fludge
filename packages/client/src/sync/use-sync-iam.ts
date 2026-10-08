@@ -47,8 +47,6 @@ export function useSyncIam() {
           syncedAt: null,
         };
 
-      console.log("syncing iam");
-
       const [lastSyncedAt, errorGetLastSyncedAt] = await tryCatch(
         iamContainer.repositories.syncIamRepository.getLastSyncedAt(),
       );

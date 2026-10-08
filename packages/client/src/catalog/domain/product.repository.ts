@@ -1,5 +1,6 @@
 import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
-import type { ProductDetail } from "./entities";
+import type { ProductSummary } from "./entities";
+import type { LocalProduct } from "@fludge/db/local-schemas/shared.schema";
 
 export type { ProductDetail } from "./entities";
 
@@ -17,14 +18,14 @@ export interface ProductRepository {
     organizationId: string,
     cursor: Cursor,
     filters?: FindAllProductsFilters,
-  ): Promise<PaginatedResponse<ProductDetail>>;
+  ): Promise<PaginatedResponse<ProductSummary>>;
 
   findOneById(
     organizationId: string,
     productId: string,
-  ): Promise<ProductDetail | null>;
+  ): Promise<ProductSummary | null>;
 
-  save(product: ProductDetail | ProductDetail[]): Promise<void>;
+  save(product: LocalProduct | LocalProduct[]): Promise<void>;
 
   delete(organizationId: string, productId: string | string[]): Promise<void>;
 
