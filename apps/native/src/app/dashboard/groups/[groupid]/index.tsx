@@ -1,3 +1,4 @@
+import { GroupDetailScreen } from "@/core/iam/screens/group-detail";
 import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { useFindGroupDetail } from "@fludge/client/iam/queries/use-find-groups";
 import { Redirect, Stack, useLocalSearchParams } from "expo-router";
@@ -15,6 +16,7 @@ function Screen({ groupid }: { groupid: string }) {
           title: data.name,
         }}
       />
+      <GroupDetailScreen group={data} />
     </>
   );
 }

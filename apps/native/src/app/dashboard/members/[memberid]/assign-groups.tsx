@@ -1,4 +1,4 @@
-import { AssignGroupsScreen } from "@/core/iam/screens/members/assign-groups.screen";
+import { AssignGroupsScreen } from "@/core/iam/screens/assign-groups";
 import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { useFindMemberDetail } from "@fludge/client/iam/queries/use-find-members";
 import { Redirect, useLocalSearchParams } from "expo-router";

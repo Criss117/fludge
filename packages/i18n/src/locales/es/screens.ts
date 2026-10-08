@@ -46,13 +46,17 @@ export const screens = {
   },
   groups: {
     create: {
-      label: "Crear Grupo",
+      title: "Crear Grupo",
     },
     update: {
-      label: "Editar Grupo",
+      title: "Editar Grupo",
     },
     detail: {
       loading: "Cargando grupo",
+      unassign: "Desasignar Miembro",
+    },
+    assign_members: {
+      title: "Asignar Miembros",
     },
   },
   members: {

@@ -66,17 +66,14 @@ export function MemberGroupsSection({ member }: Props) {
           key={group.id}
           group={group}
           menuOptions={{
-            items: {
-              hide: ["see_details", "update"],
-              extends: [
-                {
-                  action: onRemoveGroup,
-                  label: "screens.members.detail.unassign",
-                  icon: "block",
-                  color: "error",
-                },
-              ],
-            },
+            items: [
+              {
+                action: () => onRemoveGroup(group),
+                label: "screens.members.detail.unassign",
+                icon: "block",
+                color: "error",
+              },
+            ],
           }}
         />
       ))}

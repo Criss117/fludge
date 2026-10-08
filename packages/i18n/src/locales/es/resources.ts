@@ -31,6 +31,7 @@ export const resources = {
     name: "Permisos",
   },
   groups: {
-    name: "Grupos",
+    plural: "Grupos",
+    single: "Grupo",
   },
 };

@@ -18,14 +18,19 @@ import {
 } from "@expo/ui/jetpack-compose/modifiers";
 import { GroupSummary } from "@fludge/client/iam/domain/entities";
 import { useTranslation } from "react-i18next";
-import { type GroupCardMenuItems, GroupCardOptions } from "./options";
 import type { ActionFor, Resource } from "@fludge/utils/permissions/data";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { PressableScale } from "pressto";
+import {
+  type MenuOptionItem,
+  MenuOptions,
+} from "@/core/shared/components/menu-options";
+import { useRouter } from "expo-router";
+import { useMemo } from "react";
 
 export type MenuOptions = {
   hide?: boolean;
-  items?: GroupCardMenuItems;
+  items?: MenuOptionItem[];
 };
 
 interface Props {
@@ -65,6 +70,35 @@ export function SelectableGroupCard({
 export function GroupCard({ group, menuOptions }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColor();
+  const router = useRouter();
+
+  const items = useMemo(() => {
+    const baseItems: MenuOptionItem[] = [
+      {
+        label: "helpers.navigation.see_details",
+        action: () => {
+          router.push({
+            pathname: "/dashboard/groups/[groupid]",
+            params: { groupid: group.id },
+          });
+        },
+        icon: "visibility",
+      },
+      {
+        label: "helpers.navigation.update",
+        action: () => {
+          router.push({
+            pathname: "/dashboard/groups/[groupid]/update",
+            params: { groupid: group.id },
+          });
+        },
+        icon: "edit",
+      },
+      ...(menuOptions?.items ?? []),
+    ];
+
+    return baseItems;
+  }, [menuOptions, router]);
 
   return (
     <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
@@ -94,10 +128,7 @@ export function GroupCard({ group, menuOptions }: Props) {
                 </ThemedNativeText>
                 <StatusChip status={group.status} />
               </Row>
-
-              {!menuOptions?.hide && (
-                <GroupCardOptions group={group} items={menuOptions?.items} />
-              )}
+              {!menuOptions?.hide && <MenuOptions items={items} />}
             </Row>
             <ThemedNativeText>{group.description}</ThemedNativeText>
           </Column>

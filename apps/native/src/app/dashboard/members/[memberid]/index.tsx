@@ -1,4 +1,4 @@
-import { MemberDetailScreen } from "@/core/iam/screens/members/member-detail.screen";
+import { MemberDetailScreen } from "@/core/iam/screens/member-detail";
 import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { useFindMemberDetail } from "@fludge/client/iam/queries/use-find-members";
 import { Redirect, Stack, useLocalSearchParams } from "expo-router";

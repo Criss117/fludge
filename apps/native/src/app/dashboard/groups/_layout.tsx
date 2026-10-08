@@ -27,13 +27,19 @@ export default function GroupsLayout() {
       <Stack.Screen
         name="create"
         options={{
-          title: t("screens.groups.create.label"),
+          title: t("screens.groups.create.title"),
+        }}
+      />
+      <Stack.Screen
+        name="[groupid]/assign-members"
+        options={{
+          title: t("screens.groups.assign_members.title"),
         }}
       />
       <Stack.Screen
         name="[groupid]/update"
         options={{
-          title: t("screens.groups.update.label"),
+          title: t("screens.groups.update.title"),
         }}
       />
       <Stack.Screen
