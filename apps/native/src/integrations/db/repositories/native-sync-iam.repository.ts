@@ -1,6 +1,7 @@
 import type { ClientSyncIamRepository } from "@fludge/sync/repositories/iam/client-sync-iam.repository";
 import type { DatabaseService } from "..";
 import {
+  LocalGroup,
   localGroup,
   localGroupMember,
   localMember,
@@ -114,8 +115,18 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
       }
 
       if (values.groups.length > 0) {
+        const groups: Omit<LocalGroup, "members">[] = [];
+        const groupMembers: LocalGroup["members"] = [];
+
+        for (const group of values.groups) {
+          const { members, ...groupValues } = group;
+
+          groups.push(groupValues);
+          groupMembers.push(...members);
+        }
+
         tx.insert(localGroup)
-          .values(values.groups)
+          .values(groups)
           .onConflictDoUpdate({
             target: localGroup.id,
             set: buildConflictUpdateColumn(localGroup, [
@@ -128,10 +139,6 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
             ]),
           })
           .run();
-
-        const groupMembers = values.groups.flatMap((g) =>
-          g.members.map((m) => m),
-        );
 
         if (groupMembers.length > 0) {
           tx.delete(localGroupMember)

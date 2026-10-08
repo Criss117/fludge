@@ -40,7 +40,7 @@ export class NativeGroupRepository implements GroupRepository {
 
   public async findAll(
     organizationId: string,
-    filters?: FindAllGroupsFilters
+    filters?: FindAllGroupsFilters,
   ): Promise<GroupSummary[]> {
     const excludeIds = filters?.excludeIds;
     const searchQuery = filters?.searchQuery ?? "";
@@ -56,8 +56,8 @@ export class NativeGroupRepository implements GroupRepository {
         and(
           eq(localGroup.organizationId, organizationId),
           excludeIds ? notInArray(localGroup.id, excludeIds) : undefined,
-          like(localGroup.name, "%" + searchQuery + "%")
-        )
+          like(localGroup.name, "%" + searchQuery + "%"),
+        ),
       )
       .groupBy(localGroup.id)
       .orderBy(desc(localGroup.updatedAt))
@@ -66,7 +66,7 @@ export class NativeGroupRepository implements GroupRepository {
 
   public async findOneById(
     organizationId: string,
-    groupId: string
+    groupId: string,
   ): Promise<GroupDetail | null> {
     const groupData = this.db
       .select()
@@ -74,8 +74,8 @@ export class NativeGroupRepository implements GroupRepository {
       .where(
         and(
           eq(localGroup.organizationId, organizationId),
-          eq(localGroup.id, groupId)
-        )
+          eq(localGroup.id, groupId),
+        ),
       )
       .limit(1)
       .get();
@@ -92,15 +92,15 @@ export class NativeGroupRepository implements GroupRepository {
         localMember,
         and(
           eq(localMember.id, localGroupMember.memberId),
-          eq(localMember.organizationId, organizationId)
-        )
+          eq(localMember.organizationId, organizationId),
+        ),
       )
       .innerJoin(localUser, eq(localUser.id, localMember.userId))
       .where(
         and(
           eq(localGroupMember.organizationId, organizationId),
-          eq(localGroupMember.groupId, groupId)
-        )
+          eq(localGroupMember.groupId, groupId),
+        ),
       )
       .orderBy(desc(localMember.createdAt))
       .all();
@@ -134,6 +134,8 @@ export class NativeGroupRepository implements GroupRepository {
             "slug",
             "status",
             "description",
+            "permissions",
+            "updatedAt",
           ]),
         })
         .run();
@@ -143,8 +145,8 @@ export class NativeGroupRepository implements GroupRepository {
           .where(
             inArray(
               localGroupMember.groupId,
-              groups.map((g) => g.id)
-            )
+              groups.map((g) => g.id),
+            ),
           )
           .run();
 
@@ -163,10 +165,10 @@ export class NativeGroupRepository implements GroupRepository {
           ...groups.map((g) =>
             and(
               eq(localGroup.organizationId, g.organizationId),
-              eq(localGroup.id, g.id)
-            )
-          )
-        )
+              eq(localGroup.id, g.id),
+            ),
+          ),
+        ),
       )
       .run();
   }
