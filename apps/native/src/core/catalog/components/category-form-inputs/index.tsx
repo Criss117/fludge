@@ -6,7 +6,7 @@ interface InputProps<T> {
   field: MinimalField<T>;
 }
 
-function NameInput({ field }: InputProps<string>) {
+export function NameInput({ field }: InputProps<string>) {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
@@ -23,7 +23,7 @@ function NameInput({ field }: InputProps<string>) {
   );
 }
 
-function DescriptionInput({ field }: InputProps<string>) {
+export function DescriptionInput({ field }: InputProps<string>) {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (

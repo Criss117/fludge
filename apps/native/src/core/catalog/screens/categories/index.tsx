@@ -1,6 +1,9 @@
 import { CategoryCard } from "@/core/catalog/components/category-card";
 import { CreateCategoryForm } from "@/core/catalog/components/create-category-form";
+import { UpdateCategoryForm } from "@/core/catalog/components/update-category-form";
 import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
+import type { CategorySummary } from "@fludge/client/catalog/domain/category.repository";
+import type { TranslationKey } from "@fludge/i18n/index";
 import { TextInput } from "@/core/shared/components/text-input";
 import { ThemedText } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
@@ -8,6 +11,8 @@ import { SPACING } from "@/lib/sp";
 import { Host, SearchBar } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
 import { useFindCategories } from "@fludge/client/catalog/queries/use-find-categories";
+import { useToggleCategoryStatusMutation } from "@fludge/client/catalog/mutations/use-category.mutations";
+import { useMutationToast } from "@/integrations/toast";
 import { FlashList } from "@shopify/flash-list";
 import { Suspense, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -48,7 +53,15 @@ function ListEmptyComponent() {
 
 const ItemSeparator = () => <View style={{ height: SPACING.sm }} />;
 
-function CategoriesList({ searchQuery }: { searchQuery: string }) {
+function CategoriesList({
+  searchQuery,
+  onUpdate,
+  onToggleStatus,
+}: {
+  searchQuery: string;
+  onUpdate: (category: CategorySummary) => void;
+  onToggleStatus: (category: CategorySummary) => void;
+}) {
   const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useFindCategories({
       searchQuery,
@@ -68,7 +81,13 @@ function CategoriesList({ searchQuery }: { searchQuery: string }) {
       data={items}
       contentContainerStyle={styles.listContentContainer}
       keyExtractor={(i) => i.id}
-      renderItem={({ item }) => <CategoryCard category={item} />}
+      renderItem={({ item }) => (
+        <CategoryCard
+          category={item}
+          onUpdate={onUpdate}
+          onToggleStatus={onToggleStatus}
+        />
+      )}
       showsVerticalScrollIndicator={false}
       ItemSeparatorComponent={ItemSeparator}
       ListEmptyComponent={ListEmptyComponent}
@@ -86,6 +105,31 @@ function CategoriesList({ searchQuery }: { searchQuery: string }) {
 
 export function CategoriesScreen() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategorySummary | null>(null);
+  const mutationToast = useMutationToast();
+  const toggleStatus = useToggleCategoryStatusMutation();
+
+  const handleToggleStatus = (category: CategorySummary) => {
+    mutationToast.showPending("mutations.categories.update.is_pending");
+
+    toggleStatus.mutate(
+      { id: category.id },
+      {
+        onSuccess: () => {
+          mutationToast.showSuccess(
+            "mutations.categories.update.success.title",
+          );
+        },
+        onError: (error) => {
+          mutationToast.showError(
+            "mutations.categories.update.error",
+            error.message as TranslationKey,
+          );
+        },
+      },
+    );
+  };
 
   return (
     <ThemedView style={styles.container}>
@@ -103,11 +147,22 @@ export function CategoriesScreen() {
 
       <View style={styles.listContainer}>
         <Suspense fallback={<BaseLoadingIndicator />}>
-          <CategoriesList searchQuery={searchQuery} />
+          <CategoriesList
+            searchQuery={searchQuery}
+            onUpdate={setSelectedCategory}
+            onToggleStatus={handleToggleStatus}
+          />
         </Suspense>
       </View>
 
       <CreateCategoryForm />
+
+      {selectedCategory && (
+        <UpdateCategoryForm
+          category={selectedCategory}
+          onClose={() => setSelectedCategory(null)}
+        />
+      )}
     </ThemedView>
   );
 }
