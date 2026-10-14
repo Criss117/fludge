@@ -204,6 +204,11 @@ export function ProductFormScreen({ action }: Props) {
                   <ProductFormInputs.DescriptionInput field={field} />
                 )}
               </form.Field>
+              <form.Field name="categoryId">
+                {(field) => (
+                  <ProductFormInputs.CategorySelectInput field={field} />
+                )}
+              </form.Field>
             </SectionCard>
 
             <SectionCard title="forms.product.sections.stock">

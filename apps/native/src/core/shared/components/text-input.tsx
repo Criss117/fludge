@@ -38,7 +38,7 @@ type Props = Omit<OutlinedTextFieldProps, "onValueChange" | "shape" | "value"> &
     withDebounce?: number;
   };
 
-const FIELD_SHAPE = Shape.RoundedCorner({
+export const FIELD_SHAPE = Shape.RoundedCorner({
   cornerRadii: {
     topStart: SPACING.md,
     topEnd: SPACING.md,

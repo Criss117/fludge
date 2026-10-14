@@ -1,21 +1,26 @@
 import { Icon } from "@/core/shared/components/icon";
 import { MenuOptions } from "@/core/shared/components/menu-options";
-import { TextInput } from "@/core/shared/components/text-input";
+import { FIELD_SHAPE, TextInput } from "@/core/shared/components/text-input";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 import {
-  AssistChip,
   Card,
   Column,
-  FlowRow,
+  DropdownMenuItem,
+  ExposedDropdownMenu,
+  ExposedDropdownMenuBox,
   HorizontalDivider,
+  OutlinedTextField,
   Row,
   Switch,
+  TextField,
+  useNativeState,
 } from "@expo/ui/jetpack-compose";
 import {
   clickable,
   fillMaxWidth,
+  menuAnchor,
   padding,
   paddingAll,
   weight,
@@ -23,7 +28,9 @@ import {
 import { ProductFormSchema } from "@fludge/client/catalog/forms/product.form";
 import type { MinimalField } from "@fludge/client/shared/field-api";
 import { formatPrice } from "@fludge/utils/currency";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useFindCategories } from "@fludge/client/catalog/queries/use-find-categories";
 
 interface FieldProps<T> {
   field: MinimalField<T>;
@@ -263,7 +270,86 @@ function PresentationCards({
   );
 }
 
+export function CategorySelectInput({ field }: FieldProps<string>) {
+  const { t } = useTranslation();
+  const colors = useThemeColor();
+  const [expanded, setExpanded] = useState(false);
+  const { data } = useFindCategories();
+
+  const categories = useMemo(
+    () => data?.pages.flatMap((p) => p.items) ?? [],
+    [data],
+  );
+
+  const selectedLabel = useNativeState("");
+
+  useEffect(() => {
+    const selected = categories.find((c) => c.id === field.state.value);
+    selectedLabel.set(selected?.name ?? "");
+  }, [categories, field.state.value, selectedLabel]);
+
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+  return (
+    <ExposedDropdownMenuBox
+      expanded={expanded}
+      onExpandedChange={setExpanded}
+      modifiers={[fillMaxWidth()]}
+    >
+      <OutlinedTextField
+        value={selectedLabel}
+        readOnly
+        modifiers={[menuAnchor(), fillMaxWidth()]}
+        isError={isInvalid}
+        shape={FIELD_SHAPE}
+        colors={{
+          focusedIndicatorColor: colors.primary,
+          unfocusedIndicatorColor: colors.outline,
+          cursorColor: colors.primary,
+          focusedLabelColor: colors.primary,
+          unfocusedLabelColor: colors.outline,
+        }}
+      >
+        <OutlinedTextField.Label>
+          <ThemedNativeText>
+            {t("forms.product.category.label")}
+          </ThemedNativeText>
+        </OutlinedTextField.Label>
+        <OutlinedTextField.Placeholder>
+          <ThemedNativeText variant="muted">
+            {t("forms.product.category.placeholder")}
+          </ThemedNativeText>
+        </OutlinedTextField.Placeholder>
+      </OutlinedTextField>
+
+      <ExposedDropdownMenu
+        expanded={expanded}
+        onDismissRequest={() => setExpanded(false)}
+        containerColor={colors.surface}
+      >
+        {categories.map((category) => (
+          <DropdownMenuItem
+            key={category.id}
+            onClick={() => {
+              field.handleChange(category.id);
+              selectedLabel.set(category.name);
+              setExpanded(false);
+            }}
+          >
+            <DropdownMenuItem.Text>
+              <ThemedNativeText color={colors.onSurface}>
+                {category.name}
+              </ThemedNativeText>
+            </DropdownMenuItem.Text>
+          </DropdownMenuItem>
+        ))}
+      </ExposedDropdownMenu>
+    </ExposedDropdownMenuBox>
+  );
+}
+
 export const ProductFormInputs = {
+  CategorySelectInput,
   NameInput,
   DescriptionInput,
   StockInput,
