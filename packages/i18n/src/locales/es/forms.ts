@@ -148,6 +148,25 @@ export const forms = {
     },
     submit: "Registrar Miembro",
   },
+  category: {
+    create: {
+      title: "Crear Categoría",
+      submit: "Crear Categoría",
+    },
+    update: {
+      title: "Editar Categoría",
+      submit: "Editar Categoría",
+    },
+    name: {
+      label: "Nombre de la Categoría",
+      placeholder: "Ej: Lácteos",
+    },
+    description: {
+      label: "Descripción de la Categoría",
+      placeholder: "Ej: Productos derivados de la leche",
+    },
+  },
+
   product: {
     sections: {
       basic_information: "Información básica",

@@ -1,4 +1,5 @@
 import { CategoryCard } from "@/core/catalog/components/category-card";
+import { CreateCategoryForm } from "@/core/catalog/components/create-category-form";
 import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { TextInput } from "@/core/shared/components/text-input";
 import { ThemedText } from "@/core/shared/components/themed-text";
@@ -105,6 +106,8 @@ export function CategoriesScreen() {
           <CategoriesList searchQuery={searchQuery} />
         </Suspense>
       </View>
+
+      <CreateCategoryForm />
     </ThemedView>
   );
 }

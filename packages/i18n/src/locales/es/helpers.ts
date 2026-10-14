@@ -33,6 +33,8 @@ export const helpers = {
     delete: "Eliminar",
   },
 
+  cancel: "Cancelar",
+
   x_more: "{{count}} más",
   all_of: "Todos de {{label}}",
 };
