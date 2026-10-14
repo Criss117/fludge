@@ -36,7 +36,7 @@ function generateChips(product: ProductSummary): Chip[] {
     {
       label: {
         key: "screens.catalog.products.min_stock",
-        args: { quantity: product.stock },
+        args: { quantity: product.minStock },
       },
       icon: "conveyor-belt",
     },
