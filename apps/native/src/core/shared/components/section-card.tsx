@@ -1,5 +1,9 @@
-import { Column, ElevatedCard } from "@expo/ui/jetpack-compose";
-import { fillMaxWidth, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
+import { Column, ElevatedCard, Row, Spacer } from "@expo/ui/jetpack-compose";
+import {
+  fillMaxWidth,
+  paddingAll,
+  weight,
+} from "@expo/ui/jetpack-compose/modifiers";
 import { useThemeColor } from "../hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 import { ThemedNativeText } from "./themed-text";
@@ -9,10 +13,11 @@ import type { TranslationKey } from "@fludge/i18n/index";
 interface Props {
   title: TranslationKey;
   description?: TranslationKey;
+  action?: React.ReactNode;
   children: React.ReactNode;
 }
 
-export function SectionCard({ title, description, children }: Props) {
+export function SectionCard({ title, description, children, action }: Props) {
   const colors = useThemeColor();
   const { t } = useTranslation();
 
@@ -29,14 +34,18 @@ export function SectionCard({ title, description, children }: Props) {
           spacedBy: SPACING.md,
         }}
       >
-        <Column>
-          <ThemedNativeText variant="h5">{t(title)}</ThemedNativeText>
-          {description && (
-            <ThemedNativeText variant="muted">
-              {t(description)}
-            </ThemedNativeText>
-          )}
-        </Column>
+        <Row modifiers={[fillMaxWidth()]} verticalAlignment="top">
+          <Column>
+            <ThemedNativeText variant="h5">{t(title)}</ThemedNativeText>
+            {description && (
+              <ThemedNativeText variant="muted">
+                {t(description)}
+              </ThemedNativeText>
+            )}
+          </Column>
+          <Spacer modifiers={[weight(1)]} />
+          {action}
+        </Row>
         {children}
       </Column>
     </ElevatedCard>

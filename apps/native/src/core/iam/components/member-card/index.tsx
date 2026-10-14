@@ -94,7 +94,7 @@ export function MemberCard({ member, menuOptions }: Props) {
       <ElevatedCard
         modifiers={[fillMaxWidth()]}
         colors={{
-          containerColor: colors.secondaryContainer,
+          containerColor: colors.onSecondary,
         }}
       >
         <Column modifiers={[fillMaxWidth(), paddingAll(SPACING.md)]}>

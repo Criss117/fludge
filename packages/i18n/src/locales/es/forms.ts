@@ -91,4 +91,67 @@ export const forms = {
     },
     submit: "Registrar Miembro",
   },
+  product: {
+    sections: {
+      basic_information: "Información básica",
+      stock: "Stock",
+      presentations: {
+        empty: "No hay presentaciones",
+        title: "Presentaciones",
+      },
+    },
+    name: {
+      label: "Nombre del Producto",
+      placeholder: "Ej: Televisor",
+    },
+    description: {
+      label: "Descripción del Producto",
+      placeholder: "Ej: Televisor de 1080p",
+    },
+    category: {
+      label: "Categoría del Producto",
+      placeholder: "Ej: Televisores",
+    },
+    stock: {
+      label: "Stock",
+      placeholder: "Ej: 100",
+    },
+    min_stock: {
+      label: "Min. Stock",
+      placeholder: "Ej: 10",
+    },
+    allow_negative_stock: {
+      label: "Stock negativo",
+      placeholder: "Selecciona si el stock puede ser negativo",
+    },
+    submit: "Guardar Producto",
+  },
+  product_presentation: {
+    title: "Crear Presentación",
+    name: {
+      label: "Nombre de la Presentación",
+      placeholder: "Ej: Presentación de Televisor",
+    },
+    barcode: {
+      label: "Código de Barras",
+      placeholder: "Ej: 1234567890123",
+    },
+    conversion_factor: {
+      label: "Factor de Conversión",
+      placeholder: "Ej: 1",
+    },
+    price_sale: {
+      label: "Precio de Venta",
+      placeholder: "Ej: 100",
+    },
+    price_purchase: {
+      label: "Precio de Compra",
+      placeholder: "Ej: 200",
+    },
+    price_wholesale: {
+      label: "Precio Mayoreo",
+      placeholder: "Ej: 300",
+    },
+    submit: "Guardar Presentación",
+  },
 };

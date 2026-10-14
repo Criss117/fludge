@@ -6,7 +6,7 @@ import {
   useNativeState,
 } from "@expo/ui/jetpack-compose";
 import { ThemedNativeText } from "./themed-text";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { scheduleOnRN } from "react-native-worklets";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
@@ -16,20 +16,27 @@ import { NativeFieldError } from "./field-error";
 import { Icon, type IconName } from "./icon";
 import { useDebouncedCallback } from "../hooks/use-debounce";
 import { GeistFonts } from "@/integrations/fonts";
-import { height } from "@expo/ui/jetpack-compose/modifiers";
 
-interface Props extends Omit<
-  OutlinedTextFieldProps,
-  "onValueChange" | "shape" | "value"
-> {
-  value?: string;
-  placeholder: TranslationKey;
-  label: TranslationKey;
+type TextModeProps = {
+  type?: "text";
+  value?: string | null;
   onValueChange?: (value: string) => void;
-  errors?: Array<{ message?: string } | undefined>;
-  iconName?: IconName;
-  withDebounce?: number;
-}
+};
+
+type NumberModeProps = {
+  type: "number";
+  value?: number | null;
+  onValueChange?: (value: number) => void;
+};
+
+type Props = Omit<OutlinedTextFieldProps, "onValueChange" | "shape" | "value"> &
+  (TextModeProps | NumberModeProps) & {
+    placeholder: TranslationKey;
+    label: TranslationKey;
+    errors?: Array<{ message?: string } | undefined>;
+    iconName?: IconName;
+    withDebounce?: number;
+  };
 
 const FIELD_SHAPE = Shape.RoundedCorner({
   cornerRadii: {
@@ -42,6 +49,22 @@ const FIELD_SHAPE = Shape.RoundedCorner({
 
 export const TEXT_INPUT_HEIGHT = 64;
 
+/** "1,5" (teclado es-CO) -> 1.5. Vacío o inválido ("-", ".") -> 0. */
+const parseNumber = (raw: string) => {
+  const n = Number(raw.replace(",", "."));
+  return Number.isNaN(n) ? 0 : n;
+};
+
+/** Texto a mostrar. En modo number, 0/null/undefined/NaN se muestran vacíos. */
+const toText = (v: string | number | null | undefined, isNumber: boolean) => {
+  if (v === null || v === undefined) return "";
+  if (isNumber) {
+    const n = Number(v);
+    return Number.isNaN(n) || n === 0 ? "" : String(n);
+  }
+  return String(v);
+};
+
 export function TextInput({
   colors,
   placeholder,
@@ -49,42 +72,77 @@ export function TextInput({
   onValueChange,
   errors,
   value,
+  type = "text",
   iconName,
   withDebounce,
   textStyle,
   modifiers,
+  minLines,
+  keyboardOptions,
   ...props
 }: Props) {
   const { t } = useTranslation();
   const themeColors = useThemeColor();
-  const text = useNativeState(value ?? "");
+  const isNumber = type === "number";
+  const externalText = toText(value, isNumber);
+  const text = useNativeState(externalText);
 
-  const debouncedChange = useDebouncedCallback((v: string) => {
-    onValueChange?.(v);
-  }, withDebounce ?? 400);
+  // Sincroniza cuando el valor externo cambia (reset, setValue, carga async)
+  // sin pisar lo que el usuario está escribiendo ("1.", "-", "0.", "1,5").
+  useEffect(() => {
+    const current = text.value;
+    if (current === externalText) return;
+    if (isNumber && parseNumber(current) === (Number(value) || 0)) return;
+    text.set(externalText);
+  }, [externalText, isNumber, text, value]);
+
+  // Corre en el hilo JS: aquí se parsea y se entrega al consumidor.
+  const emit = useCallback(
+    (raw: string) => {
+      if (!onValueChange) return;
+      if (isNumber) {
+        (onValueChange as (v: number) => void)(parseNumber(raw));
+      } else {
+        (onValueChange as (v: string) => void)(raw);
+      }
+    },
+    [onValueChange, isNumber],
+  );
+
+  const debouncedEmit = useDebouncedCallback(emit, withDebounce ?? 400);
 
   const handleValueChange = useCallback(
-    (value: string) => {
+    (next: string) => {
       "worklet";
-      text.set(value);
+      text.set(next);
 
       if (!onValueChange) return;
 
       if (withDebounce !== undefined) {
-        scheduleOnRN(debouncedChange, value);
+        scheduleOnRN(debouncedEmit, next);
         return;
       }
 
-      scheduleOnRN(onValueChange, value);
+      scheduleOnRN(emit, next);
     },
-    [text],
+    [text, onValueChange, withDebounce, debouncedEmit, emit],
   );
+
+  const resolvedKeyboardOptions = isNumber
+    ? {
+        keyboardType: "decimal" as const,
+        autoCorrectEnabled: false,
+        ...keyboardOptions,
+      }
+    : keyboardOptions;
 
   return (
     <Column>
       <OutlinedTextField
         {...props}
-        modifiers={[height(TEXT_INPUT_HEIGHT), ...(modifiers ?? [])]}
+        keyboardOptions={resolvedKeyboardOptions}
+        minLines={minLines}
+        modifiers={modifiers}
         textStyle={{
           ...textStyle,
           fontFamily: GeistFonts.Regular,
@@ -92,12 +150,11 @@ export function TextInput({
         value={text}
         onValueChange={handleValueChange}
         shape={FIELD_SHAPE}
-        colors={
-          colors ?? {
-            cursorColor: themeColors.primary,
-            focusedIndicatorColor: themeColors.primary,
-          }
-        }
+        colors={{
+          ...colors,
+          cursorColor: themeColors.primary,
+          focusedIndicatorColor: themeColors.primary,
+        }}
       >
         <OutlinedTextField.Label>
           <ThemedNativeText>{t(label)}</ThemedNativeText>

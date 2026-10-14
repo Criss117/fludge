@@ -1,7 +1,6 @@
 import {
   AlertDialog,
   Column,
-  IconButton,
   ModalBottomSheet,
   ModalBottomSheetRef,
   OutlinedIconButton,
@@ -15,19 +14,15 @@ import {
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Icon } from "./icon";
-import { SPACING } from "@/lib/sp";
-import { height, paddingAll, width } from "@expo/ui/jetpack-compose/modifiers";
-import { TEXT_INPUT_HEIGHT } from "./text-input";
-import { BottomSheet, RNHostView } from "@expo/ui";
+import { height, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
+import { RNHostView } from "@expo/ui";
 import { ThemedNativeText } from "./themed-text";
 import { useThemeColor } from "../hooks/use-theme-color";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 interface Props {
   setBarcode: (barcode: string) => void;
 }
-
-const SCANNER_WIDTH = TEXT_INPUT_HEIGHT - 10;
 
 function RequestPermission({
   requestPermission,
@@ -45,7 +40,6 @@ function RequestPermission({
   };
 
   const close = () => setIsOpen(false);
-
   const open = () => setIsOpen(true);
 
   return (
@@ -90,8 +84,6 @@ function RequestPermission({
   );
 }
 
-const CAMERA_HEIGHT = Dimensions.get("window").height * 0.5;
-
 export function BarcodeReader({ setBarcode }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
@@ -99,9 +91,8 @@ export function BarcodeReader({ setBarcode }: Props) {
   const scannedRef = useRef(false); // ref en vez de state: evita lecturas dobles
   const colors = useThemeColor();
 
-  if (!permission?.granted) {
+  if (!permission?.granted)
     return <RequestPermission requestPermission={requestPermission} />;
-  }
 
   const open = () => {
     scannedRef.current = false;
@@ -121,7 +112,7 @@ export function BarcodeReader({ setBarcode }: Props) {
   return (
     <>
       <OutlinedIconButton onClick={open}>
-        <Icon name="barcode-scanner" />
+        <Icon name="barcode-scanner" color={colors.primary} />
       </OutlinedIconButton>
 
       {isOpen && (

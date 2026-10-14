@@ -1,3 +1,5 @@
+import { ProductFormScreen } from "@/core/catalog/screens/product-form";
+
 export default function CreateProduct() {
-  return null;
+  return <ProductFormScreen action={{ type: "create" }} />;
 }

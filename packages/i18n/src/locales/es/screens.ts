@@ -69,6 +69,17 @@ export const screens = {
       empty: "No hay categorías disponibles",
     },
   },
+  products: {
+    create: {
+      title: "Crear Producto",
+    },
+    update: {
+      title: "Editar Producto",
+    },
+    detail: {
+      loading: "Cargando producto",
+    },
+  },
   groups: {
     create: {
       title: "Crear Grupo",

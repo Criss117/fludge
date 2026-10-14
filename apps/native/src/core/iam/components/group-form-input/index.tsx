@@ -51,7 +51,6 @@ function DescriptionInput({ field }: InputProps<string>) {
       value={field.state.value}
       label="forms.group.description.label"
       placeholder="forms.group.description.placeholder"
-
       modifiers={[fillMaxWidth()]}
       isError={isInvalid}
       onValueChange={field.handleChange}

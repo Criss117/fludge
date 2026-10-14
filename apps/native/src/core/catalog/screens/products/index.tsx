@@ -13,7 +13,6 @@ import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { ProductCard } from "@/core/catalog/components/product-card";
 import { LinkFabButton } from "@/core/shared/components/link-fab-button";
-import { useIsFocused } from "expo-router";
 
 interface ListFooterProps {
   hasNextPage: boolean;
@@ -82,12 +81,9 @@ function ProductsList({ searchQuery }: { searchQuery: string }) {
 
 export function ProductsScreen() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [inputKey, setInputKey] = useState(0);
-  const isFocused = useIsFocused();
 
   const handleScan = (barcode: string) => {
     setSearchQuery(barcode);
-    setInputKey((prev) => prev + 1);
   };
 
   return (
@@ -105,7 +101,6 @@ export function ProductsScreen() {
             <Box modifiers={[weight(1)]}>
               <TextInput
                 onValueChange={setSearchQuery}
-                key={inputKey}
                 value={searchQuery}
                 modifiers={[fillMaxWidth()]}
                 iconName="search"

@@ -30,6 +30,7 @@ export const helpers = {
   navigation: {
     see_details: "Ver detalles",
     update: "Actualizar",
+    delete: "Eliminar",
   },
 
   x_more: "{{count}} más",
