@@ -47,37 +47,70 @@ export const forms = {
     submit: "Registrar",
   },
   group: {
-    assign_members: "Asignar ({{quantity}}) Miembros",
-
     create: {
       success: "Grupo creado con éxito",
       submit: "Crear Grupo",
+      error: "Error al crear el grupo",
+      pending: "Creando grupo",
     },
+
     update: {
       submit: "Editar Grupo",
       success: "Grupo actualizado con éxito",
+      error: "Error al actualizar el grupo",
+      pending: "Actualizando grupo",
     },
+
+    unassign_members: {
+      pending: "Desasignando miembros del grupo",
+      success: "Miembros desasignados con éxito",
+      error: "Error al desasignar miembros",
+    },
+
+    assign_members: {
+      submit: "Asignar ({{quantity}}) Miembros",
+      pending: "Asignando miembros al grupo",
+      success: "Miembros asignados con éxito",
+      error: "Error al asignar miembros",
+    },
+
     details: {
       title: "Detalles del Grupo",
     },
+
     name: {
       label: "Nombre del Grupo",
       placeholder: "Ej: Caja",
     },
+
     description: {
       label: "Descripción del Grupo",
       placeholder: "Ej: Caja de Cajas",
     },
+
     permissions: {
       label: "Permisos del Grupo",
     },
   },
   member: {
-    assign_groups: "Asignar ({{quantity}}) Grupos",
-    success: {
-      create: "Miembro registrado con éxito",
-      assing_groups: "Grupos asignados con éxito",
-      unassign_groups: "Grupos desasignados con éxito",
+    register: {
+      success: "Miembro registrado con éxito",
+      submit: "Registrar Miembro",
+      error: "Error al registrar el miembro",
+      pending: "Registrando miembro",
+    },
+
+    assing_groups: {
+      submit: "Asignar ({{quantity}}) Grupos",
+      pending: "Asignando grupos al miembro",
+      success: "Grupos asignados con éxito",
+      error: "Error al asignar grupos",
+    },
+
+    unassign_groups: {
+      pending: "Desasignando grupos del miembro",
+      success: "Grupos desasignados con éxito",
+      error: "Error al desasignar grupos",
     },
 
     sections: {

@@ -10,6 +10,7 @@ import { useCallback, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { MemberCard } from "@/core/iam/components/member-card";
 import { useRemoveMembersFromGroup } from "@fludge/client/iam/mutations/use-group.mutations";
+import { useMutationToast } from "@/integrations/toast";
 
 interface Props {
   group: GroupDetail;
@@ -18,6 +19,7 @@ interface Props {
 export function GroupMembersSection({ group }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const removeMembersFromGroup = useRemoveMembersFromGroup();
+  const mutationToast = useMutationToast();
 
   const members = useMemo(() => {
     return group.members.filter((m) =>
@@ -27,13 +29,19 @@ export function GroupMembersSection({ group }: Props) {
 
   const onRemoveMember = useCallback(
     (member: MemberSummary) => {
+      mutationToast.showPending("forms.group.unassign_members.pending");
       removeMembersFromGroup.mutate(
         {
           groupId: group.id,
           memberIds: [member.id],
         },
         {
-          onSuccess: () => {},
+          onSuccess: () => {
+            mutationToast.showSuccess("forms.group.unassign_members.success");
+          },
+          onError: () => {
+            mutationToast.showError("forms.group.unassign_members.error");
+          },
         },
       );
     },

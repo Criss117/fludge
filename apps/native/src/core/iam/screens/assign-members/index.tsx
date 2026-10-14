@@ -6,7 +6,6 @@ import {
   ThemedText,
 } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
-import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 import { Button, Host, Spacer } from "@expo/ui/jetpack-compose";
@@ -14,14 +13,14 @@ import { fillMaxWidth, width } from "@expo/ui/jetpack-compose/modifiers";
 import type { GroupDetail } from "@fludge/client/iam/domain/entities";
 import { useAssignMembersToGroup } from "@fludge/client/iam/mutations/use-group.mutations";
 import { useFindAllMembers } from "@fludge/client/iam/queries/use-find-members";
-import type { TranslationKey } from "@fludge/i18n/index";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import Animated from "react-native-reanimated";
 import { SelectableMemberCard } from "@/core/iam/components/member-card";
+import { useMutationToast } from "@/integrations/toast";
+import { KeyboardSpacerView } from "@/core/shared/components/keyboard-spacer-view";
 
 interface Props {
   group: GroupDetail;
@@ -78,7 +77,7 @@ export function AssignMembersScreen({ group }: Props) {
   const { t } = useTranslation();
   const router = useRouter();
   const colors = useThemeColor();
-  const spacer = useKeyboardSpacer();
+  const mutationToast = useMutationToast();
 
   const memberIds = group.members.map((member) => member.id);
 
@@ -93,6 +92,7 @@ export function AssignMembersScreen({ group }: Props) {
   };
 
   const onAssignMembers = () => {
+    mutationToast.showPending("forms.group.assign_members.pending");
     assignMembersToGroup.mutate(
       {
         groupId: group.id,
@@ -101,9 +101,12 @@ export function AssignMembersScreen({ group }: Props) {
       {
         onSuccess: () => {
           router.back();
+          mutationToast.showSuccess("forms.group.assign_members.success");
           setSelectedMemberIds([]);
         },
-        onError: (e) => {},
+        onError: (e) => {
+          mutationToast.showError("forms.group.assign_members.error");
+        },
       },
     );
   };
@@ -142,13 +145,13 @@ export function AssignMembersScreen({ group }: Props) {
             <Icon name="add" color={colors.onPrimary} />
             <Spacer modifiers={[width(SPACING.sm)]} />
             <ThemedNativeText color={colors.onPrimary}>
-              {t("forms.group.assign_members", {
+              {t("forms.group.assign_members.submit", {
                 quantity: selectedMemberIds.length,
               })}
             </ThemedNativeText>
           </Button>
         </Host>
-        <Animated.View style={spacer} />
+        <KeyboardSpacerView />
       </View>
     </ThemedView>
   );

@@ -10,6 +10,7 @@ import { Host } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
 import { useCallback, useMemo, useState } from "react";
 import { useRemoveGroupsFromMember } from "@fludge/client/iam/mutations/use-member.mutations";
+import { useMutationToast } from "@/integrations/toast";
 
 interface Props {
   member: MemberDetail;
@@ -18,6 +19,7 @@ interface Props {
 export function MemberGroupsSection({ member }: Props) {
   const removeGroupsFromMember = useRemoveGroupsFromMember();
   const [searchQuery, setSearchQuery] = useState("");
+  const mutationToast = useMutationToast();
 
   const groups = useMemo(() => {
     return member.groups.filter((g) =>
@@ -27,13 +29,19 @@ export function MemberGroupsSection({ member }: Props) {
 
   const onRemoveGroup = useCallback(
     (group: GroupSummary) => {
+      mutationToast.showPending("forms.member.unassign_groups.pending");
       removeGroupsFromMember.mutate(
         {
           memberId: member.id,
           groupIds: [group.id],
         },
         {
-          onSuccess: () => {},
+          onSuccess: () => {
+            mutationToast.showSuccess("forms.member.unassign_groups.success");
+          },
+          onError: () => {
+            mutationToast.showError("forms.member.unassign_groups.error");
+          },
         },
       );
     },

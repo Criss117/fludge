@@ -22,6 +22,7 @@ import Animated from "react-native-reanimated";
 import { useAssignGroupsToMember } from "@fludge/client/iam/mutations/use-member.mutations";
 import { useRouter } from "expo-router";
 import type { TranslationKey } from "@fludge/i18n/index";
+import { useMutationToast } from "@/integrations/toast";
 
 interface Props {
   member: MemberDetail;
@@ -73,6 +74,7 @@ function List({
 export function AssignGroupsScreen({ member }: Props) {
   const [seletedGroupIds, setSelectedGroupIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const mutationToast = useMutationToast();
 
   const { t } = useTranslation();
   const assignGroupsToMember = useAssignGroupsToMember();
@@ -93,6 +95,7 @@ export function AssignGroupsScreen({ member }: Props) {
   };
 
   const onAssignGroups = () => {
+    mutationToast.showPending("forms.member.assing_groups.pending");
     assignGroupsToMember.mutate(
       {
         memberId: member.id,
@@ -101,9 +104,12 @@ export function AssignGroupsScreen({ member }: Props) {
       {
         onSuccess: () => {
           router.back();
+          mutationToast.showSuccess("forms.member.assing_groups.success");
           setSelectedGroupIds([]);
         },
-        onError: (e) => {},
+        onError: (e) => {
+          mutationToast.showError("forms.member.assing_groups.error");
+        },
       },
     );
   };
@@ -142,7 +148,7 @@ export function AssignGroupsScreen({ member }: Props) {
             <Icon name="add" color={colors.onPrimary} />
             <Spacer modifiers={[width(SPACING.sm)]} />
             <ThemedNativeText color={colors.onPrimary}>
-              {t("forms.member.assign_groups", {
+              {t("forms.member.assing_groups.submit", {
                 quantity: seletedGroupIds.length,
               })}
             </ThemedNativeText>
