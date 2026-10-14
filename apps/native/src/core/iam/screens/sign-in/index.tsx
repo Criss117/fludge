@@ -29,6 +29,8 @@ import { Dimensions, StyleSheet, View } from "react-native";
 import { AuthFormInputs } from "@/core/iam/components/auth-form-inputs";
 import { Link } from "expo-router";
 import { PressableScale } from "pressto";
+import { useMutationToast } from "@/integrations/toast";
+import type { TranslationKey } from "@fludge/i18n/index";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -38,17 +40,24 @@ export function SignInScreen() {
   const [rootError, setRootError] = useState<string | null>(null);
   const { invalidateSync } = useInvalidateSync();
   const { signInEmail } = useAuth();
+  const mutationToast = useMutationToast();
 
   const form = useSignInForm({
     onSubmit: ({ value, resetForm }) => {
       setRootError(null);
+      mutationToast.showPending("forms.auth.sign_in_toast.pending");
       signInEmail.mutate(value, {
         onSuccess: () => {
           resetForm();
           invalidateSync();
+          mutationToast.showSuccess("forms.auth.sign_in_toast.success");
         },
         onError: (error) => {
           setRootError(error.message);
+          mutationToast.showError(
+            "forms.auth.sign_in_toast.error",
+            error.message as TranslationKey,
+          );
         },
       });
     },

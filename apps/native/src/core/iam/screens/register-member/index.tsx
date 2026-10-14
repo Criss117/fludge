@@ -13,22 +13,31 @@ import Animated from "react-native-reanimated";
 import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useRouter } from "expo-router";
+import { useMutationToast } from "@/integrations/toast";
 
 export function RegisterMemberScreen() {
   const spacer = useKeyboardSpacer();
   const colors = useThemeColor();
   const { t } = useTranslation();
   const mutation = useRegisterMember();
+  const mutationToast = useMutationToast();
   const router = useRouter();
 
   const form = useRegisterMemberForm({
     onSubmit: ({ value, resetForm }) => {
+      mutationToast.showPending("forms.member.register.pending");
       mutation.mutate(value, {
         onSuccess: () => {
           resetForm();
           router.back();
+          mutationToast.showSuccess("forms.member.register.success");
         },
-        onError: (error) => {},
+        onError: (error) => {
+          mutationToast.showError(
+            "forms.member.register.error",
+            error.message as TranslationKey,
+          );
+        },
       });
     },
   });

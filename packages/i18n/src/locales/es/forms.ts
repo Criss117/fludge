@@ -20,6 +20,18 @@ export const forms = {
     },
     sign_in: "Iniciar sesión",
     sign_up: "Registrarse",
+
+    sign_in_toast: {
+      pending: "Iniciando sesión",
+      success: "Sesión iniciada con éxito",
+      error: "Error al iniciar sesión",
+    },
+
+    sign_up_toast: {
+      pending: "Registrando cuenta",
+      success: "Cuenta registrada con éxito",
+      error: "Error al registrar la cuenta",
+    },
   },
   organization: {
     commercial_data: "Datos comerciales",
@@ -45,6 +57,18 @@ export const forms = {
       placeholder: "Ej: Calle 123, 123 123 C.A.",
     },
     submit: "Registrar",
+
+    register_toast: {
+      pending: "Registrando organización",
+      success: "Organización registrada con éxito",
+      error: "Error al registrar la organización",
+    },
+
+    switch_toast: {
+      pending: "Cambiando de organización",
+      success: "Organización cambiada con éxito",
+      error: "Error al cambiar de organización",
+    },
   },
   group: {
     create: {
@@ -158,6 +182,18 @@ export const forms = {
       placeholder: "Selecciona si el stock puede ser negativo",
     },
     submit: "Guardar Producto",
+
+    create_toast: {
+      pending: "Creando producto",
+      success: "Producto creado con éxito",
+      error: "Error al crear el producto",
+    },
+
+    update_toast: {
+      pending: "Actualizando producto",
+      success: "Producto actualizado con éxito",
+      error: "Error al actualizar el producto",
+    },
   },
   product_presentation: {
     title: "Crear Presentación",

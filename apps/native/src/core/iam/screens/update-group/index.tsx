@@ -15,6 +15,7 @@ import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import Animated from "react-native-reanimated";
 import type { GroupDetail } from "@fludge/client/iam/domain/entities";
 import type { TranslationKey } from "@fludge/i18n/index";
+import { useMutationToast } from "@/integrations/toast";
 
 interface Props {
   group: GroupDetail;
@@ -25,12 +26,14 @@ export function UpdateGroupScreen({ group }: Props) {
   const { t } = useTranslation();
   const mutation = useUpdateGroup();
   const colors = useThemeColor();
+  const mutationToast = useMutationToast();
 
   const router = useRouter();
 
   const form = useGroupForm(
     {
       onSubmit: ({ value }) => {
+        mutationToast.showPending("forms.group.update.pending");
         mutation.mutate(
           {
             id: group.id,
@@ -41,8 +44,14 @@ export function UpdateGroupScreen({ group }: Props) {
           {
             onSuccess: () => {
               router.back();
+              mutationToast.showSuccess("forms.group.update.success");
             },
-            onError: (e) => {},
+            onError: (e) => {
+              mutationToast.showError(
+                "forms.group.update.error",
+                e.message as TranslationKey,
+              );
+            },
           },
         );
       },

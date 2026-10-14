@@ -29,6 +29,8 @@ import { useState } from "react";
 import { FieldError } from "@/core/shared/components/field-error";
 import Animated from "react-native-reanimated";
 import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
+import { useMutationToast } from "@/integrations/toast";
+import type { TranslationKey } from "@fludge/i18n/index";
 
 export function RegisterOrganizationScreen() {
   const spacer = useKeyboardSpacer();
@@ -36,17 +38,24 @@ export function RegisterOrganizationScreen() {
   const colors = useThemeColor();
   const { hasOrganizations } = useOrganization();
   const registerOrganization = useRegisterOrganization();
+  const mutationToast = useMutationToast();
   const [rootError, setRootError] = useState<string | null>(null);
 
   const form = useRegisterOrganizationForm({
     onSubmit: ({ value, resetForm }) => {
       setRootError(null);
+      mutationToast.showPending("forms.organization.register_toast.pending");
       registerOrganization.mutate(value, {
         onSuccess: () => {
           resetForm();
+          mutationToast.showSuccess("forms.organization.register_toast.success");
         },
         onError: (error) => {
           setRootError(error.message);
+          mutationToast.showError(
+            "forms.organization.register_toast.error",
+            error.message as TranslationKey,
+          );
         },
       });
     },

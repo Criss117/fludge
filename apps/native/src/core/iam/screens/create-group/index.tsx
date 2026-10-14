@@ -10,6 +10,8 @@ import { useCreateGroup } from "@fludge/client/iam/mutations/use-group.mutations
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
+import { useMutationToast } from "@/integrations/toast";
+import type { TranslationKey } from "@fludge/i18n/index";
 import { GroupFormInputs } from "@/core/iam/components/group-form-input";
 import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import Animated from "react-native-reanimated";
@@ -19,11 +21,13 @@ export function CreateGroupScreen() {
   const { t } = useTranslation();
   const mutation = useCreateGroup();
   const colors = useThemeColor();
+  const mutationToast = useMutationToast();
 
   const router = useRouter();
 
   const form = useGroupForm({
     onSubmit: ({ value }) => {
+      mutationToast.showPending("forms.group.create.pending");
       mutation.mutate(
         {
           name: value.name,
@@ -33,9 +37,13 @@ export function CreateGroupScreen() {
         {
           onSuccess: () => {
             router.back();
+            mutationToast.showSuccess("forms.group.create.success");
           },
           onError: (e) => {
-            console.log(e);
+            mutationToast.showError(
+              "forms.group.create.error",
+              e.message as TranslationKey,
+            );
           },
         },
       );

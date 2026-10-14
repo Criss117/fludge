@@ -40,6 +40,8 @@ import {
   useCreateProductMutation,
   useUpdateProductMutation,
 } from "@fludge/client/catalog/mutations/use-product.mutations";
+import { useMutationToast } from "@/integrations/toast";
+import type { TranslationKey } from "@fludge/i18n/index";
 
 type Action =
   | {
@@ -58,12 +60,14 @@ function useUpsertProductForm(action: Action) {
   const router = useRouter();
   const createProduct = useCreateProductMutation();
   const updateProduct = useUpdateProductMutation();
+  const createToast = useMutationToast();
+  const updateToast = useMutationToast();
 
   const form = useProductForm(
     {
       onSubmit: ({ value }) => {
         if (action.type === "create") {
-          console.log(value);
+          createToast.showPending("forms.product.create_toast.pending");
           createProduct.mutate(
             {
               name: value.name,
@@ -85,9 +89,13 @@ function useUpsertProductForm(action: Action) {
             {
               onSuccess: () => {
                 router.back();
+                createToast.showSuccess("forms.product.create_toast.success");
               },
               onError: (e) => {
-                console.log(e);
+                createToast.showError(
+                  "forms.product.create_toast.error",
+                  e.message as TranslationKey,
+                );
               },
             },
           );
@@ -95,6 +103,7 @@ function useUpsertProductForm(action: Action) {
           return;
         }
 
+        updateToast.showPending("forms.product.update_toast.pending");
         updateProduct.mutate(
           {
             id: action.product.id,
@@ -119,9 +128,13 @@ function useUpsertProductForm(action: Action) {
           {
             onSuccess: () => {
               router.back();
+              updateToast.showSuccess("forms.product.update_toast.success");
             },
             onError: (e) => {
-              console.log(e);
+              updateToast.showError(
+                "forms.product.update_toast.error",
+                e.message as TranslationKey,
+              );
             },
           },
         );

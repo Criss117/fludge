@@ -29,6 +29,8 @@ import { AuthFormInputs } from "@/core/iam/components/auth-form-inputs";
 import { Link, useRouter } from "expo-router";
 import { PressableScale } from "pressto";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import { useMutationToast } from "@/integrations/toast";
+import type { TranslationKey } from "@fludge/i18n/index";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -38,16 +40,23 @@ export function SignUpScreen() {
   const { signUpEmail } = useAuth();
   const [rootError, setRootError] = useState<string | null>(null);
   const router = useRouter();
+  const mutationToast = useMutationToast();
 
   const form = useSignUpForm({
     onSubmit: ({ value, resetForm }) => {
       setRootError(null);
+      mutationToast.showPending("forms.auth.sign_up_toast.pending");
       signUpEmail.mutate(value, {
         onSuccess: () => {
           resetForm();
+          mutationToast.showSuccess("forms.auth.sign_up_toast.success");
         },
         onError: (error) => {
           setRootError(error.message);
+          mutationToast.showError(
+            "forms.auth.sign_up_toast.error",
+            error.message as TranslationKey,
+          );
         },
       });
     },

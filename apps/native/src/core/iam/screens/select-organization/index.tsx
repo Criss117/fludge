@@ -31,6 +31,8 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
 import Animated from "react-native-reanimated";
+import { useMutationToast } from "@/integrations/toast";
+import type { TranslationKey } from "@fludge/i18n/index";
 
 export function SelectOrganizationScreen() {
   const spacer = useKeyboardSpacer();
@@ -41,6 +43,7 @@ export function SelectOrganizationScreen() {
   const { session } = useAuth();
   const { organizations, switchOrganization, activeOrganization } =
     useOrganization();
+  const mutationToast = useMutationToast();
 
   const userIsRoot = !!session.data?.user.isRoot;
 
@@ -68,7 +71,18 @@ export function SelectOrganizationScreen() {
       return;
     }
 
-    switchOrganization.mutate(organizationId);
+    mutationToast.showPending("forms.organization.switch_toast.pending");
+    switchOrganization.mutate(organizationId, {
+      onSuccess: () => {
+        mutationToast.showSuccess("forms.organization.switch_toast.success");
+      },
+      onError: (error) => {
+        mutationToast.showError(
+          "forms.organization.switch_toast.error",
+          error.message as TranslationKey,
+        );
+      },
+    });
   };
 
   return (

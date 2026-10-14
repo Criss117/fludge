@@ -67,7 +67,7 @@
     "@types/jest": "29.5.14",
     "@types/react": "~19.2.2",
     "drizzle-kit": "catalog:",
-    "eslint": "10.10.0",
+    "eslint": "^9.0.0",
     "eslint-config-expo": "~57.0.2",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.6",
