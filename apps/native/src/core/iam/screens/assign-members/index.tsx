@@ -6,7 +6,6 @@ import {
   ThemedText,
 } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
-import { useToast } from "@/core/shared/components/toast-provider";
 import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
@@ -76,7 +75,6 @@ export function AssignMembersScreen({ group }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const assignMembersToGroup = useAssignMembersToGroup();
-  const toast = useToast();
   const { t } = useTranslation();
   const router = useRouter();
   const colors = useThemeColor();
@@ -102,17 +100,10 @@ export function AssignMembersScreen({ group }: Props) {
       },
       {
         onSuccess: () => {
-          toast.show({
-            message: "forms.member.success.assing_groups",
-          });
           router.back();
           setSelectedMemberIds([]);
         },
-        onError: (e) => {
-          toast.show({
-            message: e.message as TranslationKey,
-          });
-        },
+        onError: (e) => {},
       },
     );
   };

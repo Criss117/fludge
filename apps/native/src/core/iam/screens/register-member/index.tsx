@@ -11,7 +11,6 @@ import { AuthFormInputs } from "@/core/iam/components/auth-form-inputs";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import Animated from "react-native-reanimated";
 import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
-import { useToast } from "@/core/shared/components/toast-provider";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useRouter } from "expo-router";
 
@@ -20,7 +19,6 @@ export function RegisterMemberScreen() {
   const colors = useThemeColor();
   const { t } = useTranslation();
   const mutation = useRegisterMember();
-  const toast = useToast();
   const router = useRouter();
 
   const form = useRegisterMemberForm({
@@ -29,17 +27,8 @@ export function RegisterMemberScreen() {
         onSuccess: () => {
           resetForm();
           router.back();
-          toast.show({
-            message: "forms.member.success",
-            duration: "short",
-          });
         },
-        onError: (error) => {
-          toast.show({
-            message: error.message as TranslationKey,
-            duration: "short",
-          });
-        },
+        onError: (error) => {},
       });
     },
   });

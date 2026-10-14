@@ -13,7 +13,6 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { GroupFormInputs } from "@/core/iam/components/group-form-input";
 import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import Animated from "react-native-reanimated";
-import { useToast } from "@/core/shared/components/toast-provider";
 import type { GroupDetail } from "@fludge/client/iam/domain/entities";
 import type { TranslationKey } from "@fludge/i18n/index";
 
@@ -26,7 +25,6 @@ export function UpdateGroupScreen({ group }: Props) {
   const { t } = useTranslation();
   const mutation = useUpdateGroup();
   const colors = useThemeColor();
-  const { show } = useToast();
 
   const router = useRouter();
 
@@ -42,18 +40,9 @@ export function UpdateGroupScreen({ group }: Props) {
           },
           {
             onSuccess: () => {
-              show({
-                message: "forms.group.update.success",
-                duration: "short",
-              });
               router.back();
             },
-            onError: (e) => {
-              show({
-                message: e.message as TranslationKey,
-                duration: "short",
-              });
-            },
+            onError: (e) => {},
           },
         );
       },

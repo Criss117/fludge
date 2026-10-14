@@ -20,7 +20,6 @@ import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import Animated from "react-native-reanimated";
 import { useAssignGroupsToMember } from "@fludge/client/iam/mutations/use-member.mutations";
-import { useToast } from "@/core/shared/components/toast-provider";
 import { useRouter } from "expo-router";
 import type { TranslationKey } from "@fludge/i18n/index";
 
@@ -77,7 +76,6 @@ export function AssignGroupsScreen({ member }: Props) {
 
   const { t } = useTranslation();
   const assignGroupsToMember = useAssignGroupsToMember();
-  const toast = useToast();
   const router = useRouter();
   const colors = useThemeColor();
   const spacer = useKeyboardSpacer();
@@ -102,17 +100,10 @@ export function AssignGroupsScreen({ member }: Props) {
       },
       {
         onSuccess: () => {
-          toast.show({
-            message: "forms.member.success.assing_groups",
-          });
           router.back();
           setSelectedGroupIds([]);
         },
-        onError: (e) => {
-          toast.show({
-            message: e.message as TranslationKey,
-          });
-        },
+        onError: (e) => {},
       },
     );
   };

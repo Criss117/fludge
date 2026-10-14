@@ -13,14 +13,12 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { GroupFormInputs } from "@/core/iam/components/group-form-input";
 import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import Animated from "react-native-reanimated";
-import { useToast } from "@/core/shared/components/toast-provider";
 
 export function CreateGroupScreen() {
   const spacer = useKeyboardSpacer();
   const { t } = useTranslation();
   const mutation = useCreateGroup();
   const colors = useThemeColor();
-  const { show } = useToast();
 
   const router = useRouter();
 
@@ -34,10 +32,6 @@ export function CreateGroupScreen() {
         },
         {
           onSuccess: () => {
-            show({
-              message: "forms.group.create.success",
-              duration: "short",
-            });
             router.back();
           },
           onError: (e) => {

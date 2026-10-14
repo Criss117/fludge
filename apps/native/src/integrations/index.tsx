@@ -8,10 +8,15 @@ import { NetworkProvider } from "./network";
 import { AuthProvider } from "./auth";
 import { ORPCProvider } from "./orpc";
 import { DependenciesProvider } from "./dependencies";
-import { ToastProvider } from "@/core/shared/components/toast-provider";
+import { Toaster } from "sonner-native";
 
 function UIProvider({ children }: { children: React.ReactNode }) {
-  return <ToastProvider>{children}</ToastProvider>;
+  return (
+    <>
+      {children}
+      <Toaster />
+    </>
+  );
 }
 
 function NetProvider({ children }: { children: React.ReactNode }) {

@@ -1,5 +1,4 @@
 import { TextInput } from "@/core/shared/components/text-input";
-import { useToast } from "@/core/shared/components/toast-provider";
 import { SPACING } from "@/lib/sp";
 import { Host } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
@@ -19,7 +18,6 @@ interface Props {
 export function GroupMembersSection({ group }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const removeMembersFromGroup = useRemoveMembersFromGroup();
-  const toast = useToast();
 
   const members = useMemo(() => {
     return group.members.filter((m) =>
@@ -35,12 +33,7 @@ export function GroupMembersSection({ group }: Props) {
           memberIds: [member.id],
         },
         {
-          onSuccess: () => {
-            toast.show({
-              message: "forms.member.success.unassign_groups",
-              duration: "short",
-            });
-          },
+          onSuccess: () => {},
         },
       );
     },
