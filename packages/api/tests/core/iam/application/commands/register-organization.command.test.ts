@@ -12,6 +12,18 @@ import { InMemoryOrganizationUniquenessValidator } from "../../infrastructure/in
 
 const ROOT_USER_ID = "0192d840-7c3f-73b2-8f71-2c1b6a9e5d01";
 
+const ROOT_USER = {
+  id: ROOT_USER_ID,
+  name: "Root User",
+  email: "root@example.com",
+  emailVerified: true,
+  image: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  isRoot: true,
+  phone: "+5491155551234",
+};
+
 const VALID_CMD = {
   name: "Acme Corp",
   legalName: "Acme Corporation S.A.",
@@ -44,7 +56,7 @@ describe("RegisterOrganizationCommand", () => {
 
   describe("happy path", () => {
     it("creates and persists the organization", async () => {
-      const result = await command.execute(ROOT_USER_ID, VALID_CMD);
+      const result = await command.execute(ROOT_USER, VALID_CMD);
       const [stored] = await organizationRepository.findById(
         result.organization.id,
       );
@@ -63,7 +75,7 @@ describe("RegisterOrganizationCommand", () => {
     });
 
     it("creates an owner member for the root user tied to the organization", async () => {
-      const result = await command.execute(ROOT_USER_ID, VALID_CMD);
+      const result = await command.execute(ROOT_USER, VALID_CMD);
       const [stored] = await memberRepository.findById(
         result.organization.id,
         result.member.id,
@@ -81,7 +93,7 @@ describe("RegisterOrganizationCommand", () => {
     });
 
     it("creates and persists the Administradores admin group with all permissions", async () => {
-      const result = await command.execute(ROOT_USER_ID, VALID_CMD);
+      const result = await command.execute(ROOT_USER, VALID_CMD);
       const [stored] = await groupRepository.findById(
         result.organization.id,
         result.group.id,
@@ -100,7 +112,7 @@ describe("RegisterOrganizationCommand", () => {
     });
 
     it("returns organization, member and group values", async () => {
-      const result = await command.execute(ROOT_USER_ID, VALID_CMD);
+      const result = await command.execute(ROOT_USER, VALID_CMD);
 
       expect(result.organization).toMatchObject({
         id: expect.any(String),
@@ -122,7 +134,7 @@ describe("RegisterOrganizationCommand", () => {
     it("throws OrganizationAlreadyExistsException when the name is taken", async () => {
       uniquenessValidator.markTaken({ name: VALID_CMD.name });
 
-      const err = await command.execute(ROOT_USER_ID, VALID_CMD).catch((e) => e);
+      const err = await command.execute(ROOT_USER, VALID_CMD).catch((e) => e);
 
       expect(err).toBeInstanceOf(OrganizationAlreadyExistsException);
       expect(err.message).toBe("api_errors.iam.organizations.name_taken");
@@ -131,7 +143,7 @@ describe("RegisterOrganizationCommand", () => {
     it("throws OrganizationAlreadyExistsException when the slug is taken", async () => {
       uniquenessValidator.markTaken({ slug: "acme-corp" });
 
-      const err = await command.execute(ROOT_USER_ID, VALID_CMD).catch((e) => e);
+      const err = await command.execute(ROOT_USER, VALID_CMD).catch((e) => e);
 
       expect(err).toBeInstanceOf(OrganizationAlreadyExistsException);
       expect(err.message).toBe("api_errors.iam.organizations.name_taken");
@@ -140,7 +152,7 @@ describe("RegisterOrganizationCommand", () => {
     it("throws OrganizationAlreadyExistsException when the legal name is taken", async () => {
       uniquenessValidator.markTaken({ legalName: VALID_CMD.legalName });
 
-      const err = await command.execute(ROOT_USER_ID, VALID_CMD).catch((e) => e);
+      const err = await command.execute(ROOT_USER, VALID_CMD).catch((e) => e);
 
       expect(err).toBeInstanceOf(OrganizationAlreadyExistsException);
       expect(err.message).toBe(
@@ -151,7 +163,7 @@ describe("RegisterOrganizationCommand", () => {
     it("throws OrganizationAlreadyExistsException when the tax id is taken", async () => {
       uniquenessValidator.markTaken({ taxId: VALID_CMD.taxId });
 
-      const err = await command.execute(ROOT_USER_ID, VALID_CMD).catch((e) => e);
+      const err = await command.execute(ROOT_USER, VALID_CMD).catch((e) => e);
 
       expect(err).toBeInstanceOf(OrganizationAlreadyExistsException);
       expect(err.message).toBe("api_errors.iam.organizations.tax_id_taken");
@@ -160,7 +172,7 @@ describe("RegisterOrganizationCommand", () => {
     it("throws OrganizationAlreadyExistsException when the phone is taken", async () => {
       uniquenessValidator.markTaken({ phone: VALID_CMD.phone });
 
-      const err = await command.execute(ROOT_USER_ID, VALID_CMD).catch((e) => e);
+      const err = await command.execute(ROOT_USER, VALID_CMD).catch((e) => e);
 
       expect(err).toBeInstanceOf(OrganizationAlreadyExistsException);
       expect(err.message).toBe("api_errors.iam.organizations.phone_taken");
@@ -169,7 +181,7 @@ describe("RegisterOrganizationCommand", () => {
     it("persists nothing when uniqueness validation fails", async () => {
       uniquenessValidator.markTaken({ name: VALID_CMD.name });
 
-      await expect(command.execute(ROOT_USER_ID, VALID_CMD)).rejects.toBeInstanceOf(
+      await expect(command.execute(ROOT_USER, VALID_CMD)).rejects.toBeInstanceOf(
         OrganizationAlreadyExistsException,
       );
 

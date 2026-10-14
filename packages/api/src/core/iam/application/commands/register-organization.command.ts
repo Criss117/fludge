@@ -12,6 +12,7 @@ import { Permissions } from "@fludge/utils/permissions/index";
 import { registerOrganizationValidator } from "@fludge/utils/validators/organization.validators";
 import { UUID } from "@fludge/utils/uuid";
 import type { OrganizationUniquenessValidator } from "@fludge/api/core/iam/application/services/organization-uniqueness-validator.service";
+import type { UserSelect } from "@fludge/db/schema/auth.schema";
 
 export const registerOrganizationCommand = registerOrganizationValidator;
 
@@ -25,7 +26,7 @@ export class RegisterOrganizationCommand {
     private readonly groupRepository: GroupRepository,
   ) {}
 
-  public async execute(rootUserId: string, cmd: CMD) {
+  public async execute(user: UserSelect, cmd: CMD) {
     const organization = Organization.create({
       legalName: cmd.legalName,
       name: cmd.name,
@@ -35,10 +36,11 @@ export class RegisterOrganizationCommand {
     });
 
     const ownerMember = Member.create({
-      userId: UUID.fromString(rootUserId),
+      userId: UUID.fromString(user.id),
       organizationId: organization.id,
       role: "owner",
       assignedBy: null,
+      user,
     });
 
     const adminGroup = Group.create({
