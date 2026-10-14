@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: SPACING.sm,
+    paddingTop: SPACING.sm,
   },
   listContainer: {
     flex: 1,

@@ -1,3 +1,5 @@
+import { CategoriesScreen } from "@/core/catalog/screens/categories";
+
 export default function Categories() {
-  return null;
+  return <CategoriesScreen />;
 }

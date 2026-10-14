@@ -67,6 +67,7 @@ export const screens = {
         label: "Buscar categorías",
       },
       empty: "No hay categorías disponibles",
+      no_more: "No hay más categorías disponibles",
     },
   },
   products: {
