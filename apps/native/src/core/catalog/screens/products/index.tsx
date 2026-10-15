@@ -63,9 +63,6 @@ function ProductsList({ searchQuery }: { searchQuery: string }) {
       keyExtractor={(i) => i.id}
       renderItem={({ item }) => <ProductCard product={item} />}
       showsVerticalScrollIndicator={false}
-      ListHeaderComponent={() => (
-        <ThemedText>{data.pages.length} PAGINAS</ThemedText>
-      )}
       ListFooterComponent={() => (
         <ListFooterComponent
           hasNextPage={hasNextPage}

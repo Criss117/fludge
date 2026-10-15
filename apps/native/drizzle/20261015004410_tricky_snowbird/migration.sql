@@ -8,6 +8,12 @@ CREATE TABLE `app` (
 	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE `sync_state` (
+	`aggregate` text PRIMARY KEY,
+	`cursor` text,
+	`last_synced_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE `category` (
 	`id` text PRIMARY KEY,
 	`name` text NOT NULL,
