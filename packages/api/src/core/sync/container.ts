@@ -2,7 +2,7 @@ import { databaseService } from "@fludge/db";
 import { SqliteSyncCommerceRepository } from "./repositories/sqlite-sync-commerce.repository";
 import { SqliteSyncCatalogRepository } from "./repositories/sqlite-sync-catalog.repository";
 import { SQLiteSyncIamRepository } from "./repositories/sqlite-sync-iam.repository";
-import { SyncCommerceQuery } from "./queries/sync-sale.query";
+import { SyncCommerceQuery } from "./queries/sync-commerce.query";
 import { SyncCatalogQuery } from "./queries/sync-catalog.query";
 import { SyncIamQuery } from "./queries/sync-iam.query";
 

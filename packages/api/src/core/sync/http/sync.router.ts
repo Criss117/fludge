@@ -1,6 +1,6 @@
 import { withOrganizationIdsProcedure } from "@fludge/api/index";
 import { syncContainer } from "../container";
-import { syncCommerceQuery } from "../queries/sync-sale.query";
+import { syncCommerceQuery } from "../queries/sync-commerce.query";
 import { syncCatalogQuery } from "../queries/sync-catalog.query";
 import { syncIamQuery } from "../queries/sync-iam.query";
 

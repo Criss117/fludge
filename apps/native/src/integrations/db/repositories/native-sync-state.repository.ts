@@ -22,14 +22,16 @@ export class NativeSyncStateRepository {
   ) {
     const row = tx.select().from(app).all();
 
-    tx.update(app).set({
-      syncState: {
-        ...row[0].syncState,
-        [aggregate]: {
-          cursor,
-          lastSyncedAt: new Date(),
+    tx.update(app)
+      .set({
+        syncState: {
+          ...row[0].syncState,
+          [aggregate]: {
+            cursor,
+            lastSyncedAt: new Date(),
+          },
         },
-      },
-    });
+      })
+      .run();
   }
 }

@@ -6,7 +6,6 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import type { SessionRepository } from "../domain/session.repository";
-import { tryCatch } from "@fludge/utils/trycatch";
 
 const QUERY_KEY = ["app"] as const;
 
@@ -19,11 +18,7 @@ export function useAppState() {
     refetchOnReconnect: true,
     queryKey: QUERY_KEY,
     queryFn: async () => {
-      const [app, err] = await tryCatch(
-        iamContainer.repositories.appRepository.find(),
-      );
-
-      console.log("Error finding app", err?.cause);
+      const app = await iamContainer.repositories.appRepository.find();
 
       if (!isInternetReachable) return app;
 

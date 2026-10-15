@@ -13,6 +13,7 @@ class QueryCounterLogger implements Logger {
   public count = 0;
 
   logQuery(query: string): void {
+    return;
     this.count++;
     console.log(`[Consulta #${this.count}]`, query);
   }
