@@ -70,6 +70,17 @@ export function useAppState() {
     },
   });
 
+  const clearLastLoggedUserId = useMutation({
+    mutationKey: ["app", "clear-last-logged-user-id"],
+    mutationFn: async () => {
+      const newApp = await iamContainer.repositories.appRepository.save({
+        lastLoggedUserId: null,
+      });
+
+      queryClient.setQueryData(QUERY_KEY, newApp);
+    },
+  });
+
   const switchActiveOrganization = useMutation({
     mutationKey: ["app", "set-active-organization"],
     mutationFn: async (values: { activeOrganizationId: string | null }) => {
@@ -157,6 +168,7 @@ export function useAppState() {
     ...appQuery,
     setTheme,
     switchActiveOrganization,
+    clearLastLoggedUserId,
     clearApp,
     signUpEmail,
     signInEmail,

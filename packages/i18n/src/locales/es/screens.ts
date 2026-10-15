@@ -164,4 +164,7 @@ export const screens = {
       },
     },
   },
+  pos: {
+    label: "Nueva venta",
+  },
 };

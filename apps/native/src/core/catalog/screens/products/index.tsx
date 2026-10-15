@@ -79,10 +79,6 @@ function ProductsList({ searchQuery }: { searchQuery: string }) {
 export function ProductsScreen() {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleScan = (barcode: string) => {
-    setSearchQuery(barcode);
-  };
-
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
@@ -106,7 +102,7 @@ export function ProductsScreen() {
                 withDebounce={400}
               />
             </Box>
-            <BarcodeReader setBarcode={handleScan} />
+            <BarcodeReader setBarcode={setSearchQuery} />
           </Row>
         </Host>
       </View>

@@ -39,6 +39,10 @@ function StackScreen() {
       <Stack.Protected guard={hasActiveOrganization}>
         <Stack.Screen name="groups" />
       </Stack.Protected>
+
+      <Stack.Protected guard={hasActiveOrganization}>
+        <Stack.Screen name="pos" />
+      </Stack.Protected>
     </Stack>
   );
 }

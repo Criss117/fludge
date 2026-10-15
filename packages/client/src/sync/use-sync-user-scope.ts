@@ -13,12 +13,14 @@ export function useSyncUserScope() {
   const { data } = useAppState();
   const {
     data: { session },
+    clearLastLoggedUserId,
   } = useAppState();
   const { catalogContainer, commerceContainer, iamContainer } = useContainer();
 
   const userId = session?.user.id;
 
   if (!userId) throw new Error("User not found");
+
   return useSuspenseQuery({
     queryKey: ["sync", "user_scope", userId],
     staleTime: Infinity,
@@ -52,6 +54,8 @@ export function useSyncUserScope() {
           success: false,
           syncedAt: null,
         };
+
+      await clearLastLoggedUserId.mutateAsync();
 
       return {
         error: null,
