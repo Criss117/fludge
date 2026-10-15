@@ -58,6 +58,16 @@ export default function DashboardLayout() {
           {t("screens.iam.label")}
         </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="settings">
+        <NativeTabs.Trigger.Icon
+          sf="gear"
+          md="settings"
+          selectedColor={colors.onPrimary}
+        />
+        <NativeTabs.Trigger.Label>
+          {t("screens.settings.label")}
+        </NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
     </NativeTabs>
   );
 }

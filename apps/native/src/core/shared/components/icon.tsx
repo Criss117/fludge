@@ -28,6 +28,13 @@ import ArrowDownwardIcon from "@expo/material-symbols/arrow_downward.xml";
 import AddCircleIcon from "@expo/material-symbols/add_circle.xml";
 import BarcodeIcon from "@expo/material-symbols/barcode.xml";
 import DeleteIcon from "@expo/material-symbols/delete.xml";
+import SecurityIcon from "@expo/material-symbols/security.xml";
+import ViewListIcon from "@expo/material-symbols/view_list.xml";
+import GroupIcon from "@expo/material-symbols/group.xml";
+import SyncIcon from "@expo/material-symbols/sync.xml";
+import Inventory2Icon from "@expo/material-symbols/inventory_2.xml";
+import LogoutIcon from "@expo/material-symbols/logout.xml";
+import SwitchLeftIcon from "@expo/material-symbols/switch_left.xml";
 
 import { Icon as ExpoIcon, type IconProps as ExpoIconProps } from "@expo/ui";
 
@@ -62,6 +69,13 @@ export const ICONS = {
   "add-circle": AddCircleIcon,
   barcode: BarcodeIcon,
   delete: DeleteIcon,
+  security: SecurityIcon,
+  "view-list": ViewListIcon,
+  group: GroupIcon,
+  sync: SyncIcon,
+  inventory_2: Inventory2Icon,
+  logout: LogoutIcon,
+  switch: SwitchLeftIcon,
 } as const;
 
 export type IconName = keyof typeof ICONS;

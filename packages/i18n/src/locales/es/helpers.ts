@@ -37,4 +37,5 @@ export const helpers = {
 
   x_more: "{{count}} más",
   all_of: "Todos de {{label}}",
+  no_conection: "No hay conexión",
 };

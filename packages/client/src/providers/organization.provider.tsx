@@ -34,7 +34,19 @@ function useGenerateContext() {
 
   const switchOrganization = useMutation({
     mutationKey: ["iam", "organizations", "switch"],
-    mutationFn: async (organizationId: string) => {
+    mutationFn: async (organizationId: string | null) => {
+      if (!organizationId) {
+        await setActiveOrganization.mutateAsync({
+          activeOrganizationId: null,
+        });
+
+        queryClient.setQueryData(QUERY_KEY, {
+          list: organizationStorage.data.list,
+          activeOrganization: null,
+        });
+        return;
+      }
+
       const existingOrganization = organizationStorage.data.list.find(
         (o) => o.id === organizationId,
       );

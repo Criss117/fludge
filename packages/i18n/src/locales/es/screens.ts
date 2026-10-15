@@ -114,4 +114,54 @@ export const screens = {
   sales: {
     label: "Ventas",
   },
+  settings: {
+    label: "Ajustes",
+    sections: {
+      preferences: {
+        title: "Preferencias",
+        dark_mode: {
+          label: "Modo oscuro",
+          placeholder: "Cambia el tema de la aplicación",
+        },
+      },
+      session: {
+        title: "Sesión",
+        sign_out: "Cerrar sesión",
+        switch_organization: "Cambiar de organización",
+      },
+      sync: {
+        title: "Sincronización",
+        catalog: {
+          title: "Catálogo",
+          on_error: {
+            title: "Error al sincronizar",
+            description: "No se pudo sincronizar el catálogo",
+          },
+          refetching: "Sincronizando catálogo",
+          on_success: "Catálogo sincronizado con éxito",
+          last_synced_at: "Última sincronización: ",
+        },
+        commerce: {
+          title: "Comercio",
+          on_error: {
+            title: "Error al sincronizar",
+            description: "No se pudo sincronizar el comercio",
+          },
+          refetching: "Sincronizando comercio",
+          on_success: "Comercio sincronizado con éxito",
+          last_synced_at: "Última sincronización: ",
+        },
+        iam: {
+          title: "IAM",
+          on_error: {
+            title: "Error al sincronizar",
+            description: "No se pudo sincronizar la IAM",
+          },
+          refetching: "Sincronizando IAM",
+          on_success: "IAM sincronizado con éxito",
+          last_synced_at: "Última sincronización: ",
+        },
+      },
+    },
+  },
 };
