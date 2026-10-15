@@ -1,11 +1,12 @@
 import type {
-  CommerceLastSyncedAt,
+  CommerceSyncCursors,
   CommerceSyncResult,
 } from "@fludge/sync/types/commerce.types";
 
 export interface ServerSyncCommerceRepository {
   findAllItems(
     organizationIds: string[],
-    lastSyncedAt: CommerceLastSyncedAt,
+    cursors: CommerceSyncCursors,
+    limit?: number,
   ): Promise<CommerceSyncResult>;
 }

@@ -10,6 +10,7 @@ import { tryCatch } from "@fludge/utils/trycatch";
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { MINUTE } from "@fludge/utils/constants";
 import type { HttpClientSyncIamRepository } from "@fludge/sync/repositories/iam/client-sync-iam.repository";
+import { useEffect } from "react";
 
 export type SyncData = {
   error: Error | null;
@@ -47,38 +48,51 @@ export function useSyncIam() {
           syncedAt: null,
         };
 
-      const [lastSyncedAt, errorGetLastSyncedAt] = await tryCatch(
-        iamContainer.repositories.syncIamRepository.getLastSyncedAt(),
-      );
+      let hasMore = false;
+      let pages = 0;
+      do {
+        if (++pages > 1000)
+          return {
+            error: new Error("Sync did not converge"),
+            success: false,
+            syncedAt: null,
+          };
 
-      if (errorGetLastSyncedAt)
-        return {
-          error: errorGetLastSyncedAt,
-          success: false,
-          syncedAt: null,
-        };
+        const [lastSyncedAt, errorGetLastSyncedAt] = await tryCatch(
+          iamContainer.repositories.syncIamRepository.getLastSyncedAt(),
+        );
 
-      const [values, errorFindLastSyncedAt] = await tryCatch(
-        httpRepository.findLastSyncedAt(lastSyncedAt),
-      );
+        if (errorGetLastSyncedAt)
+          return {
+            error: errorGetLastSyncedAt,
+            success: false,
+            syncedAt: null,
+          };
 
-      if (errorFindLastSyncedAt)
-        return {
-          error: errorFindLastSyncedAt,
-          success: false,
-          syncedAt: null,
-        };
+        const [values, errorFindLastSyncedAt] = await tryCatch(
+          httpRepository.findLastSyncedAt(lastSyncedAt),
+        );
 
-      const [, erroSaveAll] = await tryCatch(
-        iamContainer.repositories.syncIamRepository.saveAll(values),
-      );
+        if (errorFindLastSyncedAt)
+          return {
+            error: errorFindLastSyncedAt,
+            success: false,
+            syncedAt: null,
+          };
 
-      if (erroSaveAll)
-        return {
-          error: erroSaveAll,
-          success: false,
-          syncedAt: null,
-        };
+        hasMore = Object.values(values).some((page) => page.hasMore);
+
+        const [, erroSaveAll] = await tryCatch(
+          iamContainer.repositories.syncIamRepository.saveAll(values),
+        );
+
+        if (erroSaveAll)
+          return {
+            error: erroSaveAll,
+            success: false,
+            syncedAt: null,
+          };
+      } while (hasMore);
 
       return {
         error: null,
@@ -88,6 +102,10 @@ export function useSyncIam() {
     },
     refetchInterval: MINUTE * 5,
   });
+
+  useEffect(() => {
+    if (isInternetReachable) query.refetch();
+  }, [isInternetReachable]);
 
   return query;
 }

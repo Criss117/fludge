@@ -9,65 +9,43 @@ import {
   localUser,
   type LocalMember,
 } from "@fludge/db/local-schemas/shared.schema";
-import { desc, inArray } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import type {
-  IamLastSyncedAt,
+  IamSyncCursors,
   IamSyncResult,
 } from "@fludge/sync/types/iam.types";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
+import { NativeSyncStateRepository } from "./native-sync-state.repository";
 
 export class NativeSyncIamRepository implements ClientSyncIamRepository {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly syncStateRepository: NativeSyncStateRepository,
+  ) {}
 
-  private async getLastSyncedGroup() {
-    const row = await this.db
-      .select()
-      .from(localGroup)
-      .orderBy(desc(localGroup.updatedAt))
-      .limit(1);
-
-    return row.at(0) ?? null;
-  }
-
-  private async getLastSyncedMember() {
-    const row = await this.db
-      .select()
-      .from(localMember)
-      .orderBy(desc(localMember.createdAt))
-      .limit(1);
-
-    return row.at(0) ?? null;
-  }
-
-  private async getLastSyncedOrganization() {
-    const row = await this.db
-      .select()
-      .from(localOrganization)
-      .orderBy(desc(localOrganization.updatedAt))
-      .limit(1);
-
-    return row.at(0) ?? null;
-  }
-
-  public async getLastSyncedAt(): Promise<IamLastSyncedAt> {
+  public async getLastSyncedAt(): Promise<IamSyncCursors> {
     const [group, member, organization] = await Promise.all([
-      this.getLastSyncedGroup(),
-      this.getLastSyncedMember(),
-      this.getLastSyncedOrganization(),
+      this.syncStateRepository.find("groups"),
+      this.syncStateRepository.find("members"),
+      this.syncStateRepository.find("organizations"),
     ]);
 
     return {
-      group: group?.updatedAt ?? null,
-      member: member?.createdAt ?? null,
-      organization: organization?.updatedAt ?? null,
+      group: group?.cursor ?? null,
+      member: member?.cursor ?? null,
+      organization: organization?.cursor ?? null,
     };
   }
 
-  public async saveAll(values: IamSyncResult): Promise<void> {
+  public async saveAll({
+    groups,
+    members,
+    organizations,
+  }: IamSyncResult): Promise<void> {
     this.db.transaction((tx) => {
-      if (values.organizations.length > 0) {
+      if (organizations.items.length > 0) {
         tx.insert(localOrganization)
-          .values(values.organizations)
+          .values(organizations.items)
           .onConflictDoUpdate({
             target: localOrganization.id,
             set: buildConflictUpdateColumn(localOrganization, [
@@ -81,21 +59,27 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
             ]),
           })
           .run();
+
+        this.syncStateRepository.save(
+          "organizations",
+          organizations.nextCursor,
+          tx,
+        );
       }
 
-      if (values.members.length > 0) {
-        const members: Omit<LocalMember, "user">[] = [];
-        const users: LocalMember["user"][] = [];
+      if (members.items.length > 0) {
+        const membersList: Omit<LocalMember, "user">[] = [];
+        const usersList: LocalMember["user"][] = [];
 
-        for (const member of values.members) {
+        for (const member of members.items) {
           const { user: memberUser, ...memberValues } = member;
 
-          members.push(memberValues);
-          users.push(memberUser);
+          membersList.push(memberValues);
+          usersList.push(memberUser);
         }
 
         tx.insert(localUser)
-          .values(users)
+          .values(usersList)
           .onConflictDoUpdate({
             target: localUser.id,
             set: buildConflictUpdateColumn(localUser, [
@@ -108,25 +92,24 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
           })
           .run();
 
-        tx.insert(localMember)
-          .values(values.members)
-          .onConflictDoNothing()
-          .run();
+        tx.insert(localMember).values(membersList).onConflictDoNothing().run();
+
+        this.syncStateRepository.save("members", members.nextCursor, tx);
       }
 
-      if (values.groups.length > 0) {
-        const groups: Omit<LocalGroup, "members">[] = [];
-        const groupMembers: LocalGroup["members"] = [];
+      if (groups.items.length > 0) {
+        const groupsList: Omit<LocalGroup, "members">[] = [];
+        const groupMembersList: LocalGroup["members"] = [];
 
-        for (const group of values.groups) {
+        for (const group of groups.items) {
           const { members, ...groupValues } = group;
 
-          groups.push(groupValues);
-          groupMembers.push(...members);
+          groupsList.push(groupValues);
+          groupMembersList.push(...members);
         }
 
         tx.insert(localGroup)
-          .values(groups)
+          .values(groupsList)
           .onConflictDoUpdate({
             target: localGroup.id,
             set: buildConflictUpdateColumn(localGroup, [
@@ -140,21 +123,23 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
           })
           .run();
 
-        if (groupMembers.length > 0) {
+        if (groupMembersList.length > 0) {
           tx.delete(localGroupMember)
             .where(
               inArray(
                 localGroupMember.groupId,
-                values.groups.map((g) => g.id),
+                groupsList.map((g) => g.id),
               ),
             )
             .run();
 
           tx.insert(localGroupMember)
-            .values(values.groups.flatMap((g) => g.members.map((m) => m)))
+            .values(groupMembersList)
             .onConflictDoNothing()
             .run();
         }
+
+        this.syncStateRepository.save("groups", groups.nextCursor, tx);
       }
     });
   }

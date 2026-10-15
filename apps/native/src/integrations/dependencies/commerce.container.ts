@@ -4,12 +4,14 @@ import { NativeCustomerRepository } from "@/core/commerce/repositories/native-cu
 import { NativeSaleRepository } from "@/core/commerce/repositories/native-sale.repository";
 import { NativeLocalTicketRepository } from "@/core/commerce/repositories/native-local-ticket.repository";
 import { NativeSyncCommerceRepository } from "@/integrations/db/repositories/native-sync-commerce.repository";
+import { syncStateRepository } from "./shared";
 
 const saleRepository = new NativeSaleRepository(databaseService);
 const customerRepository = new NativeCustomerRepository(databaseService);
 const localTicketRepository = new NativeLocalTicketRepository(databaseService);
 const syncCommerceRepository = new NativeSyncCommerceRepository(
   databaseService,
+  syncStateRepository,
 );
 
 export const commerceContainer = generateCommerceContainer({

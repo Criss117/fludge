@@ -94,3 +94,8 @@ export const notesSchema = z.literal("").or(
       error: getI18nKey("validators.notes.max_length"),
     }),
 );
+
+export const cursorSchema = z
+  .object({ updatedAt: z.coerce.date(), id: z.uuid() })
+  .nullable()
+  .default(null);

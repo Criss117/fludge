@@ -3,63 +3,61 @@ import { desc, inArray } from "drizzle-orm";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import type { ClientSyncCommerceRepository } from "@fludge/sync/repositories/commerse/client-sync-commerce.repository";
 import type {
-  CommerceLastSyncedAt,
+  CommerceSyncCursors,
   CommerceSyncResult,
 } from "@fludge/sync/types/commerce.types";
 import {
+  type LocalCustomer,
   localCustomer,
   localCustomerPayment,
+  type LocalSale,
   localSale,
   localSaleItem,
   localSalePayment,
 } from "@fludge/db/local-schemas/shared.schema";
+import { NativeSyncStateRepository } from "./native-sync-state.repository";
 
 export class NativeSyncCommerceRepository implements ClientSyncCommerceRepository {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly syncStateRepository: NativeSyncStateRepository,
+  ) {}
 
-  private async getLastSyncedCustomerDate(): Promise<Date | null> {
-    const row = await this.db
-      .select({ updatedAt: localCustomer.updatedAt })
-      .from(localCustomer)
-      .orderBy(desc(localCustomer.updatedAt))
-      .limit(1);
-
-    return row.at(0)?.updatedAt ?? null;
-  }
-
-  private async getLastSyncedSaleDate(): Promise<Date | null> {
-    const row = await this.db
-      .select({ updatedAt: localSale.updatedAt })
-      .from(localSale)
-      .orderBy(desc(localSale.updatedAt))
-      .limit(1);
-
-    return row.at(0)?.updatedAt ?? null;
-  }
-
-  public async getLastSyncedAt(): Promise<CommerceLastSyncedAt> {
+  public async getLastSyncedAt(): Promise<CommerceSyncCursors> {
     const [customer, sale] = await Promise.all([
-      this.getLastSyncedCustomerDate(),
-      this.getLastSyncedSaleDate(),
+      this.syncStateRepository.find("customers"),
+      this.syncStateRepository.find("sales"),
     ]);
 
-    return { customer, sale };
+    return { customer: customer?.cursor ?? null, sale: sale?.cursor ?? null };
   }
 
   public async saveAll(values: CommerceSyncResult): Promise<void> {
+    const { customers, sales } = values;
+
     this.db.transaction((tx) => {
-      if (values.customers.length > 0) {
+      if (customers.items.length > 0) {
+        const paymentsList: LocalCustomer["payments"] = [];
+        const customersList: Omit<LocalCustomer, "payments">[] = [];
+
+        for (const customer of customers.items) {
+          const { payments, ...customerValues } = customer;
+
+          paymentsList.push(...payments);
+          customersList.push(customerValues);
+        }
+
         tx.delete(localCustomerPayment)
           .where(
             inArray(
               localCustomerPayment.customerId,
-              values.customers.map((c) => c.id),
+              customersList.map((c) => c.id),
             ),
           )
           .run();
 
         tx.insert(localCustomer)
-          .values(values.customers)
+          .values(customersList)
           .onConflictDoUpdate({
             target: localCustomer.id,
             set: buildConflictUpdateColumn(localCustomer, [
@@ -76,21 +74,31 @@ export class NativeSyncCommerceRepository implements ClientSyncCommerceRepositor
           })
           .run();
 
-        const payments = values.customers.flatMap((c) => c.payments);
-
-        if (payments.length > 0) {
-          tx.insert(localCustomerPayment)
-            .values(values.customers.flatMap((c) => c.payments))
-            .run();
+        if (paymentsList.length > 0) {
+          tx.insert(localCustomerPayment).values(paymentsList).run();
         }
+
+        this.syncStateRepository.save("customers", customers.nextCursor, tx);
       }
 
-      if (values.sales.length > 0) {
+      if (sales.items.length > 0) {
+        const paymentsList: LocalSale["payments"] = [];
+        const itemsList: LocalSale["items"] = [];
+        const salesList: Omit<LocalSale, "payments" | "items">[] = [];
+
+        for (const sale of sales.items) {
+          const { payments, items, ...saleValues } = sale;
+
+          paymentsList.push(...payments);
+          itemsList.push(...items);
+          salesList.push(saleValues);
+        }
+
         tx.delete(localSalePayment)
           .where(
             inArray(
               localSalePayment.saleId,
-              values.sales.map((s) => s.id),
+              salesList.map((s) => s.id),
             ),
           )
           .run();
@@ -99,13 +107,13 @@ export class NativeSyncCommerceRepository implements ClientSyncCommerceRepositor
           .where(
             inArray(
               localSaleItem.saleId,
-              values.sales.map((s) => s.id),
+              salesList.map((s) => s.id),
             ),
           )
           .run();
 
         tx.insert(localSale)
-          .values(values.sales)
+          .values(salesList)
           .onConflictDoUpdate({
             target: localSale.id,
             set: buildConflictUpdateColumn(localSale, [
@@ -127,20 +135,15 @@ export class NativeSyncCommerceRepository implements ClientSyncCommerceRepositor
           })
           .run();
 
-        const payments = values.sales.flatMap((s) => s.payments);
-        const items = values.sales.flatMap((s) => s.items);
-
-        if (payments.length > 0) {
-          tx.insert(localSalePayment)
-            .values(values.sales.flatMap((s) => s.payments))
-            .run();
+        if (paymentsList.length > 0) {
+          tx.insert(localSalePayment).values(paymentsList).run();
         }
 
-        if (items.length > 0) {
-          tx.insert(localSaleItem)
-            .values(values.sales.flatMap((s) => s.items))
-            .run();
+        if (itemsList.length > 0) {
+          tx.insert(localSaleItem).values(itemsList).run();
         }
+
+        this.syncStateRepository.save("sales", sales.nextCursor, tx);
       }
     });
   }

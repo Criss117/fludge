@@ -2,15 +2,14 @@ import type {
   LocalCategory,
   LocalProduct,
 } from "@fludge/db/local-schemas/shared.schema";
+import type { SyncCursor, SyncPage } from "./shared.types";
 
-/** Timestamps más recientes del cliente por entidad. */
-export type CatalogLastSyncedAt = {
-  category: Date | null;
-  product: Date | null;
+export type CatalogSyncCursors = {
+  category: SyncCursor | null;
+  product: SyncCursor | null;
 };
 
-/** Resultado del sync de IAM — entidades agrupadas como el aggregate root. */
 export type CatalogSyncResult = {
-  categories: LocalCategory[];
-  products: LocalProduct[];
+  categories: SyncPage<LocalCategory>;
+  products: SyncPage<LocalProduct>;
 };

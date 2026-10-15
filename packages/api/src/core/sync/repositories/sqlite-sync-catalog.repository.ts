@@ -1,4 +1,8 @@
 import type { DatabaseService } from "@fludge/db";
+import type {
+  LocalCategory,
+  LocalProduct,
+} from "@fludge/db/local-schemas/shared.schema";
 import {
   category,
   product,
@@ -8,83 +12,111 @@ import {
 import { jsonObject } from "@fludge/db/utils/build-queries";
 import type { ServerSyncCatalogRepository } from "@fludge/sync/repositories/catalog/server-sync-catalog.repository";
 import type {
-  CatalogLastSyncedAt,
+  CatalogSyncCursors,
   CatalogSyncResult,
 } from "@fludge/sync/types/catalog.types";
-import { and, desc, eq, getColumns, gt, inArray, sql } from "drizzle-orm";
+import {
+  paginateSync,
+  type PaginateSyncQueryFn,
+  type SyncCursor,
+} from "@fludge/sync/types/shared.types";
+import { and, asc, eq, getColumns, gt, inArray, or, sql } from "drizzle-orm";
+
+const after = <T extends { updatedAt: any; id: any }>(
+  t: T,
+  c: SyncCursor | null,
+) =>
+  c
+    ? or(
+        gt(t.updatedAt, c.updatedAt),
+        and(eq(t.updatedAt, c.updatedAt), gt(t.id, c.id)),
+      )
+    : undefined;
 
 export class SqliteSyncCatalogRepository implements ServerSyncCatalogRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  private async findCategories(
+  private findCategories(
     organizationIds: string[],
-    lastSyncedAt: CatalogLastSyncedAt["category"],
-  ) {
-    return this.db
-      .select()
-      .from(category)
-      .where(
-        and(
-          inArray(category.organizationId, organizationIds),
-          lastSyncedAt ? gt(category.updatedAt, lastSyncedAt) : undefined,
-        ),
-      )
-      .orderBy(desc(category.updatedAt));
+  ): PaginateSyncQueryFn<LocalCategory> {
+    return (cursor, limit) =>
+      this.db
+        .select()
+        .from(category)
+        .where(
+          and(
+            inArray(category.organizationId, organizationIds),
+            after(category, cursor),
+          ),
+        )
+        .limit(limit)
+        .orderBy(asc(category.updatedAt), asc(category.id));
   }
 
-  private async findProducts(
+  private findProducts(
     organizationIds: string[],
-    lastSyncedAt: CatalogLastSyncedAt["product"],
-  ) {
-    const rows = await this.db
-      .select({
-        ...getColumns(product),
-        presentations: sql<string>`
+  ): PaginateSyncQueryFn<LocalProduct> {
+    return async (cursor, limit) => {
+      const rows = await this.db
+        .select({
+          ...getColumns(product),
+          presentations: sql<string>`
             json_group_array(
               DISTINCT ${jsonObject(productPresentation)}
             ) FILTER (WHERE ${productPresentation.productId} IS NOT NULL)
           `.as("presentations"),
-      })
-      .from(product)
-      .leftJoin(
-        productPresentation,
-        and(
-          eq(productPresentation.productId, product.id),
-          eq(productPresentation.organizationId, product.organizationId),
-        ),
-      )
-      .where(
-        and(
-          inArray(product.organizationId, organizationIds),
-          lastSyncedAt ? gt(product.updatedAt, lastSyncedAt) : undefined,
-        ),
-      )
-      .orderBy(desc(product.updatedAt))
-      .groupBy(product.id);
+        })
+        .from(product)
+        .leftJoin(
+          productPresentation,
+          and(
+            eq(productPresentation.productId, product.id),
+            eq(productPresentation.organizationId, product.organizationId),
+          ),
+        )
+        .where(
+          and(
+            inArray(product.organizationId, organizationIds),
+            after(product, cursor),
+          ),
+        )
+        .limit(limit)
+        .orderBy(asc(product.updatedAt), asc(product.id))
+        .groupBy(product.id);
 
-    return rows.map((p) => {
-      const presentations = (
-        JSON.parse(p.presentations) as ProductPresentationSelect[]
-      ).map((p) => ({
-        ...p,
-        createdAt: new Date(p.createdAt),
-        updatedAt: new Date(p.updatedAt),
-      }));
+      return rows.map((p) => {
+        const presentations = (
+          JSON.parse(p.presentations) as ProductPresentationSelect[]
+        ).map((p) => ({
+          ...p,
+          createdAt: new Date(p.createdAt),
+          updatedAt: new Date(p.updatedAt),
+        }));
 
-      return {
-        ...p,
-        presentations,
-      };
-    });
+        return {
+          ...p,
+          presentations,
+        };
+      });
+    };
   }
 
   public async findAllItems(
     organizationIds: string[],
-    lastSyncedAt: CatalogLastSyncedAt,
+    lastSyncedAt: CatalogSyncCursors,
+    limit = 500,
   ): Promise<CatalogSyncResult> {
     const [categories, products] = await Promise.all([
-      this.findCategories(organizationIds, lastSyncedAt.category),
-      this.findProducts(organizationIds, lastSyncedAt.product),
+      paginateSync(
+        this.findCategories(organizationIds),
+        lastSyncedAt.category,
+        limit,
+      ),
+      paginateSync(
+        this.findProducts(organizationIds),
+        lastSyncedAt.product,
+        limit,
+      ),
     ]);
 
     return {

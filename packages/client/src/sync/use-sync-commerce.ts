@@ -10,6 +10,7 @@ import { tryCatch } from "@fludge/utils/trycatch";
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { MINUTE } from "@fludge/utils/constants";
 import type { HttpClientSyncCommerceRepository } from "@fludge/sync/repositories/commerse/client-sync-commerce.repository";
+import { useEffect } from "react";
 
 export type SyncData = {
   error: Error | null;
@@ -37,7 +38,7 @@ export function useSyncCommerce() {
 
   const httpRepository = httpClientCommerceRepository(orpc);
 
-  return useSuspenseQuery({
+  const query = useSuspenseQuery({
     queryKey: ["sync", "commerce", session.data?.user.id],
     queryFn: async (): Promise<SyncData> => {
       if (!session.data || !isInternetReachable)
@@ -47,38 +48,52 @@ export function useSyncCommerce() {
           syncedAt: null,
         };
 
-      const [lastSyncedAt, errorGetLastSyncedAt] = await tryCatch(
-        commerceContainer.repositories.syncCommerceRepository.getLastSyncedAt(),
-      );
+      let hasMore = false;
+      let pages = 0;
 
-      if (errorGetLastSyncedAt)
-        return {
-          error: errorGetLastSyncedAt,
-          success: false,
-          syncedAt: null,
-        };
+      do {
+        if (++pages > 1000)
+          return {
+            error: new Error("Sync did not converge"),
+            success: false,
+            syncedAt: null,
+          };
 
-      const [values, errorFindLastSyncedAt] = await tryCatch(
-        httpRepository.findLastSyncedAt(lastSyncedAt),
-      );
+        const [lastSyncedAt, errorGetLastSyncedAt] = await tryCatch(
+          commerceContainer.repositories.syncCommerceRepository.getLastSyncedAt(),
+        );
 
-      if (errorFindLastSyncedAt)
-        return {
-          error: errorFindLastSyncedAt,
-          success: false,
-          syncedAt: null,
-        };
+        if (errorGetLastSyncedAt)
+          return {
+            error: errorGetLastSyncedAt,
+            success: false,
+            syncedAt: null,
+          };
 
-      const [, erroSaveAll] = await tryCatch(
-        commerceContainer.repositories.syncCommerceRepository.saveAll(values),
-      );
+        const [values, errorFindLastSyncedAt] = await tryCatch(
+          httpRepository.findLastSyncedAt(lastSyncedAt),
+        );
 
-      if (erroSaveAll)
-        return {
-          error: erroSaveAll,
-          success: false,
-          syncedAt: null,
-        };
+        if (errorFindLastSyncedAt)
+          return {
+            error: errorFindLastSyncedAt,
+            success: false,
+            syncedAt: null,
+          };
+
+        hasMore = Object.values(values).some((page) => page.hasMore);
+
+        const [, erroSaveAll] = await tryCatch(
+          commerceContainer.repositories.syncCommerceRepository.saveAll(values),
+        );
+
+        if (erroSaveAll)
+          return {
+            error: erroSaveAll,
+            success: false,
+            syncedAt: null,
+          };
+      } while (hasMore);
 
       return {
         error: null,
@@ -88,4 +103,10 @@ export function useSyncCommerce() {
     },
     refetchInterval: MINUTE * 5,
   });
+
+  useEffect(() => {
+    if (isInternetReachable) query.refetch();
+  }, [isInternetReachable]);
+
+  return query;
 }

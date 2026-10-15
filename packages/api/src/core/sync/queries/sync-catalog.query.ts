@@ -1,11 +1,12 @@
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import type { ServerSyncCatalogRepository } from "@fludge/sync/repositories/catalog/server-sync-catalog.repository";
 import { tryCatch } from "@fludge/utils/trycatch";
+import { cursorSchema } from "@fludge/utils/validators/shared";
 import { z } from "zod";
 
 export const syncCatalogQuery = z.object({
-  product: z.coerce.date<Date>().nullable(),
-  category: z.coerce.date<Date>().nullable(),
+  product: cursorSchema,
+  category: cursorSchema,
 });
 
 type Query = z.infer<typeof syncCatalogQuery>;

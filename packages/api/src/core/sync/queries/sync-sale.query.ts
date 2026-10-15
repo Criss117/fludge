@@ -1,11 +1,12 @@
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import type { ServerSyncCommerceRepository } from "@fludge/sync/repositories/commerse/server-sync-commerce.repository";
 import { tryCatch } from "@fludge/utils/trycatch";
+import { cursorSchema } from "@fludge/utils/validators/shared";
 import { z } from "zod";
 
 export const syncCommerceQuery = z.object({
-  customer: z.coerce.date<Date>().nullable(),
-  sale: z.coerce.date<Date>().nullable(),
+  customer: cursorSchema,
+  sale: cursorSchema,
 });
 
 type Query = z.infer<typeof syncCommerceQuery>;

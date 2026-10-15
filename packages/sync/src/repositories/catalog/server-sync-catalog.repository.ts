@@ -1,11 +1,12 @@
 import type {
-  CatalogLastSyncedAt,
+  CatalogSyncCursors,
   CatalogSyncResult,
 } from "@fludge/sync/types/catalog.types";
 
 export interface ServerSyncCatalogRepository {
   findAllItems(
     organizationIds: string[],
-    lastSyncedAt: CatalogLastSyncedAt,
+    cursors: CatalogSyncCursors,
+    limit?: number,
   ): Promise<CatalogSyncResult>;
 }

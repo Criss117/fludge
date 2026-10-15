@@ -1,4 +1,8 @@
 import type { DatabaseService } from "@fludge/db";
+import type {
+  LocalCustomer,
+  LocalSale,
+} from "@fludge/db/local-schemas/shared.schema";
 import {
   customer,
   customerPayment,
@@ -14,44 +18,112 @@ import {
 import { jsonObject } from "@fludge/db/utils/build-queries";
 import type { ServerSyncCommerceRepository } from "@fludge/sync/repositories/commerse/server-sync-commerce.repository";
 import type {
-  CommerceLastSyncedAt,
+  CommerceSyncCursors,
   CommerceSyncResult,
 } from "@fludge/sync/types/commerce.types";
+import {
+  paginateSync,
+  type PaginateSyncQueryFn,
+  type SyncCursor,
+} from "@fludge/sync/types/shared.types";
 
-import { and, desc, eq, getColumns, gt, inArray, sql } from "drizzle-orm";
+import { and, asc, eq, getColumns, gt, inArray, or, sql } from "drizzle-orm";
+
+const after = <T extends { updatedAt: any; id: any }>(
+  t: T,
+  c: SyncCursor | null,
+) =>
+  c
+    ? or(
+        gt(t.updatedAt, c.updatedAt),
+        and(eq(t.updatedAt, c.updatedAt), gt(t.id, c.id)),
+      )
+    : undefined;
 
 export class SqliteSyncCommerceRepository implements ServerSyncCommerceRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  private async findCustomers(
+  private findCustomers(
     organizationIds: string[],
-    lastSyncedAt: CommerceLastSyncedAt["customer"],
-  ) {
-    const rows = await this.db
-      .select({
-        ...getColumns(customer),
-        payments: sql<string>`
+  ): PaginateSyncQueryFn<LocalCustomer> {
+    return async (cursor, limit) => {
+      const rows = await this.db
+        .select({
+          ...getColumns(customer),
+          payments: sql<string>`
             json_group_array(
               DISTINCT ${jsonObject(customerPayment)}
             ) FILTER (WHERE ${customerPayment.customerId} IS NOT NULL)
           `.as("payments"),
-      })
-      .from(customer)
-      .leftJoin(customerPayment, eq(customerPayment.customerId, customer.id))
-      .where(
-        and(
-          inArray(customer.organizationId, organizationIds),
-          lastSyncedAt ? gt(customer.updatedAt, lastSyncedAt) : undefined,
-        ),
-      )
-      .orderBy(desc(customer.updatedAt))
-      .groupBy(customer.id);
+        })
+        .from(customer)
+        .leftJoin(customerPayment, eq(customerPayment.customerId, customer.id))
+        .where(
+          and(
+            inArray(customer.organizationId, organizationIds),
+            after(customer, cursor),
+          ),
+        )
+        .limit(limit)
+        .orderBy(asc(customer.updatedAt), asc(customer.id))
+        .groupBy(customer.id);
 
-    return rows
-      .map((p) => {
-        const payments = (
-          JSON.parse(p.payments) as CustomerPaymentSelect[]
-        ).map((p) => ({
+      return rows
+        .map((p) => {
+          const payments = (
+            JSON.parse(p.payments) as CustomerPaymentSelect[]
+          ).map((p) => ({
+            ...p,
+            createdAt: new Date(p.createdAt),
+            updatedAt: new Date(p.updatedAt),
+          }));
+
+          return {
+            ...p,
+            payments,
+          };
+        })
+        .filter((p) => p.id !== null);
+    };
+  }
+
+  private findSales(organizationIds: string[]): PaginateSyncQueryFn<LocalSale> {
+    return async (cursor, limit) => {
+      const rows = await this.db
+        .select({
+          ...getColumns(sale),
+          payments: sql<string>`(
+          SELECT json_group_array(${jsonObject(salePayment)})
+          FROM ${salePayment}
+          WHERE ${salePayment.saleId} = ${sale.id}
+        )`.as("payments"),
+          items: sql<string>`(
+          SELECT json_group_array(${jsonObject(saleItem)})
+          FROM ${saleItem}
+          WHERE ${saleItem.saleId} = ${sale.id}
+        )`.as("items"),
+        })
+        .from(sale)
+        .where(
+          and(
+            inArray(sale.organizationId, organizationIds),
+            after(sale, cursor),
+          ),
+        )
+        .limit(limit)
+        .orderBy(asc(sale.updatedAt), asc(sale.id))
+        .groupBy(sale.id);
+
+      return rows.map((p) => {
+        const payments = (JSON.parse(p.payments) as SalePaymentSelect[]).map(
+          (p) => ({
+            ...p,
+            createdAt: new Date(p.createdAt),
+            updatedAt: new Date(p.updatedAt),
+          }),
+        );
+
+        const items = (JSON.parse(p.items) as SaleItemSelect[]).map((p) => ({
           ...p,
           createdAt: new Date(p.createdAt),
           updatedAt: new Date(p.updatedAt),
@@ -60,69 +132,24 @@ export class SqliteSyncCommerceRepository implements ServerSyncCommerceRepositor
         return {
           ...p,
           payments,
+          items,
         };
-      })
-      .filter((p) => p.id !== null);
-  }
-
-  private async findSales(
-    organizationIds: string[],
-    lastSyncedAt: CommerceLastSyncedAt["sale"],
-  ) {
-    const rows = await this.db
-      .select({
-        ...getColumns(sale),
-        payments: sql<string>`(
-          SELECT json_group_array(${jsonObject(salePayment)})
-          FROM ${salePayment}
-          WHERE ${salePayment.saleId} = ${sale.id}
-        )`.as("payments"),
-        items: sql<string>`(
-          SELECT json_group_array(${jsonObject(saleItem)})
-          FROM ${saleItem}
-          WHERE ${saleItem.saleId} = ${sale.id}
-        )`.as("items"),
-      })
-      .from(sale)
-      .where(
-        and(
-          inArray(sale.organizationId, organizationIds),
-          lastSyncedAt ? gt(sale.updatedAt, lastSyncedAt) : undefined,
-        ),
-      )
-      .orderBy(desc(sale.updatedAt))
-      .groupBy(sale.id);
-
-    return rows.map((p) => {
-      const payments = (JSON.parse(p.payments) as SalePaymentSelect[]).map(
-        (p) => ({
-          ...p,
-          createdAt: new Date(p.createdAt),
-          updatedAt: new Date(p.updatedAt),
-        }),
-      );
-
-      const items = (JSON.parse(p.items) as SaleItemSelect[]).map((p) => ({
-        ...p,
-        createdAt: new Date(p.createdAt),
-        updatedAt: new Date(p.updatedAt),
-      }));
-
-      return {
-        ...p,
-        payments,
-        items,
-      };
-    });
+      });
+    };
   }
 
   public async findAllItems(
     organizationIds: string[],
-    lastSyncedAt: CommerceLastSyncedAt,
+    lastSyncedAt: CommerceSyncCursors,
+    limit = 500,
   ): Promise<CommerceSyncResult> {
     const [customers, sales] = await Promise.all([
-      this.findCustomers(organizationIds, lastSyncedAt.customer),
-      this.findSales(organizationIds, lastSyncedAt.sale),
+      paginateSync(
+        this.findCustomers(organizationIds),
+        lastSyncedAt.customer,
+        limit,
+      ),
+      paginateSync(this.findSales(organizationIds), lastSyncedAt.sale, limit),
     ]);
 
     return {

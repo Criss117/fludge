@@ -9,36 +9,38 @@ import {
 } from "@fludge/db/local-schemas/shared.schema";
 import {
   CatalogSyncResult,
-  CatalogLastSyncedAt,
+  CatalogSyncCursors,
 } from "@fludge/sync/types/catalog.types";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import type { TransactionService } from "@/integrations/db/index";
+import type { NativeSyncStateRepository } from "./native-sync-state.repository";
 
 export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly syncStateRepository: NativeSyncStateRepository,
+  ) {}
 
   private async saveProducts(
     values: CatalogSyncResult["products"],
     tx: TransactionService,
   ) {
-    const productsArray = Array.isArray(values) ? values : [values];
+    const productsList: Omit<LocalProduct, "presentations">[] = [];
+    const presentationsList: LocalProduct["presentations"] = [];
 
-    const productsValues: Omit<LocalProduct, "presentations">[] = [];
-    const presentationsValues: LocalProduct["presentations"] = [];
-
-    for (const product of productsArray) {
+    for (const product of values.items) {
       const { presentations, ...productValues } = product;
 
-      productsValues.push(productValues);
+      productsList.push(productValues);
 
       for (const presentation of presentations) {
-        presentationsValues.push(presentation);
+        presentationsList.push(presentation);
       }
     }
 
-    if (productsValues.length > 0) {
+    if (productsList.length > 0) {
       tx.insert(localProduct)
-        .values(productsValues)
+        .values(productsList)
         .onConflictDoUpdate({
           target: localProduct.id,
           set: buildConflictUpdateColumn(localProduct, [
@@ -57,30 +59,30 @@ export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository 
         .run();
     }
 
-    if (presentationsValues.length > 0) {
+    if (presentationsList.length > 0) {
       tx.delete(localProductPresentation)
         .where(
           inArray(
             localProductPresentation.productId,
-            productsValues.map((p) => p.id),
+            productsList.map((p) => p.id),
           ),
         )
         .run();
 
-      tx.insert(localProductPresentation).values(presentationsValues).run();
+      tx.insert(localProductPresentation).values(presentationsList).run();
     }
+
+    this.syncStateRepository.save("products", values.nextCursor, tx);
   }
 
   private async saveCategories(
     values: CatalogSyncResult["categories"],
     tx: TransactionService,
   ) {
-    const categoriesArray = Array.isArray(values) ? values : [values];
-
-    if (categoriesArray.length === 0) return;
+    if (values.items.length === 0) return;
 
     tx.insert(localCategory)
-      .values(categoriesArray)
+      .values(values.items)
       .onConflictDoUpdate({
         target: localCategory.id,
         set: buildConflictUpdateColumn(localCategory, [
@@ -91,6 +93,8 @@ export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository 
         ]),
       })
       .run();
+
+    this.syncStateRepository.save("categories", values.nextCursor, tx);
   }
 
   public async saveAll(values: CatalogSyncResult): Promise<void> {
@@ -100,46 +104,15 @@ export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository 
     });
   }
 
-  private async getLastSyncedProduct() {
-    const row = await this.db
-      .select()
-      .from(localProduct)
-      .orderBy(desc(localProduct.updatedAt))
-      .limit(1);
-
-    return row.at(0) ?? null;
-  }
-
-  private async getLastSyncedCategory() {
-    const row = await this.db
-      .select()
-      .from(localCategory)
-      .orderBy(desc(localCategory.updatedAt))
-      .limit(1);
-
-    return row.at(0) ?? null;
-  }
-
-  private async getLastSyncedProductPresentation() {
-    const row = await this.db
-      .select()
-      .from(localProductPresentation)
-      .orderBy(desc(localProductPresentation.updatedAt))
-      .limit(1);
-
-    return row.at(0) ?? null;
-  }
-
-  public async getLastSyncedAt(): Promise<CatalogLastSyncedAt> {
+  public async getLastSyncedAt(): Promise<CatalogSyncCursors> {
     const [product, category] = await Promise.all([
-      this.getLastSyncedProduct(),
-      this.getLastSyncedCategory(),
-      this.getLastSyncedProductPresentation(),
+      this.syncStateRepository.find("products"),
+      this.syncStateRepository.find("categories"),
     ]);
 
     return {
-      product: product?.updatedAt ?? null,
-      category: category?.updatedAt ?? null,
+      product: product?.cursor ?? null,
+      category: category?.cursor ?? null,
     };
   }
 }

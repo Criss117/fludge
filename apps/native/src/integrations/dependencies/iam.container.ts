@@ -5,6 +5,7 @@ import { NativeMemberRepository } from "@/core/iam/repositories/native-member.re
 import { NativeGroupRepository } from "@/core/iam/repositories/native-group.repository";
 import { NativeSyncIamRepository } from "@/integrations/db/repositories/native-sync-iam.repository";
 import { NativeAppRepository } from "@/core/iam/repositories/native-app-repository";
+import { syncStateRepository } from "./shared";
 
 const organizationRepository = new NativeOrganizationRepository(
   databaseService,
@@ -12,7 +13,10 @@ const organizationRepository = new NativeOrganizationRepository(
 const memberRepository = new NativeMemberRepository(databaseService);
 const groupRepository = new NativeGroupRepository(databaseService);
 
-const syncIamRepository = new NativeSyncIamRepository(databaseService);
+const syncIamRepository = new NativeSyncIamRepository(
+  databaseService,
+  syncStateRepository,
+);
 
 const appRepository = new NativeAppRepository(databaseService);
 

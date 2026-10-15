@@ -1,4 +1,7 @@
-import type { IamLastSyncedAt, IamSyncResult } from "@fludge/sync/types/iam.types";
+import type {
+  IamSyncCursors,
+  IamSyncResult,
+} from "@fludge/sync/types/iam.types";
 
 /**
  * Server-side sync repository for IAM.
@@ -8,6 +11,7 @@ import type { IamLastSyncedAt, IamSyncResult } from "@fludge/sync/types/iam.type
 export interface ServerSyncIamRepository {
   findAllByUpdatedAt(
     organizationIds: string[],
-    lastSyncedAt: IamLastSyncedAt,
+    cursors: IamSyncCursors,
+    limit?: number,
   ): Promise<IamSyncResult>;
 }
