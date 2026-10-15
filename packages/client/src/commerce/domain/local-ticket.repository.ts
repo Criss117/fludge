@@ -1,13 +1,8 @@
 import type {
-  TicketProductPresentationSelect,
+  TicketProductPresentation,
   TicketProductSelect,
   TicketSelect,
 } from "@fludge/db/local-schemas/ticket.schema";
-
-export type TicketProductPresentation = Omit<
-  TicketProductPresentationSelect,
-  "organizationId" | "ticketProductId"
->;
 
 export type AddTicketProductBase = {
   readonly name: string;
@@ -38,16 +33,15 @@ export type AddAdHocTicketProduct = AddTicketProductBase & {
 
 export type AddTicketProduct = AddCatalogTicketProduct | AddAdHocTicketProduct;
 
-export type TicketProduct = Omit<TicketProductSelect, "organizationId"> & {
-  readonly name: string;
-  readonly stock: number;
-  readonly minStock: number;
-  readonly allowNegativeStock: boolean;
-  presentations: Array<TicketProductPresentation>;
+export type TicketProduct = TicketProductSelect & {
+  name: string;
+  stock: number;
+  minStock: number;
+  allowNegativeStock: boolean;
 };
 
 export type Ticket = TicketSelect & {
-  products: Array<TicketProduct>;
+  items: Array<TicketProduct>;
 };
 
 export interface LocalTicketRepository {

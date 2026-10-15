@@ -2,17 +2,23 @@ import {
   sqliteTable,
   text,
   integer,
-  real,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
-import {
-  localOrganization,
-  localProduct,
-  localProductPresentation,
-} from "./shared.schema";
+import { localOrganization, localProduct } from "./shared.schema";
 import { sql } from "drizzle-orm";
 
 export const ticketProductTypeValues = ["catalog", "adHoc"] as const;
+
+export type TicketProductPresentation = {
+  id: string;
+  conversionFactor: number;
+  name: string;
+  originalPrice: number;
+  presentationId: string | null;
+  priceSale: number;
+  quantity: number;
+  wholesalePrice: number | null;
+};
 
 export const ticket = sqliteTable(
   "ticket",
@@ -48,11 +54,9 @@ export const ticketProduct = sqliteTable(
 
     type: text("type", { enum: ticketProductTypeValues }).notNull(),
 
-    organizationId: text("organization_id")
+    presentations: text("presentations", { mode: "json" })
       .notNull()
-      .references(() => localOrganization.id, {
-        onDelete: "cascade",
-      }),
+      .$type<TicketProductPresentation[]>(),
   },
   (table) => [
     uniqueIndex("ticket_product_unique_idx").on(
@@ -62,51 +66,8 @@ export const ticketProduct = sqliteTable(
   ],
 );
 
-export const ticketProductPresentation = sqliteTable(
-  "ticket_product_presentation",
-  {
-    id: text("id").primaryKey(),
-
-    ticketProductId: text("ticket_product_id")
-      .notNull()
-      .references(() => ticketProduct.id, { onDelete: "cascade" }),
-
-    presentationId: text("presentation_id").references(
-      () => localProductPresentation.id,
-      {
-        onDelete: "cascade",
-      },
-    ),
-
-    name: text("name").notNull(),
-    originalPrice: real("original_price").notNull(),
-    wholesalePrice: real("wholesale_price"), // null permitido
-    conversionFactor: real("conversion_factor").notNull(),
-    priceSale: real("price_sale").notNull(),
-    quantity: real("quantity").notNull(),
-
-    organizationId: text("organization_id")
-      .notNull()
-      .references(() => localOrganization.id, {
-        onDelete: "cascade",
-      }),
-  },
-  (table) => [
-    // Una presentación no puede repetirse dentro del mismo ticket_product
-    uniqueIndex("presentation_unique_idx").on(
-      table.ticketProductId,
-      table.presentationId,
-    ),
-  ],
-);
-
 export type TicketSelect = typeof ticket.$inferSelect;
 export type TicketInsert = typeof ticket.$inferInsert;
 
 export type TicketProductSelect = typeof ticketProduct.$inferSelect;
 export type TicketProductInsert = typeof ticketProduct.$inferInsert;
-
-export type TicketProductPresentationSelect =
-  typeof ticketProductPresentation.$inferSelect;
-export type TicketProductPresentationInsert =
-  typeof ticketProductPresentation.$inferInsert;

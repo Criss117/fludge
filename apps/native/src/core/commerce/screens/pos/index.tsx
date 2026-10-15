@@ -12,34 +12,42 @@ import { Box, Button, Host, Row } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, weight } from "@expo/ui/jetpack-compose/modifiers";
 import { useFindProducts } from "@fludge/client/catalog/queries/use-find-products";
 import { FlashList } from "@shopify/flash-list";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
+import { SaleProductCard } from "@/core/commerce/components/sale-product-card";
 
 function ProductList({ searchQuery }: { searchQuery: string }) {
-  const { data } = useFindProducts({
-    searchQuery,
-    status: "active",
-    orderBy: {
-      createdAt: "desc",
-      stock: "none",
-    },
-  });
+  const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    useFindProducts({
+      searchQuery,
+      status: "active",
+      orderBy: {
+        createdAt: "desc",
+        stock: "none",
+      },
+    });
 
   const items = useMemo(
     () => data.pages.flatMap((page) => page.items),
     [data.pages],
   );
 
+  const handleEndReached = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   return (
     <FlashList
       data={items}
       numColumns={2}
       keyExtractor={(i) => i.id}
+      showsVerticalScrollIndicator={false}
+      ItemSeparatorComponent={() => <View style={{ height: SPACING.sm }} />}
       renderItem={({ item }) => (
-        <View>
-          <ThemedText>{item.name}</ThemedText>
-        </View>
+        <SaleProductCard product={item} onPress={() => {}} />
       )}
+      onEndReachedThreshold={0.3}
+      onEndReached={handleEndReached}
     />
   );
 }
@@ -110,6 +118,7 @@ const styles = StyleSheet.create({
   },
   productListContainer: {
     paddingTop: SPACING.md,
+    paddingHorizontal: SPACING.sm,
     flex: 1,
   },
 });
