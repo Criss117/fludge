@@ -6,6 +6,7 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import type { SessionRepository } from "../domain/session.repository";
+import { defaultSyncState } from "@fludge/db/local-schemas/app.schema";
 
 const QUERY_KEY = ["app"] as const;
 
@@ -141,6 +142,7 @@ export function useAppState() {
         lastLoggedUserId: appQuery.data.session?.user.id,
         session: null,
         activeOrganizationId: null,
+        syncState: defaultSyncState,
       });
 
       await queryClient.invalidateQueries({ queryKey: QUERY_KEY });
