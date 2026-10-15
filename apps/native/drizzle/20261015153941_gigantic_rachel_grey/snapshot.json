@@ -1,17 +1,13 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "3979cdcd-18b8-43dc-91fa-3f4bede3190e",
+  "id": "06d94059-6850-4fc6-ae53-6edfddc4f4a9",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
   "ddl": [
     {
       "name": "app",
-      "entityType": "tables"
-    },
-    {
-      "name": "sync_state",
       "entityType": "tables"
     },
     {
@@ -104,16 +100,6 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "logged_user_id",
-      "entityType": "columns",
-      "table": "app"
-    },
-    {
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
       "name": "last_logged_user_id",
       "entityType": "columns",
       "table": "app"
@@ -125,6 +111,26 @@
       "default": null,
       "generated": null,
       "name": "active_organization_id",
+      "entityType": "columns",
+      "table": "app"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'{\"organizations\":{\"cursor\":null,\"lastSyncedAt\":\"2026-10-15T15:39:41.146Z\"},\"groups\":{\"cursor\":null,\"lastSyncedAt\":\"2026-10-15T15:39:41.146Z\"},\"members\":{\"cursor\":null,\"lastSyncedAt\":\"2026-10-15T15:39:41.146Z\"},\"products\":{\"cursor\":null,\"lastSyncedAt\":\"2026-10-15T15:39:41.146Z\"},\"categories\":{\"cursor\":null,\"lastSyncedAt\":\"2026-10-15T15:39:41.146Z\"},\"sales\":{\"cursor\":null,\"lastSyncedAt\":\"2026-10-15T15:39:41.146Z\"},\"customers\":{\"cursor\":null,\"lastSyncedAt\":\"2026-10-15T15:39:41.146Z\"}}'",
+      "generated": null,
+      "name": "sync_state",
+      "entityType": "columns",
+      "table": "app"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "session",
       "entityType": "columns",
       "table": "app"
     },
@@ -147,36 +153,6 @@
       "name": "created_at",
       "entityType": "columns",
       "table": "app"
-    },
-    {
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "aggregate",
-      "entityType": "columns",
-      "table": "sync_state"
-    },
-    {
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "cursor",
-      "entityType": "columns",
-      "table": "sync_state"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "(cast(unixepoch('subsecond') * 1000 as integer))",
-      "generated": null,
-      "name": "last_synced_at",
-      "entityType": "columns",
-      "table": "sync_state"
     },
     {
       "type": "text",
@@ -2355,15 +2331,6 @@
       "nameExplicit": false,
       "name": "app_pk",
       "table": "app",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "aggregate"
-      ],
-      "nameExplicit": false,
-      "name": "sync_state_pk",
-      "table": "sync_state",
       "entityType": "pks"
     },
     {

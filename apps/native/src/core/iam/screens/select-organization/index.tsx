@@ -23,8 +23,6 @@ import {
   weight,
   width,
 } from "@expo/ui/jetpack-compose/modifiers";
-import { useAuth } from "@fludge/client/providers/auth.provider";
-import { useOrganization } from "@fludge/client/providers/organization.provider";
 import { useRouter } from "expo-router";
 import { PressableScale } from "pressto";
 import { useMemo, useState } from "react";
@@ -33,6 +31,8 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { useMutationToast } from "@/integrations/toast";
 import type { TranslationKey } from "@fludge/i18n/index";
+import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
+import { useFindOrganizations } from "@fludge/client/iam/queries/use-find-organizations";
 
 export function SelectOrganizationScreen() {
   const spacer = useKeyboardSpacer();
@@ -40,12 +40,14 @@ export function SelectOrganizationScreen() {
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const router = useRouter();
-  const { session } = useAuth();
-  const { organizations, switchOrganization, activeOrganization } =
-    useOrganization();
+  const {
+    data: { session, activeOrganization },
+    switchActiveOrganization,
+  } = useAppState();
+  const { data: organizations } = useFindOrganizations();
   const mutationToast = useMutationToast();
 
-  const userIsRoot = !!session.data?.user.isRoot;
+  const userIsRoot = !!session?.user.isRoot;
 
   const allOrganizations = useMemo(() => {
     if (!query) return organizations;
@@ -61,7 +63,7 @@ export function SelectOrganizationScreen() {
   const onChangeText = (text: string) => setQuery(text.trim());
 
   const onPress = async (organizationId: string) => {
-    if (switchOrganization.isPending) return;
+    if (switchActiveOrganization.isPending) return;
 
     if (organizationId === activeOrganization?.id) {
       router.replace({
@@ -72,17 +74,22 @@ export function SelectOrganizationScreen() {
     }
 
     mutationToast.showPending("forms.organization.switch_toast.pending");
-    switchOrganization.mutate(organizationId, {
-      onSuccess: () => {
-        mutationToast.showSuccess("forms.organization.switch_toast.success");
+    switchActiveOrganization.mutate(
+      {
+        activeOrganizationId: organizationId,
       },
-      onError: (error) => {
-        mutationToast.showError(
-          "forms.organization.switch_toast.error",
-          error.message as TranslationKey,
-        );
+      {
+        onSuccess: () => {
+          mutationToast.showSuccess("forms.organization.switch_toast.success");
+        },
+        onError: (error) => {
+          mutationToast.showError(
+            "forms.organization.switch_toast.error",
+            error.message as TranslationKey,
+          );
+        },
       },
-    });
+    );
   };
 
   return (

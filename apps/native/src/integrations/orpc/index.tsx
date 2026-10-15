@@ -2,8 +2,7 @@ import { createOrpcProvider } from "@fludge/client/providers/orpc.provider";
 import { env } from "@fludge/env/native";
 import { Platform } from "react-native";
 import { ORGANIZATION_HEADER_KEY } from "@fludge/utils/constants";
-import { authClient } from "../auth";
-import { iamContainer } from "../dependencies/iam.container";
+import { authClient, iamContainer } from "../dependencies/iam.container";
 
 export const ORPCProvider = createOrpcProvider({
   url: `${env.EXPO_PUBLIC_SERVER_URL}/rpc`,

@@ -1,13 +1,15 @@
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { Integrations } from "@/integrations";
-import { useAuth } from "@fludge/client/providers/auth.provider";
+import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { Stack } from "expo-router";
 
 function StackScreen() {
-  const { session } = useAuth();
+  const {
+    data: { session },
+  } = useAppState();
   const colors = useThemeColor();
 
-  const hasSession = session.data !== null;
+  const hasSession = session !== null;
 
   return (
     <Stack

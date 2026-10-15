@@ -1,29 +1,15 @@
-import { type Aggregate, syncState } from "@fludge/db/local-schemas/app.schema";
+import { type Aggregate, app } from "@fludge/db/local-schemas/app.schema";
 import { DatabaseService, TransactionService } from "..";
-import { eq } from "drizzle-orm";
 
 export class NativeSyncStateRepository {
   constructor(private readonly db: DatabaseService) {}
 
   public async find(aggregate: Aggregate) {
-    const row = this.db
-      .select()
-      .from(syncState)
-      .where(eq(syncState.aggregate, aggregate))
-      .all();
+    const row = this.db.select().from(app).all();
 
     const lastSynced = row.at(0) ?? null;
 
-    if (!lastSynced) {
-      this.db
-        .insert(syncState)
-        .values({
-          aggregate: aggregate,
-        })
-        .run();
-    }
-
-    return lastSynced;
+    return lastSynced?.syncState[aggregate] ?? null;
   }
 
   public async save(
@@ -34,19 +20,16 @@ export class NativeSyncStateRepository {
     } | null,
     tx: TransactionService,
   ) {
-    tx.insert(syncState)
-      .values({
-        aggregate,
-        lastSyncedAt: new Date(),
-        cursor,
-      })
-      .onConflictDoUpdate({
-        target: syncState.aggregate,
-        set: {
-          lastSyncedAt: new Date(),
+    const row = tx.select().from(app).all();
+
+    tx.update(app).set({
+      syncState: {
+        ...row[0].syncState,
+        [aggregate]: {
           cursor,
+          lastSyncedAt: new Date(),
         },
-      })
-      .run();
+      },
+    });
   }
 }

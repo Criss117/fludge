@@ -21,7 +21,6 @@ import {
   width,
 } from "@expo/ui/jetpack-compose/modifiers";
 import { useSignInForm } from "@fludge/client/iam/forms/sign-in-form";
-import { useAuth } from "@fludge/client/providers/auth.provider";
 import { useInvalidateSync } from "@fludge/client/sync/use-invalidate-sync";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -31,6 +30,7 @@ import { Link } from "expo-router";
 import { PressableScale } from "pressto";
 import { useMutationToast } from "@/integrations/toast";
 import type { TranslationKey } from "@fludge/i18n/index";
+import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -39,7 +39,7 @@ export function SignInScreen() {
   const { t } = useTranslation();
   const [rootError, setRootError] = useState<string | null>(null);
   const { invalidateSync } = useInvalidateSync();
-  const { signInEmail } = useAuth();
+  const { signInEmail } = useAppState();
   const mutationToast = useMutationToast();
 
   const form = useSignInForm({

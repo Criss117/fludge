@@ -1,9 +1,9 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
-import { useOrganization } from "@fludge/client/providers/organization.provider";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 import type { FindAllSalesFilters } from "../domain/sale.repository";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 
 function normalizeFilters(filters: FindAllSalesFilters) {
   return {
@@ -20,7 +20,9 @@ export const { keys: salesKeys, useInvalidateQueries: useInvalidateSales } =
 
 export function useFindSales(filters: FindAllSalesFilters) {
   const { commerceContainer } = useContainer();
-  const { activeOrganization } = useOrganization();
+  const {
+    data: { activeOrganization },
+  } = useAppState();
 
   if (!activeOrganization) throw new Error("Active organization not found");
 

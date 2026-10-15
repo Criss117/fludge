@@ -1,6 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-import { useAuth } from "@fludge/client/providers/auth.provider";
 import { useNetwork } from "@fludge/client/providers/network-status.provider";
 import {
   useOrpc,
@@ -11,6 +10,7 @@ import { useContainer } from "@fludge/client/providers/container.provider";
 import { MINUTE } from "@fludge/utils/constants";
 import type { HttpClientSyncCommerceRepository } from "@fludge/sync/repositories/commerse/client-sync-commerce.repository";
 import { useEffect } from "react";
+import { useAppState } from "../iam/hooks/use-app-state";
 
 export type SyncData = {
   error: Error | null;
@@ -32,16 +32,18 @@ function httpClientCommerceRepository(
 
 export function useSyncCommerce() {
   const orpc = useOrpc();
-  const { session } = useAuth();
+  const {
+    data: { session },
+  } = useAppState();
   const { isInternetReachable } = useNetwork();
   const { commerceContainer } = useContainer();
 
   const httpRepository = httpClientCommerceRepository(orpc);
 
   const query = useSuspenseQuery({
-    queryKey: ["sync", "commerce", session.data?.user.id],
+    queryKey: ["sync", "commerce", session?.user.id],
     queryFn: async (): Promise<SyncData> => {
-      if (!session.data || !isInternetReachable)
+      if (!session || !isInternetReachable)
         return {
           error: null,
           success: false,

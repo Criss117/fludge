@@ -1,16 +1,22 @@
-import type { AppSelect } from "@fludge/db/local-schemas/app.schema";
+import type { AppInsert, AppSelect } from "@fludge/db/local-schemas/app.schema";
+import type { OrganizationSummary } from "./entities";
 
 export interface AppRepository {
-  find(): Promise<AppSelect>;
+  find(): Promise<
+    AppSelect & {
+      activeOrganization: OrganizationSummary | null;
+    }
+  >;
 
-  save(
-    values: Partial<{
-      theme: "light" | "dark";
-      loggedUserId: string | null;
-      lastLoggedUserId: string | null;
-      activeOrganizationId: string | null;
-    }>,
-  ): Promise<AppSelect>;
+  save(values: AppInsert): Promise<
+    AppSelect & {
+      activeOrganization: OrganizationSummary | null;
+    }
+  >;
 
-  clear(): Promise<AppSelect>;
+  clear(): Promise<
+    AppSelect & {
+      activeOrganization: OrganizationSummary | null;
+    }
+  >;
 }

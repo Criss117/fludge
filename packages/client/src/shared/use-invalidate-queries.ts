@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useOrganization } from "../providers/organization.provider";
+import { useAppState } from "../iam/hooks/use-app-state";
 
 type Module = "catalog" | "iam" | "commerce";
 type Resource =
@@ -71,7 +71,9 @@ function genearteInvalidateQueries<T, TNormalizedFilters>(
 ) {
   return function useInvalidateQueries() {
     const queryClient = useQueryClient();
-    const { activeOrganization } = useOrganization();
+    const {
+      data: { activeOrganization },
+    } = useAppState();
 
     if (!activeOrganization) {
       throw new Error("Active organization not found");

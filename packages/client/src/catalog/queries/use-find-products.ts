@@ -1,5 +1,4 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
-import { useOrganization } from "@fludge/client/providers/organization.provider";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import { SearchBlob } from "@fludge/utils/search-blob";
 import {
@@ -8,6 +7,7 @@ import {
 } from "@tanstack/react-query";
 import type { FindAllProductsFilters } from "../domain/product.repository";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
+import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 
 function normalizeFilters(filters: FindAllProductsFilters) {
   return {
@@ -32,7 +32,9 @@ export const {
 
 export function useFindProducts(filters: FindAllProductsFilters) {
   const { catalogContainer } = useContainer();
-  const { activeOrganization } = useOrganization();
+  const {
+    data: { activeOrganization },
+  } = useAppState();
 
   if (!activeOrganization) throw new Error("Active organization not found");
 
@@ -60,7 +62,9 @@ export function useFindProducts(filters: FindAllProductsFilters) {
 
 export function useFindProduct(productId: string) {
   const { catalogContainer } = useContainer();
-  const { activeOrganization } = useOrganization();
+  const {
+    data: { activeOrganization },
+  } = useAppState();
 
   if (!activeOrganization) throw new Error("Active organization not found");
 

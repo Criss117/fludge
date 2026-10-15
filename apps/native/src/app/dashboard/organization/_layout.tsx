@@ -1,17 +1,20 @@
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { GeistFonts } from "@/integrations/fonts";
-import { useAuth } from "@fludge/client/providers/auth.provider";
-import { useOrganization } from "@fludge/client/providers/organization.provider";
+import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
+import { useFindOrganizations } from "@fludge/client/iam/queries/use-find-organizations";
 import { Stack } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 export default function OrganizationLayout() {
   const { t } = useTranslation();
-  const { session } = useAuth();
-  const { hasOrganizations } = useOrganization();
+  const {
+    data: { session },
+  } = useAppState();
+  const { data: organizations } = useFindOrganizations();
   const colors = useThemeColor();
 
-  const userIsRoot = session.data?.user.isRoot ?? false;
+  const userIsRoot = session?.user.isRoot ?? false;
+  const hasOrganizations = organizations.length > 0;
 
   return (
     <Stack

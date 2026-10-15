@@ -1,8 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useApp } from "../iam/hooks/use-app";
-import { useAuth } from "../providers/auth.provider";
 import { useContainer } from "../providers/container.provider";
 import { tryCatch } from "@fludge/utils/trycatch";
+import { useAppState } from "../iam/hooks/use-app-state";
 
 type SyncData = {
   error: Error | null;
@@ -11,11 +10,13 @@ type SyncData = {
 };
 
 export function useSyncUserScope() {
-  const { data } = useApp();
-  const { session } = useAuth();
+  const { data } = useAppState();
+  const {
+    data: { session },
+  } = useAppState();
   const { catalogContainer, commerceContainer, iamContainer } = useContainer();
 
-  const userId = session.data?.user.id;
+  const userId = session?.user.id;
 
   if (!userId) throw new Error("User not found");
 

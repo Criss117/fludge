@@ -11,6 +11,22 @@ import { eq, inArray } from "drizzle-orm";
 export class NativeOrganizationRepository implements OrganizationRepository {
   constructor(private readonly db: DatabaseService) {}
 
+  public async findOneById(
+    organizationId: string,
+  ): Promise<OrganizationSummary | null> {
+    const raws = await this.db
+      .select()
+      .from(localOrganization)
+      .where(eq(localOrganization.id, organizationId))
+      .all();
+
+    const org = raws.at(0);
+
+    if (!org) return null;
+
+    return org;
+  }
+
   public async clearAll(): Promise<void> {
     this.db.transaction((tx) => {
       tx.delete(localOrganization).run();

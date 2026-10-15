@@ -1,22 +1,7 @@
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { auditMetadata } from "../shared";
-import { sql } from "drizzle-orm";
 
 export const APP_ID = "app";
-
-export const app = sqliteTable("app", {
-  id: text("id").primaryKey().default(APP_ID),
-  theme: text("theme", {
-    enum: ["light", "dark"],
-  })
-    .notNull()
-    .default("light"),
-  loggedUserId: text("logged_user_id"),
-  lastLoggedUserId: text("last_logged_user_id"),
-  activeOrganizationId: text("active_organization_id"),
-  updatedAt: auditMetadata.updatedAt,
-  createdAt: auditMetadata.createdAt,
-});
 
 export const AGGREGATE_ENUM = [
   "organizations",
@@ -29,24 +14,73 @@ export const AGGREGATE_ENUM = [
 ] as const;
 
 export type Aggregate = (typeof AGGREGATE_ENUM)[number];
+export type SyncCursor = { updatedAt: Date; id: string };
 
-export const syncState = sqliteTable("sync_state", {
-  aggregate: text("aggregate", {
-    enum: AGGREGATE_ENUM,
-  }).primaryKey(),
+export type SyncState = Record<
+  Aggregate,
+  {
+    cursor: SyncCursor | null;
+    lastSyncedAt: Date;
+  }
+>;
 
-  cursor: text("cursor", { mode: "json" }).$type<{
-    updatedAt: Date;
+export type SessionData = {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+  expiresAt: Date;
+  ipAddress?: string | null | undefined;
+  userAgent?: string | null | undefined;
+  user: {
     id: string;
-  }>(),
+    createdAt: Date;
+    updatedAt: Date;
+    email: string;
+    emailVerified: boolean;
+    name: string;
+    image?: string | null | undefined;
+    isRoot: boolean;
+  };
+};
 
-  lastSyncedAt: integer("last_synced_at", { mode: "timestamp_ms" })
+export const defaultSyncState = Object.fromEntries(
+  AGGREGATE_ENUM.map((aggregate) => [
+    aggregate,
+    {
+      cursor: null as SyncCursor | null,
+      lastSyncedAt: new Date(),
+    },
+  ]),
+) as SyncState;
+
+export const app = sqliteTable("app", {
+  id: text("id").primaryKey().default(APP_ID),
+
+  theme: text("theme", {
+    enum: ["light", "dark"],
+  })
     .notNull()
-    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`),
+    .default("light"),
+
+  lastLoggedUserId: text("last_logged_user_id"),
+
+  activeOrganizationId: text("active_organization_id"),
+
+  syncState: text("sync_state", {
+    mode: "json",
+  })
+    .notNull()
+    .$type<SyncState>()
+    .$defaultFn(() => defaultSyncState),
+
+  session: text("session", {
+    mode: "json",
+  }).$type<SessionData>(),
+
+  updatedAt: auditMetadata.updatedAt,
+  createdAt: auditMetadata.createdAt,
 });
 
 export type AppSelect = typeof app.$inferSelect;
 export type AppInsert = typeof app.$inferInsert;
-
-export type SyncStateSelect = typeof syncState.$inferSelect;
-export type SyncStateInsert = typeof syncState.$inferInsert;

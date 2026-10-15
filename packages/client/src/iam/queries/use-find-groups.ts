@@ -1,8 +1,8 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
-import { useOrganization } from "@fludge/client/providers/organization.provider";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import type { FindAllGroupsFilters } from "../domain/group.repository";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
+import { useAppState } from "../hooks/use-app-state";
 
 function normalizeFilters(filters?: FindAllGroupsFilters) {
   return {
@@ -22,7 +22,9 @@ export const { keys: groupKeys, useInvalidateQueries: useInvalidateGroups } =
 
 export function useFindAllGroups(filters?: FindAllGroupsFilters) {
   const { iamContainer } = useContainer();
-  const { activeOrganization } = useOrganization();
+  const {
+    data: { activeOrganization },
+  } = useAppState();
 
   if (!activeOrganization) throw new Error("Active organization not found");
 
@@ -38,7 +40,9 @@ export function useFindAllGroups(filters?: FindAllGroupsFilters) {
 
 export function useFindGroupDetail(groupId: string) {
   const { iamContainer } = useContainer();
-  const { activeOrganization } = useOrganization();
+  const {
+    data: { activeOrganization },
+  } = useAppState();
 
   if (!activeOrganization) throw new Error("Active organization not found");
 

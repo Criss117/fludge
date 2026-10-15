@@ -1,5 +1,4 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
-import { useOrganization } from "@fludge/client/providers/organization.provider";
 import { SearchBlob } from "@fludge/utils/search-blob";
 import {
   useSuspenseInfiniteQuery,
@@ -8,6 +7,7 @@ import {
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import type { FindAllCustomersFilters } from "../domain/customer.repository";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
+import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 
 function normalizeFilters(filters?: FindAllCustomersFilters) {
   return {
@@ -28,7 +28,9 @@ export const {
 
 export function useFindCustomers(filters?: FindAllCustomersFilters) {
   const { commerceContainer } = useContainer();
-  const { activeOrganization } = useOrganization();
+  const {
+    data: { activeOrganization },
+  } = useAppState();
 
   if (!activeOrganization) throw new Error("Active organization not found");
 
@@ -51,7 +53,9 @@ export function useFindCustomers(filters?: FindAllCustomersFilters) {
 
 export function useFindCustomer(customerId: string) {
   const { commerceContainer } = useContainer();
-  const { activeOrganization } = useOrganization();
+  const {
+    data: { activeOrganization },
+  } = useAppState();
 
   if (!activeOrganization) throw new Error("Active organization not found");
 

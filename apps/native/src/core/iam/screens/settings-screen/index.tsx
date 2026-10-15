@@ -27,10 +27,8 @@ import {
   weight,
   width,
 } from "@expo/ui/jetpack-compose/modifiers";
-import { useApp } from "@fludge/client/iam/hooks/use-app";
-import { useAuth } from "@fludge/client/providers/auth.provider";
+import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { useNetwork } from "@fludge/client/providers/network-status.provider";
-import { useOrganization } from "@fludge/client/providers/organization.provider";
 import {
   type SyncData,
   useSyncCatalog,
@@ -46,7 +44,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 function PreferencesSection() {
   const { t } = useTranslation();
   const colors = useThemeColor();
-  const { setTheme, data } = useApp();
+  const { setTheme, data } = useAppState();
 
   const toggleTheme = () => {
     setTheme.mutate({
@@ -177,19 +175,18 @@ function SyncSection() {
 
 function SessionSection() {
   const { t } = useTranslation();
-  const { signOut } = useAuth();
-  const { switchOrganization } = useOrganization();
+  const { signOut, switchActiveOrganization } = useAppState();
   const colors = useThemeColor();
 
   const setNullActiveOrganization = () => {
-    switchOrganization.mutate(null);
+    switchActiveOrganization.mutate({ activeOrganizationId: null });
   };
 
   const onSignOut = () => {
     signOut.mutate();
   };
 
-  const isPending = switchOrganization.isPending || signOut.isPending;
+  const isPending = switchActiveOrganization.isPending || signOut.isPending;
 
   return (
     <SectionCard title="screens.settings.sections.session.title">
@@ -226,9 +223,11 @@ export function SettingsScreen() {
   const { t } = useTranslation();
   const colors = useThemeColor();
   const { top } = useSafeAreaInsets();
-  const { session } = useAuth();
+  const {
+    data: { session },
+  } = useAppState();
 
-  if (!session.data) return null;
+  if (!session) return null;
 
   return (
     <ThemedView
@@ -254,13 +253,13 @@ export function SettingsScreen() {
               horizontalAlignment="center"
             >
               <RNHostView matchContents>
-                <Avatar name={session.data.user.name} size={SPACING["4xl"]} />
+                <Avatar name={session.user.name} size={SPACING["4xl"]} />
               </RNHostView>
               <ThemedNativeText variant="h4">
-                {session.data.user.name}
+                {session.user.name}
               </ThemedNativeText>
               <ThemedNativeText variant="muted">
-                {session.data.user.email}
+                {session.user.email}
               </ThemedNativeText>
             </Column>
           </ElevatedCard>

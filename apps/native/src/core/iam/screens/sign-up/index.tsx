@@ -20,8 +20,7 @@ import {
   width,
 } from "@expo/ui/jetpack-compose/modifiers";
 import { useSignUpForm } from "@fludge/client/iam/forms/sign-in-form";
-import { useAuth } from "@fludge/client/providers/auth.provider";
-import { useInvalidateSync } from "@fludge/client/sync/use-invalidate-sync";
+import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Dimensions, StyleSheet, View } from "react-native";
@@ -37,7 +36,7 @@ const windowWidth = Dimensions.get("window").width;
 export function SignUpScreen() {
   const colors = useThemeColor();
   const { t } = useTranslation();
-  const { signUpEmail } = useAuth();
+  const { signUpEmail } = useAppState();
   const [rootError, setRootError] = useState<string | null>(null);
   const router = useRouter();
   const mutationToast = useMutationToast();

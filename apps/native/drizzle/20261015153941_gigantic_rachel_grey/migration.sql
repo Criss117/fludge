@@ -1,17 +1,12 @@
 CREATE TABLE `app` (
 	`id` text PRIMARY KEY DEFAULT 'app',
 	`theme` text DEFAULT 'light' NOT NULL,
-	`logged_user_id` text,
 	`last_logged_user_id` text,
 	`active_organization_id` text,
+	`sync_state` text DEFAULT '{"organizations":{"cursor":null,"lastSyncedAt":"2026-10-15T15:39:41.146Z"},"groups":{"cursor":null,"lastSyncedAt":"2026-10-15T15:39:41.146Z"},"members":{"cursor":null,"lastSyncedAt":"2026-10-15T15:39:41.146Z"},"products":{"cursor":null,"lastSyncedAt":"2026-10-15T15:39:41.146Z"},"categories":{"cursor":null,"lastSyncedAt":"2026-10-15T15:39:41.146Z"},"sales":{"cursor":null,"lastSyncedAt":"2026-10-15T15:39:41.146Z"},"customers":{"cursor":null,"lastSyncedAt":"2026-10-15T15:39:41.146Z"}}' NOT NULL,
+	`session` text,
 	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
 	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE `sync_state` (
-	`aggregate` text PRIMARY KEY,
-	`cursor` text,
-	`last_synced_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `category` (

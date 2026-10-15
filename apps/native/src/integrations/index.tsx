@@ -5,7 +5,6 @@ import { FontsProvider } from "./fonts";
 import { QueryClientProvider } from "./query";
 import { DatabaseProvider } from "./db";
 import { NetworkProvider } from "./network";
-import { AuthProvider } from "./auth";
 import { ORPCProvider } from "./orpc";
 import { DependenciesProvider } from "./dependencies";
 import { ToastProvider } from "./toast";
@@ -20,9 +19,7 @@ function NetProvider({ children }: { children: React.ReactNode }) {
       <QueryClientProvider>
         <DatabaseProvider>
           <DependenciesProvider>
-            <AuthProvider>
-              <ORPCProvider>{children}</ORPCProvider>
-            </AuthProvider>
+            <ORPCProvider>{children}</ORPCProvider>
           </DependenciesProvider>
         </DatabaseProvider>
       </QueryClientProvider>

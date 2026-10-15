@@ -19,7 +19,6 @@ import {
 } from "@expo/ui/jetpack-compose/modifiers";
 import { useRegisterOrganizationForm } from "@fludge/client/iam/forms/organization.form";
 import { useRegisterOrganization } from "@fludge/client/iam/mutations/use-organization.mutations";
-import { useOrganization } from "@fludge/client/providers/organization.provider";
 import { Link } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -31,15 +30,18 @@ import Animated from "react-native-reanimated";
 import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import { useMutationToast } from "@/integrations/toast";
 import type { TranslationKey } from "@fludge/i18n/index";
+import { useFindOrganizations } from "@fludge/client/iam/queries/use-find-organizations";
 
 export function RegisterOrganizationScreen() {
   const spacer = useKeyboardSpacer();
   const { t } = useTranslation();
   const colors = useThemeColor();
-  const { hasOrganizations } = useOrganization();
+  const { data: organizations } = useFindOrganizations();
   const registerOrganization = useRegisterOrganization();
   const mutationToast = useMutationToast();
   const [rootError, setRootError] = useState<string | null>(null);
+
+  const hasOrganizations = organizations.length > 0;
 
   const form = useRegisterOrganizationForm({
     onSubmit: ({ value, resetForm }) => {
@@ -48,7 +50,9 @@ export function RegisterOrganizationScreen() {
       registerOrganization.mutate(value, {
         onSuccess: () => {
           resetForm();
-          mutationToast.showSuccess("forms.organization.register_toast.success");
+          mutationToast.showSuccess(
+            "forms.organization.register_toast.success",
+          );
         },
         onError: (error) => {
           setRootError(error.message);
