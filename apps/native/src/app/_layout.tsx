@@ -1,6 +1,7 @@
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { Integrations } from "@/integrations";
 import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
+import { useQueryClient } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 
 function StackScreen() {
@@ -8,6 +9,8 @@ function StackScreen() {
     data: { session },
   } = useAppState();
   const colors = useThemeColor();
+
+  const queryClient = useQueryClient();
 
   const hasSession = session !== null;
 

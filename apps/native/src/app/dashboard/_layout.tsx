@@ -1,4 +1,3 @@
-import { LoadingScreen } from "@/core/shared/components/loading-screen";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SyncDatabase } from "@/integrations/db/sync";
 import { useAppState } from "@fludge/client/iam/hooks/use-app-state";

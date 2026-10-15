@@ -14,7 +14,7 @@ export class NativeOrganizationRepository implements OrganizationRepository {
   public async findOneById(
     organizationId: string,
   ): Promise<OrganizationSummary | null> {
-    const raws = await this.db
+    const raws = this.db
       .select()
       .from(localOrganization)
       .where(eq(localOrganization.id, organizationId))

@@ -63,13 +63,9 @@ export function useAppState() {
   const setTheme = useMutation({
     mutationKey: ["app", "set-theme"],
     mutationFn: async (values: { theme: "light" | "dark" }) => {
-      const appUpdated =
-        await iamContainer.repositories.appRepository.save(values);
+      const newApp = await iamContainer.repositories.appRepository.save(values);
 
-      queryClient.setQueryData(QUERY_KEY, {
-        ...appQuery.data,
-        ...appUpdated,
-      });
+      queryClient.setQueryData(QUERY_KEY, newApp);
     },
   });
 
@@ -85,18 +81,18 @@ export function useAppState() {
         if (!organization) return;
       }
 
-      await iamContainer.repositories.appRepository.save(values);
+      const newApp = await iamContainer.repositories.appRepository.save(values);
 
-      appQuery.refetch();
+      queryClient.setQueryData(QUERY_KEY, newApp);
     },
   });
 
   const clearApp = useMutation({
     mutationKey: ["app", "clear"],
     mutationFn: async () => {
-      await iamContainer.repositories.appRepository.clear();
+      const newApp = await iamContainer.repositories.appRepository.clear();
 
-      appQuery.refetch();
+      queryClient.setQueryData(QUERY_KEY, newApp);
     },
   });
 
@@ -115,7 +111,7 @@ export function useAppState() {
 
       if (error) throw new Error(error.message, { cause: error });
 
-      await appQuery.refetch();
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEY });
     },
   });
 
@@ -129,7 +125,7 @@ export function useAppState() {
 
       if (error) throw new Error(error.message, { cause: error });
 
-      await appQuery.refetch();
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEY });
     },
   });
 
@@ -142,10 +138,16 @@ export function useAppState() {
       if (error) throw new Error(error.message, { cause: error });
 
       await iamContainer.repositories.appRepository.save({
+        lastLoggedUserId: appQuery.data.session?.user.id,
         session: null,
+        activeOrganizationId: null,
       });
 
-      queryClient.clear();
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+
+      queryClient.removeQueries({
+        predicate: (query) => query.queryKey[0] !== QUERY_KEY[0],
+      });
     },
   });
 

@@ -19,7 +19,6 @@ export function useSyncUserScope() {
   const userId = session?.user.id;
 
   if (!userId) throw new Error("User not found");
-
   return useSuspenseQuery({
     queryKey: ["sync", "user_scope", userId],
     staleTime: Infinity,
@@ -27,7 +26,7 @@ export function useSyncUserScope() {
     queryFn: async (): Promise<SyncData> => {
       const lastUserId = data.lastLoggedUserId;
 
-      if (lastUserId === userId)
+      if (!lastUserId || lastUserId === userId)
         return {
           error: null,
           success: false,

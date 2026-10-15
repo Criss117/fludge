@@ -86,8 +86,6 @@ function Presentations({ children }: PresentationsChildrenProps) {
   const field = useFieldContext<Presentation[]>();
 
   function add(presentation: Omit<Presentation, "id">) {
-    console.log(presentation);
-
     field.setValue((prev) => [
       ...prev,
       {

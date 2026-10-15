@@ -91,16 +91,14 @@ export class NativeAppRepository implements AppRepository {
 
     let organization: OrganizationSummary | null = null;
 
-    if (values.activeOrganizationId) {
+    if (appData.activeOrganizationId) {
       const organizationRows = this.db
         .select()
         .from(localOrganization)
-        .where(eq(localOrganization.id, values.activeOrganizationId))
+        .where(eq(localOrganization.id, appData.activeOrganizationId))
         .all();
 
-      const organizationRow = organizationRows.at(0);
-
-      if (organizationRow) organization = organizationRow;
+      organization = organizationRows.at(0) ?? null;
     }
 
     return { ...appData, activeOrganization: organization };
