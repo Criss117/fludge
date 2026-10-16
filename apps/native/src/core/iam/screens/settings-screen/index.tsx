@@ -206,7 +206,6 @@ function SessionSection() {
 }
 
 export function SettingsScreen() {
-  const { t } = useTranslation();
   const colors = useThemeColor();
   const { top } = useSafeAreaInsets();
   const {

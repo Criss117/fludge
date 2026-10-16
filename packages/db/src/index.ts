@@ -15,7 +15,7 @@ class QueryCounterLogger implements Logger {
     if (!env.LOG_DB_QUERIES) return;
 
     this.count++;
-    console.log(`[Consulta #${this.count}]`, query);
+    console.info(`[Consulta #${this.count}]`, query);
   }
 }
 

@@ -50,7 +50,7 @@ export function useAppState() {
             user: data.user as typeof data.user & { isRoot: boolean },
           },
         });
-      } catch (networkError) {
+      } catch {
         // La request nunca completó (sin red, timeout, DNS, etc.)
         return app;
       }

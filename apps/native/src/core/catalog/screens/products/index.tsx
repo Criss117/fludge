@@ -19,7 +19,10 @@ interface ListFooterProps {
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
 }
-function ListFooterComponent({ hasNextPage, isFetchingNextPage }: ListFooterProps) {
+function ListFooterComponent({
+  hasNextPage,
+  isFetchingNextPage: _isFetchingNextPage,
+}: ListFooterProps) {
   const { t } = useTranslation();
 
   if (!hasNextPage)

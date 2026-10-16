@@ -146,7 +146,7 @@ function AllowNegativeStockInput({ field }: FieldProps<boolean>) {
 function PresentationCards({
   field,
   remove,
-  restore,
+  restore: _restore,
   onSelect,
 }: FieldProps<ProductFormSchema["presentations"]> & {
   remove: (id: string) => void;

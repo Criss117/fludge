@@ -1,4 +1,4 @@
-import type { type EmptyRelations, Logger } from "drizzle-orm";
+import type { EmptyRelations, Logger } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import type { SQLiteAsyncTransaction } from "drizzle-orm/sqlite-core";
@@ -16,7 +16,7 @@ class QueryCounterLogger implements Logger {
   logQuery(query: string): void {
     return;
     this.count++;
-    console.log(`[Consulta #${this.count}]`, query);
+    console.info(`[Consulta #${this.count}]`, query);
   }
 }
 

@@ -102,7 +102,7 @@ export function AssignMembersScreen({ group }: Props) {
           mutationToast.showSuccess("forms.group.assign_members.success");
           setSelectedMemberIds([]);
         },
-        onError: (e) => {
+        onError: (_e) => {
           mutationToast.showError("forms.group.assign_members.error");
         },
       },
