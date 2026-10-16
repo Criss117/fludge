@@ -166,5 +166,7 @@ export const screens = {
   },
   pos: {
     label: "Nueva venta",
+    see_cart: "Ver carrito / Cobrar",
+    current_sale: "Venta actual",
   },
 };

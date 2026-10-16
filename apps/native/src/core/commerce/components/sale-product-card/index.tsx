@@ -1,7 +1,7 @@
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { GeistFonts } from "@/integrations/fonts";
 import type { ProductDetail } from "@fludge/client/catalog/domain/entities";
-import { formatPrice } from "@fludge/utils/currency";
+import { formatCurrency } from "@fludge/utils/format-currency";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -24,9 +24,9 @@ export function getSalesProductPrice(
   const min = Math.min(...prices);
   const max = Math.max(...prices);
 
-  if (min === max) return formatPrice(min);
+  if (min === max) return formatCurrency(min);
 
-  return `${formatPrice(min)} - ${formatPrice(max)}`;
+  return `${formatCurrency(min)} - ${formatCurrency(max)}`;
 }
 
 interface Props {
@@ -44,10 +44,7 @@ export function SaleProductCard({ product, onPress, style }: Props) {
     [product.presentations],
   );
 
-  const handlePress = useCallback(
-    () => onPress?.(product),
-    [onPress, product],
-  );
+  const handlePress = useCallback(() => onPress?.(product), [onPress, product]);
 
   const themedStyles = useMemo(
     () =>
@@ -125,7 +122,11 @@ export function SaleProductCard({ product, onPress, style }: Props) {
   return (
     <Pressable
       onPress={handlePress}
-      style={({ pressed }) => [themedStyles.card, style, pressed && themedStyles.pressed]}
+      style={({ pressed }) => [
+        themedStyles.card,
+        style,
+        pressed && themedStyles.pressed,
+      ]}
     >
       <View style={themedStyles.header}>
         <View style={themedStyles.headerContent}>

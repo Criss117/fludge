@@ -35,6 +35,7 @@ import SyncIcon from "@expo/material-symbols/sync.xml";
 import Inventory2Icon from "@expo/material-symbols/inventory_2.xml";
 import LogoutIcon from "@expo/material-symbols/logout.xml";
 import SwitchLeftIcon from "@expo/material-symbols/switch_left.xml";
+import ArrowForwardIcon from "@expo/material-symbols/arrow_forward.xml";
 
 import { Icon as ExpoIcon, type IconProps as ExpoIconProps } from "@expo/ui";
 
@@ -76,6 +77,7 @@ export const ICONS = {
   inventory_2: Inventory2Icon,
   logout: LogoutIcon,
   switch: SwitchLeftIcon,
+  "arrow-forward": ArrowForwardIcon,
 } as const;
 
 export type IconName = keyof typeof ICONS;

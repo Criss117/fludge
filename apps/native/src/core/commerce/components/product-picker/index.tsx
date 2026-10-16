@@ -2,7 +2,7 @@ import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 import type { ProductDetail } from "@fludge/client/catalog/domain/entities";
-import { formatPrice } from "@fludge/utils/currency";
+import { formatCurrency } from "@fludge/utils/format-currency";
 import {
   Button,
   Checkbox,
@@ -117,7 +117,7 @@ export function ProductPickerSheet({ product, isOpen, onClose, onAdd }: Props) {
                   </Column>
                   <Spacer modifiers={[weight(1)]} />
                   <ThemedNativeText>
-                    {formatPrice(presentation.priceSale)}
+                    {formatCurrency(presentation.priceSale)}
                   </ThemedNativeText>
                   <Checkbox
                     value={isSelected}

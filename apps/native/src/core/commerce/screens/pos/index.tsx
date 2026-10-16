@@ -8,8 +8,19 @@ import {
 import { ThemedView } from "@/core/shared/components/themed-view";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
-import { Box, Button, Host, Row } from "@expo/ui/jetpack-compose";
-import { fillMaxWidth, weight } from "@expo/ui/jetpack-compose/modifiers";
+import {
+  Box,
+  Button,
+  Column,
+  Host,
+  Row,
+  Spacer,
+} from "@expo/ui/jetpack-compose";
+import {
+  fillMaxWidth,
+  weight,
+  width,
+} from "@expo/ui/jetpack-compose/modifiers";
 import { useFindProducts } from "@fludge/client/catalog/queries/use-find-products";
 import { FlashList } from "@shopify/flash-list";
 import { useCallback, useMemo, useState } from "react";
@@ -19,6 +30,9 @@ import { useTicketStore } from "@fludge/client/providers/ticket-store.provider";
 import type { ProductSummary } from "@fludge/client/catalog/domain/entities";
 import type { AddCatalogTicketProduct } from "@fludge/client/commerce/domain/local-ticket.repository";
 import { ProductPickerSheet } from "@/core/commerce/components/product-picker";
+import { useTranslation } from "react-i18next";
+import { formatCurrency } from "@fludge/utils/format-currency";
+import { Icon } from "@/core/shared/components/icon";
 
 function ProductList({
   searchQuery,
@@ -72,22 +86,43 @@ function ProductList({
 }
 
 function Footer() {
+  const { t } = useTranslation();
   const activeTicketTotal = useTicketStore((s) => s.activeTicketTotal);
   const colors = useThemeColor();
 
   return (
     <View style={styles.footer}>
       <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
-        <Button
-          colors={{
-            containerColor: colors.primary,
+        <Row
+          horizontalArrangement={{
+            spacedBy: SPACING.md,
           }}
+          verticalAlignment="center"
         >
-          <ThemedNativeText color={colors.onPrimary}>
-            Cobrar ({activeTicketTotal})
-          </ThemedNativeText>
-        </Button>
+          <Column>
+            <ThemedNativeText variant="muted">
+              {t("screens.pos.current_sale")}
+            </ThemedNativeText>
+            <ThemedNativeText>
+              {formatCurrency(activeTicketTotal)}
+            </ThemedNativeText>
+          </Column>
+
+          <Button
+            colors={{
+              containerColor: colors.primary,
+            }}
+            modifiers={[fillMaxWidth()]}
+          >
+            <ThemedNativeText color={colors.onPrimary}>
+              {t("screens.pos.see_cart")}
+            </ThemedNativeText>
+            <Spacer modifiers={[width(SPACING.sm)]} />
+            <Icon name="arrow-forward" size={20} color={colors.onPrimary} />
+          </Button>
+        </Row>
       </Host>
+
       <KeyboardSpacerView />
     </View>
   );
@@ -187,8 +222,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.sm,
   },
   footer: {
+    paddingTop: SPACING.md,
     paddingHorizontal: SPACING.sm,
     paddingBottom: SPACING.md,
+  },
+  footerContent: {
+    flexDirection: "row",
   },
   productListContainer: {
     paddingTop: SPACING.md,

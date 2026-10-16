@@ -27,7 +27,7 @@ import {
 } from "@expo/ui/jetpack-compose/modifiers";
 import { ProductFormSchema } from "@fludge/client/catalog/forms/product.form";
 import type { MinimalField } from "@fludge/client/shared/field-api";
-import { formatPrice } from "@fludge/utils/currency";
+import { formatCurrency } from "@fludge/utils/format-currency";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFindCategories } from "@fludge/client/catalog/queries/use-find-categories";
@@ -235,7 +235,7 @@ function PresentationCards({
                   {t("forms.product_presentation.price_sale.label")}
                 </ThemedNativeText>
                 <ThemedNativeText variant="h4" color={colors.tertiary}>
-                  {formatPrice(p.priceSale)}
+                  {formatCurrency(p.priceSale)}
                 </ThemedNativeText>
               </Column>
 
@@ -248,7 +248,9 @@ function PresentationCards({
                     {t("forms.product_presentation.price_purchase.label")}
                   </ThemedNativeText>
                   <ThemedNativeText variant="h6">
-                    {p.pricePurchase === 0 ? "-" : formatPrice(p.pricePurchase)}
+                    {p.pricePurchase === 0
+                      ? "-"
+                      : formatCurrency(p.pricePurchase)}
                   </ThemedNativeText>
                 </Column>
                 <Column>
@@ -258,7 +260,7 @@ function PresentationCards({
                   <ThemedNativeText variant="h6">
                     {p.priceWholesale === 0
                       ? "-"
-                      : formatPrice(p.priceWholesale)}
+                      : formatCurrency(p.priceWholesale)}
                   </ThemedNativeText>
                 </Column>
               </Row>
