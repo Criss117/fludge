@@ -3,6 +3,7 @@ import type {
   MemberRepository,
   Options,
 } from "@fludge/api/core/iam/domain/repositories/member.repository";
+import type { UserSelect } from "@fludge/db/schema/auth.schema";
 import type { Result } from "@fludge/utils/trycatch";
 import { ok } from "@fludge/utils/trycatch";
 
@@ -40,6 +41,21 @@ export class InMemoryMemberRepository implements MemberRepository {
       this.members.set(m.id.toString(), m);
     }
     return ok(undefined);
+  }
+
+  async findUser(userId: string): Promise<Result<UserSelect | null>> {
+    const now = new Date();
+    return ok({
+      id: userId,
+      name: "Test User",
+      email: "test@example.com",
+      emailVerified: false,
+      image: null,
+      createdAt: now,
+      updatedAt: now,
+      isRoot: false,
+      phone: "",
+    });
   }
 
   clear() {
