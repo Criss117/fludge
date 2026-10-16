@@ -9,7 +9,9 @@
     "./native": "./src/native.ts"
   },
   "scripts": {
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@t3-oss/env-core": "0.13.11",

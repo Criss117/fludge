@@ -11,7 +11,9 @@
   "scripts": {
     "check-types": "tsc -b",
     "test": "bun test",
-    "test:watch": "bun test --watch"
+    "test:watch": "bun test --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "zod": "catalog:",

@@ -4,17 +4,14 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        "**/*.go",
-        "go.mod",
-        "go.sum",
-        "wails.json"
-      ],
+      "inputs": ["$TURBO_DEFAULT$", "**/*.go", "go.mod", "go.sum", "wails.json"],
       "outputs": ["dist/**", "build/bin/**", "frontend/dist/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
+    },
+    "lint:fix": {
+      "cache": false
     },
     "check-types": {
       "dependsOn": ["^check-types"],

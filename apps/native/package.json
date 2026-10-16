@@ -67,17 +67,12 @@
     "@types/jest": "29.5.14",
     "@types/react": "~19.2.2",
     "drizzle-kit": "catalog:",
-    "eslint": "^9.0.0",
-    "eslint-config-expo": "~57.0.2",
-    "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-prettier": "5.5.6",
     "expo-atlas": "^0.4.0",
     "jest": "~29.7.0",
     "jest-expo": "~57.0.5",
-    "prettier": "3.9.9",
-    "prettier-plugin-tailwindcss": "0.8.1",
     "rozenite": "2.4.0",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "@fludge/config": "workspace:*"
   },
   "scripts": {
     "start": "expo start",
@@ -85,13 +80,14 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint",
+    "lint": "eslint .",
     "eas-build:dev:local": "TMPDIR=~/eas-temp eas build --platform android --profile development --local",
     "eas-build:prev:local": "TMPDIR=~/eas-temp eas build --platform android --profile preview --local",
     "eas-build:prev": "TMPDIR=~/eas-temp eas build --platform android --profile preview",
     "eas-build:dev": "TMPDIR=~/eas-temp eas build --platform android --profile development",
     "check-types": "tsc -b",
-    "db:generate": "rm -rf drizzle && bunx drizzle-kit generate"
+    "db:generate": "rm -rf drizzle && bunx drizzle-kit generate",
+    "lint:fix": "eslint . --fix"
   },
   "private": true
 }

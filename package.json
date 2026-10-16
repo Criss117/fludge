@@ -3,9 +3,9 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "apps/*",
-      "packages/*",
-      "apps/desktop/frontend"
+      "apps/native",
+      "apps/server",
+      "packages/*"
     ],
     "catalog": {
       "dotenv": "17.4.2",
@@ -63,7 +63,11 @@
     "db:down": "turbo run db:down -F @fludge/db --",
     "auth:generate": "turbo -F server auth:generate",
     "test": "turbo run test",
-    "test:server": "turbo run test -F server --"
+    "test:server": "turbo run test -F server --",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@fludge/env": "workspace:*",
@@ -78,6 +82,7 @@
   },
   "packageManager": "bun@1.3.14",
   "overrides": {
+    "eslint": "^9.20.0",
     "@expo/ui": "~57.0.21",
     "expo": "~57.0.26",
     "expo-build-properties": "~57.0.22",

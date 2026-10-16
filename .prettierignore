@@ -1,0 +1,12 @@
+node_modules
+dist
+build
+*.tsbuildinfo
+.expo
+.turbo
+coverage
+.drizzle
+routeTree.gen.ts
+apps/native-old
+apps/desktop
+local.db*
