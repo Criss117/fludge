@@ -25,4 +25,5 @@ S5. "corre el autofix"
 
 L1. User request: "quiero que configures prettier/linter, entre otras cosas, eliminar los imports no usados(como por defecto hace la config de un proyecto expo), los imports de tipos o que se usan como tipos deben ser marcados como types, que mas reglas crees que deberia tener en cuenta"
 L2. User clarifies scope: whole tracked monorepo, ignore `apps/native-old` and `apps/desktop`, run autofix.
-L3. Work-unit commits: `37d5c47` (config), `8a430ad` (autofix).
+L3. Work-unit commits: `37d5c47` (config), `8a430ad` (autofix), `af79a85` (task log).
+L4. Follow-up commits: `c257fa6` (auto-fixable lint warnings), `9be9ec8` (failing tests in utils and api).
