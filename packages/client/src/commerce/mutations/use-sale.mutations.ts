@@ -1,9 +1,10 @@
+import { useInvalidateProducts } from "@fludge/client/catalog/queries/use-find-products";
+import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
 import { useMutation } from "@tanstack/react-query";
-import { useContainer } from "@fludge/client/providers/container.provider";
+
 import { useInvalidateCustomers } from "../queries/use-find-customers";
 import { useInvalidateSales } from "../queries/use-find-sales";
-import { useInvalidateProducts } from "@fludge/client/catalog/queries/use-find-products";
 
 export function useCreateSaleMutation() {
   const orpc = useOrpc();
@@ -15,14 +16,10 @@ export function useCreateSaleMutation() {
   return useMutation(
     orpc.sale.commands.create.mutationOptions({
       onSuccess: async (data) => {
-        await catalogContainer.repositories.productRepository.save(
-          data.products,
-        );
+        await catalogContainer.repositories.productRepository.save(data.products);
 
         if (data.customer) {
-          await commerceContainer.repositories.customerRepository.save(
-            data.customer,
-          );
+          await commerceContainer.repositories.customerRepository.save(data.customer);
         }
 
         await commerceContainer.repositories.saleRepository.save(data.sale);
@@ -51,9 +48,7 @@ export function useCancelSaleMutation() {
         await commerceContainer.repositories.saleRepository.save(sale);
 
         if (customer) {
-          await commerceContainer.repositories.customerRepository.save(
-            customer,
-          );
+          await commerceContainer.repositories.customerRepository.save(customer);
         }
 
         if (customer) {
@@ -85,9 +80,7 @@ export function useRefundSaleItemsMutation() {
         await commerceContainer.repositories.saleRepository.save(sale);
 
         if (customer) {
-          await commerceContainer.repositories.customerRepository.save(
-            customer,
-          );
+          await commerceContainer.repositories.customerRepository.save(customer);
         }
 
         if (customer) {

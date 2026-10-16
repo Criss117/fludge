@@ -1,9 +1,10 @@
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { GeistFonts } from "@/integrations/fonts";
 import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { useFindOrganizations } from "@fludge/client/iam/queries/use-find-organizations";
 import { Stack } from "expo-router";
 import { useTranslation } from "react-i18next";
+
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { GeistFonts } from "@/integrations/fonts";
 
 export default function OrganizationLayout() {
   const { t } = useTranslation();

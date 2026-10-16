@@ -1,38 +1,24 @@
-import { Avatar } from "@/core/shared/components/avatar";
-import { Icon } from "@/core/shared/components/icon";
-import { LinkButton } from "@/core/shared/components/link-button";
-import { TextInput } from "@/core/shared/components/text-input";
-import {
-  ThemedNativeText,
-  ThemedText,
-} from "@/core/shared/components/themed-text";
-import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { SPACING } from "@/lib/sp";
-import {
-  Column,
-  ElevatedCard,
-  Host,
-  RNHostView,
-  Row,
-  Spacer,
-} from "@expo/ui/jetpack-compose";
-import {
-  fillMaxWidth,
-  paddingAll,
-  weight,
-  width,
-} from "@expo/ui/jetpack-compose/modifiers";
+import { Column, ElevatedCard, Host, RNHostView, Row, Spacer } from "@expo/ui/jetpack-compose";
+import { fillMaxWidth, paddingAll, weight, width } from "@expo/ui/jetpack-compose/modifiers";
+import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
+import { useFindOrganizations } from "@fludge/client/iam/queries/use-find-organizations";
+import type { TranslationKey } from "@fludge/i18n/index";
 import { useRouter } from "expo-router";
 import { PressableScale } from "pressto";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
 import Animated from "react-native-reanimated";
+
+import { Avatar } from "@/core/shared/components/avatar";
+import { Icon } from "@/core/shared/components/icon";
+import { LinkButton } from "@/core/shared/components/link-button";
+import { TextInput } from "@/core/shared/components/text-input";
+import { ThemedNativeText, ThemedText } from "@/core/shared/components/themed-text";
+import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { useMutationToast } from "@/integrations/toast";
-import type { TranslationKey } from "@fludge/i18n/index";
-import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
-import { useFindOrganizations } from "@fludge/client/iam/queries/use-find-organizations";
+import { SPACING } from "@/lib/sp";
 
 export function SelectOrganizationScreen() {
   const spacer = useKeyboardSpacer();
@@ -120,11 +106,7 @@ export function SelectOrganizationScreen() {
           </View>
         )}
         {allOrganizations.map((org) => (
-          <PressableScale
-            key={org.id}
-            style={styles.pressableCard}
-            onPress={() => onPress(org.id)}
-          >
+          <PressableScale key={org.id} style={styles.pressableCard} onPress={() => onPress(org.id)}>
             <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
               <ElevatedCard
                 modifiers={[fillMaxWidth()]}
@@ -156,25 +138,15 @@ export function SelectOrganizationScreen() {
                       </ThemedNativeText>
                     </Column>
 
-                    <Row
-                      horizontalAlignment="center"
-                      verticalAlignment="center"
-                    >
+                    <Row horizontalAlignment="center" verticalAlignment="center">
                       <Icon name="location-on" size={18} />
                       <Spacer modifiers={[width(SPACING.xs)]} />
-                      <ThemedNativeText variant="base">
-                        {org.address}
-                      </ThemedNativeText>
+                      <ThemedNativeText variant="base">{org.address}</ThemedNativeText>
                     </Row>
-                    <Row
-                      horizontalAlignment="center"
-                      verticalAlignment="center"
-                    >
+                    <Row horizontalAlignment="center" verticalAlignment="center">
                       <Icon name="call" size={18} />
                       <Spacer modifiers={[width(SPACING.xs)]} />
-                      <ThemedNativeText variant="base">
-                        {org.phone}
-                      </ThemedNativeText>
+                      <ThemedNativeText variant="base">{org.phone}</ThemedNativeText>
                     </Row>
                   </Column>
                 </Row>

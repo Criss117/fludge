@@ -1,21 +1,18 @@
-import type { z } from "zod";
-import {
-  Sale,
-  type CreateSale,
-} from "@fludge/api/core/commerce/sale/domain/entities/sale.entity";
+import type { SaleProductService } from "@fludge/api/core/catalog/products/application/services/sale-product.service";
+import { ProductPresentationNotFoundException } from "@fludge/api/core/catalog/products/domain/exceptions/product-presentation-not-found.exception";
+import type { ProductRepository } from "@fludge/api/core/catalog/products/domain/repositories/product.repository";
+import type { Customer } from "@fludge/api/core/commerce/customer/domain/entities/customer.entity";
+import { CustomerNotFoundException } from "@fludge/api/core/commerce/customer/domain/exceptions/customer-not-found.exception";
+import type { CustomerRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
+import { type CreateSale, Sale } from "@fludge/api/core/commerce/sale/domain/entities/sale.entity";
 import type { SaleRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale.repository";
 import type { SaleSequenceRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale-sequence.repository";
-import type { CustomerRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
-import type { ProductRepository } from "@fludge/api/core/catalog/products/domain/repositories/product.repository";
-import type { SaleProductService } from "@fludge/api/core/catalog/products/application/services/sale-product.service";
 import type { SaleItemSnapshotValue } from "@fludge/api/core/commerce/sale/domain/value-objects/sale-item-snapshot";
-import type { Customer } from "@fludge/api/core/commerce/customer/domain/entities/customer.entity";
 import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
-import { CustomerNotFoundException } from "@fludge/api/core/commerce/customer/domain/exceptions/customer-not-found.exception";
-import { ProductPresentationNotFoundException } from "@fludge/api/core/catalog/products/domain/exceptions/product-presentation-not-found.exception";
 import { UUID } from "@fludge/utils/uuid";
 import { createSaleValidator } from "@fludge/utils/validators/sale.validators";
+import type { z } from "zod";
 
 export const createSaleCommand = createSaleValidator;
 
@@ -36,14 +33,13 @@ export class CreateSaleCommand {
     let customer: Customer | null = null;
 
     if (cmd.customerId) {
-      const [customerFind, errFindCustomer] =
-        await this.customerRepository.findById(organizationId, cmd.customerId);
+      const [customerFind, errFindCustomer] = await this.customerRepository.findById(
+        organizationId,
+        cmd.customerId,
+      );
 
       if (errFindCustomer)
-        throw new InternalServerError(
-          errFindCustomer,
-          "api_errors.customers.isr_on_find",
-        );
+        throw new InternalServerError(errFindCustomer, "api_errors.customers.isr_on_find");
 
       if (!customerFind) throw new CustomerNotFoundException();
 
@@ -123,61 +119,54 @@ export class CreateSaleCommand {
       };
     });
 
-    const [newSale, errTransaction] = await this.saleRepository.transaction(
-      async (tx) => {
-        const [nextSequence, errNextSequence] =
-          await this.saleSequenceRepository.getNextSequence(organizationId, {
-            tx,
-          });
+    const [newSale, errTransaction] = await this.saleRepository.transaction(async (tx) => {
+      const [nextSequence, errNextSequence] = await this.saleSequenceRepository.getNextSequence(
+        organizationId,
+        {
+          tx,
+        },
+      );
 
-        if (errNextSequence) throw errNextSequence;
+      if (errNextSequence) throw errNextSequence;
 
-        const sale = Sale.create({
-          createdBy: authContext.member.id,
-          organizationId: authContext.organizationId,
-          customerId: cmd.customerId ? UUID.fromString(cmd.customerId) : null,
-          paymentType: cmd.paymentType,
-          notes: cmd.notes,
-          sequence: nextSequence,
-          items: saleItems,
-        });
+      const sale = Sale.create({
+        createdBy: authContext.member.id,
+        organizationId: authContext.organizationId,
+        customerId: cmd.customerId ? UUID.fromString(cmd.customerId) : null,
+        paymentType: cmd.paymentType,
+        notes: cmd.notes,
+        sequence: nextSequence,
+        items: saleItems,
+      });
 
-        const [, errSavingSale] = await this.saleRepository.insert(sale, {
+      const [, errSavingSale] = await this.saleRepository.insert(sale, {
+        tx,
+      });
+
+      if (errSavingSale) throw errSavingSale;
+
+      if (productsToSave.length > 0) {
+        const [, errProducts] = await this.productRepository.saveOnlyProduct(productsToSave, {
           tx,
         });
 
-        if (errSavingSale) throw errSavingSale;
+        if (errProducts) throw errProducts;
+      }
 
-        if (productsToSave.length > 0) {
-          const [, errProducts] = await this.productRepository.saveOnlyProduct(
-            productsToSave,
-            { tx },
-          );
+      // Solo las ventas a crédito cargan el saldo del cliente.
+      if (customer && cmd.paymentType === "credit") {
+        customer.increaseBalance(sale.values.total);
 
-          if (errProducts) throw errProducts;
-        }
+        const [, errSavingCustomer] = await this.customerRepository.update(customer, { tx });
 
-        // Solo las ventas a crédito cargan el saldo del cliente.
-        if (customer && cmd.paymentType === "credit") {
-          customer.increaseBalance(sale.values.total);
+        if (errSavingCustomer) throw errSavingCustomer;
+      }
 
-          const [, errSavingCustomer] = await this.customerRepository.update(
-            customer,
-            { tx },
-          );
-
-          if (errSavingCustomer) throw errSavingCustomer;
-        }
-
-        return sale;
-      },
-    );
+      return sale;
+    });
 
     if (errTransaction)
-      throw new InternalServerError(
-        errTransaction,
-        "api_errors.sales.isr_on_save",
-      );
+      throw new InternalServerError(errTransaction, "api_errors.sales.isr_on_save");
 
     return {
       sale: newSale.values,

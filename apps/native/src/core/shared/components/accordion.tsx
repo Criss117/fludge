@@ -1,4 +1,3 @@
-import { SPACING } from "@/lib/sp";
 import { Column, ElevatedCard, Row } from "@expo/ui/jetpack-compose";
 import {
   animateContentSize,
@@ -12,9 +11,12 @@ import {
   weight,
 } from "@expo/ui/jetpack-compose/modifiers";
 import { useState } from "react";
+
+import { SPACING } from "@/lib/sp";
+
 import { useThemeColor } from "../hooks/use-theme-color";
-import { ThemedNativeText } from "./themed-text";
 import { Icon } from "./icon";
+import { ThemedNativeText } from "./themed-text";
 
 type Props = {
   label: string;
@@ -23,12 +25,7 @@ type Props = {
   onOpenChange?: (isOpen: boolean) => void;
 };
 
-export function Accordion({
-  label,
-  children,
-  defaultOpen,
-  onOpenChange,
-}: Props) {
+export function Accordion({ label, children, defaultOpen, onOpenChange }: Props) {
   const colors = useThemeColor();
   const [open, setOpen] = useState(defaultOpen);
 
@@ -66,12 +63,7 @@ export function Accordion({
       </Row>
 
       {open && (
-        <Column
-          modifiers={[
-            fillMaxWidth(),
-            padding(SPACING.md, 0, SPACING.md, SPACING.md),
-          ]}
-        >
+        <Column modifiers={[fillMaxWidth(), padding(SPACING.md, 0, SPACING.md, SPACING.md)]}>
           {children}
         </Column>
       )}

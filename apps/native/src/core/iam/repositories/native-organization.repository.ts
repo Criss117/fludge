@@ -1,19 +1,14 @@
-import type { DatabaseService } from "@/integrations/db";
-import { OrganizationSummary } from "@fludge/client/iam/domain/entities";
+import type { OrganizationSummary } from "@fludge/client/iam/domain/entities";
 import type { OrganizationRepository } from "@fludge/client/iam/domain/organization.repository";
-import {
-  localOrganization,
-  localUser,
-} from "@fludge/db/local-schemas/shared.schema";
-
+import { localOrganization, localUser } from "@fludge/db/local-schemas/shared.schema";
 import { eq, inArray } from "drizzle-orm";
+
+import type { DatabaseService } from "@/integrations/db";
 
 export class NativeOrganizationRepository implements OrganizationRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  public async findOneById(
-    organizationId: string,
-  ): Promise<OrganizationSummary | null> {
+  public async findOneById(organizationId: string): Promise<OrganizationSummary | null> {
     const raws = this.db
       .select()
       .from(localOrganization)
@@ -36,14 +31,9 @@ export class NativeOrganizationRepository implements OrganizationRepository {
   }
 
   public async delete(organizationId: string | string[]): Promise<void> {
-    const organizationIds = Array.isArray(organizationId)
-      ? organizationId
-      : [organizationId];
+    const organizationIds = Array.isArray(organizationId) ? organizationId : [organizationId];
 
-    this.db
-      .delete(localOrganization)
-      .where(inArray(localOrganization.id, organizationIds))
-      .run();
+    this.db.delete(localOrganization).where(inArray(localOrganization.id, organizationIds)).run();
   }
 
   public async findAll(): Promise<OrganizationSummary[]> {

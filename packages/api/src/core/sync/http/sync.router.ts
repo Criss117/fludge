@@ -1,7 +1,8 @@
 import { withOrganizationIdsProcedure } from "@fludge/api/index";
+
 import { syncContainer } from "../container";
-import { syncCommerceQuery } from "../queries/sync-commerce.query";
 import { syncCatalogQuery } from "../queries/sync-catalog.query";
+import { syncCommerceQuery } from "../queries/sync-commerce.query";
 import { syncIamQuery } from "../queries/sync-iam.query";
 
 const TAGS = ["Sync"] as const;
@@ -15,10 +16,7 @@ export const syncRouter = {
     })
     .input(syncIamQuery)
     .handler(({ input, context }) =>
-      syncContainer.queries.syncIam.execute(
-        context.session.organizationIds,
-        input,
-      ),
+      syncContainer.queries.syncIam.execute(context.session.organizationIds, input),
     ),
 
   syncCatalog: withOrganizationIdsProcedure
@@ -29,10 +27,7 @@ export const syncRouter = {
     })
     .input(syncCatalogQuery)
     .handler(({ input, context }) =>
-      syncContainer.queries.syncCatalog.execute(
-        context.session.organizationIds,
-        input,
-      ),
+      syncContainer.queries.syncCatalog.execute(context.session.organizationIds, input),
     ),
 
   syncCommerce: withOrganizationIdsProcedure
@@ -43,9 +38,6 @@ export const syncRouter = {
     })
     .input(syncCommerceQuery)
     .handler(({ input, context }) =>
-      syncContainer.queries.syncCommerce.execute(
-        context.session.organizationIds,
-        input,
-      ),
+      syncContainer.queries.syncCommerce.execute(context.session.organizationIds, input),
     ),
 };

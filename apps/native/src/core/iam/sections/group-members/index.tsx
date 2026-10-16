@@ -1,16 +1,14 @@
-import { TextInput } from "@/core/shared/components/text-input";
-import { SPACING } from "@/lib/sp";
 import { Host } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
-import type {
-  GroupDetail,
-  MemberSummary,
-} from "@fludge/client/iam/domain/entities";
+import type { GroupDetail, MemberSummary } from "@fludge/client/iam/domain/entities";
+import { useRemoveMembersFromGroup } from "@fludge/client/iam/mutations/use-group.mutations";
 import { useCallback, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
+
 import { MemberCard } from "@/core/iam/components/member-card";
-import { useRemoveMembersFromGroup } from "@fludge/client/iam/mutations/use-group.mutations";
+import { TextInput } from "@/core/shared/components/text-input";
 import { useMutationToast } from "@/integrations/toast";
+import { SPACING } from "@/lib/sp";
 
 interface Props {
   group: GroupDetail;

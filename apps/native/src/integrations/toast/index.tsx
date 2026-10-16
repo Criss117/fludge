@@ -1,8 +1,10 @@
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { toast, Toaster } from "sonner-native";
-import { GeistFonts } from "../fonts";
-import { useTranslation } from "react-i18next";
 import type { TranslationKey } from "@fludge/i18n/index";
+import { useTranslation } from "react-i18next";
+import { toast, Toaster } from "sonner-native";
+
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+
+import { GeistFonts } from "../fonts";
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const colors = useThemeColor();

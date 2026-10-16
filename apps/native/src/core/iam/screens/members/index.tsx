@@ -1,13 +1,14 @@
+import { Host } from "@expo/ui";
+import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
+import { Suspense, useState } from "react";
+import { StyleSheet, View } from "react-native";
+
 import { MemberListSection } from "@/core/iam/sections/member-list";
 import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { LinkFabButton } from "@/core/shared/components/link-fab-button";
 import { TextInput } from "@/core/shared/components/text-input";
 import { ThemedView } from "@/core/shared/components/themed-view";
 import { SPACING } from "@/lib/sp";
-import { Host } from "@expo/ui";
-import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
-import { Suspense, useState } from "react";
-import { StyleSheet, View } from "react-native";
 
 export function MembersScreen() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,9 +34,7 @@ export function MembersScreen() {
         </Suspense>
       </View>
 
-      <LinkFabButton
-        action={{ type: "push", href: "/dashboard/members/register" }}
-      />
+      <LinkFabButton action={{ type: "push", href: "/dashboard/members/register" }} />
     </ThemedView>
   );
 }

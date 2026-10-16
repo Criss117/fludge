@@ -1,12 +1,13 @@
 import {
   createContext,
+  type ReactNode,
   use,
   useCallback,
   useState,
   useSyncExternalStore,
-  type ReactNode,
 } from "react";
 import { useStore } from "zustand";
+
 import {
   createTicketStore,
   selectActiveTicket,
@@ -61,17 +62,10 @@ function OrganizationTicketStoreProvider({
 
   // Inicialización perezosa: el store se crea una sola vez por montaje.
   const [store] = useState(() =>
-    createTicketStore(
-      organizationId,
-      commerceContainer.repositories.localTicketRepository,
-    ),
+    createTicketStore(organizationId, commerceContainer.repositories.localTicketRepository),
   );
 
-  return (
-    <TicketStoreContext.Provider value={store}>
-      {children}
-    </TicketStoreContext.Provider>
-  );
+  return <TicketStoreContext.Provider value={store}>{children}</TicketStoreContext.Provider>;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -82,9 +76,7 @@ function useTicketStoreApi(): TicketStore {
   const store = use(TicketStoreContext);
 
   if (!store) {
-    throw new Error(
-      "Ticket store hooks must be used within a TicketStoreProvider",
-    );
+    throw new Error("Ticket store hooks must be used within a TicketStoreProvider");
   }
 
   return store;

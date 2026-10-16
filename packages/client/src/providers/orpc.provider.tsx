@@ -1,5 +1,5 @@
 import type { AppRouterClient } from "@fludge/api/routers/index";
-import { createORPCClient, type ClientContext } from "@orpc/client";
+import { type ClientContext, createORPCClient } from "@orpc/client";
 import { RPCLink, type RPCLinkOptions } from "@orpc/client/fetch";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import { createContext, use } from "react";
@@ -23,11 +23,7 @@ export function createOrpcProvider(options: RPCLinkOptions<ClientContext>) {
   const contextValue = { orpc: client };
 
   function OrpcProvider({ children }: { children: React.ReactNode }) {
-    return (
-      <OrpcContext.Provider value={contextValue}>
-        {children}
-      </OrpcContext.Provider>
-    );
+    return <OrpcContext.Provider value={contextValue}>{children}</OrpcContext.Provider>;
   }
 
   return OrpcProvider;
@@ -38,8 +34,6 @@ export type OrpcQueryClient = ReturnType<typeof createOrpcQueryClient>;
 export function useOrpc() {
   const context = use(OrpcContext);
   if (!context)
-    throw new Error(
-      "useOrpc must be used within an OrpcProvider returned by createOrpcProvider()",
-    );
+    throw new Error("useOrpc must be used within an OrpcProvider returned by createOrpcProvider()");
   return context.orpc;
 }

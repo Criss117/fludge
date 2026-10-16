@@ -1,5 +1,3 @@
-import { beforeEach, describe, expect, it } from "bun:test";
-
 import { AssignMembersToGroupCommand } from "@fludge/api/core/iam/application/commands/assign-members-to-group.command";
 import { Group } from "@fludge/api/core/iam/domain/entities/group.entity";
 import { Organization } from "@fludge/api/core/iam/domain/entities/organization.entity";
@@ -8,6 +6,7 @@ import { MemberIsOwnerException } from "@fludge/api/core/iam/domain/exceptions/m
 import { MemberNotFoundException } from "@fludge/api/core/iam/domain/exceptions/member-not-found.exception";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
+import { beforeEach, describe, expect, it } from "bun:test";
 
 import { makeAuthContext, makeMember, makeOwner } from "../../factories";
 import { InMemoryGroupRepository } from "../../infrastructure/in-memory-group.repository";
@@ -63,16 +62,10 @@ describe("AssignMembersToGroupCommand", () => {
 
       const memberIds = result.members.map((gm) => gm.memberId);
       expect(memberIds).toEqual(
-        expect.arrayContaining([
-          memberOne.id.toString(),
-          memberTwo.id.toString(),
-        ]),
+        expect.arrayContaining([memberOne.id.toString(), memberTwo.id.toString()]),
       );
 
-      const [stored] = await groupRepository.findById(
-        org.id.toString(),
-        group.id.toString(),
-      );
+      const [stored] = await groupRepository.findById(org.id.toString(), group.id.toString());
 
       expect(stored!.getGroupMemberByMemberId(memberOne.id)).not.toBeNull();
       expect(stored!.getGroupMemberByMemberId(memberTwo.id)).not.toBeNull();

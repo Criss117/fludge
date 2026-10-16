@@ -1,4 +1,3 @@
-import type { z } from "zod";
 import type { CategoryUniquenessValidator } from "@fludge/api/core/catalog/categories/application/services/category-uniqueness-validator.service";
 import { CategoryAlreadyExistsException } from "@fludge/api/core/catalog/categories/domain/exceptions/category-already-exists.exception";
 import { CategoryNotFoundException } from "@fludge/api/core/catalog/categories/domain/exceptions/category-not-found.exception";
@@ -8,6 +7,7 @@ import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exc
 import { Status } from "@fludge/api/core/shared/value-objects/status";
 import { Slug } from "@fludge/utils/slugify";
 import { updateCategoryValidator } from "@fludge/utils/validators/category.validators";
+import type { z } from "zod";
 
 export const updateCategoryCommand = updateCategoryValidator;
 
@@ -22,14 +22,13 @@ export class UpdateCategoryCommand {
   public async execute(authContext: UserAuthContext, cmd: CMD) {
     const organizationId = authContext.organizationId.toString();
 
-    const [existingCategory, errFinding] =
-      await this.categoryRepository.findById(organizationId, cmd.id);
+    const [existingCategory, errFinding] = await this.categoryRepository.findById(
+      organizationId,
+      cmd.id,
+    );
 
     if (errFinding)
-      throw new InternalServerError(
-        errFinding,
-        "api_errors.catalog.categories.isr_on_find",
-      );
+      throw new InternalServerError(errFinding, "api_errors.catalog.categories.isr_on_find");
 
     if (!existingCategory) throw new CategoryNotFoundException();
 
@@ -45,15 +44,10 @@ export class UpdateCategoryCommand {
         );
 
       if (errUniqueness)
-        throw new InternalServerError(
-          errUniqueness,
-          "api_errors.catalog.categories.isr_on_find",
-        );
+        throw new InternalServerError(errUniqueness, "api_errors.catalog.categories.isr_on_find");
 
       if (uniqueness.nameTaken || uniqueness.slugTaken)
-        throw new CategoryAlreadyExistsException(
-          "api_errors.catalog.categories.name_taken",
-        );
+        throw new CategoryAlreadyExistsException("api_errors.catalog.categories.name_taken");
     }
 
     existingCategory.update({
@@ -65,10 +59,7 @@ export class UpdateCategoryCommand {
     const [, errSaving] = await this.categoryRepository.save(existingCategory);
 
     if (errSaving)
-      throw new InternalServerError(
-        errSaving,
-        "api_errors.catalog.categories.isr_on_save",
-      );
+      throw new InternalServerError(errSaving, "api_errors.catalog.categories.isr_on_save");
 
     return existingCategory.values;
   }

@@ -6,13 +6,8 @@ import { and, eq, inArray } from "drizzle-orm";
 export class EnsurePresentationsExistsService {
   constructor(private readonly db: DatabaseService) {}
 
-  public async execute(
-    organizationId: string,
-    presentationId: string | string[],
-  ) {
-    const ids = Array.isArray(presentationId)
-      ? presentationId
-      : [presentationId];
+  public async execute(organizationId: string, presentationId: string | string[]) {
+    const ids = Array.isArray(presentationId) ? presentationId : [presentationId];
 
     const [rows, errFind] = await tryCatch(
       this.db

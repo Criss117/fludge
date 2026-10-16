@@ -1,7 +1,8 @@
-import { Suspense } from "react";
-import { useSyncIam } from "@fludge/client/sync/use-sync-iam";
 import { useSyncCatalog } from "@fludge/client/sync/use-sync-catalog";
 import { useSyncCommerce } from "@fludge/client/sync/use-sync-commerce";
+import { useSyncIam } from "@fludge/client/sync/use-sync-iam";
+import { Suspense } from "react";
+
 import { useSyncUserScope } from "../sync/use-sync-user-scope";
 
 interface SyncProps {

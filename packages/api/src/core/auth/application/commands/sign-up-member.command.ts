@@ -1,10 +1,10 @@
-import { tryCatch } from "@fludge/utils/trycatch";
-import type { z } from "zod";
-import type { AuthService } from "@fludge/auth";
 import type { AddMemberCommand } from "@fludge/api/core/iam/application/commands/add-member.command";
 import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
+import type { AuthService } from "@fludge/auth";
+import { tryCatch } from "@fludge/utils/trycatch";
 import { signUpValidator } from "@fludge/utils/validators/auth.validators";
+import type { z } from "zod";
 
 export const signUpMemberCommand = signUpValidator;
 
@@ -16,11 +16,7 @@ export class SignUpMemberCommand {
     private readonly addMemberCommand: AddMemberCommand,
   ) {}
 
-  public async execute(
-    headers: Headers,
-    authContext: UserAuthContext,
-    cmd: CMD,
-  ) {
+  public async execute(headers: Headers, authContext: UserAuthContext, cmd: CMD) {
     const [newUser, errNewUser] = await tryCatch(
       this.authService.api.signUpEmail({
         body: {
@@ -34,11 +30,7 @@ export class SignUpMemberCommand {
       }),
     );
 
-    if (errNewUser)
-      throw new InternalServerError(
-        errNewUser,
-        "api_errors.auth.users.isr_on_find",
-      );
+    if (errNewUser) throw new InternalServerError(errNewUser, "api_errors.auth.users.isr_on_find");
 
     return this.addMemberCommand.execute(authContext, {
       userId: newUser.user.id,

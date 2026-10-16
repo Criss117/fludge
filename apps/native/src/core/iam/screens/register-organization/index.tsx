@@ -1,36 +1,23 @@
-import {
-  ThemedNativeText,
-  ThemedText,
-} from "@/core/shared/components/themed-text";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { SPACING } from "@/lib/sp";
-import {
-  Button,
-  Column,
-  ElevatedCard,
-  Host,
-  Spacer,
-} from "@expo/ui/jetpack-compose";
-import {
-  fillMaxWidth,
-  padding,
-  paddingAll,
-  width,
-} from "@expo/ui/jetpack-compose/modifiers";
+import { Button, Column, ElevatedCard, Host, Spacer } from "@expo/ui/jetpack-compose";
+import { fillMaxWidth, padding, paddingAll, width } from "@expo/ui/jetpack-compose/modifiers";
 import { useRegisterOrganizationForm } from "@fludge/client/iam/forms/organization.form";
 import { useRegisterOrganization } from "@fludge/client/iam/mutations/use-organization.mutations";
+import { useFindOrganizations } from "@fludge/client/iam/queries/use-find-organizations";
+import type { TranslationKey } from "@fludge/i18n/index";
 import { Link } from "expo-router";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { OrganizationFormInputs } from "@/core/iam/components/organization-form-inputs";
-import { Icon } from "@/core/shared/components/icon";
-import { useState } from "react";
-import { FieldError } from "@/core/shared/components/field-error";
 import Animated from "react-native-reanimated";
+
+import { OrganizationFormInputs } from "@/core/iam/components/organization-form-inputs";
+import { FieldError } from "@/core/shared/components/field-error";
+import { Icon } from "@/core/shared/components/icon";
+import { ThemedNativeText, ThemedText } from "@/core/shared/components/themed-text";
 import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { useMutationToast } from "@/integrations/toast";
-import type { TranslationKey } from "@fludge/i18n/index";
-import { useFindOrganizations } from "@fludge/client/iam/queries/use-find-organizations";
+import { SPACING } from "@/lib/sp";
 
 export function RegisterOrganizationScreen() {
   const spacer = useKeyboardSpacer();
@@ -50,9 +37,7 @@ export function RegisterOrganizationScreen() {
       registerOrganization.mutate(value, {
         onSuccess: () => {
           resetForm();
-          mutationToast.showSuccess(
-            "forms.organization.register_toast.success",
-          );
+          mutationToast.showSuccess("forms.organization.register_toast.success");
         },
         onError: (error) => {
           setRootError(error.message);
@@ -92,21 +77,15 @@ export function RegisterOrganizationScreen() {
                     {t("forms.organization.commercial_data")}
                   </ThemedNativeText>
                   <form.Field name="name">
-                    {(field) => (
-                      <OrganizationFormInputs.NameInput field={field} />
-                    )}
+                    {(field) => <OrganizationFormInputs.NameInput field={field} />}
                   </form.Field>
 
                   <form.Field name="legalName">
-                    {(field) => (
-                      <OrganizationFormInputs.LegalNameInput field={field} />
-                    )}
+                    {(field) => <OrganizationFormInputs.LegalNameInput field={field} />}
                   </form.Field>
 
                   <form.Field name="taxId">
-                    {(field) => (
-                      <OrganizationFormInputs.TaxIdInput field={field} />
-                    )}
+                    {(field) => <OrganizationFormInputs.TaxIdInput field={field} />}
                   </form.Field>
                 </Column>
               </ElevatedCard>
@@ -131,15 +110,11 @@ export function RegisterOrganizationScreen() {
                     {t("forms.organization.location_and_contact")}
                   </ThemedNativeText>
                   <form.Field name="phone">
-                    {(field) => (
-                      <OrganizationFormInputs.PhoneInput field={field} />
-                    )}
+                    {(field) => <OrganizationFormInputs.PhoneInput field={field} />}
                   </form.Field>
 
                   <form.Field name="address">
-                    {(field) => (
-                      <OrganizationFormInputs.AddressInput field={field} />
-                    )}
+                    {(field) => <OrganizationFormInputs.AddressInput field={field} />}
                   </form.Field>
                 </Column>
               </ElevatedCard>
@@ -166,9 +141,7 @@ export function RegisterOrganizationScreen() {
         </Host>
         {hasOrganizations && (
           <Link href={{ pathname: "/dashboard/organization" }} asChild replace>
-            <ThemedText variant="muted">
-              {t("screens.organization.register.to_select")}
-            </ThemedText>
+            <ThemedText variant="muted">{t("screens.organization.register.to_select")}</ThemedText>
           </Link>
         )}
       </View>

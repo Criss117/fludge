@@ -1,10 +1,9 @@
-import { beforeEach, describe, expect, it } from "bun:test";
-
 import { UpdateOrganizationCommand } from "@fludge/api/core/iam/application/commands/update-organization.command";
 import { Organization } from "@fludge/api/core/iam/domain/entities/organization.entity";
 import { OrganizationAlreadyExistsException } from "@fludge/api/core/iam/domain/exceptions/organization-already-exists.exception";
 import { OrganizationNotFoundException } from "@fludge/api/core/iam/domain/exceptions/organization-not-found.exception";
 import { UUID } from "@fludge/utils/uuid";
+import { beforeEach, describe, expect, it } from "bun:test";
 
 import { InMemoryOrganizationRepository } from "../../infrastructure/in-memory-organization.repository";
 import { InMemoryOrganizationUniquenessValidator } from "../../infrastructure/in-memory-organization-uniqueness-validator";
@@ -27,10 +26,7 @@ describe("UpdateOrganizationCommand", () => {
   beforeEach(() => {
     organizationRepository = new InMemoryOrganizationRepository();
     uniquenessValidator = new InMemoryOrganizationUniquenessValidator();
-    command = new UpdateOrganizationCommand(
-      uniquenessValidator,
-      organizationRepository,
-    );
+    command = new UpdateOrganizationCommand(uniquenessValidator, organizationRepository);
   });
 
   describe("happy path", () => {

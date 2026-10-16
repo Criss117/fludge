@@ -1,13 +1,14 @@
-import migrations from "../../../drizzle/migrations";
-
+import type { type EmptyRelations, Logger } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
-import { openDatabaseSync, type SQLiteRunResult } from "expo-sqlite";
-import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-import { type EmptyRelations, Logger } from "drizzle-orm";
-import { LoadingScreen } from "@/core/shared/components/loading-screen";
-import { FatalErrorScreen } from "@/core/shared/components/fatal-error-screen";
 import type { SQLiteAsyncTransaction } from "drizzle-orm/sqlite-core";
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
+import { openDatabaseSync, type SQLiteRunResult } from "expo-sqlite";
+
+import { FatalErrorScreen } from "@/core/shared/components/fatal-error-screen";
+import { LoadingScreen } from "@/core/shared/components/loading-screen";
+
+import migrations from "../../../drizzle/migrations";
 
 class QueryCounterLogger implements Logger {
   public count = 0;
@@ -33,11 +34,7 @@ export const databaseService = drizzle(expoDb, {
 });
 
 export type DatabaseService = typeof databaseService;
-export type TransactionService = SQLiteAsyncTransaction<
-  "sync",
-  SQLiteRunResult,
-  EmptyRelations
->;
+export type TransactionService = SQLiteAsyncTransaction<"sync", SQLiteRunResult, EmptyRelations>;
 
 function DrizzleStudio() {
   useDrizzleStudio(expoDb);
@@ -50,11 +47,7 @@ export function DatabaseProvider({ children }: { children: React.ReactNode }) {
 
   if (error)
     return (
-      <FatalErrorScreen
-        title="app.errors.db.title"
-        message="app.errors.db.message"
-        error={error}
-      />
+      <FatalErrorScreen title="app.errors.db.title" message="app.errors.db.message" error={error} />
     );
 
   if (!success) return <LoadingScreen message="app.loading.database" />;

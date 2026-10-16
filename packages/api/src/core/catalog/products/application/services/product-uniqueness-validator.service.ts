@@ -1,7 +1,8 @@
 import type { DatabaseService } from "@fludge/db";
 import { product, productPresentation } from "@fludge/db/schema/catalog.schema";
-import { and, eq, inArray, ne, notInArray, or, SQL } from "drizzle-orm";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
+import type { SQL } from "drizzle-orm";
+import { and, eq, inArray, ne, notInArray, or } from "drizzle-orm";
 
 type Values = {
   slug?: string;
@@ -11,17 +12,12 @@ type Values = {
 export class ProductUniquenessValidator {
   constructor(private readonly db: DatabaseService) {}
 
-  public async validateUniqueFields(
-    organizationId: string,
-    value: Values,
-    excludeId?: string,
-  ) {
+  public async validateUniqueFields(organizationId: string, value: Values, excludeId?: string) {
     const { name, slug } = value;
 
-    const orConditions = [
-      name && eq(product.name, name),
-      slug && eq(product.slug, slug),
-    ].filter(Boolean) as SQL[];
+    const orConditions = [name && eq(product.name, name), slug && eq(product.slug, slug)].filter(
+      Boolean,
+    ) as SQL[];
 
     if (orConditions.length === 0)
       return ok({
@@ -75,12 +71,7 @@ export class ProductUniquenessValidator {
           barcode: productPresentation.barcode,
         })
         .from(productPresentation)
-        .where(
-          and(
-            eq(productPresentation.organizationId, organizationId),
-            ...conditions,
-          ),
-        ),
+        .where(and(eq(productPresentation.organizationId, organizationId), ...conditions)),
     );
 
     if (errFind) return err(errFind);

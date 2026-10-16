@@ -1,4 +1,5 @@
 import type { LocalMember } from "@fludge/db/local-schemas/shared.schema";
+
 import type { MemberDetail, MemberSummary } from "./entities";
 
 export type FindAllMembersFilters = {
@@ -7,15 +8,9 @@ export type FindAllMembersFilters = {
 };
 
 export interface MemberRepository {
-  findAll(
-    organizationId: string,
-    filters?: FindAllMembersFilters,
-  ): Promise<MemberSummary[]>;
+  findAll(organizationId: string, filters?: FindAllMembersFilters): Promise<MemberSummary[]>;
 
-  findOneById(
-    organizationId: string,
-    memberId: string,
-  ): Promise<MemberDetail | null>;
+  findOneById(organizationId: string, memberId: string): Promise<MemberDetail | null>;
 
   save(member: LocalMember | LocalMember[]): Promise<void>;
 

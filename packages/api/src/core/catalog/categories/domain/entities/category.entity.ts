@@ -1,7 +1,7 @@
 import { Status } from "@fludge/api/core/shared/value-objects/status";
+import type { CategorySelect } from "@fludge/db/schema/catalog.schema";
 import { Slug } from "@fludge/utils/slugify";
 import { UUID } from "@fludge/utils/uuid";
-import type { CategorySelect } from "@fludge/db/schema/catalog.schema";
 
 export type CreateCategory = {
   name: string;

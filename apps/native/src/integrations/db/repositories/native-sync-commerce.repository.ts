@@ -1,11 +1,3 @@
-import { DatabaseService } from "..";
-import { desc, inArray } from "drizzle-orm";
-import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
-import type { ClientSyncCommerceRepository } from "@fludge/sync/repositories/commerse/client-sync-commerce.repository";
-import type {
-  CommerceSyncCursors,
-  CommerceSyncResult,
-} from "@fludge/sync/types/commerce.types";
 import {
   type LocalCustomer,
   localCustomer,
@@ -15,7 +7,13 @@ import {
   localSaleItem,
   localSalePayment,
 } from "@fludge/db/local-schemas/shared.schema";
-import { NativeSyncStateRepository } from "./native-sync-state.repository";
+import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
+import type { ClientSyncCommerceRepository } from "@fludge/sync/repositories/commerse/client-sync-commerce.repository";
+import type { CommerceSyncCursors, CommerceSyncResult } from "@fludge/sync/types/commerce.types";
+import { inArray } from "drizzle-orm";
+
+import type { DatabaseService } from "..";
+import type { NativeSyncStateRepository } from "./native-sync-state.repository";
 
 export class NativeSyncCommerceRepository implements ClientSyncCommerceRepository {
   constructor(

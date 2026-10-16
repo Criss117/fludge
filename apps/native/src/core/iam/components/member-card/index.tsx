@@ -1,9 +1,3 @@
-import { Avatar } from "@/core/shared/components/avatar";
-import { Icon } from "@/core/shared/components/icon";
-import { StatusChip } from "@/core/shared/components/status-chip";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { SPACING } from "@/lib/sp";
 import {
   AssistChip,
   Column,
@@ -13,21 +7,20 @@ import {
   Row,
   Spacer,
 } from "@expo/ui/jetpack-compose";
-import {
-  fillMaxWidth,
-  paddingAll,
-  weight,
-  width,
-} from "@expo/ui/jetpack-compose/modifiers";
-import { useTranslation } from "react-i18next";
+import { fillMaxWidth, paddingAll, weight, width } from "@expo/ui/jetpack-compose/modifiers";
 import type { MemberSummary } from "@fludge/client/iam/domain/entities";
-import {
-  type MenuOptionItem,
-  MenuOptions,
-} from "@/core/shared/components/menu-options";
 import { useRouter } from "expo-router";
-import { useMemo } from "react";
 import { PressableScale } from "pressto";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+
+import { Avatar } from "@/core/shared/components/avatar";
+import { Icon } from "@/core/shared/components/icon";
+import { type MenuOptionItem, MenuOptions } from "@/core/shared/components/menu-options";
+import { StatusChip } from "@/core/shared/components/status-chip";
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { SPACING } from "@/lib/sp";
 export type MenuOptions = {
   hide?: boolean;
   items?: MenuOptionItem[];
@@ -104,9 +97,7 @@ export function MemberCard({ member, menuOptions }: Props) {
             </RNHostView>
             <Spacer modifiers={[width(SPACING.sm)]} />
             <Column modifiers={[weight(1)]}>
-              <ThemedNativeText maxLines={1}>
-                {member.user.name}
-              </ThemedNativeText>
+              <ThemedNativeText maxLines={1}>{member.user.name}</ThemedNativeText>
               <ThemedNativeText variant="muted" maxLines={1}>
                 {member.user.email}
               </ThemedNativeText>

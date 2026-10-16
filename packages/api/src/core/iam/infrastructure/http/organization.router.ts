@@ -1,7 +1,7 @@
-import { hasPermissionProcedure, rootOnlyProcedure } from "@fludge/api/index";
 import { registerOrganizationCommand } from "@fludge/api/core/iam/application/commands/register-organization.command";
 import { updateOrganizationCommand } from "@fludge/api/core/iam/application/commands/update-organization.command";
 import { iamContainer } from "@fludge/api/core/iam/container";
+import { hasPermissionProcedure, rootOnlyProcedure } from "@fludge/api/index";
 import type { UserSelect } from "@fludge/db/schema/auth.schema";
 
 const TAGS = ["Organizations"] as const;
@@ -21,10 +21,7 @@ export const organizationRouter = {
           image: context.session.user.image ?? null,
         } as UserSelect;
 
-        return iamContainer.commands.organization.register.execute(
-          user,
-          input,
-        );
+        return iamContainer.commands.organization.register.execute(user, input);
       }),
 
     update: hasPermissionProcedure({

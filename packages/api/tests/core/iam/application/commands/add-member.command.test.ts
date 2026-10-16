@@ -1,8 +1,7 @@
-import { beforeEach, describe, expect, it } from "bun:test";
-
 import { AddMemberCommand } from "@fludge/api/core/iam/application/commands/add-member.command";
 import { MemberAlreadyExistsException } from "@fludge/api/core/iam/domain/exceptions/member-already-exists.exception";
 import { UUID } from "@fludge/utils/uuid";
+import { beforeEach, describe, expect, it } from "bun:test";
 
 import { makeAuthContext, makeMember, makeOwner } from "../../factories";
 import { InMemoryMemberRepository } from "../../infrastructure/in-memory-member.repository";
@@ -26,10 +25,7 @@ describe("AddMemberCommand", () => {
         userId: userId.toString(),
       });
 
-      const [stored] = await memberRepository.findById(
-        auth.organizationId.toString(),
-        result.id,
-      );
+      const [stored] = await memberRepository.findById(auth.organizationId.toString(), result.id);
 
       expect(stored).not.toBeNull();
       expect(stored!.values).toMatchObject({
@@ -67,13 +63,9 @@ describe("AddMemberCommand", () => {
       const userId = UUID.generate();
       const auth = makeAuthContext({ member: owner });
 
-      await memberRepository.save(
-        makeMember({ organizationId: auth.organizationId, userId }),
-      );
+      await memberRepository.save(makeMember({ organizationId: auth.organizationId, userId }));
 
-      const err = await command
-        .execute(auth, { userId: userId.toString() })
-        .catch((e) => e);
+      const err = await command.execute(auth, { userId: userId.toString() }).catch((e) => e);
 
       expect(err).toBeInstanceOf(MemberAlreadyExistsException);
       expect(err.message).toBe("api_errors.iam.members.already_exists");

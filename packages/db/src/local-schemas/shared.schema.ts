@@ -1,17 +1,17 @@
 import {
   category,
   customer,
+  customerPayment,
   group,
   groupMember,
   member,
   organization,
   product,
   productPresentation,
-  user,
   sale,
   saleItem,
-  customerPayment,
   salePayment,
+  user,
 } from "../schema";
 
 // IAM
@@ -41,8 +41,7 @@ export const localProductPresentation = productPresentation;
 
 export type LocalCategory = typeof localCategory.$inferSelect;
 
-export type LocalProductPresentation =
-  typeof localProductPresentation.$inferSelect;
+export type LocalProductPresentation = typeof localProductPresentation.$inferSelect;
 export type LocalProduct = typeof localProduct.$inferSelect & {
   presentations: LocalProductPresentation[];
 };

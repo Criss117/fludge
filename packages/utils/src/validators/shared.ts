@@ -1,7 +1,7 @@
+import type { TranslationKey } from "@fludge/i18n/index";
 import { z } from "zod";
 
 import { statusEnum } from "../enums/db-enums";
-import type { TranslationKey } from "@fludge/i18n/index";
 
 export function getI18nKey(key: TranslationKey) {
   return key;

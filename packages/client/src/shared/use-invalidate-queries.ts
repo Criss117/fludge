@@ -1,9 +1,9 @@
 import { useQueryClient } from "@tanstack/react-query";
+
 import { useAppState } from "../iam/hooks/use-app-state";
 
 type Module = "catalog" | "iam" | "commerce";
-type Resource =
-  "products" | "groups" | "members" | "categories" | "customers" | "sales";
+type Resource = "products" | "groups" | "members" | "categories" | "customers" | "sales";
 
 interface QueryKeysGeneratorProps<T, TNormalizedFilters> {
   module: Module;
@@ -13,23 +13,12 @@ interface QueryKeysGeneratorProps<T, TNormalizedFilters> {
 
 type QueryKeysReturn<T, TNormalizedFilters> = {
   all: (orgId: string) => readonly [Module, "organizations", string, Resource];
-  list: (
-    orgId: string,
-  ) => readonly [Module, "organizations", string, Resource, "list"];
+  list: (orgId: string) => readonly [Module, "organizations", string, Resource, "list"];
   filteredList: (
     orgId: string,
     filters: T,
-  ) => readonly [
-    Module,
-    "organizations",
-    string,
-    Resource,
-    "list",
-    TNormalizedFilters,
-  ];
-  allDetails: (
-    orgId: string,
-  ) => readonly [Module, "organizations", string, Resource, "detail"];
+  ) => readonly [Module, "organizations", string, Resource, "list", TNormalizedFilters];
+  allDetails: (orgId: string) => readonly [Module, "organizations", string, Resource, "detail"];
   detail: (
     orgId: string,
     resourceId: string,
@@ -40,12 +29,8 @@ function queriesKeysGenerator<T, TNormalizedFilters>({
   module,
   resource,
   normalizeFilters,
-}: QueryKeysGeneratorProps<T, TNormalizedFilters>): QueryKeysReturn<
-  T,
-  TNormalizedFilters
-> {
-  const all = (orgId: string) =>
-    [module, "organizations", orgId, resource] as const;
+}: QueryKeysGeneratorProps<T, TNormalizedFilters>): QueryKeysReturn<T, TNormalizedFilters> {
+  const all = (orgId: string) => [module, "organizations", orgId, resource] as const;
 
   const list = (orgId: string) => [...all(orgId), "list"] as const;
 
@@ -54,8 +39,7 @@ function queriesKeysGenerator<T, TNormalizedFilters>({
 
   const allDetails = (orgId: string) => [...all(orgId), "detail"] as const;
 
-  const detail = (orgId: string, resourceId: string) =>
-    [...allDetails(orgId), resourceId] as const;
+  const detail = (orgId: string, resourceId: string) => [...allDetails(orgId), resourceId] as const;
 
   return {
     all,

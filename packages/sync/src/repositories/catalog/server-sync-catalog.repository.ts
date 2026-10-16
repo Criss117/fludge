@@ -1,7 +1,4 @@
-import type {
-  CatalogSyncCursors,
-  CatalogSyncResult,
-} from "@fludge/sync/types/catalog.types";
+import type { CatalogSyncCursors, CatalogSyncResult } from "@fludge/sync/types/catalog.types";
 
 export interface ServerSyncCatalogRepository {
   findAllItems(

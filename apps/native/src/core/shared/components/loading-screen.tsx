@@ -1,12 +1,7 @@
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ActivityIndicator,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { ActivityIndicator, StyleSheet, useColorScheme, View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -16,8 +11,9 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { ThemedText } from "./themed-text";
+
 import { useThemeColor } from "../hooks/use-theme-color";
+import { ThemedText } from "./themed-text";
 
 type LoadingScreenProps = {
   message?: TranslationKey;
@@ -76,9 +72,7 @@ export function LoadingScreen({ message }: LoadingScreenProps) {
       ]}
     >
       <Animated.View style={[styles.logo, logoStyle]}>
-        <ThemedText
-          style={[styles.title, isDark && { color: colors.onBackground }]}
-        >
+        <ThemedText style={[styles.title, isDark && { color: colors.onBackground }]}>
           {t("app.title")}
         </ThemedText>
         {message ? (

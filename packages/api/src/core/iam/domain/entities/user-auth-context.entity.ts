@@ -1,6 +1,7 @@
 import type { PermissionsRecord } from "@fludge/utils/permissions/data";
 import { Permissions } from "@fludge/utils/permissions/index";
-import { UUID } from "@fludge/utils/uuid";
+import type { UUID } from "@fludge/utils/uuid";
+
 import type { Group } from "./group.entity";
 import type { Member } from "./member.entity";
 
@@ -18,11 +19,7 @@ export class UserAuthContext {
   ) {}
 
   public static create(values: CreateUserAuthContext) {
-    return new UserAuthContext(
-      values.organizationId,
-      values.member,
-      values.groups,
-    );
+    return new UserAuthContext(values.organizationId, values.member, values.groups);
   }
 
   public get organizationId() {
@@ -37,16 +34,14 @@ export class UserAuthContext {
     return this._groups;
   }
 
-  public hasPermission(
-    required: PermissionsRecord,
-    mode: "all" | "any" = "all",
-  ) {
+  public hasPermission(required: PermissionsRecord, mode: "all" | "any" = "all") {
     if (this._member.role.isOwner()) return true;
 
     const activeGroups = this._groups.filter((group) => group.status.isActive());
 
-    return Permissions.merge(
-      activeGroups.map((group) => group.permissions),
-    ).checkPermissions(required, mode);
+    return Permissions.merge(activeGroups.map((group) => group.permissions)).checkPermissions(
+      required,
+      mode,
+    );
   }
 }

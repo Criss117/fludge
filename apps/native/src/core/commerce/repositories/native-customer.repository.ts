@@ -1,27 +1,18 @@
-import type { DatabaseService } from "@/integrations/db";
 import type {
   CustomerRepository,
   FindAllCustomersFilters,
 } from "@fludge/client/commerce/domain/customer.repository";
+import type { CustomerDetail, CustomerSummary } from "@fludge/client/commerce/domain/entities";
 import {
-  buildConflictUpdateColumn,
-  jsonObject,
-} from "@fludge/db/utils/build-queries";
-import { and, desc, eq, getColumns, inArray, like, sql } from "drizzle-orm";
-import {
-  type Cursor,
-  type PaginatedResponse,
-  paginate,
-} from "@fludge/utils/pagination";
-import {
+  type LocalCustomer,
   localCustomer,
   localCustomerPayment,
-  type LocalCustomer,
 } from "@fludge/db/local-schemas/shared.schema";
-import type {
-  CustomerDetail,
-  CustomerSummary,
-} from "@fludge/client/commerce/domain/entities";
+import { buildConflictUpdateColumn, jsonObject } from "@fludge/db/utils/build-queries";
+import { type Cursor, paginate, type PaginatedResponse } from "@fludge/utils/pagination";
+import { and, desc, eq, getColumns, inArray, like, sql } from "drizzle-orm";
+
+import type { DatabaseService } from "@/integrations/db";
 
 export class NativeCustomerRepository implements CustomerRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -35,7 +26,7 @@ export class NativeCustomerRepository implements CustomerRepository {
   public async findAll(
     organizationId: string,
     cursor: Cursor,
-    filters?: FindAllCustomersFilters
+    filters?: FindAllCustomersFilters,
   ): Promise<PaginatedResponse<CustomerSummary>> {
     const rows = this.db
       .select()
@@ -43,10 +34,8 @@ export class NativeCustomerRepository implements CustomerRepository {
       .where(
         and(
           eq(localCustomer.organizationId, organizationId),
-          filters?.searchQuery
-            ? like(localCustomer.name, `%${filters.searchQuery}%`)
-            : undefined
-        )
+          filters?.searchQuery ? like(localCustomer.name, `%${filters.searchQuery}%`) : undefined,
+        ),
       )
       .limit(cursor.limit + 1)
       .offset(cursor.limit * cursor.page)
@@ -58,7 +47,7 @@ export class NativeCustomerRepository implements CustomerRepository {
 
   public async findOneById(
     organizationId: string,
-    customerId: string
+    customerId: string,
   ): Promise<CustomerDetail | null> {
     const customer = this.db
       .select({
@@ -70,15 +59,9 @@ export class NativeCustomerRepository implements CustomerRepository {
           `.as("payments"),
       })
       .from(localCustomer)
-      .leftJoin(
-        localCustomerPayment,
-        eq(localCustomerPayment.customerId, localCustomer.id)
-      )
+      .leftJoin(localCustomerPayment, eq(localCustomerPayment.customerId, localCustomer.id))
       .where(
-        and(
-          eq(localCustomer.organizationId, organizationId),
-          eq(localCustomer.id, customerId)
-        )
+        and(eq(localCustomer.organizationId, organizationId), eq(localCustomer.id, customerId)),
       )
       .limit(1)
       .get();
@@ -87,9 +70,7 @@ export class NativeCustomerRepository implements CustomerRepository {
 
     return {
       ...customer,
-      payments: (
-        JSON.parse(customer.payments) as CustomerDetail["payments"]
-      ).map((p) => ({
+      payments: (JSON.parse(customer.payments) as CustomerDetail["payments"]).map((p) => ({
         ...p,
         createdAt: new Date(p.createdAt),
         updatedAt: new Date(p.updatedAt),
@@ -97,12 +78,8 @@ export class NativeCustomerRepository implements CustomerRepository {
     };
   }
 
-  public async save(
-    customerValues: LocalCustomer | LocalCustomer[]
-  ): Promise<void> {
-    const customersArray = Array.isArray(customerValues)
-      ? customerValues
-      : [customerValues];
+  public async save(customerValues: LocalCustomer | LocalCustomer[]): Promise<void> {
+    const customersArray = Array.isArray(customerValues) ? customerValues : [customerValues];
 
     const customers: Omit<LocalCustomer, "payments">[] = [];
     const payments: LocalCustomer["payments"] = [];
@@ -138,8 +115,8 @@ export class NativeCustomerRepository implements CustomerRepository {
           .where(
             inArray(
               localCustomerPayment.customerId,
-              customers.map((c) => c.id)
-            )
+              customers.map((c) => c.id),
+            ),
           )
           .run();
 
@@ -148,10 +125,7 @@ export class NativeCustomerRepository implements CustomerRepository {
     });
   }
 
-  public async delete(
-    organizationId: string,
-    customerId: string | string[]
-  ): Promise<void> {
+  public async delete(organizationId: string, customerId: string | string[]): Promise<void> {
     const customerIds = Array.isArray(customerId) ? customerId : [customerId];
 
     this.db
@@ -159,8 +133,8 @@ export class NativeCustomerRepository implements CustomerRepository {
       .where(
         and(
           eq(localCustomer.organizationId, organizationId),
-          inArray(localCustomer.id, customerIds)
-        )
+          inArray(localCustomer.id, customerIds),
+        ),
       )
       .run();
   }

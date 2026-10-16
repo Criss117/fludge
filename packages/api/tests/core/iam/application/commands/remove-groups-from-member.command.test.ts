@@ -1,5 +1,3 @@
-import { beforeEach, describe, expect, it } from "bun:test";
-
 import { AssignGroupsToMemberCommand } from "@fludge/api/core/iam/application/commands/assign-groups-to-member.command";
 import { RemoveGroupsFromMemberCommand } from "@fludge/api/core/iam/application/commands/remove-groups-from-member.command";
 import { Group } from "@fludge/api/core/iam/domain/entities/group.entity";
@@ -9,10 +7,11 @@ import { MemberIsOwnerException } from "@fludge/api/core/iam/domain/exceptions/m
 import { MemberNotFoundException } from "@fludge/api/core/iam/domain/exceptions/member-not-found.exception";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
+import { beforeEach, describe, expect, it } from "bun:test";
 
 import { makeAuthContext, makeMember, makeOwner } from "../../factories";
-import { InMemoryGroupMemberRepository } from "../../infrastructure/in-memory-group-member.repository";
 import { InMemoryGroupRepository } from "../../infrastructure/in-memory-group.repository";
+import { InMemoryGroupMemberRepository } from "../../infrastructure/in-memory-group-member.repository";
 import { InMemoryMemberRepository } from "../../infrastructure/in-memory-member.repository";
 
 function setupOrganization() {
@@ -65,10 +64,7 @@ describe("RemoveGroupsFromMemberCommand", () => {
       await groupRepository.save([groupOne, groupTwo]);
 
       // Pre-assign the member to both groups through the assign command.
-      const assign = new AssignGroupsToMemberCommand(
-        groupRepository,
-        memberRepository,
-      );
+      const assign = new AssignGroupsToMemberCommand(groupRepository, memberRepository);
       await assign.execute(auth, {
         memberId: member.id.toString(),
         groupIds: [groupOne.id.toString(), groupTwo.id.toString()],
@@ -83,14 +79,8 @@ describe("RemoveGroupsFromMemberCommand", () => {
         expect.arrayContaining([groupOne.id.toString(), groupTwo.id.toString()]),
       );
 
-      const [storedOne] = await groupRepository.findById(
-        org.id.toString(),
-        groupOne.id.toString(),
-      );
-      const [storedTwo] = await groupRepository.findById(
-        org.id.toString(),
-        groupTwo.id.toString(),
-      );
+      const [storedOne] = await groupRepository.findById(org.id.toString(), groupOne.id.toString());
+      const [storedTwo] = await groupRepository.findById(org.id.toString(), groupTwo.id.toString());
 
       expect(storedOne!.getGroupMemberByMemberId(member.id)).toBeNull();
       expect(storedTwo!.getGroupMemberByMemberId(member.id)).toBeNull();
@@ -109,10 +99,7 @@ describe("RemoveGroupsFromMemberCommand", () => {
       await memberRepository.save([owner, member]);
       await groupRepository.save([groupOne, groupTwo]);
 
-      const assign = new AssignGroupsToMemberCommand(
-        groupRepository,
-        memberRepository,
-      );
+      const assign = new AssignGroupsToMemberCommand(groupRepository, memberRepository);
       await assign.execute(auth, {
         memberId: member.id.toString(),
         groupIds: [groupOne.id.toString(), groupTwo.id.toString()],
@@ -123,14 +110,8 @@ describe("RemoveGroupsFromMemberCommand", () => {
         groupIds: [groupOne.id.toString()],
       });
 
-      const [storedOne] = await groupRepository.findById(
-        org.id.toString(),
-        groupOne.id.toString(),
-      );
-      const [storedTwo] = await groupRepository.findById(
-        org.id.toString(),
-        groupTwo.id.toString(),
-      );
+      const [storedOne] = await groupRepository.findById(org.id.toString(), groupOne.id.toString());
+      const [storedTwo] = await groupRepository.findById(org.id.toString(), groupTwo.id.toString());
 
       expect(storedOne!.getGroupMemberByMemberId(member.id)).toBeNull();
       expect(storedTwo!.getGroupMemberByMemberId(member.id)).not.toBeNull();

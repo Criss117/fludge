@@ -19,9 +19,5 @@ export function getRemountEpoch() {
 }
 
 export function useRemountEpoch() {
-  return useSyncExternalStore(
-    subscribeRemount,
-    getRemountEpoch,
-    getRemountEpoch,
-  );
+  return useSyncExternalStore(subscribeRemount, getRemountEpoch, getRemountEpoch);
 }

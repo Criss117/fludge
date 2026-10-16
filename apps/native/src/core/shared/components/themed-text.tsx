@@ -1,15 +1,8 @@
-import {
-  Text as RNText,
-  StyleSheet,
-  type TextProps as RNTextProps,
-} from "react-native";
+import { Text as NativeText, type TextProps as NativeTextProps } from "@expo/ui/jetpack-compose";
+import { StyleSheet, Text as RNText, type TextProps as RNTextProps } from "react-native";
 
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { GeistFonts } from "@/integrations/fonts";
-import {
-  Text as NativeText,
-  type TextProps as NativeTextProps,
-} from "@expo/ui/jetpack-compose";
 import { fs, lh } from "@/lib/typography";
 
 export type TextVariantsKey = keyof typeof TextVariants;
@@ -55,19 +48,10 @@ export function ThemedNativeText({
   );
 }
 
-export function ThemedText({
-  style,
-  variant = "base",
-  ...rest
-}: ThemedTextProps) {
+export function ThemedText({ style, variant = "base", ...rest }: ThemedTextProps) {
   const textColor = useVariantColor(variant);
 
-  return (
-    <RNText
-      style={[TextVariants[variant], { color: textColor }, style]}
-      {...rest}
-    />
-  );
+  return <RNText style={[TextVariants[variant], { color: textColor }, style]} {...rest} />;
 }
 
 const TextVariants = StyleSheet.create({

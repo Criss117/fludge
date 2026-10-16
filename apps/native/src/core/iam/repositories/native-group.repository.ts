@@ -1,32 +1,19 @@
-import { DatabaseService } from "@/integrations/db";
-import { GroupDetail, GroupSummary } from "@fludge/client/iam/domain/entities";
+import type { GroupDetail, GroupSummary } from "@fludge/client/iam/domain/entities";
 import type {
   FindAllGroupsFilters,
   GroupRepository,
 } from "@fludge/client/iam/domain/group.repository";
+import type { LocalGroup } from "@fludge/db/local-schemas/shared.schema";
 import {
   localGroup,
   localGroupMember,
-  LocalGroup,
   localMember,
   localUser,
 } from "@fludge/db/local-schemas/shared.schema";
-import {
-  buildConflictUpdateColumn,
-  jsonObject,
-} from "@fludge/db/utils/build-queries";
+import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
+import { and, count, desc, eq, getColumns, inArray, like, notInArray, or } from "drizzle-orm";
 
-import {
-  and,
-  count,
-  desc,
-  eq,
-  getColumns,
-  inArray,
-  like,
-  notInArray,
-  or,
-} from "drizzle-orm";
+import type { DatabaseService } from "@/integrations/db";
 
 export class NativeGroupRepository implements GroupRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -64,19 +51,11 @@ export class NativeGroupRepository implements GroupRepository {
       .all();
   }
 
-  public async findOneById(
-    organizationId: string,
-    groupId: string,
-  ): Promise<GroupDetail | null> {
+  public async findOneById(organizationId: string, groupId: string): Promise<GroupDetail | null> {
     const groupData = this.db
       .select()
       .from(localGroup)
-      .where(
-        and(
-          eq(localGroup.organizationId, organizationId),
-          eq(localGroup.id, groupId),
-        ),
-      )
+      .where(and(eq(localGroup.organizationId, organizationId), eq(localGroup.id, groupId)))
       .limit(1)
       .get();
 
@@ -163,10 +142,7 @@ export class NativeGroupRepository implements GroupRepository {
       .where(
         or(
           ...groups.map((g) =>
-            and(
-              eq(localGroup.organizationId, g.organizationId),
-              eq(localGroup.id, g.id),
-            ),
+            and(eq(localGroup.organizationId, g.organizationId), eq(localGroup.id, g.id)),
           ),
         ),
       )

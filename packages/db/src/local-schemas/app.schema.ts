@@ -1,4 +1,5 @@
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+
 import { auditMetadata } from "../shared";
 
 export const APP_ID = "app";

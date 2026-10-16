@@ -1,12 +1,9 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useNetwork } from "@fludge/client/providers/network-status.provider";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
-import type { SessionRepository } from "../domain/session.repository";
 import { defaultSyncState } from "@fludge/db/local-schemas/app.schema";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+
+import type { SessionRepository } from "../domain/session.repository";
 
 const QUERY_KEY = ["app"] as const;
 
@@ -24,8 +21,7 @@ export function useAppState() {
       if (!isInternetReachable) return app;
 
       try {
-        const { data, error } =
-          await iamContainer.repositories.sessionRepository.getSession();
+        const { data, error } = await iamContainer.repositories.sessionRepository.getSession();
 
         if (error) {
           if (error.status === 401 || error.status === 403) {
@@ -85,10 +81,9 @@ export function useAppState() {
     mutationKey: ["app", "set-active-organization"],
     mutationFn: async (values: { activeOrganizationId: string | null }) => {
       if (values.activeOrganizationId) {
-        const organization =
-          await iamContainer.repositories.organizationRepository.findOneById(
-            values.activeOrganizationId,
-          );
+        const organization = await iamContainer.repositories.organizationRepository.findOneById(
+          values.activeOrganizationId,
+        );
 
         if (!organization) return;
       }
@@ -110,16 +105,13 @@ export function useAppState() {
 
   const signUpEmail = useMutation({
     mutationKey: ["signUpEmail"],
-    mutationFn: async (
-      values: Parameters<SessionRepository["signUpEmail"]>[0],
-    ) => {
-      const { error } =
-        await iamContainer.repositories.sessionRepository.signUpEmail(
-          { ...values, isRoot: true } as any,
-          {
-            query: { disableCookieCache: true },
-          },
-        );
+    mutationFn: async (values: Parameters<SessionRepository["signUpEmail"]>[0]) => {
+      const { error } = await iamContainer.repositories.sessionRepository.signUpEmail(
+        { ...values, isRoot: true } as any,
+        {
+          query: { disableCookieCache: true },
+        },
+      );
 
       if (error) throw new Error(error.message, { cause: error });
 
@@ -129,11 +121,8 @@ export function useAppState() {
 
   const signInEmail = useMutation({
     mutationKey: ["signInEmail"],
-    mutationFn: async (
-      values: Parameters<SessionRepository["signInEmail"]>[0],
-    ) => {
-      const { error } =
-        await iamContainer.repositories.sessionRepository.signInEmail(values);
+    mutationFn: async (values: Parameters<SessionRepository["signInEmail"]>[0]) => {
+      const { error } = await iamContainer.repositories.sessionRepository.signInEmail(values);
 
       if (error) throw new Error(error.message, { cause: error });
 
@@ -144,8 +133,7 @@ export function useAppState() {
   const signOut = useMutation({
     mutationKey: ["signOut"],
     mutationFn: async () => {
-      const { error } =
-        await iamContainer.repositories.sessionRepository.signOut();
+      const { error } = await iamContainer.repositories.sessionRepository.signOut();
 
       if (error) throw new Error(error.message, { cause: error });
 

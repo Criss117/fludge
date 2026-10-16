@@ -1,8 +1,9 @@
 import { z } from "zod";
+
 import {
-  PERMISSIONS,
   type ActionFor,
   type Permission,
+  PERMISSIONS,
   type PermissionsRecord,
   type Resource,
 } from "./data";
@@ -34,9 +35,7 @@ export class Permissions {
     }
 
     for (const [resource, actions] of actionsByResource) {
-      const resourceHasReadAction = (
-        PERMISSIONS[resource] as readonly string[]
-      ).includes("read");
+      const resourceHasReadAction = (PERMISSIONS[resource] as readonly string[]).includes("read");
 
       if (resourceHasReadAction && !actions.has("read")) {
         result.add(`${resource}:read` as Permission);
@@ -59,10 +58,7 @@ export class Permissions {
     const result: PermissionsRecord = {};
 
     for (const permission of this.permissions) {
-      const [resource, action] = permission.split(":") as [
-        Resource,
-        ActionFor<Resource>,
-      ];
+      const [resource, action] = permission.split(":") as [Resource, ActionFor<Resource>];
 
       if (!result[resource]) {
         result[resource] = [];
@@ -89,9 +85,7 @@ export class Permissions {
     return new Permissions([...merged]);
   }
 
-  private static assertNonEmptyRequired(
-    required: PermissionsRecord,
-  ): Permission[] {
+  private static assertNonEmptyRequired(required: PermissionsRecord): Permission[] {
     const requiredList = Permissions.recordToList(required);
 
     if (requiredList.length === 0) {
@@ -113,10 +107,7 @@ export class Permissions {
     return requiredList.some((permission) => this.permissions.has(permission));
   }
 
-  public checkPermissions(
-    required: PermissionsRecord,
-    mode: "all" | "any" = "all",
-  ): boolean {
+  public checkPermissions(required: PermissionsRecord, mode: "all" | "any" = "all"): boolean {
     if (mode === "all") return this.hasAll(required);
 
     return this.hasAny(required);

@@ -8,16 +8,13 @@ import { user } from "@fludge/db/schema/auth.schema";
 import {
   group,
   groupMember,
+  type GroupMemberSelect,
   member,
   organization,
-  type GroupMemberSelect,
 } from "@fludge/db/schema/iam.schema";
 import { jsonObject } from "@fludge/db/utils/build-queries";
 import type { ServerSyncIamRepository } from "@fludge/sync/repositories/iam/server-sync-iam.repository";
-import type {
-  IamSyncCursors,
-  IamSyncResult,
-} from "@fludge/sync/types/iam.types";
+import type { IamSyncCursors, IamSyncResult } from "@fludge/sync/types/iam.types";
 import {
   paginateSync,
   type PaginateSyncQueryFn,
@@ -25,40 +22,25 @@ import {
 } from "@fludge/sync/types/shared.types";
 import { and, asc, eq, getColumns, gt, inArray, or, sql } from "drizzle-orm";
 
-const after = <T extends { updatedAt: any; id: any }>(
-  t: T,
-  c: SyncCursor | null,
-) =>
+const after = <T extends { updatedAt: any; id: any }>(t: T, c: SyncCursor | null) =>
   c
-    ? or(
-        gt(t.updatedAt, c.updatedAt),
-        and(eq(t.updatedAt, c.updatedAt), gt(t.id, c.id)),
-      )
+    ? or(gt(t.updatedAt, c.updatedAt), and(eq(t.updatedAt, c.updatedAt), gt(t.id, c.id)))
     : undefined;
 
 export class SQLiteSyncIamRepository implements ServerSyncIamRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  private organizationsQuery(
-    organizationIds: string[],
-  ): PaginateSyncQueryFn<LocalOrganization> {
+  private organizationsQuery(organizationIds: string[]): PaginateSyncQueryFn<LocalOrganization> {
     return (cursor, limit) =>
       this.db
         .select()
         .from(organization)
-        .where(
-          and(
-            inArray(organization.id, organizationIds),
-            after(organization, cursor),
-          ),
-        )
+        .where(and(inArray(organization.id, organizationIds), after(organization, cursor)))
         .orderBy(asc(organization.updatedAt), asc(organization.id))
         .limit(limit);
   }
 
-  private membersQuery(
-    organizationIds: string[],
-  ): PaginateSyncQueryFn<LocalMember> {
+  private membersQuery(organizationIds: string[]): PaginateSyncQueryFn<LocalMember> {
     return (cursor, limit) =>
       this.db
         .select({
@@ -67,19 +49,12 @@ export class SQLiteSyncIamRepository implements ServerSyncIamRepository {
         })
         .from(member)
         .innerJoin(user, eq(user.id, member.userId)) // ejemplo de join
-        .where(
-          and(
-            inArray(member.organizationId, organizationIds),
-            after(member, cursor),
-          ),
-        )
+        .where(and(inArray(member.organizationId, organizationIds), after(member, cursor)))
         .orderBy(asc(member.updatedAt), asc(member.id))
         .limit(limit);
   }
 
-  private groupsQuery(
-    organizationIds: string[],
-  ): PaginateSyncQueryFn<LocalGroup> {
+  private groupsQuery(organizationIds: string[]): PaginateSyncQueryFn<LocalGroup> {
     return async (cursor, limit) => {
       const rows = await this.db
         .select({
@@ -91,12 +66,7 @@ export class SQLiteSyncIamRepository implements ServerSyncIamRepository {
         })
         .from(group)
         .leftJoin(groupMember, eq(group.id, groupMember.groupId))
-        .where(
-          and(
-            inArray(group.organizationId, organizationIds),
-            after(group, cursor),
-          ),
-        )
+        .where(and(inArray(group.organizationId, organizationIds), after(group, cursor)))
         .groupBy(group.id)
         .orderBy(asc(group.updatedAt), asc(group.id))
         .limit(limit);
@@ -117,21 +87,9 @@ export class SQLiteSyncIamRepository implements ServerSyncIamRepository {
     limit = 500,
   ): Promise<IamSyncResult> {
     const [organizations, members, groups] = await Promise.all([
-      paginateSync(
-        this.organizationsQuery(organizationIds),
-        lastSyncedAt.organization,
-        limit,
-      ),
-      paginateSync(
-        this.membersQuery(organizationIds),
-        lastSyncedAt.member,
-        limit,
-      ),
-      paginateSync(
-        this.groupsQuery(organizationIds),
-        lastSyncedAt.group,
-        limit,
-      ),
+      paginateSync(this.organizationsQuery(organizationIds), lastSyncedAt.organization, limit),
+      paginateSync(this.membersQuery(organizationIds), lastSyncedAt.member, limit),
+      paginateSync(this.groupsQuery(organizationIds), lastSyncedAt.group, limit),
     ]);
 
     return {

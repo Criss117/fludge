@@ -1,7 +1,7 @@
-import { hasPermissionProcedure } from "@fludge/api/index";
+import { catalogContainer } from "@fludge/api/core/catalog/container";
 import { createProductCommand } from "@fludge/api/core/catalog/products/application/commands/create-product.command";
 import { updateProductCommand } from "@fludge/api/core/catalog/products/application/commands/update-product.command";
-import { catalogContainer } from "@fludge/api/core/catalog/container";
+import { hasPermissionProcedure } from "@fludge/api/index";
 
 const TAGS = ["Products"] as const;
 
@@ -17,10 +17,7 @@ export const productsRouter = {
       })
       .input(createProductCommand)
       .handler(({ input, context }) =>
-        catalogContainer.commands.createProductCommand.execute(
-          context.session.authContext,
-          input,
-        ),
+        catalogContainer.commands.createProductCommand.execute(context.session.authContext, input),
       ),
 
     update: hasPermissionProcedure({
@@ -33,10 +30,7 @@ export const productsRouter = {
       })
       .input(updateProductCommand)
       .handler(({ input, context }) =>
-        catalogContainer.commands.updateProductCommand.execute(
-          context.session.authContext,
-          input,
-        ),
+        catalogContainer.commands.updateProductCommand.execute(context.session.authContext, input),
       ),
   },
 };

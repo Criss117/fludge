@@ -1,5 +1,6 @@
 import { auth } from "@fludge/auth";
 import { databaseService } from "@fludge/db";
+
 import { SeedAllService } from "./services/seed-all.service";
 import { SeedCatalogService } from "./services/seed-catalog.service";
 import { SeedCommerceService } from "./services/seed-commerce.service";

@@ -1,15 +1,10 @@
+import { faker } from "@faker-js/faker/locale/es_MX";
 import type { AuthService } from "@fludge/auth";
 import type { DatabaseService } from "@fludge/db";
-import {
-  group,
-  groupMember,
-  member,
-  organization,
-} from "@fludge/db/schema/iam.schema";
 import { user } from "@fludge/db/schema/auth.schema";
-import { faker } from "@faker-js/faker/locale/es_MX";
-import { PERMISSIONS } from "@fludge/utils/permissions/data";
+import { group, groupMember, member, organization } from "@fludge/db/schema/iam.schema";
 import type { Permission } from "@fludge/utils/permissions/data";
+import { PERMISSIONS } from "@fludge/utils/permissions/data";
 import { Slug } from "@fludge/utils/slugify";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { UUID } from "@fludge/utils/uuid";
@@ -17,6 +12,7 @@ import type { seedIamValidator } from "@fludge/utils/validators/seed.validators"
 import { eq } from "drizzle-orm";
 import pLimit from "p-limit";
 import type { z } from "zod";
+
 import { batchInsert } from "./batch-insert";
 
 type SeedIamInput = z.infer<typeof seedIamValidator>;
@@ -43,8 +39,7 @@ export class SeedIamService {
     const [rootUsers, errRoots] = await tryCatch(
       this.db.select().from(user).where(eq(user.isRoot, true)),
     );
-    if (errRoots)
-      throw new Error("Error fetching root users", { cause: errRoots });
+    if (errRoots) throw new Error("Error fetching root users", { cause: errRoots });
     if (rootUsers.length === 0) {
       throw new Error("No root users found. Run seedUsers first.");
     }
@@ -89,18 +84,12 @@ export class SeedIamService {
     }
 
     // 3. Batch insert organizations
-    const [, errOrgs] = await tryCatch(
-      batchInsert(this.db, organization, orgsToInsert),
-    );
-    if (errOrgs)
-      throw new Error("Error inserting organizations", { cause: errOrgs });
+    const [, errOrgs] = await tryCatch(batchInsert(this.db, organization, orgsToInsert));
+    if (errOrgs) throw new Error("Error inserting organizations", { cause: errOrgs });
 
     // 4. Batch insert owner members
-    const [, errOwners] = await tryCatch(
-      batchInsert(this.db, member, ownerMembersToInsert),
-    );
-    if (errOwners)
-      throw new Error("Error inserting owner members", { cause: errOwners });
+    const [, errOwners] = await tryCatch(batchInsert(this.db, member, ownerMembersToInsert));
+    if (errOwners) throw new Error("Error inserting owner members", { cause: errOwners });
 
     // 5. Crear usuarios normales via betterAuth (limitado a 5 concurrentes)
     const userCreationTasks: {
@@ -162,11 +151,8 @@ export class SeedIamService {
     }
 
     if (normalMembersToInsert.length > 0) {
-      const [, errMembers] = await tryCatch(
-        batchInsert(this.db, member, normalMembersToInsert),
-      );
-      if (errMembers)
-        throw new Error("Error inserting members", { cause: errMembers });
+      const [, errMembers] = await tryCatch(batchInsert(this.db, member, normalMembersToInsert));
+      if (errMembers) throw new Error("Error inserting members", { cause: errMembers });
     }
 
     // 7. Preparar e insertar groups en batch
@@ -193,11 +179,8 @@ export class SeedIamService {
     }
 
     if (groupsToInsert.length > 0) {
-      const [, errGroups] = await tryCatch(
-        batchInsert(this.db, group, groupsToInsert),
-      );
-      if (errGroups)
-        throw new Error("Error inserting groups", { cause: errGroups });
+      const [, errGroups] = await tryCatch(batchInsert(this.db, group, groupsToInsert));
+      if (errGroups) throw new Error("Error inserting groups", { cause: errGroups });
     }
 
     // 8. Preparar e insertar groupMembers en batch
@@ -214,10 +197,7 @@ export class SeedIamService {
           min: 1,
           max: memberIds.length,
         });
-        const selectedMemberIds = faker.helpers.arrayElements(
-          memberIds,
-          numAssignments,
-        );
+        const selectedMemberIds = faker.helpers.arrayElements(memberIds, numAssignments);
 
         for (const memberId of selectedMemberIds) {
           groupMembersToInsert.push({
@@ -231,11 +211,8 @@ export class SeedIamService {
     }
 
     if (groupMembersToInsert.length > 0) {
-      const [, errGM] = await tryCatch(
-        batchInsert(this.db, groupMember, groupMembersToInsert),
-      );
-      if (errGM)
-        throw new Error("Error inserting group members", { cause: errGM });
+      const [, errGM] = await tryCatch(batchInsert(this.db, groupMember, groupMembersToInsert));
+      if (errGM) throw new Error("Error inserting group members", { cause: errGM });
     }
 
     return {

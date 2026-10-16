@@ -1,8 +1,9 @@
-import { UUID } from "@fludge/utils/uuid";
+import type { CustomerPaymentSelect } from "@fludge/db/schema/customer.schema";
 import type { CustomerPaymentMethodEnum } from "@fludge/utils/enums/db-enums";
+import { UUID } from "@fludge/utils/uuid";
+
 import { CustomerPaymentAmount } from "../value-objects/customer-payment-amount";
 import { CustomerPaymentMethod } from "../value-objects/customer-payment-method";
-import type { CustomerPaymentSelect } from "@fludge/db/schema/customer.schema";
 
 interface CreateCustomerPayment {
   organizationId: UUID;

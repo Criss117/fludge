@@ -1,21 +1,16 @@
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { GeistFonts } from "@/integrations/fonts";
 import type { ProductDetail } from "@fludge/client/catalog/domain/entities";
 import { formatCurrency } from "@fludge/utils/format-currency";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  type ViewStyle,
-} from "react-native";
+import { Pressable, StyleSheet, Text, View, type ViewStyle } from "react-native";
+
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { GeistFonts } from "@/integrations/fonts";
 
 export const SALES_CARD_HEIGHT = 180;
 
 export function getSalesProductPrice(
-  presentations: ReadonlyArray<{ priceSale: number }>,
+  presentations: readonly { priceSale: number }[],
   noPriceLabel: string,
 ) {
   if (presentations.length === 0) return noPriceLabel;
@@ -122,11 +117,7 @@ export function SaleProductCard({ product, onPress, style }: Props) {
   return (
     <Pressable
       onPress={handlePress}
-      style={({ pressed }) => [
-        themedStyles.card,
-        style,
-        pressed && themedStyles.pressed,
-      ]}
+      style={({ pressed }) => [themedStyles.card, style, pressed && themedStyles.pressed]}
     >
       <View style={themedStyles.header}>
         <View style={themedStyles.headerContent}>

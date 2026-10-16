@@ -1,6 +1,7 @@
 import { AmountMustBePositiveException } from "@fludge/api/core/commerce/shared/exceptions/amount-must-be-positive.exception";
-import { CantIncreaseBalanceException } from "../exceptions/cant-increase-balance.exception";
+
 import { CantDecreaseBalanceException } from "../exceptions/cant-decrease-balance.exception";
+import { CantIncreaseBalanceException } from "../exceptions/cant-increase-balance.exception";
 
 export class CustomerBalance {
   constructor(
@@ -70,10 +71,7 @@ export class CustomerBalance {
   }
 
   public equals(other: CustomerBalance): boolean {
-    return (
-      this._balance === other._balance &&
-      this._creditLimit === other._creditLimit
-    );
+    return this._balance === other._balance && this._creditLimit === other._creditLimit;
   }
 
   public get value() {

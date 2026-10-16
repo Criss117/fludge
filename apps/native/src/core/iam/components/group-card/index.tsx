@@ -1,7 +1,3 @@
-import { StatusChip } from "@/core/shared/components/status-chip";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { SPACING } from "@/lib/sp";
 import {
   AssistChip,
   Column,
@@ -11,22 +7,20 @@ import {
   Row,
   Spacer,
 } from "@expo/ui/jetpack-compose";
-import {
-  fillMaxWidth,
-  paddingAll,
-  weight,
-} from "@expo/ui/jetpack-compose/modifiers";
-import { GroupSummary } from "@fludge/client/iam/domain/entities";
-import { useTranslation } from "react-i18next";
-import type { ActionFor, Resource } from "@fludge/utils/permissions/data";
+import { fillMaxWidth, paddingAll, weight } from "@expo/ui/jetpack-compose/modifiers";
+import type { GroupSummary } from "@fludge/client/iam/domain/entities";
 import type { TranslationKey } from "@fludge/i18n/index";
-import { PressableScale } from "pressto";
-import {
-  type MenuOptionItem,
-  MenuOptions,
-} from "@/core/shared/components/menu-options";
+import type { ActionFor, Resource } from "@fludge/utils/permissions/data";
 import { useRouter } from "expo-router";
+import { PressableScale } from "pressto";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+
+import { type MenuOptionItem, MenuOptions } from "@/core/shared/components/menu-options";
+import { StatusChip } from "@/core/shared/components/status-chip";
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { SPACING } from "@/lib/sp";
 
 export type MenuOptions = {
   hide?: boolean;
@@ -135,13 +129,9 @@ export function GroupCard({ group, menuOptions }: Props) {
 
           <FlowRow>
             {group.permissions.slice(0, 3).map((p) => {
-              const [resource, action] = p.split(":") as [
-                Resource,
-                ActionFor<Resource>,
-              ];
+              const [resource, action] = p.split(":") as [Resource, ActionFor<Resource>];
 
-              const nameKey =
-                `permissions.${resource}.${action}.name` as TranslationKey;
+              const nameKey = `permissions.${resource}.${action}.name` as TranslationKey;
               const descriptionKey =
                 `permissions.${resource}.${action}.description` as TranslationKey;
 

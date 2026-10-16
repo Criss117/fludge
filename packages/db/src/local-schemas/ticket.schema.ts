@@ -1,4 +1,5 @@
 import { sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+
 import { localOrganization, localProduct } from "./shared.schema";
 
 export const ticketProductTypeValues = ["catalog", "adHoc"] as const;
@@ -25,9 +26,7 @@ export const ticket = sqliteTable(
         onDelete: "cascade",
       }),
   },
-  (t) => [
-    uniqueIndex("ticket_organization_name_unique").on(t.organizationId, t.name),
-  ],
+  (t) => [uniqueIndex("ticket_organization_name_unique").on(t.organizationId, t.name)],
 );
 
 export const ticketProduct = sqliteTable(
@@ -48,12 +47,7 @@ export const ticketProduct = sqliteTable(
       .notNull()
       .$type<TicketProductPresentation[]>(),
   },
-  (table) => [
-    uniqueIndex("ticket_product_unique_idx").on(
-      table.ticketId,
-      table.productId,
-    ),
-  ],
+  (table) => [uniqueIndex("ticket_product_unique_idx").on(table.ticketId, table.productId)],
 );
 
 export type TicketSelect = typeof ticket.$inferSelect;

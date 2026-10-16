@@ -1,4 +1,5 @@
 import type { LocalOrganization } from "@fludge/db/local-schemas/shared.schema";
+
 import type { OrganizationSummary } from "./entities";
 
 export interface OrganizationRepository {

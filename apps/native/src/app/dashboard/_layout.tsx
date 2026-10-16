@@ -1,7 +1,8 @@
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { SyncDatabase } from "@/integrations/db/sync";
 import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { Stack } from "expo-router";
+
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { SyncDatabase } from "@/integrations/db/sync";
 
 function StackScreen() {
   const colors = useThemeColor();

@@ -1,4 +1,3 @@
-import type { z } from "zod";
 import type { GroupUniquenessValidator } from "@fludge/api/core/iam/application/services/group-uniqueness-validator.service";
 import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 import { GroupAlreadyExistsException } from "@fludge/api/core/iam/domain/exceptions/group-already-exists.exception";
@@ -8,6 +7,7 @@ import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exc
 import { Permissions } from "@fludge/utils/permissions/index";
 import { Slug } from "@fludge/utils/slugify";
 import { updateGroupValidator } from "@fludge/utils/validators/group.validators";
+import type { z } from "zod";
 
 export const updateGroupCommand = updateGroupValidator;
 
@@ -26,52 +26,38 @@ export class UpdateGroupCommand {
     );
 
     if (errGroup)
-      throw new InternalServerError(
-        errGroup,
-        "api_errors.iam.organizations.isr_on_find",
-      );
+      throw new InternalServerError(errGroup, "api_errors.iam.organizations.isr_on_find");
 
     if (!group) throw new GroupNotFoundException();
 
     if (cmd.name && cmd.name !== group.values.name) {
-      const [uniqueness, errUniqueness] =
-        await this.groupUniquenessValidator.validateUniqueFields(
-          authContext.organizationId.toString(),
-          {
-            name: cmd.name,
-            slug: new Slug(cmd.name).toString(),
-          },
-          cmd.id,
-        );
+      const [uniqueness, errUniqueness] = await this.groupUniquenessValidator.validateUniqueFields(
+        authContext.organizationId.toString(),
+        {
+          name: cmd.name,
+          slug: new Slug(cmd.name).toString(),
+        },
+        cmd.id,
+      );
 
       if (errUniqueness)
-        throw new InternalServerError(
-          errUniqueness,
-          "api_errors.iam.organizations.isr_on_find",
-        );
+        throw new InternalServerError(errUniqueness, "api_errors.iam.organizations.isr_on_find");
 
       if (uniqueness.nameTaken || uniqueness.slugTaken)
-        throw new GroupAlreadyExistsException(
-          "api_errors.iam.groups.name_taken",
-        );
+        throw new GroupAlreadyExistsException("api_errors.iam.groups.name_taken");
     }
 
     group.update({
       name: cmd.name,
       description: cmd.description,
-      permissions: cmd.permissions
-        ? Permissions.fromList(cmd.permissions)
-        : undefined,
+      permissions: cmd.permissions ? Permissions.fromList(cmd.permissions) : undefined,
       status: cmd.status,
     });
 
     const [, errSaving] = await this.groupRepository.saveOnlyGroup(group);
 
     if (errSaving)
-      throw new InternalServerError(
-        errSaving,
-        "api_errors.iam.organizations.isr_on_save",
-      );
+      throw new InternalServerError(errSaving, "api_errors.iam.organizations.isr_on_save");
 
     return group.values;
   }

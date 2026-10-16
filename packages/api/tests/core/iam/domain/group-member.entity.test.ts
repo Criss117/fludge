@@ -1,7 +1,6 @@
-import { describe, expect, it } from "bun:test";
-
 import type { GroupMemberSelect } from "@fludge/db/schema/iam.schema";
 import { UUID } from "@fludge/utils/uuid";
+import { describe, expect, it } from "bun:test";
 
 import { GroupMember } from "../../../../src/core/iam/domain/entities/group-member.entity";
 
@@ -79,9 +78,7 @@ describe("GroupMember", () => {
 
       expect(groupMember.groupId.toString()).toBe(PERSISTED.groupId);
       expect(groupMember.memberId.toString()).toBe(PERSISTED.memberId);
-      expect(groupMember.organizationId.toString()).toBe(
-        PERSISTED.organizationId,
-      );
+      expect(groupMember.organizationId.toString()).toBe(PERSISTED.organizationId);
     });
   });
 

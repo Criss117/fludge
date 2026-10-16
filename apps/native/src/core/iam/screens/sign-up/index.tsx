@@ -1,11 +1,3 @@
-import { NativeFieldError } from "@/core/shared/components/field-error";
-import {
-  ThemedNativeText,
-  ThemedText,
-} from "@/core/shared/components/themed-text";
-import { ThemedView } from "@/core/shared/components/themed-view";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { SPACING } from "@/lib/sp";
 import {
   Button,
   Card,
@@ -14,22 +6,24 @@ import {
   Host,
   RNHostView,
 } from "@expo/ui/jetpack-compose";
-import {
-  fillMaxWidth,
-  padding,
-  width,
-} from "@expo/ui/jetpack-compose/modifiers";
+import { fillMaxWidth, padding, width } from "@expo/ui/jetpack-compose/modifiers";
 import { useSignUpForm } from "@fludge/client/iam/forms/sign-in-form";
 import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
+import type { TranslationKey } from "@fludge/i18n/index";
+import { useRouter } from "expo-router";
+import { PressableScale } from "pressto";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Dimensions, StyleSheet, View } from "react-native";
-import { AuthFormInputs } from "@/core/iam/components/auth-form-inputs";
-import { Link, useRouter } from "expo-router";
-import { PressableScale } from "pressto";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+
+import { AuthFormInputs } from "@/core/iam/components/auth-form-inputs";
+import { NativeFieldError } from "@/core/shared/components/field-error";
+import { ThemedNativeText, ThemedText } from "@/core/shared/components/themed-text";
+import { ThemedView } from "@/core/shared/components/themed-view";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { useMutationToast } from "@/integrations/toast";
-import type { TranslationKey } from "@fludge/i18n/index";
+import { SPACING } from "@/lib/sp";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -72,18 +66,13 @@ export function SignUpScreen() {
             modifiers={[width(Math.floor(windowWidth * 0.9))]}
           >
             <Column
-              modifiers={[
-                padding(SPACING.md, SPACING.sm, SPACING.md, SPACING.sm),
-                fillMaxWidth(),
-              ]}
+              modifiers={[padding(SPACING.md, SPACING.sm, SPACING.md, SPACING.sm), fillMaxWidth()]}
               verticalArrangement={{
                 spacedBy: SPACING.md,
               }}
             >
               <Column horizontalAlignment="center" modifiers={[fillMaxWidth()]}>
-                <ThemedNativeText variant="h1">
-                  {t("app.title")}
-                </ThemedNativeText>
+                <ThemedNativeText variant="h1">{t("app.title")}</ThemedNativeText>
                 <ThemedNativeText variant="muted">
                   {t("screens.sign_up.description")}
                 </ThemedNativeText>

@@ -1,22 +1,17 @@
-import type { Result } from "@fludge/utils/trycatch";
-import type { TransactionService } from "@fludge/db";
-import type { Customer } from "../entities/customer.entity";
 import type { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
+import type { TransactionService } from "@fludge/db";
+import type { Result } from "@fludge/utils/trycatch";
+
+import type { Customer } from "../entities/customer.entity";
 
 export type Options = {
   tx?: TransactionService;
 };
 
 export interface CustomerRepository extends TransactionalRepository {
-  findById(
-    organizationId: string,
-    customerId: string,
-  ): Promise<Result<Customer | null>>;
+  findById(organizationId: string, customerId: string): Promise<Result<Customer | null>>;
 
-  findByDocument(
-    organizationId: string,
-    documentNumber: string,
-  ): Promise<Result<Customer | null>>;
+  findByDocument(organizationId: string, documentNumber: string): Promise<Result<Customer | null>>;
 
   insert(customer: Customer, options?: Options): Promise<Result<void>>;
 

@@ -1,10 +1,7 @@
-import { createStore } from "zustand";
 import type { TranslationKey } from "@fludge/i18n/index";
-import {
-  persist,
-  type PersistStorage,
-  type StorageValue,
-} from "zustand/middleware";
+import { createStore } from "zustand";
+import { persist, type PersistStorage, type StorageValue } from "zustand/middleware";
+
 import type {
   AddCatalogTicketProduct,
   AddTicketProduct,
@@ -107,8 +104,7 @@ function normalizeTicket(ticket: Ticket): Ticket {
 
 function getTicketProductStockQuantity(product: TicketProduct): number {
   return product.presentations.reduce(
-    (total, presentation) =>
-      total + presentation.quantity * presentation.conversionFactor,
+    (total, presentation) => total + presentation.quantity * presentation.conversionFactor,
     0,
   );
 }
@@ -128,8 +124,7 @@ export function computeTicketTotal(ticket: Ticket | undefined): number {
     (acc, item) =>
       acc +
       item.presentations.reduce(
-        (sum, presentation) =>
-          sum + presentation.quantity * presentation.priceSale,
+        (sum, presentation) => sum + presentation.quantity * presentation.priceSale,
         0,
       ),
     0,
@@ -149,8 +144,7 @@ function mergeTicketProduct(
 
   for (const incomingPresentation of incoming.presentations) {
     const exists = presentations.some(
-      (presentation) =>
-        presentation.presentationId === incomingPresentation.presentationId,
+      (presentation) => presentation.presentationId === incomingPresentation.presentationId,
     );
 
     presentations = exists
@@ -168,10 +162,7 @@ function mergeTicketProduct(
   return { ...current, presentations };
 }
 
-function buildNextItems(
-  activeTicket: Ticket,
-  product: AddTicketProduct,
-): TicketProduct[] {
+function buildNextItems(activeTicket: Ticket, product: AddTicketProduct): TicketProduct[] {
   if (product.type === "adHoc") {
     const newProduct: TicketProduct = {
       ...product,
@@ -188,9 +179,7 @@ function buildNextItems(
     return [...activeTicket.items, newProduct];
   }
 
-  const existingProduct = activeTicket.items.find(
-    (item) => item.productId === product.productId,
-  );
+  const existingProduct = activeTicket.items.find((item) => item.productId === product.productId);
 
   if (!existingProduct) {
     const nextProductId = generateId();
@@ -216,9 +205,7 @@ function buildNextItems(
 
   assertStockAvailable(mergedProduct);
 
-  return activeTicket.items.map((item) =>
-    item.id === existingProduct.id ? mergedProduct : item,
-  );
+  return activeTicket.items.map((item) => (item.id === existingProduct.id ? mergedProduct : item));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -235,10 +222,7 @@ export const selectActiveTicketTotal = (state: TicketState): number =>
 /*                                    Store                                   */
 /* -------------------------------------------------------------------------- */
 
-export function createTicketStore(
-  organizationId: string,
-  repository: LocalTicketRepository,
-) {
+export function createTicketStore(organizationId: string, repository: LocalTicketRepository) {
   const storage: PersistStorage<Ticket[]> = {
     getItem: async () => {
       try {
@@ -264,9 +248,7 @@ export function createTicketStore(
     persist(
       (set, get) => {
         /** Aplica `updater` al ticket seleccionado. Si devuelve null, no cambia nada. */
-        const updateActiveTicket = (
-          updater: (ticket: Ticket) => Ticket | null,
-        ) => {
+        const updateActiveTicket = (updater: (ticket: Ticket) => Ticket | null) => {
           set((state) => {
             const active = selectActiveTicket(state);
             if (!active) return state;
@@ -275,9 +257,7 @@ export function createTicketStore(
             if (!updated) return state;
 
             return {
-              tickets: state.tickets.map((ticket) =>
-                ticket.id === active.id ? updated : ticket,
-              ),
+              tickets: state.tickets.map((ticket) => (ticket.id === active.id ? updated : ticket)),
             };
           });
         };
@@ -310,15 +290,11 @@ export function createTicketStore(
 
           removeTicket: (ticketId) => {
             set((state) => {
-              const index = state.tickets.findIndex(
-                (ticket) => ticket.id === ticketId,
-              );
+              const index = state.tickets.findIndex((ticket) => ticket.id === ticketId);
 
               if (index === -1) return state;
 
-              const remaining = state.tickets.filter(
-                (ticket) => ticket.id !== ticketId,
-              );
+              const remaining = state.tickets.filter((ticket) => ticket.id !== ticketId);
 
               if (remaining.length === 0) {
                 const fallback = makeTicket(organizationId, []);
@@ -346,8 +322,7 @@ export function createTicketStore(
 
             const duplicated = tickets.some(
               (ticket) =>
-                ticket.id !== ticketId &&
-                ticket.name.toLowerCase() === trimmed.toLowerCase(),
+                ticket.id !== ticketId && ticket.name.toLowerCase() === trimmed.toLowerCase(),
             );
 
             if (duplicated) return false;
@@ -393,9 +368,7 @@ export function createTicketStore(
 
               return {
                 ...ticket,
-                items: ticket.items.filter(
-                  (item) => item.id !== ticketProductId,
-                ),
+                items: ticket.items.filter((item) => item.id !== ticketProductId),
               };
             });
           },
@@ -435,16 +408,13 @@ export function createTicketStore(
             const active = selectActiveTicket(get());
             if (!active) return;
 
-            const product = active.items.find(
-              (item) => item.id === ticketProductId,
-            );
+            const product = active.items.find((item) => item.id === ticketProductId);
 
             if (!product) throw new TicketError("product_not_found");
 
             if (
               !product.presentations.some(
-                (presentation) =>
-                  presentation.id === ticketProductPresentationId,
+                (presentation) => presentation.id === ticketProductPresentationId,
               )
             ) {
               throw new TicketError("presentation_not_found");
@@ -463,9 +433,7 @@ export function createTicketStore(
 
             updateActiveTicket((ticket) => ({
               ...ticket,
-              items: ticket.items.map((item) =>
-                item.id === nextProduct.id ? nextProduct : item,
-              ),
+              items: ticket.items.map((item) => (item.id === nextProduct.id ? nextProduct : item)),
             }));
           },
         };
@@ -481,13 +449,10 @@ export function createTicketStore(
             ? (persisted as Ticket[]).map(normalizeTicket)
             : [];
 
-          const tickets =
-            persistedTickets.length > 0 ? persistedTickets : current.tickets;
+          const tickets = persistedTickets.length > 0 ? persistedTickets : current.tickets;
 
           // Conserva la selección actual si sigue existiendo; si no, el primero.
-          const selectedTicketId = tickets.some(
-            (ticket) => ticket.id === current.selectedTicketId,
-          )
+          const selectedTicketId = tickets.some((ticket) => ticket.id === current.selectedTicketId)
             ? current.selectedTicketId
             : tickets[0]!.id;
 

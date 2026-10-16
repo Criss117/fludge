@@ -1,24 +1,21 @@
-import { UUID } from "@fludge/utils/uuid";
-import { SaleCancellation } from "../value-objects/sale-cancellation";
-import type {
-  SaleItemSelect,
-  SalePaymentSelect,
-  SaleSelect,
-} from "@fludge/db/schema/sales.schema";
-import { SaleStatus } from "../value-objects/sale-status";
-import { SaleItem, type CreateSaleItem } from "./sale-item.entity";
-import { SaleItemCollection } from "./sale-item.collection";
-import { DuplicatedSaleItemException } from "../exceptions/duplicated-sale-item.exception";
-import { SaleNumber } from "../value-objects/sale-number";
-import type { PaymentTypeEnum } from "@fludge/utils/enums/db-enums";
-import { PaymentType } from "../value-objects/payment-type";
-import { CantChangeSaleStatusException } from "../exceptions/cant-change-sale-status";
-import { SaleItemNotFoundException } from "../exceptions/sale-item-not-found.exception";
 import { AmountMustBePositiveException } from "@fludge/api/core/commerce/shared/exceptions/amount-must-be-positive.exception";
+import type { SaleItemSelect, SalePaymentSelect, SaleSelect } from "@fludge/db/schema/sales.schema";
+import type { PaymentTypeEnum } from "@fludge/utils/enums/db-enums";
+import { UUID } from "@fludge/utils/uuid";
+
+import { CantChangeSaleStatusException } from "../exceptions/cant-change-sale-status";
+import { DuplicatedSaleItemException } from "../exceptions/duplicated-sale-item.exception";
 import { SaleIsCompletedException } from "../exceptions/sale-is-completed.exception";
-import { SalePaymentsCollection } from "./sale-payments.collection";
-import { SalePayment } from "./sale-payment.entity";
+import { SaleItemNotFoundException } from "../exceptions/sale-item-not-found.exception";
 import { SalePaymentNotFoundException } from "../exceptions/sale-payments-not-found";
+import { PaymentType } from "../value-objects/payment-type";
+import { SaleCancellation } from "../value-objects/sale-cancellation";
+import { SaleNumber } from "../value-objects/sale-number";
+import { SaleStatus } from "../value-objects/sale-status";
+import { SaleItemCollection } from "./sale-item.collection";
+import { type CreateSaleItem, SaleItem } from "./sale-item.entity";
+import { SalePayment } from "./sale-payment.entity";
+import { SalePaymentsCollection } from "./sale-payments.collection";
 
 export interface CreateSale {
   organizationId: UUID;
@@ -64,8 +61,7 @@ export class Sale {
       ),
     );
 
-    if (collection.hasDuplicatedPresentations())
-      throw new DuplicatedSaleItemException();
+    if (collection.hasDuplicatedPresentations()) throw new DuplicatedSaleItemException();
 
     const total = collection.calculateTotal();
 
@@ -117,9 +113,7 @@ export class Sale {
       new Date(data.createdAt),
 
       new SaleItemCollection(data.items.map((d) => SaleItem.reconstitute(d))),
-      new SalePaymentsCollection(
-        data.payments.map((d) => SalePayment.reconstitute(d)),
-      ),
+      new SalePaymentsCollection(data.payments.map((d) => SalePayment.reconstitute(d))),
     );
   }
 
@@ -149,8 +143,7 @@ export class Sale {
   }
 
   public cancel(reason?: string) {
-    if (!this.status.canTransitionTo("cancelled"))
-      throw new CantChangeSaleStatusException();
+    if (!this.status.canTransitionTo("cancelled")) throw new CantChangeSaleStatusException();
 
     this._status = this._status.transitionTo("cancelled");
     this._cancellation = new SaleCancellation(reason ?? "", new Date());
@@ -169,8 +162,7 @@ export class Sale {
   }
 
   public complete() {
-    if (!this.status.canTransitionTo("completed"))
-      throw new CantChangeSaleStatusException();
+    if (!this.status.canTransitionTo("completed")) throw new CantChangeSaleStatusException();
 
     this._status = this._status.transitionTo("completed");
     this.touch();
@@ -209,16 +201,12 @@ export class Sale {
   }
 
   public revertPayment(customerPaymentId: UUID[]) {
-    const paymentsToRevert =
-      this._payments.findByCustomerPaymentId(customerPaymentId);
+    const paymentsToRevert = this._payments.findByCustomerPaymentId(customerPaymentId);
 
     if (paymentsToRevert.length !== customerPaymentId.length)
       throw new SalePaymentNotFoundException();
 
-    const amount = paymentsToRevert.reduce(
-      (acc, payment) => acc + payment.amount,
-      0,
-    );
+    const amount = paymentsToRevert.reduce((acc, payment) => acc + payment.amount, 0);
 
     this._totalPaid -= amount;
 

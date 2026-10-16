@@ -9,10 +9,7 @@ const createCustomerPayment = createCustomerPaymentValidator.omit({
 export type CustomerPaymentFormSchema = z.input<typeof createCustomerPayment>;
 
 export type OnCustomerPaymentSubmit = {
-  onSubmit: (options: {
-    value: CustomerPaymentFormSchema;
-    resetForm: () => void;
-  }) => void;
+  onSubmit: (options: { value: CustomerPaymentFormSchema; resetForm: () => void }) => void;
 };
 
 const defaultCustomerPaymentValues: CustomerPaymentFormSchema = {

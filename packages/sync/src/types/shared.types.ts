@@ -9,10 +9,7 @@ export type SyncPage<T> = {
   hasMore: boolean;
 };
 
-export type PaginateSyncQueryFn<T> = (
-  cursor: SyncCursor | null,
-  limit: number,
-) => Promise<T[]>;
+export type PaginateSyncQueryFn<T> = (cursor: SyncCursor | null, limit: number) => Promise<T[]>;
 
 export async function paginateSync<T extends { updatedAt: Date; id: string }>(
   query: PaginateSyncQueryFn<T>,
@@ -29,8 +26,6 @@ export async function paginateSync<T extends { updatedAt: Date; id: string }>(
   return {
     items,
     hasMore,
-    nextCursor: lastItem
-      ? { updatedAt: lastItem.updatedAt, id: lastItem.id }
-      : cursor,
+    nextCursor: lastItem ? { updatedAt: lastItem.updatedAt, id: lastItem.id } : cursor,
   };
 }

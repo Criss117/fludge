@@ -1,12 +1,7 @@
 import { z } from "zod";
+
 import { permissionsValidator } from "../permissions";
-import {
-  descriptionSchema,
-  getI18nKey,
-  nameSchema,
-  statusSchema,
-  uuidSchema,
-} from "./shared";
+import { descriptionSchema, getI18nKey, nameSchema, statusSchema, uuidSchema } from "./shared";
 
 export const createGroupValidator = z.object({
   name: nameSchema,

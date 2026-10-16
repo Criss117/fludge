@@ -1,10 +1,11 @@
-import { SPACING } from "@/lib/sp";
 import { useFindAllMembers } from "@fludge/client/iam/queries/use-find-members";
 import { FlashList } from "@shopify/flash-list";
+import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
+
 import { MemberCard } from "@/core/iam/components/member-card";
 import { ThemedText } from "@/core/shared/components/themed-text";
-import { useTranslation } from "react-i18next";
+import { SPACING } from "@/lib/sp";
 
 interface Props {
   searchQuery: string;

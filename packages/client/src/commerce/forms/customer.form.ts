@@ -5,10 +5,7 @@ import type { z } from "zod";
 export type CustomerFormSchema = z.input<typeof createCustomerValidator>;
 
 export type OnCustomerSubmit = {
-  onSubmit: (options: {
-    value: CustomerFormSchema;
-    resetForm: () => void;
-  }) => void;
+  onSubmit: (options: { value: CustomerFormSchema; resetForm: () => void }) => void;
 };
 
 const defaultCustomerValues: CustomerFormSchema = {
@@ -20,10 +17,7 @@ const defaultCustomerValues: CustomerFormSchema = {
   documentNumber: "",
 };
 
-export function customerFormOptions(
-  options: OnCustomerSubmit,
-  defaultValues?: CustomerFormSchema,
-) {
+export function customerFormOptions(options: OnCustomerSubmit, defaultValues?: CustomerFormSchema) {
   return formOptions({
     defaultValues: defaultValues ?? defaultCustomerValues,
     validators: {

@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { getI18nKey, nameSchema, notesSchema, uuidSchema } from "./shared";
+
 import { paymentTypeEnum, saleStatusEnum } from "../enums/db-enums";
+import { getI18nKey, nameSchema, notesSchema, uuidSchema } from "./shared";
 
 export const paymentTypeSchema = z.enum(paymentTypeEnum, {
   error: getI18nKey("validators.payment_type.invalid"),

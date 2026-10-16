@@ -1,13 +1,13 @@
-import type { z } from "zod";
+import { CustomerNotFoundException } from "@fludge/api/core/commerce/customer/domain/exceptions/customer-not-found.exception";
 import type { CustomerRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
 import type { CustomerPaymentRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer-payment.repository";
+import type { PaySaleService } from "@fludge/api/core/commerce/sale/application/services/pay-sale.service";
 import type { SaleRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale.repository";
 import type { SalePaymentRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale-payment.repository";
-import type { PaySaleService } from "@fludge/api/core/commerce/sale/application/services/pay-sale.service";
-import { CustomerNotFoundException } from "@fludge/api/core/commerce/customer/domain/exceptions/customer-not-found.exception";
 import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { createCustomerPaymentValidator } from "@fludge/utils/validators/customer-payment.validators";
+import type { z } from "zod";
 
 export const createCustomerPaymentCommand = createCustomerPaymentValidator;
 
@@ -31,10 +31,7 @@ export class CreateCustomerPaymentCommand {
     );
 
     if (errFindCustomer)
-      throw new InternalServerError(
-        errFindCustomer,
-        "api_errors.customers.isr_on_find",
-      );
+      throw new InternalServerError(errFindCustomer, "api_errors.customers.isr_on_find");
 
     if (!customer) throw new CustomerNotFoundException();
 
@@ -60,46 +57,37 @@ export class CreateCustomerPaymentCommand {
     const salePaymentsToInsert = payResults.flatMap((r) => r.salePayments);
 
     // 3. Persistir todo en una transacción (mínimas llamadas a DB)
-    const [, errTransaction] = await this.saleRepository.transaction(
-      async (tx) => {
-        const [, errPayment] = await this.customerPaymentRepository.insert(
-          newPayment,
-          { tx },
+    const [, errTransaction] = await this.saleRepository.transaction(async (tx) => {
+      const [, errPayment] = await this.customerPaymentRepository.insert(newPayment, { tx });
+
+      if (errPayment) throw errPayment;
+
+      const [, errCustomer] = await this.customerRepository.update(customer, {
+        tx,
+      });
+
+      if (errCustomer) throw errCustomer;
+
+      if (salesToUpdate.length > 0) {
+        const [, errSales] = await this.saleRepository.updateManyOnlySale(salesToUpdate, { tx });
+
+        if (errSales) throw errSales;
+      }
+
+      if (salePaymentsToInsert.length > 0) {
+        const [, errSalePayments] = await this.salePaymentRepository.insertMany(
+          salePaymentsToInsert,
+          {
+            tx,
+          },
         );
 
-        if (errPayment) throw errPayment;
-
-        const [, errCustomer] = await this.customerRepository.update(customer, {
-          tx,
-        });
-
-        if (errCustomer) throw errCustomer;
-
-        if (salesToUpdate.length > 0) {
-          const [, errSales] = await this.saleRepository.updateManyOnlySale(
-            salesToUpdate,
-            { tx },
-          );
-
-          if (errSales) throw errSales;
-        }
-
-        if (salePaymentsToInsert.length > 0) {
-          const [, errSalePayments] =
-            await this.salePaymentRepository.insertMany(salePaymentsToInsert, {
-              tx,
-            });
-
-          if (errSalePayments) throw errSalePayments;
-        }
-      },
-    );
+        if (errSalePayments) throw errSalePayments;
+      }
+    });
 
     if (errTransaction)
-      throw new InternalServerError(
-        errTransaction,
-        "api_errors.sales.isr_on_save",
-      );
+      throw new InternalServerError(errTransaction, "api_errors.sales.isr_on_save");
 
     return {
       customer: customer.values,

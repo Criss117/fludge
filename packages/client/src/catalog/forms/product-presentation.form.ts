@@ -6,15 +6,10 @@ const productPresentationFormSchema = updateProductPresentationValidator.omit({
   id: true,
 });
 
-export type ProductPresentationFormSchema = z.input<
-  typeof productPresentationFormSchema
->;
+export type ProductPresentationFormSchema = z.input<typeof productPresentationFormSchema>;
 
 export interface OnProductPresentationSubmit {
-  onSubmit: (options: {
-    value: ProductPresentationFormSchema;
-    resetForm: () => void;
-  }) => void;
+  onSubmit: (options: { value: ProductPresentationFormSchema; resetForm: () => void }) => void;
 }
 
 const defaultProductPresentationValues: ProductPresentationFormSchema = {

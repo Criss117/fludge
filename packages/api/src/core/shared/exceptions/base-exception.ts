@@ -1,12 +1,10 @@
 import type { TranslationKey } from "@fludge/i18n/index";
 import { getI18nKey } from "@fludge/utils/validators/shared";
 import type { ORPCErrorCode } from "@orpc/client";
-import { ORPCError, ValidationError as VE } from "@orpc/server";
+import type { ValidationError as VE } from "@orpc/server";
+import { ORPCError } from "@orpc/server";
 
-export class DomainException<T extends ORPCErrorCode> extends ORPCError<
-  T,
-  void
-> {
+export class DomainException<T extends ORPCErrorCode> extends ORPCError<T, void> {
   constructor(code: T, data: { message: TranslationKey; cause?: Error }) {
     super(code, data);
   }

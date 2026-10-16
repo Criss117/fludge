@@ -1,7 +1,8 @@
-import type { Result } from "@fludge/utils/trycatch";
-import type { TransactionService } from "@fludge/db";
-import type { SalePayment } from "../entities/sale-payment.entity";
 import type { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
+import type { TransactionService } from "@fludge/db";
+import type { Result } from "@fludge/utils/trycatch";
+
+import type { SalePayment } from "../entities/sale-payment.entity";
 
 export type Options = {
   tx?: TransactionService;
@@ -13,15 +14,9 @@ export interface SalePaymentRepository extends TransactionalRepository {
     customerPaymentId: string,
   ): Promise<Result<SalePayment[]>>;
 
-  insertMany(
-    salePayments: SalePayment[],
-    options?: Options,
-  ): Promise<Result<void>>;
+  insertMany(salePayments: SalePayment[], options?: Options): Promise<Result<void>>;
 
-  deleteMany(
-    salePaymentIds: string[],
-    options?: Options,
-  ): Promise<Result<void>>;
+  deleteMany(salePaymentIds: string[], options?: Options): Promise<Result<void>>;
 
   deleteBySaleId(saleId: string, options?: Options): Promise<Result<void>>;
 }

@@ -1,15 +1,9 @@
-import {
-  integer,
-  primaryKey,
-  sqliteTable,
-  text,
-  uniqueIndex,
-} from "drizzle-orm/sqlite-core";
-
 import { paymentTypeEnum, saleStatusEnum } from "@fludge/utils/enums/db-enums";
-import { customer, customerPayment } from "./customer.schema";
-import { product, productPresentation } from "./catalog.schema";
+import { integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+
 import { auditMetadata } from "../shared";
+import { product, productPresentation } from "./catalog.schema";
+import { customer, customerPayment } from "./customer.schema";
 import { memberId, organizationId } from "./iam.schema";
 
 type SaleItemSnapshot = {
@@ -67,12 +61,9 @@ export const saleItem = sqliteTable("sale_item", {
     onDelete: "set null",
   }),
 
-  productPresentationId: text("product_presentation_id").references(
-    () => productPresentation.id,
-    {
-      onDelete: "set null",
-    },
-  ),
+  productPresentationId: text("product_presentation_id").references(() => productPresentation.id, {
+    onDelete: "set null",
+  }),
 
   productSnapshot: text("product_snapshot", {
     mode: "json",
@@ -110,10 +101,7 @@ export const salePayment = sqliteTable(
     ...auditMetadata,
   },
   (table) => [
-    uniqueIndex("sale_payments_org_customer_payment_idx").on(
-      table.saleId,
-      table.customerPaymentId,
-    ),
+    uniqueIndex("sale_payments_org_customer_payment_idx").on(table.saleId, table.customerPaymentId),
   ],
 );
 

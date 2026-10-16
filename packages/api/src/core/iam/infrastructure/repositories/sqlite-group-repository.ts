@@ -11,18 +11,13 @@ import {
   type GroupMemberSelect,
   type GroupSelect,
 } from "@fludge/db/schema/iam.schema";
-import {
-  buildConflictUpdateColumn,
-  jsonObject,
-} from "@fludge/db/utils/build-queries";
+import { buildConflictUpdateColumn, jsonObject } from "@fludge/db/utils/build-queries";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { and, eq, getColumns, inArray, sql } from "drizzle-orm";
+
 import type { GroupMemberRepository } from "../../domain/repositories/group-member.repository";
 
-export class SQLiteGroupRepository
-  extends TransactionalRepository
-  implements GroupRepository
-{
+export class SQLiteGroupRepository extends TransactionalRepository implements GroupRepository {
   constructor(
     private readonly db: DatabaseService,
     private readonly groupMemberRepository: GroupMemberRepository,
@@ -43,9 +38,7 @@ export class SQLiteGroupRepository
         })
         .from(group)
         .leftJoin(groupMember, eq(group.id, groupMember.groupId))
-        .where(
-          and(eq(group.organizationId, organizationId), eq(group.id, groupId)),
-        )
+        .where(and(eq(group.organizationId, organizationId), eq(group.id, groupId)))
         .groupBy(group.id),
     );
 
@@ -58,12 +51,10 @@ export class SQLiteGroupRepository
     return ok(
       Group.reconstitute({
         ...groupRecord,
-        members: (JSON.parse(groupRecord.members) as GroupMemberSelect[]).map(
-          (member) => ({
-            ...member,
-            createdAt: new Date(member.createdAt),
-          }),
-        ),
+        members: (JSON.parse(groupRecord.members) as GroupMemberSelect[]).map((member) => ({
+          ...member,
+          createdAt: new Date(member.createdAt),
+        })),
       }),
     );
   }
@@ -81,12 +72,7 @@ export class SQLiteGroupRepository
         })
         .from(group)
         .leftJoin(groupMember, eq(group.id, groupMember.groupId))
-        .where(
-          and(
-            eq(group.organizationId, organizationId),
-            inArray(group.id, groupIds),
-          ),
-        )
+        .where(and(eq(group.organizationId, organizationId), inArray(group.id, groupIds)))
         .groupBy(group.id),
     );
 
@@ -96,12 +82,10 @@ export class SQLiteGroupRepository
       rows.map((groupRecord) =>
         Group.reconstitute({
           ...groupRecord,
-          members: (JSON.parse(groupRecord.members) as GroupMemberSelect[]).map(
-            (member) => ({
-              ...member,
-              createdAt: new Date(member.createdAt),
-            }),
-          ),
+          members: (JSON.parse(groupRecord.members) as GroupMemberSelect[]).map((member) => ({
+            ...member,
+            createdAt: new Date(member.createdAt),
+          })),
         }),
       ),
     );
@@ -115,19 +99,12 @@ export class SQLiteGroupRepository
 
     const [, errDelete] = await tryCatch(
       this.db.transaction(async (tx) => {
-        await this.groupMemberRepository.deleteByGroupIds(
-          organizationId,
-          groupIdsToDelete,
-          { tx },
-        );
+        await this.groupMemberRepository.deleteByGroupIds(organizationId, groupIdsToDelete, { tx });
 
         await tx
           .delete(group)
           .where(
-            and(
-              eq(group.organizationId, organizationId),
-              inArray(group.id, groupIdsToDelete),
-            ),
+            and(eq(group.organizationId, organizationId), inArray(group.id, groupIdsToDelete)),
           );
       }),
     );
@@ -195,10 +172,7 @@ export class SQLiteGroupRepository
           });
 
         if (groupMembers.length > 0) {
-          await tx
-            .insert(groupMember)
-            .values(groupMembers)
-            .onConflictDoNothing();
+          await tx.insert(groupMember).values(groupMembers).onConflictDoNothing();
         }
       }),
     );

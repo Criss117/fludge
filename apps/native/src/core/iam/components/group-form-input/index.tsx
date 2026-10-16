@@ -1,26 +1,17 @@
+import { Checkbox, Column, Row, Spacer } from "@expo/ui/jetpack-compose";
+import { clickable, fillMaxWidth, padding, weight } from "@expo/ui/jetpack-compose/modifiers";
+import type { PermissionsFieldChildrenProps } from "@fludge/client/iam/forms/group.form";
+import type { MinimalField } from "@fludge/client/shared/field-api";
+import type { TranslationKey } from "@fludge/i18n/index";
+import { type Permission, PERMISSIONS, type Resource } from "@fludge/utils/permissions/data";
+import { useTranslation } from "react-i18next";
+
 import { Accordion } from "@/core/shared/components/accordion";
 import { FieldError } from "@/core/shared/components/field-error";
 import { TextInput } from "@/core/shared/components/text-input";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
-import { Card, Checkbox, Column, Row, Spacer } from "@expo/ui/jetpack-compose";
-import {
-  clickable,
-  fillMaxWidth,
-  padding,
-  weight,
-} from "@expo/ui/jetpack-compose/modifiers";
-import type { PermissionsFieldChildrenProps } from "@fludge/client/iam/forms/group.form";
-import type { MinimalField } from "@fludge/client/shared/field-api";
-import type { TranslationKey } from "@fludge/i18n/index";
-import {
-  type Permission,
-  PERMISSIONS,
-  type Resource,
-} from "@fludge/utils/permissions/data";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
 
 interface InputProps<T> {
   field: MinimalField<T>;
@@ -115,8 +106,7 @@ function PermissionsInput({
               {PERMISSIONS[resource as Resource].map((action) => {
                 const permission = `${resource}:${action}` as Permission;
 
-                const actionKey =
-                  `permissions.${resource}.${action}.name` as TranslationKey;
+                const actionKey = `permissions.${resource}.${action}.name` as TranslationKey;
                 const actionDescriptionKey =
                   `permissions.${resource}.${action}.description` as TranslationKey;
 
@@ -130,9 +120,7 @@ function PermissionsInput({
                   >
                     <Column>
                       <ThemedNativeText>{t(actionKey)}</ThemedNativeText>
-                      <ThemedNativeText variant="muted">
-                        {t(actionDescriptionKey)}
-                      </ThemedNativeText>
+                      <ThemedNativeText variant="muted">{t(actionDescriptionKey)}</ThemedNativeText>
                     </Column>
                     <Spacer modifiers={[weight(1)]} />
                     <Checkbox

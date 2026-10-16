@@ -1,11 +1,6 @@
 import { z } from "zod";
-import {
-  emailSchema,
-  nameSchema,
-  passwordSchema,
-  phoneSchema,
-  uuidSchema,
-} from "./shared";
+
+import { emailSchema, nameSchema, passwordSchema, phoneSchema, uuidSchema } from "./shared";
 
 export const signInValidator = z.object({
   email: nameSchema,

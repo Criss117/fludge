@@ -1,12 +1,3 @@
-import { Icon } from "@/core/shared/components/icon";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { SPACING } from "@/lib/sp";
-import { formatCurrency } from "@fludge/utils/format-currency";
-import {
-  useActiveTicket,
-  useTicketStore,
-} from "@fludge/client/providers/ticket-store.provider";
 import {
   Box,
   Button,
@@ -27,8 +18,15 @@ import {
   weight,
   width,
 } from "@expo/ui/jetpack-compose/modifiers";
+import { useActiveTicket, useTicketStore } from "@fludge/client/providers/ticket-store.provider";
+import { formatCurrency } from "@fludge/utils/format-currency";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+
+import { Icon } from "@/core/shared/components/icon";
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { SPACING } from "@/lib/sp";
 
 interface Props {
   isOpen: boolean;
@@ -42,12 +40,8 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
 
   const activeTicket = useActiveTicket();
   const clearTicket = useTicketStore((s) => s.clearTicket);
-  const updateTicketProductPresentation = useTicketStore(
-    (s) => s.updateTicketProductPresentation,
-  );
-  const removePresentations = useTicketStore(
-    (s) => s.removeTicketProductPresentations,
-  );
+  const updateTicketProductPresentation = useTicketStore((s) => s.updateTicketProductPresentation);
+  const removePresentations = useTicketStore((s) => s.removeTicketProductPresentations);
 
   const handleClose = async () => {
     await sheetRef.current?.hide();
@@ -78,11 +72,7 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
       >
         <Column
           verticalArrangement={{ spacedBy: SPACING.lg }}
-          modifiers={[
-            fillMaxWidth(),
-            fillMaxHeight(0.85),
-            paddingAll(SPACING.md),
-          ]}
+          modifiers={[fillMaxWidth(), fillMaxHeight(0.85), paddingAll(SPACING.md)]}
         >
           <Row
             modifiers={[fillMaxWidth()]}
@@ -146,9 +136,7 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
                     horizontalArrangement={{ spacedBy: SPACING.md }}
                   >
                     <Column verticalArrangement={{ spacedBy: SPACING.xs }}>
-                      <ThemedNativeText maxLines={1}>
-                        {item.name}
-                      </ThemedNativeText>
+                      <ThemedNativeText maxLines={1}>{item.name}</ThemedNativeText>
                       <ThemedNativeText variant="muted" maxLines={1}>
                         {presentation.name}
                       </ThemedNativeText>
@@ -160,22 +148,14 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
                           spacedBy: SPACING.sm,
                         }}
                       >
-                        <ThemedNativeText>
-                          x{presentation.quantity}
-                        </ThemedNativeText>
-                        <ThemedNativeText>
-                          {formatCurrency(subtotal)}
-                        </ThemedNativeText>
+                        <ThemedNativeText>x{presentation.quantity}</ThemedNativeText>
+                        <ThemedNativeText>{formatCurrency(subtotal)}</ThemedNativeText>
                       </Row>
                     </Column>
                     <Spacer modifiers={[weight(1)]} />
                     <Column horizontalAlignment="end">
                       <Row>
-                        <IconButton
-                          onClick={() =>
-                            handleRemovePresentation(presentation.id)
-                          }
-                        >
+                        <IconButton onClick={() => handleRemovePresentation(presentation.id)}>
                           <Icon name="delete" size={20} color={colors.error} />
                         </IconButton>
                         <IconButton onClick={() => {}}>
@@ -183,24 +163,12 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
                         </IconButton>
                       </Row>
 
-                      <Row
-                        horizontalAlignment="center"
-                        verticalAlignment="center"
-                      >
+                      <Row horizontalAlignment="center" verticalAlignment="center">
                         <OutlinedIconButton onClick={decreaseQuantity}>
-                          <Icon
-                            name="remove"
-                            size={20}
-                            color={colors.primary}
-                          />
+                          <Icon name="remove" size={20} color={colors.primary} />
                         </OutlinedIconButton>
-                        <Box
-                          modifiers={[width(SPACING.xl)]}
-                          contentAlignment="center"
-                        >
-                          <ThemedNativeText variant="h5">
-                            {presentation.quantity}
-                          </ThemedNativeText>
+                        <Box modifiers={[width(SPACING.xl)]} contentAlignment="center">
+                          <ThemedNativeText variant="h5">{presentation.quantity}</ThemedNativeText>
                         </Box>
                         <OutlinedIconButton onClick={increaseQuantity}>
                           <Icon name="add" size={20} color={colors.primary} />
@@ -219,15 +187,10 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
                 {t("screens.pos.ticket_summary.total")}
               </ThemedNativeText>
               <Spacer modifiers={[weight(1)]} />
-              <ThemedNativeText variant="h5">
-                {formatCurrency(activeTicket.total)}
-              </ThemedNativeText>
+              <ThemedNativeText variant="h5">{formatCurrency(activeTicket.total)}</ThemedNativeText>
             </Row>
 
-            <Row
-              horizontalArrangement={{ spacedBy: SPACING.md }}
-              modifiers={[fillMaxWidth()]}
-            >
+            <Row horizontalArrangement={{ spacedBy: SPACING.md }} modifiers={[fillMaxWidth()]}>
               <Box modifiers={[weight(1)]}>
                 <Button
                   modifiers={[fillMaxWidth()]}

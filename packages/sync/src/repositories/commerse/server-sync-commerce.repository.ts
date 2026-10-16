@@ -1,7 +1,4 @@
-import type {
-  CommerceSyncCursors,
-  CommerceSyncResult,
-} from "@fludge/sync/types/commerce.types";
+import type { CommerceSyncCursors, CommerceSyncResult } from "@fludge/sync/types/commerce.types";
 
 export interface ServerSyncCommerceRepository {
   findAllItems(

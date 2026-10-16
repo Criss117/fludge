@@ -1,27 +1,19 @@
-import type { Result } from "@fludge/utils/trycatch";
-import type { Group } from "../entities/group.entity";
-import type { TransactionService } from "@fludge/db";
 import type { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
+import type { TransactionService } from "@fludge/db";
+import type { Result } from "@fludge/utils/trycatch";
+
+import type { Group } from "../entities/group.entity";
 
 export type Options = {
   tx?: TransactionService;
 };
 
 export interface GroupRepository extends TransactionalRepository {
-  findById(
-    organizationId: string,
-    groupId: string,
-  ): Promise<Result<Group | null>>;
+  findById(organizationId: string, groupId: string): Promise<Result<Group | null>>;
 
-  findByIds(
-    organizationId: string,
-    groupIds: string[],
-  ): Promise<Result<Group[]>>;
+  findByIds(organizationId: string, groupIds: string[]): Promise<Result<Group[]>>;
 
-  saveOnlyGroup(
-    groups: Group | Group[],
-    options?: Options,
-  ): Promise<Result<void>>;
+  saveOnlyGroup(groups: Group | Group[], options?: Options): Promise<Result<void>>;
 
   save(group: Group | Group[]): Promise<Result<void>>;
 

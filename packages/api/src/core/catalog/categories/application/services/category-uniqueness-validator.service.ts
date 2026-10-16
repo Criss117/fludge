@@ -1,7 +1,8 @@
 import type { DatabaseService } from "@fludge/db";
 import { category } from "@fludge/db/schema/catalog.schema";
-import { and, eq, ne, or, SQL } from "drizzle-orm";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
+import type { SQL } from "drizzle-orm";
+import { and, eq, ne, or } from "drizzle-orm";
 
 type Values = {
   slug?: string;
@@ -11,17 +12,12 @@ type Values = {
 export class CategoryUniquenessValidator {
   constructor(private readonly db: DatabaseService) {}
 
-  public async validateUniqueFields(
-    organizationId: string,
-    value: Values,
-    excludeId?: string,
-  ) {
+  public async validateUniqueFields(organizationId: string, value: Values, excludeId?: string) {
     const { name, slug } = value;
 
-    const orConditions = [
-      name && eq(category.name, name),
-      slug && eq(category.slug, slug),
-    ].filter(Boolean) as SQL[];
+    const orConditions = [name && eq(category.name, name), slug && eq(category.slug, slug)].filter(
+      Boolean,
+    ) as SQL[];
 
     if (orConditions.length === 0)
       return ok({

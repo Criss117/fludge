@@ -1,7 +1,7 @@
 import { Customer } from "@fludge/api/core/commerce/customer/domain/entities/customer.entity";
 import type {
-  Options,
   CustomerRepository,
+  Options,
 } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
 import { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
@@ -22,10 +22,7 @@ export class SQLiteCustomerRepository
     super(db);
   }
 
-  private async find(
-    organizationId: string,
-    filter: { id?: string; documentNumber?: string },
-  ) {
+  private async find(organizationId: string, filter: { id?: string; documentNumber?: string }) {
     const [rows, errFind] = await tryCatch(
       this.db
         .select({
@@ -42,9 +39,7 @@ export class SQLiteCustomerRepository
           and(
             eq(customer.organizationId, organizationId),
             filter.id ? eq(customer.id, filter.id) : undefined,
-            filter.documentNumber
-              ? eq(customer.documentNumber, filter.documentNumber)
-              : undefined,
+            filter.documentNumber ? eq(customer.documentNumber, filter.documentNumber) : undefined,
           ),
         )
         .limit(1)
@@ -57,13 +52,11 @@ export class SQLiteCustomerRepository
 
     if (!data) return ok(null);
 
-    const payments = (JSON.parse(data.payments) as CustomerPaymentSelect[]).map(
-      (p) => ({
-        ...p,
-        createdAt: new Date(p.createdAt),
-        updatedAt: new Date(p.updatedAt),
-      }),
-    );
+    const payments = (JSON.parse(data.payments) as CustomerPaymentSelect[]).map((p) => ({
+      ...p,
+      createdAt: new Date(p.createdAt),
+      updatedAt: new Date(p.updatedAt),
+    }));
 
     return ok(Customer.reconstitute({ ...data, payments }));
   }
@@ -81,9 +74,7 @@ export class SQLiteCustomerRepository
 
     const values = customerEntity.values;
 
-    const [, errInsert] = await tryCatch(
-      db.insert(customer).values(values).onConflictDoNothing(),
-    );
+    const [, errInsert] = await tryCatch(db.insert(customer).values(values).onConflictDoNothing());
 
     if (errInsert) return err(errInsert);
 
@@ -109,12 +100,7 @@ export class SQLiteCustomerRepository
           status: values.status,
           updatedAt: values.updatedAt,
         })
-        .where(
-          and(
-            eq(customer.id, values.id),
-            eq(customer.organizationId, values.organizationId),
-          ),
-        ),
+        .where(and(eq(customer.id, values.id), eq(customer.organizationId, values.organizationId))),
     );
 
     if (errUpdate) return err(errUpdate);

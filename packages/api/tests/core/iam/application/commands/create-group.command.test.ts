@@ -1,8 +1,7 @@
-import { beforeEach, describe, expect, it } from "bun:test";
-
 import { CreateGroupCommand } from "@fludge/api/core/iam/application/commands/create-group.command";
 import { GroupAlreadyExistsException } from "@fludge/api/core/iam/domain/exceptions/group-already-exists.exception";
 import type { Permission } from "@fludge/utils/permissions/data";
+import { beforeEach, describe, expect, it } from "bun:test";
 
 import { makeAuthContext, makeOwner } from "../../factories";
 import { InMemoryGroupRepository } from "../../infrastructure/in-memory-group.repository";
@@ -30,10 +29,7 @@ describe("CreateGroupCommand", () => {
       const auth = makeAuthContext({ member: makeOwner() });
       const result = await command.execute(auth, VALID_CMD);
 
-      const [stored] = await groupRepository.findById(
-        auth.organizationId.toString(),
-        result.id,
-      );
+      const [stored] = await groupRepository.findById(auth.organizationId.toString(), result.id);
 
       expect(stored).not.toBeNull();
       expect(stored!.values).toMatchObject({

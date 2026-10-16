@@ -1,15 +1,12 @@
+import { DropdownMenu, DropdownMenuItem, IconButton } from "@expo/ui/jetpack-compose";
+import type { TranslationKey } from "@fludge/i18n/index";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+
 import { Icon, type IconName } from "@/core/shared/components/icon";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import type { Colors } from "@/lib/theme";
-import {
-  DropdownMenu,
-  DropdownMenuItem,
-  IconButton,
-} from "@expo/ui/jetpack-compose";
-import type { TranslationKey } from "@fludge/i18n/index";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
 
 export type MenuOptionItem = {
   label: TranslationKey;
@@ -35,11 +32,7 @@ export function MenuOptions({ items }: Props) {
     >
       <DropdownMenu.Trigger>
         <IconButton onClick={() => setIsExpanded(true)}>
-          <Icon
-            name="more-vert"
-            size={24}
-            color={colors.onSecondaryContainer}
-          />
+          <Icon name="more-vert" size={24} color={colors.onSecondaryContainer} />
         </IconButton>
       </DropdownMenu.Trigger>
       <DropdownMenu.Items>
@@ -59,9 +52,7 @@ export function MenuOptions({ items }: Props) {
               />
             </DropdownMenuItem.LeadingIcon>
             <DropdownMenuItem.Text>
-              <ThemedNativeText
-                color={i.color ? colors[i.color] : colors.onSecondaryContainer}
-              >
+              <ThemedNativeText color={i.color ? colors[i.color] : colors.onSecondaryContainer}>
                 {t(i.label)}
               </ThemedNativeText>
             </DropdownMenuItem.Text>

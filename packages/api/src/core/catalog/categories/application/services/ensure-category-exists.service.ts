@@ -13,12 +13,7 @@ export class EnsureCategoryExistsService {
       this.db
         .select({ id: category.id })
         .from(category)
-        .where(
-          and(
-            eq(category.organizationId, organizationId),
-            inArray(category.id, ids),
-          ),
-        ),
+        .where(and(eq(category.organizationId, organizationId), inArray(category.id, ids))),
     );
 
     if (errFind) return err(errFind);

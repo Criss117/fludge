@@ -20,10 +20,7 @@ export const groupRouter = {
       })
       .input(createGroupCommand)
       .handler(({ input, context }) =>
-        iamContainer.commands.group.create.execute(
-          context.session.authContext,
-          input,
-        ),
+        iamContainer.commands.group.create.execute(context.session.authContext, input),
       ),
 
     update: hasPermissionProcedure({
@@ -36,10 +33,7 @@ export const groupRouter = {
       })
       .input(updateGroupCommand)
       .handler(({ input, context }) =>
-        iamContainer.commands.group.update.execute(
-          context.session.authContext,
-          input,
-        ),
+        iamContainer.commands.group.update.execute(context.session.authContext, input),
       ),
 
     delete: hasPermissionProcedure({
@@ -52,10 +46,7 @@ export const groupRouter = {
       })
       .input(deleteGroupsCommand)
       .handler(({ input, context }) =>
-        iamContainer.commands.group.delete.execute(
-          context.session.authContext,
-          input,
-        ),
+        iamContainer.commands.group.delete.execute(context.session.authContext, input),
       ),
 
     assignMembers: hasPermissionProcedure({
@@ -68,10 +59,7 @@ export const groupRouter = {
       })
       .input(assignMembersToGroupCommand)
       .handler(({ input, context }) =>
-        iamContainer.commands.group.assignMembers.execute(
-          context.session.authContext,
-          input,
-        ),
+        iamContainer.commands.group.assignMembers.execute(context.session.authContext, input),
       ),
 
     removeMembers: hasPermissionProcedure({
@@ -84,10 +72,7 @@ export const groupRouter = {
       })
       .input(removeMembersFromGroupCommand)
       .handler(({ input, context }) =>
-        iamContainer.commands.group.removeMembers.execute(
-          context.session.authContext,
-          input,
-        ),
+        iamContainer.commands.group.removeMembers.execute(context.session.authContext, input),
       ),
   },
 };

@@ -1,8 +1,9 @@
 import { AssistChip } from "@expo/ui/jetpack-compose";
-import { ThemedNativeText } from "./themed-text";
-import { useThemeColor } from "../hooks/use-theme-color";
 import { useTranslation } from "react-i18next";
+
+import { useThemeColor } from "../hooks/use-theme-color";
 import { Icon } from "./icon";
+import { ThemedNativeText } from "./themed-text";
 
 interface Props {
   status: "active" | "inactive" | "discontinued";

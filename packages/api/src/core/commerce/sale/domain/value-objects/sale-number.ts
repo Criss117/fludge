@@ -3,11 +3,7 @@ export class SaleNumber {
   private readonly _date: Date;
   private readonly _sequence: number;
 
-  private constructor(
-    sequence: number,
-    prefix: string = "SL",
-    date: Date = new Date(),
-  ) {
+  private constructor(sequence: number, prefix: string = "SL", date: Date = new Date()) {
     if (sequence < 1) {
       throw new Error("El correlativo de la venta debe ser mayor a 0");
     }

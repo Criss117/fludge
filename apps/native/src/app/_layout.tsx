@@ -1,8 +1,9 @@
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { Integrations } from "@/integrations";
 import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { useQueryClient } from "@tanstack/react-query";
 import { Stack } from "expo-router";
+
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { Integrations } from "@/integrations";
 
 function StackScreen() {
   const {

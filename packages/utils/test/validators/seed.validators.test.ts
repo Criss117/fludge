@@ -9,28 +9,18 @@ import {
   seedUsersValidator,
 } from "../../src/validators/seed.validators";
 
-function expectParsed<TSchema extends ZodType>(
-  schema: TSchema,
-  value: unknown,
-) {
+function expectParsed<TSchema extends ZodType>(schema: TSchema, value: unknown) {
   const result = schema.safeParse(value);
-  expect(result.success, `expected success for ${JSON.stringify(value)}`).toBe(
-    true,
-  );
+  expect(result.success, `expected success for ${JSON.stringify(value)}`).toBe(true);
   if (!result.success) {
     throw new Error(`expected success but got: ${result.error.message}`);
   }
   return result.data;
 }
 
-function expectFirstIssue<TSchema extends ZodType>(
-  schema: TSchema,
-  value: unknown,
-): string {
+function expectFirstIssue<TSchema extends ZodType>(schema: TSchema, value: unknown): string {
   const result = schema.safeParse(value);
-  expect(result.success, `expected failure for ${JSON.stringify(value)}`).toBe(
-    false,
-  );
+  expect(result.success, `expected failure for ${JSON.stringify(value)}`).toBe(false);
   if (result.success) {
     throw new Error(`expected failure for ${JSON.stringify(value)}`);
   }
@@ -44,9 +34,7 @@ describe("seedUsersValidator", () => {
 
   it("accepts an explicit non-negative integer", () => {
     expect(expectParsed(seedUsersValidator, { rootUsers: 0 }).rootUsers).toBe(0);
-    expect(expectParsed(seedUsersValidator, { rootUsers: 25 }).rootUsers).toBe(
-      25,
-    );
+    expect(expectParsed(seedUsersValidator, { rootUsers: 25 }).rootUsers).toBe(25);
   });
 
   it("rejects negative values", () => {
@@ -56,15 +44,11 @@ describe("seedUsersValidator", () => {
   });
 
   it("rejects non-integer numbers", () => {
-    expect(expectFirstIssue(seedUsersValidator, { rootUsers: 1.5 })).toMatch(
-      /expected int/,
-    );
+    expect(expectFirstIssue(seedUsersValidator, { rootUsers: 1.5 })).toMatch(/expected int/);
   });
 
   it("rejects non-number values", () => {
-    expect(expectFirstIssue(seedUsersValidator, { rootUsers: "2" })).toMatch(
-      /expected number/,
-    );
+    expect(expectFirstIssue(seedUsersValidator, { rootUsers: "2" })).toMatch(/expected number/);
   });
 });
 
@@ -207,11 +191,13 @@ describe("seedAllValidator", () => {
   });
 
   it("rejects an invalid value inside a nested section", () => {
-    expect(expectFirstIssue(seedAllValidator, {
-      users: { rootUsers: -1 },
-      iam: {},
-      catalog: {},
-      commerce: {},
-    })).toMatch(/expected number to be >=0/);
+    expect(
+      expectFirstIssue(seedAllValidator, {
+        users: { rootUsers: -1 },
+        iam: {},
+        catalog: {},
+        commerce: {},
+      }),
+    ).toMatch(/expected number to be >=0/);
   });
 });

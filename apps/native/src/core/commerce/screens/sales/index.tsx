@@ -1,9 +1,10 @@
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
-import { ThemedView } from "@/core/shared/components/themed-view";
 import { Button, Host } from "@expo/ui/jetpack-compose";
 import { useRouter } from "expo-router";
 import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { ThemedView } from "@/core/shared/components/themed-view";
 
 export function SalesScreen() {
   const { top } = useSafeAreaInsets();

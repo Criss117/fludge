@@ -1,8 +1,9 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
 import { useMutation } from "@tanstack/react-query";
-import { useInvalidateMembers } from "../queries/use-find-members";
+
 import { useInvalidateGroups } from "../queries/use-find-groups";
+import { useInvalidateMembers } from "../queries/use-find-members";
 
 export function useRegisterMember() {
   const orpc = useOrpc();
@@ -32,9 +33,7 @@ export function useAssignGroupsToMember() {
         await iamContainer.repositories.groupRepository.save(groups);
 
         invalidateMembers.invalidateDetail(variables.memberId);
-        variables.groupIds.forEach((groupId) =>
-          invalidateGroups.invalidateDetail(groupId),
-        );
+        variables.groupIds.forEach((groupId) => invalidateGroups.invalidateDetail(groupId));
       },
     }),
   );
@@ -52,9 +51,7 @@ export function useRemoveGroupsFromMember() {
         await iamContainer.repositories.groupRepository.save(groups);
 
         invalidateMembers.invalidateDetail(variables.memberId);
-        variables.groupIds.forEach((groupId) =>
-          invalidateGroups.invalidateDetail(groupId),
-        );
+        variables.groupIds.forEach((groupId) => invalidateGroups.invalidateDetail(groupId));
       },
     }),
   );

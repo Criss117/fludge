@@ -1,14 +1,12 @@
 import { Status } from "@fludge/api/core/shared/value-objects/status";
-import type {
-  GroupMemberSelect,
-  GroupSelect,
-} from "@fludge/db/schema/iam.schema";
+import type { GroupMemberSelect, GroupSelect } from "@fludge/db/schema/iam.schema";
 import type { StatusEnum } from "@fludge/utils/enums/db-enums";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { Slug } from "@fludge/utils/slugify";
 import { UUID } from "@fludge/utils/uuid";
-import { GroupMember } from "./group-member.entity";
+
 import { GroupMemberAlreadyExistsException } from "../exceptions/group-member-already-exists.exception";
+import { GroupMember } from "./group-member.entity";
 
 export type CreateGroup = {
   name: string;
@@ -75,10 +73,7 @@ export class Group {
         const entity = GroupMember.reconstitute(member);
 
         return [
-          generateGroupMemberKey(
-            UUID.fromString(member.groupId),
-            UUID.fromString(member.memberId),
-          ),
+          generateGroupMemberKey(UUID.fromString(member.groupId), UUID.fromString(member.memberId)),
           entity,
         ];
       }),
@@ -115,10 +110,8 @@ export class Group {
       this._slug = new Slug(values.name);
     }
 
-    if (values.description !== undefined)
-      this._description = values.description;
-    if (values.permissions !== undefined)
-      this._permissions = values.permissions;
+    if (values.description !== undefined) this._description = values.description;
+    if (values.permissions !== undefined) this._permissions = values.permissions;
 
     if (values.status !== undefined) this._status = new Status(values.status);
 
@@ -153,9 +146,7 @@ export class Group {
   public removeGroupMember(member: GroupMember | GroupMember[]) {
     const membersToRemove = Array.isArray(member) ? member : [member];
 
-    const membersToRemoveKeys = membersToRemove.map((m) =>
-      getGroupMemberKey(m),
-    );
+    const membersToRemoveKeys = membersToRemove.map((m) => getGroupMemberKey(m));
 
     membersToRemoveKeys.forEach((key) => this._members.delete(key));
 
@@ -198,9 +189,7 @@ export class Group {
       updatedAt: this._updatedAt,
       status: this._status.value,
       organizationId: this._organizationId.toString(),
-      members: Array.from(this._members.values()).map(
-        (member) => member.values,
-      ),
+      members: Array.from(this._members.values()).map((member) => member.values),
     };
   }
 }

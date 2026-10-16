@@ -1,15 +1,12 @@
-import { describe, expect, it } from "bun:test";
-
 import { Role } from "@fludge/api/core/shared/value-objects/role";
 import { Status } from "@fludge/api/core/shared/value-objects/status";
 import type { MemberSelect } from "@fludge/db/schema/iam.schema";
 import { UUID } from "@fludge/utils/uuid";
+import { describe, expect, it } from "bun:test";
 
 import { Member } from "../../../../src/core/iam/domain/entities/member.entity";
 
-const ORGANIZATION_ID = UUID.fromString(
-  "0192d840-7c3f-73b2-8f71-2c1b6a9e5d10",
-);
+const ORGANIZATION_ID = UUID.fromString("0192d840-7c3f-73b2-8f71-2c1b6a9e5d10");
 const USER_ID = UUID.fromString("0192d840-7c3f-73b2-8f71-2c1b6a9e5d11");
 const ASSIGNED_BY = UUID.fromString("0192d840-7c3f-73b2-8f71-2c1b6a9e5d12");
 
@@ -45,9 +42,7 @@ describe("Member", () => {
     it("generates a valid UUID v7 id", () => {
       const id = Member.create(CREATE_INPUT).id.toString();
 
-      expect(id).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
-      );
+      expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
     });
 
     it("generates a unique id for each member", () => {

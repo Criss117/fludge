@@ -1,8 +1,8 @@
-import { hasPermissionProcedure } from "@fludge/api/index";
 import { createCategoryCommand } from "@fludge/api/core/catalog/categories/application/commands/create-category.command";
-import { updateCategoryCommand } from "@fludge/api/core/catalog/categories/application/commands/update-category.command";
 import { toggleCategoryStatusCommand } from "@fludge/api/core/catalog/categories/application/commands/toggle-category-status.command";
+import { updateCategoryCommand } from "@fludge/api/core/catalog/categories/application/commands/update-category.command";
 import { catalogContainer } from "@fludge/api/core/catalog/container";
+import { hasPermissionProcedure } from "@fludge/api/index";
 
 const TAGS = ["Categories"] as const;
 
@@ -18,10 +18,7 @@ export const categoryRouter = {
       })
       .input(createCategoryCommand)
       .handler(({ input, context }) =>
-        catalogContainer.commands.createCategoryCommand.execute(
-          context.session.authContext,
-          input,
-        ),
+        catalogContainer.commands.createCategoryCommand.execute(context.session.authContext, input),
       ),
 
     update: hasPermissionProcedure({
@@ -34,10 +31,7 @@ export const categoryRouter = {
       })
       .input(updateCategoryCommand)
       .handler(({ input, context }) =>
-        catalogContainer.commands.updateCategoryCommand.execute(
-          context.session.authContext,
-          input,
-        ),
+        catalogContainer.commands.updateCategoryCommand.execute(context.session.authContext, input),
       ),
 
     toggleStatus: hasPermissionProcedure({

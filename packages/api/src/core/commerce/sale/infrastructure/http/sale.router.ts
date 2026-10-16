@@ -1,8 +1,8 @@
-import { hasPermissionProcedure } from "@fludge/api/index";
-import { createSaleCommand } from "@fludge/api/core/commerce/sale/application/commands/create-sale.command";
-import { cancelSaleCommand } from "@fludge/api/core/commerce/sale/application/commands/cancel-sale.command";
-import { refundSaleItemsCommand } from "@fludge/api/core/commerce/sale/application/commands/refund-sale-items.command";
 import { commerceContainer } from "@fludge/api/core/commerce/container";
+import { cancelSaleCommand } from "@fludge/api/core/commerce/sale/application/commands/cancel-sale.command";
+import { createSaleCommand } from "@fludge/api/core/commerce/sale/application/commands/create-sale.command";
+import { refundSaleItemsCommand } from "@fludge/api/core/commerce/sale/application/commands/refund-sale-items.command";
+import { hasPermissionProcedure } from "@fludge/api/index";
 
 const TAGS = ["Sales"] as const;
 
@@ -18,10 +18,7 @@ export const saleRouter = {
       })
       .input(createSaleCommand)
       .handler(({ input, context }) =>
-        commerceContainer.commands.sale.create.execute(
-          context.session.authContext,
-          input,
-        ),
+        commerceContainer.commands.sale.create.execute(context.session.authContext, input),
       ),
 
     cancel: hasPermissionProcedure({
@@ -34,10 +31,7 @@ export const saleRouter = {
       })
       .input(cancelSaleCommand)
       .handler(({ input, context }) =>
-        commerceContainer.commands.sale.cancel.execute(
-          context.session.authContext,
-          input,
-        ),
+        commerceContainer.commands.sale.cancel.execute(context.session.authContext, input),
       ),
 
     refundItems: hasPermissionProcedure({
@@ -50,10 +44,7 @@ export const saleRouter = {
       })
       .input(refundSaleItemsCommand)
       .handler(({ input, context }) =>
-        commerceContainer.commands.sale.refundItems.execute(
-          context.session.authContext,
-          input,
-        ),
+        commerceContainer.commands.sale.refundItems.execute(context.session.authContext, input),
       ),
   },
 };

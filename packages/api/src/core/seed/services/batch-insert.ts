@@ -1,6 +1,6 @@
 import type { DatabaseService } from "@fludge/db";
-import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 import { tryCatch } from "@fludge/utils/trycatch";
+import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 
 const DEFAULT_CHUNK_SIZE = 200;
 

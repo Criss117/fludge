@@ -1,24 +1,22 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import type { FindAllGroupsFilters } from "../domain/group.repository";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
+import { useSuspenseQuery } from "@tanstack/react-query";
+
+import type { FindAllGroupsFilters } from "../domain/group.repository";
 import { useAppState } from "../hooks/use-app-state";
 
 function normalizeFilters(filters?: FindAllGroupsFilters) {
   return {
     searchQuery: filters?.searchQuery?.trim() || undefined,
-    excludeIds: filters?.excludeIds?.length
-      ? [...filters.excludeIds].sort()
-      : undefined,
+    excludeIds: filters?.excludeIds?.length ? [...filters.excludeIds].sort() : undefined,
   };
 }
 
-export const { keys: groupKeys, useInvalidateQueries: useInvalidateGroups } =
-  keysGenerator({
-    module: "iam",
-    resource: "groups",
-    normalizeFilters,
-  });
+export const { keys: groupKeys, useInvalidateQueries: useInvalidateGroups } = keysGenerator({
+  module: "iam",
+  resource: "groups",
+  normalizeFilters,
+});
 
 export function useFindAllGroups(filters?: FindAllGroupsFilters) {
   const { iamContainer } = useContainer();
@@ -31,10 +29,7 @@ export function useFindAllGroups(filters?: FindAllGroupsFilters) {
   return useSuspenseQuery({
     queryKey: groupKeys.filteredList(activeOrganization.id, filters),
     queryFn: () =>
-      iamContainer.repositories.groupRepository.findAll(
-        activeOrganization.id,
-        filters,
-      ),
+      iamContainer.repositories.groupRepository.findAll(activeOrganization.id, filters),
   });
 }
 
@@ -49,9 +44,6 @@ export function useFindGroupDetail(groupId: string) {
   return useSuspenseQuery({
     queryKey: groupKeys.detail(activeOrganization.id, groupId),
     queryFn: () =>
-      iamContainer.repositories.groupRepository.findOneById(
-        activeOrganization.id,
-        groupId,
-      ),
+      iamContainer.repositories.groupRepository.findOneById(activeOrganization.id, groupId),
   });
 }

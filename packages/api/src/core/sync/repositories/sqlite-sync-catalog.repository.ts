@@ -1,8 +1,5 @@
 import type { DatabaseService } from "@fludge/db";
-import type {
-  LocalCategory,
-  LocalProduct,
-} from "@fludge/db/local-schemas/shared.schema";
+import type { LocalCategory, LocalProduct } from "@fludge/db/local-schemas/shared.schema";
 import {
   category,
   product,
@@ -11,10 +8,7 @@ import {
 } from "@fludge/db/schema/catalog.schema";
 import { jsonObject } from "@fludge/db/utils/build-queries";
 import type { ServerSyncCatalogRepository } from "@fludge/sync/repositories/catalog/server-sync-catalog.repository";
-import type {
-  CatalogSyncCursors,
-  CatalogSyncResult,
-} from "@fludge/sync/types/catalog.types";
+import type { CatalogSyncCursors, CatalogSyncResult } from "@fludge/sync/types/catalog.types";
 import {
   paginateSync,
   type PaginateSyncQueryFn,
@@ -22,40 +16,25 @@ import {
 } from "@fludge/sync/types/shared.types";
 import { and, asc, eq, getColumns, gt, inArray, or, sql } from "drizzle-orm";
 
-const after = <T extends { updatedAt: any; id: any }>(
-  t: T,
-  c: SyncCursor | null,
-) =>
+const after = <T extends { updatedAt: any; id: any }>(t: T, c: SyncCursor | null) =>
   c
-    ? or(
-        gt(t.updatedAt, c.updatedAt),
-        and(eq(t.updatedAt, c.updatedAt), gt(t.id, c.id)),
-      )
+    ? or(gt(t.updatedAt, c.updatedAt), and(eq(t.updatedAt, c.updatedAt), gt(t.id, c.id)))
     : undefined;
 
 export class SqliteSyncCatalogRepository implements ServerSyncCatalogRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  private findCategories(
-    organizationIds: string[],
-  ): PaginateSyncQueryFn<LocalCategory> {
+  private findCategories(organizationIds: string[]): PaginateSyncQueryFn<LocalCategory> {
     return (cursor, limit) =>
       this.db
         .select()
         .from(category)
-        .where(
-          and(
-            inArray(category.organizationId, organizationIds),
-            after(category, cursor),
-          ),
-        )
+        .where(and(inArray(category.organizationId, organizationIds), after(category, cursor)))
         .limit(limit)
         .orderBy(asc(category.updatedAt), asc(category.id));
   }
 
-  private findProducts(
-    organizationIds: string[],
-  ): PaginateSyncQueryFn<LocalProduct> {
+  private findProducts(organizationIds: string[]): PaginateSyncQueryFn<LocalProduct> {
     return async (cursor, limit) => {
       const rows = await this.db
         .select({
@@ -74,24 +53,19 @@ export class SqliteSyncCatalogRepository implements ServerSyncCatalogRepository 
             eq(productPresentation.organizationId, product.organizationId),
           ),
         )
-        .where(
-          and(
-            inArray(product.organizationId, organizationIds),
-            after(product, cursor),
-          ),
-        )
+        .where(and(inArray(product.organizationId, organizationIds), after(product, cursor)))
         .limit(limit)
         .orderBy(asc(product.updatedAt), asc(product.id))
         .groupBy(product.id);
 
       return rows.map((p) => {
-        const presentations = (
-          JSON.parse(p.presentations) as ProductPresentationSelect[]
-        ).map((p) => ({
-          ...p,
-          createdAt: new Date(p.createdAt),
-          updatedAt: new Date(p.updatedAt),
-        }));
+        const presentations = (JSON.parse(p.presentations) as ProductPresentationSelect[]).map(
+          (p) => ({
+            ...p,
+            createdAt: new Date(p.createdAt),
+            updatedAt: new Date(p.updatedAt),
+          }),
+        );
 
         return {
           ...p,
@@ -107,16 +81,8 @@ export class SqliteSyncCatalogRepository implements ServerSyncCatalogRepository 
     limit = 500,
   ): Promise<CatalogSyncResult> {
     const [categories, products] = await Promise.all([
-      paginateSync(
-        this.findCategories(organizationIds),
-        lastSyncedAt.category,
-        limit,
-      ),
-      paginateSync(
-        this.findProducts(organizationIds),
-        lastSyncedAt.product,
-        limit,
-      ),
+      paginateSync(this.findCategories(organizationIds), lastSyncedAt.category, limit),
+      paginateSync(this.findProducts(organizationIds), lastSyncedAt.product, limit),
     ]);
 
     return {

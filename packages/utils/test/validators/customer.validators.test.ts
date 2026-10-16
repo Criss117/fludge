@@ -11,28 +11,18 @@ import {
 
 const VALID_UUID = "00000000-0000-4000-8000-000000000001";
 
-function expectParsed<TSchema extends ZodType>(
-  schema: TSchema,
-  value: unknown,
-) {
+function expectParsed<TSchema extends ZodType>(schema: TSchema, value: unknown) {
   const result = schema.safeParse(value);
-  expect(result.success, `expected success for ${JSON.stringify(value)}`).toBe(
-    true,
-  );
+  expect(result.success, `expected success for ${JSON.stringify(value)}`).toBe(true);
   if (!result.success) {
     throw new Error(`expected success but got: ${result.error.message}`);
   }
   return result.data;
 }
 
-function expectFirstIssue<TSchema extends ZodType>(
-  schema: TSchema,
-  value: unknown,
-): string {
+function expectFirstIssue<TSchema extends ZodType>(schema: TSchema, value: unknown): string {
   const result = schema.safeParse(value);
-  expect(result.success, `expected failure for ${JSON.stringify(value)}`).toBe(
-    false,
-  );
+  expect(result.success, `expected failure for ${JSON.stringify(value)}`).toBe(false);
   if (result.success) {
     throw new Error(`expected failure for ${JSON.stringify(value)}`);
   }
@@ -47,44 +37,28 @@ describe("documentTypeSchema", () => {
   });
 
   it("rejects a value outside the enum", () => {
-    expect(expectFirstIssue(documentTypeSchema, "TI")).toBe(
-      "validators.document_type.invalid",
-    );
+    expect(expectFirstIssue(documentTypeSchema, "TI")).toBe("validators.document_type.invalid");
   });
 
   it("rejects an empty string, lowercase and non-string values", () => {
-    expect(expectFirstIssue(documentTypeSchema, "")).toBe(
-      "validators.document_type.invalid",
-    );
-    expect(expectFirstIssue(documentTypeSchema, "cc")).toBe(
-      "validators.document_type.invalid",
-    );
-    expect(expectFirstIssue(documentTypeSchema, null)).toBe(
-      "validators.document_type.invalid",
-    );
-    expect(expectFirstIssue(documentTypeSchema, 123)).toBe(
-      "validators.document_type.invalid",
-    );
+    expect(expectFirstIssue(documentTypeSchema, "")).toBe("validators.document_type.invalid");
+    expect(expectFirstIssue(documentTypeSchema, "cc")).toBe("validators.document_type.invalid");
+    expect(expectFirstIssue(documentTypeSchema, null)).toBe("validators.document_type.invalid");
+    expect(expectFirstIssue(documentTypeSchema, 123)).toBe("validators.document_type.invalid");
   });
 });
 
 describe("documentNumberSchema", () => {
   it("accepts a document number at the minimum length (5)", () => {
-    expect(expectParsed(documentNumberSchema, "a".repeat(5))).toBe(
-      "a".repeat(5),
-    );
+    expect(expectParsed(documentNumberSchema, "a".repeat(5))).toBe("a".repeat(5));
   });
 
   it("accepts a document number at the maximum length (30)", () => {
-    expect(expectParsed(documentNumberSchema, "a".repeat(30))).toBe(
-      "a".repeat(30),
-    );
+    expect(expectParsed(documentNumberSchema, "a".repeat(30))).toBe("a".repeat(30));
   });
 
   it("trims surrounding whitespace", () => {
-    expect(expectParsed(documentNumberSchema, "  1234567890  ")).toBe(
-      "1234567890",
-    );
+    expect(expectParsed(documentNumberSchema, "  1234567890  ")).toBe("1234567890");
   });
 
   it("rejects a document number shorter than 5 characters", () => {
@@ -109,12 +83,8 @@ describe("documentNumberSchema", () => {
   });
 
   it("rejects non-string values", () => {
-    expect(expectFirstIssue(documentNumberSchema, 123)).toBe(
-      "validators.document_number.invalid",
-    );
-    expect(expectFirstIssue(documentNumberSchema, null)).toBe(
-      "validators.document_number.invalid",
-    );
+    expect(expectFirstIssue(documentNumberSchema, 123)).toBe("validators.document_number.invalid");
+    expect(expectFirstIssue(documentNumberSchema, null)).toBe("validators.document_number.invalid");
   });
 });
 
@@ -125,21 +95,13 @@ describe("creditLimitSchema", () => {
   });
 
   it("rejects zero and negative limits", () => {
-    expect(expectFirstIssue(creditLimitSchema, 0)).toBe(
-      "validators.credit_limit.non_negative",
-    );
-    expect(expectFirstIssue(creditLimitSchema, -1)).toBe(
-      "validators.credit_limit.non_negative",
-    );
+    expect(expectFirstIssue(creditLimitSchema, 0)).toBe("validators.credit_limit.non_negative");
+    expect(expectFirstIssue(creditLimitSchema, -1)).toBe("validators.credit_limit.non_negative");
   });
 
   it("rejects non-number values", () => {
-    expect(expectFirstIssue(creditLimitSchema, "500000")).toBe(
-      "validators.credit_limit.invalid",
-    );
-    expect(expectFirstIssue(creditLimitSchema, null)).toBe(
-      "validators.credit_limit.invalid",
-    );
+    expect(expectFirstIssue(creditLimitSchema, "500000")).toBe("validators.credit_limit.invalid");
+    expect(expectFirstIssue(creditLimitSchema, null)).toBe("validators.credit_limit.invalid");
   });
 });
 
@@ -208,52 +170,62 @@ describe("createCustomerValidator", () => {
   });
 
   it("rejects a name shorter than 5 characters", () => {
-    expect(expectFirstIssue(createCustomerValidator, {
-      ...VALID_CREATE_CUSTOMER,
-      name: "ab",
-    })).toBe("validators.name.min_length");
+    expect(
+      expectFirstIssue(createCustomerValidator, {
+        ...VALID_CREATE_CUSTOMER,
+        name: "ab",
+      }),
+    ).toBe("validators.name.min_length");
   });
 
   it("rejects an invalid phone", () => {
-    expect(expectFirstIssue(createCustomerValidator, {
-      ...VALID_CREATE_CUSTOMER,
-      phone: "123",
-    })).toBe("validators.phone.min_length");
+    expect(
+      expectFirstIssue(createCustomerValidator, {
+        ...VALID_CREATE_CUSTOMER,
+        phone: "123",
+      }),
+    ).toBe("validators.phone.min_length");
   });
 
   it("rejects an invalid email", () => {
-    expect(expectFirstIssue(createCustomerValidator, {
-      ...VALID_CREATE_CUSTOMER,
-      email: "not-an-email",
-    })).toBe("validators.email.invalid");
+    expect(
+      expectFirstIssue(createCustomerValidator, {
+        ...VALID_CREATE_CUSTOMER,
+        email: "not-an-email",
+      }),
+    ).toBe("validators.email.invalid");
   });
 
   it("rejects a zero credit limit", () => {
-    expect(expectFirstIssue(createCustomerValidator, {
-      ...VALID_CREATE_CUSTOMER,
-      creditLimit: 0,
-    })).toBe("validators.credit_limit.non_negative");
+    expect(
+      expectFirstIssue(createCustomerValidator, {
+        ...VALID_CREATE_CUSTOMER,
+        creditLimit: 0,
+      }),
+    ).toBe("validators.credit_limit.non_negative");
   });
 
   it("rejects a document type outside the enum", () => {
-    expect(expectFirstIssue(createCustomerValidator, {
-      ...VALID_CREATE_CUSTOMER,
-      documentType: "TI",
-    })).toBe("validators.document_type.invalid");
+    expect(
+      expectFirstIssue(createCustomerValidator, {
+        ...VALID_CREATE_CUSTOMER,
+        documentType: "TI",
+      }),
+    ).toBe("validators.document_type.invalid");
   });
 
   it("rejects a document number shorter than 5 characters", () => {
-    expect(expectFirstIssue(createCustomerValidator, {
-      ...VALID_CREATE_CUSTOMER,
-      documentNumber: "123",
-    })).toBe("validators.document_number.min_length");
+    expect(
+      expectFirstIssue(createCustomerValidator, {
+        ...VALID_CREATE_CUSTOMER,
+        documentNumber: "123",
+      }),
+    ).toBe("validators.document_number.min_length");
   });
 
   it("rejects a missing name", () => {
     const { name: _name, ...withoutName } = VALID_CREATE_CUSTOMER;
-    expect(expectFirstIssue(createCustomerValidator, withoutName)).toBe(
-      "validators.name.required",
-    );
+    expect(expectFirstIssue(createCustomerValidator, withoutName)).toBe("validators.name.required");
   });
 
   it("rejects an empty payload", () => {
@@ -285,9 +257,7 @@ describe("updateCustomerValidator", () => {
   });
 
   it("accepts an id-only payload (all other fields optional)", () => {
-    expect(expectParsed(updateCustomerValidator, { id: VALID_UUID }).id).toBe(
-      VALID_UUID,
-    );
+    expect(expectParsed(updateCustomerValidator, { id: VALID_UUID }).id).toBe(VALID_UUID);
   });
 
   it("converts an empty email to null", () => {
@@ -299,31 +269,39 @@ describe("updateCustomerValidator", () => {
   });
 
   it("rejects an invalid name when provided", () => {
-    expect(expectFirstIssue(updateCustomerValidator, {
-      id: VALID_UUID,
-      name: "ab",
-    })).toBe("validators.name.min_length");
+    expect(
+      expectFirstIssue(updateCustomerValidator, {
+        id: VALID_UUID,
+        name: "ab",
+      }),
+    ).toBe("validators.name.min_length");
   });
 
   it("rejects an invalid email when provided", () => {
-    expect(expectFirstIssue(updateCustomerValidator, {
-      id: VALID_UUID,
-      email: "not-an-email",
-    })).toBe("validators.email.invalid");
+    expect(
+      expectFirstIssue(updateCustomerValidator, {
+        id: VALID_UUID,
+        email: "not-an-email",
+      }),
+    ).toBe("validators.email.invalid");
   });
 
   it("rejects a zero credit limit when provided", () => {
-    expect(expectFirstIssue(updateCustomerValidator, {
-      id: VALID_UUID,
-      creditLimit: 0,
-    })).toBe("validators.credit_limit.non_negative");
+    expect(
+      expectFirstIssue(updateCustomerValidator, {
+        id: VALID_UUID,
+        creditLimit: 0,
+      }),
+    ).toBe("validators.credit_limit.non_negative");
   });
 
   it("rejects a status outside the enum", () => {
-    expect(expectFirstIssue(updateCustomerValidator, {
-      id: VALID_UUID,
-      status: "archived",
-    })).toBe("validators.status.invalid");
+    expect(
+      expectFirstIssue(updateCustomerValidator, {
+        id: VALID_UUID,
+        status: "archived",
+      }),
+    ).toBe("validators.status.invalid");
   });
 
   it("rejects a missing id", () => {

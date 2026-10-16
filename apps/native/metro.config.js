@@ -7,12 +7,7 @@ const config = getDefaultConfig(__dirname);
 config.resolver.sourceExts.push("sql");
 
 module.exports = withRozenite(config, {
-  enabled:
-    process.env.WITH_ROZENITE === "true" ||
-    process.env.NODE_ENV !== "production",
-  include: [
-    "@rozenite/tanstack-query-plugin",
-    "@rozenite/network-activity-plugin",
-  ],
+  enabled: process.env.WITH_ROZENITE === "true" || process.env.NODE_ENV !== "production",
+  include: ["@rozenite/tanstack-query-plugin", "@rozenite/network-activity-plugin"],
   pluginDisplay: "tabs",
 });

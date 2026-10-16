@@ -1,8 +1,11 @@
-import { ok } from "@fludge/utils/trycatch";
-import type { Result } from "@fludge/utils/trycatch";
 import type { Group } from "@fludge/api/core/iam/domain/entities/group.entity";
-import type { GroupRepository, Options } from "@fludge/api/core/iam/domain/repositories/group.repository";
+import type {
+  GroupRepository,
+  Options,
+} from "@fludge/api/core/iam/domain/repositories/group.repository";
 import { DummyTransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
+import type { Result } from "@fludge/utils/trycatch";
+import { ok } from "@fludge/utils/trycatch";
 
 export class InMemoryGroupRepository
   extends DummyTransactionalRepository

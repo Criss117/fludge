@@ -1,7 +1,4 @@
-import type {
-  CommerceSyncCursors,
-  CommerceSyncResult,
-} from "@fludge/sync/types/commerce.types";
+import type { CommerceSyncCursors, CommerceSyncResult } from "@fludge/sync/types/commerce.types";
 
 export interface ClientSyncCommerceRepository {
   getLastSyncedAt: () => Promise<CommerceSyncCursors>;
@@ -10,7 +7,5 @@ export interface ClientSyncCommerceRepository {
 }
 
 export interface HttpClientSyncCommerceRepository {
-  findLastSyncedAt: (
-    lastSyncedAt: CommerceSyncCursors,
-  ) => Promise<CommerceSyncResult>;
+  findLastSyncedAt: (lastSyncedAt: CommerceSyncCursors) => Promise<CommerceSyncResult>;
 }

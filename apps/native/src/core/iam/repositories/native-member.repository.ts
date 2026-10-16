@@ -1,32 +1,21 @@
-import { DatabaseService } from "@/integrations/db";
-import type {
-  MemberDetail,
-  MemberSummary,
-} from "@fludge/client/iam/domain/entities";
+import type { MemberDetail, MemberSummary } from "@fludge/client/iam/domain/entities";
 import type {
   FindAllMembersFilters,
   MemberRepository,
 } from "@fludge/client/iam/domain/member.repository";
+import type { LocalMember } from "@fludge/db/local-schemas/shared.schema";
 import {
   localGroup,
   localGroupMember,
-  LocalMember,
   localMember,
   localUser,
 } from "@fludge/db/local-schemas/shared.schema";
 import { groupMember } from "@fludge/db/schema/iam.schema";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
-import {
-  and,
-  count,
-  desc,
-  eq,
-  getColumns,
-  inArray,
-  like,
-  notInArray,
-} from "drizzle-orm";
+import { and, count, desc, eq, getColumns, inArray, like, notInArray } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
+
+import type { DatabaseService } from "@/integrations/db";
 
 const countGroupMembersAlias = alias(groupMember, "count_group_members");
 
@@ -41,27 +30,18 @@ export class NativeMemberRepository implements MemberRepository {
     });
   }
 
-  public async delete(
-    organizationId: string,
-    memberId: string | string[],
-  ): Promise<void> {
+  public async delete(organizationId: string, memberId: string | string[]): Promise<void> {
     const memberIds = Array.isArray(memberId) ? memberId : [memberId];
 
     this.db
       .delete(localMember)
       .where(
-        and(
-          eq(localMember.organizationId, organizationId),
-          inArray(localMember.id, memberIds),
-        ),
+        and(eq(localMember.organizationId, organizationId), inArray(localMember.id, memberIds)),
       )
       .run();
   }
 
-  public async findOneById(
-    organizationId: string,
-    memberId: string,
-  ): Promise<MemberDetail | null> {
+  public async findOneById(organizationId: string, memberId: string): Promise<MemberDetail | null> {
     const memberData = this.db
       .select({
         ...getColumns(localMember),
@@ -69,12 +49,7 @@ export class NativeMemberRepository implements MemberRepository {
       })
       .from(localMember)
       .innerJoin(localUser, eq(localUser.id, localMember.userId))
-      .where(
-        and(
-          eq(localMember.organizationId, organizationId),
-          eq(localMember.id, memberId),
-        ),
-      )
+      .where(and(eq(localMember.organizationId, organizationId), eq(localMember.id, memberId)))
       .limit(1)
       .get();
 
@@ -87,10 +62,7 @@ export class NativeMemberRepository implements MemberRepository {
       })
       .from(localGroupMember)
       .innerJoin(localGroup, eq(localGroup.id, localGroupMember.groupId))
-      .leftJoin(
-        countGroupMembersAlias,
-        eq(countGroupMembersAlias.groupId, localGroup.id),
-      )
+      .leftJoin(countGroupMembersAlias, eq(countGroupMembersAlias.groupId, localGroup.id))
       .where(
         and(
           eq(localGroupMember.memberId, memberId),
@@ -149,11 +121,7 @@ export class NativeMemberRepository implements MemberRepository {
         .values(users)
         .onConflictDoUpdate({
           target: localUser.id,
-          set: buildConflictUpdateColumn(localUser, [
-            "name",
-            "phone",
-            "updatedAt",
-          ]),
+          set: buildConflictUpdateColumn(localUser, ["name", "phone", "updatedAt"]),
         })
         .run();
 

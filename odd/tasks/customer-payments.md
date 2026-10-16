@@ -3,6 +3,7 @@
 Feature: Esquema de pagos de clientes (customer payments) — abono genérico a cuenta.
 
 ## Reglas de negocio
+
 - Abono genérico a la cuenta del cliente (no vinculado a sale específica)
 - Métodos: cash, transfer
 - Pagos parciales permitidos

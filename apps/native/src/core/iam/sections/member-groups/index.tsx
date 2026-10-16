@@ -1,16 +1,14 @@
-import { SPACING } from "@/lib/sp";
-import type {
-  GroupSummary,
-  MemberDetail,
-} from "@fludge/client/iam/domain/entities";
-import { StyleSheet, View } from "react-native";
-import { GroupCard, type MenuOptions } from "@/core/iam/components/group-card";
-import { TextInput } from "@/core/shared/components/text-input";
 import { Host } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
-import { useCallback, useMemo, useState } from "react";
+import type { GroupSummary, MemberDetail } from "@fludge/client/iam/domain/entities";
 import { useRemoveGroupsFromMember } from "@fludge/client/iam/mutations/use-member.mutations";
+import { useCallback, useMemo, useState } from "react";
+import { StyleSheet, View } from "react-native";
+
+import { GroupCard } from "@/core/iam/components/group-card";
+import { TextInput } from "@/core/shared/components/text-input";
 import { useMutationToast } from "@/integrations/toast";
+import { SPACING } from "@/lib/sp";
 
 interface Props {
   member: MemberDetail;
@@ -22,9 +20,7 @@ export function MemberGroupsSection({ member }: Props) {
   const mutationToast = useMutationToast();
 
   const groups = useMemo(() => {
-    return member.groups.filter((g) =>
-      g.name.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+    return member.groups.filter((g) => g.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }, [member, searchQuery]);
 
   const onRemoveGroup = useCallback(

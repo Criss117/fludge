@@ -2,9 +2,7 @@ import { BadRequestError } from "@fludge/api/core/shared/exceptions/base-excepti
 import type { TranslationKey } from "@fludge/i18n/index";
 
 export class CantIncreaseBalanceException extends BadRequestError {
-  constructor(
-    message: TranslationKey = "api_errors.customers.credit_limit_exceeded",
-  ) {
+  constructor(message: TranslationKey = "api_errors.customers.credit_limit_exceeded") {
     super(message);
   }
 }

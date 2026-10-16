@@ -14,9 +14,7 @@ interface NetworkContextValue extends NetworkState {
   onReconnect: (callback: () => void) => () => void; // suscripción a reconexiones
 }
 
-const NetworkContext = createContext<NetworkContextValue | undefined>(
-  undefined,
-);
+const NetworkContext = createContext<NetworkContextValue | undefined>(undefined);
 
 export function NetworkProvider({
   networkService,
@@ -55,9 +53,7 @@ export function NetworkProvider({
 
   const value: NetworkContextValue = { ...state, isOnline, onReconnect };
 
-  return (
-    <NetworkContext.Provider value={value}>{children}</NetworkContext.Provider>
-  );
+  return <NetworkContext.Provider value={value}>{children}</NetworkContext.Provider>;
 }
 
 export function useNetwork() {

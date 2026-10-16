@@ -1,7 +1,10 @@
-import { ok } from "@fludge/utils/trycatch";
-import type { Result } from "@fludge/utils/trycatch";
 import type { Member } from "@fludge/api/core/iam/domain/entities/member.entity";
-import type { MemberRepository, Options } from "@fludge/api/core/iam/domain/repositories/member.repository";
+import type {
+  MemberRepository,
+  Options,
+} from "@fludge/api/core/iam/domain/repositories/member.repository";
+import type { Result } from "@fludge/utils/trycatch";
+import { ok } from "@fludge/utils/trycatch";
 
 export class InMemoryMemberRepository implements MemberRepository {
   private members: Map<string, Member> = new Map();

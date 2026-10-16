@@ -1,28 +1,25 @@
-import { TextInput } from "@/core/shared/components/text-input";
-import {
-  ThemedNativeText,
-  ThemedText,
-} from "@/core/shared/components/themed-text";
-import { SPACING } from "@/lib/sp";
 import { Button, Host, Spacer } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, width } from "@expo/ui/jetpack-compose/modifiers";
 import type { MemberDetail } from "@fludge/client/iam/domain/entities";
+import { useAssignGroupsToMember } from "@fludge/client/iam/mutations/use-member.mutations";
 import { useFindAllGroups } from "@fludge/client/iam/queries/use-find-groups";
 import { FlashList } from "@shopify/flash-list";
-import { StyleSheet, View } from "react-native";
-import { SelectableGroupCard } from "@/core/iam/components/group-card";
-import { useTranslation } from "react-i18next";
-import { Suspense, useState } from "react";
-import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
-import { ThemedView } from "@/core/shared/components/themed-view";
-import { Icon } from "@/core/shared/components/icon";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
-import Animated from "react-native-reanimated";
-import { useAssignGroupsToMember } from "@fludge/client/iam/mutations/use-member.mutations";
 import { useRouter } from "expo-router";
-import type { TranslationKey } from "@fludge/i18n/index";
+import { Suspense, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, View } from "react-native";
+import Animated from "react-native-reanimated";
+
+import { SelectableGroupCard } from "@/core/iam/components/group-card";
+import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
+import { Icon } from "@/core/shared/components/icon";
+import { TextInput } from "@/core/shared/components/text-input";
+import { ThemedNativeText, ThemedText } from "@/core/shared/components/themed-text";
+import { ThemedView } from "@/core/shared/components/themed-view";
+import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { useMutationToast } from "@/integrations/toast";
+import { SPACING } from "@/lib/sp";
 
 interface Props {
   member: MemberDetail;

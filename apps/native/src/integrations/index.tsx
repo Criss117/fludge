@@ -1,12 +1,14 @@
 import "./i18n";
+
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
-import { FontsProvider } from "./fonts";
-import { QueryClientProvider } from "./query";
+
 import { DatabaseProvider } from "./db";
+import { DependenciesProvider } from "./dependencies";
+import { FontsProvider } from "./fonts";
 import { NetworkProvider } from "./network";
 import { ORPCProvider } from "./orpc";
-import { DependenciesProvider } from "./dependencies";
+import { QueryClientProvider } from "./query";
 import { ToastProvider } from "./toast";
 
 function UIProvider({ children }: { children: React.ReactNode }) {

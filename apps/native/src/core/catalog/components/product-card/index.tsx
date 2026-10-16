@@ -1,16 +1,16 @@
+import { AssistChip, Card, Column, Host, Row } from "@expo/ui/jetpack-compose";
+import { paddingAll, weight } from "@expo/ui/jetpack-compose/modifiers";
+import type { ProductSummary } from "@fludge/client/catalog/domain/entities";
+import type { TranslationKey } from "@fludge/i18n/index";
+import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
+
 import { Icon, type IconName } from "@/core/shared/components/icon";
 import { MenuOptions } from "@/core/shared/components/menu-options";
 import { StatusChip } from "@/core/shared/components/status-chip";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
-import { AssistChip, Card, Column, Host, Row } from "@expo/ui/jetpack-compose";
-import { paddingAll, weight } from "@expo/ui/jetpack-compose/modifiers";
-import type { ProductSummary } from "@fludge/client/catalog/domain/entities";
-import { TranslationKey } from "@fludge/i18n/index";
-import { useRouter } from "expo-router";
-import { useTranslation } from "react-i18next";
-import { View } from "react-native";
 
 interface Props {
   product: ProductSummary;
@@ -92,16 +92,10 @@ export function ProductCard({ product }: Props) {
                   }}
                 >
                   <AssistChip.LeadingIcon>
-                    <Icon
-                      name={c.icon}
-                      size={SPACING.md}
-                      color={colors.onSurface}
-                    />
+                    <Icon name={c.icon} size={SPACING.md} color={colors.onSurface} />
                   </AssistChip.LeadingIcon>
                   <AssistChip.Label>
-                    <ThemedNativeText>
-                      {t(c.label.key, c.label.args)}
-                    </ThemedNativeText>
+                    <ThemedNativeText>{t(c.label.key, c.label.args)}</ThemedNativeText>
                   </AssistChip.Label>
                 </AssistChip>
               ))}

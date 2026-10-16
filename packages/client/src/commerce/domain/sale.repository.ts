@@ -1,4 +1,5 @@
 import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
+
 import type { SaleDetail } from "./entities";
 
 export type { SaleDetail } from "./entities";

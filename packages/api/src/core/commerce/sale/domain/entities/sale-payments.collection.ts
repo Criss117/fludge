@@ -1,4 +1,5 @@
 import type { UUID } from "@fludge/utils/uuid";
+
 import type { SalePayment } from "./sale-payment.entity";
 
 export class SalePaymentsCollection {
@@ -27,9 +28,7 @@ export class SalePaymentsCollection {
     const payments: SalePayment[] = [];
 
     for (const payment of this._payments.values()) {
-      if (
-        customerPaymentIds.some((id) => id.equals(payment.customerPaymentId))
-      ) {
+      if (customerPaymentIds.some((id) => id.equals(payment.customerPaymentId))) {
         payments.push(payment);
       }
     }

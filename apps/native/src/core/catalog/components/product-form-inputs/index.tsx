@@ -1,9 +1,3 @@
-import { Icon } from "@/core/shared/components/icon";
-import { MenuOptions } from "@/core/shared/components/menu-options";
-import { FIELD_SHAPE, TextInput } from "@/core/shared/components/text-input";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { SPACING } from "@/lib/sp";
 import {
   Card,
   Column,
@@ -14,7 +8,6 @@ import {
   OutlinedTextField,
   Row,
   Switch,
-  TextField,
   useNativeState,
 } from "@expo/ui/jetpack-compose";
 import {
@@ -25,12 +18,19 @@ import {
   paddingAll,
   weight,
 } from "@expo/ui/jetpack-compose/modifiers";
-import { ProductFormSchema } from "@fludge/client/catalog/forms/product.form";
+import type { ProductFormSchema } from "@fludge/client/catalog/forms/product.form";
+import { useFindCategories } from "@fludge/client/catalog/queries/use-find-categories";
 import type { MinimalField } from "@fludge/client/shared/field-api";
 import { formatCurrency } from "@fludge/utils/format-currency";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useFindCategories } from "@fludge/client/catalog/queries/use-find-categories";
+
+import { Icon } from "@/core/shared/components/icon";
+import { MenuOptions } from "@/core/shared/components/menu-options";
+import { FIELD_SHAPE, TextInput } from "@/core/shared/components/text-input";
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { SPACING } from "@/lib/sp";
 
 interface FieldProps<T> {
   field: MinimalField<T>;
@@ -123,9 +123,7 @@ function AllowNegativeStockInput({ field }: FieldProps<boolean>) {
       ]}
     >
       <Column modifiers={[weight(1)]}>
-        <ThemedNativeText>
-          {t("forms.product.allow_negative_stock.label")}
-        </ThemedNativeText>
+        <ThemedNativeText>{t("forms.product.allow_negative_stock.label")}</ThemedNativeText>
         <ThemedNativeText variant="muted">
           {t("forms.product.allow_negative_stock.placeholder")}
         </ThemedNativeText>
@@ -159,16 +157,9 @@ function PresentationCards({
   const { t } = useTranslation();
 
   return (
-    <Column
-      verticalArrangement={{ spacedBy: SPACING.md }}
-      modifiers={[fillMaxWidth()]}
-    >
+    <Column verticalArrangement={{ spacedBy: SPACING.md }} modifiers={[fillMaxWidth()]}>
       {field.state.value.map((p) => (
-        <Card
-          key={p.id}
-          colors={{ containerColor: colors.surface }}
-          modifiers={[fillMaxWidth()]}
-        >
+        <Card key={p.id} colors={{ containerColor: colors.surface }} modifiers={[fillMaxWidth()]}>
           <Column
             modifiers={[paddingAll(SPACING.md)]}
             verticalArrangement={{
@@ -186,9 +177,7 @@ function PresentationCards({
                   modifiers={[weight(1)]}
                 >
                   <ThemedNativeText variant="h5">{p.name}</ThemedNativeText>
-                  <ThemedNativeText variant="muted">
-                    Factor x {p.conversionFactor}
-                  </ThemedNativeText>
+                  <ThemedNativeText variant="muted">Factor x {p.conversionFactor}</ThemedNativeText>
                 </Row>
 
                 <MenuOptions
@@ -218,9 +207,7 @@ function PresentationCards({
                 }}
               >
                 <Icon name="barcode" size={18} color={colors.outline} />
-                <ThemedNativeText variant="muted">
-                  {p.barcode || "-"}
-                </ThemedNativeText>
+                <ThemedNativeText variant="muted">{p.barcode || "-"}</ThemedNativeText>
               </Row>
             </Column>
 
@@ -239,18 +226,13 @@ function PresentationCards({
                 </ThemedNativeText>
               </Column>
 
-              <Row
-                horizontalArrangement="spaceBetween"
-                modifiers={[fillMaxWidth()]}
-              >
+              <Row horizontalArrangement="spaceBetween" modifiers={[fillMaxWidth()]}>
                 <Column>
                   <ThemedNativeText variant="muted">
                     {t("forms.product_presentation.price_purchase.label")}
                   </ThemedNativeText>
                   <ThemedNativeText variant="h6">
-                    {p.pricePurchase === 0
-                      ? "-"
-                      : formatCurrency(p.pricePurchase)}
+                    {p.pricePurchase === 0 ? "-" : formatCurrency(p.pricePurchase)}
                   </ThemedNativeText>
                 </Column>
                 <Column>
@@ -258,9 +240,7 @@ function PresentationCards({
                     {t("forms.product_presentation.price_wholesale.label")}
                   </ThemedNativeText>
                   <ThemedNativeText variant="h6">
-                    {p.priceWholesale === 0
-                      ? "-"
-                      : formatCurrency(p.priceWholesale)}
+                    {p.priceWholesale === 0 ? "-" : formatCurrency(p.priceWholesale)}
                   </ThemedNativeText>
                 </Column>
               </Row>
@@ -278,10 +258,7 @@ export function CategorySelectInput({ field }: FieldProps<string>) {
   const [expanded, setExpanded] = useState(false);
   const { data } = useFindCategories();
 
-  const categories = useMemo(
-    () => data?.pages.flatMap((p) => p.items) ?? [],
-    [data],
-  );
+  const categories = useMemo(() => data?.pages.flatMap((p) => p.items) ?? [], [data]);
 
   const selectedLabel = useNativeState("");
 
@@ -313,9 +290,7 @@ export function CategorySelectInput({ field }: FieldProps<string>) {
         }}
       >
         <OutlinedTextField.Label>
-          <ThemedNativeText>
-            {t("forms.product.category.label")}
-          </ThemedNativeText>
+          <ThemedNativeText>{t("forms.product.category.label")}</ThemedNativeText>
         </OutlinedTextField.Label>
         <OutlinedTextField.Placeholder>
           <ThemedNativeText variant="muted">
@@ -339,9 +314,7 @@ export function CategorySelectInput({ field }: FieldProps<string>) {
             }}
           >
             <DropdownMenuItem.Text>
-              <ThemedNativeText color={colors.onSurface}>
-                {category.name}
-              </ThemedNativeText>
+              <ThemedNativeText color={colors.onSurface}>{category.name}</ThemedNativeText>
             </DropdownMenuItem.Text>
           </DropdownMenuItem>
         ))}

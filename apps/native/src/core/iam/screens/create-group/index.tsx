@@ -1,20 +1,21 @@
-import { Icon } from "@/core/shared/components/icon";
-import { SectionCard } from "@/core/shared/components/section-card";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { SPACING } from "@/lib/sp";
 import { Button, Column, Host, Spacer } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, width } from "@expo/ui/jetpack-compose/modifiers";
 import { useGroupForm } from "@fludge/client/iam/forms/group.form";
 import { useCreateGroup } from "@fludge/client/iam/mutations/use-group.mutations";
+import type { TranslationKey } from "@fludge/i18n/index";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { useMutationToast } from "@/integrations/toast";
-import type { TranslationKey } from "@fludge/i18n/index";
-import { GroupFormInputs } from "@/core/iam/components/group-form-input";
-import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import Animated from "react-native-reanimated";
+
+import { GroupFormInputs } from "@/core/iam/components/group-form-input";
+import { Icon } from "@/core/shared/components/icon";
+import { SectionCard } from "@/core/shared/components/section-card";
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { useMutationToast } from "@/integrations/toast";
+import { SPACING } from "@/lib/sp";
 
 export function CreateGroupScreen() {
   const spacer = useKeyboardSpacer();
@@ -40,10 +41,7 @@ export function CreateGroupScreen() {
             mutationToast.showSuccess("forms.group.create.success");
           },
           onError: (e) => {
-            mutationToast.showError(
-              "forms.group.create.error",
-              e.message as TranslationKey,
-            );
+            mutationToast.showError("forms.group.create.error", e.message as TranslationKey);
           },
         },
       );
@@ -74,9 +72,7 @@ export function CreateGroupScreen() {
 
           <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
             <Column modifiers={[fillMaxWidth()]}>
-              <ThemedNativeText variant="h5">
-                {t("forms.group.permissions.label")}
-              </ThemedNativeText>
+              <ThemedNativeText variant="h5">{t("forms.group.permissions.label")}</ThemedNativeText>
 
               <form.AppField name="permissions">
                 {(field) => (

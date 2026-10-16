@@ -1,10 +1,10 @@
-import type { z } from "zod";
-import { CustomerNotFoundException } from "@fludge/api/core/commerce/customer/domain/exceptions/customer-not-found.exception";
 import { CustomerAlreadyExistsException } from "@fludge/api/core/commerce/customer/domain/exceptions/customer-already-exists.exception";
+import { CustomerNotFoundException } from "@fludge/api/core/commerce/customer/domain/exceptions/customer-not-found.exception";
 import type { CustomerRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
 import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { updateCustomerValidator } from "@fludge/utils/validators/customer.validators";
+import type { z } from "zod";
 
 export const updateCustomerCommand = updateCustomerValidator;
 
@@ -21,31 +21,21 @@ export class UpdateCustomerCommand {
       cmd.id,
     );
 
-    if (errFind)
-      throw new InternalServerError(
-        errFind,
-        "api_errors.customers.isr_on_find",
-      );
+    if (errFind) throw new InternalServerError(errFind, "api_errors.customers.isr_on_find");
 
     if (!existingCustomer) throw new CustomerNotFoundException();
 
     if (cmd.documentNumber) {
-      const [duplicateCustomer, errDuplicate] =
-        await this.customerRepository.findByDocument(
-          organizationId,
-          cmd.documentNumber,
-        );
+      const [duplicateCustomer, errDuplicate] = await this.customerRepository.findByDocument(
+        organizationId,
+        cmd.documentNumber,
+      );
 
       if (errDuplicate)
-        throw new InternalServerError(
-          errDuplicate,
-          "api_errors.customers.isr_on_find",
-        );
+        throw new InternalServerError(errDuplicate, "api_errors.customers.isr_on_find");
 
       if (duplicateCustomer && duplicateCustomer.values.id !== cmd.id) {
-        throw new CustomerAlreadyExistsException(
-          "api_errors.customers.document_taken",
-        );
+        throw new CustomerAlreadyExistsException("api_errors.customers.document_taken");
       }
     }
 
@@ -59,14 +49,9 @@ export class UpdateCustomerCommand {
       status: cmd.status,
     });
 
-    const [, errSaving] =
-      await this.customerRepository.update(existingCustomer);
+    const [, errSaving] = await this.customerRepository.update(existingCustomer);
 
-    if (errSaving)
-      throw new InternalServerError(
-        errSaving,
-        "api_errors.customers.isr_on_save",
-      );
+    if (errSaving) throw new InternalServerError(errSaving, "api_errors.customers.isr_on_save");
 
     return existingCustomer.values;
   }

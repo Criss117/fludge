@@ -1,9 +1,9 @@
-import { hasPermissionProcedure } from "@fludge/api/index";
-import { createCustomerCommand } from "@fludge/api/core/commerce/customer/application/commands/create-customer.command";
-import { updateCustomerCommand } from "@fludge/api/core/commerce/customer/application/commands/update-customer.command";
-import { createCustomerPaymentCommand } from "@fludge/api/core/commerce/customer/application/commands/create-customer-payment.command";
-import { cancelCustomerPaymentCommand } from "@fludge/api/core/commerce/customer/application/commands/cancel-customer-payment.command";
 import { commerceContainer } from "@fludge/api/core/commerce/container";
+import { cancelCustomerPaymentCommand } from "@fludge/api/core/commerce/customer/application/commands/cancel-customer-payment.command";
+import { createCustomerCommand } from "@fludge/api/core/commerce/customer/application/commands/create-customer.command";
+import { createCustomerPaymentCommand } from "@fludge/api/core/commerce/customer/application/commands/create-customer-payment.command";
+import { updateCustomerCommand } from "@fludge/api/core/commerce/customer/application/commands/update-customer.command";
+import { hasPermissionProcedure } from "@fludge/api/index";
 
 const TAGS = ["Customers"] as const;
 
@@ -19,10 +19,7 @@ export const customerRouter = {
       })
       .input(createCustomerCommand)
       .handler(({ input, context }) =>
-        commerceContainer.commands.customer.create.execute(
-          context.session.authContext,
-          input,
-        ),
+        commerceContainer.commands.customer.create.execute(context.session.authContext, input),
       ),
 
     update: hasPermissionProcedure({
@@ -35,10 +32,7 @@ export const customerRouter = {
       })
       .input(updateCustomerCommand)
       .handler(({ input, context }) =>
-        commerceContainer.commands.customer.update.execute(
-          context.session.authContext,
-          input,
-        ),
+        commerceContainer.commands.customer.update.execute(context.session.authContext, input),
       ),
 
     createPayment: hasPermissionProcedure({

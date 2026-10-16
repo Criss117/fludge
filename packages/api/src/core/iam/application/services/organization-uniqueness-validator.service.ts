@@ -1,7 +1,8 @@
 import type { DatabaseService } from "@fludge/db";
 import { organization } from "@fludge/db/schema/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
-import { and, eq, ne, or, SQL } from "drizzle-orm";
+import type { SQL } from "drizzle-orm";
+import { and, eq, ne, or } from "drizzle-orm";
 
 type Values = {
   slug?: string;

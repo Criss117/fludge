@@ -1,9 +1,11 @@
 import { generateCommerceContainer } from "@fludge/client/commerce/container";
-import { databaseService } from "@/integrations/db";
+
 import { NativeCustomerRepository } from "@/core/commerce/repositories/native-customer.repository";
-import { NativeSaleRepository } from "@/core/commerce/repositories/native-sale.repository";
 import { NativeLocalTicketRepository } from "@/core/commerce/repositories/native-local-ticket.repository";
+import { NativeSaleRepository } from "@/core/commerce/repositories/native-sale.repository";
+import { databaseService } from "@/integrations/db";
 import { NativeSyncCommerceRepository } from "@/integrations/db/repositories/native-sync-commerce.repository";
+
 import { syncStateRepository } from "./shared";
 
 const saleRepository = new NativeSaleRepository(databaseService);

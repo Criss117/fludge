@@ -1,11 +1,12 @@
+import { Card, Column, Host, Row } from "@expo/ui/jetpack-compose";
+import { paddingAll, weight } from "@expo/ui/jetpack-compose/modifiers";
+import type { CategorySummary } from "@fludge/client/catalog/domain/category.repository";
+
 import { MenuOptions } from "@/core/shared/components/menu-options";
 import { StatusChip } from "@/core/shared/components/status-chip";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
-import { Card, Column, Host, Row } from "@expo/ui/jetpack-compose";
-import { paddingAll, weight } from "@expo/ui/jetpack-compose/modifiers";
-import type { CategorySummary } from "@fludge/client/catalog/domain/category.repository";
 
 interface Props {
   category: CategorySummary;
@@ -15,11 +16,7 @@ interface Props {
 
 const CARD_HEIGHT = 96;
 
-export function CategoryCard({
-  category,
-  onUpdate,
-  onToggleStatus,
-}: Props) {
+export function CategoryCard({ category, onUpdate, onToggleStatus }: Props) {
   const colors = useThemeColor();
 
   return (

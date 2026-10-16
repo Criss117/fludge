@@ -1,12 +1,12 @@
-import type { z } from "zod";
-import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 import { Member } from "@fludge/api/core/iam/domain/entities/member.entity";
+import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 import { MemberAlreadyExistsException } from "@fludge/api/core/iam/domain/exceptions/member-already-exists.exception";
+import { UserNotFoundException } from "@fludge/api/core/iam/domain/exceptions/user-not-found.exeption";
 import type { MemberRepository } from "@fludge/api/core/iam/domain/repositories/member.repository";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { UUID } from "@fludge/utils/uuid";
 import { addMemberValidator } from "@fludge/utils/validators/organization.validators";
-import { UserNotFoundException } from "@fludge/api/core/iam/domain/exceptions/user-not-found.exeption";
+import type { z } from "zod";
 
 export const addMemberCommand = addMemberValidator;
 
@@ -18,24 +18,19 @@ export class AddMemberCommand {
   public async execute(authContext: UserAuthContext, cmd: CMD) {
     const organizationId = authContext.organizationId.toString();
 
-    const [existingMember, errMember] =
-      await this.memberRepository.findByUserId(cmd.userId, organizationId);
+    const [existingMember, errMember] = await this.memberRepository.findByUserId(
+      cmd.userId,
+      organizationId,
+    );
 
     if (errMember)
-      throw new InternalServerError(
-        errMember,
-        "api_errors.iam.organizations.isr_on_find",
-      );
+      throw new InternalServerError(errMember, "api_errors.iam.organizations.isr_on_find");
 
     if (existingMember) throw new MemberAlreadyExistsException();
 
     const [user, errUser] = await this.memberRepository.findUser(cmd.userId);
 
-    if (errUser)
-      throw new InternalServerError(
-        errUser,
-        "api_errors.iam.organizations.isr_on_find",
-      );
+    if (errUser) throw new InternalServerError(errUser, "api_errors.iam.organizations.isr_on_find");
 
     if (!user) throw new UserNotFoundException();
 
@@ -50,10 +45,7 @@ export class AddMemberCommand {
     const [, errSaving] = await this.memberRepository.save(newMember);
 
     if (errSaving)
-      throw new InternalServerError(
-        errSaving,
-        "api_errors.iam.organizations.isr_on_save",
-      );
+      throw new InternalServerError(errSaving, "api_errors.iam.organizations.isr_on_save");
 
     return newMember.values;
   }

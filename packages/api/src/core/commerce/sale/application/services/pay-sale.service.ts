@@ -2,7 +2,7 @@ import type { Sale } from "@fludge/api/core/commerce/sale/domain/entities/sale.e
 import type { SalePayment } from "@fludge/api/core/commerce/sale/domain/entities/sale-payment.entity";
 import type { SaleRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale.repository";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
-import { UUID } from "@fludge/utils/uuid";
+import type { UUID } from "@fludge/utils/uuid";
 
 export interface PaySaleResult {
   sale: Sale;
@@ -28,8 +28,7 @@ export class PaySaleService {
       customerId,
     );
 
-    if (errFind)
-      throw new InternalServerError(errFind, "api_errors.sales.isr_on_find");
+    if (errFind) throw new InternalServerError(errFind, "api_errors.sales.isr_on_find");
 
     const results: PaySaleResult[] = [];
     let remaining = totalAmount;

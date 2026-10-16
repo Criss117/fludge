@@ -1,9 +1,10 @@
+import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
-import type { FindAllSalesFilters } from "../domain/sale.repository";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
-import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
+
+import type { FindAllSalesFilters } from "../domain/sale.repository";
 
 function normalizeFilters(filters: FindAllSalesFilters) {
   return {
@@ -11,12 +12,11 @@ function normalizeFilters(filters: FindAllSalesFilters) {
   };
 }
 
-export const { keys: salesKeys, useInvalidateQueries: useInvalidateSales } =
-  keysGenerator({
-    module: "commerce",
-    resource: "sales",
-    normalizeFilters,
-  });
+export const { keys: salesKeys, useInvalidateQueries: useInvalidateSales } = keysGenerator({
+  module: "commerce",
+  resource: "sales",
+  normalizeFilters,
+});
 
 export function useFindSales(filters: FindAllSalesFilters) {
   const { commerceContainer } = useContainer();

@@ -20,11 +20,7 @@ export class InMemoryGroupUniquenessValidator {
     if (values.slug) this.takenSlugs.add(values.slug);
   }
 
-  async validateUniqueFields(
-    _organizationId: string,
-    value: UniqueValues,
-    _excludeId?: string,
-  ) {
+  async validateUniqueFields(_organizationId: string, value: UniqueValues, _excludeId?: string) {
     return ok({
       nameTaken: value.name ? this.takenNames.has(value.name) : false,
       slugTaken: value.slug ? this.takenSlugs.has(value.slug) : false,

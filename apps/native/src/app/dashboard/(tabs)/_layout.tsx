@@ -1,7 +1,8 @@
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { GeistFonts } from "@/integrations/fonts";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { useTranslation } from "react-i18next";
+
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { GeistFonts } from "@/integrations/fonts";
 
 export default function DashboardLayout() {
   const colors = useThemeColor();
@@ -19,54 +20,24 @@ export default function DashboardLayout() {
       }}
     >
       <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Icon
-          sf="gear"
-          md="shopping_cart"
-          selectedColor={colors.onPrimary}
-        />
-        <NativeTabs.Trigger.Label>
-          {t("screens.sales.label")}
-        </NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="gear" md="shopping_cart" selectedColor={colors.onPrimary} />
+        <NativeTabs.Trigger.Label>{t("screens.sales.label")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="customer">
-        <NativeTabs.Trigger.Icon
-          sf="gear"
-          md="people"
-          selectedColor={colors.onPrimary}
-        />
-        <NativeTabs.Trigger.Label>
-          {t("screens.customer.label")}
-        </NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="gear" md="people" selectedColor={colors.onPrimary} />
+        <NativeTabs.Trigger.Label>{t("screens.customer.label")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="catalog">
-        <NativeTabs.Trigger.Icon
-          sf="gear"
-          md="inventory_2"
-          selectedColor={colors.onPrimary}
-        />
-        <NativeTabs.Trigger.Label>
-          {t("screens.catalog.label")}
-        </NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="gear" md="inventory_2" selectedColor={colors.onPrimary} />
+        <NativeTabs.Trigger.Label>{t("screens.catalog.label")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="iam">
-        <NativeTabs.Trigger.Icon
-          sf="gear"
-          md="security"
-          selectedColor={colors.onPrimary}
-        />
-        <NativeTabs.Trigger.Label>
-          {t("screens.iam.label")}
-        </NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="gear" md="security" selectedColor={colors.onPrimary} />
+        <NativeTabs.Trigger.Label>{t("screens.iam.label")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="settings">
-        <NativeTabs.Trigger.Icon
-          sf="gear"
-          md="settings"
-          selectedColor={colors.onPrimary}
-        />
-        <NativeTabs.Trigger.Label>
-          {t("screens.settings.label")}
-        </NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="gear" md="settings" selectedColor={colors.onPrimary} />
+        <NativeTabs.Trigger.Label>{t("screens.settings.label")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

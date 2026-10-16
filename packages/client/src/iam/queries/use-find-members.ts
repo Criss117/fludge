@@ -1,24 +1,22 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import type { FindAllMembersFilters } from "../domain/member.repository";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
+import { useSuspenseQuery } from "@tanstack/react-query";
+
+import type { FindAllMembersFilters } from "../domain/member.repository";
 import { useAppState } from "../hooks/use-app-state";
 
 function normalizeFilters(filters?: FindAllMembersFilters) {
   return {
     searchQuery: filters?.searchQuery?.trim() || undefined,
-    excludeIds: filters?.excludeIds?.length
-      ? [...filters.excludeIds].sort()
-      : undefined,
+    excludeIds: filters?.excludeIds?.length ? [...filters.excludeIds].sort() : undefined,
   };
 }
 
-export const { keys: membersKeys, useInvalidateQueries: useInvalidateMembers } =
-  keysGenerator({
-    module: "iam",
-    resource: "members",
-    normalizeFilters,
-  });
+export const { keys: membersKeys, useInvalidateQueries: useInvalidateMembers } = keysGenerator({
+  module: "iam",
+  resource: "members",
+  normalizeFilters,
+});
 
 export function useFindAllMembers(filters?: FindAllMembersFilters) {
   const { iamContainer } = useContainer();
@@ -31,10 +29,7 @@ export function useFindAllMembers(filters?: FindAllMembersFilters) {
   return useSuspenseQuery({
     queryKey: membersKeys.filteredList(activeOrganization.id, filters),
     queryFn: () =>
-      iamContainer.repositories.memberRepository.findAll(
-        activeOrganization.id,
-        filters,
-      ),
+      iamContainer.repositories.memberRepository.findAll(activeOrganization.id, filters),
   });
 }
 
@@ -49,9 +44,6 @@ export function useFindMemberDetail(memberId: string) {
   return useSuspenseQuery({
     queryKey: membersKeys.detail(activeOrganization.id, memberId),
     queryFn: () =>
-      iamContainer.repositories.memberRepository.findOneById(
-        activeOrganization.id,
-        memberId,
-      ),
+      iamContainer.repositories.memberRepository.findOneById(activeOrganization.id, memberId),
   });
 }

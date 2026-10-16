@@ -16,12 +16,7 @@ export class SQLiteCategoryRepository implements CategoryRepository {
       this.db
         .select()
         .from(category)
-        .where(
-          and(
-            eq(category.organizationId, organizationId),
-            eq(category.id, categoryId),
-          ),
-        ),
+        .where(and(eq(category.organizationId, organizationId), eq(category.id, categoryId))),
     );
 
     if (errFind) return err(errFind);

@@ -1,8 +1,9 @@
 import type { ClientSyncIamRepository } from "@fludge/sync/repositories/iam/client-sync-iam.repository";
+
+import type { AppRepository } from "./domain/app.repository";
 import type { GroupRepository } from "./domain/group.repository";
 import type { MemberRepository } from "./domain/member.repository";
 import type { OrganizationRepository } from "./domain/organization.repository";
-import type { AppRepository } from "./domain/app.repository";
 import type { SessionRepository } from "./domain/session.repository";
 
 type Deps = {

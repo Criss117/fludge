@@ -33,9 +33,7 @@ export class InMemoryOrganizationUniquenessValidator {
     return ok({
       nameTaken: value.name ? this.takenNames.has(value.name) : false,
       slugTaken: value.slug ? this.takenSlugs.has(value.slug) : false,
-      legalNameTaken: value.legalName
-        ? this.takenLegalNames.has(value.legalName)
-        : false,
+      legalNameTaken: value.legalName ? this.takenLegalNames.has(value.legalName) : false,
       taxIdTaken: value.taxId ? this.takenTaxIds.has(value.taxId) : false,
       phoneTaken: value.phone ? this.takenPhones.has(value.phone) : false,
     });

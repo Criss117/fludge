@@ -1,26 +1,16 @@
+import { Button, Column, ElevatedCard, Host, RNHostView, Spacer } from "@expo/ui/jetpack-compose";
+import { fillMaxWidth, paddingAll, width } from "@expo/ui/jetpack-compose/modifiers";
+import type { MemberDetail } from "@fludge/client/iam/domain/entities";
+import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
+import { ScrollView, StyleSheet, View } from "react-native";
+
+import { MemberGroupsSection } from "@/core/iam/sections/member-groups";
 import { Avatar } from "@/core/shared/components/avatar";
 import { Icon } from "@/core/shared/components/icon";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
-import {
-  Button,
-  Column,
-  ElevatedCard,
-  Host,
-  RNHostView,
-  Spacer,
-} from "@expo/ui/jetpack-compose";
-import {
-  fillMaxWidth,
-  paddingAll,
-  width,
-} from "@expo/ui/jetpack-compose/modifiers";
-import type { MemberDetail } from "@fludge/client/iam/domain/entities";
-import { useTranslation } from "react-i18next";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { MemberGroupsSection } from "@/core/iam/sections/member-groups";
-import { useRouter } from "expo-router";
 
 interface Props {
   member: MemberDetail;
@@ -53,12 +43,8 @@ export function MemberDetailScreen({ member }: Props) {
               <RNHostView matchContents>
                 <Avatar name={member.user.name} size={SPACING["3xl"]} />
               </RNHostView>
-              <ThemedNativeText variant="h5">
-                {member.user.name}
-              </ThemedNativeText>
-              <ThemedNativeText variant="muted">
-                {member.user.email}
-              </ThemedNativeText>
+              <ThemedNativeText variant="h5">{member.user.name}</ThemedNativeText>
+              <ThemedNativeText variant="muted">{member.user.email}</ThemedNativeText>
             </Column>
           </ElevatedCard>
         </Host>

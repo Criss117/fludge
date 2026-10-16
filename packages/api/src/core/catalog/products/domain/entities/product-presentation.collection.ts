@@ -1,14 +1,13 @@
-import { DuplicatedBarcodeException } from "../exceptions/duplicated-barcode.exception";
-import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-presentation-no-has-barcode.exception";
-import { ProductPresentationAlreadyExistsException } from "../exceptions/product-presentation-already-exists.exception";
-import { ProductPresentationNotFoundException } from "../exceptions/product-presentation-not-found.exception";
-import type { ProductPresentation } from "./product-presentation.entity";
 import type { UUID } from "@fludge/utils/uuid";
 
+import { DuplicatedBarcodeException } from "../exceptions/duplicated-barcode.exception";
+import { ProductPresentationAlreadyExistsException } from "../exceptions/product-presentation-already-exists.exception";
+import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-presentation-no-has-barcode.exception";
+import { ProductPresentationNotFoundException } from "../exceptions/product-presentation-not-found.exception";
+import type { ProductPresentation } from "./product-presentation.entity";
+
 export class ProductPresentationCollection {
-  private constructor(
-    private readonly _items: Map<string, ProductPresentation>,
-  ) {}
+  private constructor(private readonly _items: Map<string, ProductPresentation>) {}
 
   public static create(items: ProductPresentation[]) {
     const collection = new ProductPresentationCollection(new Map());
@@ -45,8 +44,7 @@ export class ProductPresentationCollection {
   }
 
   public add(item: ProductPresentation) {
-    if (this._items.has(item.id.toString()))
-      throw new ProductPresentationAlreadyExistsException();
+    if (this._items.has(item.id.toString())) throw new ProductPresentationAlreadyExistsException();
 
     this.checkEquals(item);
 
@@ -68,13 +66,11 @@ export class ProductPresentationCollection {
   }
 
   public checkBarcodes() {
-    if (this.barcodes.length === 0)
-      throw new ProductPresentationNoHasBarcodeException();
+    if (this.barcodes.length === 0) throw new ProductPresentationNoHasBarcodeException();
 
     const setBarcode = new Set(this.barcodes);
 
-    if (setBarcode.size !== this.barcodes.length)
-      throw new DuplicatedBarcodeException();
+    if (setBarcode.size !== this.barcodes.length) throw new DuplicatedBarcodeException();
   }
 
   public get barcodes() {

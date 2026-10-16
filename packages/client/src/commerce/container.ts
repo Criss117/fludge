@@ -1,4 +1,5 @@
 import type { ClientSyncCommerceRepository } from "@fludge/sync/repositories/commerse/client-sync-commerce.repository";
+
 import type { CustomerRepository } from "./domain/customer.repository";
 import type { LocalTicketRepository } from "./domain/local-ticket.repository";
 import type { SaleRepository } from "./domain/sale.repository";

@@ -1,9 +1,6 @@
-import {
-  signInValidator,
-  signUpValidator,
-} from "@fludge/utils/validators/auth.validators";
+import { signInValidator, signUpValidator } from "@fludge/utils/validators/auth.validators";
 import { formOptions, useForm } from "@tanstack/react-form";
-import { z } from "zod";
+import type { z } from "zod";
 
 export type SignInSchema = z.infer<typeof signInValidator>;
 export type SignUpSchema = z.infer<typeof signUpValidator>;

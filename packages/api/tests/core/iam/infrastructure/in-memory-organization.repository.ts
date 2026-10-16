@@ -1,8 +1,11 @@
-import { ok } from "@fludge/utils/trycatch";
-import type { Result } from "@fludge/utils/trycatch";
 import type { Organization } from "@fludge/api/core/iam/domain/entities/organization.entity";
-import type { Options, OrganizationRepository } from "@fludge/api/core/iam/domain/repositories/organization.repository";
+import type {
+  Options,
+  OrganizationRepository,
+} from "@fludge/api/core/iam/domain/repositories/organization.repository";
 import { DummyTransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
+import type { Result } from "@fludge/utils/trycatch";
+import { ok } from "@fludge/utils/trycatch";
 
 export class InMemoryOrganizationRepository
   extends DummyTransactionalRepository

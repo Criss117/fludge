@@ -1,4 +1,4 @@
-import { GroupMember } from "@fludge/api/core/iam/domain/entities/group-member.entity";
+import type { GroupMember } from "@fludge/api/core/iam/domain/entities/group-member.entity";
 import type {
   GroupMemberRepository,
   Options,
@@ -11,13 +11,8 @@ import { and, eq, inArray, or } from "drizzle-orm";
 export class SQLiteGroupMemberRepository implements GroupMemberRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  public async delete(
-    groupMemberEntity: GroupMember | GroupMember[],
-    options?: Options,
-  ) {
-    const groupMembers = Array.isArray(groupMemberEntity)
-      ? groupMemberEntity
-      : [groupMemberEntity];
+  public async delete(groupMemberEntity: GroupMember | GroupMember[], options?: Options) {
+    const groupMembers = Array.isArray(groupMemberEntity) ? groupMemberEntity : [groupMemberEntity];
     const db = options?.tx ?? this.db;
 
     const [, errDelete] = await tryCatch(
@@ -41,11 +36,7 @@ export class SQLiteGroupMemberRepository implements GroupMemberRepository {
     return ok(undefined);
   }
 
-  public async deleteByGroupIds(
-    organizationId: string,
-    groupIds: string[],
-    options?: Options,
-  ) {
+  public async deleteByGroupIds(organizationId: string, groupIds: string[], options?: Options) {
     const db = options?.tx ?? this.db;
 
     const [, errDelete] = await tryCatch(

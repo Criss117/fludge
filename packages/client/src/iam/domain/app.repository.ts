@@ -1,4 +1,5 @@
 import type { AppInsert, AppSelect } from "@fludge/db/local-schemas/app.schema";
+
 import type { OrganizationSummary } from "./entities";
 
 export interface AppRepository {

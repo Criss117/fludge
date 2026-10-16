@@ -1,5 +1,3 @@
-import { beforeEach, describe, expect, it } from "bun:test";
-
 import { AssignGroupsToMemberCommand } from "@fludge/api/core/iam/application/commands/assign-groups-to-member.command";
 import { Group } from "@fludge/api/core/iam/domain/entities/group.entity";
 import { Organization } from "@fludge/api/core/iam/domain/entities/organization.entity";
@@ -8,6 +6,7 @@ import { MemberIsOwnerException } from "@fludge/api/core/iam/domain/exceptions/m
 import { MemberNotFoundException } from "@fludge/api/core/iam/domain/exceptions/member-not-found.exception";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
+import { beforeEach, describe, expect, it } from "bun:test";
 
 import { makeAuthContext, makeMember, makeOwner } from "../../factories";
 import { InMemoryGroupRepository } from "../../infrastructure/in-memory-group.repository";

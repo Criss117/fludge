@@ -1,9 +1,8 @@
-import { describe, expect, it } from "bun:test";
-
 import { Status } from "@fludge/api/core/shared/value-objects/status";
 import type { OrganizationSelect } from "@fludge/db/schema/iam.schema";
 import { Slug } from "@fludge/utils/slugify";
 import { UUID } from "@fludge/utils/uuid";
+import { describe, expect, it } from "bun:test";
 
 import { Organization } from "../../../../src/core/iam/domain/entities/organization.entity";
 
@@ -43,9 +42,7 @@ describe("Organization", () => {
     it("generates a valid UUID id", () => {
       const id = Organization.create(CREATE_INPUT).id.toString();
 
-      expect(id).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
-      );
+      expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
     });
 
     it("generates a unique id for each organization", () => {

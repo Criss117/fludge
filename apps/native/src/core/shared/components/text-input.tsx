@@ -1,21 +1,18 @@
-import {
-  Column,
-  OutlinedTextField,
-  OutlinedTextFieldProps,
-  Shape,
-  useNativeState,
-} from "@expo/ui/jetpack-compose";
-import { ThemedNativeText } from "./themed-text";
-import { useCallback, useEffect } from "react";
-import { scheduleOnRN } from "react-native-worklets";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { SPACING } from "@/lib/sp";
+import type { OutlinedTextFieldProps } from "@expo/ui/jetpack-compose";
+import { Column, OutlinedTextField, Shape, useNativeState } from "@expo/ui/jetpack-compose";
 import type { TranslationKey } from "@fludge/i18n/index";
+import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { scheduleOnRN } from "react-native-worklets";
+
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { GeistFonts } from "@/integrations/fonts";
+import { SPACING } from "@/lib/sp";
+
+import { useDebouncedCallback } from "../hooks/use-debounce";
 import { NativeFieldError } from "./field-error";
 import { Icon, type IconName } from "./icon";
-import { useDebouncedCallback } from "../hooks/use-debounce";
-import { GeistFonts } from "@/integrations/fonts";
+import { ThemedNativeText } from "./themed-text";
 
 type TextModeProps = {
   type?: "text";
@@ -33,7 +30,7 @@ type Props = Omit<OutlinedTextFieldProps, "onValueChange" | "shape" | "value"> &
   (TextModeProps | NumberModeProps) & {
     placeholder: TranslationKey;
     label: TranslationKey;
-    errors?: Array<{ message?: string } | undefined>;
+    errors?: ({ message?: string } | undefined)[];
     iconName?: IconName;
     withDebounce?: number;
   };

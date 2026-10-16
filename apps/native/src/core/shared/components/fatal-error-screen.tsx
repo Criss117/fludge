@@ -1,9 +1,10 @@
-import type { TranslationKey } from "@fludge/i18n/index";
-import { Pressable, StyleSheet, View } from "react-native";
-import { useTranslation } from "react-i18next";
-import { ThemedText } from "./themed-text";
 import { Host } from "@expo/ui";
+import type { TranslationKey } from "@fludge/i18n/index";
+import { useTranslation } from "react-i18next";
+import { Pressable, StyleSheet, View } from "react-native";
+
 import { Icon } from "./icon";
+import { ThemedText } from "./themed-text";
 
 const colors = {
   background: "#ffffff",
@@ -19,12 +20,7 @@ type FatalErrorScreenProps = {
   onRetry?: () => void;
 };
 
-export function FatalErrorScreen({
-  title,
-  message,
-  error,
-  onRetry,
-}: FatalErrorScreenProps) {
+export function FatalErrorScreen({ title, message, error, onRetry }: FatalErrorScreenProps) {
   const { t } = useTranslation();
 
   return (
@@ -36,24 +32,16 @@ export function FatalErrorScreen({
           </Host>
         </ThemedText>
 
-        <ThemedText style={styles.title}>
-          {t(title ?? "app.errors.fatal.title")}
-        </ThemedText>
+        <ThemedText style={styles.title}>{t(title ?? "app.errors.fatal.title")}</ThemedText>
 
-        <ThemedText style={styles.message}>
-          {t(message ?? "app.errors.fatal.message")}
-        </ThemedText>
+        <ThemedText style={styles.message}>{t(message ?? "app.errors.fatal.message")}</ThemedText>
 
-        {__DEV__ && error ? (
-          <ThemedText style={styles.devError}>{error.message}</ThemedText>
-        ) : null}
+        {__DEV__ && error ? <ThemedText style={styles.devError}>{error.message}</ThemedText> : null}
       </View>
 
       {onRetry ? (
         <Pressable onPress={onRetry} style={styles.retryButton}>
-          <ThemedText style={styles.retryText}>
-            {t("app.errors.fatal.retry")}
-          </ThemedText>
+          <ThemedText style={styles.retryText}>{t("app.errors.fatal.retry")}</ThemedText>
         </Pressable>
       ) : null}
     </View>

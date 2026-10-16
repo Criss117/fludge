@@ -1,16 +1,16 @@
-import type { z } from "zod";
-import type { SaleRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale.repository";
-import type { CustomerRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
 import type { ProductRepository } from "@fludge/api/core/catalog/products/domain/repositories/product.repository";
 import type { DecreaseCustomerBalanceService } from "@fludge/api/core/commerce/customer/application/services/decrease-customer-balance.service";
+import type { CustomerRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
 import type {
-  RefundProductsService,
   RefundProductInput,
+  RefundProductsService,
 } from "@fludge/api/core/commerce/sale/application/services/refund-products.service";
 import { SaleNotFoundException } from "@fludge/api/core/commerce/sale/domain/exceptions/sale-not-found.exception";
+import type { SaleRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale.repository";
 import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { refundSaleItemsValidator } from "@fludge/utils/validators/sale.validators";
+import type { z } from "zod";
 
 export const refundSaleItemsCommand = refundSaleItemsValidator;
 
@@ -29,16 +29,9 @@ export class RefundSaleItemsCommand {
     const organizationId = authContext.organizationId.toString();
 
     // 1. Buscar la venta
-    const [sale, errFindSale] = await this.saleRepository.findById(
-      organizationId,
-      cmd.id,
-    );
+    const [sale, errFindSale] = await this.saleRepository.findById(organizationId, cmd.id);
 
-    if (errFindSale)
-      throw new InternalServerError(
-        errFindSale,
-        "api_errors.sales.isr_on_find",
-      );
+    if (errFindSale) throw new InternalServerError(errFindSale, "api_errors.sales.isr_on_find");
 
     if (!sale) throw new SaleNotFoundException();
 
@@ -52,9 +45,7 @@ export class RefundSaleItemsCommand {
       const snapshot = item.values.productSnapshot;
       if (!snapshot || !item.values.productId) continue;
 
-      const existing = refundInputs.find(
-        (r) => r.productId === item.values.productId,
-      );
+      const existing = refundInputs.find((r) => r.productId === item.values.productId);
 
       const presentationInput = {
         presentationId: snapshot.presentation.id,
@@ -73,19 +64,13 @@ export class RefundSaleItemsCommand {
     }
 
     // 4. Revertir stock de productos (si existen)
-    const productsToSave = await this.refundProductsService.execute(
-      organizationId,
-      refundInputs,
-    );
+    const productsToSave = await this.refundProductsService.execute(organizationId, refundInputs);
 
     // 5. Disminuir balance del customer si la venta tiene cliente
     let customer = null;
 
     if (sale.values.customerId) {
-      const totalRefunded = refundedItems.reduce(
-        (acc, item) => acc + item.values.subtotal,
-        0,
-      );
+      const totalRefunded = refundedItems.reduce((acc, item) => acc + item.values.subtotal, 0);
 
       customer = await this.decreaseCustomerBalanceService.execute(
         organizationId,
@@ -95,39 +80,28 @@ export class RefundSaleItemsCommand {
     }
 
     // 6. Persistir todo en una transacción (mínimas llamadas a DB)
-    const [, errTransaction] = await this.saleRepository.transaction(
-      async (tx) => {
-        const [, errSale] = await this.saleRepository.update(sale, { tx });
+    const [, errTransaction] = await this.saleRepository.transaction(async (tx) => {
+      const [, errSale] = await this.saleRepository.update(sale, { tx });
 
-        if (errSale) throw errSale;
+      if (errSale) throw errSale;
 
-        if (productsToSave.length > 0) {
-          const [, errProducts] = await this.productRepository.saveOnlyProduct(
-            productsToSave,
-            {
-              tx,
-            },
-          );
+      if (productsToSave.length > 0) {
+        const [, errProducts] = await this.productRepository.saveOnlyProduct(productsToSave, {
+          tx,
+        });
 
-          if (errProducts) throw errProducts;
-        }
+        if (errProducts) throw errProducts;
+      }
 
-        if (customer) {
-          const [, errCustomer] = await this.customerRepository.update(
-            customer,
-            { tx },
-          );
+      if (customer) {
+        const [, errCustomer] = await this.customerRepository.update(customer, { tx });
 
-          if (errCustomer) throw errCustomer;
-        }
-      },
-    );
+        if (errCustomer) throw errCustomer;
+      }
+    });
 
     if (errTransaction)
-      throw new InternalServerError(
-        errTransaction,
-        "api_errors.sales.isr_on_save",
-      );
+      throw new InternalServerError(errTransaction, "api_errors.sales.isr_on_save");
 
     return {
       sale: sale.values,

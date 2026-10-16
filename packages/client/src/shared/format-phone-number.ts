@@ -4,10 +4,7 @@
  * @param value - El texto ingresado en el input.
  * @param mask - Patrón de formato usando 'X' para representar cada dígito.
  */
-export function formatPhoneNumber(
-  value: string,
-  mask: string = "(XXX) XXX-XXXX",
-): string {
+export function formatPhoneNumber(value: string, mask: string = "(XXX) XXX-XXXX"): string {
   const digits = value.replace(/\D/g, "");
   let formatted = "";
   let digitIndex = 0;

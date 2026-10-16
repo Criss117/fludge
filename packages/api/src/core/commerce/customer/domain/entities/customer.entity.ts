@@ -1,20 +1,18 @@
-import { UUID } from "@fludge/utils/uuid";
-import { CustomerDocument } from "../value-objects/document-type";
 import { Status } from "@fludge/api/core/shared/value-objects/status";
-import { CustomerBalance } from "../value-objects/customer-balance";
-import { CustomerPayment } from "./customer-payment.entity";
-import { CustomerPaymentCollection } from "./customer-payment.collection";
-import { CustomerHasNoDebtException } from "../exceptions/customer-has-no-debt.exception";
-import { PaymentExceedsBalanceException } from "../exceptions/payment-exceeds-balance.exception";
-import type {
-  CustomerPaymentSelect,
-  CustomerSelect,
-} from "@fludge/db/schema/customer.schema";
+import type { CustomerPaymentSelect, CustomerSelect } from "@fludge/db/schema/customer.schema";
 import type {
   CustomerDocumentTypeEnum,
   CustomerPaymentMethodEnum,
   StatusEnum,
 } from "@fludge/utils/enums/db-enums";
+import { UUID } from "@fludge/utils/uuid";
+
+import { CustomerHasNoDebtException } from "../exceptions/customer-has-no-debt.exception";
+import { PaymentExceedsBalanceException } from "../exceptions/payment-exceeds-balance.exception";
+import { CustomerBalance } from "../value-objects/customer-balance";
+import { CustomerDocument } from "../value-objects/document-type";
+import { CustomerPaymentCollection } from "./customer-payment.collection";
+import { CustomerPayment } from "./customer-payment.entity";
 
 interface CreateCustomer {
   organizationId: UUID;
@@ -58,10 +56,7 @@ export class Customer {
     const now = new Date();
 
     // documentType is always present; document only exists when documentNumber is also provided.
-    const customerDocument = new CustomerDocument(
-      data.documentType,
-      data.documentNumber,
-    );
+    const customerDocument = new CustomerDocument(data.documentType, data.documentNumber);
 
     return new Customer(
       UUID.generate(),
@@ -89,10 +84,7 @@ export class Customer {
     if (data.email !== undefined) this._email = data.email;
 
     if (data.creditLimit !== undefined) {
-      this._balance = new CustomerBalance(
-        this._balance.value.balance,
-        data.creditLimit,
-      );
+      this._balance = new CustomerBalance(this._balance.value.balance, data.creditLimit);
     }
 
     if (data.documentType !== undefined || data.documentNumber !== undefined) {
@@ -146,9 +138,7 @@ export class Customer {
       new Status(data.status),
       new Date(data.updatedAt),
       new Date(data.createdAt),
-      new CustomerPaymentCollection(
-        orderedPayments.map((p) => CustomerPayment.reconstitute(p)),
-      ),
+      new CustomerPaymentCollection(orderedPayments.map((p) => CustomerPayment.reconstitute(p))),
     );
   }
 

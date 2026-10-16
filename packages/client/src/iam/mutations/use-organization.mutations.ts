@@ -1,8 +1,9 @@
+import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
 import { useMutation } from "@tanstack/react-query";
-import { useContainer } from "@fludge/client/providers/container.provider";
-import { useInvalidateOrganizations } from "../queries/use-find-organizations";
+
 import { useAppState } from "../hooks/use-app-state";
+import { useInvalidateOrganizations } from "../queries/use-find-organizations";
 
 export function useRegisterOrganization() {
   const orpc = useOrpc();
@@ -13,9 +14,7 @@ export function useRegisterOrganization() {
   return useMutation(
     orpc.organization.commands.register.mutationOptions({
       onSuccess: async ({ organization, group, member }) => {
-        await iamContainer.repositories.organizationRepository.save(
-          organization,
-        );
+        await iamContainer.repositories.organizationRepository.save(organization);
 
         await iamContainer.repositories.groupRepository.save(group);
 
@@ -39,9 +38,7 @@ export function useUpdateOrganization() {
   return useMutation(
     orpc.organization.commands.update.mutationOptions({
       onSuccess: async (organization) => {
-        await iamContainer.repositories.organizationRepository.save(
-          organization,
-        );
+        await iamContainer.repositories.organizationRepository.save(organization);
 
         invalidateOrganizations.invalidateAll();
       },

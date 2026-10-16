@@ -2,6 +2,7 @@
 import { Image } from "expo-image";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
+
 import { useThemeColor } from "../hooks/use-theme-color";
 
 type AvatarProps = {
@@ -35,11 +36,7 @@ export function Avatar({ name, imageUri, size = 40 }: AvatarProps) {
       ]}
     >
       {imageUri ? (
-        <Image
-          source={{ uri: imageUri }}
-          style={StyleSheet.absoluteFill}
-          contentFit="cover"
-        />
+        <Image source={{ uri: imageUri }} style={StyleSheet.absoluteFill} contentFit="cover" />
       ) : (
         <Text
           style={{

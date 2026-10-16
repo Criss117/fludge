@@ -36,12 +36,7 @@ export class SQLiteMemberRepository implements MemberRepository {
         })
         .from(member)
         .innerJoin(user, eq(member.userId, user.id))
-        .where(
-          and(
-            eq(member.organizationId, organizationId),
-            eq(member.id, memberId),
-          ),
-        ),
+        .where(and(eq(member.organizationId, organizationId), eq(member.id, memberId))),
     );
 
     if (errFind) return err(errFind);
@@ -62,12 +57,7 @@ export class SQLiteMemberRepository implements MemberRepository {
         })
         .from(member)
         .innerJoin(user, eq(member.userId, user.id))
-        .where(
-          and(
-            eq(member.organizationId, organizationId),
-            inArray(member.id, memberIds),
-          ),
-        ),
+        .where(and(eq(member.organizationId, organizationId), inArray(member.id, memberIds))),
     );
 
     if (errFind) return err(errFind);
@@ -84,12 +74,7 @@ export class SQLiteMemberRepository implements MemberRepository {
         })
         .from(member)
         .innerJoin(user, eq(member.userId, user.id))
-        .where(
-          and(
-            eq(member.userId, userId),
-            eq(member.organizationId, organizationId),
-          ),
-        )
+        .where(and(eq(member.userId, userId), eq(member.organizationId, organizationId)))
         .limit(1),
     );
 

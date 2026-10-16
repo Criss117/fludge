@@ -5,10 +5,7 @@ import type { z } from "zod";
 export type RegisterMemberSchema = z.infer<typeof signUpValidator>;
 
 export type OnRegisterMemberSubmit = {
-  onSubmit: (options: {
-    value: RegisterMemberSchema;
-    resetForm: () => void;
-  }) => void;
+  onSubmit: (options: { value: RegisterMemberSchema; resetForm: () => void }) => void;
 };
 
 export function registerFormOptions(options: OnRegisterMemberSubmit) {

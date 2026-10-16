@@ -22,7 +22,11 @@ export function makeOwner(overrides?: Partial<Parameters<typeof Member.create>[0
   });
 }
 
-export function makeAuthContext(overrides?: { member?: Member; organizationId?: UUID; groups?: any[] }) {
+export function makeAuthContext(overrides?: {
+  member?: Member;
+  organizationId?: UUID;
+  groups?: any[];
+}) {
   const member = overrides?.member ?? makeMember();
   return UserAuthContext.create({
     organizationId: overrides?.organizationId ?? UUID.fromString(member.values.organizationId),

@@ -11,28 +11,18 @@ import {
 const VALID_UUID = "00000000-0000-4000-8000-000000000001";
 const OTHER_UUID = "00000000-0000-4000-8000-000000000002";
 
-function expectParsed<TSchema extends ZodType>(
-  schema: TSchema,
-  value: unknown,
-) {
+function expectParsed<TSchema extends ZodType>(schema: TSchema, value: unknown) {
   const result = schema.safeParse(value);
-  expect(result.success, `expected success for ${JSON.stringify(value)}`).toBe(
-    true,
-  );
+  expect(result.success, `expected success for ${JSON.stringify(value)}`).toBe(true);
   if (!result.success) {
     throw new Error(`expected success but got: ${result.error.message}`);
   }
   return result.data;
 }
 
-function expectFirstIssue<TSchema extends ZodType>(
-  schema: TSchema,
-  value: unknown,
-): string {
+function expectFirstIssue<TSchema extends ZodType>(schema: TSchema, value: unknown): string {
   const result = schema.safeParse(value);
-  expect(result.success, `expected failure for ${JSON.stringify(value)}`).toBe(
-    false,
-  );
+  expect(result.success, `expected failure for ${JSON.stringify(value)}`).toBe(false);
   if (result.success) {
     throw new Error(`expected failure for ${JSON.stringify(value)}`);
   }
@@ -58,11 +48,7 @@ describe("createGroupValidator", () => {
       ...VALID_CREATE_GROUP,
       permissions: ["groups:read", "products:create", "customers:update"],
     });
-    expect(data.permissions).toEqual([
-      "groups:read",
-      "products:create",
-      "customers:update",
-    ]);
+    expect(data.permissions).toEqual(["groups:read", "products:create", "customers:update"]);
   });
 
   it("accepts an empty permissions array", () => {
@@ -102,68 +88,73 @@ describe("createGroupValidator", () => {
   });
 
   it("rejects a name shorter than 5 characters", () => {
-    expect(expectFirstIssue(createGroupValidator, {
-      ...VALID_CREATE_GROUP,
-      name: "ab",
-    })).toBe("validators.name.min_length");
+    expect(
+      expectFirstIssue(createGroupValidator, {
+        ...VALID_CREATE_GROUP,
+        name: "ab",
+      }),
+    ).toBe("validators.name.min_length");
   });
 
   it("rejects a name longer than 50 characters", () => {
-    expect(expectFirstIssue(createGroupValidator, {
-      ...VALID_CREATE_GROUP,
-      name: "a".repeat(51),
-    })).toBe("validators.name.max_length");
+    expect(
+      expectFirstIssue(createGroupValidator, {
+        ...VALID_CREATE_GROUP,
+        name: "a".repeat(51),
+      }),
+    ).toBe("validators.name.max_length");
   });
 
   it("rejects a description shorter than 15 characters", () => {
-    expect(expectFirstIssue(createGroupValidator, {
-      ...VALID_CREATE_GROUP,
-      description: "x",
-    })).toBe("validators.description.min_length");
+    expect(
+      expectFirstIssue(createGroupValidator, {
+        ...VALID_CREATE_GROUP,
+        description: "x",
+      }),
+    ).toBe("validators.description.min_length");
   });
 
   it("rejects a description longer than 100 characters", () => {
-    expect(expectFirstIssue(createGroupValidator, {
-      ...VALID_CREATE_GROUP,
-      description: "a".repeat(101),
-    })).toBe("validators.description.max_length");
+    expect(
+      expectFirstIssue(createGroupValidator, {
+        ...VALID_CREATE_GROUP,
+        description: "a".repeat(101),
+      }),
+    ).toBe("validators.description.max_length");
   });
 
   it("rejects an invalid permission", () => {
-    expect(expectFirstIssue(createGroupValidator, {
-      ...VALID_CREATE_GROUP,
-      permissions: ["groups:nope"],
-    })).toMatch(/Invalid option/);
+    expect(
+      expectFirstIssue(createGroupValidator, {
+        ...VALID_CREATE_GROUP,
+        permissions: ["groups:nope"],
+      }),
+    ).toMatch(/Invalid option/);
   });
 
   it("rejects a non-array permissions value", () => {
-    expect(expectFirstIssue(createGroupValidator, {
-      ...VALID_CREATE_GROUP,
-      permissions: "groups:read",
-    })).toMatch(/expected array/);
+    expect(
+      expectFirstIssue(createGroupValidator, {
+        ...VALID_CREATE_GROUP,
+        permissions: "groups:read",
+      }),
+    ).toMatch(/expected array/);
   });
 
   it("rejects a missing permissions field", () => {
-    const { permissions: _permissions, ...withoutPermissions } =
-      VALID_CREATE_GROUP;
-    expect(expectFirstIssue(createGroupValidator, withoutPermissions)).toMatch(
-      /expected array/,
-    );
+    const { permissions: _permissions, ...withoutPermissions } = VALID_CREATE_GROUP;
+    expect(expectFirstIssue(createGroupValidator, withoutPermissions)).toMatch(/expected array/);
   });
 
   it("rejects a missing name", () => {
     const { name: _name, ...withoutName } = VALID_CREATE_GROUP;
-    expect(expectFirstIssue(createGroupValidator, withoutName)).toBe(
-      "validators.name.required",
-    );
+    expect(expectFirstIssue(createGroupValidator, withoutName)).toBe("validators.name.required");
   });
 });
 
 describe("updateGroupValidator", () => {
   it("accepts an id-only payload (all other fields optional)", () => {
-    expect(expectParsed(updateGroupValidator, { id: VALID_UUID }).id).toBe(
-      VALID_UUID,
-    );
+    expect(expectParsed(updateGroupValidator, { id: VALID_UUID }).id).toBe(VALID_UUID);
   });
 
   it("accepts a full update payload", () => {
@@ -186,31 +177,39 @@ describe("updateGroupValidator", () => {
   });
 
   it("rejects an invalid name when provided", () => {
-    expect(expectFirstIssue(updateGroupValidator, {
-      id: VALID_UUID,
-      name: "ab",
-    })).toBe("validators.name.min_length");
+    expect(
+      expectFirstIssue(updateGroupValidator, {
+        id: VALID_UUID,
+        name: "ab",
+      }),
+    ).toBe("validators.name.min_length");
   });
 
   it("rejects an invalid description when provided", () => {
-    expect(expectFirstIssue(updateGroupValidator, {
-      id: VALID_UUID,
-      description: "x",
-    })).toBe("validators.description.min_length");
+    expect(
+      expectFirstIssue(updateGroupValidator, {
+        id: VALID_UUID,
+        description: "x",
+      }),
+    ).toBe("validators.description.min_length");
   });
 
   it("rejects an invalid permission when provided", () => {
-    expect(expectFirstIssue(updateGroupValidator, {
-      id: VALID_UUID,
-      permissions: ["nope"],
-    })).toMatch(/Invalid option/);
+    expect(
+      expectFirstIssue(updateGroupValidator, {
+        id: VALID_UUID,
+        permissions: ["nope"],
+      }),
+    ).toMatch(/Invalid option/);
   });
 
   it("rejects a status outside the enum", () => {
-    expect(expectFirstIssue(updateGroupValidator, {
-      id: VALID_UUID,
-      status: "archived",
-    })).toBe("validators.status.invalid");
+    expect(
+      expectFirstIssue(updateGroupValidator, {
+        id: VALID_UUID,
+        status: "archived",
+      }),
+    ).toBe("validators.status.invalid");
   });
 
   it("rejects a missing id", () => {
@@ -239,36 +238,46 @@ describe("assignMembersToGroupValidator", () => {
   });
 
   it("rejects an empty memberIds array", () => {
-    expect(expectFirstIssue(assignMembersToGroupValidator, {
-      groupId: VALID_UUID,
-      memberIds: [],
-    })).toBe("validators.array.at_least_one");
+    expect(
+      expectFirstIssue(assignMembersToGroupValidator, {
+        groupId: VALID_UUID,
+        memberIds: [],
+      }),
+    ).toBe("validators.array.at_least_one");
   });
 
   it("rejects an invalid uuid inside memberIds", () => {
-    expect(expectFirstIssue(assignMembersToGroupValidator, {
-      groupId: VALID_UUID,
-      memberIds: ["not-a-uuid"],
-    })).toBe("validators.uuid.invalid");
+    expect(
+      expectFirstIssue(assignMembersToGroupValidator, {
+        groupId: VALID_UUID,
+        memberIds: ["not-a-uuid"],
+      }),
+    ).toBe("validators.uuid.invalid");
   });
 
   it("rejects a missing memberIds field", () => {
-    expect(expectFirstIssue(assignMembersToGroupValidator, {
-      groupId: VALID_UUID,
-    })).toMatch(/expected array/);
+    expect(
+      expectFirstIssue(assignMembersToGroupValidator, {
+        groupId: VALID_UUID,
+      }),
+    ).toMatch(/expected array/);
   });
 
   it("rejects a missing groupId", () => {
-    expect(expectFirstIssue(assignMembersToGroupValidator, {
-      memberIds: [VALID_UUID],
-    })).toBe("validators.uuid.invalid");
+    expect(
+      expectFirstIssue(assignMembersToGroupValidator, {
+        memberIds: [VALID_UUID],
+      }),
+    ).toBe("validators.uuid.invalid");
   });
 
   it("rejects an invalid groupId", () => {
-    expect(expectFirstIssue(assignMembersToGroupValidator, {
-      groupId: "not-a-uuid",
-      memberIds: [VALID_UUID],
-    })).toBe("validators.uuid.invalid");
+    expect(
+      expectFirstIssue(assignMembersToGroupValidator, {
+        groupId: "not-a-uuid",
+        memberIds: [VALID_UUID],
+      }),
+    ).toBe("validators.uuid.invalid");
   });
 });
 
@@ -294,14 +303,14 @@ describe("deleteGroupsValidator", () => {
   });
 
   it("rejects an invalid uuid inside groupIds", () => {
-    expect(expectFirstIssue(deleteGroupsValidator, {
-      groupIds: ["not-a-uuid"],
-    })).toBe("validators.uuid.invalid");
+    expect(
+      expectFirstIssue(deleteGroupsValidator, {
+        groupIds: ["not-a-uuid"],
+      }),
+    ).toBe("validators.uuid.invalid");
   });
 
   it("rejects a missing groupIds field", () => {
-    expect(expectFirstIssue(deleteGroupsValidator, {})).toMatch(
-      /expected array/,
-    );
+    expect(expectFirstIssue(deleteGroupsValidator, {})).toMatch(/expected array/);
   });
 });

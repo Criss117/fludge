@@ -1,7 +1,5 @@
-import type {
-  LocalCustomer,
-  LocalSale,
-} from "@fludge/db/local-schemas/shared.schema";
+import type { LocalCustomer, LocalSale } from "@fludge/db/local-schemas/shared.schema";
+
 import type { SyncCursor, SyncPage } from "./shared.types";
 
 export type CommerceSyncCursors = {

@@ -1,8 +1,9 @@
-import { MemberDetailScreen } from "@/core/iam/screens/member-detail";
-import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { useFindMemberDetail } from "@fludge/client/iam/queries/use-find-members";
 import { Redirect, Stack, useLocalSearchParams } from "expo-router";
 import { Suspense } from "react";
+
+import { MemberDetailScreen } from "@/core/iam/screens/member-detail";
+import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 
 function Screen({ memberid }: { memberid: string }) {
   const { data } = useFindMemberDetail(memberid);

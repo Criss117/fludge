@@ -1,5 +1,3 @@
-import { beforeEach, describe, expect, it } from "bun:test";
-
 import { AssignMembersToGroupCommand } from "@fludge/api/core/iam/application/commands/assign-members-to-group.command";
 import { RemoveMembersFromGroupCommand } from "@fludge/api/core/iam/application/commands/remove-members-from-group.command";
 import { Group } from "@fludge/api/core/iam/domain/entities/group.entity";
@@ -9,10 +7,11 @@ import { MemberIsOwnerException } from "@fludge/api/core/iam/domain/exceptions/m
 import { MemberNotFoundException } from "@fludge/api/core/iam/domain/exceptions/member-not-found.exception";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
+import { beforeEach, describe, expect, it } from "bun:test";
 
 import { makeAuthContext, makeMember, makeOwner } from "../../factories";
-import { InMemoryGroupMemberRepository } from "../../infrastructure/in-memory-group-member.repository";
 import { InMemoryGroupRepository } from "../../infrastructure/in-memory-group.repository";
+import { InMemoryGroupMemberRepository } from "../../infrastructure/in-memory-group-member.repository";
 import { InMemoryMemberRepository } from "../../infrastructure/in-memory-member.repository";
 
 function setupOrganization() {
@@ -65,10 +64,7 @@ describe("RemoveMembersFromGroupCommand", () => {
       await groupRepository.save(group);
 
       // Pre-assign both members to the group through the assign command.
-      const assign = new AssignMembersToGroupCommand(
-        groupRepository,
-        memberRepository,
-      );
+      const assign = new AssignMembersToGroupCommand(groupRepository, memberRepository);
       await assign.execute(auth, {
         groupId: group.id.toString(),
         memberIds: [memberOne.id.toString(), memberTwo.id.toString()],
@@ -81,10 +77,7 @@ describe("RemoveMembersFromGroupCommand", () => {
 
       expect(result.members).toHaveLength(0);
 
-      const [stored] = await groupRepository.findById(
-        org.id.toString(),
-        group.id.toString(),
-      );
+      const [stored] = await groupRepository.findById(org.id.toString(), group.id.toString());
 
       expect(stored!.getGroupMemberByMemberId(memberOne.id)).toBeNull();
       expect(stored!.getGroupMemberByMemberId(memberTwo.id)).toBeNull();
@@ -101,10 +94,7 @@ describe("RemoveMembersFromGroupCommand", () => {
       await memberRepository.save([owner, memberOne, memberTwo]);
       await groupRepository.save(group);
 
-      const assign = new AssignMembersToGroupCommand(
-        groupRepository,
-        memberRepository,
-      );
+      const assign = new AssignMembersToGroupCommand(groupRepository, memberRepository);
       await assign.execute(auth, {
         groupId: group.id.toString(),
         memberIds: [memberOne.id.toString(), memberTwo.id.toString()],
@@ -117,10 +107,7 @@ describe("RemoveMembersFromGroupCommand", () => {
 
       expect(result.members).toHaveLength(1);
 
-      const [stored] = await groupRepository.findById(
-        org.id.toString(),
-        group.id.toString(),
-      );
+      const [stored] = await groupRepository.findById(org.id.toString(), group.id.toString());
 
       expect(stored!.getGroupMemberByMemberId(memberOne.id)).toBeNull();
       expect(stored!.getGroupMemberByMemberId(memberTwo.id)).not.toBeNull();

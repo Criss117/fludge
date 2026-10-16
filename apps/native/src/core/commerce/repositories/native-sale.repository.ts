@@ -1,24 +1,14 @@
-import { DatabaseService } from "@/integrations/db";
 import type {
+  FindAllSalesFilters,
   SaleDetail,
   SaleRepository,
-  FindAllSalesFilters,
 } from "@fludge/client/commerce/domain/sale.repository";
-import {
-  buildConflictUpdateColumn,
-  jsonObject,
-} from "@fludge/db/utils/build-queries";
+import { localSale, localSaleItem, localSalePayment } from "@fludge/db/local-schemas/shared.schema";
+import { buildConflictUpdateColumn, jsonObject } from "@fludge/db/utils/build-queries";
+import { type Cursor, paginate, type PaginatedResponse } from "@fludge/utils/pagination";
 import { and, desc, eq, getColumns, inArray, sql } from "drizzle-orm";
-import {
-  localSale,
-  localSaleItem,
-  localSalePayment,
-} from "@fludge/db/local-schemas/shared.schema";
-import {
-  type Cursor,
-  type PaginatedResponse,
-  paginate,
-} from "@fludge/utils/pagination";
+
+import type { DatabaseService } from "@/integrations/db";
 
 export class NativeSaleRepository implements SaleRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -34,7 +24,7 @@ export class NativeSaleRepository implements SaleRepository {
   public async findAll(
     organizationId: string,
     cursor: Cursor,
-    filters?: FindAllSalesFilters
+    filters?: FindAllSalesFilters,
   ): Promise<PaginatedResponse<SaleDetail>> {
     const rows = this.db
       .select({
@@ -56,10 +46,8 @@ export class NativeSaleRepository implements SaleRepository {
       .where(
         and(
           eq(localSale.organizationId, organizationId),
-          filters?.customerId
-            ? eq(localSale.customerId, filters.customerId)
-            : undefined
-        )
+          filters?.customerId ? eq(localSale.customerId, filters.customerId) : undefined,
+        ),
       )
       .groupBy(localSale.id)
       .orderBy(desc(localSale.createdAt))
@@ -71,23 +59,19 @@ export class NativeSaleRepository implements SaleRepository {
       rows
         .map((sale) => ({
           ...sale,
-          items: (JSON.parse(sale.items) as SaleDetail["items"]).map(
-            (item) => ({
-              ...item,
-              createdAt: new Date(item.createdAt),
-              updatedAt: new Date(item.updatedAt),
-            })
-          ),
-          payments: (JSON.parse(sale.payments) as SaleDetail["payments"]).map(
-            (payment) => ({
-              ...payment,
-              createdAt: new Date(payment.createdAt),
-              updatedAt: new Date(payment.updatedAt),
-            })
-          ),
+          items: (JSON.parse(sale.items) as SaleDetail["items"]).map((item) => ({
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+          })),
+          payments: (JSON.parse(sale.payments) as SaleDetail["payments"]).map((payment) => ({
+            ...payment,
+            createdAt: new Date(payment.createdAt),
+            updatedAt: new Date(payment.updatedAt),
+          })),
         }))
         .filter((sale) => sale.id !== null),
-      cursor
+      cursor,
     );
   }
 
@@ -135,8 +119,8 @@ export class NativeSaleRepository implements SaleRepository {
           .where(
             inArray(
               localSaleItem.saleId,
-              sales.map((s) => s.id)
-            )
+              sales.map((s) => s.id),
+            ),
           )
           .run();
 
@@ -148,8 +132,8 @@ export class NativeSaleRepository implements SaleRepository {
           .where(
             inArray(
               localSalePayment.saleId,
-              sales.map((s) => s.id)
-            )
+              sales.map((s) => s.id),
+            ),
           )
           .run();
 

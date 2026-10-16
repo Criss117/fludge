@@ -1,5 +1,6 @@
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { Stack } from "expo-router";
+
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 
 export default function AuthLayout() {
   const colors = useThemeColor();

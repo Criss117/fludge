@@ -1,18 +1,16 @@
-import { DatabaseService } from "..";
-import { desc, inArray } from "drizzle-orm";
-import type { ClientSyncCatalogRepository } from "@fludge/sync/repositories/catalog/client-sync-catalog.repository";
 import {
   localCategory,
+  type LocalProduct,
   localProduct,
   localProductPresentation,
-  type LocalProduct,
 } from "@fludge/db/local-schemas/shared.schema";
-import {
-  CatalogSyncResult,
-  CatalogSyncCursors,
-} from "@fludge/sync/types/catalog.types";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
-import type { TransactionService } from "@/integrations/db/index";
+import type { ClientSyncCatalogRepository } from "@fludge/sync/repositories/catalog/client-sync-catalog.repository";
+import type { CatalogSyncCursors, CatalogSyncResult } from "@fludge/sync/types/catalog.types";
+import { inArray } from "drizzle-orm";
+
+import type { DatabaseService, TransactionService } from "@/integrations/db/index";
+
 import type { NativeSyncStateRepository } from "./native-sync-state.repository";
 
 export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository {
@@ -21,10 +19,7 @@ export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository 
     private readonly syncStateRepository: NativeSyncStateRepository,
   ) {}
 
-  private async saveProducts(
-    values: CatalogSyncResult["products"],
-    tx: TransactionService,
-  ) {
+  private async saveProducts(values: CatalogSyncResult["products"], tx: TransactionService) {
     const productsList: Omit<LocalProduct, "presentations">[] = [];
     const presentationsList: LocalProduct["presentations"] = [];
 
@@ -75,22 +70,14 @@ export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository 
     this.syncStateRepository.save("products", values.nextCursor, tx);
   }
 
-  private async saveCategories(
-    values: CatalogSyncResult["categories"],
-    tx: TransactionService,
-  ) {
+  private async saveCategories(values: CatalogSyncResult["categories"], tx: TransactionService) {
     if (values.items.length === 0) return;
 
     tx.insert(localCategory)
       .values(values.items)
       .onConflictDoUpdate({
         target: localCategory.id,
-        set: buildConflictUpdateColumn(localCategory, [
-          "name",
-          "slug",
-          "status",
-          "description",
-        ]),
+        set: buildConflictUpdateColumn(localCategory, ["name", "slug", "status", "description"]),
       })
       .run();
 

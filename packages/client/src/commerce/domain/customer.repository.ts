@@ -1,6 +1,7 @@
-import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
 import type { LocalCustomer } from "@fludge/db/local-schemas/shared.schema";
-import type { CustomerSummary, CustomerDetail } from "./entities";
+import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
+
+import type { CustomerDetail, CustomerSummary } from "./entities";
 
 export type FindAllCustomersFilters = {
   searchQuery?: string;
@@ -13,10 +14,7 @@ export interface CustomerRepository {
     filters?: FindAllCustomersFilters,
   ): Promise<PaginatedResponse<CustomerSummary>>;
 
-  findOneById(
-    organizationId: string,
-    customerId: string,
-  ): Promise<CustomerDetail | null>;
+  findOneById(organizationId: string, customerId: string): Promise<CustomerDetail | null>;
 
   save(customer: LocalCustomer | LocalCustomer[]): Promise<void>;
 

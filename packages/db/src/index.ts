@@ -1,10 +1,12 @@
 import { env } from "@fludge/env/server";
-import { drizzle, LibSQLDatabase } from "drizzle-orm/libsql";
 import type { Client, ResultSet } from "@libsql/client";
 import type { EmptyRelations } from "drizzle-orm";
-import type { SQLiteAsyncTransaction } from "drizzle-orm/sqlite-core";
-import { createResilientClient } from "./resilient-client";
+import type { LibSQLDatabase } from "drizzle-orm/libsql";
+import { drizzle } from "drizzle-orm/libsql";
 import type { Logger } from "drizzle-orm/logger";
+import type { SQLiteAsyncTransaction } from "drizzle-orm/sqlite-core";
+
+import { createResilientClient } from "./resilient-client";
 
 class QueryCounterLogger implements Logger {
   public count = 0;
@@ -37,8 +39,4 @@ export type DatabaseService = LibSQLDatabase<EmptyRelations> & {
   $client: Client;
 };
 
-export type TransactionService = SQLiteAsyncTransaction<
-  "async",
-  ResultSet,
-  EmptyRelations
->;
+export type TransactionService = SQLiteAsyncTransaction<"async", ResultSet, EmptyRelations>;

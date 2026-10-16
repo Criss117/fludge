@@ -12,9 +12,7 @@ export const syncCatalogQuery = z.object({
 type Query = z.infer<typeof syncCatalogQuery>;
 
 export class SyncCatalogQuery {
-  constructor(
-    private readonly syncCatalogRepository: ServerSyncCatalogRepository,
-  ) {}
+  constructor(private readonly syncCatalogRepository: ServerSyncCatalogRepository) {}
 
   public async execute(organizationIds: string[], lastSyncedAt: Query) {
     const [values, error] = await tryCatch(

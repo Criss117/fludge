@@ -1,5 +1,5 @@
 // packages/db/src/resilient-client.ts
-import { createClient, type Client, type Config } from "@libsql/client";
+import { type Client, type Config, createClient } from "@libsql/client";
 
 function isStreamExpiredError(err: unknown): boolean {
   const msg = err instanceof Error ? err.message : String(err);
@@ -40,8 +40,7 @@ export function createResilientClient(config: Config): Client {
 
       // Solo envolvemos operaciones seguras de reintentar (idempotentes / de un solo statement)
       if (["execute", "executeMultiple"].includes(prop as string)) {
-        return (...args: unknown[]) =>
-          withRetry((client) => (client as any)[prop](...args));
+        return (...args: unknown[]) => withRetry((client) => (client as any)[prop](...args));
       }
 
       // batch y transaction NO se reintentan a ciegas: si fallan a medias,

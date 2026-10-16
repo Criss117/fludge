@@ -24,11 +24,7 @@ export const err = <TError>(error: TError): Err<TError> => [null, error];
  * Verifica si un tipo es EXACTAMENTE `Error`
  * y no una subclase.
  */
-type IsExactlyError<T> = [T] extends [Error]
-  ? [Error] extends [T]
-    ? true
-    : false
-  : false;
+type IsExactlyError<T> = [T] extends [Error] ? ([Error] extends [T] ? true : false) : false;
 
 // ─── Options ──────────────────────────────────────────────────────────────────
 

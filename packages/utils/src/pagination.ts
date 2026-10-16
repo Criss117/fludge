@@ -20,10 +20,7 @@ export type PaginatedResponse<T> = {
   nextCursor: Cursor | null;
 };
 
-export function paginate<T>(
-  items: T[],
-  currentCursor: Cursor,
-): PaginatedResponse<T> {
+export function paginate<T>(items: T[], currentCursor: Cursor): PaginatedResponse<T> {
   const nextCursor =
     items.length > currentCursor.limit
       ? { page: currentCursor.page + 1, limit: currentCursor.limit }

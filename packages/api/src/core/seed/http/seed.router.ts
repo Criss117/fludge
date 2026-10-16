@@ -6,6 +6,7 @@ import {
   seedIamValidator,
   seedUsersValidator,
 } from "@fludge/utils/validators/seed.validators";
+
 import { seedContainer } from "../container";
 
 const TAGS = ["Seed"] as const;
@@ -38,9 +39,7 @@ export const seedRouter = {
         tags: TAGS,
       })
       .input(seedIamValidator)
-      .handler(({ input, context }) =>
-        seedContainer.services.seedIam.seed(context.headers, input),
-      ),
+      .handler(({ input, context }) => seedContainer.services.seedIam.seed(context.headers, input)),
 
     clearIamTables: devOnlyProcedure
       .route({
@@ -91,9 +90,7 @@ export const seedRouter = {
         tags: TAGS,
       })
       .input(seedAllValidator)
-      .handler(({ input, context }) =>
-        seedContainer.services.seedAll.seed(context.headers, input),
-      ),
+      .handler(({ input, context }) => seedContainer.services.seedAll.seed(context.headers, input)),
 
     clearAllTables: devOnlyProcedure
       .route({

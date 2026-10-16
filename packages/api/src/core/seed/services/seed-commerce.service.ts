@@ -1,19 +1,15 @@
+import { faker } from "@faker-js/faker/locale/es_MX";
 import type { DatabaseService } from "@fludge/db";
-import {
-  sale,
-  saleItem,
-  salePayment,
-  saleSequences,
-} from "@fludge/db/schema/sales.schema";
+import { product, productPresentation } from "@fludge/db/schema/catalog.schema";
 import { customer, customerPayment } from "@fludge/db/schema/customer.schema";
 import { member, organization } from "@fludge/db/schema/iam.schema";
-import { product, productPresentation } from "@fludge/db/schema/catalog.schema";
-import { faker } from "@faker-js/faker/locale/es_MX";
+import { sale, saleItem, salePayment, saleSequences } from "@fludge/db/schema/sales.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { UUID } from "@fludge/utils/uuid";
 import type { seedCommerceValidator } from "@fludge/utils/validators/seed.validators";
 import { eq, getColumns, sql } from "drizzle-orm";
 import type { z } from "zod";
+
 import { batchInsert } from "./batch-insert";
 
 type SeedCommerceInput = z.infer<typeof seedCommerceValidator>;
@@ -48,12 +44,9 @@ export class SeedCommerceService {
         .innerJoin(member, eq(member.organizationId, organization.id))
         .where(eq(member.role, "owner")),
     );
-    if (errOrgs)
-      throw new Error("Error fetching organizations", { cause: errOrgs });
+    if (errOrgs) throw new Error("Error fetching organizations", { cause: errOrgs });
     if (orgsWithOwners.length === 0) {
-      throw new Error(
-        "No organizations with owner members found. Run seedIam first.",
-      );
+      throw new Error("No organizations with owner members found. Run seedIam first.");
     }
 
     // 2. Obtener productos con presentaciones por org
@@ -74,15 +67,11 @@ export class SeedCommerceService {
           `.as("presentations"),
         })
         .from(product)
-        .leftJoin(
-          productPresentation,
-          eq(productPresentation.productId, product.id),
-        )
+        .leftJoin(productPresentation, eq(productPresentation.productId, product.id))
         .where(eq(product.status, "active"))
         .groupBy(product.id),
     );
-    if (errProds)
-      throw new Error("Error fetching products", { cause: errProds });
+    if (errProds) throw new Error("Error fetching products", { cause: errProds });
 
     const productsByOrg = new Map<string, ProductLite[]>();
     for (const row of productRows) {
@@ -133,11 +122,8 @@ export class SeedCommerceService {
 
     // 4. Batch insert customers
     if (customersToInsert.length > 0) {
-      const [, errCust] = await tryCatch(
-        batchInsert(this.db, customer, customersToInsert),
-      );
-      if (errCust)
-        throw new Error("Error inserting customers", { cause: errCust });
+      const [, errCust] = await tryCatch(batchInsert(this.db, customer, customersToInsert));
+      if (errCust) throw new Error("Error inserting customers", { cause: errCust });
     }
 
     // 5. Preparar ventas
@@ -205,9 +191,7 @@ export class SeedCommerceService {
 
           for (let i = 0; i < input.itemsPerSale; i++) {
             const product = faker.helpers.arrayElement(orgProducts);
-            const presentation = faker.helpers.arrayElement(
-              product.presentations,
-            );
+            const presentation = faker.helpers.arrayElement(product.presentations);
             const quantity = faker.number.int({ min: 1, max: 10 });
             const unitPrice = faker.number.int({ min: 1000, max: 500_000 });
             const subtotal = unitPrice * quantity;
@@ -255,20 +239,14 @@ export class SeedCommerceService {
 
     // 8. Batch insert sales
     if (salesToInsert.length > 0) {
-      const [, errSales] = await tryCatch(
-        batchInsert(this.db, sale, salesToInsert),
-      );
-      if (errSales)
-        throw new Error("Error inserting sales", { cause: errSales });
+      const [, errSales] = await tryCatch(batchInsert(this.db, sale, salesToInsert));
+      if (errSales) throw new Error("Error inserting sales", { cause: errSales });
     }
 
     // 9. Batch insert sale items
     if (saleItemsToInsert.length > 0) {
-      const [, errItems] = await tryCatch(
-        batchInsert(this.db, saleItem, saleItemsToInsert),
-      );
-      if (errItems)
-        throw new Error("Error inserting sale items", { cause: errItems });
+      const [, errItems] = await tryCatch(batchInsert(this.db, saleItem, saleItemsToInsert));
+      if (errItems) throw new Error("Error inserting sale items", { cause: errItems });
     }
 
     // 10. Actualizar secuencias
@@ -293,8 +271,7 @@ export class SeedCommerceService {
             },
           }),
       );
-      if (errSeq)
-        throw new Error("Error updating sale sequences", { cause: errSeq });
+      if (errSeq) throw new Error("Error updating sale sequences", { cause: errSeq });
     }
 
     return {

@@ -1,20 +1,15 @@
-import { DatabaseService } from "@/integrations/db";
 import type {
   CategoryRepository,
   CategorySummary,
   FindAllCategoriesFilters,
 } from "@fludge/client/catalog/domain/category.repository";
+import type { LocalCategory } from "@fludge/db/local-schemas/shared.schema";
+import { localCategory } from "@fludge/db/local-schemas/shared.schema";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
+import { type Cursor, paginate, type PaginatedResponse } from "@fludge/utils/pagination";
 import { and, desc, eq, inArray, like } from "drizzle-orm";
-import {
-  type Cursor,
-  type PaginatedResponse,
-  paginate,
-} from "@fludge/utils/pagination";
-import {
-  localCategory,
-  LocalCategory,
-} from "@fludge/db/local-schemas/shared.schema";
+
+import type { DatabaseService } from "@/integrations/db";
 
 export class NativeCategoryRepository implements CategoryRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -28,7 +23,7 @@ export class NativeCategoryRepository implements CategoryRepository {
   public async findAll(
     organizationId: string,
     cursor: Cursor,
-    filters?: FindAllCategoriesFilters
+    filters?: FindAllCategoriesFilters,
   ): Promise<PaginatedResponse<CategorySummary>> {
     const rows = this.db
       .select()
@@ -36,10 +31,8 @@ export class NativeCategoryRepository implements CategoryRepository {
       .where(
         and(
           eq(localCategory.organizationId, organizationId),
-          filters?.searchQuery
-            ? like(localCategory.name, `%${filters.searchQuery}%`)
-            : undefined
-        )
+          filters?.searchQuery ? like(localCategory.name, `%${filters.searchQuery}%`) : undefined,
+        ),
       )
       .limit(cursor.limit + 1)
       .offset(cursor.limit * cursor.page)
@@ -51,16 +44,13 @@ export class NativeCategoryRepository implements CategoryRepository {
 
   public async findOneById(
     organizationId: string,
-    categoryId: string
+    categoryId: string,
   ): Promise<CategorySummary | null> {
     const row = this.db
       .select()
       .from(localCategory)
       .where(
-        and(
-          eq(localCategory.organizationId, organizationId),
-          eq(localCategory.id, categoryId)
-        )
+        and(eq(localCategory.organizationId, organizationId), eq(localCategory.id, categoryId)),
       )
       .limit(0)
       .get();
@@ -68,12 +58,8 @@ export class NativeCategoryRepository implements CategoryRepository {
     return row || null;
   }
 
-  public async save(
-    categoryValues: LocalCategory | LocalCategory[]
-  ): Promise<void> {
-    const categoriesArray = Array.isArray(categoryValues)
-      ? categoryValues
-      : [categoryValues];
+  public async save(categoryValues: LocalCategory | LocalCategory[]): Promise<void> {
+    const categoriesArray = Array.isArray(categoryValues) ? categoryValues : [categoryValues];
 
     if (categoriesArray.length === 0) return;
 
@@ -82,20 +68,12 @@ export class NativeCategoryRepository implements CategoryRepository {
       .values(categoriesArray)
       .onConflictDoUpdate({
         target: localCategory.id,
-        set: buildConflictUpdateColumn(localCategory, [
-          "name",
-          "slug",
-          "status",
-          "description",
-        ]),
+        set: buildConflictUpdateColumn(localCategory, ["name", "slug", "status", "description"]),
       })
       .run();
   }
 
-  public async delete(
-    organizationId: string,
-    categoryId: string | string[]
-  ): Promise<void> {
+  public async delete(organizationId: string, categoryId: string | string[]): Promise<void> {
     const categoryIds = Array.isArray(categoryId) ? categoryId : [categoryId];
 
     this.db
@@ -103,8 +81,8 @@ export class NativeCategoryRepository implements CategoryRepository {
       .where(
         and(
           eq(localCategory.organizationId, organizationId),
-          inArray(localCategory.id, categoryIds)
-        )
+          inArray(localCategory.id, categoryIds),
+        ),
       )
       .run();
   }

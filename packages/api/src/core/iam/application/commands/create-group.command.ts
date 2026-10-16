@@ -1,13 +1,13 @@
-import type { z } from "zod";
 import type { GroupUniquenessValidator } from "@fludge/api/core/iam/application/services/group-uniqueness-validator.service";
 import { Group } from "@fludge/api/core/iam/domain/entities/group.entity";
+import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 import { GroupAlreadyExistsException } from "@fludge/api/core/iam/domain/exceptions/group-already-exists.exception";
 import type { GroupRepository } from "@fludge/api/core/iam/domain/repositories/group.repository";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
 import { createGroupValidator } from "@fludge/utils/validators/group.validators";
-import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
+import type { z } from "zod";
 
 export const createGroupCommand = createGroupValidator;
 
@@ -28,20 +28,16 @@ export class CreateGroupCommand {
       organizationId: UUID.fromString(authContext.organizationId.toString()),
     });
 
-    const [uniqueness, errUniqueness] =
-      await this.groupUniquenessValidator.validateUniqueFields(
-        authContext.organizationId.toString(),
-        {
-          name: newGroup.values.name,
-          slug: newGroup.values.slug,
-        },
-      );
+    const [uniqueness, errUniqueness] = await this.groupUniquenessValidator.validateUniqueFields(
+      authContext.organizationId.toString(),
+      {
+        name: newGroup.values.name,
+        slug: newGroup.values.slug,
+      },
+    );
 
     if (errUniqueness)
-      throw new InternalServerError(
-        errUniqueness,
-        "api_errors.iam.organizations.isr_on_find",
-      );
+      throw new InternalServerError(errUniqueness, "api_errors.iam.organizations.isr_on_find");
 
     if (uniqueness.nameTaken || uniqueness.slugTaken)
       throw new GroupAlreadyExistsException("api_errors.iam.groups.name_taken");
@@ -49,10 +45,7 @@ export class CreateGroupCommand {
     const [, errSaving] = await this.groupRepository.save(newGroup);
 
     if (errSaving)
-      throw new InternalServerError(
-        errSaving,
-        "api_errors.iam.organizations.isr_on_save",
-      );
+      throw new InternalServerError(errSaving, "api_errors.iam.organizations.isr_on_save");
 
     return newGroup.values;
   }

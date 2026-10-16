@@ -1,21 +1,19 @@
-import type { ClientSyncIamRepository } from "@fludge/sync/repositories/iam/client-sync-iam.repository";
-import type { DatabaseService } from "..";
-import {
+import type {
   LocalGroup,
   localGroup,
   localGroupMember,
+  type LocalMember,
   localMember,
   localOrganization,
   localUser,
-  type LocalMember,
 } from "@fludge/db/local-schemas/shared.schema";
-import { inArray } from "drizzle-orm";
-import type {
-  IamSyncCursors,
-  IamSyncResult,
-} from "@fludge/sync/types/iam.types";
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
-import { NativeSyncStateRepository } from "./native-sync-state.repository";
+import type { ClientSyncIamRepository } from "@fludge/sync/repositories/iam/client-sync-iam.repository";
+import type { IamSyncCursors, IamSyncResult } from "@fludge/sync/types/iam.types";
+import { inArray } from "drizzle-orm";
+
+import type { DatabaseService } from "..";
+import type { NativeSyncStateRepository } from "./native-sync-state.repository";
 
 export class NativeSyncIamRepository implements ClientSyncIamRepository {
   constructor(
@@ -37,11 +35,7 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
     };
   }
 
-  public async saveAll({
-    groups,
-    members,
-    organizations,
-  }: IamSyncResult): Promise<void> {
+  public async saveAll({ groups, members, organizations }: IamSyncResult): Promise<void> {
     this.db.transaction((tx) => {
       if (organizations.items.length > 0) {
         tx.insert(localOrganization)
@@ -60,11 +54,7 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
           })
           .run();
 
-        this.syncStateRepository.save(
-          "organizations",
-          organizations.nextCursor,
-          tx,
-        );
+        this.syncStateRepository.save("organizations", organizations.nextCursor, tx);
       }
 
       if (members.items.length > 0) {
@@ -133,10 +123,7 @@ export class NativeSyncIamRepository implements ClientSyncIamRepository {
             )
             .run();
 
-          tx.insert(localGroupMember)
-            .values(groupMembersList)
-            .onConflictDoNothing()
-            .run();
+          tx.insert(localGroupMember).values(groupMembersList).onConflictDoNothing().run();
         }
 
         this.syncStateRepository.save("groups", groups.nextCursor, tx);

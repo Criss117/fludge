@@ -1,21 +1,15 @@
-import { describe, expect, it } from "bun:test";
-
 import { Status } from "@fludge/api/core/shared/value-objects/status";
-import type {
-  GroupMemberSelect,
-  GroupSelect,
-} from "@fludge/db/schema/iam.schema";
+import type { GroupMemberSelect, GroupSelect } from "@fludge/db/schema/iam.schema";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { Slug } from "@fludge/utils/slugify";
 import { UUID } from "@fludge/utils/uuid";
+import { describe, expect, it } from "bun:test";
 
-import { GroupMember } from "../../../../src/core/iam/domain/entities/group-member.entity";
 import { Group } from "../../../../src/core/iam/domain/entities/group.entity";
+import { GroupMember } from "../../../../src/core/iam/domain/entities/group-member.entity";
 import { GroupMemberAlreadyExistsException } from "../../../../src/core/iam/domain/exceptions/group-member-already-exists.exception";
 
-const ORGANIZATION_ID = UUID.fromString(
-  "0192d840-7c3f-73b2-8f71-2c1b6a9e5d10",
-);
+const ORGANIZATION_ID = UUID.fromString("0192d840-7c3f-73b2-8f71-2c1b6a9e5d10");
 const CREATED_BY = UUID.fromString("0192d840-7c3f-73b2-8f71-2c1b6a9e5d11");
 const MEMBER_ID = UUID.fromString("0192d840-7c3f-73b2-8f71-2c1b6a9e5d12");
 
@@ -67,9 +61,7 @@ describe("Group", () => {
     it("generates a valid UUID v7 id", () => {
       const id = Group.create(CREATE_INPUT).id.toString();
 
-      expect(id).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
-      );
+      expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
     });
 
     it("generates a unique id for each group", () => {
@@ -109,10 +101,7 @@ describe("Group", () => {
       const group = Group.create(CREATE_INPUT);
 
       expect(group.permissions).toBeInstanceOf(Permissions);
-      expect(group.permissions.values).toEqual([
-        "categories:read",
-        "categories:update",
-      ]);
+      expect(group.permissions.values).toEqual(["categories:read", "categories:update"]);
     });
 
     it("sets the status to active", () => {
@@ -153,9 +142,7 @@ describe("Group", () => {
       expect(group.members).toBeInstanceOf(Map);
       expect(group.members.size).toBe(PERSISTED.members.length);
 
-      const member = group.members.get(
-        `${GROUP_MEMBER.groupId}-${GROUP_MEMBER.memberId}`,
-      );
+      const member = group.members.get(`${GROUP_MEMBER.groupId}-${GROUP_MEMBER.memberId}`);
       expect(member).toBeDefined();
       expect(member).toBeInstanceOf(GroupMember);
       expect(group.values.members).toEqual(PERSISTED.members);
@@ -368,16 +355,12 @@ describe("Group", () => {
 
       group.addGroupMember(groupMember);
 
-      expect(() => group.addGroupMember(groupMember)).toThrow(
-        GroupMemberAlreadyExistsException,
-      );
+      expect(() => group.addGroupMember(groupMember)).toThrow(GroupMemberAlreadyExistsException);
     });
 
     it("allows adding a different member with the same entity as a group", () => {
       const group = Group.create(CREATE_INPUT);
-      const otherMemberId = UUID.fromString(
-        "0192d840-7c3f-73b2-8f71-2c1b6a9e5d13",
-      );
+      const otherMemberId = UUID.fromString("0192d840-7c3f-73b2-8f71-2c1b6a9e5d13");
 
       group.addGroupMember(createGroupMember(group));
       group.addGroupMember(
@@ -416,9 +399,7 @@ describe("Group", () => {
 
     it("removes an array of members", () => {
       const group = Group.create(CREATE_INPUT);
-      const otherMemberId = UUID.fromString(
-        "0192d840-7c3f-73b2-8f71-2c1b6a9e5d13",
-      );
+      const otherMemberId = UUID.fromString("0192d840-7c3f-73b2-8f71-2c1b6a9e5d13");
       const first = createGroupMember(group, MEMBER_ID);
       const second = createGroupMember(group, otherMemberId);
       group.addGroupMember(first);
@@ -431,9 +412,7 @@ describe("Group", () => {
 
     it("only removes the provided members", () => {
       const group = Group.create(CREATE_INPUT);
-      const otherMemberId = UUID.fromString(
-        "0192d840-7c3f-73b2-8f71-2c1b6a9e5d13",
-      );
+      const otherMemberId = UUID.fromString("0192d840-7c3f-73b2-8f71-2c1b6a9e5d13");
       const keep = createGroupMember(group, MEMBER_ID);
       const remove = createGroupMember(group, otherMemberId);
       group.addGroupMember(keep);

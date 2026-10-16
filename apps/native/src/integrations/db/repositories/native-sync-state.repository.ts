@@ -1,5 +1,6 @@
 import { type Aggregate, app } from "@fludge/db/local-schemas/app.schema";
-import { DatabaseService, TransactionService } from "..";
+
+import type { DatabaseService, TransactionService } from "..";
 
 export class NativeSyncStateRepository {
   constructor(private readonly db: DatabaseService) {}

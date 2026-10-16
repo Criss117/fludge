@@ -1,4 +1,5 @@
-import { buildI18n, es } from "@fludge/i18n/index";
+import type { es } from "@fludge/i18n/index";
+import { buildI18n } from "@fludge/i18n/index";
 
 declare module "i18next" {
   interface CustomTypeOptions {

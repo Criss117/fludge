@@ -1,13 +1,14 @@
 import { z } from "zod";
+
+import { customerDocumentTypeEnum } from "../enums/db-enums";
 import {
+  emailSchema,
   getI18nKey,
   nameSchema,
   phoneSchema,
-  emailSchema,
-  uuidSchema,
   statusSchema,
+  uuidSchema,
 } from "./shared";
-import { customerDocumentTypeEnum } from "../enums/db-enums";
 
 export const documentTypeSchema = z.enum(customerDocumentTypeEnum, {
   error: getI18nKey("validators.document_type.invalid"),

@@ -1,15 +1,16 @@
+import { roleEnum } from "@fludge/utils/enums/db-enums";
+import type { Permission } from "@fludge/utils/permissions/data";
 import {
+  type AnySQLiteColumn,
   index,
   primaryKey,
   sqliteTable,
   text,
   uniqueIndex,
-  type AnySQLiteColumn,
 } from "drizzle-orm/sqlite-core";
-import { roleEnum } from "@fludge/utils/enums/db-enums";
-import { user } from "./auth.schema";
-import type { Permission } from "@fludge/utils/permissions/data";
+
 import { auditMetadata } from "../shared";
+import { user } from "./auth.schema";
 
 export const organization = sqliteTable(
   "organization",
@@ -54,27 +55,18 @@ export const member = sqliteTable(
 
     role: text("role", { enum: roleEnum }).notNull(),
 
-    assignedBy: text("assigned_by").references(
-      (): AnySQLiteColumn => member.id,
-      {
-        onDelete: "set null",
-      },
-    ),
+    assignedBy: text("assigned_by").references((): AnySQLiteColumn => member.id, {
+      onDelete: "set null",
+    }),
 
     organizationId: organizationId(),
 
     ...auditMetadata,
   },
   (table) => [
-    uniqueIndex("member_organization_user_unique").on(
-      table.organizationId,
-      table.userId,
-    ),
+    uniqueIndex("member_organization_user_unique").on(table.organizationId, table.userId),
 
-    index("member_organization_assignedBy_idx").on(
-      table.organizationId,
-      table.assignedBy,
-    ),
+    index("member_organization_assignedBy_idx").on(table.organizationId, table.assignedBy),
   ],
 );
 
@@ -91,9 +83,7 @@ export const group = sqliteTable(
     name: text("name").notNull(),
     slug: text("slug").notNull(),
     description: text("description").notNull(),
-    permissions: text("permissions", { mode: "json" })
-      .notNull()
-      .$type<Permission[]>(),
+    permissions: text("permissions", { mode: "json" }).notNull().$type<Permission[]>(),
 
     organizationId: organizationId(),
     createdBy: memberId(),
@@ -103,14 +93,8 @@ export const group = sqliteTable(
     index("group_slug_idx").on(t.slug),
     index("group_name_idx").on(t.name),
 
-    uniqueIndex("group_organization_id_slug_unique").on(
-      t.organizationId,
-      t.slug,
-    ),
-    uniqueIndex("group_organization_id_name_unique").on(
-      t.organizationId,
-      t.name,
-    ),
+    uniqueIndex("group_organization_id_slug_unique").on(t.organizationId, t.slug),
+    uniqueIndex("group_organization_id_name_unique").on(t.organizationId, t.name),
   ],
 );
 

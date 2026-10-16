@@ -1,17 +1,17 @@
-import type { z } from "zod";
-import type { SaleRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale.repository";
-import type { SalePaymentRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale-payment.repository";
-import type { CustomerRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
 import type { ProductRepository } from "@fludge/api/core/catalog/products/domain/repositories/product.repository";
 import type { DecreaseCustomerBalanceService } from "@fludge/api/core/commerce/customer/application/services/decrease-customer-balance.service";
+import type { CustomerRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
 import type {
-  RefundProductsService,
   RefundProductInput,
+  RefundProductsService,
 } from "@fludge/api/core/commerce/sale/application/services/refund-products.service";
 import { SaleNotFoundException } from "@fludge/api/core/commerce/sale/domain/exceptions/sale-not-found.exception";
+import type { SaleRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale.repository";
+import type { SalePaymentRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale-payment.repository";
 import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { cancelSaleValidator } from "@fludge/utils/validators/sale.validators";
+import type { z } from "zod";
 
 export const cancelSaleCommand = cancelSaleValidator;
 
@@ -31,16 +31,9 @@ export class CancelSaleCommand {
     const organizationId = authContext.organizationId.toString();
 
     // 1. Buscar la venta
-    const [sale, errFindSale] = await this.saleRepository.findById(
-      organizationId,
-      cmd.id,
-    );
+    const [sale, errFindSale] = await this.saleRepository.findById(organizationId, cmd.id);
 
-    if (errFindSale)
-      throw new InternalServerError(
-        errFindSale,
-        "api_errors.sales.isr_on_find",
-      );
+    if (errFindSale) throw new InternalServerError(errFindSale, "api_errors.sales.isr_on_find");
 
     if (!sale) throw new SaleNotFoundException();
 
@@ -69,10 +62,7 @@ export class CancelSaleCommand {
     }
 
     // 3. Revertir stock de productos (si existen)
-    const productsToSave = await this.refundProductsService.execute(
-      organizationId,
-      refundInputs,
-    );
+    const productsToSave = await this.refundProductsService.execute(organizationId, refundInputs);
 
     // 4. Disminuir balance del customer (si la venta tenía cliente)
     let customer = null;
@@ -89,48 +79,36 @@ export class CancelSaleCommand {
     sale.cancel(cmd.cancellationReason);
 
     // 6. Persistir todo en una transacción (mínimas llamadas a DB)
-    const [, errTransaction] = await this.saleRepository.transaction(
-      async (tx) => {
-        // Eliminar todos los SalePayments de la venta
-        const [, errDeletePayments] =
-          await this.salePaymentRepository.deleteBySaleId(cmd.id, { tx });
+    const [, errTransaction] = await this.saleRepository.transaction(async (tx) => {
+      // Eliminar todos los SalePayments de la venta
+      const [, errDeletePayments] = await this.salePaymentRepository.deleteBySaleId(cmd.id, { tx });
 
-        if (errDeletePayments) throw errDeletePayments;
+      if (errDeletePayments) throw errDeletePayments;
 
-        // Actualizar la venta
-        const [, errSale] = await this.saleRepository.update(sale, { tx });
+      // Actualizar la venta
+      const [, errSale] = await this.saleRepository.update(sale, { tx });
 
-        if (errSale) throw errSale;
+      if (errSale) throw errSale;
 
-        // Actualizar customer si aplica
-        if (customer) {
-          const [, errCustomer] = await this.customerRepository.update(
-            customer,
-            { tx },
-          );
+      // Actualizar customer si aplica
+      if (customer) {
+        const [, errCustomer] = await this.customerRepository.update(customer, { tx });
 
-          if (errCustomer) throw errCustomer;
-        }
+        if (errCustomer) throw errCustomer;
+      }
 
-        // Actualizar productos si hay stock que revertir
-        if (productsToSave.length > 0) {
-          const [, errProducts] = await this.productRepository.saveOnlyProduct(
-            productsToSave,
-            {
-              tx,
-            },
-          );
+      // Actualizar productos si hay stock que revertir
+      if (productsToSave.length > 0) {
+        const [, errProducts] = await this.productRepository.saveOnlyProduct(productsToSave, {
+          tx,
+        });
 
-          if (errProducts) throw errProducts;
-        }
-      },
-    );
+        if (errProducts) throw errProducts;
+      }
+    });
 
     if (errTransaction)
-      throw new InternalServerError(
-        errTransaction,
-        "api_errors.sales.isr_on_save",
-      );
+      throw new InternalServerError(errTransaction, "api_errors.sales.isr_on_save");
 
     return {
       sale: sale.values,

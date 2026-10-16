@@ -1,12 +1,13 @@
-import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { GeistFonts } from "@/integrations/fonts";
 import {
   TicketStoreProvider,
   useTicketsHydrated,
 } from "@fludge/client/providers/ticket-store.provider";
 import { Stack } from "expo-router";
 import { useTranslation } from "react-i18next";
+
+import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { GeistFonts } from "@/integrations/fonts";
 
 function Screen() {
   const colors = useThemeColor();

@@ -2,9 +2,7 @@ import { BadRequestError } from "@fludge/api/core/shared/exceptions/base-excepti
 import type { TranslationKey } from "@fludge/i18n/index";
 
 export class PaymentExceedsBalanceException extends BadRequestError {
-  constructor(
-    message: TranslationKey = "api_errors.customer_payments.exceeds_balance",
-  ) {
+  constructor(message: TranslationKey = "api_errors.customer_payments.exceeds_balance") {
     super(message);
   }
 }

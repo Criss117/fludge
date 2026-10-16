@@ -1,24 +1,22 @@
+import { RNHostView } from "@expo/ui";
+import type { ModalBottomSheetRef } from "@expo/ui/jetpack-compose";
 import {
   AlertDialog,
   Column,
   ModalBottomSheet,
-  ModalBottomSheetRef,
   OutlinedIconButton,
   TextButton,
 } from "@expo/ui/jetpack-compose";
-import {
-  CameraView,
-  PermissionResponse,
-  useCameraPermissions,
-} from "expo-camera";
+import { height, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
+import type { PermissionResponse } from "expo-camera";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Icon } from "./icon";
-import { height, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
-import { RNHostView } from "@expo/ui";
-import { ThemedNativeText } from "./themed-text";
-import { useThemeColor } from "../hooks/use-theme-color";
 import { StyleSheet } from "react-native";
+
+import { useThemeColor } from "../hooks/use-theme-color";
+import { Icon } from "./icon";
+import { ThemedNativeText } from "./themed-text";
 
 interface Props {
   setBarcode: (barcode: string) => void;
@@ -55,27 +53,19 @@ function RequestPermission({
           }}
         >
           <AlertDialog.Title>
-            <ThemedNativeText>
-              {t("app.permissions.camera.request")}
-            </ThemedNativeText>
+            <ThemedNativeText>{t("app.permissions.camera.request")}</ThemedNativeText>
           </AlertDialog.Title>
           <AlertDialog.Text>
-            <ThemedNativeText>
-              {t("app.permissions.camera.required")}
-            </ThemedNativeText>
+            <ThemedNativeText>{t("app.permissions.camera.required")}</ThemedNativeText>
           </AlertDialog.Text>
           <AlertDialog.ConfirmButton>
             <TextButton onClick={onRequestPermission}>
-              <ThemedNativeText>
-                {t("app.permissions.camera.confirm")}
-              </ThemedNativeText>
+              <ThemedNativeText>{t("app.permissions.camera.confirm")}</ThemedNativeText>
             </TextButton>
           </AlertDialog.ConfirmButton>
           <AlertDialog.DismissButton>
             <TextButton onClick={close}>
-              <ThemedNativeText>
-                {t("app.permissions.camera.cancel")}
-              </ThemedNativeText>
+              <ThemedNativeText>{t("app.permissions.camera.cancel")}</ThemedNativeText>
             </TextButton>
           </AlertDialog.DismissButton>
         </AlertDialog>
@@ -91,8 +81,7 @@ export function BarcodeReader({ setBarcode }: Props) {
   const scannedRef = useRef(false); // ref en vez de state: evita lecturas dobles
   const colors = useThemeColor();
 
-  if (!permission?.granted)
-    return <RequestPermission requestPermission={requestPermission} />;
+  if (!permission?.granted) return <RequestPermission requestPermission={requestPermission} />;
 
   const open = () => {
     scannedRef.current = false;

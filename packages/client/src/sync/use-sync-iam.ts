@@ -1,15 +1,12 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-
-import { useNetwork } from "@fludge/client/providers/network-status.provider";
-import {
-  useOrpc,
-  type OrpcQueryClient,
-} from "@fludge/client/providers/orpc.provider";
-import { tryCatch } from "@fludge/utils/trycatch";
 import { useContainer } from "@fludge/client/providers/container.provider";
-import { MINUTE } from "@fludge/utils/constants";
+import { useNetwork } from "@fludge/client/providers/network-status.provider";
+import { type OrpcQueryClient, useOrpc } from "@fludge/client/providers/orpc.provider";
 import type { HttpClientSyncIamRepository } from "@fludge/sync/repositories/iam/client-sync-iam.repository";
+import { MINUTE } from "@fludge/utils/constants";
+import { tryCatch } from "@fludge/utils/trycatch";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+
 import { useAppState } from "../iam/hooks/use-app-state";
 
 export type SyncData = {
@@ -18,9 +15,7 @@ export type SyncData = {
   syncedAt: Date | null;
 };
 
-function httpClientIamRepository(
-  orpc: OrpcQueryClient,
-): HttpClientSyncIamRepository {
+function httpClientIamRepository(orpc: OrpcQueryClient): HttpClientSyncIamRepository {
   return {
     findLastSyncedAt: async (lastSyncedAt) => {
       const data = await orpc.sync.syncIam.call(lastSyncedAt);

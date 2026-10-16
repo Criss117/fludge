@@ -1,5 +1,3 @@
-import { Icon } from "@/core/shared/components/icon";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import {
   Box,
   Button,
@@ -10,21 +8,21 @@ import {
   Row,
   Spacer,
 } from "@expo/ui/jetpack-compose";
+import { fillMaxWidth, paddingAll, weight } from "@expo/ui/jetpack-compose/modifiers";
+import type { ProductFormSchema } from "@fludge/client/catalog/forms/product.form";
 import {
   type ProductPresentationFormSchema,
   useProductPresentationForm,
 } from "@fludge/client/catalog/forms/product-presentation.form";
 import { useEffect, useRef, useState } from "react";
-import { ProductPresentationFormInputs } from "../product-presentation-form-inputs";
-import {
-  fillMaxWidth,
-  paddingAll,
-  weight,
-} from "@expo/ui/jetpack-compose/modifiers";
-import { SPACING } from "@/lib/sp";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useTranslation } from "react-i18next";
-import type { ProductFormSchema } from "@fludge/client/catalog/forms/product.form";
+
+import { Icon } from "@/core/shared/components/icon";
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { SPACING } from "@/lib/sp";
+
+import { ProductPresentationFormInputs } from "../product-presentation-form-inputs";
 
 interface Props {
   onSubmit: (value: ProductPresentationFormSchema) => void;
@@ -94,11 +92,7 @@ export function UpdateProductPresentationForm({
   }, [form, selectedPresentation]);
 
   return (
-    <ProductPresentationForm
-      close={close}
-      isOpen={selectedPresentation !== null}
-      form={form}
-    />
+    <ProductPresentationForm close={close} isOpen={selectedPresentation !== null} form={form} />
   );
 }
 
@@ -127,27 +121,17 @@ function ProductPresentationForm({ close, isOpen, form }: ContentProps) {
         verticalArrangement={{ spacedBy: SPACING["2xl"] }}
         modifiers={[fillMaxWidth(), paddingAll(SPACING.md)]}
       >
-        <Column
-          verticalArrangement={{ spacedBy: SPACING.md }}
-          modifiers={[fillMaxWidth()]}
-        >
+        <Column verticalArrangement={{ spacedBy: SPACING.md }} modifiers={[fillMaxWidth()]}>
           <form.Field name="name">
-            {(field) => (
-              <ProductPresentationFormInputs.NameInput field={field} />
-            )}
+            {(field) => <ProductPresentationFormInputs.NameInput field={field} />}
           </form.Field>
 
           <form.Field name="barcode">
-            {(field) => (
-              <ProductPresentationFormInputs.BarcodeInput field={field} />
-            )}
+            {(field) => <ProductPresentationFormInputs.BarcodeInput field={field} />}
           </form.Field>
         </Column>
 
-        <Column
-          verticalArrangement={{ spacedBy: SPACING.md }}
-          modifiers={[fillMaxWidth()]}
-        >
+        <Column verticalArrangement={{ spacedBy: SPACING.md }} modifiers={[fillMaxWidth()]}>
           <Row
             horizontalArrangement={{
               spacedBy: SPACING.sm,
@@ -155,18 +139,12 @@ function ProductPresentationForm({ close, isOpen, form }: ContentProps) {
           >
             <Box modifiers={[weight(1)]}>
               <form.Field name="conversionFactor">
-                {(field) => (
-                  <ProductPresentationFormInputs.ConversionFactorInput
-                    field={field}
-                  />
-                )}
+                {(field) => <ProductPresentationFormInputs.ConversionFactorInput field={field} />}
               </form.Field>
             </Box>
             <Box modifiers={[weight(1)]}>
               <form.Field name="priceSale">
-                {(field) => (
-                  <ProductPresentationFormInputs.PriceSaleInput field={field} />
-                )}
+                {(field) => <ProductPresentationFormInputs.PriceSaleInput field={field} />}
               </form.Field>
             </Box>
           </Row>
@@ -178,20 +156,12 @@ function ProductPresentationForm({ close, isOpen, form }: ContentProps) {
           >
             <Box modifiers={[weight(1)]}>
               <form.Field name="pricePurchase">
-                {(field) => (
-                  <ProductPresentationFormInputs.PricePurchaseInput
-                    field={field}
-                  />
-                )}
+                {(field) => <ProductPresentationFormInputs.PricePurchaseInput field={field} />}
               </form.Field>
             </Box>
             <Box modifiers={[weight(1)]}>
               <form.Field name="priceWholesale">
-                {(field) => (
-                  <ProductPresentationFormInputs.PriceWholesaleInput
-                    field={field}
-                  />
-                )}
+                {(field) => <ProductPresentationFormInputs.PriceWholesaleInput field={field} />}
               </form.Field>
             </Box>
           </Row>

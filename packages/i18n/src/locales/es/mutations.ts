@@ -61,8 +61,7 @@ export const mutations = {
       error: "Algo salió mal al eliminar la categoría",
       dialog: {
         title: "Eliminar Categoría",
-        description:
-          "¿Estás seguro de que deseas eliminar la categoría {{name}}?",
+        description: "¿Estás seguro de que deseas eliminar la categoría {{name}}?",
       },
     },
   },
@@ -94,8 +93,7 @@ export const mutations = {
       error: "Algo salió mal al eliminar el producto",
       dialog: {
         title: "Eliminar Producto",
-        description:
-          "¿Estás seguro de que deseas eliminar el producto {{name}}?",
+        description: "¿Estás seguro de que deseas eliminar el producto {{name}}?",
       },
     },
   },

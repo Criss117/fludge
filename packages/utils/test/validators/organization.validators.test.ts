@@ -9,28 +9,18 @@ import {
 
 const VALID_UUID = "00000000-0000-4000-8000-000000000001";
 
-function expectParsed<TSchema extends ZodType>(
-  schema: TSchema,
-  value: unknown,
-) {
+function expectParsed<TSchema extends ZodType>(schema: TSchema, value: unknown) {
   const result = schema.safeParse(value);
-  expect(result.success, `expected success for ${JSON.stringify(value)}`).toBe(
-    true,
-  );
+  expect(result.success, `expected success for ${JSON.stringify(value)}`).toBe(true);
   if (!result.success) {
     throw new Error(`expected success but got: ${result.error.message}`);
   }
   return result.data;
 }
 
-function expectFirstIssue<TSchema extends ZodType>(
-  schema: TSchema,
-  value: unknown,
-): string {
+function expectFirstIssue<TSchema extends ZodType>(schema: TSchema, value: unknown): string {
   const result = schema.safeParse(value);
-  expect(result.success, `expected failure for ${JSON.stringify(value)}`).toBe(
-    false,
-  );
+  expect(result.success, `expected failure for ${JSON.stringify(value)}`).toBe(false);
   if (result.success) {
     throw new Error(`expected failure for ${JSON.stringify(value)}`);
   }
@@ -104,59 +94,75 @@ describe("registerOrganizationValidator", () => {
   });
 
   it("rejects a name shorter than 5 characters", () => {
-    expect(expectFirstIssue(registerOrganizationValidator, {
-      ...VALID_ORGANIZATION,
-      name: "ab",
-    })).toBe("validators.name.min_length");
+    expect(
+      expectFirstIssue(registerOrganizationValidator, {
+        ...VALID_ORGANIZATION,
+        name: "ab",
+      }),
+    ).toBe("validators.name.min_length");
   });
 
   it("rejects an invalid phone", () => {
-    expect(expectFirstIssue(registerOrganizationValidator, {
-      ...VALID_ORGANIZATION,
-      phone: "123",
-    })).toBe("validators.phone.min_length");
+    expect(
+      expectFirstIssue(registerOrganizationValidator, {
+        ...VALID_ORGANIZATION,
+        phone: "123",
+      }),
+    ).toBe("validators.phone.min_length");
   });
 
   it("rejects a legalName shorter than 3 characters", () => {
-    expect(expectFirstIssue(registerOrganizationValidator, {
-      ...VALID_ORGANIZATION,
-      legalName: "ab",
-    })).toBe("validators.legal_name.min_length");
+    expect(
+      expectFirstIssue(registerOrganizationValidator, {
+        ...VALID_ORGANIZATION,
+        legalName: "ab",
+      }),
+    ).toBe("validators.legal_name.min_length");
   });
 
   it("rejects a legalName longer than 50 characters", () => {
-    expect(expectFirstIssue(registerOrganizationValidator, {
-      ...VALID_ORGANIZATION,
-      legalName: "a".repeat(51),
-    })).toBe("validators.legal_name.max_length");
+    expect(
+      expectFirstIssue(registerOrganizationValidator, {
+        ...VALID_ORGANIZATION,
+        legalName: "a".repeat(51),
+      }),
+    ).toBe("validators.legal_name.max_length");
   });
 
   it("rejects a taxId shorter than 9 characters", () => {
-    expect(expectFirstIssue(registerOrganizationValidator, {
-      ...VALID_ORGANIZATION,
-      taxId: "12345678",
-    })).toBe("validators.tax_id.min_length");
+    expect(
+      expectFirstIssue(registerOrganizationValidator, {
+        ...VALID_ORGANIZATION,
+        taxId: "12345678",
+      }),
+    ).toBe("validators.tax_id.min_length");
   });
 
   it("rejects a taxId longer than 15 characters", () => {
-    expect(expectFirstIssue(registerOrganizationValidator, {
-      ...VALID_ORGANIZATION,
-      taxId: "a".repeat(16),
-    })).toBe("validators.tax_id.max_length");
+    expect(
+      expectFirstIssue(registerOrganizationValidator, {
+        ...VALID_ORGANIZATION,
+        taxId: "a".repeat(16),
+      }),
+    ).toBe("validators.tax_id.max_length");
   });
 
   it("rejects an address shorter than 5 characters", () => {
-    expect(expectFirstIssue(registerOrganizationValidator, {
-      ...VALID_ORGANIZATION,
-      address: "x",
-    })).toBe("validators.address.min_length");
+    expect(
+      expectFirstIssue(registerOrganizationValidator, {
+        ...VALID_ORGANIZATION,
+        address: "x",
+      }),
+    ).toBe("validators.address.min_length");
   });
 
   it("rejects an address longer than 50 characters", () => {
-    expect(expectFirstIssue(registerOrganizationValidator, {
-      ...VALID_ORGANIZATION,
-      address: "a".repeat(51),
-    })).toBe("validators.address.max_length");
+    expect(
+      expectFirstIssue(registerOrganizationValidator, {
+        ...VALID_ORGANIZATION,
+        address: "a".repeat(51),
+      }),
+    ).toBe("validators.address.max_length");
   });
 
   it("rejects an empty payload", () => {
@@ -227,9 +233,7 @@ describe("updateOrganizationValidator", () => {
 
 describe("addMemberValidator", () => {
   it("accepts a valid user id", () => {
-    expect(expectParsed(addMemberValidator, { userId: VALID_UUID }).userId).toBe(
-      VALID_UUID,
-    );
+    expect(expectParsed(addMemberValidator, { userId: VALID_UUID }).userId).toBe(VALID_UUID);
   });
 
   it("rejects an invalid user id", () => {
@@ -239,8 +243,6 @@ describe("addMemberValidator", () => {
   });
 
   it("rejects a missing user id", () => {
-    expect(expectFirstIssue(addMemberValidator, {})).toBe(
-      "validators.uuid.invalid",
-    );
+    expect(expectFirstIssue(addMemberValidator, {})).toBe("validators.uuid.invalid");
   });
 });

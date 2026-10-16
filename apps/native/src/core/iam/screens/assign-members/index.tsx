@@ -1,13 +1,3 @@
-import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
-import { Icon } from "@/core/shared/components/icon";
-import { TextInput } from "@/core/shared/components/text-input";
-import {
-  ThemedNativeText,
-  ThemedText,
-} from "@/core/shared/components/themed-text";
-import { ThemedView } from "@/core/shared/components/themed-view";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { SPACING } from "@/lib/sp";
 import { Button, Host, Spacer } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, width } from "@expo/ui/jetpack-compose/modifiers";
 import type { GroupDetail } from "@fludge/client/iam/domain/entities";
@@ -18,9 +8,17 @@ import { useRouter } from "expo-router";
 import { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
+
 import { SelectableMemberCard } from "@/core/iam/components/member-card";
-import { useMutationToast } from "@/integrations/toast";
+import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
+import { Icon } from "@/core/shared/components/icon";
 import { KeyboardSpacerView } from "@/core/shared/components/keyboard-spacer-view";
+import { TextInput } from "@/core/shared/components/text-input";
+import { ThemedNativeText, ThemedText } from "@/core/shared/components/themed-text";
+import { ThemedView } from "@/core/shared/components/themed-view";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { useMutationToast } from "@/integrations/toast";
+import { SPACING } from "@/lib/sp";
 
 interface Props {
   group: GroupDetail;

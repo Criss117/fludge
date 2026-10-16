@@ -1,5 +1,5 @@
-import { useReducer } from "react";
 import type { CustomerSummary } from "@fludge/client/commerce/domain/entities";
+import { useReducer } from "react";
 
 type State = {
   selectedCustomer: CustomerSummary | null;
@@ -42,8 +42,7 @@ function reducer(state: State, action: Action): State {
     case "set-selected-customer":
       return {
         ...state,
-        selectedCustomer:
-          state.customerTab === "customer" ? action.payload : null,
+        selectedCustomer: state.customerTab === "customer" ? action.payload : null,
       };
     case "reset":
       return {
@@ -71,8 +70,7 @@ export function useChargeSale() {
           : state.selectedCustomer
             ? state.paymentType
             : "cash",
-      selectedCustomer:
-        state.customerTab === "customer" ? state.selectedCustomer : null,
+      selectedCustomer: state.customerTab === "customer" ? state.selectedCustomer : null,
     };
   }
 

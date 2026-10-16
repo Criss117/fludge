@@ -1,15 +1,10 @@
+import { faker } from "@faker-js/faker/locale/es_MX";
 import type { AuthService } from "@fludge/auth";
 import type { DatabaseService } from "@fludge/db";
-import {
-  account,
-  session,
-  user,
-  verification,
-} from "@fludge/db/schema/auth.schema";
-import { faker } from "@faker-js/faker/locale/es_MX";
+import { account, session, user, verification } from "@fludge/db/schema/auth.schema";
 import { tryCatch } from "@fludge/utils/trycatch";
-import type { z } from "zod";
 import type { seedUsersValidator } from "@fludge/utils/validators/seed.validators";
+import type { z } from "zod";
 
 type SeedUsersInput = z.infer<typeof seedUsersValidator>;
 

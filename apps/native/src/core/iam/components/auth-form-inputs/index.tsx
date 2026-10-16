@@ -1,6 +1,7 @@
-import { TextInput } from "@/core/shared/components/text-input";
 import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
 import type { MinimalField } from "@fludge/client/shared/field-api";
+
+import { TextInput } from "@/core/shared/components/text-input";
 
 interface FieldProps<T> {
   field: MinimalField<T>;

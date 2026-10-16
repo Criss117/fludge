@@ -10,28 +10,18 @@ import {
 const VALID_UUID = "00000000-0000-4000-8000-000000000001";
 const OTHER_UUID = "00000000-0000-4000-8000-000000000002";
 
-function expectParsed<TSchema extends ZodType>(
-  schema: TSchema,
-  value: unknown,
-) {
+function expectParsed<TSchema extends ZodType>(schema: TSchema, value: unknown) {
   const result = schema.safeParse(value);
-  expect(result.success, `expected success for ${JSON.stringify(value)}`).toBe(
-    true,
-  );
+  expect(result.success, `expected success for ${JSON.stringify(value)}`).toBe(true);
   if (!result.success) {
     throw new Error(`expected success but got: ${result.error.message}`);
   }
   return result.data;
 }
 
-function expectFirstIssue<TSchema extends ZodType>(
-  schema: TSchema,
-  value: unknown,
-): string {
+function expectFirstIssue<TSchema extends ZodType>(schema: TSchema, value: unknown): string {
   const result = schema.safeParse(value);
-  expect(result.success, `expected failure for ${JSON.stringify(value)}`).toBe(
-    false,
-  );
+  expect(result.success, `expected failure for ${JSON.stringify(value)}`).toBe(false);
   if (result.success) {
     throw new Error(`expected failure for ${JSON.stringify(value)}`);
   }
@@ -107,45 +97,57 @@ describe("createCustomerPaymentValidator", () => {
   });
 
   it("rejects a zero amount", () => {
-    expect(expectFirstIssue(createCustomerPaymentValidator, {
-      ...VALID_CREATE_PAYMENT,
-      amount: 0,
-    })).toBe("api_errors.customer_payments.amount_must_be_positive");
+    expect(
+      expectFirstIssue(createCustomerPaymentValidator, {
+        ...VALID_CREATE_PAYMENT,
+        amount: 0,
+      }),
+    ).toBe("api_errors.customer_payments.amount_must_be_positive");
   });
 
   it("rejects a negative amount", () => {
-    expect(expectFirstIssue(createCustomerPaymentValidator, {
-      ...VALID_CREATE_PAYMENT,
-      amount: -5,
-    })).toBe("api_errors.customer_payments.amount_must_be_positive");
+    expect(
+      expectFirstIssue(createCustomerPaymentValidator, {
+        ...VALID_CREATE_PAYMENT,
+        amount: -5,
+      }),
+    ).toBe("api_errors.customer_payments.amount_must_be_positive");
   });
 
   it("rejects a non-number amount", () => {
-    expect(expectFirstIssue(createCustomerPaymentValidator, {
-      ...VALID_CREATE_PAYMENT,
-      amount: "10",
-    })).toMatch(/expected number/);
+    expect(
+      expectFirstIssue(createCustomerPaymentValidator, {
+        ...VALID_CREATE_PAYMENT,
+        amount: "10",
+      }),
+    ).toMatch(/expected number/);
   });
 
   it("rejects an invalid method", () => {
-    expect(expectFirstIssue(createCustomerPaymentValidator, {
-      ...VALID_CREATE_PAYMENT,
-      method: "card",
-    })).toBe("api_errors.customer_payments.invalid_method");
+    expect(
+      expectFirstIssue(createCustomerPaymentValidator, {
+        ...VALID_CREATE_PAYMENT,
+        method: "card",
+      }),
+    ).toBe("api_errors.customer_payments.invalid_method");
   });
 
   it("rejects an invalid customer id", () => {
-    expect(expectFirstIssue(createCustomerPaymentValidator, {
-      ...VALID_CREATE_PAYMENT,
-      customerId: "not-a-uuid",
-    })).toBe("validators.uuid.invalid");
+    expect(
+      expectFirstIssue(createCustomerPaymentValidator, {
+        ...VALID_CREATE_PAYMENT,
+        customerId: "not-a-uuid",
+      }),
+    ).toBe("validators.uuid.invalid");
   });
 
   it("rejects a non-string notes value", () => {
-    expect(expectFirstIssue(createCustomerPaymentValidator, {
-      ...VALID_CREATE_PAYMENT,
-      notes: 5,
-    })).toMatch(/expected string/);
+    expect(
+      expectFirstIssue(createCustomerPaymentValidator, {
+        ...VALID_CREATE_PAYMENT,
+        notes: 5,
+      }),
+    ).toMatch(/expected string/);
   });
 });
 
@@ -178,37 +180,47 @@ describe("cancelCustomerPaymentValidator", () => {
   });
 
   it("rejects a reason shorter than 3 characters", () => {
-    expect(expectFirstIssue(cancelCustomerPaymentValidator, {
-      ...VALID_CANCEL_PAYMENT,
-      reason: "ab",
-    })).toBe("api_errors.customer_payments.reason_too_short");
+    expect(
+      expectFirstIssue(cancelCustomerPaymentValidator, {
+        ...VALID_CANCEL_PAYMENT,
+        reason: "ab",
+      }),
+    ).toBe("api_errors.customer_payments.reason_too_short");
   });
 
   it("rejects a reason longer than 500 characters", () => {
-    expect(expectFirstIssue(cancelCustomerPaymentValidator, {
-      ...VALID_CANCEL_PAYMENT,
-      reason: "a".repeat(501),
-    })).toBe("api_errors.customer_payments.reason_too_long");
+    expect(
+      expectFirstIssue(cancelCustomerPaymentValidator, {
+        ...VALID_CANCEL_PAYMENT,
+        reason: "a".repeat(501),
+      }),
+    ).toBe("api_errors.customer_payments.reason_too_long");
   });
 
   it("rejects a missing reason", () => {
-    expect(expectFirstIssue(cancelCustomerPaymentValidator, {
-      customerId: VALID_UUID,
-      paymentId: OTHER_UUID,
-    })).toMatch(/expected string/);
+    expect(
+      expectFirstIssue(cancelCustomerPaymentValidator, {
+        customerId: VALID_UUID,
+        paymentId: OTHER_UUID,
+      }),
+    ).toMatch(/expected string/);
   });
 
   it("rejects an invalid payment id", () => {
-    expect(expectFirstIssue(cancelCustomerPaymentValidator, {
-      ...VALID_CANCEL_PAYMENT,
-      paymentId: "not-a-uuid",
-    })).toBe("validators.uuid.invalid");
+    expect(
+      expectFirstIssue(cancelCustomerPaymentValidator, {
+        ...VALID_CANCEL_PAYMENT,
+        paymentId: "not-a-uuid",
+      }),
+    ).toBe("validators.uuid.invalid");
   });
 
   it("rejects an invalid customer id", () => {
-    expect(expectFirstIssue(cancelCustomerPaymentValidator, {
-      ...VALID_CANCEL_PAYMENT,
-      customerId: "not-a-uuid",
-    })).toBe("validators.uuid.invalid");
+    expect(
+      expectFirstIssue(cancelCustomerPaymentValidator, {
+        ...VALID_CANCEL_PAYMENT,
+        customerId: "not-a-uuid",
+      }),
+    ).toBe("validators.uuid.invalid");
   });
 });

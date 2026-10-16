@@ -1,8 +1,9 @@
 import type {
-  LocalOrganization,
-  LocalMember,
   LocalGroup,
+  LocalMember,
+  LocalOrganization,
 } from "@fludge/db/local-schemas/shared.schema";
+
 import type { SyncCursor, SyncPage } from "./shared.types";
 
 /** Timestamps más recientes del cliente por entidad. */

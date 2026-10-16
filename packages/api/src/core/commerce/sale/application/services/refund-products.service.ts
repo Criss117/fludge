@@ -21,10 +21,7 @@ export interface RefundProductInput {
 export class RefundProductsService {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  public async execute(
-    organizationId: string,
-    items: RefundProductInput[],
-  ): Promise<Product[]> {
+  public async execute(organizationId: string, items: RefundProductInput[]): Promise<Product[]> {
     if (items.length === 0) return [];
 
     const productIds = [...new Set(items.map((item) => item.productId))];
@@ -34,11 +31,7 @@ export class RefundProductsService {
       productIds,
     );
 
-    if (errFind)
-      throw new InternalServerError(
-        errFind,
-        "api_errors.catalog.products.isr_on_find",
-      );
+    if (errFind) throw new InternalServerError(errFind, "api_errors.catalog.products.isr_on_find");
 
     // Si un producto ya no existe, no es caso de fallo — se omite
     const productMap = new Map(products.map((p) => [p.id.toString(), p]));

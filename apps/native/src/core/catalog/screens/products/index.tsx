@@ -1,9 +1,3 @@
-import { BarcodeReader } from "@/core/shared/components/barcode-reader";
-import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
-import { TextInput } from "@/core/shared/components/text-input";
-import { ThemedText } from "@/core/shared/components/themed-text";
-import { ThemedView } from "@/core/shared/components/themed-view";
-import { SPACING } from "@/lib/sp";
 import { Box, Host, Row } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, weight } from "@expo/ui/jetpack-compose/modifiers";
 import { useFindProducts } from "@fludge/client/catalog/queries/use-find-products";
@@ -11,17 +5,21 @@ import { FlashList } from "@shopify/flash-list";
 import { Suspense, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
+
 import { ProductCard } from "@/core/catalog/components/product-card";
+import { BarcodeReader } from "@/core/shared/components/barcode-reader";
+import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { LinkFabButton } from "@/core/shared/components/link-fab-button";
+import { TextInput } from "@/core/shared/components/text-input";
+import { ThemedText } from "@/core/shared/components/themed-text";
+import { ThemedView } from "@/core/shared/components/themed-view";
+import { SPACING } from "@/lib/sp";
 
 interface ListFooterProps {
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
 }
-function ListFooterComponent({
-  hasNextPage,
-  isFetchingNextPage,
-}: ListFooterProps) {
+function ListFooterComponent({ hasNextPage, isFetchingNextPage }: ListFooterProps) {
   const { t } = useTranslation();
 
   if (!hasNextPage)
@@ -37,20 +35,16 @@ function ListFooterComponent({
 const ItemSeparator = () => <View style={{ height: SPACING.sm }} />;
 
 function ProductsList({ searchQuery }: { searchQuery: string }) {
-  const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
-    useFindProducts({
-      searchQuery,
-      status: "all",
-      orderBy: {
-        createdAt: "desc",
-        stock: "none",
-      },
-    });
+  const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useFindProducts({
+    searchQuery,
+    status: "all",
+    orderBy: {
+      createdAt: "desc",
+      stock: "none",
+    },
+  });
 
-  const items = useMemo(
-    () => data.pages.flatMap((page) => page.items),
-    [data.pages],
-  );
+  const items = useMemo(() => data.pages.flatMap((page) => page.items), [data.pages]);
 
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
@@ -64,10 +58,7 @@ function ProductsList({ searchQuery }: { searchQuery: string }) {
       renderItem={({ item }) => <ProductCard product={item} />}
       showsVerticalScrollIndicator={false}
       ListFooterComponent={() => (
-        <ListFooterComponent
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-        />
+        <ListFooterComponent hasNextPage={hasNextPage} isFetchingNextPage={isFetchingNextPage} />
       )}
       ItemSeparatorComponent={ItemSeparator}
       onEndReachedThreshold={0.3}

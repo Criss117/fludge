@@ -11,9 +11,7 @@ export async function createContext({ context }: CreateContextOptions) {
     headers: context.request.headers,
   });
 
-  const activeOrganizationId = context.request.headers.get(
-    ORGANIZATION_HEADER_KEY,
-  );
+  const activeOrganizationId = context.request.headers.get(ORGANIZATION_HEADER_KEY);
 
   return {
     headers: context.request.headers,

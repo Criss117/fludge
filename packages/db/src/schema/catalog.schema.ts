@@ -1,12 +1,6 @@
-import {
-  check,
-  index,
-  integer,
-  sqliteTable,
-  text,
-  uniqueIndex,
-} from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
+import { check, index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+
 import { auditMetadata, productStatus } from "../shared";
 import { memberId, organizationId } from "./iam.schema";
 
@@ -24,14 +18,8 @@ export const category = sqliteTable(
     ...auditMetadata,
   },
   (t) => [
-    uniqueIndex("category_organization_name_unique").on(
-      t.organizationId,
-      t.name,
-    ),
-    uniqueIndex("category_organization_slug_unique").on(
-      t.organizationId,
-      t.slug,
-    ),
+    uniqueIndex("category_organization_name_unique").on(t.organizationId, t.name),
+    uniqueIndex("category_organization_slug_unique").on(t.organizationId, t.slug),
     index("category_name_idx").on(t.name),
   ],
 );
@@ -66,38 +54,22 @@ export const product = sqliteTable(
     status: productStatus,
   },
   (t) => [
-    uniqueIndex("product_organization_slug_unique").on(
-      t.organizationId,
-      t.slug,
-    ),
+    uniqueIndex("product_organization_slug_unique").on(t.organizationId, t.slug),
 
     // Índices
     index("product_organization_idx").on(t.organizationId),
 
-    index("product_organization_search_blob_idx").on(
-      t.organizationId,
-      t.searchBlob,
-    ),
+    index("product_organization_search_blob_idx").on(t.organizationId, t.searchBlob),
 
-    index("product_organization_category_idx").on(
-      t.organizationId,
-      t.categoryId,
-    ),
+    index("product_organization_category_idx").on(t.organizationId, t.categoryId),
 
     index("product_organization_status_idx").on(t.organizationId, t.status),
 
-    index("product_organization_category_status_idx").on(
-      t.organizationId,
-      t.categoryId,
-      t.status,
-    ),
+    index("product_organization_category_status_idx").on(t.organizationId, t.categoryId, t.status),
 
     check("product_minimum_stock_check", sql`${t.minStock} >= 0`),
 
-    check(
-      "product_stock_quantity_check",
-      sql`${t.allowNegativeStock} = true OR ${t.stock} >= 0`,
-    ),
+    check("product_stock_quantity_check", sql`${t.allowNegativeStock} = true OR ${t.stock} >= 0`),
   ],
 );
 
@@ -151,19 +123,13 @@ export const productPresentation = sqliteTable(
   (t) => [
     uniqueIndex("presentation_product_name_unique").on(t.productId, t.name),
 
-    uniqueIndex("presentation_product_factor_unique").on(
-      t.productId,
-      t.conversionFactor,
-    ),
+    uniqueIndex("presentation_product_factor_unique").on(t.productId, t.conversionFactor),
 
     uniqueIndex("presentation_organization_barcode_unique")
       .on(t.organizationId, t.barcode)
       .where(sql`${t.barcode} IS NOT NULL`),
 
-    check(
-      "presentation_conversion_factor_check",
-      sql`${t.conversionFactor} >= 1`,
-    ),
+    check("presentation_conversion_factor_check", sql`${t.conversionFactor} >= 1`),
 
     check("presentation_price_sale_check", sql`${t.priceSale} >= 0`),
 
@@ -183,15 +149,9 @@ export const productPresentation = sqliteTable(
       `,
     ),
 
-    index("presentation_organization_product_idx").on(
-      t.organizationId,
-      t.productId,
-    ),
+    index("presentation_organization_product_idx").on(t.organizationId, t.productId),
 
-    index("presentation_organization_status_idx").on(
-      t.organizationId,
-      t.status,
-    ),
+    index("presentation_organization_status_idx").on(t.organizationId, t.status),
   ],
 );
 

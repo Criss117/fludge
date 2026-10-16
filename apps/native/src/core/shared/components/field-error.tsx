@@ -1,14 +1,15 @@
-import { useMemo } from "react";
-import { ThemedNativeText, ThemedText } from "./themed-text";
-import { useTranslation } from "react-i18next";
 import type { TranslationKey } from "@fludge/i18n/index";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+
+import { ThemedNativeText, ThemedText } from "./themed-text";
 
 type NativeFieldErrorProps = React.ComponentProps<typeof ThemedNativeText> & {
-  errors?: Array<{ message?: string } | undefined>;
+  errors?: ({ message?: string } | undefined)[];
 };
 
 type FieldErrorProps = React.ComponentProps<typeof ThemedText> & {
-  errors?: Array<{ message?: string } | undefined>;
+  errors?: ({ message?: string } | undefined)[];
 };
 
 function useContent({
@@ -16,7 +17,7 @@ function useContent({
   errors,
 }: {
   children?: React.ReactNode;
-  errors?: Array<{ message?: string } | undefined>;
+  errors?: ({ message?: string } | undefined)[];
 }) {
   const { t } = useTranslation();
 
@@ -36,27 +37,19 @@ function useContent({
       return null;
     }
     if (uniqueErrors.length === 1) {
-      return uniqueErrors[0]?.message
-        ? t(uniqueErrors[0].message as TranslationKey)
-        : "";
+      return uniqueErrors[0]?.message ? t(uniqueErrors[0].message as TranslationKey) : "";
     }
 
     // RN no soporta <ul>/<li>; usamos viñetas de texto separadas por saltos de línea.
     return uniqueErrors
-      .map(
-        (error) => `\u2022 ${error ? t(error.message as TranslationKey) : ""}`,
-      )
+      .map((error) => `\u2022 ${error ? t(error.message as TranslationKey) : ""}`)
       .join("\n");
   }, [children, errors]);
 
   return content;
 }
 
-export function NativeFieldError({
-  children,
-  errors,
-  ...props
-}: NativeFieldErrorProps) {
+export function NativeFieldError({ children, errors, ...props }: NativeFieldErrorProps) {
   const content = useContent({ children, errors });
 
   if (!content) return null;

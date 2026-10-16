@@ -1,10 +1,11 @@
+import type { MaterialTopTabNavigationOptions } from "expo-router/js-top-tabs";
+import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { ThemedView } from "@/core/shared/components/themed-view";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { GeistFonts } from "@/integrations/fonts";
 import { MaterialTopTabs } from "@/lib/material-top-tabs";
-import type { MaterialTopTabNavigationOptions } from "expo-router/js-top-tabs";
-import { useTranslation } from "react-i18next";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function CatalogLayout() {
   const { top } = useSafeAreaInsets();

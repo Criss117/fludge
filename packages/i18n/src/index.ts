@@ -1,13 +1,12 @@
-import { es } from "./locales/es";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+
+import { es } from "./locales/es";
 
 // Utility para extraer rutas anidadas en notación de puntos
 type LeafPaths<T> = T extends object
   ? {
-      [K in keyof T & string]: T[K] extends object
-        ? `${K}.${LeafPaths<T[K]>}`
-        : `${K}`;
+      [K in keyof T & string]: T[K] extends object ? `${K}.${LeafPaths<T[K]>}` : `${K}`;
     }[keyof T & string]
   : never;
 

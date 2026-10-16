@@ -20,28 +20,18 @@ import {
 
 const VALID_UUID = "00000000-0000-4000-8000-000000000001";
 
-function expectParsed<TSchema extends ZodType>(
-  schema: TSchema,
-  value: unknown,
-) {
+function expectParsed<TSchema extends ZodType>(schema: TSchema, value: unknown) {
   const result = schema.safeParse(value);
-  expect(result.success, `expected success for ${JSON.stringify(value)}`).toBe(
-    true,
-  );
+  expect(result.success, `expected success for ${JSON.stringify(value)}`).toBe(true);
   if (!result.success) {
     throw new Error(`expected success but got: ${result.error.message}`);
   }
   return result.data;
 }
 
-function expectFirstIssue<TSchema extends ZodType>(
-  schema: TSchema,
-  value: unknown,
-): string {
+function expectFirstIssue<TSchema extends ZodType>(schema: TSchema, value: unknown): string {
   const result = schema.safeParse(value);
-  expect(result.success, `expected failure for ${JSON.stringify(value)}`).toBe(
-    false,
-  );
+  expect(result.success, `expected failure for ${JSON.stringify(value)}`).toBe(false);
   if (result.success) {
     throw new Error(`expected failure for ${JSON.stringify(value)}`);
   }
@@ -66,21 +56,15 @@ describe("barcodeSchema", () => {
   });
 
   it("rejects a barcode shorter than 6 characters", () => {
-    expect(expectFirstIssue(barcodeSchema, "a".repeat(5))).toBe(
-      "validators.barcode.min_length",
-    );
+    expect(expectFirstIssue(barcodeSchema, "a".repeat(5))).toBe("validators.barcode.min_length");
   });
 
   it("rejects a barcode longer than 100 characters", () => {
-    expect(expectFirstIssue(barcodeSchema, "a".repeat(101))).toBe(
-      "validators.barcode.max_length",
-    );
+    expect(expectFirstIssue(barcodeSchema, "a".repeat(101))).toBe("validators.barcode.max_length");
   });
 
-  it("rejects a whitespace-only string (literal \"\" does not match)", () => {
-    expect(expectFirstIssue(barcodeSchema, "     ")).toBe(
-      "validators.barcode.min_length",
-    );
+  it('rejects a whitespace-only string (literal "" does not match)', () => {
+    expect(expectFirstIssue(barcodeSchema, "     ")).toBe("validators.barcode.min_length");
   });
 
   it("rejects non-string values", () => {
@@ -101,9 +85,7 @@ describe("categoryIdSchema", () => {
   });
 
   it("rejects a malformed uuid", () => {
-    expect(expectFirstIssue(categoryIdSchema, "not-a-uuid")).toBe(
-      "validators.uuid.invalid",
-    );
+    expect(expectFirstIssue(categoryIdSchema, "not-a-uuid")).toBe("validators.uuid.invalid");
   });
 });
 
@@ -148,24 +130,16 @@ describe("priceSaleSchema", () => {
   });
 
   it("rejects zero and negative prices", () => {
-    expect(expectFirstIssue(priceSaleSchema, 0)).toBe(
-      "validators.price_sale.positive",
-    );
-    expect(expectFirstIssue(priceSaleSchema, -1)).toBe(
-      "validators.price_sale.positive",
-    );
+    expect(expectFirstIssue(priceSaleSchema, 0)).toBe("validators.price_sale.positive");
+    expect(expectFirstIssue(priceSaleSchema, -1)).toBe("validators.price_sale.positive");
   });
 
   it("rejects a non-integer price", () => {
-    expect(expectFirstIssue(priceSaleSchema, 2.5)).toBe(
-      "validators.price_sale.integer",
-    );
+    expect(expectFirstIssue(priceSaleSchema, 2.5)).toBe("validators.price_sale.integer");
   });
 
   it("rejects a non-numeric string", () => {
-    expect(expectFirstIssue(priceSaleSchema, "abc")).toBe(
-      "validators.price_sale.invalid",
-    );
+    expect(expectFirstIssue(priceSaleSchema, "abc")).toBe("validators.price_sale.invalid");
   });
 });
 
@@ -182,16 +156,12 @@ describe("pricePurchaseSchema", () => {
     expect(expectParsed(pricePurchaseSchema, "3000")).toBe(3000);
   });
 
-  it("rejects the string \"0\" (literal zero does not coerce)", () => {
-    expect(expectFirstIssue(pricePurchaseSchema, "0")).toBe(
-      "validators.price_purchase.positive",
-    );
+  it('rejects the string "0" (literal zero does not coerce)', () => {
+    expect(expectFirstIssue(pricePurchaseSchema, "0")).toBe("validators.price_purchase.positive");
   });
 
   it("rejects negative values", () => {
-    expect(expectFirstIssue(pricePurchaseSchema, -1)).toBe(
-      "validators.price_purchase.positive",
-    );
+    expect(expectFirstIssue(pricePurchaseSchema, -1)).toBe("validators.price_purchase.positive");
   });
 
   it("rejects a non-integer value", () => {
@@ -216,16 +186,12 @@ describe("priceWholesaleSchema", () => {
     expect(expectParsed(priceWholesaleSchema, "2500")).toBe(2500);
   });
 
-  it("rejects the string \"0\" (literal zero does not coerce)", () => {
-    expect(expectFirstIssue(priceWholesaleSchema, "0")).toBe(
-      "validators.price_wholesale.positive",
-    );
+  it('rejects the string "0" (literal zero does not coerce)', () => {
+    expect(expectFirstIssue(priceWholesaleSchema, "0")).toBe("validators.price_wholesale.positive");
   });
 
   it("rejects negative values", () => {
-    expect(expectFirstIssue(priceWholesaleSchema, -1)).toBe(
-      "validators.price_wholesale.positive",
-    );
+    expect(expectFirstIssue(priceWholesaleSchema, -1)).toBe("validators.price_wholesale.positive");
   });
 
   it("rejects a non-integer value", () => {
@@ -254,9 +220,7 @@ describe("productStatusSchema", () => {
   });
 
   it("rejects null and undefined", () => {
-    expect(expectFirstIssue(productStatusSchema, null)).toBe(
-      "validators.product_status.invalid",
-    );
+    expect(expectFirstIssue(productStatusSchema, null)).toBe("validators.product_status.invalid");
     expect(expectFirstIssue(productStatusSchema, undefined)).toBe(
       "validators.product_status.invalid",
     );
@@ -273,24 +237,16 @@ describe("stockSchema", () => {
   });
 
   it("rejects zero and negative stock", () => {
-    expect(expectFirstIssue(stockSchema, 0)).toBe(
-      "validators.stock.positive",
-    );
-    expect(expectFirstIssue(stockSchema, -3)).toBe(
-      "validators.stock.positive",
-    );
+    expect(expectFirstIssue(stockSchema, 0)).toBe("validators.stock.positive");
+    expect(expectFirstIssue(stockSchema, -3)).toBe("validators.stock.positive");
   });
 
   it("rejects a non-integer stock", () => {
-    expect(expectFirstIssue(stockSchema, 2.5)).toBe(
-      "validators.stock.integer",
-    );
+    expect(expectFirstIssue(stockSchema, 2.5)).toBe("validators.stock.integer");
   });
 
   it("rejects a non-numeric string", () => {
-    expect(expectFirstIssue(stockSchema, "abc")).toBe(
-      "validators.stock.invalid",
-    );
+    expect(expectFirstIssue(stockSchema, "abc")).toBe("validators.stock.invalid");
   });
 });
 
@@ -304,24 +260,16 @@ describe("minStockSchema", () => {
   });
 
   it("rejects zero and negative minimum stock", () => {
-    expect(expectFirstIssue(minStockSchema, 0)).toBe(
-      "validators.min_stock.positive",
-    );
-    expect(expectFirstIssue(minStockSchema, -1)).toBe(
-      "validators.min_stock.positive",
-    );
+    expect(expectFirstIssue(minStockSchema, 0)).toBe("validators.min_stock.positive");
+    expect(expectFirstIssue(minStockSchema, -1)).toBe("validators.min_stock.positive");
   });
 
   it("rejects a non-integer minimum stock", () => {
-    expect(expectFirstIssue(minStockSchema, 1.5)).toBe(
-      "validators.min_stock.integer",
-    );
+    expect(expectFirstIssue(minStockSchema, 1.5)).toBe("validators.min_stock.integer");
   });
 
   it("rejects a non-numeric string", () => {
-    expect(expectFirstIssue(minStockSchema, "abc")).toBe(
-      "validators.min_stock.invalid",
-    );
+    expect(expectFirstIssue(minStockSchema, "abc")).toBe("validators.min_stock.invalid");
   });
 });
 
@@ -336,10 +284,7 @@ const VALID_PRESENTATION = {
 
 describe("createProductPresentationValidator", () => {
   it("accepts a complete valid presentation", () => {
-    const data = expectParsed(
-      createProductPresentationValidator,
-      VALID_PRESENTATION,
-    );
+    const data = expectParsed(createProductPresentationValidator, VALID_PRESENTATION);
     expect(data.name).toBe("Presentación 500g");
     expect(data.barcode).toBe("7701234567890");
     expect(data.conversionFactor).toBe(1);
@@ -370,10 +315,12 @@ describe("createProductPresentationValidator", () => {
   });
 
   it("rejects a name shorter than 5 characters", () => {
-    expect(expectFirstIssue(createProductPresentationValidator, {
-      ...VALID_PRESENTATION,
-      name: "ab",
-    })).toBe("validators.name.min_length");
+    expect(
+      expectFirstIssue(createProductPresentationValidator, {
+        ...VALID_PRESENTATION,
+        name: "ab",
+      }),
+    ).toBe("validators.name.min_length");
   });
 
   it("rejects a missing name", () => {
@@ -384,38 +331,48 @@ describe("createProductPresentationValidator", () => {
   });
 
   it("rejects a barcode shorter than 6 characters", () => {
-    expect(expectFirstIssue(createProductPresentationValidator, {
-      ...VALID_PRESENTATION,
-      barcode: "12345",
-    })).toBe("validators.barcode.min_length");
+    expect(
+      expectFirstIssue(createProductPresentationValidator, {
+        ...VALID_PRESENTATION,
+        barcode: "12345",
+      }),
+    ).toBe("validators.barcode.min_length");
   });
 
   it("rejects a zero conversion factor", () => {
-    expect(expectFirstIssue(createProductPresentationValidator, {
-      ...VALID_PRESENTATION,
-      conversionFactor: 0,
-    })).toBe("validators.conversion_factor.positive");
+    expect(
+      expectFirstIssue(createProductPresentationValidator, {
+        ...VALID_PRESENTATION,
+        conversionFactor: 0,
+      }),
+    ).toBe("validators.conversion_factor.positive");
   });
 
   it("rejects a zero sale price", () => {
-    expect(expectFirstIssue(createProductPresentationValidator, {
-      ...VALID_PRESENTATION,
-      priceSale: 0,
-    })).toBe("validators.price_sale.positive");
+    expect(
+      expectFirstIssue(createProductPresentationValidator, {
+        ...VALID_PRESENTATION,
+        priceSale: 0,
+      }),
+    ).toBe("validators.price_sale.positive");
   });
 
   it("rejects a negative purchase price", () => {
-    expect(expectFirstIssue(createProductPresentationValidator, {
-      ...VALID_PRESENTATION,
-      pricePurchase: -1,
-    })).toBe("validators.price_purchase.positive");
+    expect(
+      expectFirstIssue(createProductPresentationValidator, {
+        ...VALID_PRESENTATION,
+        pricePurchase: -1,
+      }),
+    ).toBe("validators.price_purchase.positive");
   });
 
   it("rejects a negative wholesale price", () => {
-    expect(expectFirstIssue(createProductPresentationValidator, {
-      ...VALID_PRESENTATION,
-      priceWholesale: -1,
-    })).toBe("validators.price_wholesale.positive");
+    expect(
+      expectFirstIssue(createProductPresentationValidator, {
+        ...VALID_PRESENTATION,
+        priceWholesale: -1,
+      }),
+    ).toBe("validators.price_wholesale.positive");
   });
 });
 
@@ -431,27 +388,33 @@ describe("updateProductPresentationValidator", () => {
   });
 
   it("rejects a missing id", () => {
-    expect(expectFirstIssue(updateProductPresentationValidator, {
-      ...VALID_PRESENTATION,
-      status: "active",
-    })).toBe("validators.uuid.invalid");
+    expect(
+      expectFirstIssue(updateProductPresentationValidator, {
+        ...VALID_PRESENTATION,
+        status: "active",
+      }),
+    ).toBe("validators.uuid.invalid");
   });
 
   it("rejects a status outside the enum", () => {
-    expect(expectFirstIssue(updateProductPresentationValidator, {
-      ...VALID_PRESENTATION,
-      id: VALID_UUID,
-      status: "archived",
-    })).toBe("validators.product_status.invalid");
+    expect(
+      expectFirstIssue(updateProductPresentationValidator, {
+        ...VALID_PRESENTATION,
+        id: VALID_UUID,
+        status: "archived",
+      }),
+    ).toBe("validators.product_status.invalid");
   });
 
   it("rejects an invalid name when provided", () => {
-    expect(expectFirstIssue(updateProductPresentationValidator, {
-      ...VALID_PRESENTATION,
-      id: VALID_UUID,
-      status: "active",
-      name: "ab",
-    })).toBe("validators.name.min_length");
+    expect(
+      expectFirstIssue(updateProductPresentationValidator, {
+        ...VALID_PRESENTATION,
+        id: VALID_UUID,
+        status: "active",
+        name: "ab",
+      }),
+    ).toBe("validators.name.min_length");
   });
 });
 
@@ -511,67 +474,82 @@ describe("createProductValidator", () => {
   });
 
   it("rejects a malformed categoryId", () => {
-    expect(expectFirstIssue(createProductValidator, {
-      ...VALID_CREATE_PRODUCT,
-      categoryId: "not-a-uuid",
-    })).toBe("validators.uuid.invalid");
+    expect(
+      expectFirstIssue(createProductValidator, {
+        ...VALID_CREATE_PRODUCT,
+        categoryId: "not-a-uuid",
+      }),
+    ).toBe("validators.uuid.invalid");
   });
 
   it("rejects a non-boolean allowNegativeStock", () => {
-    expect(expectFirstIssue(createProductValidator, {
-      ...VALID_CREATE_PRODUCT,
-      allowNegativeStock: "true",
-    })).toMatch(/expected boolean/);
+    expect(
+      expectFirstIssue(createProductValidator, {
+        ...VALID_CREATE_PRODUCT,
+        allowNegativeStock: "true",
+      }),
+    ).toMatch(/expected boolean/);
   });
 
   it("rejects an empty presentations array", () => {
-    expect(expectFirstIssue(createProductValidator, {
-      ...VALID_CREATE_PRODUCT,
-      presentations: [],
-    })).toBe("validators.array.presentations.at_least_one");
+    expect(
+      expectFirstIssue(createProductValidator, {
+        ...VALID_CREATE_PRODUCT,
+        presentations: [],
+      }),
+    ).toBe("validators.array.presentations.at_least_one");
   });
 
   it("rejects a missing presentations field", () => {
-    const { presentations: _presentations, ...withoutPresentations } =
-      VALID_CREATE_PRODUCT;
+    const { presentations: _presentations, ...withoutPresentations } = VALID_CREATE_PRODUCT;
     expect(expectFirstIssue(createProductValidator, withoutPresentations)).toMatch(
       /expected array/,
     );
   });
 
   it("rejects a zero stock", () => {
-    expect(expectFirstIssue(createProductValidator, {
-      ...VALID_CREATE_PRODUCT,
-      stock: 0,
-    })).toBe("validators.stock.positive");
+    expect(
+      expectFirstIssue(createProductValidator, {
+        ...VALID_CREATE_PRODUCT,
+        stock: 0,
+      }),
+    ).toBe("validators.stock.positive");
   });
 
   it("rejects a zero minimum stock", () => {
-    expect(expectFirstIssue(createProductValidator, {
-      ...VALID_CREATE_PRODUCT,
-      minStock: 0,
-    })).toBe("validators.min_stock.positive");
+    expect(
+      expectFirstIssue(createProductValidator, {
+        ...VALID_CREATE_PRODUCT,
+        minStock: 0,
+      }),
+    ).toBe("validators.min_stock.positive");
   });
 
   it("rejects a name shorter than 5 characters", () => {
-    expect(expectFirstIssue(createProductValidator, {
-      ...VALID_CREATE_PRODUCT,
-      name: "ab",
-    })).toBe("validators.name.min_length");
+    expect(
+      expectFirstIssue(createProductValidator, {
+        ...VALID_CREATE_PRODUCT,
+        name: "ab",
+      }),
+    ).toBe("validators.name.min_length");
   });
 
   it("rejects a description shorter than 15 characters", () => {
-    expect(expectFirstIssue(createProductValidator, {
-      ...VALID_CREATE_PRODUCT,
-      description: "x",
-    })).toBe("validators.description.min_length");
+    expect(
+      expectFirstIssue(createProductValidator, {
+        ...VALID_CREATE_PRODUCT,
+        description: "x",
+      }),
+    ).toBe("validators.description.min_length");
   });
 
   it("rejects an invalid presentation inside the array", () => {
-    expect(expectFirstIssue(createProductValidator, {
-      ...VALID_CREATE_PRODUCT,
-      presentations: [{ ...VALID_PRESENTATION, priceSale: 0 }],
-    })).toBe("validators.price_sale.positive");
+    expect(
+      expectFirstIssue(createProductValidator, {
+        ...VALID_CREATE_PRODUCT,
+        presentations: [{ ...VALID_PRESENTATION, priceSale: 0 }],
+      }),
+    ).toBe("validators.price_sale.positive");
   });
 });
 
@@ -601,38 +579,40 @@ describe("updateProductValidator", () => {
 
   it("rejects a missing id", () => {
     const { id: _id, ...withoutId } = VALID_UPDATE_PRODUCT;
-    expect(expectFirstIssue(updateProductValidator, withoutId)).toBe(
-      "validators.uuid.invalid",
-    );
+    expect(expectFirstIssue(updateProductValidator, withoutId)).toBe("validators.uuid.invalid");
   });
 
   it("rejects a status outside the enum", () => {
-    expect(expectFirstIssue(updateProductValidator, {
-      ...VALID_UPDATE_PRODUCT,
-      status: "archived",
-    })).toBe("validators.product_status.invalid");
+    expect(
+      expectFirstIssue(updateProductValidator, {
+        ...VALID_UPDATE_PRODUCT,
+        status: "archived",
+      }),
+    ).toBe("validators.product_status.invalid");
   });
 
   it("rejects a presentation without an id", () => {
-    expect(expectFirstIssue(updateProductValidator, {
-      ...VALID_UPDATE_PRODUCT,
-      presentations: [{ ...VALID_PRESENTATION, status: "active" }],
-    })).toBe("validators.uuid.invalid");
+    expect(
+      expectFirstIssue(updateProductValidator, {
+        ...VALID_UPDATE_PRODUCT,
+        presentations: [{ ...VALID_PRESENTATION, status: "active" }],
+      }),
+    ).toBe("validators.uuid.invalid");
   });
 
   it("rejects an empty presentations array", () => {
-    expect(expectFirstIssue(updateProductValidator, {
-      ...VALID_UPDATE_PRODUCT,
-      presentations: [],
-    })).toBe("validators.array.presentations.at_least_one");
+    expect(
+      expectFirstIssue(updateProductValidator, {
+        ...VALID_UPDATE_PRODUCT,
+        presentations: [],
+      }),
+    ).toBe("validators.array.presentations.at_least_one");
   });
 });
 
 describe("deleteProductValidator", () => {
   it("accepts a valid product id", () => {
-    expect(expectParsed(deleteProductValidator, { id: VALID_UUID }).id).toBe(
-      VALID_UUID,
-    );
+    expect(expectParsed(deleteProductValidator, { id: VALID_UUID }).id).toBe(VALID_UUID);
   });
 
   it("rejects an invalid product id", () => {
@@ -642,8 +622,6 @@ describe("deleteProductValidator", () => {
   });
 
   it("rejects a missing id", () => {
-    expect(expectFirstIssue(deleteProductValidator, {})).toBe(
-      "validators.uuid.invalid",
-    );
+    expect(expectFirstIssue(deleteProductValidator, {})).toBe("validators.uuid.invalid");
   });
 });

@@ -1,11 +1,7 @@
 import { z } from "zod";
+
 import { productStatusEnum } from "../enums/db-enums";
-import {
-  descriptionSchema,
-  getI18nKey,
-  nameSchema,
-  uuidSchema,
-} from "./shared";
+import { descriptionSchema, getI18nKey, nameSchema, uuidSchema } from "./shared";
 
 export const barcodeSchema = z
   .string({
@@ -110,11 +106,10 @@ export const createProductPresentationValidator = z.object({
   priceWholesale: priceWholesaleSchema,
 });
 
-export const updateProductPresentationValidator =
-  createProductPresentationValidator.extend({
-    id: uuidSchema,
-    status: productStatusSchema,
-  });
+export const updateProductPresentationValidator = createProductPresentationValidator.extend({
+  id: uuidSchema,
+  status: productStatusSchema,
+});
 
 export const createProductValidator = z.object({
   name: nameSchema,

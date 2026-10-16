@@ -1,7 +1,8 @@
-import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { useFindProduct } from "@fludge/client/catalog/queries/use-find-products";
 import { Redirect, Stack, useLocalSearchParams } from "expo-router";
 import { Suspense } from "react";
+
+import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 
 function Screen({ productid }: { productid: string }) {
   const { data } = useFindProduct(productid);

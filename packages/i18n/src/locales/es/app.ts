@@ -22,8 +22,7 @@ export const app = {
     },
     db: {
       title: "Error de base de datos",
-      message:
-        "Algo salió mal al migrar la base de datos. Por favor, vuelva a intentarlo.",
+      message: "Algo salió mal al migrar la base de datos. Por favor, vuelva a intentarlo.",
     },
   },
 

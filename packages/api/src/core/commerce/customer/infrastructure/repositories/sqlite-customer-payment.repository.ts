@@ -1,7 +1,7 @@
-import { CustomerPayment } from "@fludge/api/core/commerce/customer/domain/entities/customer-payment.entity";
+import type { CustomerPayment } from "@fludge/api/core/commerce/customer/domain/entities/customer-payment.entity";
 import type {
-  Options,
   CustomerPaymentRepository,
+  Options,
 } from "@fludge/api/core/commerce/customer/domain/repositories/customer-payment.repository";
 import { TransactionalRepository } from "@fludge/api/core/shared/repositories/transactional-repository";
 import type { DatabaseService } from "@fludge/db";
@@ -45,9 +45,7 @@ export class SQLiteCustomerPaymentRepository
     const db = options?.tx ?? this.db;
 
     const [, errDelete] = await tryCatch(
-      db
-        .delete(customerPayment)
-        .where(eq(customerPayment.id, customerPaymentId)),
+      db.delete(customerPayment).where(eq(customerPayment.id, customerPaymentId)),
     );
 
     if (errDelete) return err(errDelete);

@@ -1,7 +1,8 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useContainer } from "../providers/container.provider";
 import { tryCatch } from "@fludge/utils/trycatch";
+import { useSuspenseQuery } from "@tanstack/react-query";
+
 import { useAppState } from "../iam/hooks/use-app-state";
+import { useContainer } from "../providers/container.provider";
 
 type SyncData = {
   error: Error | null;

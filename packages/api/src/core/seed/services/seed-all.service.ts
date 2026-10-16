@@ -1,9 +1,10 @@
+import type { seedAllValidator } from "@fludge/utils/validators/seed.validators";
 import type { z } from "zod";
+
 import type { SeedCatalogService } from "./seed-catalog.service";
 import type { SeedCommerceService } from "./seed-commerce.service";
 import type { SeedIamService } from "./seed-iam.service";
 import type { SeedUsersService } from "./seed-users.service";
-import type { seedAllValidator } from "@fludge/utils/validators/seed.validators";
 
 type SeedAllInput = z.infer<typeof seedAllValidator>;
 

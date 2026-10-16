@@ -1,17 +1,13 @@
-import { createGroupValidator } from "@fludge/utils/validators/group.validators";
 import {
-  formOptions,
-  createFormHook,
-  createFormHookContexts,
-} from "@tanstack/react-form";
-import {
-  getPermissionsByResource,
-  PERMISSIONS,
   type ActionFor,
+  getPermissionsByResource,
   type Permission,
+  PERMISSIONS,
   type Resource,
 } from "@fludge/utils/permissions/data";
 import { Permissions } from "@fludge/utils/permissions/index";
+import { createGroupValidator } from "@fludge/utils/validators/group.validators";
+import { createFormHook, createFormHookContexts, formOptions } from "@tanstack/react-form";
 import { useMemo } from "react";
 import type { z } from "zod";
 
@@ -21,10 +17,7 @@ export type OnGroupSubmit = {
   onSubmit: (options: { value: GroupSchema; resetForm: () => void }) => void;
 };
 
-export function groupFormOptions(
-  options: OnGroupSubmit,
-  defaultValues?: GroupSchema,
-) {
+export function groupFormOptions(options: OnGroupSubmit, defaultValues?: GroupSchema) {
   return formOptions({
     defaultValues: {
       name: defaultValues?.name ?? "",
@@ -121,10 +114,7 @@ export function PermissionsField({ children }: PermissionsFieldProps) {
 
   const counts = useMemo(() => {
     return statement.reduce((acc, permission) => {
-      const [resource] = permission.split(":") as [
-        Resource,
-        ActionFor<Resource>,
-      ];
+      const [resource] = permission.split(":") as [Resource, ActionFor<Resource>];
 
       acc[resource as Resource].selected++;
 
@@ -149,9 +139,6 @@ const { useAppForm } = createFormHook({
   formComponents: {},
 });
 
-export function useGroupForm(
-  options: OnGroupSubmit,
-  defaultValues?: GroupSchema,
-) {
+export function useGroupForm(options: OnGroupSubmit, defaultValues?: GroupSchema) {
   return useAppForm(groupFormOptions(options, defaultValues));
 }

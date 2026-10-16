@@ -1,7 +1,8 @@
 import { createContext, use } from "react";
-import type { IAMContainer } from "../iam/container";
+
 import type { CatalogContainer } from "../catalog/container";
 import type { CommerceContainer } from "../commerce/container";
+import type { IAMContainer } from "../iam/container";
 
 type Context = {
   iamContainer: IAMContainer;
@@ -17,11 +18,7 @@ type Props = {
 };
 
 export function ContainerProvider({ children, containers }: Props) {
-  return (
-    <ContainerContext.Provider value={containers}>
-      {children}
-    </ContainerContext.Provider>
-  );
+  return <ContainerContext.Provider value={containers}>{children}</ContainerContext.Provider>;
 }
 
 export function useContainer() {

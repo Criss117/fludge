@@ -19,10 +19,7 @@ export class SQLiteOrganizationRepository
 
   public async findById(organizationId: string) {
     const [rows, errFind] = await tryCatch(
-      this.db
-        .select()
-        .from(organization)
-        .where(eq(organization.id, organizationId)),
+      this.db.select().from(organization).where(eq(organization.id, organizationId)),
     );
 
     if (errFind) return err(errFind);

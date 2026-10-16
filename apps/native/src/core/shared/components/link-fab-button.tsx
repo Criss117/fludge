@@ -1,8 +1,10 @@
-import { SPACING } from "@/lib/sp";
 import { FloatingActionButton, Host } from "@expo/ui/jetpack-compose";
 import { type Href, useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import Animated from "react-native-reanimated";
+
+import { SPACING } from "@/lib/sp";
+
 import { useKeyboardSpacer } from "../hooks/use-keyboard-spacer";
 import { useThemeColor } from "../hooks/use-theme-color";
 import { Icon } from "./icon";

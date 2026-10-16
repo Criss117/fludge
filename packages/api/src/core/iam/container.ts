@@ -22,26 +22,14 @@ import { SQLiteOrganizationRepository } from "./infrastructure/repositories/sqli
 //Repositories
 const memberRepository = new SQLiteMemberRepository(databaseService);
 const groupMemberRepository = new SQLiteGroupMemberRepository(databaseService);
-const groupRepository = new SQLiteGroupRepository(
-  databaseService,
-  groupMemberRepository,
-);
-const organizationRepository = new SQLiteOrganizationRepository(
-  databaseService,
-);
+const groupRepository = new SQLiteGroupRepository(databaseService, groupMemberRepository);
+const organizationRepository = new SQLiteOrganizationRepository(databaseService);
 
 //Services
-const organizationUniquenessValidator = new OrganizationUniquenessValidator(
-  databaseService,
-);
+const organizationUniquenessValidator = new OrganizationUniquenessValidator(databaseService);
 const groupUniquenessValidator = new GroupUniquenessValidator(databaseService);
-const userAuthContextService = new UserAuthContextService(
-  databaseService,
-  memberRepository,
-);
-const userOrganizationIdsService = new UserOrganizationIdsService(
-  databaseService,
-);
+const userAuthContextService = new UserAuthContextService(databaseService, memberRepository);
+const userOrganizationIdsService = new UserOrganizationIdsService(databaseService);
 
 //Commands
 const registerOrganizationCommand = new RegisterOrganizationCommand(
@@ -56,15 +44,9 @@ const updateOrganizationCommand = new UpdateOrganizationCommand(
   organizationRepository,
 );
 
-const createGroupCommand = new CreateGroupCommand(
-  groupUniquenessValidator,
-  groupRepository,
-);
+const createGroupCommand = new CreateGroupCommand(groupUniquenessValidator, groupRepository);
 
-const updateGroupCommand = new UpdateGroupCommand(
-  groupUniquenessValidator,
-  groupRepository,
-);
+const updateGroupCommand = new UpdateGroupCommand(groupUniquenessValidator, groupRepository);
 
 const deleteGroupsCommand = new DeleteGroupsCommand(groupRepository);
 

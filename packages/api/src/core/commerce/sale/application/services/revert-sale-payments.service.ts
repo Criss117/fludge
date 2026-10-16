@@ -1,8 +1,9 @@
 import type { Sale } from "@fludge/api/core/commerce/sale/domain/entities/sale.entity";
-import type { SalePaymentRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale-payment.repository";
 import type { SaleRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale.repository";
+import type { SalePaymentRepository } from "@fludge/api/core/commerce/sale/domain/repositories/sale-payment.repository";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { UUID } from "@fludge/utils/uuid";
+
 import type { SalePayment } from "../../domain/entities/sale-payment.entity";
 
 export interface RevertSalePaymentsResult {
@@ -27,29 +28,22 @@ export class RevertSalePaymentsService {
     customerPaymentId: string,
   ): Promise<RevertSalePaymentsResult> {
     // 1. Buscar SalePayments vinculados a este CustomerPayment
-    const [salePayments, errFind] =
-      await this.salePaymentRepository.findByCustomerPaymentId(
-        organizationId,
-        customerPaymentId,
-      );
+    const [salePayments, errFind] = await this.salePaymentRepository.findByCustomerPaymentId(
+      organizationId,
+      customerPaymentId,
+    );
 
-    if (errFind)
-      throw new InternalServerError(errFind, "api_errors.sales.isr_on_find");
+    if (errFind) throw new InternalServerError(errFind, "api_errors.sales.isr_on_find");
 
-    if (salePayments.length === 0)
-      return { sales: [], salePaymentsToDelete: [] };
+    if (salePayments.length === 0) return { sales: [], salePaymentsToDelete: [] };
 
     // 2. Obtener IDs únicos de ventas afectadas
     const saleIds = [...new Set(salePayments.map((sp) => sp.values.saleId))];
 
     // 3. Buscar esas ventas (con sus payments cargados)
-    const [sales, errSales] = await this.saleRepository.findByIds(
-      organizationId,
-      saleIds,
-    );
+    const [sales, errSales] = await this.saleRepository.findByIds(organizationId, saleIds);
 
-    if (errSales)
-      throw new InternalServerError(errSales, "api_errors.sales.isr_on_find");
+    if (errSales) throw new InternalServerError(errSales, "api_errors.sales.isr_on_find");
 
     // 4. Revertir el pago en cada venta (modifica totalPaid y status in-memory)
     const customerPaymentUUID = UUID.fromString(customerPaymentId);

@@ -1,9 +1,10 @@
-import { BarcodeReader } from "@/core/shared/components/barcode-reader";
-import { TextInput } from "@/core/shared/components/text-input";
-import { SPACING } from "@/lib/sp";
 import { Box, Row } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, weight } from "@expo/ui/jetpack-compose/modifiers";
 import type { MinimalField } from "@fludge/client/shared/field-api";
+
+import { BarcodeReader } from "@/core/shared/components/barcode-reader";
+import { TextInput } from "@/core/shared/components/text-input";
+import { SPACING } from "@/lib/sp";
 
 interface FieldProps<T> {
   field: MinimalField<T>;

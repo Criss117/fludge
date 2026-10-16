@@ -2,15 +2,10 @@ import { registerOrganizationValidator } from "@fludge/utils/validators/organiza
 import { formOptions, useForm } from "@tanstack/react-form";
 import type { z } from "zod";
 
-export type RegisterOrganizationSchema = z.infer<
-  typeof registerOrganizationValidator
->;
+export type RegisterOrganizationSchema = z.infer<typeof registerOrganizationValidator>;
 
 export type OnRegisterSubmit = {
-  onSubmit: (options: {
-    value: RegisterOrganizationSchema;
-    resetForm: () => void;
-  }) => void;
+  onSubmit: (options: { value: RegisterOrganizationSchema; resetForm: () => void }) => void;
 };
 
 export function registerOrganizationFormOptions(options: OnRegisterSubmit) {
@@ -38,9 +33,7 @@ export function useRegisterOrganizationForm(options: OnRegisterSubmit) {
 type FieldComponent = ReturnType<typeof useRegisterOrganizationForm>["Field"];
 
 export type RegisterOrganizationName = keyof RegisterOrganizationSchema;
-export type RegisterOrganizationFieldApi<
-  TName extends keyof RegisterOrganizationSchema,
-> = {
+export type RegisterOrganizationFieldApi<TName extends keyof RegisterOrganizationSchema> = {
   [K in TName]: FieldComponent extends (props: {
     name: K;
     children: (field: infer TFieldApi) => any;

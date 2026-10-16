@@ -1,23 +1,14 @@
-import { Avatar } from "@/core/shared/components/avatar";
-import { Icon, type IconName } from "@/core/shared/components/icon";
-import { SectionCard } from "@/core/shared/components/section-card";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
-import { ThemedView } from "@/core/shared/components/themed-view";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { useMutationToast } from "@/integrations/toast";
-import { SPACING } from "@/lib/sp";
 import {
+  Button,
   Column,
   ElevatedCard,
   Host,
+  OutlinedButton,
+  OutlinedIconButton,
   RNHostView,
   Row,
-  Switch,
-  IconButton,
-  OutlinedIconButton,
-  Button,
   Spacer,
-  OutlinedButton,
+  Switch,
 } from "@expo/ui/jetpack-compose";
 import {
   clickable,
@@ -29,10 +20,7 @@ import {
 } from "@expo/ui/jetpack-compose/modifiers";
 import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { useNetwork } from "@fludge/client/providers/network-status.provider";
-import {
-  type SyncData,
-  useSyncCatalog,
-} from "@fludge/client/sync/use-sync-catalog";
+import { type SyncData, useSyncCatalog } from "@fludge/client/sync/use-sync-catalog";
 import { useSyncCommerce } from "@fludge/client/sync/use-sync-commerce";
 import { useSyncIam } from "@fludge/client/sync/use-sync-iam";
 import type { TranslationKey } from "@fludge/i18n/index";
@@ -40,6 +28,15 @@ import type { UseSuspenseQueryResult } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { Avatar } from "@/core/shared/components/avatar";
+import { Icon, type IconName } from "@/core/shared/components/icon";
+import { SectionCard } from "@/core/shared/components/section-card";
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { ThemedView } from "@/core/shared/components/themed-view";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { useMutationToast } from "@/integrations/toast";
+import { SPACING } from "@/lib/sp";
 
 function PreferencesSection() {
   const { t } = useTranslation();
@@ -55,11 +52,7 @@ function PreferencesSection() {
   return (
     <SectionCard title="screens.settings.sections.preferences.title">
       <Row
-        modifiers={[
-          fillMaxWidth(),
-          padding(SPACING.sm, 0, SPACING.sm, 0),
-          clickable(toggleTheme),
-        ]}
+        modifiers={[fillMaxWidth(), padding(SPACING.sm, 0, SPACING.sm, 0), clickable(toggleTheme)]}
       >
         <Column modifiers={[weight(1)]}>
           <ThemedNativeText>
@@ -100,8 +93,7 @@ function SyncItem({ syncHook, module, icon }: Props) {
 
   const isDisabled = syncHook.isRefetching || !isInternetReachable;
 
-  const translationBaseKey =
-    `screens.settings.sections.sync.${module}` as const;
+  const translationBaseKey = `screens.settings.sections.sync.${module}` as const;
 
   function sync() {
     if (!isInternetReachable) {
@@ -114,15 +106,11 @@ function SyncItem({ syncHook, module, icon }: Props) {
 
     if (syncHook.isRefetching) return;
 
-    mutationToast.showPending(
-      `${translationBaseKey}.refetching` as TranslationKey,
-    );
+    mutationToast.showPending(`${translationBaseKey}.refetching` as TranslationKey);
     syncHook
       .refetch()
       .then(() => {
-        mutationToast.showSuccess(
-          `${translationBaseKey}.on_success` as TranslationKey,
-        );
+        mutationToast.showSuccess(`${translationBaseKey}.on_success` as TranslationKey);
       })
       .catch(() => {
         mutationToast.showError(
@@ -141,9 +129,7 @@ function SyncItem({ syncHook, module, icon }: Props) {
           }}
         >
           <Icon name={icon} size={24} />
-          <ThemedNativeText>
-            {t(`${translationBaseKey}.title` as TranslationKey)}
-          </ThemedNativeText>
+          <ThemedNativeText>{t(`${translationBaseKey}.title` as TranslationKey)}</ThemedNativeText>
         </Row>
         {syncHook.data.syncedAt !== null && (
           <ThemedNativeText variant="muted">
@@ -255,12 +241,8 @@ export function SettingsScreen() {
               <RNHostView matchContents>
                 <Avatar name={session.user.name} size={SPACING["4xl"]} />
               </RNHostView>
-              <ThemedNativeText variant="h4">
-                {session.user.name}
-              </ThemedNativeText>
-              <ThemedNativeText variant="muted">
-                {session.user.email}
-              </ThemedNativeText>
+              <ThemedNativeText variant="h4">{session.user.name}</ThemedNativeText>
+              <ThemedNativeText variant="muted">{session.user.email}</ThemedNativeText>
             </Column>
           </ElevatedCard>
         </Host>

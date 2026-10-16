@@ -1,16 +1,13 @@
-import type { DatabaseService } from "@/integrations/db";
 import type {
   LocalTicketRepository,
   Ticket,
-  TicketProduct,
 } from "@fludge/client/commerce/domain/local-ticket.repository";
-import type {
-  TicketProductSelect,
-  TicketSelect,
-} from "@fludge/db/local-schemas/ticket.schema";
-import { ticket, ticketProduct } from "@fludge/db/local-schemas/ticket.schema";
 import { localProduct } from "@fludge/db/local-schemas/shared.schema";
+import type { TicketProductSelect, TicketSelect } from "@fludge/db/local-schemas/ticket.schema";
+import { ticket, ticketProduct } from "@fludge/db/local-schemas/ticket.schema";
 import { and, eq, getColumns, inArray } from "drizzle-orm";
+
+import type { DatabaseService } from "@/integrations/db";
 
 export class NativeLocalTicketRepository implements LocalTicketRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -69,9 +66,7 @@ export class NativeLocalTicketRepository implements LocalTicketRepository {
       .all();
 
     const allTickets = tickets.map((ticketRow) => {
-      const ticketProducts = itemRows.filter(
-        (product) => product.ticketId === ticketRow.id,
-      );
+      const ticketProducts = itemRows.filter((product) => product.ticketId === ticketRow.id);
 
       return {
         ...ticketRow,
@@ -127,9 +122,6 @@ export class NativeLocalTicketRepository implements LocalTicketRepository {
   }
 
   public async clear(organizationId: string): Promise<void> {
-    this.db
-      .delete(ticket)
-      .where(eq(ticket.organizationId, organizationId))
-      .run();
+    this.db.delete(ticket).where(eq(ticket.organizationId, organizationId)).run();
   }
 }

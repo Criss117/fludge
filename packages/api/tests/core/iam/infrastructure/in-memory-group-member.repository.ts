@@ -1,7 +1,10 @@
-import { ok } from "@fludge/utils/trycatch";
-import type { Result } from "@fludge/utils/trycatch";
 import type { GroupMember } from "@fludge/api/core/iam/domain/entities/group-member.entity";
-import type { GroupMemberRepository, Options } from "@fludge/api/core/iam/domain/repositories/group-member.repository";
+import type {
+  GroupMemberRepository,
+  Options,
+} from "@fludge/api/core/iam/domain/repositories/group-member.repository";
+import type { Result } from "@fludge/utils/trycatch";
+import { ok } from "@fludge/utils/trycatch";
 
 export class InMemoryGroupMemberRepository implements GroupMemberRepository {
   private groupMembers: Map<string, GroupMember> = new Map();

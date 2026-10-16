@@ -1,7 +1,8 @@
-import { UUID } from "@fludge/utils/uuid";
-import { ProductStatus } from "../value-objects/product-status";
 import type { ProductPresentationSelect } from "@fludge/db/schema/catalog.schema";
 import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
+import { UUID } from "@fludge/utils/uuid";
+
+import { ProductStatus } from "../value-objects/product-status";
 
 export type CreateProductPresentation = {
   name: string;
@@ -101,16 +102,13 @@ export class ProductPresentation {
 
     if (data.barcode !== undefined) this._barcode = data.barcode;
 
-    if (data.conversionFactor !== undefined)
-      this._conversionFactor = data.conversionFactor;
+    if (data.conversionFactor !== undefined) this._conversionFactor = data.conversionFactor;
 
-    if (data.pricePurchase !== undefined)
-      this._pricePurchase = data.pricePurchase;
+    if (data.pricePurchase !== undefined) this._pricePurchase = data.pricePurchase;
 
     if (data.priceSale !== undefined) this._priceSale = data.priceSale;
 
-    if (data.priceWholesale !== undefined)
-      this._priceWholesale = data.priceWholesale;
+    if (data.priceWholesale !== undefined) this._priceWholesale = data.priceWholesale;
 
     if (data.status) this._status = new ProductStatus(data.status);
 

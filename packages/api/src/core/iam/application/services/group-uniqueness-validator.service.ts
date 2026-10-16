@@ -1,7 +1,8 @@
 import type { DatabaseService } from "@fludge/db";
 import { group } from "@fludge/db/schema/iam.schema";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
-import { and, eq, ne, or, SQL } from "drizzle-orm";
+import type { SQL } from "drizzle-orm";
+import { and, eq, ne, or } from "drizzle-orm";
 
 type Values = {
   slug?: string;
@@ -11,17 +12,12 @@ type Values = {
 export class GroupUniquenessValidator {
   constructor(private readonly db: DatabaseService) {}
 
-  public async validateUniqueFields(
-    organizationId: string,
-    value: Values,
-    excludeId?: string,
-  ) {
+  public async validateUniqueFields(organizationId: string, value: Values, excludeId?: string) {
     const { name, slug } = value;
 
-    const orConditions = [
-      name && eq(group.name, name),
-      slug && eq(group.slug, slug),
-    ].filter(Boolean) as SQL[];
+    const orConditions = [name && eq(group.name, name), slug && eq(group.slug, slug)].filter(
+      Boolean,
+    ) as SQL[];
 
     if (orConditions.length === 0)
       return ok({
@@ -29,10 +25,7 @@ export class GroupUniquenessValidator {
         slugTaken: false,
       });
 
-    const conditions = [
-      eq(group.organizationId, organizationId),
-      or(...orConditions),
-    ];
+    const conditions = [eq(group.organizationId, organizationId), or(...orConditions)];
 
     if (excludeId) {
       conditions.push(ne(group.id, excludeId));

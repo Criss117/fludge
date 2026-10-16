@@ -1,11 +1,9 @@
-import { UUID } from "@fludge/utils/uuid";
-import type { SaleItemSelect } from "@fludge/db/schema/sales.schema";
-import {
-  SaleItemSnapshot,
-  type SaleItemSnapshotValue,
-} from "../value-objects/sale-item-snapshot";
 import { Status } from "@fludge/api/core/shared/value-objects/status";
+import type { SaleItemSelect } from "@fludge/db/schema/sales.schema";
 import type { StatusEnum } from "@fludge/utils/enums/db-enums";
+import { UUID } from "@fludge/utils/uuid";
+
+import { SaleItemSnapshot, type SaleItemSnapshotValue } from "../value-objects/sale-item-snapshot";
 
 export interface CreateSaleItem {
   saleId: UUID;
@@ -68,9 +66,7 @@ export class SaleItem {
       UUID.fromString(data.organizationId),
       UUID.fromString(data.saleId),
       data.productId ? UUID.fromString(data.productId) : null,
-      data.productPresentationId
-        ? UUID.fromString(data.productPresentationId)
-        : null,
+      data.productPresentationId ? UUID.fromString(data.productPresentationId) : null,
       data.productSnapshot ? new SaleItemSnapshot(data.productSnapshot) : null,
       data.name,
       data.unitPrice,
@@ -87,11 +83,9 @@ export class SaleItem {
   }
 
   public update(data: UpdateSaleItem) {
-    if (data.quantity !== undefined && data.quantity > 0)
-      this._quantity = data.quantity;
+    if (data.quantity !== undefined && data.quantity > 0) this._quantity = data.quantity;
 
-    if (data.price !== undefined && data.price > 0)
-      this._unitPrice = data.price;
+    if (data.price !== undefined && data.price > 0) this._unitPrice = data.price;
 
     if (data.status !== undefined) this._status = new Status(data.status);
 

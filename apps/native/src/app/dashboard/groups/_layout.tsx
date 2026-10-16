@@ -1,7 +1,8 @@
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { GeistFonts } from "@/integrations/fonts";
 import { Stack } from "expo-router";
 import { useTranslation } from "react-i18next";
+
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { GeistFonts } from "@/integrations/fonts";
 
 export default function GroupsLayout() {
   const colors = useThemeColor();

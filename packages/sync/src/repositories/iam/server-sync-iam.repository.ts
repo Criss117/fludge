@@ -1,7 +1,4 @@
-import type {
-  IamSyncCursors,
-  IamSyncResult,
-} from "@fludge/sync/types/iam.types";
+import type { IamSyncCursors, IamSyncResult } from "@fludge/sync/types/iam.types";
 
 /**
  * Server-side sync repository for IAM.

@@ -1,11 +1,7 @@
-import type { DatabaseService } from "@fludge/db";
-import {
-  category,
-  product,
-  productPresentation,
-} from "@fludge/db/schema/catalog.schema";
-import { member, organization } from "@fludge/db/schema/iam.schema";
 import { faker } from "@faker-js/faker/locale/es_MX";
+import type { DatabaseService } from "@fludge/db";
+import { category, product, productPresentation } from "@fludge/db/schema/catalog.schema";
+import { member, organization } from "@fludge/db/schema/iam.schema";
 import { SearchBlob } from "@fludge/utils/search-blob";
 import { Slug } from "@fludge/utils/slugify";
 import { tryCatch } from "@fludge/utils/trycatch";
@@ -13,6 +9,7 @@ import { UUID } from "@fludge/utils/uuid";
 import type { seedCatalogValidator } from "@fludge/utils/validators/seed.validators";
 import { eq } from "drizzle-orm";
 import type { z } from "zod";
+
 import { batchInsert } from "./batch-insert";
 
 type SeedCatalogInput = z.infer<typeof seedCatalogValidator>;
@@ -32,12 +29,9 @@ export class SeedCatalogService {
         .innerJoin(member, eq(member.organizationId, organization.id))
         .where(eq(member.role, "owner")),
     );
-    if (errOrgs)
-      throw new Error("Error fetching organizations", { cause: errOrgs });
+    if (errOrgs) throw new Error("Error fetching organizations", { cause: errOrgs });
     if (orgsWithOwners.length === 0) {
-      throw new Error(
-        "No organizations with owner members found. Run seedIam first.",
-      );
+      throw new Error("No organizations with owner members found. Run seedIam first.");
     }
 
     // 2. Preparar categorías
@@ -69,11 +63,8 @@ export class SeedCatalogService {
 
     // 3. Batch insert categorías
     if (categoriesToInsert.length > 0) {
-      const [, errCats] = await tryCatch(
-        batchInsert(this.db, category, categoriesToInsert),
-      );
-      if (errCats)
-        throw new Error("Error inserting categories", { cause: errCats });
+      const [, errCats] = await tryCatch(batchInsert(this.db, category, categoriesToInsert));
+      if (errCats) throw new Error("Error inserting categories", { cause: errCats });
     }
 
     // 4. Preparar productos
@@ -89,15 +80,13 @@ export class SeedCatalogService {
         const productId = UUID.generate().toString();
         const productName = `Producto ${orgIdx}-${i}`;
 
-        const barcodes = Array.from(
-          { length: input.presentationsPerProduct },
-          () => String(barcodeCounter++).padStart(13, "0"),
+        const barcodes = Array.from({ length: input.presentationsPerProduct }, () =>
+          String(barcodeCounter++).padStart(13, "0"),
         );
 
         const searchBlob = new SearchBlob(productName, ...barcodes).value;
 
-        const categoryId =
-          orgCats.length > 0 ? orgCats[i % orgCats.length]?.id : null;
+        const categoryId = orgCats.length > 0 ? orgCats[i % orgCats.length]?.id : null;
 
         const productRow = {
           id: productId,
@@ -122,16 +111,12 @@ export class SeedCatalogService {
 
     // 5. Batch insert productos
     if (productsToInsert.length > 0) {
-      const [, errProds] = await tryCatch(
-        batchInsert(this.db, product, productsToInsert),
-      );
-      if (errProds)
-        throw new Error("Error inserting products", { cause: errProds });
+      const [, errProds] = await tryCatch(batchInsert(this.db, product, productsToInsert));
+      if (errProds) throw new Error("Error inserting products", { cause: errProds });
     }
 
     // 6. Preparar presentaciones
-    const presentationsToInsert: (typeof productPresentation.$inferInsert)[] =
-      [];
+    const presentationsToInsert: (typeof productPresentation.$inferInsert)[] = [];
     let presBarcodeCounter = 1_000_000_000_000;
 
     for (const [orgIdx, org] of orgsWithOwners.entries()) {

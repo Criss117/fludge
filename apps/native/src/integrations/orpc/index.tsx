@@ -1,7 +1,8 @@
 import { createOrpcProvider } from "@fludge/client/providers/orpc.provider";
 import { env } from "@fludge/env/native";
-import { Platform } from "react-native";
 import { ORGANIZATION_HEADER_KEY } from "@fludge/utils/constants";
+import { Platform } from "react-native";
+
 import { authClient, iamContainer } from "../dependencies/iam.container";
 
 export const ORPCProvider = createOrpcProvider({
@@ -25,8 +26,7 @@ export const ORPCProvider = createOrpcProvider({
 
     if (cookies) headers.set("Cookie", cookies);
 
-    if (activeOrganizationId)
-      headers.set(ORGANIZATION_HEADER_KEY, activeOrganizationId);
+    if (activeOrganizationId) headers.set(ORGANIZATION_HEADER_KEY, activeOrganizationId);
 
     return Object.fromEntries(headers);
   },

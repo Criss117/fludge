@@ -1,6 +1,6 @@
 import type { Customer } from "@fludge/api/core/commerce/customer/domain/entities/customer.entity";
-import type { CustomerRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
 import { CustomerNotFoundException } from "@fludge/api/core/commerce/customer/domain/exceptions/customer-not-found.exception";
+import type { CustomerRepository } from "@fludge/api/core/commerce/customer/domain/repositories/customer.repository";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 
 /**
@@ -16,16 +16,9 @@ export class DecreaseCustomerBalanceService {
     customerId: string,
     amount: number,
   ): Promise<Customer> {
-    const [customer, errFind] = await this.customerRepository.findById(
-      organizationId,
-      customerId,
-    );
+    const [customer, errFind] = await this.customerRepository.findById(organizationId, customerId);
 
-    if (errFind)
-      throw new InternalServerError(
-        errFind,
-        "api_errors.customers.isr_on_find",
-      );
+    if (errFind) throw new InternalServerError(errFind, "api_errors.customers.isr_on_find");
 
     if (!customer) throw new CustomerNotFoundException();
 

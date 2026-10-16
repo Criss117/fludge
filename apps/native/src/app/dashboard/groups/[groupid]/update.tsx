@@ -1,8 +1,9 @@
-import { UpdateGroupScreen } from "@/core/iam/screens/update-group";
-import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { useFindGroupDetail } from "@fludge/client/iam/queries/use-find-groups";
 import { Redirect, useLocalSearchParams } from "expo-router";
 import { Suspense } from "react";
+
+import { UpdateGroupScreen } from "@/core/iam/screens/update-group";
+import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 
 function Screen({ groupid }: { groupid: string }) {
   const { data } = useFindGroupDetail(groupid);

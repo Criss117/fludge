@@ -1,4 +1,4 @@
-import type { z } from "zod";
+import type { OrganizationUniquenessValidator } from "@fludge/api/core/iam/application/services/organization-uniqueness-validator.service";
 import { Group } from "@fludge/api/core/iam/domain/entities/group.entity";
 import { Member } from "@fludge/api/core/iam/domain/entities/member.entity";
 import { Organization } from "@fludge/api/core/iam/domain/entities/organization.entity";
@@ -7,12 +7,12 @@ import type { GroupRepository } from "@fludge/api/core/iam/domain/repositories/g
 import type { MemberRepository } from "@fludge/api/core/iam/domain/repositories/member.repository";
 import type { OrganizationRepository } from "@fludge/api/core/iam/domain/repositories/organization.repository";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
+import type { UserSelect } from "@fludge/db/schema/auth.schema";
 import { PERMISSIONS } from "@fludge/utils/permissions/data";
 import { Permissions } from "@fludge/utils/permissions/index";
-import { registerOrganizationValidator } from "@fludge/utils/validators/organization.validators";
 import { UUID } from "@fludge/utils/uuid";
-import type { OrganizationUniquenessValidator } from "@fludge/api/core/iam/application/services/organization-uniqueness-validator.service";
-import type { UserSelect } from "@fludge/db/schema/auth.schema";
+import { registerOrganizationValidator } from "@fludge/utils/validators/organization.validators";
+import type { z } from "zod";
 
 export const registerOrganizationCommand = registerOrganizationValidator;
 
@@ -61,61 +61,40 @@ export class RegisterOrganizationCommand {
       });
 
     if (errUniqueness)
-      throw new InternalServerError(
-        errUniqueness,
-        "api_errors.iam.organizations.isr_on_find",
-      );
+      throw new InternalServerError(errUniqueness, "api_errors.iam.organizations.isr_on_find");
 
     if (uniqueness.nameTaken || uniqueness.slugTaken)
-      throw new OrganizationAlreadyExistsException(
-        "api_errors.iam.organizations.name_taken",
-      );
+      throw new OrganizationAlreadyExistsException("api_errors.iam.organizations.name_taken");
 
     if (uniqueness.legalNameTaken)
-      throw new OrganizationAlreadyExistsException(
-        "api_errors.iam.organizations.legal_name_taken",
-      );
+      throw new OrganizationAlreadyExistsException("api_errors.iam.organizations.legal_name_taken");
 
     if (uniqueness.taxIdTaken)
-      throw new OrganizationAlreadyExistsException(
-        "api_errors.iam.organizations.tax_id_taken",
-      );
+      throw new OrganizationAlreadyExistsException("api_errors.iam.organizations.tax_id_taken");
 
     if (uniqueness.phoneTaken)
-      throw new OrganizationAlreadyExistsException(
-        "api_errors.iam.organizations.phone_taken",
-      );
+      throw new OrganizationAlreadyExistsException("api_errors.iam.organizations.phone_taken");
 
-    const [, errSaving] = await this.organizationRepository.transaction(
-      async (tx) => {
-        const [, errInsertOrganization] =
-          await this.organizationRepository.save(organization, { tx });
+    const [, errSaving] = await this.organizationRepository.transaction(async (tx) => {
+      const [, errInsertOrganization] = await this.organizationRepository.save(organization, {
+        tx,
+      });
 
-        if (errInsertOrganization) throw errInsertOrganization;
+      if (errInsertOrganization) throw errInsertOrganization;
 
-        const [, errInsertMember] = await this.memberRepository.save(
-          ownerMember,
-          { tx },
-        );
+      const [, errInsertMember] = await this.memberRepository.save(ownerMember, { tx });
 
-        if (errInsertMember) throw errInsertMember;
+      if (errInsertMember) throw errInsertMember;
 
-        const [, errInsertGroup] = await this.groupRepository.saveOnlyGroup(
-          adminGroup,
-          {
-            tx,
-          },
-        );
+      const [, errInsertGroup] = await this.groupRepository.saveOnlyGroup(adminGroup, {
+        tx,
+      });
 
-        if (errInsertGroup) throw errInsertGroup;
-      },
-    );
+      if (errInsertGroup) throw errInsertGroup;
+    });
 
     if (errSaving)
-      throw new InternalServerError(
-        errSaving,
-        "api_errors.iam.organizations.isr_on_save",
-      );
+      throw new InternalServerError(errSaving, "api_errors.iam.organizations.isr_on_save");
 
     return {
       organization: organization.values,

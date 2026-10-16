@@ -3,11 +3,7 @@ import {
   updateProductValidator,
 } from "@fludge/utils/validators/product.validators";
 import { getI18nKey } from "@fludge/utils/validators/shared";
-import {
-  formOptions,
-  createFormHook,
-  createFormHookContexts,
-} from "@tanstack/react-form";
+import { createFormHook, createFormHookContexts, formOptions } from "@tanstack/react-form";
 import { z } from "zod";
 
 const productPresentationFormSchema = updateProductPresentationValidator
@@ -32,10 +28,7 @@ const productFormSchema = updateProductValidator
 export type ProductFormSchema = z.input<typeof productFormSchema>;
 
 export interface OnProductSubmit {
-  onSubmit: (options: {
-    value: ProductFormSchema;
-    resetForm: () => void;
-  }) => void;
+  onSubmit: (options: { value: ProductFormSchema; resetForm: () => void }) => void;
 }
 
 const defaultProductValues: ProductFormSchema = {
@@ -49,10 +42,7 @@ const defaultProductValues: ProductFormSchema = {
   presentations: [],
 };
 
-export function productFormOptions(
-  options: OnProductSubmit,
-  initialValues?: ProductFormSchema,
-) {
+export function productFormOptions(options: OnProductSubmit, initialValues?: ProductFormSchema) {
   return formOptions({
     defaultValues: initialValues ?? defaultProductValues,
     validators: {
@@ -100,15 +90,11 @@ function Presentations({ children }: PresentationsChildrenProps) {
   }
 
   function markAsInactive(id: string) {
-    field.setValue((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, status: "inactive" } : p)),
-    );
+    field.setValue((prev) => prev.map((p) => (p.id === id ? { ...p, status: "inactive" } : p)));
   }
 
   function restore(id: string) {
-    field.setValue((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, status: "active" } : p)),
-    );
+    field.setValue((prev) => prev.map((p) => (p.id === id ? { ...p, status: "active" } : p)));
   }
 
   function update(id: string, presentation: Presentation) {
@@ -137,9 +123,6 @@ const { useAppForm } = createFormHook({
   formComponents: {},
 });
 
-export function useProductForm(
-  options: OnProductSubmit,
-  initialValues?: ProductFormSchema,
-) {
+export function useProductForm(options: OnProductSubmit, initialValues?: ProductFormSchema) {
   return useAppForm(productFormOptions(options, initialValues));
 }

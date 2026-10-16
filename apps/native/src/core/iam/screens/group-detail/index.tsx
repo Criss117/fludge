@@ -1,33 +1,29 @@
-import { Icon } from "@/core/shared/components/icon";
-import { StatusChip } from "@/core/shared/components/status-chip";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { SPACING } from "@/lib/sp";
 import {
   Button,
   Column,
   ElevatedCard,
-  Host,
-  Spacer,
   HorizontalDivider,
-  SingleChoiceSegmentedButtonRow,
+  Host,
   SegmentedButton,
+  SingleChoiceSegmentedButtonRow,
+  Spacer,
 } from "@expo/ui/jetpack-compose";
-import {
-  fillMaxWidth,
-  height,
-  paddingAll,
-  width,
-} from "@expo/ui/jetpack-compose/modifiers";
+import { fillMaxWidth, height, paddingAll, width } from "@expo/ui/jetpack-compose/modifiers";
 import type { GroupDetail } from "@fludge/client/iam/domain/entities";
 import { useRouter } from "expo-router";
 import { Activity, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { GroupMembersSection } from "@/core/iam/sections/group-members";
-import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import Animated from "react-native-reanimated";
+
+import { GroupMembersSection } from "@/core/iam/sections/group-members";
 import { PermissionsListSection } from "@/core/iam/sections/permissions-list";
+import { Icon } from "@/core/shared/components/icon";
+import { StatusChip } from "@/core/shared/components/status-chip";
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { SPACING } from "@/lib/sp";
 
 interface Props {
   group: GroupDetail;
@@ -48,9 +44,7 @@ export function GroupDetailScreen({ group }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColor();
   const router = useRouter();
-  const [selectedTab, setSelectedTab] = useState<"members" | "permissions">(
-    "members",
-  );
+  const [selectedTab, setSelectedTab] = useState<"members" | "permissions">("members");
   const spacer = useKeyboardSpacer();
 
   return (
@@ -73,9 +67,7 @@ export function GroupDetailScreen({ group }: Props) {
                 {group.name}
               </ThemedNativeText>
               <StatusChip status={group.status} />
-              <ThemedNativeText variant="muted">
-                {group.description}
-              </ThemedNativeText>
+              <ThemedNativeText variant="muted">{group.description}</ThemedNativeText>
               <Spacer modifiers={[height(SPACING.sm)]} />
               <HorizontalDivider />
               <Spacer modifiers={[height(SPACING.sm)]} />
@@ -103,11 +95,7 @@ export function GroupDetailScreen({ group }: Props) {
                 >
                   <SegmentedButton.Label>
                     <ThemedNativeText
-                      color={
-                        selectedTab === ta.key
-                          ? colors.onPrimary
-                          : colors.onSurface
-                      }
+                      color={selectedTab === ta.key ? colors.onPrimary : colors.onSurface}
                     >
                       {t(ta.label)}
                     </ThemedNativeText>

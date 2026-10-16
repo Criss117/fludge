@@ -1,35 +1,16 @@
-import { DatabaseService } from "@/integrations/db";
 import type {
   FindAllProductsFilters,
-  ProductRepository,
   ProductDetail,
+  ProductRepository,
 } from "@fludge/client/catalog/domain/product.repository";
-import {
-  buildConflictUpdateColumn,
-  jsonObject,
-  sortBy,
-} from "@fludge/db/utils/build-queries";
-import {
-  and,
-  desc,
-  eq,
-  getColumns,
-  inArray,
-  like,
-  or,
-  sql,
-  SQL,
-} from "drizzle-orm";
-import {
-  type Cursor,
-  type PaginatedResponse,
-  paginate,
-} from "@fludge/utils/pagination";
-import {
-  localProduct,
-  localProductPresentation,
-  LocalProduct,
-} from "@fludge/db/local-schemas/shared.schema";
+import type { LocalProduct } from "@fludge/db/local-schemas/shared.schema";
+import { localProduct, localProductPresentation } from "@fludge/db/local-schemas/shared.schema";
+import { buildConflictUpdateColumn, jsonObject, sortBy } from "@fludge/db/utils/build-queries";
+import { type Cursor, paginate, type PaginatedResponse } from "@fludge/utils/pagination";
+import type { SQL } from "drizzle-orm";
+import { and, desc, eq, getColumns, inArray, like, or, sql } from "drizzle-orm";
+
+import type { DatabaseService } from "@/integrations/db";
 
 export class NativeProductRepository implements ProductRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -44,7 +25,7 @@ export class NativeProductRepository implements ProductRepository {
   public async findAll(
     organizationId: string,
     cursor: Cursor,
-    filters: FindAllProductsFilters
+    filters: FindAllProductsFilters,
   ): Promise<PaginatedResponse<ProductDetail>> {
     const orderByFilters: SQL[] = [];
 
@@ -52,9 +33,7 @@ export class NativeProductRepository implements ProductRepository {
       orderByFilters.push(sortBy(localProduct.stock, filters.orderBy.stock));
     }
 
-    orderByFilters.push(
-      sortBy(localProduct.createdAt, filters.orderBy.createdAt)
-    );
+    orderByFilters.push(sortBy(localProduct.createdAt, filters.orderBy.createdAt));
 
     const rows = this.db
       .select({
@@ -66,21 +45,16 @@ export class NativeProductRepository implements ProductRepository {
           `.as("presentations"),
       })
       .from(localProduct)
-      .innerJoin(
-        localProductPresentation,
-        eq(localProduct.id, localProductPresentation.productId)
-      )
+      .innerJoin(localProductPresentation, eq(localProduct.id, localProductPresentation.productId))
       .where(
         and(
           eq(localProduct.organizationId, organizationId),
           or(
             like(localProduct.name, `%${filters.searchQuery}%`),
-            like(localProduct.searchBlob, `%${filters.searchQuery}%`)
+            like(localProduct.searchBlob, `%${filters.searchQuery}%`),
           ),
-          filters.status !== "all"
-            ? eq(localProduct.status, filters.status)
-            : undefined
-        )
+          filters.status !== "all" ? eq(localProduct.status, filters.status) : undefined,
+        ),
       )
       .limit(cursor.limit + 1)
       .offset(cursor.limit * cursor.page)
@@ -90,36 +64,31 @@ export class NativeProductRepository implements ProductRepository {
 
     return paginate(
       rows.map((p) => {
-        const presentations = (
-          JSON.parse(p.presentations) as LocalProduct["presentations"]
-        ).map((p) => ({
-          ...p,
-          createdAt: new Date(p.createdAt),
-          updatedAt: new Date(p.updatedAt),
-        }));
+        const presentations = (JSON.parse(p.presentations) as LocalProduct["presentations"]).map(
+          (p) => ({
+            ...p,
+            createdAt: new Date(p.createdAt),
+            updatedAt: new Date(p.updatedAt),
+          }),
+        );
 
         return {
           ...p,
           presentations,
         };
       }),
-      cursor
+      cursor,
     );
   }
 
   public async findOneById(
     organizationId: string,
-    productId: string
+    productId: string,
   ): Promise<ProductDetail | null> {
     const row = this.db
       .select()
       .from(localProduct)
-      .where(
-        and(
-          eq(localProduct.organizationId, organizationId),
-          eq(localProduct.id, productId)
-        )
-      )
+      .where(and(eq(localProduct.organizationId, organizationId), eq(localProduct.id, productId)))
       .limit(1)
       .get();
 
@@ -139,9 +108,7 @@ export class NativeProductRepository implements ProductRepository {
   }
 
   public async save(productValues: ProductDetail | ProductDetail[]) {
-    const productsArray = Array.isArray(productValues)
-      ? productValues
-      : [productValues];
+    const productsArray = Array.isArray(productValues) ? productValues : [productValues];
 
     const productsValues: Omit<LocalProduct, "presentations">[] = [];
     const presentationsValues: LocalProduct["presentations"] = [];
@@ -183,8 +150,8 @@ export class NativeProductRepository implements ProductRepository {
           .where(
             inArray(
               localProductPresentation.productId,
-              productsValues.map((p) => p.id)
-            )
+              productsValues.map((p) => p.id),
+            ),
           )
           .run();
 
@@ -193,10 +160,7 @@ export class NativeProductRepository implements ProductRepository {
     });
   }
 
-  public async delete(
-    organizationId: string,
-    productId: string | string[]
-  ): Promise<void> {
+  public async delete(organizationId: string, productId: string | string[]): Promise<void> {
     const productIds = Array.isArray(productId) ? productId : [productId];
 
     this.db.transaction((tx) => {
@@ -204,8 +168,8 @@ export class NativeProductRepository implements ProductRepository {
         .where(
           and(
             eq(localProductPresentation.organizationId, organizationId),
-            inArray(localProductPresentation.productId, productIds)
-          )
+            inArray(localProductPresentation.productId, productIds),
+          ),
         )
         .run();
 
@@ -213,8 +177,8 @@ export class NativeProductRepository implements ProductRepository {
         .where(
           and(
             eq(localProduct.organizationId, organizationId),
-            inArray(localProduct.id, productIds)
-          )
+            inArray(localProduct.id, productIds),
+          ),
         )
         .run();
     });

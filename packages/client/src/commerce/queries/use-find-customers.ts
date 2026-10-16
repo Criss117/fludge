@@ -1,26 +1,19 @@
-import { useContainer } from "@fludge/client/providers/container.provider";
-import { SearchBlob } from "@fludge/utils/search-blob";
-import {
-  useSuspenseInfiniteQuery,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
-import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
-import type { FindAllCustomersFilters } from "../domain/customer.repository";
-import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
+import { useContainer } from "@fludge/client/providers/container.provider";
+import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
+import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
+import { SearchBlob } from "@fludge/utils/search-blob";
+import { useSuspenseInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
+
+import type { FindAllCustomersFilters } from "../domain/customer.repository";
 
 function normalizeFilters(filters?: FindAllCustomersFilters) {
   return {
-    searchQuery: filters?.searchQuery
-      ? SearchBlob.normalize(filters.searchQuery)
-      : undefined,
+    searchQuery: filters?.searchQuery ? SearchBlob.normalize(filters.searchQuery) : undefined,
   };
 }
 
-export const {
-  keys: customerKeys,
-  useInvalidateQueries: useInvalidateCustomers,
-} = keysGenerator({
+export const { keys: customerKeys, useInvalidateQueries: useInvalidateCustomers } = keysGenerator({
   module: "commerce",
   resource: "customers",
   normalizeFilters,
@@ -40,13 +33,9 @@ export function useFindCustomers(filters?: FindAllCustomersFilters) {
     queryKey: customerKeys.filteredList(activeOrganization.id, filters),
     initialPageParam: DEFAULT_CURSOR,
     queryFn: ({ pageParam }) =>
-      commerceContainer.repositories.customerRepository.findAll(
-        activeOrganization.id,
-        pageParam,
-        {
-          searchQuery: normalizedQuery,
-        },
-      ),
+      commerceContainer.repositories.customerRepository.findAll(activeOrganization.id, pageParam, {
+        searchQuery: normalizedQuery,
+      }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 }

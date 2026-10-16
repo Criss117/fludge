@@ -1,8 +1,3 @@
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { SPACING } from "@/lib/sp";
-import type { ProductDetail } from "@fludge/client/catalog/domain/entities";
-import { formatCurrency } from "@fludge/utils/format-currency";
 import {
   Button,
   Checkbox,
@@ -22,16 +17,19 @@ import {
   paddingAll,
   weight,
 } from "@expo/ui/jetpack-compose/modifiers";
+import type { ProductDetail } from "@fludge/client/catalog/domain/entities";
+import { formatCurrency } from "@fludge/utils/format-currency";
 import { useEffect, useRef, useState } from "react";
+
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { SPACING } from "@/lib/sp";
 
 interface Props {
   product: ProductDetail | null;
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (
-    product: ProductDetail,
-    presentations: ProductDetail["presentations"],
-  ) => void;
+  onAdd: (product: ProductDetail, presentations: ProductDetail["presentations"]) => void;
 }
 
 export function ProductPickerSheet({ product, isOpen, onClose, onAdd }: Props) {
@@ -85,9 +83,7 @@ export function ProductPickerSheet({ product, isOpen, onClose, onAdd }: Props) {
         >
           <Column verticalArrangement={{ spacedBy: SPACING.xs }}>
             <ThemedNativeText variant="h5">{product.name}</ThemedNativeText>
-            <ThemedNativeText variant="muted">
-              Seleccioná las presentaciones
-            </ThemedNativeText>
+            <ThemedNativeText variant="muted">Seleccioná las presentaciones</ThemedNativeText>
           </Column>
 
           <LazyColumn
@@ -116,9 +112,7 @@ export function ProductPickerSheet({ product, isOpen, onClose, onAdd }: Props) {
                     </ThemedNativeText>
                   </Column>
                   <Spacer modifiers={[weight(1)]} />
-                  <ThemedNativeText>
-                    {formatCurrency(presentation.priceSale)}
-                  </ThemedNativeText>
+                  <ThemedNativeText>{formatCurrency(presentation.priceSale)}</ThemedNativeText>
                   <Checkbox
                     value={isSelected}
                     colors={{
@@ -137,9 +131,7 @@ export function ProductPickerSheet({ product, isOpen, onClose, onAdd }: Props) {
             }}
             onClick={handleAdd}
           >
-            <ThemedNativeText color={colors.onPrimary}>
-              Agregar al ticket
-            </ThemedNativeText>
+            <ThemedNativeText color={colors.onPrimary}>Agregar al ticket</ThemedNativeText>
           </Button>
         </Column>
       </ModalBottomSheet>

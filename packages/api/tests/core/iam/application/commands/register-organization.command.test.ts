@@ -1,9 +1,8 @@
-import { beforeEach, describe, expect, it } from "bun:test";
-
 import { RegisterOrganizationCommand } from "@fludge/api/core/iam/application/commands/register-organization.command";
 import { OrganizationAlreadyExistsException } from "@fludge/api/core/iam/domain/exceptions/organization-already-exists.exception";
 import { PERMISSIONS } from "@fludge/utils/permissions/data";
 import { Permissions } from "@fludge/utils/permissions/index";
+import { beforeEach, describe, expect, it } from "bun:test";
 
 import { InMemoryGroupRepository } from "../../infrastructure/in-memory-group.repository";
 import { InMemoryMemberRepository } from "../../infrastructure/in-memory-member.repository";
@@ -57,9 +56,7 @@ describe("RegisterOrganizationCommand", () => {
   describe("happy path", () => {
     it("creates and persists the organization", async () => {
       const result = await command.execute(ROOT_USER, VALID_CMD);
-      const [stored] = await organizationRepository.findById(
-        result.organization.id,
-      );
+      const [stored] = await organizationRepository.findById(result.organization.id);
 
       expect(stored).not.toBeNull();
       expect(stored!.values).toMatchObject({
@@ -76,10 +73,7 @@ describe("RegisterOrganizationCommand", () => {
 
     it("creates an owner member for the root user tied to the organization", async () => {
       const result = await command.execute(ROOT_USER, VALID_CMD);
-      const [stored] = await memberRepository.findById(
-        result.organization.id,
-        result.member.id,
-      );
+      const [stored] = await memberRepository.findById(result.organization.id, result.member.id);
 
       expect(stored).not.toBeNull();
       expect(stored!.values).toMatchObject({
@@ -94,10 +88,7 @@ describe("RegisterOrganizationCommand", () => {
 
     it("creates and persists the Administradores admin group with all permissions", async () => {
       const result = await command.execute(ROOT_USER, VALID_CMD);
-      const [stored] = await groupRepository.findById(
-        result.organization.id,
-        result.group.id,
-      );
+      const [stored] = await groupRepository.findById(result.organization.id, result.group.id);
 
       expect(stored).not.toBeNull();
       expect(stored!.values).toMatchObject({
@@ -155,9 +146,7 @@ describe("RegisterOrganizationCommand", () => {
       const err = await command.execute(ROOT_USER, VALID_CMD).catch((e) => e);
 
       expect(err).toBeInstanceOf(OrganizationAlreadyExistsException);
-      expect(err.message).toBe(
-        "api_errors.iam.organizations.legal_name_taken",
-      );
+      expect(err.message).toBe("api_errors.iam.organizations.legal_name_taken");
     });
 
     it("throws OrganizationAlreadyExistsException when the tax id is taken", async () => {

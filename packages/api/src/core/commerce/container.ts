@@ -1,51 +1,40 @@
 import { databaseService } from "@fludge/db";
 
+import { catalogContainer } from "../catalog/container";
+import { CancelCustomerPaymentCommand } from "./customer/application/commands/cancel-customer-payment.command";
+// Customer commands
+import { CreateCustomerCommand } from "./customer/application/commands/create-customer.command";
+import { CreateCustomerPaymentCommand } from "./customer/application/commands/create-customer-payment.command";
+import { UpdateCustomerCommand } from "./customer/application/commands/update-customer.command";
+// Customer services
+import { DecreaseCustomerBalanceService } from "./customer/application/services/decrease-customer-balance.service";
 // Customer repositories
 import { SQLiteCustomerRepository } from "./customer/infrastructure/repositories/sqlite-customer.repository";
 import { SQLiteCustomerPaymentRepository } from "./customer/infrastructure/repositories/sqlite-customer-payment.repository";
-
+import { CancelSaleCommand } from "./sale/application/commands/cancel-sale.command";
+// Sale commands
+import { CreateSaleCommand } from "./sale/application/commands/create-sale.command";
+import { RefundSaleItemsCommand } from "./sale/application/commands/refund-sale-items.command";
+// Sale services
+import { PaySaleService } from "./sale/application/services/pay-sale.service";
+import { RefundProductsService } from "./sale/application/services/refund-products.service";
+import { RevertSalePaymentsService } from "./sale/application/services/revert-sale-payments.service";
 // Sale repositories
 import { SQLiteSaleRepository } from "./sale/infrastructure/repositories/sqlite-sale.repository";
 import { SQLiteSalePaymentRepository } from "./sale/infrastructure/repositories/sqlite-sale-payment.repository";
 import { SQLiteSaleSequenceRepository } from "./sale/infrastructure/repositories/sqlite-sale-sequence.repository";
 
-// Customer services
-import { DecreaseCustomerBalanceService } from "./customer/application/services/decrease-customer-balance.service";
-
-// Sale services
-import { PaySaleService } from "./sale/application/services/pay-sale.service";
-import { RevertSalePaymentsService } from "./sale/application/services/revert-sale-payments.service";
-import { RefundProductsService } from "./sale/application/services/refund-products.service";
-
-// Customer commands
-import { CreateCustomerCommand } from "./customer/application/commands/create-customer.command";
-import { UpdateCustomerCommand } from "./customer/application/commands/update-customer.command";
-import { CreateCustomerPaymentCommand } from "./customer/application/commands/create-customer-payment.command";
-import { CancelCustomerPaymentCommand } from "./customer/application/commands/cancel-customer-payment.command";
-
-// Sale commands
-import { CreateSaleCommand } from "./sale/application/commands/create-sale.command";
-import { CancelSaleCommand } from "./sale/application/commands/cancel-sale.command";
-import { RefundSaleItemsCommand } from "./sale/application/commands/refund-sale-items.command";
-import { catalogContainer } from "../catalog/container";
-
 // ── Repositories ──────────────────────────────────────────────────────────────
 
 const customerRepository = new SQLiteCustomerRepository(databaseService);
-const customerPaymentRepository = new SQLiteCustomerPaymentRepository(
-  databaseService,
-);
+const customerPaymentRepository = new SQLiteCustomerPaymentRepository(databaseService);
 const saleRepository = new SQLiteSaleRepository(databaseService);
 const salePaymentRepository = new SQLiteSalePaymentRepository(databaseService);
-const saleSequenceRepository = new SQLiteSaleSequenceRepository(
-  databaseService,
-);
+const saleSequenceRepository = new SQLiteSaleSequenceRepository(databaseService);
 
 // ── Services ─────────────────────────────────────────────────────────────────
 
-const decreaseCustomerBalanceService = new DecreaseCustomerBalanceService(
-  customerRepository,
-);
+const decreaseCustomerBalanceService = new DecreaseCustomerBalanceService(customerRepository);
 const paySaleService = new PaySaleService(saleRepository);
 const revertSalePaymentsService = new RevertSalePaymentsService(
   salePaymentRepository,

@@ -1,4 +1,3 @@
-import type { z } from "zod";
 import type { OrganizationUniquenessValidator } from "@fludge/api/core/iam/application/services/organization-uniqueness-validator.service";
 import { OrganizationAlreadyExistsException } from "@fludge/api/core/iam/domain/exceptions/organization-already-exists.exception";
 import { OrganizationNotFoundException } from "@fludge/api/core/iam/domain/exceptions/organization-not-found.exception";
@@ -6,6 +5,7 @@ import type { OrganizationRepository } from "@fludge/api/core/iam/domain/reposit
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { Slug } from "@fludge/utils/slugify";
 import { updateOrganizationValidator } from "@fludge/utils/validators/organization.validators";
+import type { z } from "zod";
 
 export const updateOrganizationCommand = updateOrganizationValidator;
 
@@ -22,10 +22,7 @@ export class UpdateOrganizationCommand {
       await this.organizationRepository.findById(activeOrganizationId);
 
     if (errOrganization)
-      throw new InternalServerError(
-        errOrganization,
-        "api_errors.iam.organizations.isr_on_find",
-      );
+      throw new InternalServerError(errOrganization, "api_errors.iam.organizations.isr_on_find");
 
     if (!activeOrganization) throw new OrganizationNotFoundException();
 
@@ -39,26 +36,17 @@ export class UpdateOrganizationCommand {
       );
 
     if (errUniqueness)
-      throw new InternalServerError(
-        errUniqueness,
-        "api_errors.iam.organizations.isr_on_find",
-      );
+      throw new InternalServerError(errUniqueness, "api_errors.iam.organizations.isr_on_find");
 
     if (uniqueness.nameTaken || uniqueness.slugTaken)
-      throw new OrganizationAlreadyExistsException(
-        "api_errors.iam.organizations.name_taken",
-      );
+      throw new OrganizationAlreadyExistsException("api_errors.iam.organizations.name_taken");
 
     activeOrganization.update(cmd);
 
-    const [, errSaving] =
-      await this.organizationRepository.save(activeOrganization);
+    const [, errSaving] = await this.organizationRepository.save(activeOrganization);
 
     if (errSaving)
-      throw new InternalServerError(
-        errSaving,
-        "api_errors.iam.organizations.isr_on_save",
-      );
+      throw new InternalServerError(errSaving, "api_errors.iam.organizations.isr_on_save");
 
     return activeOrganization.values;
   }

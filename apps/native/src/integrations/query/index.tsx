@@ -1,10 +1,7 @@
-import {
-  QueryClient,
-  QueryClientProvider as Provider,
-  onlineManager,
-} from "@tanstack/react-query";
+import type { INetworkService } from "@fludge/client/providers/network-status.provider";
 import { useTanStackQueryDevTools } from "@rozenite/tanstack-query-plugin";
-import { INetworkService } from "@fludge/client/providers/network-status.provider";
+import { onlineManager, QueryClient, QueryClientProvider as Provider } from "@tanstack/react-query";
+
 import { networkService } from "../network";
 
 export function setupQueryClientNetwork(networkService: INetworkService) {
@@ -35,11 +32,7 @@ function QueryDevTools() {
   return null;
 }
 
-export function QueryClientProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function QueryClientProvider({ children }: { children: React.ReactNode }) {
   return (
     <Provider client={queryClient}>
       {__DEV__ && <QueryDevTools />}

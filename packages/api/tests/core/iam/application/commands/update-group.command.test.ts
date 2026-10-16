@@ -1,5 +1,3 @@
-import { beforeEach, describe, expect, it } from "bun:test";
-
 import { UpdateGroupCommand } from "@fludge/api/core/iam/application/commands/update-group.command";
 import { Group } from "@fludge/api/core/iam/domain/entities/group.entity";
 import { Organization } from "@fludge/api/core/iam/domain/entities/organization.entity";
@@ -8,6 +6,7 @@ import { GroupNotFoundException } from "@fludge/api/core/iam/domain/exceptions/g
 import type { Permission } from "@fludge/utils/permissions/data";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
+import { beforeEach, describe, expect, it } from "bun:test";
 
 import { makeAuthContext, makeOwner } from "../../factories";
 import { InMemoryGroupRepository } from "../../infrastructure/in-memory-group.repository";
@@ -71,10 +70,7 @@ describe("UpdateGroupCommand", () => {
         expect.arrayContaining(["groups:create", "groups:update", "groups:delete"]),
       );
 
-      const [stored] = await groupRepository.findById(
-        org.id.toString(),
-        group.id.toString(),
-      );
+      const [stored] = await groupRepository.findById(org.id.toString(), group.id.toString());
 
       expect(stored!.values.name).toBe("Equipo Soporte");
       expect(stored!.values.slug).toBe("equipo-soporte");
@@ -96,9 +92,7 @@ describe("UpdateGroupCommand", () => {
 
       expect(result.name).toBe("Equipo Ventas");
       expect(result.status).toBe("active");
-      expect(result.description).toBe(
-        "Equipo enfocado en clientes de la region norte",
-      );
+      expect(result.description).toBe("Equipo enfocado en clientes de la region norte");
     });
   });
 
@@ -137,10 +131,7 @@ describe("UpdateGroupCommand", () => {
       expect(err).toBeInstanceOf(GroupAlreadyExistsException);
       expect(err.message).toBe("api_errors.iam.groups.name_taken");
 
-      const [stored] = await groupRepository.findById(
-        org.id.toString(),
-        group.id.toString(),
-      );
+      const [stored] = await groupRepository.findById(org.id.toString(), group.id.toString());
 
       expect(stored!.values.name).toBe("Equipo Ventas");
     });
@@ -183,9 +174,7 @@ describe("UpdateGroupCommand", () => {
       });
 
       expect(result.name).toBe("Equipo Ventas");
-      expect(result.description).toBe(
-        "Equipo de ventas renovado para el nuevo periodo",
-      );
+      expect(result.description).toBe("Equipo de ventas renovado para el nuevo periodo");
     });
   });
 });

@@ -36,8 +36,7 @@ export const api_errors = {
       insufficient_stock: "El stock es insuficiente",
       invalid_amount: "La cantidad no es válida",
       invalid_min_stock: "El stock mínimo no es válido",
-      min_stock_must_be_lower_than_stock:
-        "El stock mínimo debe ser menor que el stock",
+      min_stock_must_be_lower_than_stock: "El stock mínimo debe ser menor que el stock",
       no_has_barcode: "Debe tener al menos una presentación con barcode",
       stock_must_be_positive: "El stock debe ser positivo",
       amount_must_be_positive: "La cantidad debe ser positiva",
@@ -151,8 +150,7 @@ export const api_errors = {
   sync: {
     iam: {
       isr_on_find_organizations: "Error al obtener las organizaciones",
-      isr_on_find_last_synced_at:
-        "Error al obtener los últimos datos sincronizados",
+      isr_on_find_last_synced_at: "Error al obtener los últimos datos sincronizados",
     },
   },
 };

@@ -1,6 +1,6 @@
 import {
-  NetworkProvider as NP,
   type INetworkService,
+  NetworkProvider as NP,
   type NetworkState,
 } from "@fludge/client/providers/network-status.provider";
 import NetInfo from "@react-native-community/netinfo";

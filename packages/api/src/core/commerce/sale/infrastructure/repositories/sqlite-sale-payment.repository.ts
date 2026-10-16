@@ -17,10 +17,7 @@ export class SQLiteSalePaymentRepository
     super(db);
   }
 
-  public async findByCustomerPaymentId(
-    organizationId: string,
-    customerPaymentId: string,
-  ) {
+  public async findByCustomerPaymentId(organizationId: string, customerPaymentId: string) {
     const [rows, errFind] = await tryCatch(
       this.db
         .select()

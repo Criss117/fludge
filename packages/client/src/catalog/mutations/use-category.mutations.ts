@@ -1,6 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
-import { useOrpc } from "@fludge/client/providers/orpc.provider";
 import { useContainer } from "@fludge/client/providers/container.provider";
+import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import { useMutation } from "@tanstack/react-query";
+
 import { useInvalidateCategories } from "../queries/use-find-categories";
 
 export function useCreateCategoryMutation() {
@@ -11,9 +12,7 @@ export function useCreateCategoryMutation() {
   return useMutation(
     orpc.category.commands.create.mutationOptions({
       onSuccess: async (newCategory) => {
-        await catalogContainer.repositories.categoryRepository.save(
-          newCategory,
-        );
+        await catalogContainer.repositories.categoryRepository.save(newCategory);
 
         invalidateCategories.invalidateList();
       },
@@ -29,9 +28,7 @@ export function useUpdateCategoryMutation() {
   return useMutation(
     orpc.category.commands.update.mutationOptions({
       onSuccess: async (newCategory) => {
-        await catalogContainer.repositories.categoryRepository.save(
-          newCategory,
-        );
+        await catalogContainer.repositories.categoryRepository.save(newCategory);
 
         invalidateCategories.invalidateList();
       },
@@ -47,9 +44,7 @@ export function useToggleCategoryStatusMutation() {
   return useMutation(
     orpc.category.commands.toggleStatus.mutationOptions({
       onSuccess: async (newCategory) => {
-        await catalogContainer.repositories.categoryRepository.save(
-          newCategory,
-        );
+        await catalogContainer.repositories.categoryRepository.save(newCategory);
 
         invalidateCategories.invalidateList();
       },

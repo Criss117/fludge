@@ -1,26 +1,21 @@
-import { UUID } from "@fludge/utils/uuid";
-import { ProductStatus } from "../value-objects/product-status";
+import type { ProductPresentationSelect, ProductSelect } from "@fludge/db/schema/catalog.schema";
+import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
 import { SearchBlob } from "@fludge/utils/search-blob";
-import type {
-  ProductPresentationSelect,
-  ProductSelect,
-} from "@fludge/db/schema/catalog.schema";
 import { Slug } from "@fludge/utils/slugify";
+import { UUID } from "@fludge/utils/uuid";
+
+import { DuplicatedBarcodeException } from "../exceptions/duplicated-barcode.exception";
+import { InvalidAmountException } from "../exceptions/invalid-amount.exception";
+import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-presentation-no-has-barcode.exception";
+import { ProductStatus } from "../value-objects/product-status";
+import { ProductStock } from "../value-objects/product-stock";
+import { ProductPresentationCollection } from "./product-presentation.collection";
 import {
   type CreateProductPresentation as CPP,
   ProductPresentation,
 } from "./product-presentation.entity";
-import { ProductPresentationCollection } from "./product-presentation.collection";
-import { ProductPresentationNoHasBarcodeException } from "../exceptions/product-presentation-no-has-barcode.exception";
-import { ProductStock } from "../value-objects/product-stock";
-import { DuplicatedBarcodeException } from "../exceptions/duplicated-barcode.exception";
-import { InvalidAmountException } from "../exceptions/invalid-amount.exception";
-import type { ProductStatusEnum } from "@fludge/utils/enums/db-enums";
 
-type CreateProductPresentation = Omit<
-  CPP,
-  "productId" | "createdBy" | "organizationId"
->;
+type CreateProductPresentation = Omit<CPP, "productId" | "createdBy" | "organizationId">;
 
 type CreateProduct = {
   name: string;
@@ -90,17 +85,13 @@ export class Product {
       (item) => item.barcode && item.barcode.length > 0,
     );
 
-    if (!somePresentationHasBarcode)
-      throw new ProductPresentationNoHasBarcodeException();
+    if (!somePresentationHasBarcode) throw new ProductPresentationNoHasBarcodeException();
 
-    const allBarcodes = data.presentations
-      .map((item) => item.barcode)
-      .filter((b) => b !== null);
+    const allBarcodes = data.presentations.map((item) => item.barcode).filter((b) => b !== null);
 
     const setBarcode = new Set(allBarcodes);
 
-    if (setBarcode.size !== allBarcodes.length)
-      throw new DuplicatedBarcodeException();
+    if (setBarcode.size !== allBarcodes.length) throw new DuplicatedBarcodeException();
 
     const newProduct = new Product(
       productId,
@@ -153,9 +144,7 @@ export class Product {
       new Date(data.createdAt),
       new Date(data.updatedAt),
       ProductPresentationCollection.create(
-        data.presentations.map((item) =>
-          ProductPresentation.reconstitute(item),
-        ),
+        data.presentations.map((item) => ProductPresentation.reconstitute(item)),
       ),
     );
   }
@@ -246,15 +235,11 @@ export class Product {
   }
 
   public sale(presentation: SaleProduct | SaleProduct[]) {
-    const presentations = Array.isArray(presentation)
-      ? presentation
-      : [presentation];
+    const presentations = Array.isArray(presentation) ? presentation : [presentation];
 
     for (const item of presentations) {
       if (item.quantity < 0)
-        throw new InvalidAmountException(
-          "api_errors.catalog.products.amount_must_be_positive",
-        );
+        throw new InvalidAmountException("api_errors.catalog.products.amount_must_be_positive");
     }
 
     const totalQuantity = presentations.reduce((acc, sale) => {
@@ -272,15 +257,11 @@ export class Product {
   }
 
   public refund(presentation: RefundProduct | RefundProduct[]) {
-    const presentations = Array.isArray(presentation)
-      ? presentation
-      : [presentation];
+    const presentations = Array.isArray(presentation) ? presentation : [presentation];
 
     for (const item of presentations) {
       if (item.quantity < 0)
-        throw new InvalidAmountException(
-          "api_errors.catalog.products.amount_must_be_positive",
-        );
+        throw new InvalidAmountException("api_errors.catalog.products.amount_must_be_positive");
     }
 
     const totalQuantity = presentations.reduce((acc, item) => {

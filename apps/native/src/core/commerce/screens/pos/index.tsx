@@ -1,39 +1,26 @@
+import { Box, Button, Column, Host, Row, Spacer } from "@expo/ui/jetpack-compose";
+import { fillMaxWidth, weight, width } from "@expo/ui/jetpack-compose/modifiers";
+import type { ProductSummary } from "@fludge/client/catalog/domain/entities";
+import { useFindProducts } from "@fludge/client/catalog/queries/use-find-products";
+import type { AddCatalogTicketProduct } from "@fludge/client/commerce/domain/local-ticket.repository";
+import { useActiveTicket, useTicketStore } from "@fludge/client/providers/ticket-store.provider";
+import { formatCurrency } from "@fludge/utils/format-currency";
+import { FlashList } from "@shopify/flash-list";
+import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, View } from "react-native";
+
+import { ProductPickerSheet } from "@/core/commerce/components/product-picker";
+import { SaleProductCard } from "@/core/commerce/components/sale-product-card";
+import { TicketDetailSheet } from "@/core/commerce/components/ticket-detail-sheet";
 import { BarcodeReader } from "@/core/shared/components/barcode-reader";
+import { Icon } from "@/core/shared/components/icon";
 import { KeyboardSpacerView } from "@/core/shared/components/keyboard-spacer-view";
 import { TextInput } from "@/core/shared/components/text-input";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
-import {
-  Box,
-  Button,
-  Column,
-  Host,
-  Row,
-  Spacer,
-} from "@expo/ui/jetpack-compose";
-import {
-  fillMaxWidth,
-  weight,
-  width,
-} from "@expo/ui/jetpack-compose/modifiers";
-import { useFindProducts } from "@fludge/client/catalog/queries/use-find-products";
-import { FlashList } from "@shopify/flash-list";
-import { useCallback, useMemo, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { SaleProductCard } from "@/core/commerce/components/sale-product-card";
-import {
-  useActiveTicket,
-  useTicketStore,
-} from "@fludge/client/providers/ticket-store.provider";
-import type { ProductSummary } from "@fludge/client/catalog/domain/entities";
-import type { AddCatalogTicketProduct } from "@fludge/client/commerce/domain/local-ticket.repository";
-import { ProductPickerSheet } from "@/core/commerce/components/product-picker";
-import { TicketDetailSheet } from "@/core/commerce/components/ticket-detail-sheet";
-import { useTranslation } from "react-i18next";
-import { formatCurrency } from "@fludge/utils/format-currency";
-import { Icon } from "@/core/shared/components/icon";
 
 function ProductList({
   searchQuery,
@@ -42,20 +29,16 @@ function ProductList({
   searchQuery: string;
   selectProduct: (product: ProductSummary) => void;
 }) {
-  const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
-    useFindProducts({
-      searchQuery,
-      status: "active",
-      orderBy: {
-        createdAt: "desc",
-        stock: "none",
-      },
-    });
+  const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useFindProducts({
+    searchQuery,
+    status: "active",
+    orderBy: {
+      createdAt: "desc",
+      stock: "none",
+    },
+  });
 
-  const items = useMemo(
-    () => data.pages.flatMap((page) => page.items),
-    [data.pages],
-  );
+  const items = useMemo(() => data.pages.flatMap((page) => page.items), [data.pages]);
 
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
@@ -101,12 +84,8 @@ function Footer({ onSeeCart }: { onSeeCart: () => void }) {
           verticalAlignment="center"
         >
           <Column>
-            <ThemedNativeText variant="muted">
-              {t("screens.pos.current_sale")}
-            </ThemedNativeText>
-            <ThemedNativeText>
-              {formatCurrency(activeTicket?.total ?? 0)}
-            </ThemedNativeText>
+            <ThemedNativeText variant="muted">{t("screens.pos.current_sale")}</ThemedNativeText>
+            <ThemedNativeText>{formatCurrency(activeTicket?.total ?? 0)}</ThemedNativeText>
           </Column>
 
           <Button
@@ -133,10 +112,7 @@ function Footer({ onSeeCart }: { onSeeCart: () => void }) {
 function useAddProductToTicket() {
   const addTicketProduct = useTicketStore((s) => s.addTicketProduct);
 
-  return (
-    product: ProductSummary,
-    presentations: ProductSummary["presentations"],
-  ) => {
+  return (product: ProductSummary, presentations: ProductSummary["presentations"]) => {
     const ticketProduct: AddCatalogTicketProduct = {
       type: "catalog",
       name: product.name,
@@ -161,9 +137,7 @@ function useAddProductToTicket() {
 
 export function POSScreen() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState<ProductSummary | null>(
-    null,
-  );
+  const [selectedProduct, setSelectedProduct] = useState<ProductSummary | null>(null);
   const [isTicketDetailOpen, setIsTicketDetailOpen] = useState(false);
   const addToTicket = useAddProductToTicket();
 
@@ -200,10 +174,7 @@ export function POSScreen() {
       </View>
 
       <View style={styles.productListContainer}>
-        <ProductList
-          searchQuery={searchQuery}
-          selectProduct={setSelectedProduct}
-        />
+        <ProductList searchQuery={searchQuery} selectProduct={setSelectedProduct} />
       </View>
 
       <Footer onSeeCart={handleOpenTicketDetail} />
@@ -215,10 +186,7 @@ export function POSScreen() {
         onAdd={addToTicket}
       />
 
-      <TicketDetailSheet
-        isOpen={isTicketDetailOpen}
-        onClose={handleCloseTicketDetail}
-      />
+      <TicketDetailSheet isOpen={isTicketDetailOpen} onClose={handleCloseTicketDetail} />
     </ThemedView>
   );
 }

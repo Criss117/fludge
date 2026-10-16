@@ -1,47 +1,30 @@
-import { SectionCard } from "@/core/shared/components/section-card";
-import {
-  ThemedScrollView,
-  ThemedView,
-} from "@/core/shared/components/themed-view";
-import { SPACING } from "@/lib/sp";
-import {
-  Box,
-  Button,
-  Column,
-  Host,
-  Row,
-  Spacer,
-} from "@expo/ui/jetpack-compose";
-import {
-  type ProductFormSchema,
-  useProductForm,
-} from "@fludge/client/catalog/forms/product.form";
-import { StyleSheet, View } from "react-native";
-import { ProductFormInputs } from "@/core/catalog/components/product-form-inputs";
-import {
-  fillMaxWidth,
-  padding,
-  weight,
-  width,
-} from "@expo/ui/jetpack-compose/modifiers";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { Icon } from "@/core/shared/components/icon";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
-import { useTranslation } from "react-i18next";
-import { KeyboardSpacerView } from "@/core/shared/components/keyboard-spacer-view";
-import {
-  CreateProductPresentationForm,
-  UpdateProductPresentationForm,
-} from "@/core/catalog/components/product-presentation-form";
-import { useState } from "react";
-import { useRouter } from "expo-router";
+import { Box, Button, Column, Host, Row, Spacer } from "@expo/ui/jetpack-compose";
+import { fillMaxWidth, padding, weight, width } from "@expo/ui/jetpack-compose/modifiers";
 import type { ProductSummary } from "@fludge/client/catalog/domain/entities";
+import { type ProductFormSchema, useProductForm } from "@fludge/client/catalog/forms/product.form";
 import {
   useCreateProductMutation,
   useUpdateProductMutation,
 } from "@fludge/client/catalog/mutations/use-product.mutations";
-import { useMutationToast } from "@/integrations/toast";
 import type { TranslationKey } from "@fludge/i18n/index";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, View } from "react-native";
+
+import { ProductFormInputs } from "@/core/catalog/components/product-form-inputs";
+import {
+  CreateProductPresentationForm,
+  UpdateProductPresentationForm,
+} from "@/core/catalog/components/product-presentation-form";
+import { Icon } from "@/core/shared/components/icon";
+import { KeyboardSpacerView } from "@/core/shared/components/keyboard-spacer-view";
+import { SectionCard } from "@/core/shared/components/section-card";
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { ThemedScrollView, ThemedView } from "@/core/shared/components/themed-view";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { useMutationToast } from "@/integrations/toast";
+import { SPACING } from "@/lib/sp";
 
 type Action =
   | {
@@ -185,10 +168,7 @@ export function ProductFormScreen({ action }: Props) {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <Host
-          matchContents={{ vertical: true }}
-          style={styles.basicInfoContainer}
-        >
+        <Host matchContents={{ vertical: true }} style={styles.basicInfoContainer}>
           <Column
             modifiers={[fillMaxWidth(), padding(SPACING.sm, 0, SPACING.sm, 0)]}
             verticalArrangement={{
@@ -200,14 +180,10 @@ export function ProductFormScreen({ action }: Props) {
                 {(field) => <ProductFormInputs.NameInput field={field} />}
               </form.Field>
               <form.Field name="description">
-                {(field) => (
-                  <ProductFormInputs.DescriptionInput field={field} />
-                )}
+                {(field) => <ProductFormInputs.DescriptionInput field={field} />}
               </form.Field>
               <form.Field name="categoryId">
-                {(field) => (
-                  <ProductFormInputs.CategorySelectInput field={field} />
-                )}
+                {(field) => <ProductFormInputs.CategorySelectInput field={field} />}
               </form.Field>
             </SectionCard>
 
@@ -224,16 +200,12 @@ export function ProductFormScreen({ action }: Props) {
                 </Box>
                 <Box modifiers={[weight(1)]}>
                   <form.Field name="minStock">
-                    {(field) => (
-                      <ProductFormInputs.MinStockInput field={field} />
-                    )}
+                    {(field) => <ProductFormInputs.MinStockInput field={field} />}
                   </form.Field>
                 </Box>
               </Row>
               <form.Field name="allowNegativeStock">
-                {(field) => (
-                  <ProductFormInputs.AllowNegativeStockInput field={field} />
-                )}
+                {(field) => <ProductFormInputs.AllowNegativeStockInput field={field} />}
               </form.Field>
             </SectionCard>
 
@@ -243,9 +215,7 @@ export function ProductFormScreen({ action }: Props) {
                 <form.AppField name="presentations">
                   {(field) => (
                     <field.Presentations>
-                      {(props) => (
-                        <CreateProductPresentationForm onSubmit={props.add} />
-                      )}
+                      {(props) => <CreateProductPresentationForm onSubmit={props.add} />}
                     </field.Presentations>
                   )}
                 </form.AppField>

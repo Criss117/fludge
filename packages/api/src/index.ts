@@ -1,4 +1,8 @@
+import { env } from "@fludge/env/server";
+import type { PermissionsRecord } from "@fludge/utils/permissions/data";
+import { tryCatch } from "@fludge/utils/trycatch";
 import { os } from "@orpc/server";
+
 import type { Context } from "./context";
 import { iamContainer } from "./core/iam/container";
 import {
@@ -6,17 +10,13 @@ import {
   InternalServerError,
   UnauthorizedError,
 } from "./core/shared/exceptions/base-exception";
-import type { PermissionsRecord } from "@fludge/utils/permissions/data";
-import { env } from "@fludge/env/server";
-import { tryCatch } from "@fludge/utils/trycatch";
 
 export const o = os.$context<Context>();
 
 export const publicProcedure = o;
 
 const requireAuth = o.middleware(async ({ context, next }) => {
-  if (!context.session)
-    throw new UnauthorizedError("api_errors.auth.sessions.unauthorized");
+  if (!context.session) throw new UnauthorizedError("api_errors.auth.sessions.unauthorized");
 
   return next({
     context: {
@@ -26,8 +26,7 @@ const requireAuth = o.middleware(async ({ context, next }) => {
 });
 
 const rootOnly = requireAuth.concat(({ context, next }) => {
-  if (!context.session.user.isRoot)
-    throw new ForbiddenError("api_errors.auth.users.not_root");
+  if (!context.session.user.isRoot) throw new ForbiddenError("api_errors.auth.users.not_root");
 
   return next({
     context: {
@@ -42,20 +41,15 @@ const requireOrganization = requireAuth.concat(async ({ context, next }) => {
   if (!activeOrganizationId)
     throw new ForbiddenError("api_errors.auth.sessions.no_active_organization");
 
-  const [authContext, errAuthContext] =
-    await iamContainer.services.userAuthContextService.build(
-      activeOrganizationId,
-      context.session.user.id,
-    );
+  const [authContext, errAuthContext] = await iamContainer.services.userAuthContextService.build(
+    activeOrganizationId,
+    context.session.user.id,
+  );
 
   if (errAuthContext)
-    throw new InternalServerError(
-      errAuthContext,
-      "api_errors.iam.organizations.isr_on_find",
-    );
+    throw new InternalServerError(errAuthContext, "api_errors.iam.organizations.isr_on_find");
 
-  if (!authContext)
-    throw new ForbiddenError("api_errors.iam.members.not_member");
+  if (!authContext) throw new ForbiddenError("api_errors.iam.members.not_member");
 
   if (authContext.member.status.isInactive())
     throw new ForbiddenError("api_errors.iam.members.without_permissions");
@@ -71,8 +65,7 @@ function hasPermission(required: PermissionsRecord) {
   return requireOrganization.concat(({ context, next }) => {
     const hasPermissions = context.session.authContext.hasPermission(required);
 
-    if (!hasPermissions)
-      throw new ForbiddenError("api_errors.iam.members.without_permissions");
+    if (!hasPermissions) throw new ForbiddenError("api_errors.iam.members.without_permissions");
 
     return next({
       context,
@@ -82,9 +75,7 @@ function hasPermission(required: PermissionsRecord) {
 
 const withOrganizationIds = requireAuth.concat(async ({ context, next }) => {
   const [organizationIds, errorFindingOrganizationIds] = await tryCatch(
-    iamContainer.services.userOrganizationIdsService.execute(
-      context.session.user.id,
-    ),
+    iamContainer.services.userOrganizationIdsService.execute(context.session.user.id),
   );
 
   if (errorFindingOrganizationIds)
@@ -101,8 +92,7 @@ const withOrganizationIds = requireAuth.concat(async ({ context, next }) => {
 });
 
 const devOnly = o.middleware(({ context, next }) => {
-  if (env.NODE_ENV !== "development")
-    throw new ForbiddenError("api_errors.auth.users.only_dev");
+  if (env.NODE_ENV !== "development") throw new ForbiddenError("api_errors.auth.users.only_dev");
 
   return next({
     context,
@@ -111,10 +101,8 @@ const devOnly = o.middleware(({ context, next }) => {
 
 export const protectedProcedure = publicProcedure.use(requireAuth);
 export const rootOnlyProcedure = publicProcedure.use(rootOnly);
-export const requireOrganizationProcedure =
-  publicProcedure.use(requireOrganization);
-export const withOrganizationIdsProcedure =
-  publicProcedure.use(withOrganizationIds);
+export const requireOrganizationProcedure = publicProcedure.use(requireOrganization);
+export const withOrganizationIdsProcedure = publicProcedure.use(withOrganizationIds);
 export const devOnlyProcedure = publicProcedure.use(devOnly);
 export function hasPermissionProcedure(permission: PermissionsRecord) {
   return publicProcedure.use(hasPermission(permission));

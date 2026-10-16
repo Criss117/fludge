@@ -1,6 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
-import { useOrpc } from "@fludge/client/providers/orpc.provider";
 import { useContainer } from "@fludge/client/providers/container.provider";
+import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import { useMutation } from "@tanstack/react-query";
+
 import { useInvalidateCustomers } from "../queries/use-find-customers";
 import { useInvalidateSales } from "../queries/use-find-sales";
 
@@ -12,9 +13,7 @@ export function useCreateCustomerMutation() {
   return useMutation(
     orpc.customer.commands.create.mutationOptions({
       onSuccess: async (newCustomer) => {
-        await commerceContainer.repositories.customerRepository.save(
-          newCustomer,
-        );
+        await commerceContainer.repositories.customerRepository.save(newCustomer);
 
         invalidateCustomers.invalidateList();
       },
@@ -30,9 +29,7 @@ export function useUpdateCustomerMutation() {
   return useMutation(
     orpc.customer.commands.update.mutationOptions({
       onSuccess: async (updatedCustomer) => {
-        await commerceContainer.repositories.customerRepository.save(
-          updatedCustomer,
-        );
+        await commerceContainer.repositories.customerRepository.save(updatedCustomer);
 
         invalidateCustomers.invalidateList();
         invalidateCustomers.invalidateDetail(updatedCustomer.id);

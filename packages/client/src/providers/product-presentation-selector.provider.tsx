@@ -1,5 +1,6 @@
-import type { ProductDetail } from "../catalog/domain/entities";
 import { createContext, use, useState } from "react";
+
+import type { ProductDetail } from "../catalog/domain/entities";
 
 export interface ProductPresentationSelectorRef {
   open: (product: ProductDetail) => void;
@@ -26,17 +27,11 @@ interface Context {
 
 const ProductPresentationSelectorContext = createContext<Context | null>(null);
 
-export function ProductPresentationSelectorProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [selectedProduct, setSelectedProduct] =
-    useState<SelectedProduct | null>(null);
+export function ProductPresentationSelectorProvider({ children }: { children: React.ReactNode }) {
+  const [selectedProduct, setSelectedProduct] = useState<SelectedProduct | null>(null);
 
   const isSheetOpen = selectedProduct !== null;
-  const selectedPresentations =
-    selectedProduct?.presentations.filter((p) => p.selected) ?? [];
+  const selectedPresentations = selectedProduct?.presentations.filter((p) => p.selected) ?? [];
 
   const onOpenSheetChange = (v: boolean) => {
     if (v) setSelectedProduct(null);
@@ -56,8 +51,7 @@ export function ProductPresentationSelectorProvider({
     const updatedProduct: SelectedProduct = {
       ...selectedProduct,
       presentations: selectedProduct.presentations.map((p) => {
-        if (p.id === presentationId)
-          return { ...p, selected: p.selected ? !p.selected : true };
+        if (p.id === presentationId) return { ...p, selected: p.selected ? !p.selected : true };
 
         return p;
       }),
@@ -87,9 +81,7 @@ export function useProductPresentationSelector() {
   const context = use(ProductPresentationSelectorContext);
 
   if (!context) {
-    throw new Error(
-      "useProductPresentation must be used within a ProductPresentationProvider",
-    );
+    throw new Error("useProductPresentation must be used within a ProductPresentationProvider");
   }
 
   return context;

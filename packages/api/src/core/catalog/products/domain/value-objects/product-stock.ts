@@ -23,40 +23,24 @@ export class ProductStock {
   }
 
   public toggleAllowNegativeStock() {
-    return new ProductStock(
-      this._stock,
-      this._minStock,
-      !this._allowNegativeStock,
-    );
+    return new ProductStock(this._stock, this._minStock, !this._allowNegativeStock);
   }
 
   public increaseStock(amount: number) {
     if (amount < 0)
-      throw new InvalidAmountException(
-        "api_errors.catalog.products.amount_must_be_positive",
-      );
+      throw new InvalidAmountException("api_errors.catalog.products.amount_must_be_positive");
 
-    return new ProductStock(
-      this._stock + amount,
-      this._minStock,
-      this._allowNegativeStock,
-    );
+    return new ProductStock(this._stock + amount, this._minStock, this._allowNegativeStock);
   }
 
   public decreaseStock(amount: number) {
     if (amount < 0)
-      throw new InvalidAmountException(
-        "api_errors.catalog.products.amount_must_be_positive",
-      );
+      throw new InvalidAmountException("api_errors.catalog.products.amount_must_be_positive");
 
     if (!this._allowNegativeStock && this._stock - amount < 0)
       throw new InsufficientStockException();
 
-    return new ProductStock(
-      this._stock - amount,
-      this._minStock,
-      this._allowNegativeStock,
-    );
+    return new ProductStock(this._stock - amount, this._minStock, this._allowNegativeStock);
   }
 
   public updateMinStock(newMinStock: number): ProductStock {

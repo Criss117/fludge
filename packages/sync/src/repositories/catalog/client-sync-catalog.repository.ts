@@ -1,7 +1,4 @@
-import type {
-  CatalogSyncCursors,
-  CatalogSyncResult,
-} from "@fludge/sync/types/catalog.types";
+import type { CatalogSyncCursors, CatalogSyncResult } from "@fludge/sync/types/catalog.types";
 
 export interface ClientSyncCatalogRepository {
   getLastSyncedAt(): Promise<CatalogSyncCursors>;
@@ -10,7 +7,5 @@ export interface ClientSyncCatalogRepository {
 }
 
 export interface HttpClientSyncCatalogRepository {
-  findLastSyncedAt(
-    lastSyncedAt: CatalogSyncCursors,
-  ): Promise<CatalogSyncResult>;
+  findLastSyncedAt(lastSyncedAt: CatalogSyncCursors): Promise<CatalogSyncResult>;
 }

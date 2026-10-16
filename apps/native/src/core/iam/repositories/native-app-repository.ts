@@ -1,16 +1,16 @@
-import type { DatabaseService } from "@/integrations/db";
 import type { AppRepository } from "@fludge/client/iam/domain/app.repository";
 import type { OrganizationSummary } from "@fludge/client/iam/domain/entities";
-
-import {
+import type {
   app,
   APP_ID,
   AppInsert,
-  defaultSyncState,
   type AppSelect,
+  defaultSyncState,
 } from "@fludge/db/local-schemas/app.schema";
 import { localOrganization } from "@fludge/db/local-schemas/shared.schema";
 import { eq, getColumns } from "drizzle-orm";
+
+import type { DatabaseService } from "@/integrations/db";
 
 export class NativeAppRepository implements AppRepository {
   constructor(private readonly db: DatabaseService) {}
@@ -26,10 +26,7 @@ export class NativeAppRepository implements AppRepository {
         activeOrganization: getColumns(localOrganization),
       })
       .from(app)
-      .leftJoin(
-        localOrganization,
-        eq(app.activeOrganizationId, localOrganization.id),
-      )
+      .leftJoin(localOrganization, eq(app.activeOrganizationId, localOrganization.id))
       .where(eq(app.id, APP_ID))
       .limit(1)
       .all();

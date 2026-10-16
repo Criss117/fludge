@@ -1,8 +1,8 @@
-import type { z } from "zod";
+import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import type { AuthService } from "@fludge/auth";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { updateUserInfoValidator } from "@fludge/utils/validators/auth.validators";
-import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
+import type { z } from "zod";
 
 export const updateUserInfoCommand = updateUserInfoValidator;
 
@@ -22,7 +22,6 @@ export class UpdateUserInfoCommand {
       }),
     );
 
-    if (err)
-      throw new InternalServerError(err, "api_errors.auth.users.isr_on_update");
+    if (err) throw new InternalServerError(err, "api_errors.auth.users.isr_on_update");
   }
 }

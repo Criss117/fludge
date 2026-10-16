@@ -1,7 +1,3 @@
-import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
-
 import {
   Geist_100Thin,
   Geist_200ExtraLight,
@@ -13,6 +9,9 @@ import {
   Geist_800ExtraBold,
   Geist_900Black,
 } from "@expo-google-fonts/geist";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
 
 SplashScreen.preventAutoHideAsync();
 

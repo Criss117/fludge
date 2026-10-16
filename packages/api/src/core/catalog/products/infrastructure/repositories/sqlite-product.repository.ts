@@ -10,25 +10,16 @@ import {
   productPresentation,
   type ProductPresentationSelect,
 } from "@fludge/db/schema/catalog.schema";
-import {
-  buildConflictUpdateColumn,
-  jsonObject,
-} from "@fludge/db/utils/build-queries";
+import { buildConflictUpdateColumn, jsonObject } from "@fludge/db/utils/build-queries";
 import { err, ok, tryCatch } from "@fludge/utils/trycatch";
 import { and, eq, getColumns, inArray, sql } from "drizzle-orm";
 
-export class SQLiteProductRepository
-  extends TransactionalRepository
-  implements ProductRepository
-{
+export class SQLiteProductRepository extends TransactionalRepository implements ProductRepository {
   constructor(private readonly db: DatabaseService) {
     super(db);
   }
 
-  private async find(
-    organizationId: string,
-    filter: { id?: string; ids?: string[] },
-  ) {
+  private async find(organizationId: string, filter: { id?: string; ids?: string[] }) {
     const [rows, errFind] = await tryCatch(
       this.db
         .select({
@@ -40,10 +31,7 @@ export class SQLiteProductRepository
           `.as("presentations"),
         })
         .from(product)
-        .leftJoin(
-          productPresentation,
-          eq(productPresentation.productId, product.id),
-        )
+        .leftJoin(productPresentation, eq(productPresentation.productId, product.id))
         .where(
           and(
             eq(product.organizationId, organizationId),
@@ -58,13 +46,13 @@ export class SQLiteProductRepository
 
     return ok(
       rows.map((row) => {
-        const presentations = (
-          JSON.parse(row.presentations) as ProductPresentationSelect[]
-        ).map((presentation) => ({
-          ...presentation,
-          createdAt: new Date(presentation.createdAt),
-          updatedAt: new Date(presentation.updatedAt),
-        }));
+        const presentations = (JSON.parse(row.presentations) as ProductPresentationSelect[]).map(
+          (presentation) => ({
+            ...presentation,
+            createdAt: new Date(presentation.createdAt),
+            updatedAt: new Date(presentation.updatedAt),
+          }),
+        );
 
         return Product.reconstitute({ ...row, presentations });
       }),
@@ -135,13 +123,8 @@ export class SQLiteProductRepository
     return ok(undefined);
   }
 
-  public async saveOnlyProduct(
-    productEntity: Product | Product[],
-    options?: Options,
-  ) {
-    const products = Array.isArray(productEntity)
-      ? productEntity
-      : [productEntity];
+  public async saveOnlyProduct(productEntity: Product | Product[], options?: Options) {
+    const products = Array.isArray(productEntity) ? productEntity : [productEntity];
 
     const db = options?.tx ?? this.db;
 

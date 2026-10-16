@@ -1,19 +1,13 @@
+import { Column, HorizontalDivider, Host, Row } from "@expo/ui/jetpack-compose";
+import type { GroupDetail } from "@fludge/client/iam/domain/entities";
+import type { TranslationKey } from "@fludge/i18n/index";
+import type { Resource } from "@fludge/utils/permissions/data";
+import { Permissions } from "@fludge/utils/permissions/index";
+import { useTranslation } from "react-i18next";
+
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
-import {
-  AssistChip,
-  Column,
-  HorizontalDivider,
-  Host,
-  Row,
-} from "@expo/ui/jetpack-compose";
-import type { GroupDetail } from "@fludge/client/iam/domain/entities";
-import { TranslationKey } from "@fludge/i18n/index";
-import { Resource } from "@fludge/utils/permissions/data";
-import { Permissions } from "@fludge/utils/permissions/index";
-import { useTranslation } from "react-i18next";
-import { View } from "react-native";
 
 interface Props {
   group: GroupDetail;
@@ -23,9 +17,7 @@ export function PermissionsListSection({ group }: Props) {
   const colors = useThemeColor();
   const { t } = useTranslation();
 
-  const permissionsRecord = Object.entries(
-    Permissions.fromList(group.permissions).toRecord(),
-  );
+  const permissionsRecord = Object.entries(Permissions.fromList(group.permissions).toRecord());
 
   return (
     <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
@@ -60,9 +52,7 @@ export function PermissionsListSection({ group }: Props) {
                       }}
                     >
                       <ThemedNativeText>{t(nameKey)}: </ThemedNativeText>
-                      <ThemedNativeText variant="muted">
-                        {t(descriptionKey)}
-                      </ThemedNativeText>
+                      <ThemedNativeText variant="muted">{t(descriptionKey)}</ThemedNativeText>
                     </Row>
                   );
                 })}

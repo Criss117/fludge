@@ -1,4 +1,3 @@
-import type { z } from "zod";
 import type { CategoryUniquenessValidator } from "@fludge/api/core/catalog/categories/application/services/category-uniqueness-validator.service";
 import { Category } from "@fludge/api/core/catalog/categories/domain/entities/category.entity";
 import { CategoryAlreadyExistsException } from "@fludge/api/core/catalog/categories/domain/exceptions/category-already-exists.exception";
@@ -6,6 +5,7 @@ import type { CategoryRepository } from "@fludge/api/core/catalog/categories/dom
 import type { UserAuthContext } from "@fludge/api/core/iam/domain/entities/user-auth-context.entity";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { createCategoryValidator } from "@fludge/utils/validators/category.validators";
+import type { z } from "zod";
 
 export const createCategoryCommand = createCategoryValidator;
 
@@ -25,33 +25,24 @@ export class CreateCategoryCommand {
       createdBy: authContext.member.id,
     });
 
-    const [uniqueness, errUniqueness] =
-      await this.categoryUniquenessValidator.validateUniqueFields(
-        authContext.organizationId.toString(),
-        {
-          name: category.values.name,
-          slug: category.values.slug,
-        },
-      );
+    const [uniqueness, errUniqueness] = await this.categoryUniquenessValidator.validateUniqueFields(
+      authContext.organizationId.toString(),
+      {
+        name: category.values.name,
+        slug: category.values.slug,
+      },
+    );
 
     if (errUniqueness)
-      throw new InternalServerError(
-        errUniqueness,
-        "api_errors.catalog.categories.isr_on_find",
-      );
+      throw new InternalServerError(errUniqueness, "api_errors.catalog.categories.isr_on_find");
 
     if (uniqueness.nameTaken || uniqueness.slugTaken)
-      throw new CategoryAlreadyExistsException(
-        "api_errors.catalog.categories.name_taken",
-      );
+      throw new CategoryAlreadyExistsException("api_errors.catalog.categories.name_taken");
 
     const [, errSaving] = await this.categoryRepository.save(category);
 
     if (errSaving)
-      throw new InternalServerError(
-        errSaving,
-        "api_errors.catalog.categories.isr_on_save",
-      );
+      throw new InternalServerError(errSaving, "api_errors.catalog.categories.isr_on_save");
 
     return category.values;
   }

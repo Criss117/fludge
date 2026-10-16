@@ -1,17 +1,18 @@
-import { LinkFabButton } from "@/core/shared/components/link-fab-button";
-import { TextInput } from "@/core/shared/components/text-input";
-import { ThemedView } from "@/core/shared/components/themed-view";
-import { SPACING } from "@/lib/sp";
 import { Host } from "@expo/ui";
 import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
-import { Suspense, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
-import { useTranslation } from "react-i18next";
 import { useFindAllGroups } from "@fludge/client/iam/queries/use-find-groups";
 import { FlashList } from "@shopify/flash-list";
+import { Suspense, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, View } from "react-native";
+
 import { GroupCard } from "@/core/iam/components/group-card";
+import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
+import { LinkFabButton } from "@/core/shared/components/link-fab-button";
+import { TextInput } from "@/core/shared/components/text-input";
 import { ThemedText } from "@/core/shared/components/themed-text";
+import { ThemedView } from "@/core/shared/components/themed-view";
+import { SPACING } from "@/lib/sp";
 
 function GroupsListSection({ searchQuery }: { searchQuery: string }) {
   const { t } = useTranslation();
@@ -74,9 +75,7 @@ export function GroupsScreen() {
         </Suspense>
       </View>
 
-      <LinkFabButton
-        action={{ type: "push", href: "/dashboard/groups/create" }}
-      />
+      <LinkFabButton action={{ type: "push", href: "/dashboard/groups/create" }} />
     </ThemedView>
   );
 }

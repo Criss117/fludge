@@ -2,9 +2,7 @@ import { BadRequestError } from "@fludge/api/core/shared/exceptions/base-excepti
 import type { TranslationKey } from "@fludge/i18n/index";
 
 export class InvalidPaymentAmountException extends BadRequestError {
-  constructor(
-    message: TranslationKey = "api_errors.customer_payments.invalid_amount",
-  ) {
+  constructor(message: TranslationKey = "api_errors.customer_payments.invalid_amount") {
     super(message);
   }
 }

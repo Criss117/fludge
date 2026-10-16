@@ -1,11 +1,10 @@
-import { beforeEach, describe, expect, it } from "bun:test";
-
 import { DeleteGroupsCommand } from "@fludge/api/core/iam/application/commands/delete-groups.command";
 import { Group } from "@fludge/api/core/iam/domain/entities/group.entity";
 import { Organization } from "@fludge/api/core/iam/domain/entities/organization.entity";
 import { InternalServerError } from "@fludge/api/core/shared/exceptions/base-exception";
 import { Permissions } from "@fludge/utils/permissions/index";
 import { UUID } from "@fludge/utils/uuid";
+import { beforeEach, describe, expect, it } from "bun:test";
 
 import { makeAuthContext, makeOwner } from "../../factories";
 import { InMemoryGroupRepository } from "../../infrastructure/in-memory-group.repository";
@@ -58,14 +57,8 @@ describe("DeleteGroupsCommand", () => {
       );
       expect(groupRepository.size).toBe(0);
 
-      const [storedOne] = await groupRepository.findById(
-        org.id.toString(),
-        groupOne.id.toString(),
-      );
-      const [storedTwo] = await groupRepository.findById(
-        org.id.toString(),
-        groupTwo.id.toString(),
-      );
+      const [storedOne] = await groupRepository.findById(org.id.toString(), groupOne.id.toString());
+      const [storedTwo] = await groupRepository.findById(org.id.toString(), groupTwo.id.toString());
 
       expect(storedOne).toBeNull();
       expect(storedTwo).toBeNull();
@@ -83,10 +76,7 @@ describe("DeleteGroupsCommand", () => {
 
       expect(groupRepository.size).toBe(1);
 
-      const [storedTwo] = await groupRepository.findById(
-        org.id.toString(),
-        groupTwo.id.toString(),
-      );
+      const [storedTwo] = await groupRepository.findById(org.id.toString(), groupTwo.id.toString());
 
       expect(storedTwo).not.toBeNull();
     });
