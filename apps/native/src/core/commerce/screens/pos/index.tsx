@@ -15,8 +15,18 @@ import { FlashList } from "@shopify/flash-list";
 import { useCallback, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SaleProductCard } from "@/core/commerce/components/sale-product-card";
+import { useTicketStore } from "@fludge/client/providers/ticket-store.provider";
+import type { ProductSummary } from "@fludge/client/catalog/domain/entities";
+import type { AddCatalogTicketProduct } from "@fludge/client/commerce/domain/local-ticket.repository";
+import { ProductPickerSheet } from "@/core/commerce/components/product-picker";
 
-function ProductList({ searchQuery }: { searchQuery: string }) {
+function ProductList({
+  searchQuery,
+  selectProduct,
+}: {
+  searchQuery: string;
+  selectProduct: (product: ProductSummary) => void;
+}) {
   const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useFindProducts({
       searchQuery,
@@ -38,13 +48,22 @@ function ProductList({ searchQuery }: { searchQuery: string }) {
 
   return (
     <FlashList
+      contentContainerStyle={styles.listContentContainer}
       data={items}
       numColumns={2}
       keyExtractor={(i) => i.id}
       showsVerticalScrollIndicator={false}
       ItemSeparatorComponent={() => <View style={{ height: SPACING.sm }} />}
-      renderItem={({ item }) => (
-        <SaleProductCard product={item} onPress={() => {}} />
+      renderItem={({ item, index }) => (
+        <View
+          style={{
+            flex: 1,
+            paddingLeft: index % 2 === 0 ? 0 : SPACING.sm / 2,
+            paddingRight: index % 2 === 0 ? SPACING.sm / 2 : 0,
+          }}
+        >
+          <SaleProductCard product={item} onPress={selectProduct} />
+        </View>
       )}
       onEndReachedThreshold={0.3}
       onEndReached={handleEndReached}
@@ -52,9 +71,65 @@ function ProductList({ searchQuery }: { searchQuery: string }) {
   );
 }
 
-export function POSScreen() {
+function Footer() {
+  const activeTicketTotal = useTicketStore((s) => s.activeTicketTotal);
   const colors = useThemeColor();
+
+  return (
+    <View style={styles.footer}>
+      <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
+        <Button
+          colors={{
+            containerColor: colors.primary,
+          }}
+        >
+          <ThemedNativeText color={colors.onPrimary}>
+            Cobrar ({activeTicketTotal})
+          </ThemedNativeText>
+        </Button>
+      </Host>
+      <KeyboardSpacerView />
+    </View>
+  );
+}
+
+function useAddProductToTicket() {
+  const addTicketProduct = useTicketStore((s) => s.addTicketProduct);
+
+  return (
+    product: ProductSummary,
+    presentations: ProductSummary["presentations"],
+  ) => {
+    const ticketProduct: AddCatalogTicketProduct = {
+      type: "catalog",
+      name: product.name,
+      stock: product.stock,
+      minStock: product.minStock,
+      allowNegativeStock: product.allowNegativeStock,
+      productId: product.id,
+      presentations: presentations.map((presentation) => ({
+        conversionFactor: presentation.conversionFactor,
+        name: presentation.name,
+        originalPrice: presentation.priceSale,
+        priceSale: presentation.priceSale,
+        quantity: 1,
+        wholesalePrice: presentation.priceWholesale ?? null,
+        presentationId: presentation.id,
+      })),
+    };
+
+    addTicketProduct(ticketProduct);
+  };
+}
+
+export function POSScreen() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<ProductSummary | null>(
+    null,
+  );
+  const addToTicket = useAddProductToTicket();
+
+  const handleCloseSheet = () => setSelectedProduct(null);
 
   return (
     <ThemedView style={styles.container}>
@@ -85,21 +160,20 @@ export function POSScreen() {
       </View>
 
       <View style={styles.productListContainer}>
-        <ProductList searchQuery={searchQuery} />
+        <ProductList
+          searchQuery={searchQuery}
+          selectProduct={setSelectedProduct}
+        />
       </View>
 
-      <View style={styles.footer}>
-        <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
-          <Button
-            colors={{
-              containerColor: colors.primary,
-            }}
-          >
-            <ThemedNativeText color={colors.onPrimary}>Cobrar</ThemedNativeText>
-          </Button>
-        </Host>
-        <KeyboardSpacerView />
-      </View>
+      <Footer />
+
+      <ProductPickerSheet
+        product={selectedProduct}
+        isOpen={selectedProduct !== null}
+        onClose={handleCloseSheet}
+        onAdd={addToTicket}
+      />
     </ThemedView>
   );
 }
@@ -118,7 +192,9 @@ const styles = StyleSheet.create({
   },
   productListContainer: {
     paddingTop: SPACING.md,
-    paddingHorizontal: SPACING.sm,
     flex: 1,
+  },
+  listContentContainer: {
+    paddingHorizontal: SPACING.sm,
   },
 });

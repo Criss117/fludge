@@ -1,7 +1,7 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "06d94059-6850-4fc6-ae53-6edfddc4f4a9",
+  "id": "7897cf57-9aeb-4184-ac90-cae27bcd41c3",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -71,10 +71,6 @@
       "entityType": "tables"
     },
     {
-      "name": "ticket_product_presentation",
-      "entityType": "tables"
-    },
-    {
       "type": "text",
       "notNull": false,
       "autoincrement": false,
@@ -118,7 +114,7 @@
       "type": "text",
       "notNull": true,
       "autoincrement": false,
-      "default": "'{\"organizations\":{\"cursor\":null,\"lastSyncedAt\":\"2026-10-15T15:39:41.146Z\"},\"groups\":{\"cursor\":null,\"lastSyncedAt\":\"2026-10-15T15:39:41.146Z\"},\"members\":{\"cursor\":null,\"lastSyncedAt\":\"2026-10-15T15:39:41.146Z\"},\"products\":{\"cursor\":null,\"lastSyncedAt\":\"2026-10-15T15:39:41.146Z\"},\"categories\":{\"cursor\":null,\"lastSyncedAt\":\"2026-10-15T15:39:41.146Z\"},\"sales\":{\"cursor\":null,\"lastSyncedAt\":\"2026-10-15T15:39:41.146Z\"},\"customers\":{\"cursor\":null,\"lastSyncedAt\":\"2026-10-15T15:39:41.146Z\"}}'",
+      "default": null,
       "generated": null,
       "name": "sync_state",
       "entityType": "columns",
@@ -1610,109 +1606,9 @@
       "autoincrement": false,
       "default": null,
       "generated": null,
-      "name": "organization_id",
+      "name": "presentations",
       "entityType": "columns",
       "table": "ticket_product"
-    },
-    {
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "id",
-      "entityType": "columns",
-      "table": "ticket_product_presentation"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "ticket_product_id",
-      "entityType": "columns",
-      "table": "ticket_product_presentation"
-    },
-    {
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "presentation_id",
-      "entityType": "columns",
-      "table": "ticket_product_presentation"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "name",
-      "entityType": "columns",
-      "table": "ticket_product_presentation"
-    },
-    {
-      "type": "real",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "original_price",
-      "entityType": "columns",
-      "table": "ticket_product_presentation"
-    },
-    {
-      "type": "real",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "wholesale_price",
-      "entityType": "columns",
-      "table": "ticket_product_presentation"
-    },
-    {
-      "type": "real",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "conversion_factor",
-      "entityType": "columns",
-      "table": "ticket_product_presentation"
-    },
-    {
-      "type": "real",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "price_sale",
-      "entityType": "columns",
-      "table": "ticket_product_presentation"
-    },
-    {
-      "type": "real",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "quantity",
-      "entityType": "columns",
-      "table": "ticket_product_presentation"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "organization_id",
-      "entityType": "columns",
-      "table": "ticket_product_presentation"
     },
     {
       "columns": [
@@ -2256,66 +2152,6 @@
     },
     {
       "columns": [
-        "organization_id"
-      ],
-      "tableTo": "organization",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "nameExplicit": false,
-      "name": "fk_ticket_product_organization_id_organization_id_fk",
-      "entityType": "fks",
-      "table": "ticket_product"
-    },
-    {
-      "columns": [
-        "ticket_product_id"
-      ],
-      "tableTo": "ticket_product",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "nameExplicit": false,
-      "name": "fk_ticket_product_presentation_ticket_product_id_ticket_product_id_fk",
-      "entityType": "fks",
-      "table": "ticket_product_presentation"
-    },
-    {
-      "columns": [
-        "presentation_id"
-      ],
-      "tableTo": "product_presentation",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "nameExplicit": false,
-      "name": "fk_ticket_product_presentation_presentation_id_product_presentation_id_fk",
-      "entityType": "fks",
-      "table": "ticket_product_presentation"
-    },
-    {
-      "columns": [
-        "organization_id"
-      ],
-      "tableTo": "organization",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "nameExplicit": false,
-      "name": "fk_ticket_product_presentation_organization_id_organization_id_fk",
-      "entityType": "fks",
-      "table": "ticket_product_presentation"
-    },
-    {
-      "columns": [
         "group_id",
         "member_id"
       ],
@@ -2457,15 +2293,6 @@
       "nameExplicit": false,
       "name": "ticket_product_pk",
       "table": "ticket_product",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "ticket_product_presentation_pk",
-      "table": "ticket_product_presentation",
       "entityType": "pks"
     },
     {
@@ -3029,24 +2856,6 @@
       "name": "ticket_product_unique_idx",
       "entityType": "indexes",
       "table": "ticket_product"
-    },
-    {
-      "columns": [
-        {
-          "value": "ticket_product_id",
-          "isExpression": false
-        },
-        {
-          "value": "presentation_id",
-          "isExpression": false
-        }
-      ],
-      "isUnique": true,
-      "where": null,
-      "origin": "manual",
-      "name": "presentation_unique_idx",
-      "entityType": "indexes",
-      "table": "ticket_product_presentation"
     },
     {
       "columns": [

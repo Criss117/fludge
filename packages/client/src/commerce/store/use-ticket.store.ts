@@ -31,6 +31,9 @@ export type TicketState = {
 };
 
 const VERSION = 1;
+function generateId(): string {
+  return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 11)}`;
+}
 
 function getTicketProductStockQuantity(product: TicketProduct): number {
   return product.presentations.reduce(
@@ -65,7 +68,7 @@ function mergeTicketProduct(
     if (!existingPresentation) {
       presentations.push({
         ...incomingPresentation,
-        id: crypto.randomUUID(),
+        id: generateId(),
       });
       continue;
     }
@@ -81,7 +84,7 @@ function mergeTicketProduct(
 
 function makeDefaultTicket(organizationId: string): Ticket {
   return {
-    id: crypto.randomUUID(),
+    id: generateId(),
     isActive: true,
     name: "Ticket-1",
     organizationId,
@@ -191,7 +194,7 @@ export function createTicketStore(
             }
 
             const newTicket: Ticket = {
-              id: crypto.randomUUID(),
+              id: generateId(),
               isActive: true,
               name,
               organizationId,
@@ -282,12 +285,12 @@ export function createTicketStore(
             if (product.type === "adHoc") {
               const newProduct: TicketProduct = {
                 ...product,
-                id: crypto.randomUUID(),
+                id: generateId(),
                 ticketId: activeTicket.id,
                 productId: null,
                 presentations: product.presentations.map((presentation) => ({
                   ...presentation,
-                  id: crypto.randomUUID(),
+                  id: generateId(),
                   presentationId: null,
                 })),
               };
@@ -299,7 +302,7 @@ export function createTicketStore(
               );
 
               if (!existingProduct) {
-                const nextProductId = crypto.randomUUID();
+                const nextProductId = generateId();
 
                 const newProduct: TicketProduct = {
                   ...product,
@@ -307,7 +310,7 @@ export function createTicketStore(
                   ticketId: activeTicket.id,
                   presentations: product.presentations.map((presentation) => ({
                     ...presentation,
-                    id: crypto.randomUUID(),
+                    id: generateId(),
                     ticketProductId: nextProductId,
                   })),
                 };

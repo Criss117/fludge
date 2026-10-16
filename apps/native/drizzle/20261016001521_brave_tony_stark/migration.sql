@@ -3,7 +3,7 @@ CREATE TABLE `app` (
 	`theme` text DEFAULT 'light' NOT NULL,
 	`last_logged_user_id` text,
 	`active_organization_id` text,
-	`sync_state` text DEFAULT '{"organizations":{"cursor":null,"lastSyncedAt":"2026-10-15T15:39:41.146Z"},"groups":{"cursor":null,"lastSyncedAt":"2026-10-15T15:39:41.146Z"},"members":{"cursor":null,"lastSyncedAt":"2026-10-15T15:39:41.146Z"},"products":{"cursor":null,"lastSyncedAt":"2026-10-15T15:39:41.146Z"},"categories":{"cursor":null,"lastSyncedAt":"2026-10-15T15:39:41.146Z"},"sales":{"cursor":null,"lastSyncedAt":"2026-10-15T15:39:41.146Z"},"customers":{"cursor":null,"lastSyncedAt":"2026-10-15T15:39:41.146Z"}}' NOT NULL,
+	`sync_state` text NOT NULL,
 	`session` text,
 	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
 	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL
@@ -250,26 +250,9 @@ CREATE TABLE `ticket_product` (
 	`ticket_id` text NOT NULL,
 	`product_id` text,
 	`type` text NOT NULL,
-	`organization_id` text NOT NULL,
+	`presentations` text NOT NULL,
 	CONSTRAINT `fk_ticket_product_ticket_id_ticket_id_fk` FOREIGN KEY (`ticket_id`) REFERENCES `ticket`(`id`) ON DELETE CASCADE,
-	CONSTRAINT `fk_ticket_product_product_id_product_id_fk` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`) ON DELETE SET NULL,
-	CONSTRAINT `fk_ticket_product_organization_id_organization_id_fk` FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON DELETE CASCADE
-);
---> statement-breakpoint
-CREATE TABLE `ticket_product_presentation` (
-	`id` text PRIMARY KEY,
-	`ticket_product_id` text NOT NULL,
-	`presentation_id` text,
-	`name` text NOT NULL,
-	`original_price` real NOT NULL,
-	`wholesale_price` real,
-	`conversion_factor` real NOT NULL,
-	`price_sale` real NOT NULL,
-	`quantity` real NOT NULL,
-	`organization_id` text NOT NULL,
-	CONSTRAINT `fk_ticket_product_presentation_ticket_product_id_ticket_product_id_fk` FOREIGN KEY (`ticket_product_id`) REFERENCES `ticket_product`(`id`) ON DELETE CASCADE,
-	CONSTRAINT `fk_ticket_product_presentation_presentation_id_product_presentation_id_fk` FOREIGN KEY (`presentation_id`) REFERENCES `product_presentation`(`id`) ON DELETE CASCADE,
-	CONSTRAINT `fk_ticket_product_presentation_organization_id_organization_id_fk` FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON DELETE CASCADE
+	CONSTRAINT `fk_ticket_product_product_id_product_id_fk` FOREIGN KEY (`product_id`) REFERENCES `product`(`id`) ON DELETE SET NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `category_organization_name_unique` ON `category` (`organization_id`,`name`);--> statement-breakpoint
@@ -304,5 +287,4 @@ CREATE INDEX `presentation_organization_status_idx` ON `product_presentation` (`
 CREATE UNIQUE INDEX `sale_payments_org_customer_payment_idx` ON `sale_payment` (`sale_id`,`customer_payment_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `ticket_organization_name_unique` ON `ticket` (`organization_id`,`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `ticket_organization_active_unique` ON `ticket` (`organization_id`,`is_active`) WHERE "ticket"."is_active" = 1;--> statement-breakpoint
-CREATE UNIQUE INDEX `ticket_product_unique_idx` ON `ticket_product` (`ticket_id`,`product_id`);--> statement-breakpoint
-CREATE UNIQUE INDEX `presentation_unique_idx` ON `ticket_product_presentation` (`ticket_product_id`,`presentation_id`);
+CREATE UNIQUE INDEX `ticket_product_unique_idx` ON `ticket_product` (`ticket_id`,`product_id`);
