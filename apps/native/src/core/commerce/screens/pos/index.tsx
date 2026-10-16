@@ -30,6 +30,7 @@ import { useTicketStore } from "@fludge/client/providers/ticket-store.provider";
 import type { ProductSummary } from "@fludge/client/catalog/domain/entities";
 import type { AddCatalogTicketProduct } from "@fludge/client/commerce/domain/local-ticket.repository";
 import { ProductPickerSheet } from "@/core/commerce/components/product-picker";
+import { TicketDetailSheet } from "@/core/commerce/components/ticket-detail-sheet";
 import { useTranslation } from "react-i18next";
 import { formatCurrency } from "@fludge/utils/format-currency";
 import { Icon } from "@/core/shared/components/icon";
@@ -85,7 +86,7 @@ function ProductList({
   );
 }
 
-function Footer() {
+function Footer({ onSeeCart }: { onSeeCart: () => void }) {
   const { t } = useTranslation();
   const activeTicketTotal = useTicketStore((s) => s.activeTicketTotal);
   const colors = useThemeColor();
@@ -113,6 +114,7 @@ function Footer() {
               containerColor: colors.primary,
             }}
             modifiers={[fillMaxWidth()]}
+            onClick={onSeeCart}
           >
             <ThemedNativeText color={colors.onPrimary}>
               {t("screens.pos.see_cart")}
@@ -162,9 +164,12 @@ export function POSScreen() {
   const [selectedProduct, setSelectedProduct] = useState<ProductSummary | null>(
     null,
   );
+  const [isTicketDetailOpen, setIsTicketDetailOpen] = useState(false);
   const addToTicket = useAddProductToTicket();
 
-  const handleCloseSheet = () => setSelectedProduct(null);
+  const handleCloseProductSheet = () => setSelectedProduct(null);
+  const handleOpenTicketDetail = () => setIsTicketDetailOpen(true);
+  const handleCloseTicketDetail = () => setIsTicketDetailOpen(false);
 
   return (
     <ThemedView style={styles.container}>
@@ -201,13 +206,18 @@ export function POSScreen() {
         />
       </View>
 
-      <Footer />
+      <Footer onSeeCart={handleOpenTicketDetail} />
 
       <ProductPickerSheet
         product={selectedProduct}
         isOpen={selectedProduct !== null}
-        onClose={handleCloseSheet}
+        onClose={handleCloseProductSheet}
         onAdd={addToTicket}
+      />
+
+      <TicketDetailSheet
+        isOpen={isTicketDetailOpen}
+        onClose={handleCloseTicketDetail}
       />
     </ThemedView>
   );

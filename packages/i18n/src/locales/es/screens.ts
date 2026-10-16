@@ -168,5 +168,12 @@ export const screens = {
     label: "Nueva venta",
     see_cart: "Ver carrito / Cobrar",
     current_sale: "Venta actual",
+    ticket_summary: {
+      title: "Resumen de la Venta",
+      items_count: "{{count}} productos",
+      total: "Total a Cobrar",
+      clear: "Limpiar",
+      charge: "Cobrar {{total}}",
+    },
   },
 };
