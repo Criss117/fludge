@@ -1,12 +1,7 @@
 import type { AppRepository } from "@fludge/client/iam/domain/app.repository";
 import type { OrganizationSummary } from "@fludge/client/iam/domain/entities";
-import type {
-  app,
-  APP_ID,
-  AppInsert,
-  type AppSelect,
-  defaultSyncState,
-} from "@fludge/db/local-schemas/app.schema";
+import type { AppInsert, AppSelect } from "@fludge/db/local-schemas/app.schema";
+import { app, APP_ID, defaultSyncState } from "@fludge/db/local-schemas/app.schema";
 import { localOrganization } from "@fludge/db/local-schemas/shared.schema";
 import { eq, getColumns } from "drizzle-orm";
 

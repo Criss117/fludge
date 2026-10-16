@@ -33,6 +33,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           },
           closeButtonIconStyle: {
             color: colors.onPrimary,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any,
         }}
       />

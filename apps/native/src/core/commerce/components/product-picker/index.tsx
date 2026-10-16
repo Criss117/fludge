@@ -19,7 +19,7 @@ import {
 } from "@expo/ui/jetpack-compose/modifiers";
 import type { ProductDetail } from "@fludge/client/catalog/domain/entities";
 import { formatCurrency } from "@fludge/utils/format-currency";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
@@ -36,12 +36,6 @@ export function ProductPickerSheet({ product, isOpen, onClose, onAdd }: Props) {
   const sheetRef = useRef<ModalBottomSheetRef>(null);
   const colors = useThemeColor();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    if (isOpen) {
-      setSelectedIds(new Set());
-    }
-  }, [isOpen, product?.id]);
 
   if (!isOpen || !product) return null;
 

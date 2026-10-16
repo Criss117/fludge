@@ -22,14 +22,14 @@ import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
-export type MenuOptions = {
+export type MenuOptionsType = {
   hide?: boolean;
   items?: MenuOptionItem[];
 };
 
 interface Props {
   group: GroupSummary;
-  menuOptions?: MenuOptions;
+  menuOptions?: MenuOptionsType;
 }
 
 interface SelectableGroupCardProps extends Props {
@@ -92,7 +92,7 @@ export function GroupCard({ group, menuOptions }: Props) {
     ];
 
     return baseItems;
-  }, [menuOptions, router]);
+  }, [menuOptions, router, group.id]);
 
   return (
     <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>

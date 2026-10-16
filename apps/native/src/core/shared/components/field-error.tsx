@@ -44,7 +44,7 @@ function useContent({
     return uniqueErrors
       .map((error) => `\u2022 ${error ? t(error.message as TranslationKey) : ""}`)
       .join("\n");
-  }, [children, errors]);
+  }, [children, errors, t]);
 
   return content;
 }

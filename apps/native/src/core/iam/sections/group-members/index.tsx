@@ -43,7 +43,7 @@ export function GroupMembersSection({ group }: Props) {
         },
       );
     },
-    [group],
+    [group, removeMembersFromGroup, mutationToast],
   );
 
   return (

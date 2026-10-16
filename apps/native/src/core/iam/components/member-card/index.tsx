@@ -21,13 +21,14 @@ import { StatusChip } from "@/core/shared/components/status-chip";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
-export type MenuOptions = {
+
+export type MenuOptionsType = {
   hide?: boolean;
   items?: MenuOptionItem[];
 };
 interface Props {
   member: MemberSummary;
-  menuOptions?: MenuOptions;
+  menuOptions?: MenuOptionsType;
 }
 
 interface SelectableMemberCardProps extends Props {
@@ -80,7 +81,7 @@ export function MemberCard({ member, menuOptions }: Props) {
     ];
 
     return baseItems;
-  }, [menuOptions, router]);
+  }, [menuOptions, router, member.id]);
 
   return (
     <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>

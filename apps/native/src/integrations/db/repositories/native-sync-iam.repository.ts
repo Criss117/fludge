@@ -1,5 +1,5 @@
-import type {
-  LocalGroup,
+import {
+  type LocalGroup,
   localGroup,
   localGroupMember,
   type LocalMember,

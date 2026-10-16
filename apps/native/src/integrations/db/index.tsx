@@ -43,6 +43,7 @@ function DrizzleStudio() {
 }
 
 export function DatabaseProvider({ children }: { children: React.ReactNode }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { success, error } = useMigrations(databaseService, migrations as any);
 
   if (error)

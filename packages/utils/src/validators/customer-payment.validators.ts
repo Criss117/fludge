@@ -10,10 +10,10 @@ export const customerPaymentMethodSchema = z.enum(customerPaymentMethodEnum, {
 export const createCustomerPaymentValidator = z.object({
   customerId: uuidSchema,
   amount: z
-    .number<number>({ invalid_type_error: "expected number" })
+    .number({ error: "expected number" })
     .positive("api_errors.customer_payments.amount_must_be_positive"),
   method: customerPaymentMethodSchema,
-  notes: z.string({ invalid_type_error: "expected string" }).nullable().optional(),
+  notes: z.string({ error: "expected string" }).nullable().optional(),
 });
 
 export const cancelCustomerPaymentValidator = z.object({
