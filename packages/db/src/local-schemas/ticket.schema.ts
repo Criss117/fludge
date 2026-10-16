@@ -1,11 +1,5 @@
-import {
-  sqliteTable,
-  text,
-  integer,
-  uniqueIndex,
-} from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { localOrganization, localProduct } from "./shared.schema";
-import { sql } from "drizzle-orm";
 
 export const ticketProductTypeValues = ["catalog", "adHoc"] as const;
 
@@ -25,7 +19,6 @@ export const ticket = sqliteTable(
   {
     id: text("id").primaryKey(),
     name: text("name").notNull(),
-    isActive: integer("is_active", { mode: "boolean" }).notNull(),
     organizationId: text("organization_id")
       .notNull()
       .references(() => localOrganization.id, {
@@ -34,9 +27,6 @@ export const ticket = sqliteTable(
   },
   (t) => [
     uniqueIndex("ticket_organization_name_unique").on(t.organizationId, t.name),
-    uniqueIndex("ticket_organization_active_unique")
-      .on(t.organizationId, t.isActive)
-      .where(sql`${t.isActive} = 1`),
   ],
 );
 

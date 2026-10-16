@@ -1,5 +1,10 @@
 import { createStore } from "zustand";
-import { persist, type StorageValue } from "zustand/middleware";
+import type { TranslationKey } from "@fludge/i18n/index";
+import {
+  persist,
+  type PersistStorage,
+  type StorageValue,
+} from "zustand/middleware";
 import type {
   AddCatalogTicketProduct,
   AddTicketProduct,
@@ -7,21 +12,52 @@ import type {
   Ticket,
   TicketProduct,
 } from "../domain/local-ticket.repository";
-import type { PersistStorage } from "zustand/middleware";
+
+/* -------------------------------------------------------------------------- */
+/*                                   Errores                                  */
+/* -------------------------------------------------------------------------- */
+
+export type TicketErrorCode =
+  | "insufficient_stock"
+  | "product_not_found"
+  | "presentation_not_found"
+  | "invalid_quantity"
+  | "invalid_price";
+
+/**
+ * El mensaje conserva la clave i18n original para no romper la UI existente,
+ * pero ahora también puedes discriminar por `error.code`.
+ */
+export class TicketError extends Error {
+  readonly code: TicketErrorCode;
+
+  constructor(code: TicketErrorCode) {
+    const key = `mutations.tickets.errors.${code}` satisfies TranslationKey;
+
+    super(key);
+    this.name = "TicketError";
+    this.code = code;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                    Tipos                                   */
+/* -------------------------------------------------------------------------- */
 
 export type TicketState = {
   tickets: Ticket[];
   selectedTicketId: string;
-  activeTicket: Ticket | undefined;
-  activeTicketTotal: number;
   switchActiveTicket: (ticketId: string) => void;
   createTicket: () => void;
   removeTicket: (ticketId: string) => void;
-  renameTicket: (ticketId: string, name: string) => void;
+  /** Devuelve `true` si el nombre se aplicó. */
+  renameTicket: (ticketId: string, name: string) => boolean;
   clearTicket: (ticketId: string) => void;
+  /** Lanza `TicketError` si no hay stock suficiente. */
   addTicketProduct: (product: AddTicketProduct) => void;
   removeTicketProduct: (ticketProductId: string) => void;
   removeTicketProductPresentations: (presentationIds: string[]) => void;
+  /** Lanza `TicketError` si los datos son inválidos o no hay stock. */
   updateTicketProductPresentation: (
     ticketProductId: string,
     ticketProductPresentationId: string,
@@ -30,10 +66,44 @@ export type TicketState = {
   ) => void;
 };
 
+/* -------------------------------------------------------------------------- */
+/*                                  Utilidades                                */
+/* -------------------------------------------------------------------------- */
+
 const VERSION = 1;
+
 function generateId(): string {
-  return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 11)}`;
+  return crypto.randomUUID();
 }
+
+function nextTicketName(tickets: Ticket[]): string {
+  const names = new Set(tickets.map((ticket) => ticket.name));
+
+  let number = 1;
+  while (names.has(`Ticket-${number}`)) number++;
+
+  return `Ticket-${number}`;
+}
+
+function makeTicket(organizationId: string, existing: Ticket[]): Ticket {
+  return {
+    id: generateId(),
+    name: nextTicketName(existing),
+    organizationId,
+    items: [],
+  };
+}
+
+/** Elimina restos de modelos antiguos (p. ej. `isActive`) al hidratar. */
+function normalizeTicket(ticket: Ticket): Ticket {
+  const { isActive: _legacy, ...rest } = ticket as Ticket & {
+    isActive?: boolean;
+  };
+
+  return { ...rest, items: rest.items ?? [] };
+}
+
+/* ------------------------------- Stock/total ------------------------------- */
 
 function getTicketProductStockQuantity(product: TicketProduct): number {
   return product.presentations.reduce(
@@ -43,96 +113,127 @@ function getTicketProductStockQuantity(product: TicketProduct): number {
   );
 }
 
-function validateTicketProductStock(product: TicketProduct) {
+function assertStockAvailable(product: TicketProduct): void {
   if (product.allowNegativeStock) return;
 
-  const requestedQuantity = getTicketProductStockQuantity(product);
-
-  if (requestedQuantity > product.stock) {
-    throw new Error("mutations.tickets.errors.insufficient_stock");
+  if (getTicketProductStockQuantity(product) > product.stock) {
+    throw new TicketError("insufficient_stock");
   }
 }
+
+export function computeTicketTotal(ticket: Ticket | undefined): number {
+  if (!ticket) return 0;
+
+  const total = ticket.items.reduce(
+    (acc, item) =>
+      acc +
+      item.presentations.reduce(
+        (sum, presentation) =>
+          sum + presentation.quantity * presentation.priceSale,
+        0,
+      ),
+    0,
+  );
+
+  // Evita ruido de coma flotante (0.1 + 0.2).
+  return Math.round(total * 100) / 100;
+}
+
+/* -------------------------------- Productos -------------------------------- */
 
 function mergeTicketProduct(
   current: TicketProduct,
   incoming: AddCatalogTicketProduct,
 ): TicketProduct {
-  const presentations = [...current.presentations];
+  let presentations = current.presentations;
 
   for (const incomingPresentation of incoming.presentations) {
-    const existingPresentation = presentations.find(
+    const exists = presentations.some(
       (presentation) =>
         presentation.presentationId === incomingPresentation.presentationId,
     );
 
-    if (!existingPresentation) {
-      presentations.push({
-        ...incomingPresentation,
-        id: generateId(),
-      });
-      continue;
-    }
-
-    existingPresentation.quantity += incomingPresentation.quantity;
+    presentations = exists
+      ? presentations.map((presentation) =>
+          presentation.presentationId === incomingPresentation.presentationId
+            ? {
+                ...presentation,
+                quantity: presentation.quantity + incomingPresentation.quantity,
+              }
+            : presentation,
+        )
+      : [...presentations, { ...incomingPresentation, id: generateId() }];
   }
 
-  return {
-    ...current,
-    presentations,
-  };
+  return { ...current, presentations };
 }
 
-function makeDefaultTicket(organizationId: string): Ticket {
-  return {
-    id: generateId(),
-    isActive: true,
-    name: "Ticket-1",
-    organizationId,
-    items: [],
-  };
+function buildNextItems(
+  activeTicket: Ticket,
+  product: AddTicketProduct,
+): TicketProduct[] {
+  if (product.type === "adHoc") {
+    const newProduct: TicketProduct = {
+      ...product,
+      id: generateId(),
+      ticketId: activeTicket.id,
+      productId: null,
+      presentations: product.presentations.map((presentation) => ({
+        ...presentation,
+        id: generateId(),
+        presentationId: null,
+      })),
+    };
+
+    return [...activeTicket.items, newProduct];
+  }
+
+  const existingProduct = activeTicket.items.find(
+    (item) => item.productId === product.productId,
+  );
+
+  if (!existingProduct) {
+    const nextProductId = generateId();
+
+    const newProduct: TicketProduct = {
+      ...product,
+      id: nextProductId,
+      ticketId: activeTicket.id,
+      presentations: product.presentations.map((presentation) => ({
+        ...presentation,
+        id: generateId(),
+        ticketProductId: nextProductId,
+      })),
+    };
+
+    // Antes no se validaba el stock en la primera adición.
+    assertStockAvailable(newProduct);
+
+    return [...activeTicket.items, newProduct];
+  }
+
+  const mergedProduct = mergeTicketProduct(existingProduct, product);
+
+  assertStockAvailable(mergedProduct);
+
+  return activeTicket.items.map((item) =>
+    item.id === existingProduct.id ? mergedProduct : item,
+  );
 }
 
-function ensureOneActiveTicket(tickets: Ticket[]): Ticket[] {
-  if (tickets.length === 0) return tickets;
+/* -------------------------------------------------------------------------- */
+/*                                  Selectores                                */
+/* -------------------------------------------------------------------------- */
 
-  const someActive = tickets.some((ticket) => ticket.isActive);
+export const selectActiveTicket = (state: TicketState): Ticket | undefined =>
+  state.tickets.find((ticket) => ticket.id === state.selectedTicketId);
 
-  if (someActive) return tickets;
+export const selectActiveTicketTotal = (state: TicketState): number =>
+  computeTicketTotal(selectActiveTicket(state));
 
-  const [first, ...rest] = tickets;
-  return [{ ...first!, isActive: true }, ...rest];
-}
-
-function computeTicketTotal(ticket: Ticket): number {
-  return ticket.items.reduce((total, item) => {
-    const itemTotal = item.presentations.reduce(
-      (sum, presentation) =>
-        sum + presentation.quantity * presentation.priceSale,
-      0,
-    );
-
-    return total + itemTotal;
-  }, 0);
-}
-
-function deriveActiveTicket(
-  tickets: Ticket[],
-  selectedTicketId: string,
-): {
-  activeTicket: Ticket | undefined;
-  activeTicketTotal: number;
-  selectedTicketId: string;
-} {
-  const activeTicket =
-    tickets.find((ticket) => ticket.id === selectedTicketId) ??
-    tickets.find((ticket) => ticket.isActive);
-
-  return {
-    activeTicket,
-    activeTicketTotal: activeTicket ? computeTicketTotal(activeTicket) : 0,
-    selectedTicketId: activeTicket?.id ?? selectedTicketId,
-  };
-}
+/* -------------------------------------------------------------------------- */
+/*                                    Store                                   */
+/* -------------------------------------------------------------------------- */
 
 export function createTicketStore(
   organizationId: string,
@@ -140,11 +241,14 @@ export function createTicketStore(
 ) {
   const storage: PersistStorage<Ticket[]> = {
     getItem: async () => {
-      const tickets = await repository.load(organizationId);
-
-      return {
-        state: tickets,
-      };
+      try {
+        const tickets = await repository.load(organizationId);
+        if (!tickets || tickets.length === 0) return null;
+        return { state: tickets, version: VERSION };
+      } catch (error) {
+        console.error("No se pudieron cargar los tickets locales", error);
+        return null; // arranca con el ticket por defecto
+      }
     },
     setItem: async (_name: string, value: StorageValue<Ticket[]>) => {
       await repository.save(organizationId, value.state);
@@ -154,279 +258,197 @@ export function createTicketStore(
     },
   };
 
+  const initialTicket = makeTicket(organizationId, []);
+
   return createStore<TicketState>()(
     persist(
-      (set) => ({
-        tickets: [],
-        selectedTicketId: "",
-        activeTicket: undefined,
-        activeTicketTotal: 0,
-
-        switchActiveTicket: (ticketId) => {
+      (set, get) => {
+        /** Aplica `updater` al ticket seleccionado. Si devuelve null, no cambia nada. */
+        const updateActiveTicket = (
+          updater: (ticket: Ticket) => Ticket | null,
+        ) => {
           set((state) => {
-            const target = state.tickets.find((ticket) => ticket.id === ticketId);
+            const active = selectActiveTicket(state);
+            if (!active) return state;
 
-            if (!target || target.isActive) return state;
-
-            const nextTickets = state.tickets.map((ticket) =>
-              ticket.id === ticketId
-                ? { ...ticket, isActive: true }
-                : { ...ticket, isActive: false },
-            );
+            const updated = updater(active);
+            if (!updated) return state;
 
             return {
-              tickets: nextTickets,
-              ...deriveActiveTicket(nextTickets, ticketId),
+              tickets: state.tickets.map((ticket) =>
+                ticket.id === active.id ? updated : ticket,
+              ),
             };
           });
-        },
+        };
 
-        createTicket: () => {
-          set((state) => {
-            const existingNames = new Set(state.tickets.map((t) => t.name));
+        return {
+          tickets: [initialTicket],
+          selectedTicketId: initialTicket.id,
 
-            let number = state.tickets.length + 1;
-            let name = `Ticket-${number}`;
+          switchActiveTicket: (ticketId) => {
+            set((state) => {
+              if (ticketId === state.selectedTicketId) return state;
+              if (!state.tickets.some((ticket) => ticket.id === ticketId)) {
+                return state;
+              }
 
-            while (existingNames.has(name)) {
-              number++;
-              name = `Ticket-${number}`;
-            }
+              return { selectedTicketId: ticketId };
+            });
+          },
 
-            const newTicket: Ticket = {
-              id: generateId(),
-              isActive: true,
-              name,
-              organizationId,
-              items: [],
-            };
+          createTicket: () => {
+            set((state) => {
+              const newTicket = makeTicket(organizationId, state.tickets);
 
-            const nextTickets = [
-              ...state.tickets.map((ticket) => ({ ...ticket, isActive: false })),
-              newTicket,
-            ];
-
-            return {
-              tickets: nextTickets,
-              ...deriveActiveTicket(nextTickets, newTicket.id),
-            };
-          });
-        },
-
-        removeTicket: (ticketId) => {
-          set((state) => {
-            if (!state.tickets.some((ticket) => ticket.id === ticketId)) {
-              return state;
-            }
-
-            let nextTickets = state.tickets.filter(
-              (ticket) => ticket.id !== ticketId,
-            );
-
-            if (nextTickets.length === 0) {
-              nextTickets = [makeDefaultTicket(organizationId)];
-            } else {
-              nextTickets = ensureOneActiveTicket(nextTickets);
-            }
-
-            return {
-              tickets: nextTickets,
-              ...deriveActiveTicket(nextTickets, state.selectedTicketId),
-            };
-          });
-        },
-
-        renameTicket: (ticketId, name) => {
-          set((state) => {
-            if (!state.tickets.some((ticket) => ticket.id === ticketId)) {
-              return state;
-            }
-
-            if (state.tickets.some((ticket) => ticket.name === name)) {
-              return state;
-            }
-
-            const nextTickets = state.tickets.map((ticket) =>
-              ticket.id === ticketId ? { ...ticket, name } : ticket,
-            );
-
-            return {
-              tickets: nextTickets,
-              ...deriveActiveTicket(nextTickets, state.selectedTicketId),
-            };
-          });
-        },
-
-        clearTicket: (ticketId) => {
-          set((state) => {
-            if (!state.tickets.some((ticket) => ticket.id === ticketId)) {
-              return state;
-            }
-
-            const nextTickets = state.tickets.map((ticket) =>
-              ticket.id === ticketId ? { ...ticket, items: [] } : ticket,
-            );
-
-            return {
-              tickets: nextTickets,
-              ...deriveActiveTicket(nextTickets, state.selectedTicketId),
-            };
-          });
-        },
-
-        addTicketProduct: (product) => {
-          set((state) => {
-            const activeTicket = state.tickets.find((ticket) => ticket.isActive);
-
-            if (!activeTicket) return state;
-
-            let nextItems: TicketProduct[];
-
-            if (product.type === "adHoc") {
-              const newProduct: TicketProduct = {
-                ...product,
-                id: generateId(),
-                ticketId: activeTicket.id,
-                productId: null,
-                presentations: product.presentations.map((presentation) => ({
-                  ...presentation,
-                  id: generateId(),
-                  presentationId: null,
-                })),
+              return {
+                tickets: [...state.tickets, newTicket],
+                selectedTicketId: newTicket.id,
               };
+            });
+          },
 
-              nextItems = [...activeTicket.items, newProduct];
-            } else {
-              const existingProduct = activeTicket.items.find(
-                (item) => item.productId === product.productId,
+          removeTicket: (ticketId) => {
+            set((state) => {
+              const index = state.tickets.findIndex(
+                (ticket) => ticket.id === ticketId,
               );
 
-              if (!existingProduct) {
-                const nextProductId = generateId();
+              if (index === -1) return state;
 
-                const newProduct: TicketProduct = {
-                  ...product,
-                  id: nextProductId,
-                  ticketId: activeTicket.id,
-                  presentations: product.presentations.map((presentation) => ({
-                    ...presentation,
-                    id: generateId(),
-                    ticketProductId: nextProductId,
-                  })),
-                };
+              const remaining = state.tickets.filter(
+                (ticket) => ticket.id !== ticketId,
+              );
 
-                nextItems = [...activeTicket.items, newProduct];
-              } else {
-                const mergedProduct = mergeTicketProduct(existingProduct, product);
-
-                validateTicketProductStock(mergedProduct);
-
-                nextItems = activeTicket.items.map((item) =>
-                  item.productId === product.productId
-                    ? mergedProduct
-                    : item,
-                );
+              if (remaining.length === 0) {
+                const fallback = makeTicket(organizationId, []);
+                return { tickets: [fallback], selectedTicketId: fallback.id };
               }
-            }
 
-            const nextTickets = state.tickets.map((ticket) =>
-              ticket.id === activeTicket.id
-                ? { ...ticket, items: nextItems }
-                : ticket,
+              if (ticketId !== state.selectedTicketId) {
+                return { tickets: remaining };
+              }
+
+              // Se borró el ticket seleccionado: selecciona el vecino anterior.
+              const neighbor = remaining[Math.max(0, index - 1)]!;
+
+              return { tickets: remaining, selectedTicketId: neighbor.id };
+            });
+          },
+
+          renameTicket: (ticketId, name) => {
+            const trimmed = name.trim();
+            if (!trimmed) return false;
+
+            const { tickets } = get();
+
+            if (!tickets.some((ticket) => ticket.id === ticketId)) return false;
+
+            const duplicated = tickets.some(
+              (ticket) =>
+                ticket.id !== ticketId &&
+                ticket.name.toLowerCase() === trimmed.toLowerCase(),
             );
 
-            return {
-              tickets: nextTickets,
-              ...deriveActiveTicket(nextTickets, state.selectedTicketId),
-            };
-          });
-        },
+            if (duplicated) return false;
 
-        removeTicketProduct: (ticketProductId) => {
-          set((state) => {
-            const activeTicket = state.tickets.find((ticket) => ticket.isActive);
+            set({
+              tickets: tickets.map((ticket) =>
+                ticket.id === ticketId ? { ...ticket, name: trimmed } : ticket,
+              ),
+            });
 
-            if (!activeTicket) return state;
+            return true;
+          },
 
-            if (
-              !activeTicket.items.some((item) => item.id === ticketProductId)
-            ) {
-              return state;
-            }
+          clearTicket: (ticketId) => {
+            set((state) => {
+              if (!state.tickets.some((ticket) => ticket.id === ticketId)) {
+                return state;
+              }
 
-            const nextItems = activeTicket.items.filter(
-              (item) => item.id !== ticketProductId,
-            );
+              return {
+                tickets: state.tickets.map((ticket) =>
+                  ticket.id === ticketId ? { ...ticket, items: [] } : ticket,
+                ),
+              };
+            });
+          },
 
-            const nextTickets = state.tickets.map((ticket) =>
-              ticket.id === activeTicket.id
-                ? { ...ticket, items: nextItems }
-                : ticket,
-            );
+          addTicketProduct: (product) => {
+            const active = selectActiveTicket(get());
+            if (!active) return;
 
-            return {
-              tickets: nextTickets,
-              ...deriveActiveTicket(nextTickets, state.selectedTicketId),
-            };
-          });
-        },
+            // Valida y calcula FUERA de `set` para que el reducer sea puro.
+            const nextItems = buildNextItems(active, product);
 
-        removeTicketProductPresentations: (presentationIds) => {
-          set((state) => {
-            const activeTicket = state.tickets.find((ticket) => ticket.isActive);
+            updateActiveTicket((ticket) => ({ ...ticket, items: nextItems }));
+          },
 
-            if (!activeTicket) return state;
+          removeTicketProduct: (ticketProductId) => {
+            updateActiveTicket((ticket) => {
+              if (!ticket.items.some((item) => item.id === ticketProductId)) {
+                return null;
+              }
 
-            if (presentationIds.length === 0) return state;
+              return {
+                ...ticket,
+                items: ticket.items.filter(
+                  (item) => item.id !== ticketProductId,
+                ),
+              };
+            });
+          },
+
+          removeTicketProductPresentations: (presentationIds) => {
+            if (presentationIds.length === 0) return;
 
             const idsToRemove = new Set(presentationIds);
 
-            const nextItems = activeTicket.items
-              .map((item) => ({
-                ...item,
-                presentations: item.presentations.filter(
-                  (presentation) => !idsToRemove.has(presentation.id),
-                ),
-              }))
-              .filter((item) => item.presentations.length > 0);
+            updateActiveTicket((ticket) => ({
+              ...ticket,
+              items: ticket.items
+                .map((item) => ({
+                  ...item,
+                  presentations: item.presentations.filter(
+                    (presentation) => !idsToRemove.has(presentation.id),
+                  ),
+                }))
+                .filter((item) => item.presentations.length > 0),
+            }));
+          },
 
-            const nextTickets = state.tickets.map((ticket) =>
-              ticket.id === activeTicket.id
-                ? { ...ticket, items: nextItems }
-                : ticket,
-            );
+          updateTicketProductPresentation: (
+            ticketProductId,
+            ticketProductPresentationId,
+            quantity,
+            priceSale,
+          ) => {
+            if (!Number.isFinite(quantity) || quantity <= 0) {
+              throw new TicketError("invalid_quantity");
+            }
 
-            return {
-              tickets: nextTickets,
-              ...deriveActiveTicket(nextTickets, state.selectedTicketId),
-            };
-          });
-        },
+            if (!Number.isFinite(priceSale) || priceSale < 0) {
+              throw new TicketError("invalid_price");
+            }
 
-        updateTicketProductPresentation: (
-          ticketProductId,
-          ticketProductPresentationId,
-          quantity,
-          priceSale,
-        ) => {
-          set((state) => {
-            const activeTicket = state.tickets.find((ticket) => ticket.isActive);
+            const active = selectActiveTicket(get());
+            if (!active) return;
 
-            if (!activeTicket) return state;
-
-            const product = activeTicket.items.find(
+            const product = active.items.find(
               (item) => item.id === ticketProductId,
             );
 
-            if (!product)
-              throw new Error("mutations.tickets.errors.product_not_found");
+            if (!product) throw new TicketError("product_not_found");
 
-            const presentationExists = product.presentations.some(
-              (presentation) => presentation.id === ticketProductPresentationId,
-            );
-
-            if (!presentationExists)
-              throw new Error("mutations.tickets.errors.presentation_not_found");
+            if (
+              !product.presentations.some(
+                (presentation) =>
+                  presentation.id === ticketProductPresentationId,
+              )
+            ) {
+              throw new TicketError("presentation_not_found");
+            }
 
             const nextProduct: TicketProduct = {
               ...product,
@@ -437,44 +459,40 @@ export function createTicketStore(
               ),
             };
 
-            validateTicketProductStock(nextProduct);
+            assertStockAvailable(nextProduct);
 
-            const nextItems = activeTicket.items.map((item) =>
-              item.id === product.id ? nextProduct : item,
-            );
-
-            const nextTickets = state.tickets.map((ticket) =>
-              ticket.id === activeTicket.id
-                ? { ...ticket, items: nextItems }
-                : ticket,
-            );
-
-            return {
-              tickets: nextTickets,
-              ...deriveActiveTicket(nextTickets, state.selectedTicketId),
-            };
-          });
-        },
-      }),
+            updateActiveTicket((ticket) => ({
+              ...ticket,
+              items: ticket.items.map((item) =>
+                item.id === nextProduct.id ? nextProduct : item,
+              ),
+            }));
+          },
+        };
+      },
       {
         name: `tickets-${organizationId}`,
-        partialize: (state) => state.tickets,
-        merge: (persisted, current) => {
-          const tickets =
-            Array.isArray(persisted) && persisted.length > 0
-              ? (persisted as Ticket[])
-              : current.tickets;
-
-          const nextTickets = ensureOneActiveTicket(tickets);
-
-          return {
-            ...current,
-            tickets: nextTickets,
-            ...deriveActiveTicket(nextTickets, current.selectedTicketId),
-          };
-        },
         version: VERSION,
         storage,
+        partialize: (state) => state.tickets,
+        migrate: (persisted) => persisted as Ticket[],
+        merge: (persisted, current) => {
+          const persistedTickets = Array.isArray(persisted)
+            ? (persisted as Ticket[]).map(normalizeTicket)
+            : [];
+
+          const tickets =
+            persistedTickets.length > 0 ? persistedTickets : current.tickets;
+
+          // Conserva la selección actual si sigue existiendo; si no, el primero.
+          const selectedTicketId = tickets.some(
+            (ticket) => ticket.id === current.selectedTicketId,
+          )
+            ? current.selectedTicketId
+            : tickets[0]!.id;
+
+          return { ...current, tickets, selectedTicketId };
+        },
       },
     ),
   );

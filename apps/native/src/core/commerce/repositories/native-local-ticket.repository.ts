@@ -36,7 +36,6 @@ export class NativeLocalTicketRepository implements LocalTicketRepository {
           id: Date.now().toString() + Math.floor(Math.random() * 1000),
           organizationId,
           name: "Ticket-1",
-          isActive: true,
         })
         .returning()
         .all();
@@ -85,18 +84,6 @@ export class NativeLocalTicketRepository implements LocalTicketRepository {
         })),
       };
     });
-
-    const someTicketIsActive = allTickets.some((t) => t.isActive);
-
-    if (!someTicketIsActive) {
-      allTickets[0]!.isActive = true;
-
-      this.db
-        .update(ticket)
-        .set({ isActive: true })
-        .where(eq(ticket.id, allTickets[0]!.id))
-        .run();
-    }
 
     return allTickets;
   }

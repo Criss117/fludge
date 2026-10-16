@@ -1,10 +1,7 @@
 import { BarcodeReader } from "@/core/shared/components/barcode-reader";
 import { KeyboardSpacerView } from "@/core/shared/components/keyboard-spacer-view";
 import { TextInput } from "@/core/shared/components/text-input";
-import {
-  ThemedNativeText,
-  ThemedText,
-} from "@/core/shared/components/themed-text";
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
@@ -26,7 +23,10 @@ import { FlashList } from "@shopify/flash-list";
 import { useCallback, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SaleProductCard } from "@/core/commerce/components/sale-product-card";
-import { useTicketStore } from "@fludge/client/providers/ticket-store.provider";
+import {
+  useActiveTicket,
+  useTicketStore,
+} from "@fludge/client/providers/ticket-store.provider";
 import type { ProductSummary } from "@fludge/client/catalog/domain/entities";
 import type { AddCatalogTicketProduct } from "@fludge/client/commerce/domain/local-ticket.repository";
 import { ProductPickerSheet } from "@/core/commerce/components/product-picker";
@@ -88,7 +88,7 @@ function ProductList({
 
 function Footer({ onSeeCart }: { onSeeCart: () => void }) {
   const { t } = useTranslation();
-  const activeTicketTotal = useTicketStore((s) => s.activeTicketTotal);
+  const activeTicket = useActiveTicket();
   const colors = useThemeColor();
 
   return (
@@ -105,7 +105,7 @@ function Footer({ onSeeCart }: { onSeeCart: () => void }) {
               {t("screens.pos.current_sale")}
             </ThemedNativeText>
             <ThemedNativeText>
-              {formatCurrency(activeTicketTotal)}
+              {formatCurrency(activeTicket?.total ?? 0)}
             </ThemedNativeText>
           </Column>
 

@@ -1,38 +1,52 @@
+import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { GeistFonts } from "@/integrations/fonts";
-import { TicketStoreProvider } from "@fludge/client/providers/ticket-store.provider";
+import {
+  TicketStoreProvider,
+  useTicketsHydrated,
+} from "@fludge/client/providers/ticket-store.provider";
 import { Stack } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-export default function POSLayout() {
+function Screen() {
   const colors = useThemeColor();
   const { t } = useTranslation();
 
+  const hydrated = useTicketsHydrated();
+
+  if (!hydrated) return <BaseLoadingIndicator />;
+
+  return (
+    <Stack
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: colors.background,
+        },
+        headerTitleStyle: {
+          color: colors.onPrimaryContainer,
+          fontFamily: GeistFonts.Bold,
+        },
+        headerShadowVisible: false,
+        contentStyle: {
+          backgroundColor: colors.background,
+        },
+        animation: "fade",
+      }}
+    >
+      <Stack.Screen
+        name="index"
+        options={{
+          title: t("screens.pos.label"),
+        }}
+      />
+    </Stack>
+  );
+}
+
+export default function POSLayout() {
   return (
     <TicketStoreProvider>
-      <Stack
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: colors.background,
-          },
-          headerTitleStyle: {
-            color: colors.onPrimaryContainer,
-            fontFamily: GeistFonts.Bold,
-          },
-          headerShadowVisible: false,
-          contentStyle: {
-            backgroundColor: colors.background,
-          },
-          animation: "fade",
-        }}
-      >
-        <Stack.Screen
-          name="index"
-          options={{
-            title: t("screens.pos.label"),
-          }}
-        />
-      </Stack>
+      <Screen />
     </TicketStoreProvider>
   );
 }

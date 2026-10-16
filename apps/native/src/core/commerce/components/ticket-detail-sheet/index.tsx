@@ -3,7 +3,10 @@ import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 import { formatCurrency } from "@fludge/utils/format-currency";
-import { useTicketStore } from "@fludge/client/providers/ticket-store.provider";
+import {
+  useActiveTicket,
+  useTicketStore,
+} from "@fludge/client/providers/ticket-store.provider";
 import {
   Box,
   Button,
@@ -37,8 +40,7 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
   const colors = useThemeColor();
   const { t } = useTranslation();
 
-  const activeTicket = useTicketStore((s) => s.activeTicket);
-  const activeTicketTotal = useTicketStore((s) => s.activeTicketTotal);
+  const activeTicket = useActiveTicket();
   const clearTicket = useTicketStore((s) => s.clearTicket);
   const updateTicketProductPresentation = useTicketStore(
     (s) => s.updateTicketProductPresentation,
@@ -64,7 +66,7 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
     removePresentations([presentationId]);
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !activeTicket) return null;
 
   return (
     <Host matchContents>
@@ -218,7 +220,7 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
               </ThemedNativeText>
               <Spacer modifiers={[weight(1)]} />
               <ThemedNativeText variant="h5">
-                {formatCurrency(activeTicketTotal)}
+                {formatCurrency(activeTicket.total)}
               </ThemedNativeText>
             </Row>
 
@@ -249,7 +251,7 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
                 >
                   <ThemedNativeText color={colors.onPrimary}>
                     {t("screens.pos.ticket_summary.charge", {
-                      total: formatCurrency(activeTicketTotal),
+                      total: formatCurrency(activeTicket.total),
                     })}
                   </ThemedNativeText>
                 </Button>

@@ -159,6 +159,8 @@ export const mutations = {
       product_not_found: "No se encontró el producto en el ticket",
       presentation_not_found: "No se encontró la presentación del producto",
       insufficient_stock: "Stock insuficiente para el producto",
+      invalid_quantity: "La cantidad no es válida",
+      invalid_price: "El precio no es válido",
     },
   },
 };
