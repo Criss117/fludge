@@ -126,7 +126,14 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
                 };
 
                 const decreaseQuantity = () => {
-                  handleUpdateQuantity(presentation.quantity - 1);
+                  const nextQuantity = presentation.quantity - 1;
+
+                  if (nextQuantity <= 0) {
+                    handleRemovePresentation(presentation.id);
+                    return;
+                  }
+
+                  handleUpdateQuantity(nextQuantity);
                 };
 
                 return (
