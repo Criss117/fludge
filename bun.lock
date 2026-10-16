@@ -355,7 +355,7 @@
         "react-i18next": "catalog:",
         "uuid": "catalog:",
         "zod": "catalog:",
-        "zustand": "catalog:",
+        "zustand": "5.0.15",
       },
       "devDependencies": {
         "@fludge/api": "workspace:*",
