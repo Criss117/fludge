@@ -55,12 +55,12 @@ export type TicketState = {
   removeTicketProduct: (ticketProductId: string) => void;
   removeTicketProductPresentations: (presentationIds: string[]) => void;
   /** Lanza `TicketError` si los datos son inválidos o no hay stock. */
-  updateTicketProductPresentation: (
-    ticketProductId: string,
-    ticketProductPresentationId: string,
-    quantity: number,
-    priceSale: number,
-  ) => void;
+  updateTicketProductPresentation: (v: {
+    ticketProductId: string;
+    ticketProductPresentationId: string;
+    quantity: number;
+    priceSale: number;
+  }) => void;
 };
 
 /* -------------------------------------------------------------------------- */
@@ -391,12 +391,12 @@ export function createTicketStore(organizationId: string, repository: LocalTicke
             }));
           },
 
-          updateTicketProductPresentation: (
+          updateTicketProductPresentation: ({
             ticketProductId,
             ticketProductPresentationId,
             quantity,
             priceSale,
-          ) => {
+          }) => {
             if (!Number.isFinite(quantity) || quantity <= 0) {
               throw new TicketError("invalid_quantity");
             }

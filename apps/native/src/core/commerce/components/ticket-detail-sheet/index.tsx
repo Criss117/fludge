@@ -7,7 +7,6 @@ import {
   LazyColumn,
   ModalBottomSheet,
   type ModalBottomSheetRef,
-  OutlinedIconButton,
   Row,
   Spacer,
 } from "@expo/ui/jetpack-compose";
@@ -16,7 +15,6 @@ import {
   fillMaxWidth,
   paddingAll,
   weight,
-  width,
 } from "@expo/ui/jetpack-compose/modifiers";
 import { useActiveTicket, useTicketStore } from "@fludge/client/providers/ticket-store.provider";
 import { formatCurrency } from "@fludge/utils/format-currency";
@@ -27,6 +25,8 @@ import { Icon } from "@/core/shared/components/icon";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
+
+import { TicketDetailItem } from "../ticket-item";
 
 interface Props {
   isOpen: boolean;
@@ -40,8 +40,6 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
 
   const activeTicket = useActiveTicket();
   const clearTicket = useTicketStore((s) => s.clearTicket);
-  const updateTicketProductPresentation = useTicketStore((s) => s.updateTicketProductPresentation);
-  const removePresentations = useTicketStore((s) => s.removeTicketProductPresentations);
 
   const handleClose = async () => {
     await sheetRef.current?.hide();
@@ -56,11 +54,14 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
     onClose();
   };
 
-  const handleRemovePresentation = (presentationId: string) => {
-    removePresentations([presentationId]);
-  };
-
   if (!isOpen || !activeTicket) return null;
+
+  const items = activeTicket?.items.flatMap((item) =>
+    item.presentations.map((presentation) => ({
+      ...presentation,
+      ticketProductId: item.id,
+    })),
+  );
 
   return (
     <Host matchContents>
@@ -100,85 +101,9 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
             verticalArrangement={{ spacedBy: SPACING.sm }}
             modifiers={[fillMaxWidth(), weight(1)]}
           >
-            {activeTicket?.items.flatMap((item) =>
-              item.presentations.map((presentation) => {
-                const subtotal = presentation.quantity * presentation.priceSale;
-
-                const handleUpdateQuantity = (quantity: number) => {
-                  updateTicketProductPresentation(
-                    item.id,
-                    presentation.id,
-                    quantity,
-                    presentation.priceSale,
-                  );
-                };
-
-                const increaseQuantity = () => {
-                  handleUpdateQuantity(presentation.quantity + 1);
-                };
-
-                const decreaseQuantity = () => {
-                  const nextQuantity = presentation.quantity - 1;
-
-                  if (nextQuantity <= 0) {
-                    handleRemovePresentation(presentation.id);
-                    return;
-                  }
-
-                  handleUpdateQuantity(nextQuantity);
-                };
-
-                return (
-                  <Row
-                    key={presentation.id}
-                    modifiers={[fillMaxWidth(), paddingAll(SPACING.sm)]}
-                    verticalAlignment="top"
-                    horizontalArrangement={{ spacedBy: SPACING.md }}
-                  >
-                    <Column verticalArrangement={{ spacedBy: SPACING.xs }}>
-                      <ThemedNativeText maxLines={1}>{item.name}</ThemedNativeText>
-                      <ThemedNativeText variant="muted" maxLines={1}>
-                        {presentation.name}
-                      </ThemedNativeText>
-                      <ThemedNativeText variant="muted">
-                        {presentation.priceSale} c/u
-                      </ThemedNativeText>
-                      <Row
-                        horizontalArrangement={{
-                          spacedBy: SPACING.sm,
-                        }}
-                      >
-                        <ThemedNativeText>x{presentation.quantity}</ThemedNativeText>
-                        <ThemedNativeText>{formatCurrency(subtotal)}</ThemedNativeText>
-                      </Row>
-                    </Column>
-                    <Spacer modifiers={[weight(1)]} />
-                    <Column horizontalAlignment="end">
-                      <Row>
-                        <IconButton onClick={() => handleRemovePresentation(presentation.id)}>
-                          <Icon name="delete" size={20} color={colors.error} />
-                        </IconButton>
-                        <IconButton onClick={() => {}}>
-                          <Icon name="edit" size={20} color={colors.primary} />
-                        </IconButton>
-                      </Row>
-
-                      <Row horizontalAlignment="center" verticalAlignment="center">
-                        <OutlinedIconButton onClick={decreaseQuantity}>
-                          <Icon name="remove" size={20} color={colors.primary} />
-                        </OutlinedIconButton>
-                        <Box modifiers={[width(SPACING.xl)]} contentAlignment="center">
-                          <ThemedNativeText variant="h5">{presentation.quantity}</ThemedNativeText>
-                        </Box>
-                        <OutlinedIconButton onClick={increaseQuantity}>
-                          <Icon name="add" size={20} color={colors.primary} />
-                        </OutlinedIconButton>
-                      </Row>
-                    </Column>
-                  </Row>
-                );
-              }),
-            )}
+            {items.map((item) => (
+              <TicketDetailItem key={item.id} presentations={item} />
+            ))}
           </LazyColumn>
 
           <Column verticalArrangement={{ spacedBy: SPACING.md }}>
@@ -213,9 +138,7 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
                   onClick={() => {}}
                 >
                   <ThemedNativeText color={colors.onPrimary}>
-                    {t("screens.pos.ticket_summary.charge", {
-                      total: formatCurrency(activeTicket.total),
-                    })}
+                    {t("screens.pos.ticket_summary.charge")}
                   </ThemedNativeText>
                 </Button>
               </Box>

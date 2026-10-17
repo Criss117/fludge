@@ -5,7 +5,7 @@ import { APP_COLORS } from "@/lib/theme";
 export function useThemeColor() {
   const scheme = useColorScheme();
 
-  const theme = scheme === "unspecified" ? "light" : scheme;
+  const theme = scheme === null ? "light" : scheme;
 
   return APP_COLORS[theme];
 }

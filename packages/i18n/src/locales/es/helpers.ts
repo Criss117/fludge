@@ -34,6 +34,7 @@ export const helpers = {
   },
 
   cancel: "Cancelar",
+  confirm: "Confirmar",
 
   x_more: "{{count}} más",
   all_of: "Todos de {{label}}",

@@ -5,6 +5,7 @@ import ApartmentIcon from "@expo/material-symbols/apartment.xml";
 import ArrowDownwardIcon from "@expo/material-symbols/arrow_downward.xml";
 import ArrowDropDownIcon from "@expo/material-symbols/arrow_drop_down.xml";
 import ArrowForwardIcon from "@expo/material-symbols/arrow_forward.xml";
+import AttachMoneyIcon from "@expo/material-symbols/attach_money.xml";
 import BadgeIcon from "@expo/material-symbols/badge.xml";
 import BarcodeIcon from "@expo/material-symbols/barcode.xml";
 import BarcodeScannerIcon from "@expo/material-symbols/barcode_scanner.xml";
@@ -79,6 +80,7 @@ export const ICONS = {
   switch: SwitchLeftIcon,
   "arrow-forward": ArrowForwardIcon,
   remove: RemoveIcon,
+  "attach-money": AttachMoneyIcon,
 } as const;
 
 export type IconName = keyof typeof ICONS;

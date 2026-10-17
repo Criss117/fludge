@@ -173,7 +173,7 @@ export const screens = {
       items_count: "{{count}} productos",
       total: "Total a Cobrar",
       clear: "Limpiar",
-      charge: "Cobrar {{total}}",
+      charge: "Cobrar",
     },
   },
 };
