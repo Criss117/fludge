@@ -8,7 +8,8 @@
     "scheme": "native",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.crviveros.fludge"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +20,10 @@
       },
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "pan",
-      "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
       "package": "com.crviveros.fludge"
     },
     "web": {
