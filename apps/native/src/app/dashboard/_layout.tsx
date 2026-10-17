@@ -25,23 +25,14 @@ function StackScreen() {
         headerShown: false,
       }}
     >
-      <Stack.Protected guard={!hasActiveOrganization}>
+      <Stack.Protected guard={!hasActiveOrganization} redirectTo="/dashboard/(tabs)">
         <Stack.Screen name="organization" />
       </Stack.Protected>
 
-      <Stack.Protected guard={hasActiveOrganization}>
+      <Stack.Protected guard={hasActiveOrganization} redirectTo="/dashboard/organization">
         <Stack.Screen name="(tabs)" />
-      </Stack.Protected>
-
-      <Stack.Protected guard={hasActiveOrganization}>
         <Stack.Screen name="members" />
-      </Stack.Protected>
-
-      <Stack.Protected guard={hasActiveOrganization}>
         <Stack.Screen name="groups" />
-      </Stack.Protected>
-
-      <Stack.Protected guard={hasActiveOrganization}>
         <Stack.Screen name="pos" />
       </Stack.Protected>
     </Stack>

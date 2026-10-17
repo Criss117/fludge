@@ -60,6 +60,7 @@ export function ProductPickerSheet({ product, isOpen, onClose, onAdd }: Props) {
 
     onAdd(product, selectedPresentations);
     await sheetRef.current?.hide();
+    setSelectedIds(new Set());
     onClose();
   };
 

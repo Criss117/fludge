@@ -1,8 +1,10 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "7897cf57-9aeb-4184-ac90-cae27bcd41c3",
-  "prevIds": ["00000000-0000-0000-0000-000000000000"],
+  "id": "a096197a-b595-4129-9495-138e88a368d8",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
   "ddl": [
     {
       "name": "app",
@@ -1539,16 +1541,6 @@
       "table": "ticket"
     },
     {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "is_active",
-      "entityType": "columns",
-      "table": "ticket"
-    },
-    {
       "type": "text",
       "notNull": true,
       "autoincrement": false,
@@ -1609,9 +1601,13 @@
       "table": "ticket_product"
     },
     {
-      "columns": ["created_by"],
+      "columns": [
+        "created_by"
+      ],
       "tableTo": "member",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "nameExplicit": false,
@@ -1620,9 +1616,13 @@
       "table": "category"
     },
     {
-      "columns": ["organization_id"],
+      "columns": [
+        "organization_id"
+      ],
       "tableTo": "organization",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1631,9 +1631,13 @@
       "table": "category"
     },
     {
-      "columns": ["organization_id"],
+      "columns": [
+        "organization_id"
+      ],
       "tableTo": "organization",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1642,9 +1646,13 @@
       "table": "customer"
     },
     {
-      "columns": ["created_by"],
+      "columns": [
+        "created_by"
+      ],
       "tableTo": "member",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "nameExplicit": false,
@@ -1653,9 +1661,13 @@
       "table": "customer"
     },
     {
-      "columns": ["customer_id"],
+      "columns": [
+        "customer_id"
+      ],
       "tableTo": "customer",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "RESTRICT",
       "nameExplicit": false,
@@ -1664,9 +1676,13 @@
       "table": "customer_payment"
     },
     {
-      "columns": ["organization_id"],
+      "columns": [
+        "organization_id"
+      ],
       "tableTo": "organization",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1675,9 +1691,13 @@
       "table": "customer_payment"
     },
     {
-      "columns": ["created_by"],
+      "columns": [
+        "created_by"
+      ],
       "tableTo": "member",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "nameExplicit": false,
@@ -1686,9 +1706,13 @@
       "table": "customer_payment"
     },
     {
-      "columns": ["organization_id"],
+      "columns": [
+        "organization_id"
+      ],
       "tableTo": "organization",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1697,9 +1721,13 @@
       "table": "group"
     },
     {
-      "columns": ["created_by"],
+      "columns": [
+        "created_by"
+      ],
       "tableTo": "member",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "nameExplicit": false,
@@ -1708,9 +1736,13 @@
       "table": "group"
     },
     {
-      "columns": ["group_id"],
+      "columns": [
+        "group_id"
+      ],
       "tableTo": "group",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1719,9 +1751,13 @@
       "table": "group_member"
     },
     {
-      "columns": ["member_id"],
+      "columns": [
+        "member_id"
+      ],
       "tableTo": "member",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1730,9 +1766,13 @@
       "table": "group_member"
     },
     {
-      "columns": ["organization_id"],
+      "columns": [
+        "organization_id"
+      ],
       "tableTo": "organization",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1741,9 +1781,13 @@
       "table": "group_member"
     },
     {
-      "columns": ["created_by"],
+      "columns": [
+        "created_by"
+      ],
       "tableTo": "member",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "nameExplicit": false,
@@ -1752,9 +1796,13 @@
       "table": "group_member"
     },
     {
-      "columns": ["user_id"],
+      "columns": [
+        "user_id"
+      ],
       "tableTo": "user",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1763,9 +1811,13 @@
       "table": "member"
     },
     {
-      "columns": ["assigned_by"],
+      "columns": [
+        "assigned_by"
+      ],
       "tableTo": "member",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "nameExplicit": false,
@@ -1774,9 +1826,13 @@
       "table": "member"
     },
     {
-      "columns": ["organization_id"],
+      "columns": [
+        "organization_id"
+      ],
       "tableTo": "organization",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1785,9 +1841,13 @@
       "table": "member"
     },
     {
-      "columns": ["category_id"],
+      "columns": [
+        "category_id"
+      ],
       "tableTo": "category",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "nameExplicit": false,
@@ -1796,9 +1856,13 @@
       "table": "product"
     },
     {
-      "columns": ["created_by"],
+      "columns": [
+        "created_by"
+      ],
       "tableTo": "member",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "nameExplicit": false,
@@ -1807,9 +1871,13 @@
       "table": "product"
     },
     {
-      "columns": ["organization_id"],
+      "columns": [
+        "organization_id"
+      ],
       "tableTo": "organization",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1818,9 +1886,13 @@
       "table": "product"
     },
     {
-      "columns": ["product_id"],
+      "columns": [
+        "product_id"
+      ],
       "tableTo": "product",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1829,9 +1901,13 @@
       "table": "product_presentation"
     },
     {
-      "columns": ["created_by"],
+      "columns": [
+        "created_by"
+      ],
       "tableTo": "member",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "nameExplicit": false,
@@ -1840,9 +1916,13 @@
       "table": "product_presentation"
     },
     {
-      "columns": ["organization_id"],
+      "columns": [
+        "organization_id"
+      ],
       "tableTo": "organization",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1851,9 +1931,13 @@
       "table": "product_presentation"
     },
     {
-      "columns": ["customer_id"],
+      "columns": [
+        "customer_id"
+      ],
       "tableTo": "customer",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "nameExplicit": false,
@@ -1862,9 +1946,13 @@
       "table": "sale"
     },
     {
-      "columns": ["organization_id"],
+      "columns": [
+        "organization_id"
+      ],
       "tableTo": "organization",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1873,9 +1961,13 @@
       "table": "sale"
     },
     {
-      "columns": ["created_by"],
+      "columns": [
+        "created_by"
+      ],
       "tableTo": "member",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "nameExplicit": false,
@@ -1884,9 +1976,13 @@
       "table": "sale"
     },
     {
-      "columns": ["sale_id"],
+      "columns": [
+        "sale_id"
+      ],
       "tableTo": "sale",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1895,9 +1991,13 @@
       "table": "sale_item"
     },
     {
-      "columns": ["product_id"],
+      "columns": [
+        "product_id"
+      ],
       "tableTo": "product",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "nameExplicit": false,
@@ -1906,9 +2006,13 @@
       "table": "sale_item"
     },
     {
-      "columns": ["product_presentation_id"],
+      "columns": [
+        "product_presentation_id"
+      ],
       "tableTo": "product_presentation",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "nameExplicit": false,
@@ -1917,9 +2021,13 @@
       "table": "sale_item"
     },
     {
-      "columns": ["organization_id"],
+      "columns": [
+        "organization_id"
+      ],
       "tableTo": "organization",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1928,9 +2036,13 @@
       "table": "sale_item"
     },
     {
-      "columns": ["customer_payment_id"],
+      "columns": [
+        "customer_payment_id"
+      ],
       "tableTo": "customer_payment",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1939,9 +2051,13 @@
       "table": "sale_payment"
     },
     {
-      "columns": ["sale_id"],
+      "columns": [
+        "sale_id"
+      ],
       "tableTo": "sale",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "RESTRICT",
       "nameExplicit": false,
@@ -1950,9 +2066,13 @@
       "table": "sale_payment"
     },
     {
-      "columns": ["organization_id"],
+      "columns": [
+        "organization_id"
+      ],
       "tableTo": "organization",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1961,9 +2081,13 @@
       "table": "sale_payment"
     },
     {
-      "columns": ["created_by"],
+      "columns": [
+        "created_by"
+      ],
       "tableTo": "member",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "nameExplicit": false,
@@ -1972,9 +2096,13 @@
       "table": "sale_payment"
     },
     {
-      "columns": ["organization_id"],
+      "columns": [
+        "organization_id"
+      ],
       "tableTo": "organization",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1983,9 +2111,13 @@
       "table": "ticket"
     },
     {
-      "columns": ["ticket_id"],
+      "columns": [
+        "ticket_id"
+      ],
       "tableTo": "ticket",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "nameExplicit": false,
@@ -1994,9 +2126,13 @@
       "table": "ticket_product"
     },
     {
-      "columns": ["product_id"],
+      "columns": [
+        "product_id"
+      ],
       "tableTo": "product",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "nameExplicit": false,
@@ -2005,112 +2141,145 @@
       "table": "ticket_product"
     },
     {
-      "columns": ["group_id", "member_id"],
+      "columns": [
+        "group_id",
+        "member_id"
+      ],
       "nameExplicit": false,
       "name": "group_member_pk",
       "entityType": "pks",
       "table": "group_member"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "app_pk",
       "table": "app",
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "category_pk",
       "table": "category",
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "customer_pk",
       "table": "customer",
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "customer_payment_pk",
       "table": "customer_payment",
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "group_pk",
       "table": "group",
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "member_pk",
       "table": "member",
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "organization_pk",
       "table": "organization",
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "product_pk",
       "table": "product",
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "product_presentation_pk",
       "table": "product_presentation",
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "sale_pk",
       "table": "sale",
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "sale_item_pk",
       "table": "sale_item",
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "sale_payment_pk",
       "table": "sale_payment",
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "user_pk",
       "table": "user",
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "ticket_pk",
       "table": "ticket",
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "ticket_product_pk",
       "table": "ticket_product",
@@ -2645,24 +2814,6 @@
     {
       "columns": [
         {
-          "value": "organization_id",
-          "isExpression": false
-        },
-        {
-          "value": "is_active",
-          "isExpression": false
-        }
-      ],
-      "isUnique": true,
-      "where": "\"ticket\".\"is_active\" = 1",
-      "origin": "manual",
-      "name": "ticket_organization_active_unique",
-      "entityType": "indexes",
-      "table": "ticket"
-    },
-    {
-      "columns": [
-        {
           "value": "ticket_id",
           "isExpression": false
         },
@@ -2679,7 +2830,9 @@
       "table": "ticket_product"
     },
     {
-      "columns": ["email"],
+      "columns": [
+        "email"
+      ],
       "nameExplicit": false,
       "name": "user_email_unique",
       "entityType": "uniques",

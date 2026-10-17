@@ -34,7 +34,7 @@ export default function OrganizationLayout() {
         animation: "fade",
       }}
     >
-      <Stack.Protected guard={hasOrganizations}>
+      <Stack.Protected guard={hasOrganizations} redirectTo="/dashboard/organization/register">
         <Stack.Screen
           name="index"
           options={{
@@ -43,7 +43,7 @@ export default function OrganizationLayout() {
         />
       </Stack.Protected>
 
-      <Stack.Protected guard={userIsRoot}>
+      <Stack.Protected guard={userIsRoot} redirectTo="/dashboard/organization">
         <Stack.Screen
           name="register"
           options={{

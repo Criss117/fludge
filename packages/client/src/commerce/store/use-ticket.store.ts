@@ -70,7 +70,7 @@ export type TicketState = {
 const VERSION = 1;
 
 function generateId(): string {
-  return crypto.randomUUID();
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
 function nextTicketName(tickets: Ticket[]): string {

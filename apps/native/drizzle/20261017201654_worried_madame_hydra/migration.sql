@@ -240,7 +240,6 @@ CREATE TABLE `user` (
 CREATE TABLE `ticket` (
 	`id` text PRIMARY KEY,
 	`name` text NOT NULL,
-	`is_active` integer NOT NULL,
 	`organization_id` text NOT NULL,
 	CONSTRAINT `fk_ticket_organization_id_organization_id_fk` FOREIGN KEY (`organization_id`) REFERENCES `organization`(`id`) ON DELETE CASCADE
 );
@@ -286,5 +285,4 @@ CREATE INDEX `presentation_organization_product_idx` ON `product_presentation` (
 CREATE INDEX `presentation_organization_status_idx` ON `product_presentation` (`organization_id`,`status`);--> statement-breakpoint
 CREATE UNIQUE INDEX `sale_payments_org_customer_payment_idx` ON `sale_payment` (`sale_id`,`customer_payment_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `ticket_organization_name_unique` ON `ticket` (`organization_id`,`name`);--> statement-breakpoint
-CREATE UNIQUE INDEX `ticket_organization_active_unique` ON `ticket` (`organization_id`,`is_active`) WHERE "ticket"."is_active" = 1;--> statement-breakpoint
 CREATE UNIQUE INDEX `ticket_product_unique_idx` ON `ticket_product` (`ticket_id`,`product_id`);
