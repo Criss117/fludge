@@ -1,3 +1,5 @@
+import { CustomersScreen } from "@/core/commerce/screens/customers";
+
 export default function Customer() {
-  return null;
+  return <CustomersScreen />;
 }

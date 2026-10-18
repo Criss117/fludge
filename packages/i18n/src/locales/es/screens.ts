@@ -235,9 +235,18 @@ export const screens = {
   },
   customers: {
     not_found: "No se encontraron clientes",
+    empty: "No hay clientes disponibles",
+    no_more: "No hay más clientes disponibles",
+    search: {
+      label: "Buscar clientes",
+      placeholder: "Ej: Camila Gómez",
+    },
     card: {
       debt: "Deuda",
       credit_limit: "Límite de crédito",
+      available_credit: "Cupo",
+      used_credit: "cupo utilizado",
+      pay: "Abonar",
       deselect: "Quitar cliente",
     },
   },
