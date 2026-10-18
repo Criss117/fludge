@@ -22,6 +22,7 @@ import {
 } from "@expo/ui/jetpack-compose/modifiers";
 import type { CustomerSummary } from "@fludge/client/commerce/domain/entities";
 import { formatCurrency } from "@fludge/utils/format-currency";
+import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { Icon } from "@/core/shared/components/icon";
@@ -49,6 +50,7 @@ function getDebtLevel(balance: number, creditLimit: number) {
 export function CustomerCard({ customer }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColor();
+  const router = useRouter();
 
   const { percentage, color } = getDebtLevel(customer.balance, customer.creditLimit);
 
@@ -195,7 +197,10 @@ export function CustomerCard({ customer }: Props) {
                 {
                   label: "helpers.navigation.update",
                   action: () => {
-                    // TODO: navigate to customer update
+                    router.push({
+                      pathname: "/dashboard/customers/[customerid]/update",
+                      params: { customerid: customer.id },
+                    });
                   },
                   icon: "edit",
                 },

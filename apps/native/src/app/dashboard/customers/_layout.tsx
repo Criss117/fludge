@@ -31,6 +31,12 @@ export default function CustomersLayout() {
           title: t("screens.customers.create.title"),
         }}
       />
+      <Stack.Screen
+        name="[customerid]/update"
+        options={{
+          title: t("screens.customers.update.title"),
+        }}
+      />
     </Stack>
   );
 }
