@@ -245,4 +245,45 @@ export const forms = {
   ticket: {
     submit: "Cobrar",
   },
+  customer: {
+    create: {
+      title: "Crear Cliente",
+      submit: "Crear Cliente",
+    },
+    update: {
+      title: "Editar Cliente",
+      submit: "Editar Cliente",
+    },
+    sections: {
+      general: "Información general",
+      general_description: "Nombre e identificación del cliente",
+      contact: "Contacto",
+      contact_description: "Teléfono y correo electrónico",
+      credit: "Cupo y crédito",
+      credit_description: "Configuración del límite de crédito",
+    },
+    name: {
+      label: "Nombre",
+      placeholder: "Ej: Camila Gómez Salazar",
+    },
+    document_type: {
+      label: "Tipo de documento",
+    },
+    document_number: {
+      label: "Número de documento",
+      placeholder: "Ej: 1098765432",
+    },
+    phone: {
+      label: "Teléfono",
+      placeholder: "Ej: 300 123 4567",
+    },
+    email: {
+      label: "Correo electrónico",
+      placeholder: "Ej: camila.gomez@gmail.com",
+    },
+    credit_limit: {
+      label: "Cupo",
+      placeholder: "Ej: 500000",
+    },
+  },
 };

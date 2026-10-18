@@ -5,19 +5,17 @@ import type { TranslationKey } from "@fludge/i18n/index";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
-import Animated from "react-native-reanimated";
 
 import { AuthFormInputs } from "@/core/iam/components/auth-form-inputs";
+import { KeyboardSpacerView } from "@/core/shared/components/keyboard-spacer-view";
 import { SectionCard } from "@/core/shared/components/section-card";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
-import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { useMutationToast } from "@/integrations/toast";
 import { SPACING } from "@/lib/sp";
 
 export function RegisterMemberScreen() {
-  const spacer = useKeyboardSpacer();
   const colors = useThemeColor();
   const { t } = useTranslation();
   const mutation = useRegisterMember();
@@ -80,7 +78,7 @@ export function RegisterMemberScreen() {
             <ThemedNativeText color={colors.onPrimary}>{t("forms.member.submit")}</ThemedNativeText>
           </Button>
         </Host>
-        <Animated.View style={spacer} />
+        <KeyboardSpacerView />
       </View>
     </ThemedView>
   );

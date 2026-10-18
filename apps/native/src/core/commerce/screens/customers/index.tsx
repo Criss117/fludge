@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { CustomerCard } from "@/core/commerce/components/customer-card";
 import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
+import { LinkFabButton } from "@/core/shared/components/link-fab-button";
 import { TextInput } from "@/core/shared/components/text-input";
 import { ThemedText } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
@@ -101,6 +102,13 @@ export function CustomersScreen() {
           <CustomersList searchQuery={searchQuery} />
         </Suspense>
       </View>
+
+      <LinkFabButton
+        action={{
+          type: "push",
+          href: "/dashboard/customers/create",
+        }}
+      />
     </ThemedView>
   );
 }

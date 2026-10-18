@@ -234,12 +234,19 @@ export const screens = {
     },
   },
   customers: {
+    label: "Clientes",
     not_found: "No se encontraron clientes",
     empty: "No hay clientes disponibles",
     no_more: "No hay más clientes disponibles",
     search: {
       label: "Buscar clientes",
       placeholder: "Ej: Camila Gómez",
+    },
+    create: {
+      title: "Crear Cliente",
+    },
+    update: {
+      title: "Editar Cliente",
     },
     card: {
       debt: "Deuda",
