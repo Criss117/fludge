@@ -1,3 +1,4 @@
+import AccountBalanceWalletIcon from "@expo/material-symbols/account_balance_wallet.xml";
 import AddIcon from "@expo/material-symbols/add.xml";
 import AddBusinessIcon from "@expo/material-symbols/add_business.xml";
 import AddCircleIcon from "@expo/material-symbols/add_circle.xml";
@@ -5,6 +6,7 @@ import ApartmentIcon from "@expo/material-symbols/apartment.xml";
 import ArrowDownwardIcon from "@expo/material-symbols/arrow_downward.xml";
 import ArrowDropDownIcon from "@expo/material-symbols/arrow_drop_down.xml";
 import ArrowForwardIcon from "@expo/material-symbols/arrow_forward.xml";
+import AssignMentReturnIcon from "@expo/material-symbols/assignment_return.xml";
 import AttachMoneyIcon from "@expo/material-symbols/attach_money.xml";
 import BadgeIcon from "@expo/material-symbols/badge.xml";
 import BarcodeIcon from "@expo/material-symbols/barcode.xml";
@@ -13,13 +15,16 @@ import BlockIcon from "@expo/material-symbols/block.xml";
 import CallIcon from "@expo/material-symbols/call.xml";
 import CheckIcon from "@expo/material-symbols/check.xml";
 import CheckCircleIcon from "@expo/material-symbols/check_circle.xml";
+import ChevronRightIcon from "@expo/material-symbols/chevron_right.xml";
 import CloseIcon from "@expo/material-symbols/close.xml";
 import ConveyorBeltIcon from "@expo/material-symbols/conveyor_belt.xml";
+import CreditCardIcon from "@expo/material-symbols/credit_card.xml";
 import DeleteIcon from "@expo/material-symbols/delete.xml";
 import DescriptionIcon from "@expo/material-symbols/description.xml";
 import DoNotDisturbOnIcon from "@expo/material-symbols/do_not_disturb_on.xml";
 import EditIcon from "@expo/material-symbols/edit.xml";
 import ErrorIcon from "@expo/material-symbols/error.xml";
+import ExpandIcon from "@expo/material-symbols/expand.xml";
 import GroupIcon from "@expo/material-symbols/group.xml";
 import GroupAddIcon from "@expo/material-symbols/group_add.xml";
 import InventoryIcon from "@expo/material-symbols/inventory.xml";
@@ -30,7 +35,11 @@ import LogoutIcon from "@expo/material-symbols/logout.xml";
 import MailIcon from "@expo/material-symbols/mail.xml";
 import MoreVertIcon from "@expo/material-symbols/more_vert.xml";
 import PasswordIcon from "@expo/material-symbols/password.xml";
+import PaymentsIcon from "@expo/material-symbols/payments.xml";
 import PersonIcon from "@expo/material-symbols/person.xml";
+import PersonAddIcon from "@expo/material-symbols/person_add.xml";
+import PointOfSaleIcon from "@expo/material-symbols/point_of_sale.xml";
+import ReceiptLongIcon from "@expo/material-symbols/receipt_long.xml";
 import RemoveIcon from "@expo/material-symbols/remove.xml";
 import SearchIcon from "@expo/material-symbols/search.xml";
 import SecurityIcon from "@expo/material-symbols/security.xml";
@@ -44,6 +53,7 @@ export const ICONS = {
   error: ErrorIcon,
   "add-business": AddBusinessIcon,
   apartment: ApartmentIcon,
+  "account-balance-wallet": AccountBalanceWalletIcon,
   badge: BadgeIcon,
   call: CallIcon,
   password: PasswordIcon,
@@ -54,6 +64,7 @@ export const ICONS = {
   "more-vert": MoreVertIcon,
   add: AddIcon,
   person: PersonIcon,
+  "person-add": PersonAddIcon,
   check: CheckIcon,
   "check-circle": CheckCircleIcon,
   visibility: VisibilityIcon,
@@ -62,12 +73,13 @@ export const ICONS = {
   label: LabelIcon,
   description: DescriptionIcon,
   "arrow-drop-down": ArrowDropDownIcon,
+  "arrow-forward": ArrowForwardIcon,
+  "arrow-downward": ArrowDownwardIcon,
   block: BlockIcon,
   "barcode-scanner": BarcodeScannerIcon,
   "conveyor-belt": ConveyorBeltIcon,
   "do-not-disturb-on": DoNotDisturbOnIcon,
   inventory: InventoryIcon,
-  "arrow-downward": ArrowDownwardIcon,
   "add-circle": AddCircleIcon,
   barcode: BarcodeIcon,
   delete: DeleteIcon,
@@ -78,9 +90,15 @@ export const ICONS = {
   inventory_2: Inventory2Icon,
   logout: LogoutIcon,
   switch: SwitchLeftIcon,
-  "arrow-forward": ArrowForwardIcon,
   remove: RemoveIcon,
   "attach-money": AttachMoneyIcon,
+  payments: PaymentsIcon,
+  "point-of-sale": PointOfSaleIcon,
+  "assignment-return": AssignMentReturnIcon,
+  "credit-card": CreditCardIcon,
+  "chevron-right": ChevronRightIcon,
+  expand: ExpandIcon,
+  receipt: ReceiptLongIcon,
 } as const;
 
 export type IconName = keyof typeof ICONS;

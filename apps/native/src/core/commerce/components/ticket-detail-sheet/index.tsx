@@ -18,6 +18,7 @@ import {
 } from "@expo/ui/jetpack-compose/modifiers";
 import { useActiveTicket, useTicketStore } from "@fludge/client/providers/ticket-store.provider";
 import { formatCurrency } from "@fludge/utils/format-currency";
+import { useRouter } from "expo-router";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -38,6 +39,7 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
   const colors = useThemeColor();
   const { t } = useTranslation();
 
+  const router = useRouter();
   const activeTicket = useActiveTicket();
   const clearTicket = useTicketStore((s) => s.clearTicket);
 
@@ -135,7 +137,12 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
                   colors={{
                     containerColor: colors.primary,
                   }}
-                  onClick={() => {}}
+                  enabled={activeTicket.items.length > 0}
+                  onClick={async () => {
+                    await sheetRef.current?.hide();
+                    onClose();
+                    router.push("/dashboard/pos/charge");
+                  }}
                 >
                   <ThemedNativeText color={colors.onPrimary}>
                     {t("screens.pos.ticket_summary.charge")}

@@ -40,6 +40,12 @@ function Screen() {
           title: t("screens.pos.label"),
         }}
       />
+      <Stack.Screen
+        name="charge"
+        options={{
+          title: t("screens.charge.title"),
+        }}
+      />
     </Stack>
   );
 }

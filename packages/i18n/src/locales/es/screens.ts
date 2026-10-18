@@ -176,4 +176,44 @@ export const screens = {
       charge: "Cobrar",
     },
   },
+  charge: {
+    title: "Cobrar venta",
+    sections: {
+      amount_received: {
+        title: "Monto recibido",
+        label: "Monto recibido",
+        placeholder: "0",
+        resubmitted: {
+          title: "Vuelto",
+          description: "Dinero a devolver al cliente",
+        },
+      },
+      payment_type: {
+        title: "Forma de pago",
+        cash: "Efectivo",
+        credit: "Crédito",
+      },
+      customer_selector: {
+        title: "Cliente",
+        walk_in: "Mostrador",
+        customer: "Cliente",
+        walk_in_hint: "Venta de contado sin cliente asignado",
+        select_customer: "Seleccionar cliente",
+        select_title: "Seleccionar cliente",
+      },
+      summary: {
+        title: "Resumen",
+        see_details: "Ver detalles",
+        items_count: "{{count}} productos",
+      },
+    },
+  },
+  customers: {
+    not_found: "No se encontraron clientes",
+    card: {
+      debt: "Deuda",
+      credit_limit: "Límite de crédito",
+      deselect: "Quitar cliente",
+    },
+  },
 };

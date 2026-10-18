@@ -36,6 +36,11 @@ export const helpers = {
   cancel: "Cancelar",
   confirm: "Confirmar",
 
+  total: "Total",
+  summary: "Resumen",
+  see_details: "Ver detalles",
+  items: "ítems",
+
   x_more: "{{count}} más",
   all_of: "Todos de {{label}}",
   no_conection: "No hay conexión",

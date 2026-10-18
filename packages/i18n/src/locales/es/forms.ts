@@ -242,4 +242,7 @@ export const forms = {
     },
     submit: "Guardar Presentación",
   },
+  ticket: {
+    submit: "Cobrar",
+  },
 };
