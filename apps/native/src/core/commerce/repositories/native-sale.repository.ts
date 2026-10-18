@@ -3,6 +3,7 @@ import type {
   FindAllSalesFilters,
   SaleRepository,
 } from "@fludge/client/commerce/domain/sale.repository";
+import type { LocalSale } from "@fludge/db/local-schemas/shared.schema";
 import {
   localCustomer,
   localSale,
@@ -82,15 +83,15 @@ export class NativeSaleRepository implements SaleRepository {
     );
   }
 
-  public async save(saleValues: SaleSummary | SaleSummary[]): Promise<void> {
+  public async save(saleValues: LocalSale | LocalSale[]): Promise<void> {
     const salesArray = Array.isArray(saleValues) ? saleValues : [saleValues];
 
-    const sales: Omit<SaleSummary, "items" | "payments" | "customer">[] = [];
-    const items: SaleSummary["items"] = [];
-    const payments: SaleSummary["payments"] = [];
+    const sales: Omit<LocalSale, "items" | "payments" | "customer">[] = [];
+    const items: LocalSale["items"] = [];
+    const payments: LocalSale["payments"] = [];
 
     for (const sale of salesArray) {
-      const { items: saleItems, payments: salePayments, customer: _customer, ...saleValues } = sale;
+      const { items: saleItems, payments: salePayments, ...saleValues } = sale;
 
       sales.push(saleValues);
       payments.push(...salePayments);

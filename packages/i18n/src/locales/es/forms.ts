@@ -286,4 +286,12 @@ export const forms = {
       placeholder: "Ej: 500000",
     },
   },
+  customer_payment: {
+    title: "Registrar abono",
+    amount: {
+      label: "Monto",
+      placeholder: "Ej: 100000",
+    },
+    submit: "Registrar",
+  },
 };
