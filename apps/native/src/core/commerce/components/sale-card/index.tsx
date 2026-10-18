@@ -71,7 +71,7 @@ export function SaleCard({ sale }: SaleCardProps) {
       <ElevatedCard
         modifiers={[fillMaxWidth(), fillMaxHeight()]}
         colors={{
-          containerColor: colors.surfaceContainerLowest,
+          containerColor: colors.onSecondary,
         }}
       >
         <Column
