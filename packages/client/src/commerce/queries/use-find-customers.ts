@@ -3,6 +3,7 @@ import { useContainer } from "@fludge/client/providers/container.provider";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import { SearchBlob } from "@fludge/utils/search-blob";
+import { unwrapResult } from "@fludge/utils/trycatch";
 import { useSuspenseInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 
 import type { FindAllCustomersFilters } from "../domain/customer.repository";
@@ -32,10 +33,16 @@ export function useFindCustomers(filters?: FindAllCustomersFilters) {
   return useSuspenseInfiniteQuery({
     queryKey: customerKeys.filteredList(activeOrganization.id, filters),
     initialPageParam: DEFAULT_CURSOR,
-    queryFn: ({ pageParam }) =>
-      commerceContainer.repositories.customerRepository.findAll(activeOrganization.id, pageParam, {
-        searchQuery: normalizedQuery,
-      }),
+    queryFn: async ({ pageParam }) =>
+      unwrapResult(
+        await commerceContainer.repositories.customerRepository.findAll(
+          activeOrganization.id,
+          pageParam,
+          {
+            searchQuery: normalizedQuery,
+          },
+        ),
+      ),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 }
@@ -50,10 +57,12 @@ export function useFindCustomer(customerId: string) {
 
   return useSuspenseQuery({
     queryKey: customerKeys.detail(activeOrganization.id, customerId),
-    queryFn: () =>
-      commerceContainer.repositories.customerRepository.findOneById(
-        activeOrganization.id,
-        customerId,
+    queryFn: async () =>
+      unwrapResult(
+        await commerceContainer.repositories.customerRepository.findOneById(
+          activeOrganization.id,
+          customerId,
+        ),
       ),
   });
 }

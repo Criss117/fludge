@@ -7,6 +7,8 @@ import {
 import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import type { ClientSyncCatalogRepository } from "@fludge/sync/repositories/catalog/client-sync-catalog.repository";
 import type { CatalogSyncCursors, CatalogSyncResult } from "@fludge/sync/types/catalog.types";
+import { type RepositoryError, toRepositoryError } from "@fludge/utils/errors/repository.error";
+import { type Result, tryCatch, unwrapResult } from "@fludge/utils/trycatch";
 import { inArray } from "drizzle-orm";
 
 import type { DatabaseService, TransactionService } from "@/integrations/db/index";
@@ -19,7 +21,7 @@ export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository 
     private readonly syncStateRepository: NativeSyncStateRepository,
   ) {}
 
-  private async saveProducts(values: CatalogSyncResult["products"], tx: TransactionService) {
+  private saveProducts(values: CatalogSyncResult["products"], tx: TransactionService) {
     const productsList: Omit<LocalProduct, "presentations">[] = [];
     const presentationsList: LocalProduct["presentations"] = [];
 
@@ -67,10 +69,10 @@ export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository 
       tx.insert(localProductPresentation).values(presentationsList).run();
     }
 
-    this.syncStateRepository.save("products", values.nextCursor, tx);
+    unwrapResult(this.syncStateRepository.save("products", values.nextCursor, tx));
   }
 
-  private async saveCategories(values: CatalogSyncResult["categories"], tx: TransactionService) {
+  private saveCategories(values: CatalogSyncResult["categories"], tx: TransactionService) {
     if (values.items.length === 0) return;
 
     tx.insert(localCategory)
@@ -81,25 +83,39 @@ export class NativeSyncCatalogRepository implements ClientSyncCatalogRepository 
       })
       .run();
 
-    this.syncStateRepository.save("categories", values.nextCursor, tx);
+    unwrapResult(this.syncStateRepository.save("categories", values.nextCursor, tx));
   }
 
-  public async saveAll(values: CatalogSyncResult): Promise<void> {
-    this.db.transaction((tx) => {
-      this.saveCategories(values.categories, tx);
-      this.saveProducts(values.products, tx);
-    });
+  public async saveAll(values: CatalogSyncResult): Promise<Result<void, RepositoryError>> {
+    return tryCatch(
+      () => {
+        this.db.transaction((tx) => {
+          this.saveCategories(values.categories, tx);
+          this.saveProducts(values.products, tx);
+        });
+      },
+      {
+        parseError: (raw) => toRepositoryError("api_errors.catalog.products.isr_on_save", raw),
+      },
+    );
   }
 
-  public async getLastSyncedAt(): Promise<CatalogSyncCursors> {
-    const [product, category] = await Promise.all([
-      this.syncStateRepository.find("products"),
-      this.syncStateRepository.find("categories"),
-    ]);
+  public async getLastSyncedAt(): Promise<Result<CatalogSyncCursors, RepositoryError>> {
+    return tryCatch(
+      async () => {
+        const [product, category] = await Promise.all([
+          this.syncStateRepository.find("products"),
+          this.syncStateRepository.find("categories"),
+        ]);
 
-    return {
-      product: product?.cursor ?? null,
-      category: category?.cursor ?? null,
-    };
+        return {
+          product: unwrapResult(product)?.cursor ?? null,
+          category: unwrapResult(category)?.cursor ?? null,
+        };
+      },
+      {
+        parseError: (raw) => toRepositoryError("api_errors.catalog.products.isr_on_find", raw),
+      },
+    );
   }
 }

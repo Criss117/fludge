@@ -2,7 +2,9 @@ import { useContainer } from "@fludge/client/providers/container.provider";
 import { useNetwork } from "@fludge/client/providers/network-status.provider";
 import { type OrpcQueryClient, useOrpc } from "@fludge/client/providers/orpc.provider";
 import type { HttpClientSyncCatalogRepository } from "@fludge/sync/repositories/catalog/client-sync-catalog.repository";
+import type { CatalogSyncResult } from "@fludge/sync/types/catalog.types";
 import { MINUTE } from "@fludge/utils/constants";
+import { RepositoryError } from "@fludge/utils/errors/repository.error";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -18,9 +20,15 @@ export type SyncData = {
 function httpClientCatalogRepository(orpc: OrpcQueryClient): HttpClientSyncCatalogRepository {
   return {
     findLastSyncedAt: async (lastSyncedAt) => {
-      const data = await orpc.sync.syncCatalog.call(lastSyncedAt);
-
-      return data;
+      return tryCatch<CatalogSyncResult, RepositoryError>(
+        orpc.sync.syncCatalog.call(lastSyncedAt),
+        {
+          parseError: (raw) =>
+            new RepositoryError("api_errors.catalog.products.isr_on_find", {
+              cause: raw instanceof Error ? raw : new Error(String(raw)),
+            }),
+        },
+      );
     },
   };
 }
@@ -56,9 +64,8 @@ export function useSyncCatalog() {
             syncedAt: null,
           };
 
-        const [lastSyncedAt, errorGetLastSyncedAt] = await tryCatch(
-          catalogContainer.repositories.syncCatalogRepository.getLastSyncedAt(),
-        );
+        const [lastSyncedAt, errorGetLastSyncedAt] =
+          await catalogContainer.repositories.syncCatalogRepository.getLastSyncedAt();
 
         if (errorGetLastSyncedAt)
           return {
@@ -67,9 +74,7 @@ export function useSyncCatalog() {
             syncedAt: null,
           };
 
-        const [values, errorFindLastSyncedAt] = await tryCatch(
-          httpRepository.findLastSyncedAt(lastSyncedAt),
-        );
+        const [values, errorFindLastSyncedAt] = await httpRepository.findLastSyncedAt(lastSyncedAt);
 
         if (errorFindLastSyncedAt)
           return {
@@ -80,9 +85,8 @@ export function useSyncCatalog() {
 
         hasMore = Object.values(values).some((page) => page.hasMore);
 
-        const [, erroSaveAll] = await tryCatch(
-          catalogContainer.repositories.syncCatalogRepository.saveAll(values),
-        );
+        const [, erroSaveAll] =
+          await catalogContainer.repositories.syncCatalogRepository.saveAll(values);
 
         if (erroSaveAll)
           return {

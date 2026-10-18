@@ -1,5 +1,6 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
+import { unwrapResult } from "@fludge/utils/trycatch";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import type { FindAllMembersFilters } from "../domain/member.repository";
@@ -28,8 +29,10 @@ export function useFindAllMembers(filters?: FindAllMembersFilters) {
 
   return useSuspenseQuery({
     queryKey: membersKeys.filteredList(activeOrganization.id, filters),
-    queryFn: () =>
-      iamContainer.repositories.memberRepository.findAll(activeOrganization.id, filters),
+    queryFn: async () =>
+      unwrapResult(
+        await iamContainer.repositories.memberRepository.findAll(activeOrganization.id, filters),
+      ),
   });
 }
 
@@ -43,7 +46,12 @@ export function useFindMemberDetail(memberId: string) {
 
   return useSuspenseQuery({
     queryKey: membersKeys.detail(activeOrganization.id, memberId),
-    queryFn: () =>
-      iamContainer.repositories.memberRepository.findOneById(activeOrganization.id, memberId),
+    queryFn: async () =>
+      unwrapResult(
+        await iamContainer.repositories.memberRepository.findOneById(
+          activeOrganization.id,
+          memberId,
+        ),
+      ),
   });
 }

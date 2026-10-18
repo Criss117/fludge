@@ -1,6 +1,7 @@
 import { createOrpcProvider } from "@fludge/client/providers/orpc.provider";
 import { env } from "@fludge/env/native";
 import { ORGANIZATION_HEADER_KEY } from "@fludge/utils/constants";
+import { unwrapResult } from "@fludge/utils/trycatch";
 import { Platform } from "react-native";
 
 import { authClient, iamContainer } from "../dependencies/iam.container";
@@ -17,7 +18,7 @@ export const ORPCProvider = createOrpcProvider({
     let activeOrganizationId: string | null = null;
 
     try {
-      const appStore = await iamContainer.repositories.appRepository.find();
+      const appStore = unwrapResult(await iamContainer.repositories.appRepository.find());
 
       activeOrganizationId = appStore?.activeOrganizationId ?? null;
     } catch (error) {

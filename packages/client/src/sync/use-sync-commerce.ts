@@ -3,6 +3,7 @@ import { useNetwork } from "@fludge/client/providers/network-status.provider";
 import { type OrpcQueryClient, useOrpc } from "@fludge/client/providers/orpc.provider";
 import type { HttpClientSyncCommerceRepository } from "@fludge/sync/repositories/commerse/client-sync-commerce.repository";
 import { MINUTE } from "@fludge/utils/constants";
+import { RepositoryError } from "@fludge/utils/errors/repository.error";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -18,9 +19,12 @@ export type SyncData = {
 function httpClientCommerceRepository(orpc: OrpcQueryClient): HttpClientSyncCommerceRepository {
   return {
     findLastSyncedAt: async (lastSyncedAt) => {
-      const data = await orpc.sync.syncCommerce.call(lastSyncedAt);
-
-      return data;
+      return tryCatch(orpc.sync.syncCommerce.call(lastSyncedAt), {
+        parseError: (raw) =>
+          new RepositoryError("api_errors.sales.isr_on_find", {
+            cause: raw instanceof Error ? raw : new Error(String(raw)),
+          }),
+      });
     },
   };
 }
@@ -56,9 +60,8 @@ export function useSyncCommerce() {
             syncedAt: null,
           };
 
-        const [lastSyncedAt, errorGetLastSyncedAt] = await tryCatch(
-          commerceContainer.repositories.syncCommerceRepository.getLastSyncedAt(),
-        );
+        const [lastSyncedAt, errorGetLastSyncedAt] =
+          await commerceContainer.repositories.syncCommerceRepository.getLastSyncedAt();
 
         if (errorGetLastSyncedAt)
           return {
@@ -67,9 +70,7 @@ export function useSyncCommerce() {
             syncedAt: null,
           };
 
-        const [values, errorFindLastSyncedAt] = await tryCatch(
-          httpRepository.findLastSyncedAt(lastSyncedAt),
-        );
+        const [values, errorFindLastSyncedAt] = await httpRepository.findLastSyncedAt(lastSyncedAt);
 
         if (errorFindLastSyncedAt)
           return {
@@ -80,9 +81,8 @@ export function useSyncCommerce() {
 
         hasMore = Object.values(values).some((page) => page.hasMore);
 
-        const [, erroSaveAll] = await tryCatch(
-          commerceContainer.repositories.syncCommerceRepository.saveAll(values),
-        );
+        const [, erroSaveAll] =
+          await commerceContainer.repositories.syncCommerceRepository.saveAll(values);
 
         if (erroSaveAll)
           return {

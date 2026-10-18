@@ -111,3 +111,19 @@ export function isPromise<T>(value: unknown): value is Promise<T> {
     typeof (value as PromiseLike<T>).then === "function"
   );
 }
+
+// ─── Result Unwrap ───────────────────────────────────────────────────────────
+
+/**
+ * Desempaqueta un {@link Result} exitoso o lanza el error contenido.
+ *
+ * Útil en consumidores que aún trabajan con excepciones (p. ej. mutations
+ * de TanStack Query) mientras los repositories migran al patrón Result.
+ */
+export function unwrapResult<T, TError extends Error>(result: Result<T, TError>): T {
+  if (result[1] !== null) {
+    throw result[1];
+  }
+
+  return result[0] as T;
+}

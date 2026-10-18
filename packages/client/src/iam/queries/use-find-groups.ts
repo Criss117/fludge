@@ -1,5 +1,6 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
+import { unwrapResult } from "@fludge/utils/trycatch";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import type { FindAllGroupsFilters } from "../domain/group.repository";
@@ -28,8 +29,10 @@ export function useFindAllGroups(filters?: FindAllGroupsFilters) {
 
   return useSuspenseQuery({
     queryKey: groupKeys.filteredList(activeOrganization.id, filters),
-    queryFn: () =>
-      iamContainer.repositories.groupRepository.findAll(activeOrganization.id, filters),
+    queryFn: async () =>
+      unwrapResult(
+        await iamContainer.repositories.groupRepository.findAll(activeOrganization.id, filters),
+      ),
   });
 }
 
@@ -43,7 +46,9 @@ export function useFindGroupDetail(groupId: string) {
 
   return useSuspenseQuery({
     queryKey: groupKeys.detail(activeOrganization.id, groupId),
-    queryFn: () =>
-      iamContainer.repositories.groupRepository.findOneById(activeOrganization.id, groupId),
+    queryFn: async () =>
+      unwrapResult(
+        await iamContainer.repositories.groupRepository.findOneById(activeOrganization.id, groupId),
+      ),
   });
 }

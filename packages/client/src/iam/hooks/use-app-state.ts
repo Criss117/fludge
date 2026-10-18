@@ -1,6 +1,7 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useNetwork } from "@fludge/client/providers/network-status.provider";
 import { defaultSyncState } from "@fludge/db/local-schemas/app.schema";
+import { unwrapResult } from "@fludge/utils/trycatch";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 
 import type { SessionRepository } from "../domain/session.repository";
@@ -16,40 +17,34 @@ export function useAppState() {
     refetchOnReconnect: true,
     queryKey: QUERY_KEY,
     queryFn: async () => {
-      const app = await iamContainer.repositories.appRepository.find();
+      const app = unwrapResult(await iamContainer.repositories.appRepository.find());
 
       if (!isInternetReachable) return app;
 
       try {
-        const { data, error } = await iamContainer.repositories.sessionRepository.getSession();
-
-        if (error) {
-          if (error.status === 401 || error.status === 403) {
-            return iamContainer.repositories.appRepository.save({
-              session: null,
-            });
-          }
-
-          return app;
-        }
+        const data = unwrapResult(await iamContainer.repositories.sessionRepository.getSession());
 
         if (!data)
-          return iamContainer.repositories.appRepository.save({
-            session: null,
-          });
+          return unwrapResult(
+            await iamContainer.repositories.appRepository.save({
+              session: null,
+            }),
+          );
 
-        return iamContainer.repositories.appRepository.save({
-          session: {
-            createdAt: data.session.createdAt,
-            updatedAt: data.session.updatedAt,
-            id: data.session.id,
-            userId: data.session.userId,
-            expiresAt: data.session.expiresAt,
-            ipAddress: data.session.ipAddress,
-            userAgent: data.session.userAgent,
-            user: data.user as typeof data.user & { isRoot: boolean },
-          },
-        });
+        return unwrapResult(
+          await iamContainer.repositories.appRepository.save({
+            session: {
+              createdAt: data.session.createdAt,
+              updatedAt: data.session.updatedAt,
+              id: data.session.id,
+              userId: data.session.userId,
+              expiresAt: data.session.expiresAt,
+              ipAddress: data.session.ipAddress,
+              userAgent: data.session.userAgent,
+              user: data.user as typeof data.user & { isRoot: boolean },
+            },
+          }),
+        );
       } catch {
         // La request nunca completó (sin red, timeout, DNS, etc.)
         return app;
@@ -60,7 +55,7 @@ export function useAppState() {
   const setTheme = useMutation({
     mutationKey: ["app", "set-theme"],
     mutationFn: async (values: { theme: "light" | "dark" }) => {
-      const newApp = await iamContainer.repositories.appRepository.save(values);
+      const newApp = unwrapResult(await iamContainer.repositories.appRepository.save(values));
 
       queryClient.setQueryData(QUERY_KEY, newApp);
     },
@@ -69,9 +64,11 @@ export function useAppState() {
   const clearLastLoggedUserId = useMutation({
     mutationKey: ["app", "clear-last-logged-user-id"],
     mutationFn: async () => {
-      const newApp = await iamContainer.repositories.appRepository.save({
-        lastLoggedUserId: null,
-      });
+      const newApp = unwrapResult(
+        await iamContainer.repositories.appRepository.save({
+          lastLoggedUserId: null,
+        }),
+      );
 
       queryClient.setQueryData(QUERY_KEY, newApp);
     },
@@ -81,14 +78,16 @@ export function useAppState() {
     mutationKey: ["app", "set-active-organization"],
     mutationFn: async (values: { activeOrganizationId: string | null }) => {
       if (values.activeOrganizationId) {
-        const organization = await iamContainer.repositories.organizationRepository.findOneById(
-          values.activeOrganizationId,
+        const organization = unwrapResult(
+          await iamContainer.repositories.organizationRepository.findOneById(
+            values.activeOrganizationId,
+          ),
         );
 
         if (!organization) return;
       }
 
-      const newApp = await iamContainer.repositories.appRepository.save(values);
+      const newApp = unwrapResult(await iamContainer.repositories.appRepository.save(values));
 
       queryClient.setQueryData(QUERY_KEY, newApp);
     },
@@ -97,7 +96,7 @@ export function useAppState() {
   const clearApp = useMutation({
     mutationKey: ["app", "clear"],
     mutationFn: async () => {
-      const newApp = await iamContainer.repositories.appRepository.clear();
+      const newApp = unwrapResult(await iamContainer.repositories.appRepository.clear());
 
       queryClient.setQueryData(QUERY_KEY, newApp);
     },
@@ -106,14 +105,14 @@ export function useAppState() {
   const signUpEmail = useMutation({
     mutationKey: ["signUpEmail"],
     mutationFn: async (values: Parameters<SessionRepository["signUpEmail"]>[0]) => {
-      const { error } = await iamContainer.repositories.sessionRepository.signUpEmail(
-        { ...values, isRoot: true } as any,
-        {
-          query: { disableCookieCache: true },
-        },
+      unwrapResult(
+        await iamContainer.repositories.sessionRepository.signUpEmail(
+          { ...values, isRoot: true } as any,
+          {
+            query: { disableCookieCache: true },
+          },
+        ),
       );
-
-      if (error) throw new Error(error.message, { cause: error });
 
       await queryClient.invalidateQueries({ queryKey: QUERY_KEY });
     },
@@ -122,9 +121,7 @@ export function useAppState() {
   const signInEmail = useMutation({
     mutationKey: ["signInEmail"],
     mutationFn: async (values: Parameters<SessionRepository["signInEmail"]>[0]) => {
-      const { error } = await iamContainer.repositories.sessionRepository.signInEmail(values);
-
-      if (error) throw new Error(error.message, { cause: error });
+      unwrapResult(await iamContainer.repositories.sessionRepository.signInEmail(values));
 
       await queryClient.invalidateQueries({ queryKey: QUERY_KEY });
     },
@@ -133,16 +130,16 @@ export function useAppState() {
   const signOut = useMutation({
     mutationKey: ["signOut"],
     mutationFn: async () => {
-      const { error } = await iamContainer.repositories.sessionRepository.signOut();
+      unwrapResult(await iamContainer.repositories.sessionRepository.signOut());
 
-      if (error) throw new Error(error.message, { cause: error });
-
-      await iamContainer.repositories.appRepository.save({
-        lastLoggedUserId: appQuery.data.session?.user.id,
-        session: null,
-        activeOrganizationId: null,
-        syncState: defaultSyncState,
-      });
+      unwrapResult(
+        await iamContainer.repositories.appRepository.save({
+          lastLoggedUserId: appQuery.data.session?.user.id,
+          session: null,
+          activeOrganizationId: null,
+          syncState: defaultSyncState,
+        }),
+      );
 
       await queryClient.invalidateQueries({ queryKey: QUERY_KEY });
 

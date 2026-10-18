@@ -3,6 +3,7 @@ import { useContainer } from "@fludge/client/providers/container.provider";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import { SearchBlob } from "@fludge/utils/search-blob";
+import { unwrapResult } from "@fludge/utils/trycatch";
 import { useSuspenseInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 
 import type { FindAllProductsFilters } from "../domain/product.repository";
@@ -38,15 +39,21 @@ export function useFindProducts(filters: FindAllProductsFilters) {
   return useSuspenseInfiniteQuery({
     queryKey: productKeys.filteredList(activeOrganization.id, filters),
     initialPageParam: DEFAULT_CURSOR,
-    queryFn: ({ pageParam }) =>
-      catalogContainer.repositories.productRepository.findAll(activeOrganization.id, pageParam, {
-        searchQuery: normalizedQuery,
-        status: filters.status,
-        orderBy: {
-          createdAt: filters.orderBy.createdAt,
-          stock: filters.orderBy.stock,
-        },
-      }),
+    queryFn: async ({ pageParam }) =>
+      unwrapResult(
+        await catalogContainer.repositories.productRepository.findAll(
+          activeOrganization.id,
+          pageParam,
+          {
+            searchQuery: normalizedQuery,
+            status: filters.status,
+            orderBy: {
+              createdAt: filters.orderBy.createdAt,
+              stock: filters.orderBy.stock,
+            },
+          },
+        ),
+      ),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 }
@@ -61,7 +68,12 @@ export function useFindProduct(productId: string) {
 
   return useSuspenseQuery({
     queryKey: productKeys.detail(activeOrganization.id, productId),
-    queryFn: () =>
-      catalogContainer.repositories.productRepository.findOneById(activeOrganization.id, productId),
+    queryFn: async () =>
+      unwrapResult(
+        await catalogContainer.repositories.productRepository.findOneById(
+          activeOrganization.id,
+          productId,
+        ),
+      ),
   });
 }

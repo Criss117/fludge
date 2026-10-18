@@ -1,15 +1,19 @@
 import type { LocalOrganization } from "@fludge/db/local-schemas/shared.schema";
+import type { RepositoryError } from "@fludge/utils/errors/repository.error";
+import type { Result } from "@fludge/utils/trycatch";
 
 import type { OrganizationSummary } from "./entities";
 
 export interface OrganizationRepository {
-  findAll(): Promise<OrganizationSummary[]>;
+  findAll(): Promise<Result<OrganizationSummary[], RepositoryError>>;
 
-  findOneById(organizationId: string): Promise<OrganizationSummary | null>;
+  findOneById(organizationId: string): Promise<Result<OrganizationSummary | null, RepositoryError>>;
 
-  save(organization: LocalOrganization | LocalOrganization[]): Promise<void>;
+  save(
+    organization: LocalOrganization | LocalOrganization[],
+  ): Promise<Result<void, RepositoryError>>;
 
-  delete(organizationId: string | string[]): Promise<void>;
+  delete(organizationId: string | string[]): Promise<Result<void, RepositoryError>>;
 
-  clearAll(): Promise<void>;
+  clearAll(): Promise<Result<void, RepositoryError>>;
 }

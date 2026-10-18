@@ -3,6 +3,7 @@ import { useNetwork } from "@fludge/client/providers/network-status.provider";
 import { type OrpcQueryClient, useOrpc } from "@fludge/client/providers/orpc.provider";
 import type { HttpClientSyncIamRepository } from "@fludge/sync/repositories/iam/client-sync-iam.repository";
 import { MINUTE } from "@fludge/utils/constants";
+import { RepositoryError } from "@fludge/utils/errors/repository.error";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -18,9 +19,12 @@ export type SyncData = {
 function httpClientIamRepository(orpc: OrpcQueryClient): HttpClientSyncIamRepository {
   return {
     findLastSyncedAt: async (lastSyncedAt) => {
-      const data = await orpc.sync.syncIam.call(lastSyncedAt);
-
-      return data;
+      return tryCatch(orpc.sync.syncIam.call(lastSyncedAt), {
+        parseError: (raw) =>
+          new RepositoryError("api_errors.iam.organizations.isr_on_find", {
+            cause: raw instanceof Error ? raw : new Error(String(raw)),
+          }),
+      });
     },
   };
 }
@@ -55,9 +59,8 @@ export function useSyncIam() {
             syncedAt: null,
           };
 
-        const [lastSyncedAt, errorGetLastSyncedAt] = await tryCatch(
-          iamContainer.repositories.syncIamRepository.getLastSyncedAt(),
-        );
+        const [lastSyncedAt, errorGetLastSyncedAt] =
+          await iamContainer.repositories.syncIamRepository.getLastSyncedAt();
 
         if (errorGetLastSyncedAt)
           return {
@@ -66,9 +69,7 @@ export function useSyncIam() {
             syncedAt: null,
           };
 
-        const [values, errorFindLastSyncedAt] = await tryCatch(
-          httpRepository.findLastSyncedAt(lastSyncedAt),
-        );
+        const [values, errorFindLastSyncedAt] = await httpRepository.findLastSyncedAt(lastSyncedAt);
 
         if (errorFindLastSyncedAt)
           return {
@@ -79,9 +80,7 @@ export function useSyncIam() {
 
         hasMore = Object.values(values).some((page) => page.hasMore);
 
-        const [, erroSaveAll] = await tryCatch(
-          iamContainer.repositories.syncIamRepository.saveAll(values),
-        );
+        const [, erroSaveAll] = await iamContainer.repositories.syncIamRepository.saveAll(values);
 
         if (erroSaveAll)
           return {

@@ -2,6 +2,7 @@ import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
+import { unwrapResult } from "@fludge/utils/trycatch";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 
 import type { FindAllSalesFilters } from "../domain/sale.repository";
@@ -29,11 +30,13 @@ export function useFindSales(filters?: FindAllSalesFilters) {
   return useSuspenseInfiniteQuery({
     queryKey: salesKeys.filteredList(activeOrganization.id, filters),
     initialPageParam: DEFAULT_CURSOR,
-    queryFn: ({ pageParam }) =>
-      commerceContainer.repositories.saleRepository.findAll(
-        activeOrganization.id,
-        pageParam,
-        filters,
+    queryFn: async ({ pageParam }) =>
+      unwrapResult(
+        await commerceContainer.repositories.saleRepository.findAll(
+          activeOrganization.id,
+          pageParam,
+          filters,
+        ),
       ),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });

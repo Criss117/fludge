@@ -1,5 +1,6 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import { unwrapResult } from "@fludge/utils/trycatch";
 import { useMutation } from "@tanstack/react-query";
 
 import { useInvalidateCustomers } from "../queries/use-find-customers";
@@ -13,7 +14,7 @@ export function useCreateCustomerMutation() {
   return useMutation(
     orpc.customer.commands.create.mutationOptions({
       onSuccess: async (newCustomer) => {
-        await commerceContainer.repositories.customerRepository.save(newCustomer);
+        unwrapResult(await commerceContainer.repositories.customerRepository.save(newCustomer));
 
         invalidateCustomers.invalidateList();
       },
@@ -29,7 +30,7 @@ export function useUpdateCustomerMutation() {
   return useMutation(
     orpc.customer.commands.update.mutationOptions({
       onSuccess: async (updatedCustomer) => {
-        await commerceContainer.repositories.customerRepository.save(updatedCustomer);
+        unwrapResult(await commerceContainer.repositories.customerRepository.save(updatedCustomer));
 
         invalidateCustomers.invalidateList();
         invalidateCustomers.invalidateDetail(updatedCustomer.id);
@@ -47,8 +48,8 @@ export function useCreateCustomerPaymentMutation() {
   return useMutation(
     orpc.customer.commands.createPayment.mutationOptions({
       onSuccess: async ({ customer, sales }) => {
-        await commerceContainer.repositories.customerRepository.save(customer);
-        await commerceContainer.repositories.saleRepository.save(sales);
+        unwrapResult(await commerceContainer.repositories.customerRepository.save(customer));
+        unwrapResult(await commerceContainer.repositories.saleRepository.save(sales));
 
         invalidateCustomers.invalidateList();
         invalidateCustomers.invalidateDetail(customer.id);
@@ -71,8 +72,8 @@ export function useCancelCustomerPaymentMutation() {
   return useMutation(
     orpc.customer.commands.cancelPayment.mutationOptions({
       onSuccess: async ({ customer, sales }) => {
-        await commerceContainer.repositories.saleRepository.save(sales);
-        await commerceContainer.repositories.customerRepository.save(customer);
+        unwrapResult(await commerceContainer.repositories.saleRepository.save(sales));
+        unwrapResult(await commerceContainer.repositories.customerRepository.save(customer));
 
         invalidateCustomers.invalidateList();
         invalidateCustomers.invalidateDetail(customer.id);

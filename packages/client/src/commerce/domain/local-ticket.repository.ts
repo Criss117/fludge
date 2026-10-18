@@ -3,6 +3,8 @@ import type {
   TicketProductSelect,
   TicketSelect,
 } from "@fludge/db/local-schemas/ticket.schema";
+import type { RepositoryError } from "@fludge/utils/errors/repository.error";
+import type { Result } from "@fludge/utils/trycatch";
 
 export type AddTicketProductBase = {
   readonly name: string;
@@ -45,11 +47,11 @@ export type Ticket = TicketSelect & {
 };
 
 export interface LocalTicketRepository {
-  load(organizationId: string): Promise<Ticket[]>;
+  load(organizationId: string): Promise<Result<Ticket[], RepositoryError>>;
 
-  save(organizationId: string, tickets: Ticket[]): Promise<void>;
+  save(organizationId: string, tickets: Ticket[]): Promise<Result<void, RepositoryError>>;
 
-  clear(organizationId: string): Promise<void>;
+  clear(organizationId: string): Promise<Result<void, RepositoryError>>;
 
-  clearAll(): Promise<void>;
+  clearAll(): Promise<Result<void, RepositoryError>>;
 }

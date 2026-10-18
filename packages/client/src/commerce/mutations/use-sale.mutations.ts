@@ -1,6 +1,7 @@
 import { useInvalidateProducts } from "@fludge/client/catalog/queries/use-find-products";
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import { unwrapResult } from "@fludge/utils/trycatch";
 import { useMutation } from "@tanstack/react-query";
 
 import { useInvalidateCustomers } from "../queries/use-find-customers";
@@ -16,13 +17,13 @@ export function useCreateSaleMutation() {
   return useMutation(
     orpc.sale.commands.create.mutationOptions({
       onSuccess: async (data) => {
-        await catalogContainer.repositories.productRepository.save(data.products);
+        unwrapResult(await catalogContainer.repositories.productRepository.save(data.products));
 
         if (data.customer) {
-          await commerceContainer.repositories.customerRepository.save(data.customer);
+          unwrapResult(await commerceContainer.repositories.customerRepository.save(data.customer));
         }
 
-        await commerceContainer.repositories.saleRepository.save(data.sale);
+        unwrapResult(await commerceContainer.repositories.saleRepository.save(data.sale));
 
         invalidateProducts.invalidateList();
         data.products.forEach((p) => invalidateProducts.invalidateDetail(p.id));
@@ -44,11 +45,11 @@ export function useCancelSaleMutation() {
   return useMutation(
     orpc.sale.commands.cancel.mutationOptions({
       onSuccess: async ({ customer, products, sale }) => {
-        await catalogContainer.repositories.productRepository.save(products);
-        await commerceContainer.repositories.saleRepository.save(sale);
+        unwrapResult(await catalogContainer.repositories.productRepository.save(products));
+        unwrapResult(await commerceContainer.repositories.saleRepository.save(sale));
 
         if (customer) {
-          await commerceContainer.repositories.customerRepository.save(customer);
+          unwrapResult(await commerceContainer.repositories.customerRepository.save(customer));
         }
 
         if (customer) {
@@ -76,11 +77,11 @@ export function useRefundSaleItemsMutation() {
   return useMutation(
     orpc.sale.commands.refundItems.mutationOptions({
       onSuccess: async ({ customer, products, sale }) => {
-        await catalogContainer.repositories.productRepository.save(products);
-        await commerceContainer.repositories.saleRepository.save(sale);
+        unwrapResult(await catalogContainer.repositories.productRepository.save(products));
+        unwrapResult(await commerceContainer.repositories.saleRepository.save(sale));
 
         if (customer) {
-          await commerceContainer.repositories.customerRepository.save(customer);
+          unwrapResult(await commerceContainer.repositories.customerRepository.save(customer));
         }
 
         if (customer) {

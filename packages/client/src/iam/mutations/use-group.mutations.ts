@@ -1,5 +1,6 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import { unwrapResult } from "@fludge/utils/trycatch";
 import { useMutation } from "@tanstack/react-query";
 
 import { useInvalidateGroups } from "../queries/use-find-groups";
@@ -13,7 +14,7 @@ export function useCreateGroup() {
   return useMutation(
     orpc.group.commands.create.mutationOptions({
       onSuccess: async (group) => {
-        await iamContainer.repositories.groupRepository.save(group);
+        unwrapResult(await iamContainer.repositories.groupRepository.save(group));
 
         invalidateGroups.invalidateList();
       },
@@ -30,7 +31,7 @@ export function useUpdateGroup() {
   return useMutation(
     orpc.group.commands.update.mutationOptions({
       onSuccess: async (group, variables) => {
-        await iamContainer.repositories.groupRepository.save(group);
+        unwrapResult(await iamContainer.repositories.groupRepository.save(group));
 
         invalidateGroups.invalidateList();
         invalidateGroups.invalidateDetail(variables.id);
@@ -49,7 +50,7 @@ export function useDeleteGroup() {
   return useMutation(
     orpc.group.commands.delete.mutationOptions({
       onSuccess: async (groups, variables) => {
-        await iamContainer.repositories.groupRepository.delete(groups);
+        unwrapResult(await iamContainer.repositories.groupRepository.delete(groups));
 
         invalidateGroups.invalidateList();
         variables.groupIds.forEach((groupId) => invalidateGroups.invalidateDetail(groupId));
@@ -69,7 +70,7 @@ export function useAssignMembersToGroup() {
   return useMutation(
     orpc.group.commands.assignMembers.mutationOptions({
       onSuccess: async (group, variables) => {
-        await iamContainer.repositories.groupRepository.save(group);
+        unwrapResult(await iamContainer.repositories.groupRepository.save(group));
 
         invalidateGroups.invalidateDetail(variables.groupId);
         variables.memberIds.forEach((memberId) => invalidateMembers.invalidateDetail(memberId));
@@ -87,7 +88,7 @@ export function useRemoveMembersFromGroup() {
   return useMutation(
     orpc.group.commands.removeMembers.mutationOptions({
       onSuccess: async (group, variables) => {
-        await iamContainer.repositories.groupRepository.save(group);
+        unwrapResult(await iamContainer.repositories.groupRepository.save(group));
 
         invalidateGroups.invalidateDetail(variables.groupId);
         variables.memberIds.forEach((memberId) => invalidateMembers.invalidateDetail(memberId));

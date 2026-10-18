@@ -1,4 +1,5 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
+import { unwrapResult } from "@fludge/utils/trycatch";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 
 export function useFindOrganizations() {
@@ -6,7 +7,8 @@ export function useFindOrganizations() {
 
   return useSuspenseQuery({
     queryKey: ["iam", "organizations"],
-    queryFn: () => iamContainer.repositories.organizationRepository.findAll(),
+    queryFn: async () =>
+      unwrapResult(await iamContainer.repositories.organizationRepository.findAll()),
   });
 }
 

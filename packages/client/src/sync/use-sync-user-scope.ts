@@ -1,4 +1,3 @@
-import { tryCatch } from "@fludge/utils/trycatch";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { useAppState } from "../iam/hooks/use-app-state";
@@ -36,22 +35,79 @@ export function useSyncUserScope() {
           syncedAt: null,
         };
 
-      const [, erroDeleting] = await tryCatch(async () => {
+      const [, errorClearLocalTickets] =
         await commerceContainer.repositories.localTicketRepository.clearAll();
-        await commerceContainer.repositories.saleRepository.clearAll();
+
+      if (errorClearLocalTickets)
+        return {
+          error: errorClearLocalTickets,
+          success: false,
+          syncedAt: null,
+        };
+
+      const [, errorClearSales] = await commerceContainer.repositories.saleRepository.clearAll();
+
+      if (errorClearSales)
+        return {
+          error: errorClearSales,
+          success: false,
+          syncedAt: null,
+        };
+
+      const [, errorClearCustomers] =
         await commerceContainer.repositories.customerRepository.clearAll();
 
+      if (errorClearCustomers)
+        return {
+          error: errorClearCustomers,
+          success: false,
+          syncedAt: null,
+        };
+
+      const [, errorClearProducts] =
         await catalogContainer.repositories.productRepository.clearAll();
+
+      if (errorClearProducts)
+        return {
+          error: errorClearProducts,
+          success: false,
+          syncedAt: null,
+        };
+
+      const [, errorClearCategories] =
         await catalogContainer.repositories.categoryRepository.clearAll();
 
-        await iamContainer.repositories.groupRepository.clearAll();
-        await iamContainer.repositories.memberRepository.clearAll();
-        await iamContainer.repositories.organizationRepository.clearAll();
-      });
-
-      if (erroDeleting)
+      if (errorClearCategories)
         return {
-          error: erroDeleting,
+          error: errorClearCategories,
+          success: false,
+          syncedAt: null,
+        };
+
+      const [, errorClearGroups] = await iamContainer.repositories.groupRepository.clearAll();
+
+      if (errorClearGroups)
+        return {
+          error: errorClearGroups,
+          success: false,
+          syncedAt: null,
+        };
+
+      const [, errorClearMembers] = await iamContainer.repositories.memberRepository.clearAll();
+
+      if (errorClearMembers)
+        return {
+          error: errorClearMembers,
+          success: false,
+          syncedAt: null,
+        };
+
+      const [, errorClearOrganizations] =
+        await iamContainer.repositories.organizationRepository.clearAll();
+
+      if (errorClearOrganizations)
+        return {
+          error: errorClearOrganizations,
           success: false,
           syncedAt: null,
         };

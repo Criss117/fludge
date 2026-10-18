@@ -1,4 +1,5 @@
 import type { TranslationKey } from "@fludge/i18n/index";
+import { unwrapResult } from "@fludge/utils/trycatch";
 import { createStore } from "zustand";
 import { persist, type PersistStorage, type StorageValue } from "zustand/middleware";
 
@@ -226,7 +227,7 @@ export function createTicketStore(organizationId: string, repository: LocalTicke
   const storage: PersistStorage<Ticket[]> = {
     getItem: async () => {
       try {
-        const tickets = await repository.load(organizationId);
+        const tickets = unwrapResult(await repository.load(organizationId));
         if (!tickets || tickets.length === 0) return null;
         return { state: tickets, version: VERSION };
       } catch (error) {
@@ -235,10 +236,10 @@ export function createTicketStore(organizationId: string, repository: LocalTicke
       }
     },
     setItem: async (_name: string, value: StorageValue<Ticket[]>) => {
-      await repository.save(organizationId, value.state);
+      unwrapResult(await repository.save(organizationId, value.state));
     },
     removeItem: async () => {
-      await repository.clear(organizationId);
+      unwrapResult(await repository.clear(organizationId));
     },
   };
 

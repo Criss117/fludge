@@ -1,5 +1,6 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import { unwrapResult } from "@fludge/utils/trycatch";
 import { useMutation } from "@tanstack/react-query";
 
 import { useInvalidateProducts } from "../queries/use-find-products";
@@ -12,7 +13,7 @@ export function useCreateProductMutation() {
   return useMutation(
     orpc.product.commands.create.mutationOptions({
       onSuccess: async (newProduct) => {
-        await catalogContainer.repositories.productRepository.save(newProduct);
+        unwrapResult(await catalogContainer.repositories.productRepository.save(newProduct));
 
         invalidateProducts.invalidateList();
       },
@@ -28,7 +29,7 @@ export function useUpdateProductMutation() {
   return useMutation(
     orpc.product.commands.update.mutationOptions({
       onSuccess: async (newProduct) => {
-        await catalogContainer.repositories.productRepository.save(newProduct);
+        unwrapResult(await catalogContainer.repositories.productRepository.save(newProduct));
 
         invalidateProducts.invalidateList();
         invalidateProducts.invalidateDetail(newProduct.id);

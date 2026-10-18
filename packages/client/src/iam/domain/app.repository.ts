@@ -1,23 +1,17 @@
 import type { AppInsert, AppSelect } from "@fludge/db/local-schemas/app.schema";
+import type { RepositoryError } from "@fludge/utils/errors/repository.error";
+import type { Result } from "@fludge/utils/trycatch";
 
 import type { OrganizationSummary } from "./entities";
 
+type AppWithActiveOrganization = AppSelect & {
+  activeOrganization: OrganizationSummary | null;
+};
+
 export interface AppRepository {
-  find(): Promise<
-    AppSelect & {
-      activeOrganization: OrganizationSummary | null;
-    }
-  >;
+  find(): Promise<Result<AppWithActiveOrganization, RepositoryError>>;
 
-  save(values: AppInsert): Promise<
-    AppSelect & {
-      activeOrganization: OrganizationSummary | null;
-    }
-  >;
+  save(values: AppInsert): Promise<Result<AppWithActiveOrganization, RepositoryError>>;
 
-  clear(): Promise<
-    AppSelect & {
-      activeOrganization: OrganizationSummary | null;
-    }
-  >;
+  clear(): Promise<Result<AppWithActiveOrganization, RepositoryError>>;
 }

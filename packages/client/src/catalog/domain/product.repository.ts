@@ -1,5 +1,7 @@
 import type { LocalProduct } from "@fludge/db/local-schemas/shared.schema";
+import type { RepositoryError } from "@fludge/utils/errors/repository.error";
 import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
+import type { Result } from "@fludge/utils/trycatch";
 
 import type { ProductSummary } from "./entities";
 
@@ -19,13 +21,19 @@ export interface ProductRepository {
     organizationId: string,
     cursor: Cursor,
     filters?: FindAllProductsFilters,
-  ): Promise<PaginatedResponse<ProductSummary>>;
+  ): Promise<Result<PaginatedResponse<ProductSummary>, RepositoryError>>;
 
-  findOneById(organizationId: string, productId: string): Promise<ProductSummary | null>;
+  findOneById(
+    organizationId: string,
+    productId: string,
+  ): Promise<Result<ProductSummary | null, RepositoryError>>;
 
-  save(product: LocalProduct | LocalProduct[]): Promise<void>;
+  save(product: LocalProduct | LocalProduct[]): Promise<Result<void, RepositoryError>>;
 
-  delete(organizationId: string, productId: string | string[]): Promise<void>;
+  delete(
+    organizationId: string,
+    productId: string | string[],
+  ): Promise<Result<void, RepositoryError>>;
 
-  clearAll(): Promise<void>;
+  clearAll(): Promise<Result<void, RepositoryError>>;
 }

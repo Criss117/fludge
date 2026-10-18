@@ -4,6 +4,7 @@ import { useContainer } from "@fludge/client/providers/container.provider";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import { SearchBlob } from "@fludge/utils/search-blob";
+import { unwrapResult } from "@fludge/utils/trycatch";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 
 function normalizeFilters(filters?: FindAllGroupsFilters) {
@@ -31,10 +32,16 @@ export function useFindCategories(filters?: FindAllGroupsFilters) {
   return useSuspenseInfiniteQuery({
     queryKey: categoryKeys.filteredList(activeOrganization.id, filters),
     initialPageParam: DEFAULT_CURSOR,
-    queryFn: ({ pageParam }) =>
-      catalogContainer.repositories.categoryRepository.findAll(activeOrganization!.id, pageParam, {
-        searchQuery: normalizedQuery,
-      }),
+    queryFn: async ({ pageParam }) =>
+      unwrapResult(
+        await catalogContainer.repositories.categoryRepository.findAll(
+          activeOrganization!.id,
+          pageParam,
+          {
+            searchQuery: normalizedQuery,
+          },
+        ),
+      ),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 }
