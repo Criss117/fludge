@@ -1,8 +1,5 @@
-import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
-
-import type { SaleDetail } from "./entities";
-
-export type { SaleDetail } from "./entities";
+import type { PaginatedResponse, Cursor } from "@fludge/utils/pagination";
+import type { SaleSummary } from "./entities";
 
 export type FindAllSalesFilters = {
   customerId?: string;
@@ -13,9 +10,9 @@ export interface SaleRepository {
     organizationId: string,
     cursor: Cursor,
     filters?: FindAllSalesFilters,
-  ): Promise<PaginatedResponse<SaleDetail>>;
+  ): Promise<PaginatedResponse<SaleSummary>>;
 
-  save(sale: SaleDetail | SaleDetail[]): Promise<void>;
+  save(sale: SaleSummary | SaleSummary[]): Promise<void>;
 
   clearAll(): Promise<void>;
 }

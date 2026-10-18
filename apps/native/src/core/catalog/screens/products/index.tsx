@@ -17,12 +17,8 @@ import { SPACING } from "@/lib/sp";
 
 interface ListFooterProps {
   hasNextPage: boolean;
-  isFetchingNextPage: boolean;
 }
-function ListFooterComponent({
-  hasNextPage,
-  isFetchingNextPage: _isFetchingNextPage,
-}: ListFooterProps) {
+function ListFooterComponent({ hasNextPage }: ListFooterProps) {
   const { t } = useTranslation();
 
   if (!hasNextPage)
@@ -60,9 +56,7 @@ function ProductsList({ searchQuery }: { searchQuery: string }) {
       keyExtractor={(i) => i.id}
       renderItem={({ item }) => <ProductCard product={item} />}
       showsVerticalScrollIndicator={false}
-      ListFooterComponent={() => (
-        <ListFooterComponent hasNextPage={hasNextPage} isFetchingNextPage={isFetchingNextPage} />
-      )}
+      ListFooterComponent={() => <ListFooterComponent hasNextPage={hasNextPage} />}
       ItemSeparatorComponent={ItemSeparator}
       onEndReachedThreshold={0.3}
       onEndReached={handleEndReached}

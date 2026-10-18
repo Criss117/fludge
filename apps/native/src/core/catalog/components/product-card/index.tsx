@@ -1,4 +1,4 @@
-import { AssistChip, Card, Column, Host, Row } from "@expo/ui/jetpack-compose";
+import { AssistChip, Column, ElevatedCard, Host, Row } from "@expo/ui/jetpack-compose";
 import { paddingAll, weight } from "@expo/ui/jetpack-compose/modifiers";
 import type { ProductSummary } from "@fludge/client/catalog/domain/entities";
 import type { TranslationKey } from "@fludge/i18n/index";
@@ -62,7 +62,7 @@ export function ProductCard({ product }: Props) {
 
   return (
     <Host style={{ width: "100%", height: CARD_HEIGHT }}>
-      <Card
+      <ElevatedCard
         colors={{
           containerColor: colors.onSecondary,
         }}
@@ -130,7 +130,7 @@ export function ProductCard({ product }: Props) {
             />
           </Row>
         </Column>
-      </Card>
+      </ElevatedCard>
     </Host>
   );
 }

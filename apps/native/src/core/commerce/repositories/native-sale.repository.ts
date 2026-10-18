@@ -1,9 +1,14 @@
+import type { SaleSummary } from "@fludge/client/commerce/domain/entities";
 import type {
   FindAllSalesFilters,
-  SaleDetail,
   SaleRepository,
 } from "@fludge/client/commerce/domain/sale.repository";
-import { localSale, localSaleItem, localSalePayment } from "@fludge/db/local-schemas/shared.schema";
+import {
+  localCustomer,
+  localSale,
+  localSaleItem,
+  localSalePayment,
+} from "@fludge/db/local-schemas/shared.schema";
 import { buildConflictUpdateColumn, jsonObject } from "@fludge/db/utils/build-queries";
 import { type Cursor, paginate, type PaginatedResponse } from "@fludge/utils/pagination";
 import { and, desc, eq, getColumns, inArray, sql } from "drizzle-orm";
@@ -25,7 +30,7 @@ export class NativeSaleRepository implements SaleRepository {
     organizationId: string,
     cursor: Cursor,
     filters?: FindAllSalesFilters,
-  ): Promise<PaginatedResponse<SaleDetail>> {
+  ): Promise<PaginatedResponse<SaleSummary>> {
     const rows = this.db
       .select({
         ...getColumns(localSale),
@@ -38,11 +43,13 @@ export class NativeSaleRepository implements SaleRepository {
             json_group_array(
               DISTINCT ${jsonObject(localSalePayment)}
             ) FILTER (WHERE ${localSalePayment.saleId} IS NOT NULL)
-          `.as("items"),
+          `.as("payments"),
+        customer: getColumns(localCustomer),
       })
       .from(localSale)
-      .innerJoin(localSaleItem, eq(localSaleItem.saleId, localSale.id))
+      .leftJoin(localSaleItem, eq(localSaleItem.saleId, localSale.id))
       .leftJoin(localSalePayment, eq(localSalePayment.saleId, localSale.id))
+      .leftJoin(localCustomer, eq(localCustomer.id, localSale.customerId))
       .where(
         and(
           eq(localSale.organizationId, organizationId),
@@ -59,12 +66,12 @@ export class NativeSaleRepository implements SaleRepository {
       rows
         .map((sale) => ({
           ...sale,
-          items: (JSON.parse(sale.items) as SaleDetail["items"]).map((item) => ({
+          items: (JSON.parse(sale.items) as SaleSummary["items"]).map((item) => ({
             ...item,
             createdAt: new Date(item.createdAt),
             updatedAt: new Date(item.updatedAt),
           })),
-          payments: (JSON.parse(sale.payments) as SaleDetail["payments"]).map((payment) => ({
+          payments: (JSON.parse(sale.payments) as SaleSummary["payments"]).map((payment) => ({
             ...payment,
             createdAt: new Date(payment.createdAt),
             updatedAt: new Date(payment.updatedAt),
@@ -75,15 +82,15 @@ export class NativeSaleRepository implements SaleRepository {
     );
   }
 
-  public async save(saleValues: SaleDetail | SaleDetail[]): Promise<void> {
+  public async save(saleValues: SaleSummary | SaleSummary[]): Promise<void> {
     const salesArray = Array.isArray(saleValues) ? saleValues : [saleValues];
 
-    const sales: Omit<SaleDetail, "items" | "payments">[] = [];
-    const items: SaleDetail["items"] = [];
-    const payments: SaleDetail["payments"] = [];
+    const sales: Omit<SaleSummary, "items" | "payments" | "customer">[] = [];
+    const items: SaleSummary["items"] = [];
+    const payments: SaleSummary["payments"] = [];
 
     for (const sale of salesArray) {
-      const { items: saleItems, payments: salePayments, ...saleValues } = sale;
+      const { items: saleItems, payments: salePayments, customer: _customer, ...saleValues } = sale;
 
       sales.push(saleValues);
       payments.push(...salePayments);

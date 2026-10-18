@@ -6,9 +6,9 @@ import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 
 import type { FindAllSalesFilters } from "../domain/sale.repository";
 
-function normalizeFilters(filters: FindAllSalesFilters) {
+function normalizeFilters(filters?: FindAllSalesFilters) {
   return {
-    customerId: filters.customerId,
+    customerId: filters?.customerId ? filters.customerId : undefined,
   };
 }
 
@@ -18,7 +18,7 @@ export const { keys: salesKeys, useInvalidateQueries: useInvalidateSales } = key
   normalizeFilters,
 });
 
-export function useFindSales(filters: FindAllSalesFilters) {
+export function useFindSales(filters?: FindAllSalesFilters) {
   const { commerceContainer } = useContainer();
   const {
     data: { activeOrganization },

@@ -4,4 +4,6 @@ export type CustomerSummary = Omit<LocalCustomer, "payments">;
 
 export type CustomerDetail = LocalCustomer;
 
-export type SaleDetail = LocalSale;
+export type SaleSummary = LocalSale & {
+  customer?: CustomerSummary | null;
+};
