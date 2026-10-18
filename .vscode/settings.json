@@ -2,6 +2,18 @@
   "js/ts.experimental.useTsgo": true,
   "js/ts.tsdk.path": "node_modules/typescript/lib",
   "js/ts.tsserver.maxMemory": 4096,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.sortMembers": "explicit"
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
   "files.watcherExclude": {
     "**/node_modules/**": true,
     "**/dist/**": true,
