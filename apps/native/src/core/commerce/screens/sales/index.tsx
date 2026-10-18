@@ -49,7 +49,7 @@ function SaleList() {
       ListFooterComponent={() => <ListFooterComponent hasNextPage={hasNextPage} />}
       ItemSeparatorComponent={ItemSeparator}
       onEndReachedThreshold={0.3}
-      // onEndReached={handleEndReached}
+      onEndReached={handleEndReached}
     />
   );
 }
