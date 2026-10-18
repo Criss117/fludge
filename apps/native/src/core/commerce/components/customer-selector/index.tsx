@@ -2,9 +2,9 @@ import {
   Box,
   Button,
   Column,
-  HorizontalDivider,
   Host,
   IconButton,
+  LazyColumn,
   ModalBottomSheet,
   type ModalBottomSheetRef,
   RNHostView,
@@ -12,33 +12,25 @@ import {
   Spacer,
 } from "@expo/ui/jetpack-compose";
 import {
-  align,
-  background,
   clickable,
-  clip,
-  fillMaxHeight,
+  fillMaxSize,
   fillMaxWidth,
-  height,
-  padding,
   paddingAll,
-  Shapes,
-  size,
   weight,
 } from "@expo/ui/jetpack-compose/modifiers";
 import type { CustomerSummary } from "@fludge/client/commerce/domain/entities";
 import { useFindCustomers } from "@fludge/client/commerce/queries/use-find-customers";
-import { FlashList } from "@shopify/flash-list";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { ActivityIndicator, View } from "react-native";
 
 import { CustomerSaleCard } from "@/core/commerce/components/customer-sale-card";
 import { Icon } from "@/core/shared/components/icon";
 import { SectionCard } from "@/core/shared/components/section-card";
 import { TextInput } from "@/core/shared/components/text-input";
-import { ThemedNativeText, ThemedText } from "@/core/shared/components/themed-text";
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
-import { View } from "react-native";
 
 interface CustomerSelectorProps {
   selectedCustomer: CustomerSummary | null;
@@ -84,6 +76,25 @@ function CustomerListItem({
   );
 }
 
+const onReachedItem: CustomerSummary = {
+  id: "onReachedItem",
+  name: "onReachedItem",
+  documentNumber: "onReachedItem",
+  phone: "onReachedItem",
+  email: "onReachedItem",
+  creditLimit: 0,
+  balance: 0,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  status: "active",
+  documentType: "CC",
+  createdBy: "onReachedItem",
+  organizationId: "onReachedItem",
+};
+
+const END_PREFIX = "onReachedItem";
+const isEndItem = (item: CustomerSummary) => item.id.startsWith(END_PREFIX);
+
 function CustomerSelectorSheet({
   isOpen,
   onClose,
@@ -102,17 +113,44 @@ function CustomerSelectorSheet({
     searchQuery: query,
   });
 
-  const items = useMemo(() => data.pages.flatMap((page) => page.items), [data]);
+  const items = useMemo(() => {
+    const customers = data.pages.flatMap((page) => page.items);
+    return hasNextPage
+      ? customers.concat({ ...onReachedItem, id: `${END_PREFIX}-${customers.length}` })
+      : customers;
+  }, [hasNextPage, data]);
 
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const handleSelect = async (customer: CustomerSummary) => {
-    onSelect(customer);
-    await sheetRef.current?.hide();
-    onClose();
-  };
+  const handleSelect = useCallback(
+    async (customer: CustomerSummary) => {
+      onSelect(customer);
+      await sheetRef.current?.hide();
+      onClose();
+    },
+    [onClose, onSelect],
+  );
+
+  const renderCustomer = useCallback(
+    ({ item }: { item: CustomerSummary }) => {
+      if (isEndItem(item))
+        return (
+          <RNHostView matchContents={{ vertical: true }}>
+            <View
+              style={{ height: SPACING["4xl"], alignItems: "center", justifyContent: "center" }}
+              onLayout={handleEndReached}
+            >
+              {isFetchingNextPage && <ActivityIndicator />}
+            </View>
+          </RNHostView>
+        );
+
+      return <CustomerListItem customer={item} onSelect={() => handleSelect(item)} />;
+    },
+    [handleSelect, handleEndReached, isFetchingNextPage],
+  );
 
   if (!isOpen) return null;
 
@@ -147,39 +185,27 @@ function CustomerSelectorSheet({
             modifiers={[fillMaxWidth()]}
           />
 
-          <RNHostView>
-            <FlashList
-              data={items}
-              style={{ flex: 1 }}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View
-                  style={{
-                    height: SPACING["4xl"],
-                  }}
-                >
-                  <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
-                    <CustomerListItem customer={item} onSelect={() => handleSelect(item)} />
-                  </Host>
-                </View>
-              )}
-              onEndReached={handleEndReached}
-              onEndReachedThreshold={0.3}
-              ListEmptyComponent={
-                <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
-                  <Column modifiers={[fillMaxWidth(), paddingAll(SPACING.lg)]}>
-                    <Row modifiers={[fillMaxWidth()]}>
-                      <Spacer modifiers={[weight(1)]} />
-                      <ThemedNativeText variant="muted">
-                        {t("screens.customers.not_found")}
-                      </ThemedNativeText>
-                      <Spacer modifiers={[weight(1)]} />
-                    </Row>
-                  </Column>
-                </Host>
-              }
-            />
-          </RNHostView>
+          {items.length === 0 ? (
+            <Column modifiers={[fillMaxWidth(), paddingAll(SPACING.lg)]}>
+              <Row modifiers={[fillMaxWidth()]}>
+                <Spacer modifiers={[weight(1)]} />
+                <ThemedNativeText variant="muted">
+                  {t("screens.customers.not_found")}
+                </ThemedNativeText>
+                <Spacer modifiers={[weight(1)]} />
+              </Row>
+            </Column>
+          ) : (
+            <LazyColumn modifiers={[fillMaxSize()]}>
+              <LazyColumn.Items
+                data={items}
+                keyExtractor={(item) => item.id}
+                estimatedItemSize={SPACING["4xl"]}
+              >
+                {renderCustomer}
+              </LazyColumn.Items>
+            </LazyColumn>
+          )}
         </Column>
       </ModalBottomSheet>
     </Host>
