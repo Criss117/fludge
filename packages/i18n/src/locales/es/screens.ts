@@ -113,6 +113,31 @@ export const screens = {
   },
   sales: {
     label: "Ventas",
+    list: {
+      empty: "No hay ventas disponibles",
+      no_more: "No hay más ventas disponibles",
+      new_sale: "Nueva venta",
+      receipt: "Tirilla",
+      detail: "Detalle",
+      audit: "Ver Auditoría",
+      see_products: "Ver productos",
+      items_count: "{{count}} productos",
+      cancellation_reason: "Motivo de Anulación",
+      walk_in: "Consumidor Final (Mostrador)",
+      due_info: "Vence en {{days}} días ({{date}})",
+      available_credit: "Cupo disponible restante: {{amount}}",
+      reissued: "Reemitida en ticket {{ticket}}",
+    },
+    status: {
+      open: "Abierta",
+      partial: "Parcial",
+      completed: "Completada",
+      cancelled: "Anulada",
+    },
+    payment_type: {
+      cash: "Efectivo",
+      credit: "Crédito / Fiado",
+    },
   },
   settings: {
     label: "Ajustes",

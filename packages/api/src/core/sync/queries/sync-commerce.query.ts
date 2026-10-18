@@ -16,7 +16,7 @@ export class SyncCommerceQuery {
 
   public async execute(organizationIds: string[], lastSyncedAt: Query) {
     const [values, error] = await tryCatch(
-      this.syncSaleRepository.findAllItems(organizationIds, lastSyncedAt),
+      this.syncSaleRepository.findAllItems(organizationIds, lastSyncedAt, 100),
     );
 
     if (error) throw new InternalServerError(error);

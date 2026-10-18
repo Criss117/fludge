@@ -82,6 +82,8 @@ export class SqliteSyncCommerceRepository implements ServerSyncCommerceRepositor
         )`.as("items"),
         })
         .from(sale)
+        .innerJoin(saleItem, eq(saleItem.saleId, sale.id))
+        .leftJoin(salePayment, eq(salePayment.saleId, sale.id))
         .where(and(inArray(sale.organizationId, organizationIds), after(sale, cursor)))
         .limit(limit)
         .orderBy(asc(sale.updatedAt), asc(sale.id))

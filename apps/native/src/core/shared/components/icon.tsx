@@ -24,6 +24,7 @@ import DescriptionIcon from "@expo/material-symbols/description.xml";
 import DoNotDisturbOnIcon from "@expo/material-symbols/do_not_disturb_on.xml";
 import EditIcon from "@expo/material-symbols/edit.xml";
 import ErrorIcon from "@expo/material-symbols/error.xml";
+import EventIcon from "@expo/material-symbols/event.xml";
 import ExpandIcon from "@expo/material-symbols/expand.xml";
 import GroupIcon from "@expo/material-symbols/group.xml";
 import GroupAddIcon from "@expo/material-symbols/group_add.xml";
@@ -51,6 +52,7 @@ import { Icon as ExpoIcon, type IconProps as ExpoIconProps } from "@expo/ui";
 
 export const ICONS = {
   error: ErrorIcon,
+  event: EventIcon,
   "add-business": AddBusinessIcon,
   apartment: ApartmentIcon,
   "account-balance-wallet": AccountBalanceWalletIcon,
