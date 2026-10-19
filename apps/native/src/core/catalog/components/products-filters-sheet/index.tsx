@@ -25,7 +25,7 @@ export function ProductsFiltersSheet() {
   const { actions, state, texts } = useProductsFiltersSheet();
   const sheetRef = useRef<ModalBottomSheetRef>(null);
 
-  const iconName = (status: "none" | OrderByDirection): IconName => {
+  const iconName = (status: OrderByDirection): IconName => {
     switch (status) {
       case "asc":
         return "keyboard-arrow-up";
@@ -56,17 +56,13 @@ export function ProductsFiltersSheet() {
             <ThemedNativeText variant="h5">{t(texts.title)}</ThemedNativeText>
 
             <Column>
-              <OutlinedButton onClick={() => actions.setNextOrderBy("createdAt")}>
-                <ThemedNativeText>{t("helpers.order_by.created_at")}</ThemedNativeText>
-                <Spacer modifiers={[weight(1)]} />
-                <Icon name={iconName(state.orderBy.createdAt)} size={18} />
-              </OutlinedButton>
-
-              <OutlinedButton onClick={() => actions.setNextOrderBy("stock")}>
-                <ThemedNativeText>{t("helpers.order_by.stock")}</ThemedNativeText>
-                <Spacer modifiers={[weight(1)]} />
-                <Icon name={iconName(state.orderBy.stock)} size={18} />
-              </OutlinedButton>
+              {state.orderBy.map(({ direction, key, label }) => (
+                <OutlinedButton onClick={() => actions.setNextOrderBy(key)} key={key}>
+                  <ThemedNativeText>{t(label)}</ThemedNativeText>
+                  <Spacer modifiers={[weight(1)]} />
+                  <Icon name={iconName(direction)} size={18} />
+                </OutlinedButton>
+              ))}
             </Column>
           </Column>
         </ModalBottomSheet>

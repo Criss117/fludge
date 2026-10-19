@@ -11,6 +11,7 @@ export const helpers = {
   order_by: {
     created_at: "Por fecha de creación",
     stock: "Por stock",
+    min_stock: "Por stock mínimo",
   },
 
   filters: {

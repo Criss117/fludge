@@ -29,6 +29,10 @@ export const ORDER_BY_FIELDS = {
     label: getI18nKey("helpers.order_by.stock"),
     value: "stock",
   },
+  MIN_STOCK: {
+    label: getI18nKey("helpers.order_by.min_stock"),
+    value: "minStock",
+  },
 } as const;
 
 export const ORDER_BY_DIRECTIONS = ["asc", "desc", "none"] as const;
