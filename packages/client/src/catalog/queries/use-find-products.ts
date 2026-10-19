@@ -1,22 +1,17 @@
 import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { useContainer } from "@fludge/client/providers/container.provider";
+import type { Filters } from "@fludge/client/shared/use-filters";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import { SearchBlob } from "@fludge/utils/search-blob";
 import { unwrapResult } from "@fludge/utils/trycatch";
 import { useSuspenseInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 
-import type { FindAllProductsFilters } from "../domain/product.repository";
-
-function normalizeFilters(filters: FindAllProductsFilters) {
+function normalizeFilters(filters: Filters) {
   return {
     searchQuery: SearchBlob.normalize(filters.searchQuery),
-
     status: filters.status,
-    orderBy: {
-      createdAt: filters.orderBy.createdAt,
-      stock: filters.orderBy.stock,
-    },
+    orderBy: filters.orderBy,
   };
 }
 
@@ -26,7 +21,7 @@ export const { keys: productKeys, useInvalidateQueries: useInvalidateProducts } 
   normalizeFilters,
 });
 
-export function useFindProducts(filters: FindAllProductsFilters) {
+export function useFindProducts(filters: Filters) {
   const { catalogContainer } = useContainer();
   const {
     data: { activeOrganization },
@@ -47,10 +42,7 @@ export function useFindProducts(filters: FindAllProductsFilters) {
           {
             searchQuery: normalizedQuery,
             status: filters.status,
-            orderBy: {
-              createdAt: filters.orderBy.createdAt,
-              stock: filters.orderBy.stock,
-            },
+            orderBy: filters.orderBy,
           },
         ),
       ),

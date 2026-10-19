@@ -1,19 +1,28 @@
-import { Box, Host, Row } from "@expo/ui/jetpack-compose";
+import {
+  Box,
+  Host,
+  Row,
+  SegmentedButton,
+  SingleChoiceSegmentedButtonRow,
+} from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, weight } from "@expo/ui/jetpack-compose/modifiers";
-import { useFindProducts } from "@fludge/client/catalog/queries/use-find-products";
 import { FlashList } from "@shopify/flash-list";
-import { Suspense, useCallback, useMemo, useState } from "react";
+import { Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
 import { ProductCard } from "@/core/catalog/components/product-card";
+import { ProductsFiltersSheet } from "@/core/catalog/components/products-filters-sheet";
 import { BarcodeReader } from "@/core/shared/components/barcode-reader";
 import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { LinkFabButton } from "@/core/shared/components/link-fab-button";
 import { TextInput } from "@/core/shared/components/text-input";
-import { ThemedText } from "@/core/shared/components/themed-text";
+import { ThemedNativeText, ThemedText } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
+
+import { useProducts, useProductsList } from "./use-products";
 
 interface ListFooterProps {
   hasNextPage: boolean;
@@ -33,39 +42,28 @@ function ListFooterComponent({ hasNextPage }: ListFooterProps) {
 
 const ItemSeparator = () => <View style={{ height: SPACING.sm }} />;
 
-function ProductsList({ searchQuery }: { searchQuery: string }) {
-  const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useFindProducts({
-    searchQuery,
-    status: "all",
-    orderBy: {
-      createdAt: "desc",
-      stock: "none",
-    },
-  });
-
-  const items = useMemo(() => data.pages.flatMap((page) => page.items), [data.pages]);
-
-  const handleEndReached = useCallback(() => {
-    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+function ProductsList() {
+  const { status, actions } = useProductsList();
 
   return (
     <FlashList
-      data={items}
+      data={status.items}
       contentContainerStyle={styles.listContentContainer}
       keyExtractor={(i) => i.id}
       renderItem={({ item }) => <ProductCard product={item} />}
       showsVerticalScrollIndicator={false}
-      ListFooterComponent={() => <ListFooterComponent hasNextPage={hasNextPage} />}
+      ListFooterComponent={() => <ListFooterComponent hasNextPage={status.hasNextPage} />}
       ItemSeparatorComponent={ItemSeparator}
       onEndReachedThreshold={0.3}
-      onEndReached={handleEndReached}
+      onEndReached={actions.handleEndReached}
     />
   );
 }
 
 export function ProductsScreen() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const { t } = useTranslation();
+  const colors = useThemeColor();
+  const { texts, actions, status } = useProducts();
 
   return (
     <ThemedView style={styles.container}>
@@ -81,23 +79,58 @@ export function ProductsScreen() {
           >
             <Box modifiers={[weight(1)]}>
               <TextInput
-                onValueChange={setSearchQuery}
-                value={searchQuery}
+                onValueChange={actions.setSearchQuery}
+                value={status.filters.searchQuery}
                 modifiers={[fillMaxWidth()]}
                 iconName="search"
-                label="screens.catalog.products.search.label"
-                placeholder="screens.catalog.products.search.placeholder"
+                label={texts.searchBar.label}
+                placeholder={texts.searchBar.placeholder}
                 withDebounce={400}
               />
             </Box>
-            <BarcodeReader setBarcode={setSearchQuery} />
+            <BarcodeReader setBarcode={actions.setSearchQuery} />
+          </Row>
+        </Host>
+        <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
+          <Row
+            modifiers={[fillMaxWidth()]}
+            verticalAlignment="center"
+            horizontalAlignment="center"
+            horizontalArrangement={{
+              spacedBy: SPACING.sm,
+            }}
+          >
+            <SingleChoiceSegmentedButtonRow modifiers={[weight(1)]}>
+              {status.statusOptions.map((item) => (
+                <SegmentedButton
+                  colors={{
+                    activeContainerColor: colors.secondary,
+                    activeContentColor: colors.onSecondary,
+                  }}
+                  key={item.value}
+                  selected={actions.isStatusSelected(item.value)}
+                  onClick={() => actions.setStatus(item.value)}
+                >
+                  <SegmentedButton.Label>
+                    <ThemedNativeText
+                      color={
+                        actions.isStatusSelected(item.value) ? colors.onSecondary : colors.onSurface
+                      }
+                    >
+                      {t(item.label)}
+                    </ThemedNativeText>
+                  </SegmentedButton.Label>
+                </SegmentedButton>
+              ))}
+            </SingleChoiceSegmentedButtonRow>
+            <ProductsFiltersSheet />
           </Row>
         </Host>
       </View>
 
       <View style={styles.listContainer}>
         <Suspense fallback={<BaseLoadingIndicator />}>
-          <ProductsList searchQuery={searchQuery} />
+          <ProductsList />
         </Suspense>
       </View>
 
@@ -119,6 +152,7 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: SPACING.sm,
     paddingTop: SPACING.sm,
+    rowGap: SPACING.sm,
   },
   listContainer: {
     flex: 1,

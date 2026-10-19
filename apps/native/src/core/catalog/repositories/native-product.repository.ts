@@ -1,16 +1,13 @@
-import type {
-  FindAllProductsFilters,
-  ProductDetail,
-  ProductRepository,
-} from "@fludge/client/catalog/domain/product.repository";
+import type { ProductDetail } from "@fludge/client/catalog/domain/entities";
+import type { ProductRepository } from "@fludge/client/catalog/domain/product.repository";
+import type { Filters } from "@fludge/client/shared/use-filters";
 import type { LocalProduct } from "@fludge/db/local-schemas/shared.schema";
 import { localProduct, localProductPresentation } from "@fludge/db/local-schemas/shared.schema";
-import { buildConflictUpdateColumn, jsonObject, sortBy } from "@fludge/db/utils/build-queries";
+import { buildConflictUpdateColumn, jsonObject } from "@fludge/db/utils/build-queries";
 import { type RepositoryError, toRepositoryError } from "@fludge/utils/errors/repository.error";
 import { type Cursor, paginate, type PaginatedResponse } from "@fludge/utils/pagination";
 import { type Result, tryCatch } from "@fludge/utils/trycatch";
-import type { SQL } from "drizzle-orm";
-import { and, desc, eq, getColumns, inArray, like, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, getColumns, inArray, like, or, sql } from "drizzle-orm";
 
 import type { DatabaseService } from "@/integrations/db";
 
@@ -34,17 +31,18 @@ export class NativeProductRepository implements ProductRepository {
   public async findAll(
     organizationId: string,
     cursor: Cursor,
-    filters: FindAllProductsFilters,
+    filters: Filters,
   ): Promise<Result<PaginatedResponse<ProductDetail>, RepositoryError>> {
     return tryCatch(
       () => {
-        const orderByFilters: SQL[] = [];
+        const orderByFilters =
+          filters.orderBy
+            ?.filter((o) => o.direction !== "none")
+            .map((orderBy) => {
+              const column = localProduct[orderBy.field];
 
-        if (filters.orderBy.stock !== "none") {
-          orderByFilters.push(sortBy(localProduct.stock, filters.orderBy.stock));
-        }
-
-        orderByFilters.push(sortBy(localProduct.createdAt, filters.orderBy.createdAt));
+              return orderBy.direction === "asc" ? asc(column) : desc(column);
+            }) ?? [];
 
         const rows = this.db
           .select({

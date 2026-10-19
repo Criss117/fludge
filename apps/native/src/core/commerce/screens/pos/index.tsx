@@ -32,10 +32,12 @@ function ProductList({
   const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useFindProducts({
     searchQuery,
     status: "active",
-    orderBy: {
-      createdAt: "desc",
-      stock: "none",
-    },
+    orderBy: [
+      {
+        direction: "asc",
+        field: "createdAt",
+      },
+    ],
   });
 
   const items = useMemo(() => data.pages.flatMap((page) => page.items), [data.pages]);

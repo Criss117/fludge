@@ -26,10 +26,13 @@ import EditIcon from "@expo/material-symbols/edit.xml";
 import ErrorIcon from "@expo/material-symbols/error.xml";
 import EventIcon from "@expo/material-symbols/event.xml";
 import ExpandIcon from "@expo/material-symbols/expand.xml";
+import FilterListIcon from "@expo/material-symbols/filter_list.xml";
 import GroupIcon from "@expo/material-symbols/group.xml";
 import GroupAddIcon from "@expo/material-symbols/group_add.xml";
 import InventoryIcon from "@expo/material-symbols/inventory.xml";
 import Inventory2Icon from "@expo/material-symbols/inventory_2.xml";
+import KeyboardArrowDownIcon from "@expo/material-symbols/keyboard_arrow_down.xml";
+import KeyboardArrowUpIcon from "@expo/material-symbols/keyboard_arrow_up.xml";
 import LabelIcon from "@expo/material-symbols/label.xml";
 import LocationOnIcon from "@expo/material-symbols/location_on.xml";
 import LogoutIcon from "@expo/material-symbols/logout.xml";
@@ -101,6 +104,9 @@ export const ICONS = {
   "chevron-right": ChevronRightIcon,
   expand: ExpandIcon,
   receipt: ReceiptLongIcon,
+  "filter-list": FilterListIcon,
+  "keyboard-arrow-down": KeyboardArrowDownIcon,
+  "keyboard-arrow-up": KeyboardArrowUpIcon,
 } as const;
 
 export type IconName = keyof typeof ICONS;

@@ -1,10 +1,20 @@
 export const helpers = {
   status: {
+    all: "Todos",
     active: "Activo",
     inactive: "Inactivo",
     discontinued: "Descontinuado",
     activate: "Activar",
     deactivate: "Desactivar",
+  },
+
+  order_by: {
+    created_at: "Por fecha de creación",
+    stock: "Por stock",
+  },
+
+  filters: {
+    title: "Filtros",
   },
 
   placeholder: {
