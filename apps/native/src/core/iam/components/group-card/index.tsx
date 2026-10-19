@@ -61,6 +61,8 @@ export function SelectableGroupCard({
   );
 }
 
+const GROUP_CARD_HEIGHT = 380;
+
 export function GroupCard({ group, menuOptions }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColor();
@@ -95,7 +97,7 @@ export function GroupCard({ group, menuOptions }: Props) {
   }, [menuOptions, router, group.id]);
 
   return (
-    <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
+    <Host style={{ width: "100%", height: GROUP_CARD_HEIGHT }}>
       <ElevatedCard
         modifiers={[fillMaxWidth()]}
         colors={{
@@ -124,7 +126,7 @@ export function GroupCard({ group, menuOptions }: Props) {
               </Row>
               {!menuOptions?.hide && <MenuOptions items={items} />}
             </Row>
-            <ThemedNativeText>{group.description}</ThemedNativeText>
+            <ThemedNativeText maxLines={2}>{group.description}</ThemedNativeText>
           </Column>
 
           <FlowRow>

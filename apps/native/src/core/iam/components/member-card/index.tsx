@@ -84,7 +84,7 @@ export function MemberCard({ member, menuOptions }: Props) {
   }, [menuOptions, router, member.id]);
 
   return (
-    <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
+    <Host style={{ width: "100%", height: SPACING["5xl"] }}>
       <ElevatedCard
         modifiers={[fillMaxWidth()]}
         colors={{
