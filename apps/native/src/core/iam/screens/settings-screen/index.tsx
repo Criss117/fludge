@@ -162,6 +162,8 @@ function SyncSection() {
 function SessionSection() {
   const { t } = useTranslation();
   const { signOut, switchActiveOrganization } = useAppState();
+  const { isFullyOnline } = useNetwork();
+  const mutationToast = useMutationToast();
   const colors = useThemeColor();
 
   const setNullActiveOrganization = () => {
@@ -169,7 +171,11 @@ function SessionSection() {
   };
 
   const onSignOut = () => {
-    signOut.mutate();
+    signOut.mutate(undefined, {
+      onError: (e) => {
+        mutationToast.showError(e.message as TranslationKey);
+      },
+    });
   };
 
   const isPending = switchActiveOrganization.isPending || signOut.isPending;
@@ -193,7 +199,7 @@ function SessionSection() {
           containerColor: colors.error,
         }}
         onClick={onSignOut}
-        enabled={!isPending}
+        enabled={!isPending && isFullyOnline}
       >
         <Icon name="logout" size={20} color={colors.onError} />
         <Spacer modifiers={[width(SPACING.sm)]} />
@@ -267,9 +273,12 @@ export function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: SPACING.md,
+    paddingHorizontal: SPACING.sm,
   },
   contentContainer: {
     rowGap: SPACING.xl,
+    paddingBottom: SPACING.md,
+    paddingHorizontal: SPACING.sm,
+    paddingTop: SPACING.sm,
   },
 });

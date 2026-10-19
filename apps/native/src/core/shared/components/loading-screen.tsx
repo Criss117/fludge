@@ -1,7 +1,7 @@
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, StyleSheet, useColorScheme, View } from "react-native";
+import { ActivityIndicator, StyleSheet, useColorScheme } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -14,6 +14,7 @@ import Animated, {
 
 import { useThemeColor } from "../hooks/use-theme-color";
 import { ThemedText } from "./themed-text";
+import { ThemedView } from "./themed-view";
 
 type LoadingScreenProps = {
   message?: TranslationKey;
@@ -63,27 +64,16 @@ export function LoadingScreen({ message }: LoadingScreenProps) {
   }));
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
-    >
+    <ThemedView style={[styles.container]}>
       <Animated.View style={[styles.logo, logoStyle]}>
-        <ThemedText style={[styles.title, isDark && { color: colors.onBackground }]}>
+        <ThemedText style={[isDark && { color: colors.onBackground }]} variant="h1">
           {t("app.title")}
         </ThemedText>
-        {message ? (
-          <ThemedText style={styles.message} variant="muted">
-            {t(message)}
-          </ThemedText>
-        ) : null}
+        {message ? <ThemedText variant="muted">{t(message)}</ThemedText> : null}
       </Animated.View>
 
       <ActivityIndicator color={colors.onBackground} size="small" />
-    </View>
+    </ThemedView>
   );
 }
 
@@ -100,17 +90,5 @@ const styles = StyleSheet.create({
   logo: {
     alignItems: "center",
     gap: 8,
-  },
-  // text-5xl font-bold (+ dark:text-accent aplicado inline según el esquema)
-  title: {
-    fontSize: 48,
-    lineHeight: 48,
-    fontWeight: "700",
-  },
-  // text-muted text-center text-sm
-  message: {
-    textAlign: "center",
-    fontSize: 14,
-    lineHeight: 20,
   },
 });

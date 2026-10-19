@@ -2,8 +2,6 @@ import { expoClient } from "@better-auth/expo/client";
 import { generateIamContainer } from "@fludge/client/iam/container";
 import type { SessionRepository } from "@fludge/client/iam/domain/session.repository";
 import { env } from "@fludge/env/native";
-import { toRepositoryError } from "@fludge/utils/errors/repository.error";
-import { err, ok } from "@fludge/utils/trycatch";
 import { createAuthClient } from "better-auth/react";
 import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
@@ -37,34 +35,10 @@ const syncIamRepository = new NativeSyncIamRepository(databaseService, syncState
 const appRepository = new NativeAppRepository(databaseService);
 
 const sessionRepository: SessionRepository = {
-  getSession: async (...args) => {
-    const { data, error } = await authClient.getSession(...args);
-
-    if (error) return err(toRepositoryError("api_errors.auth.sessions.isr_on_update", error));
-
-    return ok(data);
-  },
-  signUpEmail: async (...args) => {
-    const { data, error } = await authClient.signUp.email(...args);
-
-    if (error) return err(toRepositoryError("api_errors.auth.sessions.isr_on_update", error));
-
-    return ok(data);
-  },
-  signInEmail: async (...args) => {
-    const { data, error } = await authClient.signIn.email(...args);
-
-    if (error) return err(toRepositoryError("api_errors.auth.sessions.isr_on_update", error));
-
-    return ok(data);
-  },
-  signOut: async (...args) => {
-    const { data, error } = await authClient.signOut(...args);
-
-    if (error) return err(toRepositoryError("api_errors.auth.sessions.isr_on_update", error));
-
-    return ok(data);
-  },
+  getSession: authClient.getSession,
+  signUpEmail: authClient.signUp.email,
+  signInEmail: authClient.signIn.email,
+  signOut: authClient.signOut,
 };
 
 export const iamContainer = generateIamContainer({

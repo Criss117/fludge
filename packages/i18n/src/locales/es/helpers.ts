@@ -31,7 +31,7 @@ export const helpers = {
     online: "En línea",
     offline: "Desconectado",
     checking: "Comprobando",
-    server_down: "Servidor no responde",
+    server_down: "El Servidor no responde",
   },
 
   navigation: {

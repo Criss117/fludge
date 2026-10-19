@@ -1,28 +1,34 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useNetwork } from "@fludge/client/providers/network-status.provider";
+import { useNetworkMutation } from "@fludge/client/shared/use-network-mutation";
 import { defaultSyncState } from "@fludge/db/local-schemas/app.schema";
 import { unwrapResult } from "@fludge/utils/trycatch";
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 
+import type { AppWithActiveOrganization } from "../domain/app.repository";
 import type { SessionRepository } from "../domain/session.repository";
 
 const QUERY_KEY = ["app"] as const;
 
 export function useAppState() {
-  const { isInternetReachable } = useNetwork();
+  const { isFullyOnline } = useNetwork();
   const { iamContainer } = useContainer();
   const queryClient = useQueryClient();
 
   const appQuery = useSuspenseQuery({
     refetchOnReconnect: true,
     queryKey: QUERY_KEY,
-    queryFn: async () => {
-      const app = unwrapResult(await iamContainer.repositories.appRepository.find());
+    queryFn: async (): Promise<AppWithActiveOrganization> => {
+      const [app, errorGetApp] = await iamContainer.repositories.appRepository.find();
 
-      if (!isInternetReachable) return app;
+      if (errorGetApp) throw errorGetApp;
+
+      if (!isFullyOnline) return app;
 
       try {
-        const data = unwrapResult(await iamContainer.repositories.sessionRepository.getSession());
+        const { data, error } = await iamContainer.repositories.sessionRepository.getSession();
+
+        if (error) throw errorGetApp;
 
         if (!data)
           return unwrapResult(
@@ -52,7 +58,7 @@ export function useAppState() {
     },
   });
 
-  const setTheme = useMutation({
+  const setTheme = useNetworkMutation({
     mutationKey: ["app", "set-theme"],
     mutationFn: async (values: { theme: "light" | "dark" }) => {
       const newApp = unwrapResult(await iamContainer.repositories.appRepository.save(values));
@@ -61,7 +67,7 @@ export function useAppState() {
     },
   });
 
-  const clearLastLoggedUserId = useMutation({
+  const clearLastLoggedUserId = useNetworkMutation({
     mutationKey: ["app", "clear-last-logged-user-id"],
     mutationFn: async () => {
       const newApp = unwrapResult(
@@ -74,7 +80,7 @@ export function useAppState() {
     },
   });
 
-  const switchActiveOrganization = useMutation({
+  const switchActiveOrganization = useNetworkMutation({
     mutationKey: ["app", "set-active-organization"],
     mutationFn: async (values: { activeOrganizationId: string | null }) => {
       if (values.activeOrganizationId) {
@@ -93,7 +99,7 @@ export function useAppState() {
     },
   });
 
-  const clearApp = useMutation({
+  const clearApp = useNetworkMutation({
     mutationKey: ["app", "clear"],
     mutationFn: async () => {
       const newApp = unwrapResult(await iamContainer.repositories.appRepository.clear());
@@ -102,39 +108,39 @@ export function useAppState() {
     },
   });
 
-  const signUpEmail = useMutation({
+  const signUpEmail = useNetworkMutation({
     mutationKey: ["signUpEmail"],
     mutationFn: async (values: Parameters<SessionRepository["signUpEmail"]>[0]) => {
-      unwrapResult(
-        await iamContainer.repositories.sessionRepository.signUpEmail(
-          { ...values, isRoot: true } as any,
-          {
-            query: { disableCookieCache: true },
-          },
-        ),
+      await iamContainer.repositories.sessionRepository.signUpEmail(
+        { ...values, isRoot: true } as any,
+        {
+          query: { disableCookieCache: true },
+        },
       );
 
       await queryClient.invalidateQueries({ queryKey: QUERY_KEY });
     },
   });
 
-  const signInEmail = useMutation({
+  const signInEmail = useNetworkMutation({
     mutationKey: ["signInEmail"],
     mutationFn: async (values: Parameters<SessionRepository["signInEmail"]>[0]) => {
-      unwrapResult(await iamContainer.repositories.sessionRepository.signInEmail(values));
+      const { error } = await iamContainer.repositories.sessionRepository.signInEmail(values);
+
+      if (error) throw error;
 
       await queryClient.invalidateQueries({ queryKey: QUERY_KEY });
     },
   });
 
-  const signOut = useMutation({
+  const signOut = useNetworkMutation({
     mutationKey: ["signOut"],
     mutationFn: async () => {
-      unwrapResult(await iamContainer.repositories.sessionRepository.signOut());
+      await iamContainer.repositories.sessionRepository.signOut();
 
       unwrapResult(
         await iamContainer.repositories.appRepository.save({
-          lastLoggedUserId: appQuery.data.session?.user.id,
+          lastLoggedUserId: appQuery.data?.session?.user.id,
           session: null,
           activeOrganizationId: null,
           syncState: defaultSyncState,

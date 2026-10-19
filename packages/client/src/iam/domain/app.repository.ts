@@ -4,7 +4,7 @@ import type { Result } from "@fludge/utils/trycatch";
 
 import type { OrganizationSummary } from "./entities";
 
-type AppWithActiveOrganization = AppSelect & {
+export type AppWithActiveOrganization = AppSelect & {
   activeOrganization: OrganizationSummary | null;
 };
 
