@@ -1,62 +1,23 @@
 import { AssistChip, Column, ElevatedCard, Host, Row } from "@expo/ui/jetpack-compose";
 import { paddingAll, weight } from "@expo/ui/jetpack-compose/modifiers";
-import type { ProductSummary } from "@fludge/client/catalog/domain/entities";
-import type { TranslationKey } from "@fludge/i18n/index";
-import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { Icon, type IconName } from "@/core/shared/components/icon";
+import { Icon } from "@/core/shared/components/icon";
 import { MenuOptions } from "@/core/shared/components/menu-options";
 import { StatusChip } from "@/core/shared/components/status-chip";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
-interface Props {
-  product: ProductSummary;
-}
-
-type Chip = {
-  label: {
-    key: TranslationKey;
-    args?: Record<string, unknown>;
-  };
-  icon: IconName;
-};
-
-function generateChips(product: ProductSummary): Chip[] {
-  return [
-    {
-      label: {
-        key: "screens.catalog.products.stock",
-        args: { quantity: product.stock },
-      },
-      icon: "conveyor-belt",
-    },
-    {
-      label: {
-        key: "screens.catalog.products.min_stock",
-        args: { quantity: product.minStock },
-      },
-      icon: "conveyor-belt",
-    },
-    {
-      label: {
-        key: product.allowNegativeStock
-          ? "screens.catalog.products.allow_negative_stock"
-          : "screens.catalog.products.not_allow_negative_stock",
-      },
-      icon: "do-not-disturb-on",
-    },
-  ];
-}
+import type { ProductCardProps } from "./types";
+import { generateChips, useProductCard } from "./use-product-card";
 
 const CARD_HEIGHT = 224;
 
-export function ProductCard({ product }: Props) {
+export function ProductCard({ product }: ProductCardProps) {
   const colors = useThemeColor();
   const { t } = useTranslation();
-  const router = useRouter();
+  const { state } = useProductCard({ product });
 
   const chips = generateChips(product);
 
@@ -100,34 +61,7 @@ export function ProductCard({ product }: Props) {
                 </AssistChip>
               ))}
             </Column>
-            <MenuOptions
-              items={[
-                {
-                  label: "helpers.navigation.see_details",
-                  action: () => {
-                    router.push({
-                      pathname: "/dashboard/products/[productid]",
-                      params: {
-                        productid: product.id,
-                      },
-                    });
-                  },
-                  icon: "visibility",
-                },
-                {
-                  label: "helpers.navigation.update",
-                  action: () => {
-                    router.push({
-                      pathname: "/dashboard/products/[productid]/update",
-                      params: {
-                        productid: product.id,
-                      },
-                    });
-                  },
-                  icon: "edit",
-                },
-              ]}
-            />
+            <MenuOptions items={state.menuOptions} />
           </Row>
         </Column>
       </ElevatedCard>
