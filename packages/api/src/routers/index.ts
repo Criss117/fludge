@@ -25,9 +25,14 @@ export const appRouter = {
   sync: syncRouter,
   seed: seedRouter,
 
-  ping: publicProcedure.handler(({ context }) => {
-    return context;
-  }),
+  ping: publicProcedure
+    .route({
+      path: "/ping",
+      method: "GET",
+    })
+    .handler(() => {
+      return "pong";
+    }),
 } as const;
 
 export type AppRouter = typeof appRouter;

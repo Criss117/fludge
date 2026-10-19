@@ -1,7 +1,7 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import { useNetworkMutation } from "@fludge/client/shared/use-network-mutation";
 import { unwrapResult } from "@fludge/utils/trycatch";
-import { useMutation } from "@tanstack/react-query";
 
 import { useInvalidateCategories } from "../queries/use-find-categories";
 
@@ -10,7 +10,7 @@ export function useCreateCategoryMutation() {
   const invalidateCategories = useInvalidateCategories();
   const { catalogContainer } = useContainer();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.category.commands.create.mutationOptions({
       onSuccess: async (newCategory) => {
         unwrapResult(await catalogContainer.repositories.categoryRepository.save(newCategory));
@@ -26,7 +26,7 @@ export function useUpdateCategoryMutation() {
   const invalidateCategories = useInvalidateCategories();
   const { catalogContainer } = useContainer();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.category.commands.update.mutationOptions({
       onSuccess: async (newCategory) => {
         unwrapResult(await catalogContainer.repositories.categoryRepository.save(newCategory));
@@ -42,7 +42,7 @@ export function useToggleCategoryStatusMutation() {
   const invalidateCategories = useInvalidateCategories();
   const { catalogContainer } = useContainer();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.category.commands.toggleStatus.mutationOptions({
       onSuccess: async (newCategory) => {
         unwrapResult(await catalogContainer.repositories.categoryRepository.save(newCategory));

@@ -1,7 +1,7 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import { useNetworkMutation } from "@fludge/client/shared/use-network-mutation";
 import { unwrapResult } from "@fludge/utils/trycatch";
-import { useMutation } from "@tanstack/react-query";
 
 import { useInvalidateGroups } from "../queries/use-find-groups";
 import { useInvalidateMembers } from "../queries/use-find-members";
@@ -11,7 +11,7 @@ export function useRegisterMember() {
   const { iamContainer } = useContainer();
   const invalidateMembers = useInvalidateMembers();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.auth.commands.signUpMember.mutationOptions({
       onSuccess: async (member) => {
         unwrapResult(await iamContainer.repositories.memberRepository.save(member));
@@ -28,7 +28,7 @@ export function useAssignGroupsToMember() {
   const invalidateMembers = useInvalidateMembers();
   const invalidateGroups = useInvalidateGroups();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.member.commands.assignGroups.mutationOptions({
       onSuccess: async (groups, variables) => {
         unwrapResult(await iamContainer.repositories.groupRepository.save(groups));
@@ -46,7 +46,7 @@ export function useRemoveGroupsFromMember() {
   const invalidateMembers = useInvalidateMembers();
   const invalidateGroups = useInvalidateGroups();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.member.commands.removeGroups.mutationOptions({
       onSuccess: async (groups, variables) => {
         unwrapResult(await iamContainer.repositories.groupRepository.save(groups));

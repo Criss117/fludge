@@ -2,6 +2,7 @@ import { Host } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
 import type { GroupDetail, MemberSummary } from "@fludge/client/iam/domain/entities";
 import { useRemoveMembersFromGroup } from "@fludge/client/iam/mutations/use-group.mutations";
+import type { TranslationKey } from "@fludge/i18n/index";
 import { useCallback, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -37,8 +38,11 @@ export function GroupMembersSection({ group }: Props) {
           onSuccess: () => {
             mutationToast.showSuccess("forms.group.unassign_members.success");
           },
-          onError: () => {
-            mutationToast.showError("forms.group.unassign_members.error");
+          onError: (e) => {
+            mutationToast.showError(
+              "forms.group.unassign_members.error",
+              e.message as TranslationKey,
+            );
           },
         },
       );

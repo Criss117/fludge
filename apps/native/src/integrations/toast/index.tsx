@@ -27,6 +27,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           actionButtonTextStyle: {
             fontFamily: GeistFonts.Regular,
           },
+          descriptionStyle: {
+            color: colors.onPrimary,
+            fontFamily: GeistFonts.Regular,
+          },
           cancelButtonTextStyle: {
             fontFamily: GeistFonts.Regular,
             color: colors.onPrimary,

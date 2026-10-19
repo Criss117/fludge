@@ -38,7 +38,7 @@ export function useSyncCatalog() {
   const {
     data: { session },
   } = useAppState();
-  const { isInternetReachable } = useNetwork();
+  const { isFullyOnline } = useNetwork();
   const { catalogContainer } = useContainer();
 
   const httpRepository = httpClientCatalogRepository(orpc);
@@ -46,11 +46,11 @@ export function useSyncCatalog() {
   const query = useSuspenseQuery({
     queryKey: ["sync", "catalog", session?.user.id],
     queryFn: async (): Promise<SyncData> => {
-      if (!session || !isInternetReachable)
+      if (!isFullyOnline)
         return {
           error: null,
-          success: false,
-          syncedAt: null,
+          success: true,
+          syncedAt: new Date(),
         };
 
       let hasMore = false;
@@ -106,8 +106,8 @@ export function useSyncCatalog() {
   });
 
   useEffect(() => {
-    if (isInternetReachable) query.refetch();
-  }, [isInternetReachable]);
+    if (isFullyOnline && !query.data.success) query.refetch();
+  }, [isFullyOnline]);
 
   return query;
 }

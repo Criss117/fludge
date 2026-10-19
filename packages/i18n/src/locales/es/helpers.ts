@@ -27,6 +27,13 @@ export const helpers = {
     error: "Error",
   },
 
+  network_status: {
+    online: "En línea",
+    offline: "Desconectado",
+    checking: "Comprobando",
+    server_down: "Servidor no responde",
+  },
+
   navigation: {
     see_details: "Ver detalles",
     update: "Actualizar",

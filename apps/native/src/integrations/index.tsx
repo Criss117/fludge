@@ -17,15 +17,15 @@ function UIProvider({ children }: { children: React.ReactNode }) {
 
 function NetProvider({ children }: { children: React.ReactNode }) {
   return (
-    <NetworkProvider>
-      <QueryClientProvider>
-        <DatabaseProvider>
-          <DependenciesProvider>
-            <ORPCProvider>{children}</ORPCProvider>
-          </DependenciesProvider>
-        </DatabaseProvider>
-      </QueryClientProvider>
-    </NetworkProvider>
+    <QueryClientProvider>
+      <DatabaseProvider>
+        <DependenciesProvider>
+          <ORPCProvider>
+            <NetworkProvider>{children}</NetworkProvider>
+          </ORPCProvider>
+        </DependenciesProvider>
+      </DatabaseProvider>
+    </QueryClientProvider>
   );
 }
 

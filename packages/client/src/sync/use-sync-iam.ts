@@ -34,7 +34,7 @@ export function useSyncIam() {
   const {
     data: { session },
   } = useAppState();
-  const { isInternetReachable } = useNetwork();
+  const { isFullyOnline } = useNetwork();
   const { iamContainer } = useContainer();
 
   const httpRepository = httpClientIamRepository(orpc);
@@ -42,11 +42,11 @@ export function useSyncIam() {
   const query = useSuspenseQuery({
     queryKey: ["sync", "iam", session?.user.id],
     queryFn: async (): Promise<SyncData> => {
-      if (!session || !isInternetReachable)
+      if (!isFullyOnline)
         return {
           error: null,
-          success: false,
-          syncedAt: null,
+          success: true,
+          syncedAt: new Date(),
         };
 
       let hasMore = false;
@@ -100,8 +100,8 @@ export function useSyncIam() {
   });
 
   useEffect(() => {
-    if (isInternetReachable) query.refetch();
-  }, [isInternetReachable]);
+    if (isFullyOnline && !query.data.success) query.refetch();
+  }, [isFullyOnline]);
 
   return query;
 }

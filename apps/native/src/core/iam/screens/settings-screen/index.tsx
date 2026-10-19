@@ -88,15 +88,15 @@ interface Props {
 
 function SyncItem({ syncHook, module, icon }: Props) {
   const { t } = useTranslation();
-  const { isInternetReachable } = useNetwork();
+  const { isFullyOnline } = useNetwork();
   const mutationToast = useMutationToast(`sync-toast-${module}`);
 
-  const isDisabled = syncHook.isRefetching || !isInternetReachable;
+  const isDisabled = syncHook.isRefetching || !isFullyOnline;
 
   const translationBaseKey = `screens.settings.sections.sync.${module}` as const;
 
   function sync() {
-    if (!isInternetReachable) {
+    if (!isFullyOnline) {
       mutationToast.showError(
         `${translationBaseKey}.on_error.title` as TranslationKey,
         "helpers.no_conection",

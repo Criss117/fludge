@@ -1,5 +1,6 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import { useNetworkMutation } from "@fludge/client/shared/use-network-mutation";
 import { unwrapResult } from "@fludge/utils/trycatch";
 import { useMutation } from "@tanstack/react-query";
 
@@ -47,7 +48,7 @@ export function useDeleteGroup() {
   const invalidateGroups = useInvalidateGroups();
   const invalidateMembers = useInvalidateMembers();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.group.commands.delete.mutationOptions({
       onSuccess: async (groups, variables) => {
         unwrapResult(await iamContainer.repositories.groupRepository.delete(groups));
@@ -67,7 +68,7 @@ export function useAssignMembersToGroup() {
   const invalidateGroups = useInvalidateGroups();
   const invalidateMembers = useInvalidateMembers();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.group.commands.assignMembers.mutationOptions({
       onSuccess: async (group, variables) => {
         unwrapResult(await iamContainer.repositories.groupRepository.save(group));
@@ -85,7 +86,7 @@ export function useRemoveMembersFromGroup() {
   const invalidateGroups = useInvalidateGroups();
   const invalidateMembers = useInvalidateMembers();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.group.commands.removeMembers.mutationOptions({
       onSuccess: async (group, variables) => {
         unwrapResult(await iamContainer.repositories.groupRepository.save(group));

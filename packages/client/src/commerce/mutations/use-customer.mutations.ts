@@ -1,7 +1,7 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import { useNetworkMutation } from "@fludge/client/shared/use-network-mutation";
 import { unwrapResult } from "@fludge/utils/trycatch";
-import { useMutation } from "@tanstack/react-query";
 
 import { useInvalidateCustomers } from "../queries/use-find-customers";
 import { useInvalidateSales } from "../queries/use-find-sales";
@@ -11,7 +11,7 @@ export function useCreateCustomerMutation() {
   const invalidateCustomers = useInvalidateCustomers();
   const { commerceContainer } = useContainer();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.customer.commands.create.mutationOptions({
       onSuccess: async (newCustomer) => {
         unwrapResult(await commerceContainer.repositories.customerRepository.save(newCustomer));
@@ -27,7 +27,7 @@ export function useUpdateCustomerMutation() {
   const invalidateCustomers = useInvalidateCustomers();
   const { commerceContainer } = useContainer();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.customer.commands.update.mutationOptions({
       onSuccess: async (updatedCustomer) => {
         unwrapResult(await commerceContainer.repositories.customerRepository.save(updatedCustomer));
@@ -45,7 +45,7 @@ export function useCreateCustomerPaymentMutation() {
   const invalidateSales = useInvalidateSales();
   const { commerceContainer } = useContainer();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.customer.commands.createPayment.mutationOptions({
       onSuccess: async ({ customer, sales }) => {
         unwrapResult(await commerceContainer.repositories.customerRepository.save(customer));
@@ -69,7 +69,7 @@ export function useCancelCustomerPaymentMutation() {
   const invalidateSales = useInvalidateSales();
   const { commerceContainer } = useContainer();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.customer.commands.cancelPayment.mutationOptions({
       onSuccess: async ({ customer, sales }) => {
         unwrapResult(await commerceContainer.repositories.saleRepository.save(sales));

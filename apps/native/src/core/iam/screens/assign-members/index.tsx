@@ -3,6 +3,7 @@ import { fillMaxWidth, width } from "@expo/ui/jetpack-compose/modifiers";
 import type { GroupDetail } from "@fludge/client/iam/domain/entities";
 import { useAssignMembersToGroup } from "@fludge/client/iam/mutations/use-group.mutations";
 import { useFindAllMembers } from "@fludge/client/iam/queries/use-find-members";
+import type { TranslationKey } from "@fludge/i18n/index";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import { Suspense, useState } from "react";
@@ -102,8 +103,8 @@ export function AssignMembersScreen({ group }: Props) {
           mutationToast.showSuccess("forms.group.assign_members.success");
           setSelectedMemberIds([]);
         },
-        onError: (_e) => {
-          mutationToast.showError("forms.group.assign_members.error");
+        onError: (e) => {
+          mutationToast.showError("forms.group.assign_members.error", e.message as TranslationKey);
         },
       },
     );

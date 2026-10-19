@@ -1,8 +1,8 @@
 import { useInvalidateProducts } from "@fludge/client/catalog/queries/use-find-products";
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import { useNetworkMutation } from "@fludge/client/shared/use-network-mutation";
 import { unwrapResult } from "@fludge/utils/trycatch";
-import { useMutation } from "@tanstack/react-query";
 
 import { useInvalidateCustomers } from "../queries/use-find-customers";
 import { useInvalidateSales } from "../queries/use-find-sales";
@@ -14,7 +14,7 @@ export function useCreateSaleMutation() {
   const invalidateSales = useInvalidateSales();
   const { catalogContainer, commerceContainer } = useContainer();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.sale.commands.create.mutationOptions({
       onSuccess: async (data) => {
         unwrapResult(await catalogContainer.repositories.productRepository.save(data.products));
@@ -42,7 +42,7 @@ export function useCancelSaleMutation() {
   const invalidateProducts = useInvalidateProducts();
   const { commerceContainer, catalogContainer } = useContainer();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.sale.commands.cancel.mutationOptions({
       onSuccess: async ({ customer, products, sale }) => {
         unwrapResult(await catalogContainer.repositories.productRepository.save(products));
@@ -74,7 +74,7 @@ export function useRefundSaleItemsMutation() {
   const invalidateProducts = useInvalidateProducts();
   const { commerceContainer, catalogContainer } = useContainer();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.sale.commands.refundItems.mutationOptions({
       onSuccess: async ({ customer, products, sale }) => {
         unwrapResult(await catalogContainer.repositories.productRepository.save(products));

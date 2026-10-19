@@ -12,6 +12,7 @@ export const app = {
     commerce: "Cargando comercio...",
     ticket: "Cargando ticket...",
     user_scope: "Cargando ámbito de usuario...",
+    network: "Verificando conexión...",
   },
 
   errors: {

@@ -34,7 +34,7 @@ export function useSyncCommerce() {
   const {
     data: { session },
   } = useAppState();
-  const { isInternetReachable } = useNetwork();
+  const { isFullyOnline } = useNetwork();
   const { commerceContainer } = useContainer();
 
   const httpRepository = httpClientCommerceRepository(orpc);
@@ -42,11 +42,11 @@ export function useSyncCommerce() {
   const query = useSuspenseQuery({
     queryKey: ["sync", "commerce", session?.user.id],
     queryFn: async (): Promise<SyncData> => {
-      if (!session || !isInternetReachable)
+      if (!isFullyOnline)
         return {
           error: null,
-          success: false,
-          syncedAt: null,
+          success: true,
+          syncedAt: new Date(),
         };
 
       let hasMore = false;
@@ -102,8 +102,8 @@ export function useSyncCommerce() {
   });
 
   useEffect(() => {
-    if (isInternetReachable) query.refetch();
-  }, [isInternetReachable]);
+    if (isFullyOnline && !query.data.success) query.refetch();
+  }, [isFullyOnline]);
 
   return query;
 }

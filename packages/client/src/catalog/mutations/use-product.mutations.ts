@@ -1,7 +1,7 @@
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { useOrpc } from "@fludge/client/providers/orpc.provider";
+import { useNetworkMutation } from "@fludge/client/shared/use-network-mutation";
 import { unwrapResult } from "@fludge/utils/trycatch";
-import { useMutation } from "@tanstack/react-query";
 
 import { useInvalidateProducts } from "../queries/use-find-products";
 
@@ -10,7 +10,7 @@ export function useCreateProductMutation() {
   const { catalogContainer } = useContainer();
   const invalidateProducts = useInvalidateProducts();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.product.commands.create.mutationOptions({
       onSuccess: async (newProduct) => {
         unwrapResult(await catalogContainer.repositories.productRepository.save(newProduct));
@@ -26,7 +26,7 @@ export function useUpdateProductMutation() {
   const { catalogContainer } = useContainer();
   const invalidateProducts = useInvalidateProducts();
 
-  return useMutation(
+  return useNetworkMutation(
     orpc.product.commands.update.mutationOptions({
       onSuccess: async (newProduct) => {
         unwrapResult(await catalogContainer.repositories.productRepository.save(newProduct));

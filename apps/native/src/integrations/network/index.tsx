@@ -3,29 +3,27 @@ import {
   NetworkProvider as NP,
   type NetworkState,
 } from "@fludge/client/providers/network-status.provider";
-import NetInfo from "@react-native-community/netinfo";
+import NetInfo, { type NetInfoState } from "@react-native-community/netinfo";
 
-class RNNetworkService implements INetworkService {
-  async getState(): Promise<NetworkState> {
-    const state = await NetInfo.fetch();
-    return {
-      isConnected: state.isConnected ?? false,
-      isInternetReachable: state.isInternetReachable,
-    };
-  }
+import { LoadingScreen } from "@/core/shared/components/loading-screen";
 
-  subscribe(callback: (state: NetworkState) => void): () => void {
-    return NetInfo.addEventListener((state) => {
-      callback({
-        isConnected: state.isConnected ?? false,
-        isInternetReachable: state.isInternetReachable,
-      });
-    });
-  }
-}
+const toState = (s: NetInfoState): NetworkState => ({
+  isConnected: !!s.isConnected,
+  isInternetReachable: s.isInternetReachable,
+});
 
-export const networkService = new RNNetworkService();
-
+export const networkService: INetworkService = {
+  async getState() {
+    return toState(await NetInfo.fetch());
+  },
+  subscribe(callback) {
+    return NetInfo.addEventListener((s) => callback(toState(s)));
+  },
+};
 export function NetworkProvider({ children }: { children: React.ReactNode }) {
-  return <NP networkService={networkService}>{children}</NP>;
+  return (
+    <NP networkService={networkService} loader={<LoadingScreen message="app.loading.network" />}>
+      {children}
+    </NP>
+  );
 }
