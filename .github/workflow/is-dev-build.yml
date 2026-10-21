@@ -1,0 +1,61 @@
+name: iOS dev build (sin firmar)
+
+on:
+  workflow_dispatch:
+
+env:
+  APP_DIR: apps/native
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Instalar dependencias (desde la raíz del monorepo)
+        run: bun install --frozen-lockfile
+
+      - name: Generar proyecto nativo iOS
+        working-directory: ${{ env.APP_DIR }}
+        run: bunx expo prebuild --platform ios --no-install
+
+      - name: Instalar pods
+        working-directory: ${{ env.APP_DIR }}/ios
+        run: pod install
+
+      - name: Compilar sin firmar (Debug / dev client)
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          WORKSPACE=$(ls -d ios/*.xcworkspace | head -1)
+          SCHEME=$(basename "$WORKSPACE" .xcworkspace)
+          xcodebuild \
+            -workspace "$WORKSPACE" \
+            -scheme "$SCHEME" \
+            -configuration Debug \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Empaquetar .ipa
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          APP=$(ls -d build/Build/Products/Debug-iphoneos/*.app | head -1)
+          mkdir Payload
+          cp -r "$APP" Payload/
+          zip -r app-unsigned.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-unsigned-ipa
+          path: ${{ env.APP_DIR }}/app-unsigned.ipa
+          retention-days: 7
