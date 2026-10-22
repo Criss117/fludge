@@ -29,3 +29,9 @@ export type TextInputProps = (TextModeProps | NumberModeProps) & {
   withDebounce?: number;
   maxLines?: number;
 };
+
+export interface SearchInputProps {
+  onValueChange: (text: string) => void;
+  placeholder: TranslationKey;
+  label: TranslationKey;
+}

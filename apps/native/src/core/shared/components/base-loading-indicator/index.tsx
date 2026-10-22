@@ -1,9 +1,8 @@
 import { Host, LoadingIndicator } from "@expo/ui/jetpack-compose";
 import { StyleSheet, View } from "react-native";
 
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
-
-import { useThemeColor } from "../hooks/use-theme-color";
 
 export function BaseLoadingIndicator() {
   const colors = useThemeColor();

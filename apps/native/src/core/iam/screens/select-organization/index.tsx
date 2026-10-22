@@ -1,93 +1,31 @@
 import { Column, ElevatedCard, Host, RNHostView, Row, Spacer } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, paddingAll, weight, width } from "@expo/ui/jetpack-compose/modifiers";
-import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
-import { useFindOrganizations } from "@fludge/client/iam/queries/use-find-organizations";
-import type { TranslationKey } from "@fludge/i18n/index";
-import { useRouter } from "expo-router";
 import { PressableScale } from "pressto";
-import { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
-import Animated from "react-native-reanimated";
 
 import { Avatar } from "@/core/shared/components/avatar";
 import { Icon } from "@/core/shared/components/icon";
+import { KeyboardSpacerView } from "@/core/shared/components/keyboard-spacer-view";
 import { LinkButton } from "@/core/shared/components/link-button";
-import { TextInput } from "@/core/shared/components/text-input";
+import { SearchInput } from "@/core/shared/components/text-input";
 import { ThemedNativeText, ThemedText } from "@/core/shared/components/themed-text";
-import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { useMutationToast } from "@/integrations/toast";
 import { SPACING } from "@/lib/sp";
 
+import { useSelectOrganizationScreen } from "./use-select-organization-screen";
+
 export function SelectOrganizationScreen() {
-  const spacer = useKeyboardSpacer();
   const colors = useThemeColor();
-  const { t } = useTranslation();
-  const [query, setQuery] = useState("");
-  const router = useRouter();
-  const {
-    data: { session, activeOrganization },
-    switchActiveOrganization,
-  } = useAppState();
-  const { data: organizations } = useFindOrganizations();
-  const mutationToast = useMutationToast();
-
-  const userIsRoot = !!session?.user.isRoot;
-
-  const allOrganizations = useMemo(() => {
-    if (!query) return organizations;
-
-    return organizations.filter(
-      (d) =>
-        d.name.toLowerCase().includes(query.toLowerCase()) ||
-        d.taxId.toLowerCase().includes(query.toLowerCase()) ||
-        d.legalName.toLowerCase().includes(query.toLowerCase()),
-    );
-  }, [organizations, query]);
-
-  const onChangeText = (text: string) => setQuery(text.trim());
-
-  const onPress = async (organizationId: string) => {
-    if (switchActiveOrganization.isPending) return;
-
-    if (organizationId === activeOrganization?.id) {
-      router.replace({
-        pathname: "/dashboard",
-      });
-
-      return;
-    }
-
-    mutationToast.showPending("forms.organization.switch_toast.pending");
-    switchActiveOrganization.mutate(
-      {
-        activeOrganizationId: organizationId,
-      },
-      {
-        onSuccess: () => {
-          mutationToast.showSuccess("forms.organization.switch_toast.success");
-        },
-        onError: (error) => {
-          mutationToast.showError(
-            "forms.organization.switch_toast.error",
-            error.message as TranslationKey,
-          );
-        },
-      },
-    );
-  };
+  const { actions, state, texts } = useSelectOrganizationScreen();
 
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
-          <TextInput
-            onValueChange={onChangeText}
-            modifiers={[fillMaxWidth()]}
-            iconName="search"
-            placeholder="screens.organization.select.search.placeholder"
-            label="screens.organization.select.search.label"
+          <SearchInput
+            onValueChange={actions.onChangeText}
+            placeholder={texts.searchInput.placeholder}
+            label={texts.searchInput.label}
           />
         </Host>
       </View>
@@ -98,15 +36,17 @@ export function SelectOrganizationScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {allOrganizations.length === 0 && (
+        {state.organizations.length === 0 && (
           <View style={styles.emptyContainer}>
-            <ThemedText variant="muted">
-              {t("screens.organization.select.no_organizations")}
-            </ThemedText>
+            <ThemedText variant="muted">{texts.emptyList}</ThemedText>
           </View>
         )}
-        {allOrganizations.map((org) => (
-          <PressableScale key={org.id} style={styles.pressableCard} onPress={() => onPress(org.id)}>
+        {state.organizations.map((org) => (
+          <PressableScale
+            key={org.id}
+            style={styles.pressableCard}
+            onPress={() => actions.onSelect(org.id)}
+          >
             <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
               <ElevatedCard
                 modifiers={[fillMaxWidth()]}
@@ -155,7 +95,7 @@ export function SelectOrganizationScreen() {
           </PressableScale>
         ))}
       </ScrollView>
-      {userIsRoot && (
+      {state.userIsRoot && (
         <View style={styles.footerContainer}>
           <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
             <LinkButton
@@ -171,13 +111,13 @@ export function SelectOrganizationScreen() {
               <Icon name="add-business" size={20} />
               <Spacer modifiers={[width(SPACING.sm)]} />
               <ThemedNativeText color={colors.primaryContainer}>
-                {t("screens.organization.register.title")}
+                {texts.toRegister}
               </ThemedNativeText>
             </LinkButton>
           </Host>
         </View>
       )}
-      <Animated.View style={spacer} />
+      <KeyboardSpacerView />
     </View>
   );
 }

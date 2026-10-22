@@ -1,5 +1,6 @@
 import type { ObservableState } from "@expo/ui/jetpack-compose";
 import { Column, OutlinedTextField, Shape } from "@expo/ui/jetpack-compose";
+import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
 
 import { NativeFieldError } from "@/core/shared/components/field-error";
 import { Icon } from "@/core/shared/components/icon";
@@ -8,7 +9,7 @@ import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { GeistFonts } from "@/integrations/fonts";
 import { SPACING } from "@/lib/sp";
 
-import type { TextInputProps } from "./types";
+import type { SearchInputProps, TextInputProps } from "./types";
 import { useTextInput } from "./use-text-input";
 
 export const FIELD_SHAPE = Shape.RoundedCorner({
@@ -66,5 +67,17 @@ export function TextInput(props: TextInputProps) {
       </OutlinedTextField>
       {props.isError && <NativeFieldError errors={props.errors} />}
     </Column>
+  );
+}
+
+export function SearchInput({ label, onValueChange, placeholder }: SearchInputProps) {
+  return (
+    <TextInput
+      onValueChange={onValueChange}
+      modifiers={[fillMaxWidth()]}
+      iconName="search"
+      placeholder={placeholder}
+      label={label}
+    />
   );
 }

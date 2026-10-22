@@ -2,22 +2,30 @@ import type { TextFieldRef } from "@expo/ui/swift-ui";
 import { Button, HStack, SecureField, TextField, VStack } from "@expo/ui/swift-ui";
 import type { ModifierConfig, ObservableState } from "@expo/ui/swift-ui/modifiers";
 import {
+  Animation,
+  animation,
   background,
+  buttonStyle,
+  clipShape,
   cornerRadius,
   frame,
+  glassEffect,
   keyboardType,
   labelStyle,
+  offset,
   onTapGesture,
+  opacity,
   padding,
 } from "@expo/ui/swift-ui/modifiers";
 import { useCallback, useState } from "react";
+import { KeyboardController } from "react-native-keyboard-controller";
 
 import { Icon } from "@/core/shared/components/icon";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
 import { NativeFieldError } from "../field-error";
-import type { TextInputProps } from "./types";
+import type { SearchInputProps, TextInputProps } from "./types";
 import { useTextInput } from "./use-text-input";
 
 function keyboardTypeModifiers(type: TextInputProps["keyboardOptions"]): ModifierConfig[] {
@@ -126,5 +134,81 @@ export function TextInput(props: TextInputProps) {
 
       {props.isError && <NativeFieldError errors={props.errors} />}
     </VStack>
+  );
+}
+
+export function SearchInput({ label, onValueChange, placeholder }: SearchInputProps) {
+  const colors = useThemeColor();
+  const [isFocused, setIsFocused] = useState(false);
+
+  const { actions, state, text } = useTextInput({
+    label,
+    onValueChange,
+    placeholder,
+  });
+
+  const onCancel = useCallback(() => {
+    KeyboardController.dismiss();
+    actions.onValueChange("");
+    setIsFocused(false);
+  }, [actions]);
+
+  return (
+    <HStack
+      spacing={0}
+      modifiers={[
+        frame({ width: Infinity }),
+        // anima todo lo que cambie dentro de este HStack cuando cambia isFocused
+        animation(Animation.spring({ duration: 0.35, bounce: 0.1 }), isFocused),
+      ]}
+    >
+      <HStack
+        modifiers={[
+          frame({
+            width: Infinity,
+          }),
+          glassEffect(),
+          background("transparent"),
+          cornerRadius(SPACING.md),
+        ]}
+      >
+        <HStack
+          modifiers={[
+            padding({
+              vertical: SPACING.sm,
+              horizontal: SPACING.md,
+            }),
+          ]}
+        >
+          <Icon name="search" size={18} color={colors.onPrimaryContainer} />
+          <TextField
+            onFocusChange={setIsFocused}
+            text={state.value as ObservableState<string>}
+            onTextChange={actions.onValueChange}
+            placeholder={text.label}
+            modifiers={[
+              frame({
+                width: Infinity,
+              }),
+            ]}
+          />
+        </HStack>
+      </HStack>
+      <Button
+        onPress={onCancel}
+        modifiers={[
+          buttonStyle("glass"),
+          clipShape("circle"),
+          background("transparent"),
+          // 0 de ancho cuando no hay foco: el search bar ocupa todo
+          frame({ width: isFocused ? SPACING.xl : 0, height: SPACING.xl }),
+          padding({ leading: isFocused ? SPACING.sm : 0 }),
+          opacity(isFocused ? 1 : 0),
+          offset({ x: isFocused ? 0 : SPACING.xl }), // entra desde la derecha
+        ]}
+      >
+        <Icon name="close" size={20} color={colors.onPrimaryContainer} />
+      </Button>
+    </HStack>
   );
 }
