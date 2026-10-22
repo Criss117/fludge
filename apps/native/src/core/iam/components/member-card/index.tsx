@@ -98,8 +98,8 @@ export function MemberCard({ member, menuOptions }: Props) {
             </RNHostView>
             <Spacer modifiers={[width(SPACING.sm)]} />
             <Column modifiers={[weight(1)]}>
-              <ThemedNativeText maxLines={1}>{member.user.name}</ThemedNativeText>
-              <ThemedNativeText variant="muted" maxLines={1}>
+              <ThemedNativeText numberOfLines={1}>{member.user.name}</ThemedNativeText>
+              <ThemedNativeText variant="muted" numberOfLines={1}>
                 {member.user.email}
               </ThemedNativeText>
             </Column>

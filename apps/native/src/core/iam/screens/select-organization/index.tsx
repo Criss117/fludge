@@ -130,10 +130,10 @@ export function SelectOrganizationScreen() {
                     }}
                   >
                     <Column>
-                      <ThemedNativeText maxLines={1} variant="h6">
+                      <ThemedNativeText numberOfLines={1} variant="h6">
                         {org.name}
                       </ThemedNativeText>
-                      <ThemedNativeText maxLines={1} variant="muted">
+                      <ThemedNativeText numberOfLines={1} variant="muted">
                         {org.legalName} - {org.taxId}
                       </ThemedNativeText>
                     </Column>

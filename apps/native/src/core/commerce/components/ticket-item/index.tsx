@@ -160,8 +160,8 @@ export function TicketDetailItem({ presentations }: Props) {
       horizontalArrangement={{ spacedBy: SPACING.md }}
     >
       <Column verticalArrangement={{ spacedBy: SPACING.xs }}>
-        <ThemedNativeText maxLines={1}>{presentations.name}</ThemedNativeText>
-        <ThemedNativeText variant="muted" maxLines={1}>
+        <ThemedNativeText numberOfLines={1}>{presentations.name}</ThemedNativeText>
+        <ThemedNativeText variant="muted" numberOfLines={1}>
           {presentations.name}
         </ThemedNativeText>
         <ThemedNativeText variant="muted">{presentations.priceSale} c/u</ThemedNativeText>

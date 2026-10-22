@@ -31,10 +31,10 @@ export function ProductCard({ product }: ProductCardProps) {
         <Column modifiers={[paddingAll(SPACING.md)]}>
           <Row horizontalAlignment="center">
             <Column modifiers={[weight(1)]}>
-              <ThemedNativeText variant="h5" maxLines={1}>
+              <ThemedNativeText variant="h5" numberOfLines={1}>
                 {product.name}
               </ThemedNativeText>
-              <ThemedNativeText variant="muted" maxLines={1}>
+              <ThemedNativeText variant="muted" numberOfLines={1}>
                 {t("screens.catalog.products.total_presentations", {
                   quantity: product.presentations.length,
                 })}

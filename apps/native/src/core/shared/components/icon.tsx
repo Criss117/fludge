@@ -54,59 +54,218 @@ import VisibilityIcon from "@expo/material-symbols/visibility.xml";
 import { Icon as ExpoIcon, type IconProps as ExpoIconProps } from "@expo/ui";
 
 export const ICONS = {
-  error: ErrorIcon,
-  event: EventIcon,
-  "add-business": AddBusinessIcon,
-  apartment: ApartmentIcon,
-  "account-balance-wallet": AccountBalanceWalletIcon,
-  badge: BadgeIcon,
-  call: CallIcon,
-  password: PasswordIcon,
-  mail: MailIcon,
-  close: CloseIcon,
-  search: SearchIcon,
-  "location-on": LocationOnIcon,
-  "more-vert": MoreVertIcon,
-  add: AddIcon,
-  person: PersonIcon,
-  "person-add": PersonAddIcon,
-  check: CheckIcon,
-  "check-circle": CheckCircleIcon,
-  visibility: VisibilityIcon,
-  edit: EditIcon,
-  "group-add": GroupAddIcon,
-  label: LabelIcon,
-  description: DescriptionIcon,
-  "arrow-drop-down": ArrowDropDownIcon,
-  "arrow-forward": ArrowForwardIcon,
-  "arrow-downward": ArrowDownwardIcon,
-  block: BlockIcon,
-  "barcode-scanner": BarcodeScannerIcon,
-  "conveyor-belt": ConveyorBeltIcon,
-  "do-not-disturb-on": DoNotDisturbOnIcon,
-  inventory: InventoryIcon,
-  "add-circle": AddCircleIcon,
-  barcode: BarcodeIcon,
-  delete: DeleteIcon,
-  security: SecurityIcon,
-  "view-list": ViewListIcon,
-  group: GroupIcon,
-  sync: SyncIcon,
-  inventory_2: Inventory2Icon,
-  logout: LogoutIcon,
-  switch: SwitchLeftIcon,
-  remove: RemoveIcon,
-  "attach-money": AttachMoneyIcon,
-  payments: PaymentsIcon,
-  "point-of-sale": PointOfSaleIcon,
-  "assignment-return": AssignMentReturnIcon,
-  "credit-card": CreditCardIcon,
-  "chevron-right": ChevronRightIcon,
-  expand: ExpandIcon,
-  receipt: ReceiptLongIcon,
-  "filter-list": FilterListIcon,
-  "keyboard-arrow-down": KeyboardArrowDownIcon,
-  "keyboard-arrow-up": KeyboardArrowUpIcon,
+  error: ExpoIcon.select({
+    android: ErrorIcon,
+    ios: "exclamationmark.circle.fill",
+  }),
+  event: ExpoIcon.select({
+    android: EventIcon,
+    ios: "calendar",
+  }),
+  "add-business": ExpoIcon.select({
+    android: AddBusinessIcon,
+    ios: "storefront",
+  }),
+  apartment: ExpoIcon.select({
+    android: ApartmentIcon,
+    ios: "building.2",
+  }),
+  "account-balance-wallet": ExpoIcon.select({
+    android: AccountBalanceWalletIcon,
+    ios: "wallet.pass",
+  }),
+  badge: ExpoIcon.select({
+    android: BadgeIcon,
+    ios: "person.text.rectangle",
+  }),
+  call: ExpoIcon.select({
+    android: CallIcon,
+    ios: "phone",
+  }),
+  password: ExpoIcon.select({
+    android: PasswordIcon,
+    ios: "ellipsis.rectangle",
+  }),
+  mail: ExpoIcon.select({
+    android: MailIcon,
+    ios: "envelope",
+  }),
+  close: ExpoIcon.select({
+    android: CloseIcon,
+    ios: "xmark",
+  }),
+  search: ExpoIcon.select({
+    android: SearchIcon,
+    ios: "magnifyingglass",
+  }),
+  "location-on": ExpoIcon.select({
+    android: LocationOnIcon,
+    ios: "mappin",
+  }),
+  "more-vert": ExpoIcon.select({
+    android: MoreVertIcon,
+    ios: "ellipsis",
+  }),
+  add: ExpoIcon.select({
+    android: AddIcon,
+    ios: "plus",
+  }),
+  person: ExpoIcon.select({
+    android: PersonIcon,
+    ios: "person",
+  }),
+  "person-add": ExpoIcon.select({
+    android: PersonAddIcon,
+    ios: "person.badge.plus",
+  }),
+  check: ExpoIcon.select({
+    android: CheckIcon,
+    ios: "checkmark",
+  }),
+  "check-circle": ExpoIcon.select({
+    android: CheckCircleIcon,
+    ios: "checkmark.circle",
+  }),
+  visibility: ExpoIcon.select({
+    android: VisibilityIcon,
+    ios: "eye",
+  }),
+  edit: ExpoIcon.select({
+    android: EditIcon,
+    ios: "pencil",
+  }),
+  "group-add": ExpoIcon.select({
+    android: GroupAddIcon,
+    ios: "eraser",
+  }),
+  label: ExpoIcon.select({
+    android: LabelIcon,
+    ios: "tag",
+  }),
+  description: ExpoIcon.select({
+    android: DescriptionIcon,
+    ios: "doc.text",
+  }),
+  "arrow-drop-down": ExpoIcon.select({
+    android: ArrowDropDownIcon,
+    ios: "arrowtriangle.down.fill",
+  }),
+  "arrow-forward": ExpoIcon.select({
+    android: ArrowForwardIcon,
+    ios: "arrow.right",
+  }),
+  "arrow-downward": ExpoIcon.select({
+    android: ArrowDownwardIcon,
+    ios: "arrow.down",
+  }),
+  block: ExpoIcon.select({
+    android: BlockIcon,
+    ios: "nosign",
+  }),
+  "barcode-scanner": ExpoIcon.select({
+    android: BarcodeScannerIcon,
+    ios: "barcode.viewfinder",
+  }),
+  "conveyor-belt": ExpoIcon.select({
+    android: ConveyorBeltIcon,
+    ios: "eraser",
+  }),
+  "do-not-disturb-on": ExpoIcon.select({
+    android: DoNotDisturbOnIcon,
+    ios: "minus.circle.fill",
+  }),
+  inventory: ExpoIcon.select({
+    android: InventoryIcon,
+    ios: "shippingbox",
+  }),
+  "add-circle": ExpoIcon.select({
+    android: AddCircleIcon,
+    ios: "plus.circle",
+  }),
+  barcode: ExpoIcon.select({
+    android: BarcodeIcon,
+    ios: "barcode",
+  }),
+  delete: ExpoIcon.select({
+    android: DeleteIcon,
+    ios: "trash",
+  }),
+  security: ExpoIcon.select({
+    android: SecurityIcon,
+    ios: "lock.shield",
+  }),
+  "view-list": ExpoIcon.select({
+    android: ViewListIcon,
+    ios: "list.bullet",
+  }),
+  group: ExpoIcon.select({
+    android: GroupIcon,
+    ios: "person.2",
+  }),
+  sync: ExpoIcon.select({
+    android: SyncIcon,
+    ios: "arrow.triangle.2.circlepath",
+  }),
+  inventory_2: ExpoIcon.select({
+    android: Inventory2Icon,
+    ios: "archivebox",
+  }),
+  logout: ExpoIcon.select({
+    android: LogoutIcon,
+    ios: "rectangle.portrait.and.arrow.right",
+  }),
+  switch: ExpoIcon.select({
+    android: SwitchLeftIcon,
+    ios: "arrow.left.arrow.right",
+  }),
+  remove: ExpoIcon.select({
+    android: RemoveIcon,
+    ios: "minus",
+  }),
+  "attach-money": ExpoIcon.select({
+    android: AttachMoneyIcon,
+    ios: "dollarsign",
+  }),
+  payments: ExpoIcon.select({
+    android: PaymentsIcon,
+    ios: "banknote",
+  }),
+  "point-of-sale": ExpoIcon.select({
+    android: PointOfSaleIcon,
+    ios: "creditcard.and.123",
+  }),
+  "assignment-return": ExpoIcon.select({
+    android: AssignMentReturnIcon,
+    ios: "arrow.uturn.backward",
+  }),
+  "credit-card": ExpoIcon.select({
+    android: CreditCardIcon,
+    ios: "creditcard",
+  }),
+  "chevron-right": ExpoIcon.select({
+    android: ChevronRightIcon,
+    ios: "chevron.right",
+  }),
+  expand: ExpoIcon.select({
+    android: ExpandIcon,
+    ios: "arrow.up.and.down",
+  }),
+  receipt: ExpoIcon.select({
+    android: ReceiptLongIcon,
+    ios: "receipt",
+  }),
+  "filter-list": ExpoIcon.select({
+    android: FilterListIcon,
+    ios: "line.3.horizontal.decrease",
+  }),
+  "keyboard-arrow-down": ExpoIcon.select({
+    android: KeyboardArrowDownIcon,
+    ios: "chevron.down",
+  }),
+  "keyboard-arrow-up": ExpoIcon.select({
+    android: KeyboardArrowUpIcon,
+    ios: "chevron.up",
+  }),
 } as const;
 
 export type IconName = keyof typeof ICONS;

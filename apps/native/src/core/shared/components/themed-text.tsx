@@ -1,4 +1,5 @@
-import { Text as NativeText, type TextProps as NativeTextProps } from "@expo/ui/jetpack-compose";
+import { Text as NativeText, type TextProps as NativeTextProps } from "@expo/ui";
+import { Children } from "react";
 import { StyleSheet, Text as RNText, type TextProps as RNTextProps } from "react-native";
 
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
@@ -7,8 +8,10 @@ import { fs, lh } from "@/lib/typography";
 
 export type TextVariantsKey = keyof typeof TextVariants;
 
-export type ThemedNativeTextProps = NativeTextProps & {
-  variant?: TextVariantsKey;
+export type ThemedNativeTextProps = Omit<NativeTextProps, "children"> & {
+  variant?: keyof typeof TextVariants;
+  color?: string;
+  children?: React.ReactNode;
 };
 
 export type ThemedTextProps = RNTextProps & {
@@ -28,23 +31,32 @@ function useVariantColor(variant: TextVariantsKey) {
   }
 }
 
+function childrenToString(children: React.ReactNode): string {
+  return Children.toArray(children)
+    .map((child) => (typeof child === "string" || typeof child === "number" ? String(child) : ""))
+    .join("");
+}
+
 export function ThemedNativeText({
-  style,
   variant = "base",
   color,
+  textStyle,
+  children,
   ...rest
 }: ThemedNativeTextProps) {
   const textColor = useVariantColor(variant);
 
   return (
     <NativeText
-      style={{
+      textStyle={{
+        ...textStyle,
         ...TextVariants[variant],
-        ...style,
+        color: color ?? textColor,
       }}
-      color={color ?? textColor}
       {...rest}
-    />
+    >
+      {childrenToString(children)}
+    </NativeText>
   );
 }
 

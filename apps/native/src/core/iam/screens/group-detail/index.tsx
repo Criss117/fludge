@@ -63,7 +63,7 @@ export function GroupDetailScreen({ group }: Props) {
             }}
           >
             <Column modifiers={[fillMaxWidth(), paddingAll(SPACING.md)]}>
-              <ThemedNativeText variant="h5" maxLines={2}>
+              <ThemedNativeText variant="h5" numberOfLines={2}>
                 {group.name}
               </ThemedNativeText>
               <StatusChip status={group.status} />

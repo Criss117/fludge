@@ -29,11 +29,11 @@ export function CategoryCard({ category, onUpdate, onToggleStatus }: Props) {
         <Column modifiers={[paddingAll(SPACING.md)]}>
           <Row horizontalAlignment="center">
             <Column modifiers={[weight(1)]}>
-              <ThemedNativeText variant="h5" maxLines={1}>
+              <ThemedNativeText variant="h5" numberOfLines={1}>
                 {category.name}
               </ThemedNativeText>
               {category.description ? (
-                <ThemedNativeText variant="muted" maxLines={2}>
+                <ThemedNativeText variant="muted" numberOfLines={2}>
                   {category.description}
                 </ThemedNativeText>
               ) : null}

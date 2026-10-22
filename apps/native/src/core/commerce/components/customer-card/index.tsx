@@ -85,7 +85,7 @@ export function CustomerCard({ customer }: Props) {
           >
             <Row modifiers={[fillMaxWidth()]} verticalAlignment="center">
               <Column modifiers={[weight(1)]}>
-                <ThemedNativeText variant="h5" maxLines={1}>
+                <ThemedNativeText variant="h5" numberOfLines={1}>
                   {customer.name}
                 </ThemedNativeText>
               </Column>

@@ -59,7 +59,7 @@ function CustomerListItem({
       horizontalArrangement={{ spacedBy: SPACING.md }}
     >
       <Column modifiers={[weight(1)]}>
-        <ThemedNativeText variant="h6" maxLines={1}>
+        <ThemedNativeText variant="h6" numberOfLines={1}>
           {customer.name}
         </ThemedNativeText>
         <Row horizontalArrangement={{ spacedBy: SPACING.xs }}>

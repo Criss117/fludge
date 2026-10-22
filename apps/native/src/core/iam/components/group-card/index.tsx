@@ -119,14 +119,14 @@ export function GroupCard({ group, menuOptions }: Props) {
                   spacedBy: SPACING.sm,
                 }}
               >
-                <ThemedNativeText maxLines={1} variant="h5">
+                <ThemedNativeText numberOfLines={1} variant="h5">
                   {group.name}
                 </ThemedNativeText>
                 <StatusChip status={group.status} />
               </Row>
               {!menuOptions?.hide && <MenuOptions items={items} />}
             </Row>
-            <ThemedNativeText maxLines={2}>{group.description}</ThemedNativeText>
+            <ThemedNativeText numberOfLines={2}>{group.description}</ThemedNativeText>
           </Column>
 
           <FlowRow>

@@ -122,11 +122,11 @@ export function SaleCard({ sale }: SaleCardProps) {
           >
             <Icon name="person" size={18} color={colors.outline} />
             <Column>
-              <ThemedNativeText variant="h6" maxLines={1}>
+              <ThemedNativeText variant="h6" numberOfLines={1}>
                 {customer?.name ?? t("screens.sales.list.walk_in")}
               </ThemedNativeText>
               {customer && (
-                <ThemedNativeText variant="muted" maxLines={1}>
+                <ThemedNativeText variant="muted" numberOfLines={1}>
                   {customer.documentType} {customer.documentNumber}
                 </ThemedNativeText>
               )}
