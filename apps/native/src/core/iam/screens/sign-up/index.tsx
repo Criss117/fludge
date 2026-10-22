@@ -7,13 +7,8 @@ import {
   RNHostView,
 } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, padding, width } from "@expo/ui/jetpack-compose/modifiers";
-import { useSignUpForm } from "@fludge/client/iam/forms/sign-in-form";
-import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
-import type { TranslationKey } from "@fludge/i18n/index";
 import { useRouter } from "expo-router";
 import { PressableScale } from "pressto";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
@@ -22,38 +17,16 @@ import { NativeFieldError } from "@/core/shared/components/field-error";
 import { ThemedNativeText, ThemedText } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { useMutationToast } from "@/integrations/toast";
 import { SPACING } from "@/lib/sp";
+
+import { useSignUpScreen } from "./use-sign-up";
 
 const windowWidth = Dimensions.get("window").width;
 
 export function SignUpScreen() {
   const colors = useThemeColor();
-  const { t } = useTranslation();
-  const { signUpEmail } = useAppState();
-  const [rootError, setRootError] = useState<string | null>(null);
   const router = useRouter();
-  const mutationToast = useMutationToast();
-
-  const form = useSignUpForm({
-    onSubmit: ({ value, resetForm }) => {
-      setRootError(null);
-      mutationToast.showPending("forms.auth.sign_up_toast.pending");
-      signUpEmail.mutate(value, {
-        onSuccess: () => {
-          resetForm();
-          mutationToast.showSuccess("forms.auth.sign_up_toast.success");
-        },
-        onError: (error) => {
-          setRootError(error.message);
-          mutationToast.showError(
-            "forms.auth.sign_up_toast.error",
-            error.message as TranslationKey,
-          );
-        },
-      });
-    },
-  });
+  const { actions, state, texts } = useSignUpScreen();
 
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
@@ -72,11 +45,9 @@ export function SignUpScreen() {
               }}
             >
               <Column horizontalAlignment="center" modifiers={[fillMaxWidth()]}>
-                <ThemedNativeText variant="h1">{t("app.title")}</ThemedNativeText>
-                <ThemedNativeText variant="muted">
-                  {t("screens.sign_up.description")}
-                </ThemedNativeText>
-                {rootError && <NativeFieldError>{rootError}</NativeFieldError>}
+                <ThemedNativeText variant="h1">{texts.title}</ThemedNativeText>
+                <ThemedNativeText variant="muted">{texts.description}</ThemedNativeText>
+                {state.rootError && <NativeFieldError>{state.rootError}</NativeFieldError>}
               </Column>
               <HorizontalDivider color={colors.primaryContainer} />
 
@@ -90,29 +61,29 @@ export function SignUpScreen() {
                     spacedBy: SPACING.sm,
                   }}
                 >
-                  <form.Field name="name">
+                  <state.form.Field name="name">
                     {(field) => <AuthFormInputs.NameInput field={field} />}
-                  </form.Field>
-                  <form.Field name="phone">
+                  </state.form.Field>
+                  <state.form.Field name="phone">
                     {(field) => <AuthFormInputs.PhoneInput field={field} />}
-                  </form.Field>
-                  <form.Field name="email">
+                  </state.form.Field>
+                  <state.form.Field name="email">
                     {(field) => <AuthFormInputs.EmailInput field={field} />}
-                  </form.Field>
-                  <form.Field name="password">
+                  </state.form.Field>
+                  <state.form.Field name="password">
                     {(field) => <AuthFormInputs.PasswordInput field={field} />}
-                  </form.Field>
+                  </state.form.Field>
                 </Column>
 
                 <Button
-                  onClick={form.handleSubmit}
+                  onClick={actions.onSubmit}
                   modifiers={[fillMaxWidth()]}
                   colors={{
                     containerColor: colors.primaryContainer,
                   }}
                 >
                   <ThemedNativeText color={colors.onPrimaryContainer}>
-                    {t("forms.auth.sign_up")}
+                    {texts.submit}
                   </ThemedNativeText>
                 </Button>
               </Column>
@@ -123,8 +94,7 @@ export function SignUpScreen() {
                 <View style={styles.footer}>
                   <PressableScale onPress={() => router.back()}>
                     <ThemedText variant="muted">
-                      {t("screens.sign_up.already_account")}{" "}
-                      <ThemedText>{t("screens.sign_up.sign_in")}</ThemedText>
+                      {texts.alreadyAccount} <ThemedText>{texts.signIn}</ThemedText>
                     </ThemedText>
                   </PressableScale>
                 </View>

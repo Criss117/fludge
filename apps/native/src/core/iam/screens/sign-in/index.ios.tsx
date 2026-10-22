@@ -3,6 +3,7 @@ import { buttonStyle, frame, tint } from "@expo/ui/swift-ui/modifiers";
 import { Link } from "expo-router";
 import { PressableScale } from "pressto";
 import { Dimensions, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 import { AuthFormInputs } from "@/core/iam/components/auth-form-inputs";
 import { ThemedNativeText, ThemedText } from "@/core/shared/components/themed-text";
@@ -19,58 +20,60 @@ export function SignInScreen() {
   const { actions, state, texts } = useSignInScreen();
 
   return (
-    <ThemedView style={styles.container}>
-      <Host matchContents>
-        <VStack
-          modifiers={[
-            frame({
-              width: Math.floor(windowWidth * 0.8),
-            }),
-          ]}
-          spacing={SPACING.xl}
-        >
-          <VStack>
-            <ThemedNativeText variant="h1">{texts.title}</ThemedNativeText>
-            <ThemedNativeText variant="muted">{texts.description}</ThemedNativeText>
-          </VStack>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+      <ThemedView style={styles.container}>
+        <Host matchContents>
+          <VStack
+            modifiers={[
+              frame({
+                width: Math.floor(windowWidth * 0.8),
+              }),
+            ]}
+            spacing={SPACING.xl}
+          >
+            <VStack>
+              <ThemedNativeText variant="h1">{texts.title}</ThemedNativeText>
+              <ThemedNativeText variant="muted">{texts.description}</ThemedNativeText>
+            </VStack>
 
-          <Divider />
+            <Divider />
 
-          <VStack spacing={SPACING.md}>
-            <state.form.Field name="email">
-              {(field) => <AuthFormInputs.EmailInput field={field} />}
-            </state.form.Field>
-            <state.form.Field name="password">
-              {(field) => <AuthFormInputs.PasswordInput field={field} />}
-            </state.form.Field>
-            <Button
-              onPress={actions.onSubmit}
-              modifiers={[buttonStyle("borderedProminent"), tint(colors.primary)]}
-            >
-              <ThemedNativeText
-                modifiers={[frame({ maxWidth: Infinity })]}
-                color={colors.onPrimary}
-                variant="h6"
+            <VStack spacing={SPACING.md}>
+              <state.form.Field name="email">
+                {(field) => <AuthFormInputs.EmailInput field={field} />}
+              </state.form.Field>
+              <state.form.Field name="password">
+                {(field) => <AuthFormInputs.PasswordInput field={field} />}
+              </state.form.Field>
+              <Button
+                onPress={actions.onSubmit}
+                modifiers={[buttonStyle("borderedProminent"), tint(colors.primary)]}
               >
-                {texts.submit}
-              </ThemedNativeText>
-            </Button>
-          </VStack>
+                <ThemedNativeText
+                  modifiers={[frame({ maxWidth: Infinity })]}
+                  color={colors.onPrimary}
+                  variant="h6"
+                >
+                  {texts.submit}
+                </ThemedNativeText>
+              </Button>
+            </VStack>
 
-          <RNHostView matchContents>
-            <View style={styles.footer}>
-              <Link href="/sign-up" push asChild>
-                <PressableScale>
-                  <ThemedText variant="muted">
-                    {texts.noAccount} <ThemedText>{texts.signUp}</ThemedText>
-                  </ThemedText>
-                </PressableScale>
-              </Link>
-            </View>
-          </RNHostView>
-        </VStack>
-      </Host>
-    </ThemedView>
+            <RNHostView matchContents>
+              <View style={styles.footer}>
+                <Link href="/sign-up" push asChild>
+                  <PressableScale>
+                    <ThemedText variant="muted">
+                      {texts.noAccount} <ThemedText>{texts.signUp}</ThemedText>
+                    </ThemedText>
+                  </PressableScale>
+                </Link>
+              </View>
+            </RNHostView>
+          </VStack>
+        </Host>
+      </ThemedView>
+    </KeyboardAvoidingView>
   );
 }
 
