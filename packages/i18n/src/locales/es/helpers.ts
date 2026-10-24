@@ -62,4 +62,9 @@ export const helpers = {
   x_more: "{{count}} más",
   all_of: "Todos de {{label}}",
   no_conection: "No hay conexión",
+
+  date: {
+    created_at: "Fecha de creación: {{date}}",
+    last_updated: "Última actualización: {{date}}",
+  },
 };

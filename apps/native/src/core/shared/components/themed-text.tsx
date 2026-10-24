@@ -12,6 +12,7 @@ export type ThemedNativeTextProps = Omit<NativeTextProps, "children"> & {
   variant?: keyof typeof TextVariants;
   color?: string;
   children?: React.ReactNode;
+  nested?: boolean;
 };
 
 export type ThemedTextProps = RNTextProps & {
@@ -42,6 +43,7 @@ export function ThemedNativeText({
   color,
   textStyle,
   children,
+  nested,
   ...rest
 }: ThemedNativeTextProps) {
   const textColor = useVariantColor(variant);
@@ -51,6 +53,7 @@ export function ThemedNativeText({
       textStyle={{
         ...textStyle,
         ...TextVariants[variant],
+        ...(nested ? null : TextLineHeight[variant]),
         color: color ?? textColor,
       }}
       {...rest}
@@ -66,55 +69,78 @@ export function ThemedText({ style, variant = "base", ...rest }: ThemedTextProps
   return <RNText style={[TextVariants[variant], { color: textColor }, style]} {...rest} />;
 }
 
+const TextLineHeight = StyleSheet.create({
+  h1: {
+    lineHeight: lh("5xl"),
+  },
+  h2: {
+    lineHeight: lh("4xl"),
+  },
+  h3: {
+    lineHeight: lh("3xl"),
+  },
+  h4: {
+    lineHeight: lh("2xl"),
+  },
+  h5: {
+    lineHeight: lh("xl"),
+  },
+  h6: {
+    lineHeight: lh("lg"),
+  },
+  base: {
+    lineHeight: lh("base"),
+  },
+  sm: {
+    lineHeight: lh("sm"),
+  },
+  muted: {
+    lineHeight: lh("sm"),
+  },
+  error: {
+    lineHeight: lh("base"),
+  },
+});
+
 const TextVariants = StyleSheet.create({
   h1: {
     fontFamily: GeistFonts.Bold,
     fontSize: fs("5xl"),
-    lineHeight: lh("5xl"),
   },
   h2: {
     fontFamily: GeistFonts.Bold,
     fontSize: fs("4xl"),
-    lineHeight: lh("4xl"),
   },
   h3: {
     fontFamily: GeistFonts.SemiBold,
     fontSize: fs("3xl"),
-    lineHeight: lh("3xl"),
   },
   h4: {
     fontFamily: GeistFonts.SemiBold,
     fontSize: fs("2xl"),
-    lineHeight: lh("2xl"),
   },
   h5: {
     fontFamily: GeistFonts.Medium,
     fontSize: fs("xl"),
-    lineHeight: lh("xl"),
   },
   h6: {
     fontFamily: GeistFonts.Medium,
     fontSize: fs("lg"),
-    lineHeight: lh("lg"),
   },
   base: {
     fontFamily: GeistFonts.Regular,
     fontSize: fs("base"),
-    lineHeight: lh("base"),
   },
   sm: {
     fontFamily: GeistFonts.Regular,
     fontSize: fs("sm"),
-    lineHeight: lh("sm"),
   },
   muted: {
     fontFamily: GeistFonts.Regular,
     fontSize: fs("sm"),
-    lineHeight: lh("sm"),
   },
   error: {
     fontFamily: GeistFonts.Regular,
     fontSize: fs("base"),
-    lineHeight: lh("base"),
   },
 });

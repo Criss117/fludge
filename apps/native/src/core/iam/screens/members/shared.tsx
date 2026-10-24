@@ -1,10 +1,10 @@
 import { FlashList } from "@shopify/flash-list";
 import { StyleSheet, View } from "react-native";
 
+import { MemberCard } from "@/core/iam/components/member-card";
 import { ThemedText } from "@/core/shared/components/themed-text";
 import { SPACING } from "@/lib/sp";
 
-import { MemberCard } from "../../components/member-card";
 import type { MembersListProps } from "./types";
 import { useMembersListSection } from "./use-members-screen";
 
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.sm,
   },
   listContentContainer: {
-    paddingBottom: SPACING["3xl"],
+    paddingBottom: SPACING["5xl"],
     paddingTop: SPACING.md,
   },
   listEmptyContainer: {

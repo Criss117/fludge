@@ -1,156 +1,95 @@
-import {
-  AssistChip,
-  Column,
-  ElevatedCard,
-  Host,
-  RNHostView,
-  Row,
-  Spacer,
-} from "@expo/ui/jetpack-compose";
-import { fillMaxWidth, paddingAll, weight, width } from "@expo/ui/jetpack-compose/modifiers";
-import type { MemberSummary } from "@fludge/client/iam/domain/entities";
-import { useRouter } from "expo-router";
+import { Host } from "@expo/ui";
 import { PressableScale } from "pressto";
-import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { StyleSheet, View } from "react-native";
 
 import { Avatar } from "@/core/shared/components/avatar";
-import { Icon } from "@/core/shared/components/icon";
-import { type MenuOptionItem, MenuOptions } from "@/core/shared/components/menu-options";
-import { StatusChip } from "@/core/shared/components/status-chip";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { MenuOptions } from "@/core/shared/components/menu-options";
+import { ThemedText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
-export type MenuOptionsType = {
-  hide?: boolean;
-  items?: MenuOptionItem[];
-};
-interface Props {
-  member: MemberSummary;
-  menuOptions?: MenuOptionsType;
-}
+import type { MemberCardProps } from "./types";
+import { useMemberCard } from "./use-member-card";
 
-interface SelectableMemberCardProps extends Props {
-  isSelected: boolean;
-  onPress: (member: MemberSummary) => void;
-}
-
-export function SelectableMemberCard({
-  member,
-  menuOptions,
-  isSelected,
-  onPress,
-}: SelectableMemberCardProps) {
+export function MemberCard({ member, menuOptions }: MemberCardProps) {
   const colors = useThemeColor();
+  const { state, actions, texts } = useMemberCard({ member, menuOptions });
+
+  const hasMenu = state.menuOptions.length > 0;
 
   return (
-    <PressableScale
-      onPress={() => onPress(member)}
-      style={[
-        {
-          borderWidth: 2,
-          borderRadius: SPACING.md,
-          borderColor: isSelected ? colors.primary : "transparent",
-        },
-      ]}
-    >
-      <MemberCard member={member} menuOptions={menuOptions} />
-    </PressableScale>
-  );
-}
-
-export function MemberCard({ member, menuOptions }: Props) {
-  const { t } = useTranslation();
-  const colors = useThemeColor();
-  const router = useRouter();
-
-  const items = useMemo(() => {
-    const baseItems: MenuOptionItem[] = [
-      {
-        label: "helpers.navigation.see_details",
-        action: () => {
-          router.push({
-            pathname: "/dashboard/members/[memberid]",
-            params: { memberid: member.id },
-          });
-        },
-        icon: "visibility",
-      },
-      ...(menuOptions?.items ?? []),
-    ];
-
-    return baseItems;
-  }, [menuOptions, router, member.id]);
-
-  return (
-    <Host style={{ width: "100%", height: SPACING["5xl"] }}>
-      <ElevatedCard
-        modifiers={[fillMaxWidth()]}
-        colors={{
-          containerColor: colors.onSecondary,
-        }}
+    <View>
+      <PressableScale
+        onLongPress={actions.onLongPress}
+        style={[styles.container, { backgroundColor: colors.onSecondary }]}
       >
-        <Column modifiers={[fillMaxWidth(), paddingAll(SPACING.md)]}>
-          <Row>
-            <RNHostView matchContents>
-              <Avatar name={member.user.name} />
-            </RNHostView>
-            <Spacer modifiers={[width(SPACING.sm)]} />
-            <Column modifiers={[weight(1)]}>
-              <ThemedNativeText numberOfLines={1}>{member.user.name}</ThemedNativeText>
-              <ThemedNativeText variant="muted" numberOfLines={1}>
+        <View style={styles.contentContainer}>
+          <View style={styles.headerContainer}>
+            <Avatar name={member.user.name} />
+            <View style={styles.memberInfoContainer}>
+              <ThemedText numberOfLines={1} variant="h5">
+                {member.user.name}
+              </ThemedText>
+              <ThemedText numberOfLines={1} variant="muted">
                 {member.user.email}
-              </ThemedNativeText>
-            </Column>
-            {!menuOptions?.hide && <MenuOptions items={items} />}
-          </Row>
-          <Row
-            horizontalArrangement={{
-              spacedBy: SPACING.sm,
-            }}
-          >
-            {member.user.isRoot ? (
-              <AssistChip
-                colors={{
-                  containerColor: colors.primary,
-                  labelColor: colors.onPrimary,
-                  leadingIconContentColor: colors.onPrimary,
-                  trailingIconContentColor: colors.onPrimary,
-                }}
-              >
-                <AssistChip.Label>
-                  <ThemedNativeText color={colors.onPrimary}>
-                    {t("resources.members.root")}
-                  </ThemedNativeText>
-                </AssistChip.Label>
-                <AssistChip.LeadingIcon>
-                  <Icon name="person" size={18} />
-                </AssistChip.LeadingIcon>
-              </AssistChip>
-            ) : (
-              <AssistChip
-                colors={{
-                  containerColor: colors.surface,
-                  labelColor: colors.onSurface,
-                  leadingIconContentColor: colors.onSurface,
-                  trailingIconContentColor: colors.onSurface,
-                }}
-              >
-                <AssistChip.Label>
-                  <ThemedNativeText color={colors.onSurface}>
-                    {t("resources.members.single")}
-                  </ThemedNativeText>
-                </AssistChip.Label>
-                <AssistChip.LeadingIcon>
-                  <Icon name="person" size={18} />
-                </AssistChip.LeadingIcon>
-              </AssistChip>
-            )}
-            <StatusChip status={member.status} />
-          </Row>
-        </Column>
-      </ElevatedCard>
-    </Host>
+              </ThemedText>
+            </View>
+            {/* Reserva el espacio del menú para que el texto no quede debajo */}
+            {hasMenu && <View style={styles.menuSpacer} />}
+          </View>
+          <View>
+            <ThemedText variant="muted">{texts.createdAt}</ThemedText>
+          </View>
+        </View>
+      </PressableScale>
+
+      {/* Hermano del PressableScale, no hijo */}
+      {hasMenu && (
+        <View style={styles.menuOptionsContainer}>
+          <Host style={{ flex: 1 }}>
+            <MenuOptions
+              items={state.menuOptions}
+              isExpanded={state.isExpanded}
+              onExpandChange={actions.setIsExpanded}
+            />
+          </Host>
+        </View>
+      )}
+    </View>
   );
 }
+
+const MENU_SIZE = SPACING["2xl"];
+
+const styles = StyleSheet.create({
+  container: {
+    height: SPACING["5xl"],
+    borderRadius: SPACING.md,
+  },
+  contentContainer: {
+    flex: 1,
+    padding: SPACING.md,
+    columnGap: SPACING.md,
+  },
+  headerContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    columnGap: SPACING.sm,
+  },
+  memberInfoContainer: {
+    flex: 1,
+  },
+  menuSpacer: {
+    width: MENU_SIZE,
+  },
+  menuOptionsContainer: {
+    position: "absolute",
+    top: SPACING.md,
+    right: SPACING.xs,
+    gap: SPACING.sm,
+    width: MENU_SIZE,
+    height: MENU_SIZE,
+    paddingTop: SPACING.sm,
+  },
+});

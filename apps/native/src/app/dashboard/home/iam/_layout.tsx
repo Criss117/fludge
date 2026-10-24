@@ -3,6 +3,7 @@ import { TopTabs } from "expo-router/js-top-tabs";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { HomeHeader } from "@/core/shared/components/home-header";
 import { SegmentedTabBar } from "@/core/shared/components/segmented-tab-bar";
 import { ThemedView } from "@/core/shared/components/themed-view";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
@@ -17,7 +18,7 @@ export default function IamLayout() {
 
   return (
     <ThemedView style={{ flex: 1, paddingTop: top }}>
-      {/* {isIos && (
+      {isIos && (
         <HomeHeader
           title="screens.iam.label"
           navigateTo={[
@@ -33,7 +34,7 @@ export default function IamLayout() {
             },
           ]}
         />
-      )} */}
+      )}
       <TopTabs
         tabBar={isIos ? SegmentedTabBar : undefined}
         screenOptions={{

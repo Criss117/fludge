@@ -8,6 +8,7 @@ import {
   buttonStyle,
   clipShape,
   cornerRadius,
+  foregroundStyle,
   frame,
   glassEffect,
   keyboardType,
@@ -16,6 +17,7 @@ import {
   onTapGesture,
   opacity,
   padding,
+  tint,
 } from "@expo/ui/swift-ui/modifiers";
 import { useCallback, useState } from "react";
 import { KeyboardController } from "react-native-keyboard-controller";
@@ -25,6 +27,7 @@ import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
 import { NativeFieldError } from "../field-error";
+import { ThemedNativeText } from "../themed-text";
 import type { SearchInputProps, TextInputProps } from "./types";
 import { useTextInput } from "./use-text-input";
 
@@ -167,9 +170,13 @@ export function SearchInput({ label, onValueChange, placeholder }: SearchInputPr
           frame({
             width: Infinity,
           }),
-          glassEffect(),
-          background("transparent"),
-          cornerRadius(SPACING.md),
+          background(colors.surfaceContainerHigh),
+          cornerRadius(SPACING.xl),
+          glassEffect({
+            glass: {
+              variant: isFocused ? "clear" : "identity",
+            },
+          }),
         ]}
       >
         <HStack
@@ -180,18 +187,27 @@ export function SearchInput({ label, onValueChange, placeholder }: SearchInputPr
             }),
           ]}
         >
-          <Icon name="search" size={18} color={colors.onPrimaryContainer} />
+          <Icon name="search" size={18} color={colors.outline} />
           <TextField
             onFocusChange={setIsFocused}
             text={state.value as ObservableState<string>}
+
             onTextChange={actions.onValueChange}
             placeholder={text.label}
             modifiers={[
               frame({
                 width: Infinity,
               }),
+              foregroundStyle(colors.onSurface),
+              tint(colors.primary),
             ]}
-          />
+          >
+            <TextField.Placeholder>
+              <ThemedNativeText nested variant="muted">
+                {text.placeholder}
+              </ThemedNativeText>
+            </TextField.Placeholder>
+          </TextField>
         </HStack>
       </HStack>
       <Button
@@ -207,7 +223,7 @@ export function SearchInput({ label, onValueChange, placeholder }: SearchInputPr
           offset({ x: isFocused ? 0 : SPACING.xl }), // entra desde la derecha
         ]}
       >
-        <Icon name="close" size={20} color={colors.onPrimaryContainer} />
+        <Icon name="close" size={22} color={colors.onPrimaryContainer} />
       </Button>
     </HStack>
   );
