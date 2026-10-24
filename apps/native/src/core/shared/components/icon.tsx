@@ -47,6 +47,7 @@ import ReceiptLongIcon from "@expo/material-symbols/receipt_long.xml";
 import RemoveIcon from "@expo/material-symbols/remove.xml";
 import SearchIcon from "@expo/material-symbols/search.xml";
 import SecurityIcon from "@expo/material-symbols/security.xml";
+import SettingsIcon from "@expo/material-symbols/settings.xml";
 import SwitchLeftIcon from "@expo/material-symbols/switch_left.xml";
 import SyncIcon from "@expo/material-symbols/sync.xml";
 import ViewListIcon from "@expo/material-symbols/view_list.xml";
@@ -265,6 +266,10 @@ export const ICONS = {
   "keyboard-arrow-up": ExpoIcon.select({
     android: KeyboardArrowUpIcon,
     ios: "chevron.up",
+  }),
+  settings: ExpoIcon.select({
+    android: SettingsIcon,
+    ios: "gear",
   }),
 } as const;
 
