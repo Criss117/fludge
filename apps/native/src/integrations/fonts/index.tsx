@@ -29,7 +29,7 @@ export const GeistFonts = {
 
 export type GeistVariants = (typeof GeistFonts)[keyof typeof GeistFonts];
 
-const FONT_VARIANTS: Record<GeistVariants, number> = {
+export const FONT_VARIANTS: Record<GeistVariants, number> = {
   "geist-thin": Geist_100Thin,
   "geist-extralight": Geist_200ExtraLight,
   "geist-light": Geist_300Light,

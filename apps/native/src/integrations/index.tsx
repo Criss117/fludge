@@ -1,7 +1,10 @@
 import "./i18n";
 
+import { ThemeProvider } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+
+import { useNavigationTheme } from "@/core/shared/hooks/use-theme-color";
 
 import { DatabaseProvider } from "./db";
 import { DependenciesProvider } from "./dependencies";
@@ -12,7 +15,11 @@ import { QueryClientProvider } from "./query";
 import { ToastProvider } from "./toast";
 
 function UIProvider({ children }: { children: React.ReactNode }) {
-  return <ToastProvider>{children}</ToastProvider>;
+  return (
+    <ThemeProvider value={useNavigationTheme()}>
+      <ToastProvider>{children}</ToastProvider>
+    </ThemeProvider>
+  );
 }
 
 function NetProvider({ children }: { children: React.ReactNode }) {
