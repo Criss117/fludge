@@ -1,67 +1,34 @@
-import { Host } from "@expo/ui";
-import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
-import { useFindAllMembers } from "@fludge/client/iam/queries/use-find-members";
-import { FlashList } from "@shopify/flash-list";
-import { Suspense, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { Host } from "@expo/ui/jetpack-compose";
+import { Suspense } from "react";
 import { StyleSheet, View } from "react-native";
 
-import { MemberCard } from "@/core/iam/components/member-card";
 import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { LinkFabButton } from "@/core/shared/components/link-fab-button";
-import { TextInput } from "@/core/shared/components/text-input";
-import { ThemedText } from "@/core/shared/components/themed-text";
+import { SearchInput } from "@/core/shared/components/text-input";
 import { ThemedView } from "@/core/shared/components/themed-view";
 import { SPACING } from "@/lib/sp";
 
-interface Props {
-  searchQuery: string;
-}
-
-export function MemberListSection({ searchQuery }: Props) {
-  const { t } = useTranslation();
-  const { data } = useFindAllMembers({
-    searchQuery,
-  });
-
-  return (
-    <FlashList
-      data={data}
-      contentContainerStyle={styles.listContentContainer}
-      showsVerticalScrollIndicator={false}
-      keyExtractor={(d) => d.id}
-      renderItem={({ item }) => <MemberCard member={item} />}
-      ItemSeparatorComponent={() => <View style={{ height: SPACING.md }} />}
-      ListEmptyComponent={
-        <View style={styles.listEmptyContainer}>
-          <ThemedText>{t("screens.iam.members.empty")}</ThemedText>
-        </View>
-      }
-    />
-  );
-}
+import { MemberListSection } from "./shared";
+import { useMembersScreen } from "./use-members-screen";
 
 export function MembersScreen() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const { actions, state, texts } = useMembersScreen();
 
   return (
     <ThemedView style={styles.container}>
       <View style={styles.headerContainer}>
         <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
-          <TextInput
-            value={searchQuery}
-            onValueChange={setSearchQuery}
-            label="screens.iam.members.search.label"
-            placeholder="screens.iam.members.search.placeholder"
-            modifiers={[fillMaxWidth()]}
-            iconName="search"
+          <SearchInput
+            onValueChange={actions.setSearchQuery}
+            label={texts.search.label}
+            placeholder={texts.search.placeholder}
           />
         </Host>
       </View>
 
       <View style={styles.listContainer}>
         <Suspense fallback={<BaseLoadingIndicator />}>
-          <MemberListSection searchQuery={searchQuery} />
+          <MemberListSection searchQuery={state.searchQuery} />
         </Suspense>
       </View>
 

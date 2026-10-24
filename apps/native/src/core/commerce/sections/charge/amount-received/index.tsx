@@ -82,7 +82,6 @@ export function AmountReceivedSection({ total }: Props) {
           <ThemedNativeText
             variant="h3"
             color={isEnough ? colors.onSuccess : colors.onErrorContainer}
-            style={{ textAlign: "right" }}
           >
             {formatCurrency(change)}
           </ThemedNativeText>

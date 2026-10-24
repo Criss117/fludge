@@ -2,8 +2,9 @@ import type { ProductDetail } from "@fludge/client/catalog/domain/entities";
 import { formatCurrency } from "@fludge/utils/format-currency";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, StyleSheet, Text, View, type ViewStyle } from "react-native";
+import { Pressable, StyleSheet, View, type ViewStyle } from "react-native";
 
+import { ThemedText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { GeistFonts } from "@/integrations/fonts";
 
@@ -121,23 +122,23 @@ export function SaleProductCard({ product, onPress, style }: Props) {
     >
       <View style={themedStyles.header}>
         <View style={themedStyles.headerContent}>
-          <Text style={themedStyles.name} numberOfLines={1}>
+          <ThemedText style={themedStyles.name} numberOfLines={1}>
             {product.name}
-          </Text>
+          </ThemedText>
           <View style={themedStyles.chip}>
-            <Text style={themedStyles.chipText}>
+            <ThemedText style={themedStyles.chipText}>
               {t("screens.catalog.products.stock", {
                 quantity: product.stock,
               })}
-            </Text>
+            </ThemedText>
           </View>
         </View>
         <View style={themedStyles.addIcon}>
-          <Text style={themedStyles.addIconText}>+</Text>
+          <ThemedText style={themedStyles.addIconText}>+</ThemedText>
         </View>
       </View>
       <View>
-        <Text style={themedStyles.price}>{price}</Text>
+        <ThemedText style={themedStyles.price}>{price}</ThemedText>
       </View>
     </Pressable>
   );

@@ -21,7 +21,7 @@ function StackScreen() {
         },
       }}
     >
-      <Stack.Protected guard={!hasSession} redirectTo="/dashboard/(tabs)">
+      <Stack.Protected guard={!hasSession} redirectTo="/dashboard/home">
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
 

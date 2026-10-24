@@ -1,5 +1,5 @@
-import type { FindAllProductsFilters } from "@fludge/client/catalog/domain/product.repository";
+import type { Filters } from "@fludge/client/shared/use-filters";
 
 export interface ProductsListProps {
-  filters: FindAllProductsFilters;
+  filters: Filters;
 }

@@ -5,11 +5,13 @@ import { useTranslation } from "react-i18next";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { GeistFonts } from "@/integrations/fonts";
 
+const isAndroid = Platform.OS === "android";
+
 export default function DashboardLayout() {
   const colors = useThemeColor();
   const { t } = useTranslation();
 
-  const iconColor = Platform.OS === "android" ? colors.onPrimary : colors.primary;
+  const iconColor = isAndroid ? colors.onPrimary : colors.primary;
 
   return (
     <NativeTabs
@@ -53,14 +55,16 @@ export default function DashboardLayout() {
         <NativeTabs.Trigger.Icon sf="shield.checkerboard" md="security" selectedColor={iconColor} />
         <NativeTabs.Trigger.Label>{t("screens.iam.label")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="settings">
-        <NativeTabs.Trigger.Icon
-          sf={{ default: "gear.circle", selected: "gear.circle.fill" }}
-          md="settings"
-          selectedColor={iconColor}
-        />
-        <NativeTabs.Trigger.Label>{t("screens.settings.label")}</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
+      {isAndroid && (
+        <NativeTabs.Trigger name="settings">
+          <NativeTabs.Trigger.Icon
+            sf={{ default: "gear.circle", selected: "gear.circle.fill" }}
+            md="settings"
+            selectedColor={iconColor}
+          />
+          <NativeTabs.Trigger.Label>{t("screens.settings.label")}</NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
+      )}
     </NativeTabs>
   );
 }

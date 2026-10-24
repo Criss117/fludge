@@ -11,7 +11,7 @@ function Screen({ groupid }: { groupid: string }) {
   const { data } = useFindGroupDetail(groupid);
   const router = useRouter();
 
-  if (!data) return <Redirect href="/dashboard/iam/groups" />;
+  if (!data) return <Redirect href="/dashboard/home/iam/groups" />;
 
   return (
     <>

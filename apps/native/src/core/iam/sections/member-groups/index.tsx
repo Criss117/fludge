@@ -56,7 +56,7 @@ export function MemberGroupsSection({ member }: Props) {
           onValueChange={setSearchQuery}
           modifiers={[fillMaxWidth()]}
           iconName="search"
-          numberOfLines={1}
+          maxLines={1}
           label="screens.iam.groups.search.label"
           placeholder="screens.iam.groups.search.placeholder"
         />

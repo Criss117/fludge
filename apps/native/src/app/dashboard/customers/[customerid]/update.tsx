@@ -8,7 +8,7 @@ import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indi
 function Screen({ customerid }: { customerid: string }) {
   const { data } = useFindCustomer(customerid);
 
-  if (data === null) return <Redirect href="/dashboard/customer" />;
+  if (data === null) return <Redirect href="/dashboard/home/customer" />;
 
   return <CustomerFormScreen action={{ type: "update", customer: data }} />;
 }

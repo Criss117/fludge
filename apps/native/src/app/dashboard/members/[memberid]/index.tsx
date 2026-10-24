@@ -8,7 +8,7 @@ import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indi
 function Screen({ memberid }: { memberid: string }) {
   const { data } = useFindMemberDetail(memberid);
 
-  if (!data) return <Redirect href="/dashboard/iam" />;
+  if (!data) return <Redirect href="/dashboard/home/iam" />;
 
   return (
     <>

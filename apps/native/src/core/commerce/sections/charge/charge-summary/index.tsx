@@ -15,8 +15,6 @@ interface Props {
   ticket: Ticket & { total: number };
 }
 
-const RECEIPT_FONT_SIZE = 13;
-
 export function ChargeSummarySection({ ticket }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
@@ -57,21 +55,19 @@ export function ChargeSummarySection({ ticket }: Props) {
                         modifiers={[fillMaxWidth()]}
                         horizontalArrangement={{ spacedBy: SPACING.sm }}
                       >
-                        <ThemedNativeText variant="muted" style={{ fontSize: RECEIPT_FONT_SIZE }}>
-                          {presentation.name}
-                        </ThemedNativeText>
+                        <ThemedNativeText variant="muted">{presentation.name}</ThemedNativeText>
                         <Spacer modifiers={[weight(1)]} />
-                        <ThemedNativeText variant="muted" style={{ fontSize: RECEIPT_FONT_SIZE }}>
+                        <ThemedNativeText variant="muted">
                           x{presentation.quantity}
                         </ThemedNativeText>
-                        <ThemedNativeText style={{ fontSize: RECEIPT_FONT_SIZE }}>
+                        <ThemedNativeText>
                           {formatCurrency(presentation.priceSale * presentation.quantity)}
                         </ThemedNativeText>
                       </Row>
                     ))}
 
                     <Row modifiers={[fillMaxWidth()]}>
-                      <ThemedNativeText variant="muted" style={{ fontSize: RECEIPT_FONT_SIZE - 2 }}>
+                      <ThemedNativeText variant="muted">
                         {item.presentations.reduce((sum, p) => sum + p.quantity, 0)}{" "}
                         {t("helpers.items")}
                       </ThemedNativeText>

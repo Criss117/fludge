@@ -7,7 +7,7 @@ import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indi
 function Screen({ productid }: { productid: string }) {
   const { data } = useFindProduct(productid);
 
-  if (data === null) return <Redirect href="/dashboard/catalog" />;
+  if (data === null) return <Redirect href="/dashboard/home/catalog" />;
 
   return (
     <>

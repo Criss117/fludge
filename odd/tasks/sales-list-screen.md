@@ -23,7 +23,7 @@ Files to edit:
 
 - apps/native/src/modules/sales/presentation/screens/sale.screen.tsx (FlatList + skeleton + empty/footer states)
 - packages/i18n/src/locales/es/screens.ts (sales.history._, sales.status._, sales.card._, sales.receipt._)
-- apps/native/src/app/(private)/dashboard/(tabs)/_layout.tsx (fix stale /(private)/sales link → /(private)/pos)
+- apps/native/src/app/(private)/dashboard/home/_layout.tsx (fix stale /(private)/sales link → /(private)/pos)
 - apps/native/src/modules/sales/presentation/components/sale-summary/content.tsx (fix stale /sales/charge link → /pos/charge)
 
 ## Constraints

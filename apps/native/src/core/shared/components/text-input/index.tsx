@@ -78,6 +78,11 @@ export function SearchInput({ label, onValueChange, placeholder }: SearchInputPr
       iconName="search"
       placeholder={placeholder}
       label={label}
+      keyboardOptions={{
+        imeAction: "search",
+        capitalization: "none",
+        autoCorrectEnabled: false,
+      }}
     />
   );
 }

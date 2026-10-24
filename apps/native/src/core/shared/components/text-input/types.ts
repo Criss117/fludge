@@ -28,6 +28,7 @@ export type TextInputProps = (TextModeProps | NumberModeProps) & {
   modifiers?: SwiftUIModifierConfig[] | ModifierConfig[];
   withDebounce?: number;
   maxLines?: number;
+  dismissKeyboardOnClear?: boolean;
 };
 
 export interface SearchInputProps {
