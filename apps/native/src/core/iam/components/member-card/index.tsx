@@ -1,4 +1,5 @@
 import { Host } from "@expo/ui";
+import type { MemberSummary } from "@fludge/client/iam/domain/entities";
 import { PressableScale } from "pressto";
 import { StyleSheet, View } from "react-native";
 
@@ -10,6 +11,34 @@ import { SPACING } from "@/lib/sp";
 
 import type { MemberCardProps } from "./types";
 import { useMemberCard } from "./use-member-card";
+
+interface SelectableMemberCardProps extends MemberCardProps {
+  isSelected: boolean;
+  onPress: (member: MemberSummary) => void;
+}
+
+export function SelectableMemberCard({
+  member,
+  menuOptions,
+  isSelected,
+  onPress,
+}: SelectableMemberCardProps) {
+  const colors = useThemeColor();
+
+  return (
+    <PressableScale
+      onPress={() => onPress(member)}
+      style={[
+        styles.selectableContainer,
+        {
+          borderColor: isSelected ? colors.primary : "transparent",
+        },
+      ]}
+    >
+      <MemberCard member={member} menuOptions={menuOptions} />
+    </PressableScale>
+  );
+}
 
 export function MemberCard({ member, menuOptions }: MemberCardProps) {
   const colors = useThemeColor();
@@ -62,6 +91,10 @@ export function MemberCard({ member, menuOptions }: MemberCardProps) {
 const MENU_SIZE = SPACING["2xl"];
 
 const styles = StyleSheet.create({
+  selectableContainer: {
+    borderWidth: 2,
+    borderRadius: SPACING.md,
+  },
   container: {
     height: SPACING["5xl"],
     borderRadius: SPACING.md,

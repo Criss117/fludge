@@ -1,29 +1,27 @@
-import { AssistChip } from "@expo/ui/jetpack-compose";
 import { useTranslation } from "react-i18next";
+import { StyleSheet, View } from "react-native";
+
+import { SPACING } from "@/lib/sp";
 
 import { useThemeColor } from "../hooks/use-theme-color";
-import { Icon } from "./icon";
-import { ThemedNativeText } from "./themed-text";
+import { ThemedText } from "./themed-text";
 
 interface Props {
   status: "active" | "inactive" | "discontinued";
 }
 
-const styles = {
+const stylesConfig = {
   active: {
     primary: "success",
     secondary: "onSuccess",
-    icon: "check",
   },
   inactive: {
     primary: "surface",
     secondary: "onSurface",
-    icon: "close",
   },
   discontinued: {
     primary: "success",
     secondary: "onSuccess",
-    icon: "close",
   },
 } as const;
 
@@ -31,25 +29,30 @@ export function StatusChip({ status }: Props) {
   const colors = useThemeColor();
   const { t } = useTranslation();
 
-  const s = styles[status];
+  const config = stylesConfig[status];
 
   return (
-    <AssistChip
-      colors={{
-        containerColor: colors[s.primary],
-        labelColor: colors[s.secondary],
-        leadingIconContentColor: colors[s.secondary],
-        trailingIconContentColor: colors[s.secondary],
-      }}
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors[config.primary],
+        },
+      ]}
     >
-      <AssistChip.LeadingIcon>
-        <Icon name={s.icon} size={18} color={colors[s.secondary]} />
-      </AssistChip.LeadingIcon>
-      <AssistChip.Label>
-        <ThemedNativeText color={colors[s.secondary]}>
-          {t(`helpers.status.${status}`)}
-        </ThemedNativeText>
-      </AssistChip.Label>
-    </AssistChip>
+      <ThemedText variant="sm" style={[styles.label, { color: colors[config.secondary] }]}>
+        {t(`helpers.status.${status}`)}
+      </ThemedText>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    alignSelf: "flex-start",
+    paddingVertical: SPACING.xs,
+    paddingHorizontal: SPACING.sm,
+    borderRadius: SPACING.xl,
+  },
+  label: {},
+});

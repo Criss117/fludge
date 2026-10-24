@@ -1,4 +1,4 @@
-import { Host } from "@expo/ui/jetpack-compose";
+import { Host } from "@expo/ui";
 import { useFindGroupDetail } from "@fludge/client/iam/queries/use-find-groups";
 import { Redirect, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Suspense } from "react";
@@ -19,7 +19,7 @@ function Screen({ groupid }: { groupid: string }) {
         options={{
           title: data.name,
           headerRight: () => (
-            <Host matchContents>
+            <Host style={{ flex: 1 }}>
               <MenuOptions
                 items={[
                   {

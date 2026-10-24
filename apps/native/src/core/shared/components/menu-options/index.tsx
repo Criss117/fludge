@@ -1,4 +1,5 @@
 import { DropdownMenu, DropdownMenuItem, IconButton } from "@expo/ui/jetpack-compose";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Icon } from "@/core/shared/components/icon";
@@ -10,12 +11,16 @@ import type { MenuOptionsProps } from "./types";
 export function MenuOptions({ items, isExpanded, onExpandChange }: MenuOptionsProps) {
   const { t } = useTranslation();
   const colors = useThemeColor();
+  const [internalExpanded, setInternalExpanded] = useState(false);
 
-  const open = () => onExpandChange(true);
-  const close = () => onExpandChange(false);
+  const expanded = isExpanded ?? internalExpanded;
+  const setExpanded = onExpandChange ?? setInternalExpanded;
+
+  const open = () => setExpanded(true);
+  const close = () => setExpanded(false);
 
   return (
-    <DropdownMenu expanded={isExpanded} onDismissRequest={close} color={colors.primaryContainer}>
+    <DropdownMenu expanded={expanded} onDismissRequest={close} color={colors.primaryContainer}>
       <DropdownMenu.Trigger>
         <IconButton onClick={open}>
           <Icon name="more-vert" size={24} color={colors.onSecondaryContainer} />

@@ -12,6 +12,6 @@ export type MenuOptionItem = {
 
 export interface MenuOptionsProps {
   items: MenuOptionItem[];
-  isExpanded: boolean;
-  onExpandChange: (isExpanded: boolean) => void;
+  isExpanded?: boolean;
+  onExpandChange?: (isExpanded: boolean) => void;
 }
