@@ -21,18 +21,18 @@ function StackScreen() {
         },
       }}
     >
-      <Stack.Protected guard={!hasSession} redirectTo="/dashboard/home">
+      <Stack.Protected guard={!hasSession} redirectTo="/(protected)/dashboard/(tabs)">
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
 
       <Stack.Protected guard={hasSession} redirectTo="/(auth)">
-        <Stack.Screen name="dashboard" />
+        <Stack.Screen name="(protected)" />
       </Stack.Protected>
     </Stack>
   );
 }
 
-export default function TabLayout() {
+export default function AppLayout() {
   return (
     <Integrations>
       <StackScreen />

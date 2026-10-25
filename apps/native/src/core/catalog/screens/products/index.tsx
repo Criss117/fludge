@@ -7,7 +7,7 @@ import {
 } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, weight } from "@expo/ui/jetpack-compose/modifiers";
 import { FlashList } from "@shopify/flash-list";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
@@ -16,7 +16,7 @@ import { ProductsFiltersSheet } from "@/core/catalog/components/products-filters
 import { BarcodeReader } from "@/core/shared/components/barcode-reader";
 import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { LinkFabButton } from "@/core/shared/components/link-fab-button";
-import { TextInput } from "@/core/shared/components/text-input";
+import { SearchInput } from "@/core/shared/components/text-input";
 import { ThemedNativeText, ThemedText } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
@@ -64,6 +64,12 @@ export function ProductsScreen() {
   const { t } = useTranslation();
   const colors = useThemeColor();
   const { texts, actions, status } = useProducts();
+  const [barcodeSearchIndex, setBarcodeSearchIndex] = useState(0);
+
+  const handleBarcodeSearch = (barcode: string) => {
+    setBarcodeSearchIndex((prev) => prev + 1);
+    actions.setSearchQuery(barcode);
+  };
 
   return (
     <ThemedView style={styles.container}>
@@ -78,17 +84,15 @@ export function ProductsScreen() {
             }}
           >
             <Box modifiers={[weight(1)]}>
-              <TextInput
+              <SearchInput
                 onValueChange={actions.setSearchQuery}
-                value={status.filters.searchQuery}
-                modifiers={[fillMaxWidth()]}
-                iconName="search"
                 label={texts.searchBar.label}
                 placeholder={texts.searchBar.placeholder}
-                withDebounce={400}
+                defaultValue={status.filters.searchQuery}
+                key={barcodeSearchIndex}
               />
             </Box>
-            <BarcodeReader setBarcode={actions.setSearchQuery} />
+            <BarcodeReader setBarcode={handleBarcodeSearch} />
           </Row>
         </Host>
         <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>

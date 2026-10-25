@@ -10,6 +10,9 @@ export const screens = {
     already_account: "¿Ya tienes una cuenta?",
     sign_in: "Inicia sesión",
   },
+  dashboard: {
+    label: "Dashboard",
+  },
   organization: {
     select: {
       title: "Selecciona una organización",
@@ -107,9 +110,6 @@ export const screens = {
     assign_groups: {
       title: "Asignar Grupos",
     },
-  },
-  customer: {
-    label: "Cliente",
   },
   sales: {
     label: "Ventas",

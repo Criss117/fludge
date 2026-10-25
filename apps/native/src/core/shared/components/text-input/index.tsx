@@ -102,10 +102,11 @@ export function TextInput(props: TextInputProps) {
   );
 }
 
-export function SearchInput({ label, onValueChange, placeholder }: SearchInputProps) {
+export function SearchInput({ label, onValueChange, placeholder, defaultValue }: SearchInputProps) {
   return (
     <TextInput
       onValueChange={onValueChange}
+      defaultValue={defaultValue}
       modifiers={[fillMaxWidth()]}
       iconName="search"
       placeholder={placeholder}

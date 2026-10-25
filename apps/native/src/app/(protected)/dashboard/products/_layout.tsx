@@ -1,21 +1,16 @@
-import { Platform } from "expo";
 import { Stack } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-import { HomeHeader } from "@/core/shared/components/home-header";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { GeistFonts } from "@/integrations/fonts";
 
-const isIos = Platform.OS === "ios";
-
-export default function IamLayout() {
-  const { t } = useTranslation();
+export default function ProductsLayout() {
   const colors = useThemeColor();
+  const { t } = useTranslation();
 
   return (
     <Stack
       screenOptions={{
-        headerShown: isIos,
         contentStyle: {
           backgroundColor: colors.background,
         },
@@ -27,15 +22,25 @@ export default function IamLayout() {
           fontFamily: GeistFonts.SemiBold,
         },
         headerShadowVisible: false,
-        headerLeft: () => {
-          return <HomeHeader />;
-        },
+        animation: "slide_from_right",
       }}
     >
       <Stack.Screen
-        name="iam"
+        name="create"
         options={{
-          title: t("screens.iam.label"),
+          title: t("screens.products.create.title"),
+        }}
+      />
+      <Stack.Screen
+        name="[productid]/update"
+        options={{
+          title: t("screens.products.update.title"),
+        }}
+      />
+      <Stack.Screen
+        name="[productid]/index"
+        options={{
+          title: t("screens.products.detail.loading"),
         }}
       />
     </Stack>
