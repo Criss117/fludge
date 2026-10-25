@@ -27,7 +27,7 @@ export default function IamLayout() {
           fontFamily: GeistFonts.SemiBold,
         },
         headerShadowVisible: false,
-        headerRight: () => {
+        headerLeft: () => {
           return <HomeHeader />;
         },
       }}

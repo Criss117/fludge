@@ -8,3 +8,8 @@ export interface NavigateTo {
   icon: IconName;
   key: "iam" | "groups" | "catalog" | "categories";
 }
+
+export interface HomeHeaderActionButtonProps {
+  onPress: () => void;
+  icon: IconName;
+}
