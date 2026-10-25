@@ -13,7 +13,6 @@ import { useMembersScreen } from "./use-members-screen";
 
 export function MembersScreen() {
   const { actions, state, texts } = useMembersScreen();
-
   return (
     <BaseTabScreen
       header={

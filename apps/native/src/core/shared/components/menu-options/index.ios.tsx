@@ -1,15 +1,13 @@
-import { Button, Popover, VStack } from "@expo/ui/swift-ui";
+import { Button, HStack, Menu, Spacer } from "@expo/ui/swift-ui";
 import {
   buttonBorderShape,
   buttonStyle,
   controlSize,
   frame,
   labelStyle,
-  padding,
 } from "@expo/ui/swift-ui/modifiers";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Dimensions } from "react-native";
 
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
@@ -17,8 +15,6 @@ import { SPACING } from "@/lib/sp";
 import { Icon } from "../icon";
 import { ThemedNativeText } from "../themed-text";
 import type { MenuOptionsProps } from "./types";
-
-const width = Dimensions.get("window").width;
 
 export function MenuOptions({ items, isExpanded, onExpandChange }: MenuOptionsProps) {
   const { t } = useTranslation();
@@ -32,22 +28,11 @@ export function MenuOptions({ items, isExpanded, onExpandChange }: MenuOptionsPr
   const close = () => setExpanded(false);
 
   return (
-    <Popover
-      isPresented={expanded}
-      onIsPresentedChange={(v) => {
-        if (v) {
-          open();
-        } else {
-          close();
-        }
-      }}
-      arrowEdge="top"
-    >
-      <Popover.Trigger>
+    <Menu
+      label={
         <Button
-          onPress={open}
           modifiers={[
-            buttonStyle("borderless"),
+            buttonStyle("bordered"),
             controlSize("large"),
             labelStyle("iconOnly"),
             buttonBorderShape("circle"),
@@ -55,44 +40,33 @@ export function MenuOptions({ items, isExpanded, onExpandChange }: MenuOptionsPr
         >
           <Icon name="more-vert" size={24} color={colors.onSecondaryContainer} />
         </Button>
-      </Popover.Trigger>
-      <Popover.Content>
-        <VStack
-          modifiers={[
-            frame({
-              width: Math.floor(width / 3),
-            }),
-            padding({ all: SPACING.md }),
-          ]}
-          spacing={SPACING.md}
+      }
+      systemImage="ellipsis.circle"
+    >
+      {items.map((i, index) => (
+        <Button
+          key={index}
+          onPress={() => {
+            close();
+            i.action();
+          }}
         >
-          {items.map((i, index) => (
-            <Button
-              key={index}
-              onPress={() => {
-                close();
-                i.action();
-              }}
-            >
-              <Icon
-                name={i.icon}
-                size={18}
-                color={i.color ? colors[i.color] : colors.onSecondaryContainer}
-              />
-              <ThemedNativeText
-                color={i.color ? colors[i.color] : colors.onSecondaryContainer}
-                modifiers={[
-                  frame({
-                    width: Infinity,
-                  }),
-                ]}
-              >
-                {t(i.label)}
-              </ThemedNativeText>
-            </Button>
-          ))}
-        </VStack>
-      </Popover.Content>
-    </Popover>
+          <HStack
+            spacing={SPACING.sm}
+            modifiers={[frame({ maxWidth: Infinity, alignment: "leading" })]}
+          >
+            <Icon
+              name={i.icon}
+              size={18}
+              color={i.color ? colors[i.color] : colors.onSecondaryContainer}
+            />
+            <ThemedNativeText color={i.color ? colors[i.color] : colors.onSecondaryContainer}>
+              {t(i.label)}
+            </ThemedNativeText>
+            <Spacer />
+          </HStack>
+        </Button>
+      ))}
+    </Menu>
   );
 }

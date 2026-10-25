@@ -47,7 +47,7 @@ export const helpers = {
 
   navigation: {
     see_details: "Ver detalles",
-    update: "Actualizar",
+    update: "Editar",
     delete: "Eliminar",
   },
 

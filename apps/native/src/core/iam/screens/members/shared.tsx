@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   },
   listContentContainer: {
     paddingBottom: SPACING["5xl"],
-    paddingTop: SPACING.md,
+    paddingTop: SPACING["3xl"],
   },
   listEmptyContainer: {
     flex: 1,

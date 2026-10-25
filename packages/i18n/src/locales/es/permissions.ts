@@ -2,8 +2,8 @@ export const permissions = {
   organizations: {
     name: "Organizaciones",
     update: {
-      name: "Actualizar organización",
-      description: "Puede actualizar la organización",
+      name: "Editar organización",
+      description: "Puede editar la organización",
     },
   },
   groups: {
@@ -17,8 +17,8 @@ export const permissions = {
       description: "Puede leer grupos",
     },
     update: {
-      name: "Actualizar grupo",
-      description: "Puede actualizar grupos",
+      name: "Editar grupo",
+      description: "Puede editar grupos",
     },
     delete: {
       name: "Eliminar grupo",
@@ -59,8 +59,8 @@ export const permissions = {
       description: "Puede leer categorías",
     },
     update: {
-      name: "Actualizar categoría",
-      description: "Puede actualizar categorías",
+      name: "Editar categoría",
+      description: "Puede editar categorías",
     },
     delete: {
       name: "Eliminar categoría",
@@ -78,8 +78,8 @@ export const permissions = {
       description: "Puede leer productos",
     },
     update: {
-      name: "Actualizar producto",
-      description: "Puede actualizar productos",
+      name: "Editar producto",
+      description: "Puede editar productos",
     },
     delete: {
       name: "Eliminar producto",
@@ -97,8 +97,8 @@ export const permissions = {
       description: "Puede leer ventas",
     },
     update: {
-      name: "Actualizar venta",
-      description: "Puede actualizar ventas",
+      name: "Editar venta",
+      description: "Puede editar ventas",
     },
     delete: {
       name: "Eliminar venta",
@@ -116,8 +116,8 @@ export const permissions = {
       description: "Puede leer clientes",
     },
     update: {
-      name: "Actualizar cliente",
-      description: "Puede actualizar clientes",
+      name: "Editar cliente",
+      description: "Puede editar clientes",
     },
     delete: {
       name: "Eliminar cliente",

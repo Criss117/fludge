@@ -6,7 +6,8 @@ import { PressableScale } from "pressto";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
-import { type MenuOptionItem, MenuOptions } from "@/core/shared/components/menu-options";
+import { MenuOptions } from "@/core/shared/components/menu-options";
+import type { MenuOptionItem } from "@/core/shared/components/menu-options/types";
 import { StatusChip } from "@/core/shared/components/status-chip";
 import { ThemedText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
