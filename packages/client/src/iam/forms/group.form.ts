@@ -25,7 +25,7 @@ export function groupFormOptions(options: OnGroupSubmit, defaultValues?: GroupSc
       permissions: defaultValues?.permissions ?? [],
     },
     validators: {
-      onChange: createGroupValidator,
+      onSubmit: createGroupValidator,
     },
     onSubmit: ({ value, formApi }) => {
       options.onSubmit({ value, resetForm: formApi.reset });

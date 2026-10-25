@@ -1,7 +1,6 @@
 import { Checkbox, Column, Row, Spacer } from "@expo/ui/jetpack-compose";
 import { clickable, fillMaxWidth, padding, weight } from "@expo/ui/jetpack-compose/modifiers";
 import type { PermissionsFieldChildrenProps } from "@fludge/client/iam/forms/group.form";
-import type { MinimalField } from "@fludge/client/shared/field-api";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { type Permission, PERMISSIONS, type Resource } from "@fludge/utils/permissions/data";
 import { useTranslation } from "react-i18next";
@@ -9,20 +8,16 @@ import { useTranslation } from "react-i18next";
 import { Accordion } from "@/core/shared/components/accordion";
 import { FieldError } from "@/core/shared/components/field-error";
 import { TextInput } from "@/core/shared/components/text-input";
+import type { InputProps } from "@/core/shared/components/text-input/types";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
-
-interface InputProps<T> {
-  field: MinimalField<T>;
-}
 
 function NameInput({ field }: InputProps<string>) {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.group.name.label"
       placeholder="forms.group.name.placeholder"
       iconName="label"
@@ -39,7 +34,6 @@ function DescriptionInput({ field }: InputProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.group.description.label"
       placeholder="forms.group.description.placeholder"
       modifiers={[fillMaxWidth()]}

@@ -70,7 +70,7 @@ export function GroupCard({ group, menuOptions }: Props) {
           </View>
 
           {state.hasMenu && (
-            <Host style={styles.menuHost}>
+            <Host style={styles.menuHost} ignoreSafeArea="all">
               <MenuOptions
                 items={state.menuOptions}
                 isExpanded={state.isExpanded}

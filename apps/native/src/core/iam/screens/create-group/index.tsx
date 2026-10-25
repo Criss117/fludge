@@ -1,52 +1,22 @@
 import { Button, Column, Host, Spacer } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, width } from "@expo/ui/jetpack-compose/modifiers";
-import { useGroupForm } from "@fludge/client/iam/forms/group.form";
-import { useCreateGroup } from "@fludge/client/iam/mutations/use-group.mutations";
-import type { TranslationKey } from "@fludge/i18n/index";
-import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
-import Animated from "react-native-reanimated";
 
 import { GroupFormInputs } from "@/core/iam/components/group-form-input";
 import { Icon } from "@/core/shared/components/icon";
+import { KeyboardSpacerView } from "@/core/shared/components/keyboard-spacer-view";
 import { SectionCard } from "@/core/shared/components/section-card";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
-import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { useMutationToast } from "@/integrations/toast";
 import { SPACING } from "@/lib/sp";
 
+import { useCreateGroupScreen } from "./use-create-group-screen";
+
 export function CreateGroupScreen() {
-  const spacer = useKeyboardSpacer();
   const { t } = useTranslation();
-  const mutation = useCreateGroup();
   const colors = useThemeColor();
-  const mutationToast = useMutationToast();
-
-  const router = useRouter();
-
-  const form = useGroupForm({
-    onSubmit: ({ value }) => {
-      mutationToast.showPending("forms.group.create.pending");
-      mutation.mutate(
-        {
-          name: value.name,
-          description: value.description,
-          permissions: value.permissions,
-        },
-        {
-          onSuccess: () => {
-            router.back();
-            mutationToast.showSuccess("forms.group.create.success");
-          },
-          onError: (e) => {
-            mutationToast.showError("forms.group.create.error", e.message as TranslationKey);
-          },
-        },
-      );
-    },
-  });
+  const { actions, state, texts } = useCreateGroupScreen();
 
   return (
     <View style={styles.container}>
@@ -60,27 +30,27 @@ export function CreateGroupScreen() {
       >
         <View style={styles.content}>
           <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
-            <SectionCard title="forms.group.details.title">
-              <form.Field name="name">
+            <SectionCard title={texts.sections.details}>
+              <state.form.Field name="name">
                 {(field) => <GroupFormInputs.NameInput field={field} />}
-              </form.Field>
-              <form.Field name="description">
+              </state.form.Field>
+              <state.form.Field name="description">
                 {(field) => <GroupFormInputs.DescriptionInput field={field} />}
-              </form.Field>
+              </state.form.Field>
             </SectionCard>
           </Host>
 
           <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
             <Column modifiers={[fillMaxWidth()]}>
-              <ThemedNativeText variant="h5">{t("forms.group.permissions.label")}</ThemedNativeText>
+              <ThemedNativeText variant="h5">{t(texts.sections.permissions)}</ThemedNativeText>
 
-              <form.AppField name="permissions">
+              <state.form.AppField name="permissions">
                 {(field) => (
                   <field.PermissionsField>
                     {(props) => <GroupFormInputs.PermissionsInput {...props} />}
                   </field.PermissionsField>
                 )}
-              </form.AppField>
+              </state.form.AppField>
             </Column>
           </Host>
         </View>
@@ -91,16 +61,14 @@ export function CreateGroupScreen() {
             colors={{
               containerColor: colors.primary,
             }}
-            onClick={form.handleSubmit}
+            onClick={actions.submit}
           >
             <Icon name="group-add" size={SPACING.lg} color={colors.onPrimary} />
             <Spacer modifiers={[width(SPACING.sm)]} />
-            <ThemedNativeText color={colors.onPrimary}>
-              {t("forms.group.create.submit")}
-            </ThemedNativeText>
+            <ThemedNativeText color={colors.onPrimary}>{t(texts.submit)}</ThemedNativeText>
           </Button>
         </Host>
-        <Animated.View style={spacer} />
+        <KeyboardSpacerView />
       </View>
     </View>
   );

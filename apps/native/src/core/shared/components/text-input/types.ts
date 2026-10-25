@@ -1,9 +1,14 @@
 import type { TextFieldKeyboardOptions } from "@expo/ui/jetpack-compose";
 import type { ModifierConfig } from "@expo/ui/jetpack-compose/modifiers";
 import type { ModifierConfig as SwiftUIModifierConfig } from "@expo/ui/swift-ui/modifiers";
+import type { MinimalField } from "@fludge/client/shared/field-api";
 import type { TranslationKey } from "@fludge/i18n/index";
 
 import type { IconName } from "../icon";
+
+export interface InputProps<T> {
+  field: MinimalField<T>;
+}
 
 type TextMode = {
   type?: "text";

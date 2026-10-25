@@ -137,7 +137,7 @@ export const ICONS = {
   }),
   "group-add": ExpoIcon.select({
     android: GroupAddIcon,
-    ios: "eraser",
+    ios: "plus",
   }),
   label: ExpoIcon.select({
     android: LabelIcon,
