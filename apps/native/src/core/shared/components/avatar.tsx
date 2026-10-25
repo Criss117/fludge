@@ -3,6 +3,8 @@ import { Image } from "expo-image";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
+import { GeistFonts } from "@/integrations/fonts";
+
 import { useThemeColor } from "../hooks/use-theme-color";
 
 type AvatarProps = {
@@ -31,7 +33,7 @@ export function Avatar({ name, imageUri, size = 40 }: AvatarProps) {
           width: size,
           height: size,
           borderRadius: size / 2,
-          backgroundColor: colors.onPrimary,
+          backgroundColor: colors.primary,
         },
       ]}
     >
@@ -40,9 +42,10 @@ export function Avatar({ name, imageUri, size = 40 }: AvatarProps) {
       ) : (
         <Text
           style={{
-            color: colors.primary,
+            color: colors.onPrimary,
             fontSize: size * 0.4,
             fontWeight: "600",
+            fontFamily: GeistFonts.Medium,
           }}
         >
           {initials}
