@@ -29,7 +29,8 @@ import { SPACING } from "@/lib/sp";
 import { NativeFieldError } from "../field-error";
 import { ThemedNativeText } from "../themed-text";
 import type { SearchInputProps, TextInputProps } from "./types";
-import { useTextInput } from "./use-text-input";
+import { useFormInput } from "./use-form-input";
+import { useSearchInput } from "./use-search-input";
 
 function keyboardTypeModifiers(type: TextInputProps["keyboardOptions"]): ModifierConfig[] {
   if (!type || !type.keyboardType) return [];
@@ -63,7 +64,7 @@ function keyboardTypeModifiers(type: TextInputProps["keyboardOptions"]): Modifie
 
 export function TextInput(props: TextInputProps) {
   const themeColors = useThemeColor();
-  const { actions, state, text } = useTextInput(props);
+  const { actions, state, text } = useFormInput(props);
 
   const [textFieldNode, setTextFieldNode] = useState<TextFieldRef | null>(null);
 
@@ -91,11 +92,9 @@ export function TextInput(props: TextInputProps) {
             vertical: SPACING.md,
             horizontal: SPACING.md,
           }),
-          frame({
-            width: Infinity,
-          }),
+          frame({ maxWidth: Infinity }),
           background(themeColors.surfaceContainerHigh),
-          cornerRadius(SPACING.md),
+          cornerRadius(SPACING.xl),
           onTapGesture(onFocus),
         ]}
       >
@@ -110,29 +109,28 @@ export function TextInput(props: TextInputProps) {
             placeholder={text.label}
             modifiers={[
               ...keyboardTypeModifiers(state.resolvedKeyboardOptions),
-              frame({
-                width: Infinity,
-              }),
+              frame({ maxWidth: Infinity }),
             ]}
           />
         ) : (
           <TextField
+            axis={props.axis}
             ref={refCallback}
             text={state.value as ObservableState<string>}
             onTextChange={actions.onValueChange}
             placeholder={text.label}
             modifiers={[
               ...keyboardTypeModifiers(state.resolvedKeyboardOptions),
-              frame({
-                width: Infinity,
-              }),
+              frame({ maxWidth: Infinity }),
             ]}
           />
         )}
 
-        <Button modifiers={[labelStyle("iconOnly")]} onPress={actions.clearInput}>
-          <Icon name="close" size={14} color={themeColors.outline} />
-        </Button>
+        {state.hasText && (
+          <Button modifiers={[labelStyle("iconOnly")]} onPress={actions.clearInput}>
+            <Icon name="close" size={14} color={themeColors.outline} />
+          </Button>
+        )}
       </HStack>
 
       {props.isError && <NativeFieldError errors={props.errors} />}
@@ -140,15 +138,10 @@ export function TextInput(props: TextInputProps) {
   );
 }
 
-export function SearchInput({ label, onValueChange, placeholder }: SearchInputProps) {
+export function SearchInput(props: SearchInputProps) {
   const colors = useThemeColor();
   const [isFocused, setIsFocused] = useState(false);
-
-  const { actions, state, text } = useTextInput({
-    label,
-    onValueChange,
-    placeholder,
-  });
+  const { actions, state, text } = useSearchInput(props);
 
   const onCancel = useCallback(() => {
     KeyboardController.dismiss();

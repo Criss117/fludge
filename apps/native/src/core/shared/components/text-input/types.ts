@@ -5,34 +5,39 @@ import type { TranslationKey } from "@fludge/i18n/index";
 
 import type { IconName } from "../icon";
 
-type TextModeProps = {
+type TextMode = {
   type?: "text";
-  value?: string | null;
+  defaultValue?: string | null;
   onValueChange?: (value: string) => void;
 };
 
-type NumberModeProps = {
+type NumberMode = {
   type: "number";
-  value?: number | null;
+  defaultValue?: number | null;
   onValueChange?: (value: number) => void;
 };
 
-export type TextInputProps = (TextModeProps | NumberModeProps) & {
+export type TextInputProps = (TextMode | NumberMode) & {
   iconName?: IconName;
   label: TranslationKey;
   placeholder: TranslationKey;
   isError?: boolean;
   errors?: ({ message?: string } | undefined)[];
   minLines?: number;
-  keyboardOptions?: TextFieldKeyboardOptions;
-  modifiers?: SwiftUIModifierConfig[] | ModifierConfig[];
-  withDebounce?: number;
   maxLines?: number;
+  keyboardOptions?: TextFieldKeyboardOptions;
+  axis?: "horizontal" | "vertical";
+  modifiers?: SwiftUIModifierConfig[] | ModifierConfig[];
   dismissKeyboardOnClear?: boolean;
 };
 
 export interface SearchInputProps {
   onValueChange: (text: string) => void;
-  placeholder: TranslationKey;
   label: TranslationKey;
+  placeholder: TranslationKey;
+  defaultValue?: string;
+  /** ms. Por defecto 400. */
+  debounce?: number;
+  keyboardOptions?: TextFieldKeyboardOptions;
+  dismissKeyboardOnClear?: boolean;
 }
