@@ -1,9 +1,13 @@
+import { Platform } from "expo";
 import { Stack } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SyncDatabase } from "@/integrations/db/sync";
 import { GeistFonts } from "@/integrations/fonts";
+
+const isIos = Platform.OS === "ios";
+const isAndroid = Platform.OS === "android";
 
 function StackScreen() {
   const { t } = useTranslation();
@@ -12,9 +16,11 @@ function StackScreen() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: {
-          backgroundColor: colors.background,
-        },
+        headerStyle: isAndroid
+          ? {
+              backgroundColor: colors.surface,
+            }
+          : undefined,
         contentStyle: {
           backgroundColor: colors.background,
         },
@@ -24,6 +30,7 @@ function StackScreen() {
         },
         headerShadowVisible: false,
         headerBackButtonDisplayMode: "minimal",
+        headerTransparent: isIos,
       }}
     >
       <Stack.Screen

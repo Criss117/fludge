@@ -6,7 +6,37 @@ import { useCallback, useMemo, useState } from "react";
 
 const statusOptions = [STATUES.ACTIVE, STATUES.INACTIVE];
 
-export function useProducts() {
+export function useProductsScreen() {
+  const { filters } = useFilters();
+  const { data, hasNextPage, isFetchingNextPage, isFetching, fetchNextPage } = useFindProducts({
+    searchQuery: filters.searchQuery,
+    status: filters.status,
+    orderBy: filters.orderBy,
+  });
+
+  const items = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data?.pages]);
+
+  const handleEndReached = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  return {
+    actions: {
+      handleEndReached,
+    },
+    texts: {
+      noMore: getI18nKey("screens.catalog.products.no_more"),
+    },
+    state: {
+      items,
+      hasNextPage,
+      isFetchingNextPage,
+      isFetching,
+    },
+  };
+}
+
+export function useProductsHeader() {
   const { filters, ...rest } = useFilters();
   const [barcodeSearchIndex, setBarcodeSearchIndex] = useState(0);
 
@@ -35,33 +65,6 @@ export function useProducts() {
       filters,
       statusOptions,
       barcodeSearchIndex,
-    },
-  };
-}
-
-export function useProductsList() {
-  const { filters } = useFilters();
-
-  const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useFindProducts({
-    searchQuery: filters.searchQuery,
-    status: filters.status,
-    orderBy: filters.orderBy,
-  });
-
-  const items = useMemo(() => data.pages.flatMap((page) => page.items), [data.pages]);
-
-  const handleEndReached = useCallback(() => {
-    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  return {
-    status: {
-      items,
-      hasNextPage,
-      isFetchingNextPage,
-    },
-    actions: {
-      handleEndReached,
     },
   };
 }

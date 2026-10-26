@@ -5,14 +5,14 @@ import { SPACING } from "@/lib/sp";
 import { ThemedView } from "./themed-view";
 
 interface BaseTabScreenProps {
-  header: React.ReactNode;
+  header?: React.ReactNode;
   children: React.ReactNode;
 }
 
 export function BaseTabScreen({ children, header }: BaseTabScreenProps) {
   return (
     <ThemedView style={styles.container}>
-      <View style={styles.headerContainer}>{header}</View>
+      {header && <View style={styles.headerContainer}>{header}</View>}
       {children}
     </ThemedView>
   );

@@ -5,7 +5,7 @@ import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import { SearchBlob } from "@fludge/utils/search-blob";
 import { unwrapResult } from "@fludge/utils/trycatch";
-import { useSuspenseInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 
 function normalizeFilters(filters: Filters) {
   return {
@@ -31,7 +31,7 @@ export function useFindProducts(filters: Filters) {
 
   const normalizedQuery = SearchBlob.normalize(filters.searchQuery);
 
-  return useSuspenseInfiniteQuery({
+  return useInfiniteQuery({
     queryKey: productKeys.filteredList(activeOrganization.id, filters),
     initialPageParam: DEFAULT_CURSOR,
     queryFn: async ({ pageParam }) =>

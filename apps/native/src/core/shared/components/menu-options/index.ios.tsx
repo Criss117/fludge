@@ -41,6 +41,7 @@ export function MenuOptions({ items }: MenuOptionsProps) {
           onPress={() => {
             i.action();
           }}
+          role={i.role}
         >
           <HStack
             spacing={SPACING.sm}

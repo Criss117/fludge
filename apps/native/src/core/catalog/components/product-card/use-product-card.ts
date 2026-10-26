@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { useMemo } from "react";
 
 import type { IconName } from "@/core/shared/components/icon";
-import type { MenuOptionItem } from "@/core/shared/components/menu-options";
+import type { MenuOptionItem } from "@/core/shared/components/menu-options/types";
 
 import type { ProductCardProps } from "./types";
 
@@ -52,6 +52,7 @@ export function useProductCard({ product }: ProductCardProps) {
       action: () => {},
       icon: "block",
       color: "error",
+      role: "destructive",
     };
 
     const onInactiveStatus: MenuOptionItem = {
@@ -92,6 +93,11 @@ export function useProductCard({ product }: ProductCardProps) {
   return {
     texts: {},
     actions: {},
-    state: { menuOptions },
+    state: {
+      menuOptions,
+      firtsPresentations: product.presentations.slice(0, 3),
+      hasMorePresentations:
+        product.presentations.length > 3 ? product.presentations.length - 3 : null,
+    },
   };
 }

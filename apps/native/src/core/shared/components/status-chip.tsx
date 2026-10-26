@@ -1,13 +1,16 @@
+import { Host } from "@expo/ui";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
 import { SPACING } from "@/lib/sp";
 
 import { useThemeColor } from "../hooks/use-theme-color";
+import { Icon, type IconName } from "./icon";
 import { ThemedText } from "./themed-text";
 
 interface Props {
   status: "active" | "inactive" | "discontinued";
+  icon?: IconName;
 }
 
 const stylesConfig = {
@@ -25,30 +28,62 @@ const stylesConfig = {
   },
 } as const;
 
-export function StatusChip({ status }: Props) {
-  const colors = useThemeColor();
-  const { t } = useTranslation();
+interface ChipProps {
+  label: string;
+  color?: string;
+  textColor?: string;
+  icon?: IconName;
+}
 
-  const config = stylesConfig[status];
+export function Chip({ label, color, textColor, icon }: ChipProps) {
+  const colors = useThemeColor();
 
   return (
     <View
       style={[
         styles.container,
         {
-          backgroundColor: colors[config.primary],
+          backgroundColor: color ?? colors.outlineVariant,
         },
       ]}
     >
-      <ThemedText variant="sm" style={[styles.label, { color: colors[config.secondary] }]}>
-        {t(`helpers.status.${status}`)}
+      {icon && (
+        <Host matchContents>
+          <Icon name={icon} size={SPACING.md} color={colors.primary} />
+        </Host>
+      )}
+      <ThemedText
+        variant="sm"
+        style={{
+          color: textColor ?? colors.primary,
+        }}
+      >
+        {label}
       </ThemedText>
     </View>
   );
 }
 
+export function StatusChip({ status, icon }: Props) {
+  const colors = useThemeColor();
+  const { t } = useTranslation();
+
+  const config = stylesConfig[status];
+
+  return (
+    <Chip
+      label={t(`helpers.status.${status}`)}
+      color={colors[config.primary]}
+      textColor={colors[config.secondary]}
+      icon={icon}
+    />
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
+    flexDirection: "row",
+    columnGap: SPACING.xs,
     alignSelf: "flex-start",
     paddingVertical: SPACING.xs,
     paddingHorizontal: SPACING.sm,
