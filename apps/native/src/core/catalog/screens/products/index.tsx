@@ -7,7 +7,7 @@ import {
 } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, weight } from "@expo/ui/jetpack-compose/modifiers";
 import { FlashList } from "@shopify/flash-list";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
@@ -63,13 +63,7 @@ function ProductsList() {
 export function ProductsScreen() {
   const { t } = useTranslation();
   const colors = useThemeColor();
-  const { texts, actions, status } = useProducts();
-  const [barcodeSearchIndex, setBarcodeSearchIndex] = useState(0);
-
-  const handleBarcodeSearch = (barcode: string) => {
-    setBarcodeSearchIndex((prev) => prev + 1);
-    actions.setSearchQuery(barcode);
-  };
+  const { texts, actions, state } = useProducts();
 
   return (
     <ThemedView style={styles.container}>
@@ -88,11 +82,11 @@ export function ProductsScreen() {
                 onValueChange={actions.setSearchQuery}
                 label={texts.searchBar.label}
                 placeholder={texts.searchBar.placeholder}
-                defaultValue={status.filters.searchQuery}
-                key={barcodeSearchIndex}
+                defaultValue={state.filters.searchQuery}
+                key={state.barcodeSearchIndex}
               />
             </Box>
-            <BarcodeReader setBarcode={handleBarcodeSearch} />
+            <BarcodeReader setBarcode={actions.setBarcode} />
           </Row>
         </Host>
         <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
@@ -105,7 +99,7 @@ export function ProductsScreen() {
             }}
           >
             <SingleChoiceSegmentedButtonRow modifiers={[weight(1)]}>
-              {status.statusOptions.map((item) => (
+              {state.statusOptions.map((item) => (
                 <SegmentedButton
                   colors={{
                     activeContainerColor: colors.secondary,
