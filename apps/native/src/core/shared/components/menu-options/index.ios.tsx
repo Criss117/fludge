@@ -6,26 +6,18 @@ import {
   frame,
   labelStyle,
 } from "@expo/ui/swift-ui/modifiers";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Icon } from "@/core/shared/components/icon";
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
-import { Icon } from "../icon";
-import { ThemedNativeText } from "../themed-text";
 import type { MenuOptionsProps } from "./types";
 
-export function MenuOptions({ items, isExpanded, onExpandChange }: MenuOptionsProps) {
+export function MenuOptions({ items }: MenuOptionsProps) {
   const { t } = useTranslation();
   const colors = useThemeColor();
-  const [internalExpanded, setInternalExpanded] = useState(false);
-
-  const expanded = isExpanded ?? internalExpanded;
-  const setExpanded = onExpandChange ?? setInternalExpanded;
-
-  const open = () => setExpanded(true);
-  const close = () => setExpanded(false);
 
   return (
     <Menu
@@ -47,7 +39,6 @@ export function MenuOptions({ items, isExpanded, onExpandChange }: MenuOptionsPr
         <Button
           key={index}
           onPress={() => {
-            close();
             i.action();
           }}
         >

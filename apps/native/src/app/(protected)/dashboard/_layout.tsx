@@ -18,7 +18,12 @@ function StackScreen() {
         contentStyle: {
           backgroundColor: colors.background,
         },
+        headerTitleStyle: {
+          color: colors.onBackground,
+          fontFamily: GeistFonts.SemiBold,
+        },
         headerShadowVisible: false,
+        headerBackButtonDisplayMode: "minimal",
       }}
     >
       <Stack.Screen
@@ -31,12 +36,14 @@ function StackScreen() {
           },
         }}
       />
+
       <Stack.Screen
         name="members"
         options={{
           title: t("screens.iam.members.label"),
         }}
       />
+
       <Stack.Screen
         name="groups"
         options={{
@@ -44,15 +51,26 @@ function StackScreen() {
         }}
       />
       <Stack.Screen
+        name="products"
+        options={{
+          title: t("screens.catalog.products.label"),
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="categories"
+        options={{
+          title: t("screens.catalog.categories.label"),
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
         name="settings"
         options={{
           headerShown: true,
           headerTitle: t("screens.settings.label"),
-          headerTitleStyle: {
-            color: colors.primary,
-            fontFamily: GeistFonts.Medium,
-          },
-          headerBackButtonDisplayMode: "minimal",
         }}
       />
     </Stack>

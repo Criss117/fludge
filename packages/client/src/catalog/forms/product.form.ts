@@ -46,7 +46,7 @@ export function productFormOptions(options: OnProductSubmit, initialValues?: Pro
   return formOptions({
     defaultValues: initialValues ?? defaultProductValues,
     validators: {
-      onChange: productFormSchema,
+      onSubmit: productFormSchema,
     },
     onSubmit: ({ value, formApi }) => {
       options.onSubmit({ value, resetForm: formApi.reset });

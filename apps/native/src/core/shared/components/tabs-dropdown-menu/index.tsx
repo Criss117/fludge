@@ -1,4 +1,11 @@
-import { DropdownMenu, DropdownMenuItem, Host, IconButton } from "@expo/ui/jetpack-compose";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  Host,
+  IconButton,
+  OutlinedButton,
+  Row,
+} from "@expo/ui/jetpack-compose";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -18,60 +25,72 @@ export function TabsDropdownMenu() {
 
   return (
     <Host matchContents>
-      <DropdownMenu expanded={isExpanded} onDismissRequest={close} color={colors.surface}>
-        <DropdownMenu.Trigger>
-          <IconButton onClick={open}>
-            <Icon name="settings" size={24} color={colors.onSurface} />
-          </IconButton>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Items>
-          <DropdownMenuItem
-            onClick={() => {
-              close();
-              router.push("/dashboard/settings");
-            }}
-          >
-            <DropdownMenuItem.Text>
-              <ThemedNativeText color={colors.onSurface}>
-                {t("screens.settings.label")}
-              </ThemedNativeText>
-            </DropdownMenuItem.Text>
-            <DropdownMenuItem.LeadingIcon>
-              <Icon name="settings" />
-            </DropdownMenuItem.LeadingIcon>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              close();
-              console.log("Home pressed");
-            }}
-          >
-            <DropdownMenuItem.Text>
-              <ThemedNativeText color={colors.onSurface}>
-                {t("screens.iam.members.label")}
-              </ThemedNativeText>
-            </DropdownMenuItem.Text>
-            <DropdownMenuItem.LeadingIcon>
-              <Icon name="person-add" />
-            </DropdownMenuItem.LeadingIcon>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              close();
-              console.log("Home pressed");
-            }}
-          >
-            <DropdownMenuItem.Text>
-              <ThemedNativeText color={colors.onSurface}>
-                {t("screens.iam.groups.label")}
-              </ThemedNativeText>
-            </DropdownMenuItem.Text>
-            <DropdownMenuItem.LeadingIcon>
-              <Icon name="group" />
-            </DropdownMenuItem.LeadingIcon>
-          </DropdownMenuItem>
-        </DropdownMenu.Items>
-      </DropdownMenu>
+      <Row>
+        <DropdownMenu expanded={isExpanded} onDismissRequest={close} color={colors.surface}>
+          <DropdownMenu.Trigger>
+            <IconButton onClick={open}>
+              <Icon name="settings" size={24} color={colors.onSurface} />
+            </IconButton>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Items>
+            <DropdownMenuItem
+              onClick={() => {
+                close();
+                router.push("/dashboard/settings");
+              }}
+            >
+              <DropdownMenuItem.Text>
+                <ThemedNativeText color={colors.onSurface}>
+                  {t("screens.settings.label")}
+                </ThemedNativeText>
+              </DropdownMenuItem.Text>
+              <DropdownMenuItem.LeadingIcon>
+                <Icon name="settings" />
+              </DropdownMenuItem.LeadingIcon>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                close();
+                console.log("Home pressed");
+              }}
+            >
+              <DropdownMenuItem.Text>
+                <ThemedNativeText color={colors.onSurface}>
+                  {t("screens.iam.members.label")}
+                </ThemedNativeText>
+              </DropdownMenuItem.Text>
+              <DropdownMenuItem.LeadingIcon>
+                <Icon name="person-add" />
+              </DropdownMenuItem.LeadingIcon>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                close();
+                console.log("Home pressed");
+              }}
+            >
+              <DropdownMenuItem.Text>
+                <ThemedNativeText color={colors.onSurface}>
+                  {t("screens.iam.groups.label")}
+                </ThemedNativeText>
+              </DropdownMenuItem.Text>
+              <DropdownMenuItem.LeadingIcon>
+                <Icon name="group" />
+              </DropdownMenuItem.LeadingIcon>
+            </DropdownMenuItem>
+          </DropdownMenu.Items>
+        </DropdownMenu>
+        <OutlinedButton
+          onClick={() => router.push("/dashboard/categories")}
+
+          colors={{
+            containerColor: colors.surface,
+            contentColor: colors.onSurface,
+          }}
+        >
+          <ThemedNativeText>{t("screens.catalog.categories.label")}</ThemedNativeText>
+        </OutlinedButton>
+      </Row>
     </Host>
   );
 }

@@ -1,14 +1,5 @@
 import { Box, Button, Column, Host, Row, Spacer } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, padding, weight, width } from "@expo/ui/jetpack-compose/modifiers";
-import type { ProductSummary } from "@fludge/client/catalog/domain/entities";
-import { type ProductFormSchema, useProductForm } from "@fludge/client/catalog/forms/product.form";
-import {
-  useCreateProductMutation,
-  useUpdateProductMutation,
-} from "@fludge/client/catalog/mutations/use-product.mutations";
-import type { TranslationKey } from "@fludge/i18n/index";
-import { useRouter } from "expo-router";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
@@ -20,151 +11,24 @@ import {
 import { Icon } from "@/core/shared/components/icon";
 import { KeyboardSpacerView } from "@/core/shared/components/keyboard-spacer-view";
 import { SectionCard } from "@/core/shared/components/section-card";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { ThemedNativeText, ThemedText } from "@/core/shared/components/themed-text";
 import { ThemedScrollView, ThemedView } from "@/core/shared/components/themed-view";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { useMutationToast } from "@/integrations/toast";
 import { SPACING } from "@/lib/sp";
 
-type Action =
-  | {
-      type: "create";
-    }
-  | {
-      type: "update";
-      product: ProductSummary;
-    };
+import type { ProductFormScreenProps } from "./types";
+import { useProductFormScreen } from "./use-product-form";
 
-interface Props {
-  action: Action;
-}
-
-function useUpsertProductForm(action: Action) {
-  const router = useRouter();
-  const createProduct = useCreateProductMutation();
-  const updateProduct = useUpdateProductMutation();
-  const createToast = useMutationToast();
-  const updateToast = useMutationToast();
-
-  const form = useProductForm(
-    {
-      onSubmit: ({ value }) => {
-        if (action.type === "create") {
-          createToast.showPending("forms.product.create_toast.pending");
-          createProduct.mutate(
-            {
-              name: value.name,
-              description: value.description,
-              categoryId: value.categoryId,
-              stock: value.stock,
-              allowNegativeStock: value.allowNegativeStock,
-              minStock: value.minStock,
-              presentations: value.presentations.map((p) => ({
-                barcode: p.barcode,
-                conversionFactor: p.conversionFactor,
-                name: p.name,
-                pricePurchase: p.pricePurchase,
-                priceSale: p.priceSale,
-                priceWholesale: p.priceWholesale,
-                status: p.status,
-              })),
-            },
-            {
-              onSuccess: () => {
-                router.back();
-                createToast.showSuccess("forms.product.create_toast.success");
-              },
-              onError: (e) => {
-                createToast.showError(
-                  "forms.product.create_toast.error",
-                  e.message as TranslationKey,
-                );
-              },
-            },
-          );
-
-          return;
-        }
-
-        updateToast.showPending("forms.product.update_toast.pending");
-        updateProduct.mutate(
-          {
-            id: action.product.id,
-            name: value.name,
-            description: value.description,
-            categoryId: value.categoryId,
-            stock: value.stock,
-            allowNegativeStock: value.allowNegativeStock,
-            minStock: value.minStock,
-            status: value.status,
-            presentations: value.presentations.map((p) => ({
-              barcode: p.barcode,
-              conversionFactor: p.conversionFactor,
-              id: p.id,
-              name: p.name,
-              pricePurchase: p.pricePurchase,
-              priceSale: p.priceSale,
-              priceWholesale: p.priceWholesale,
-              status: p.status,
-            })),
-          },
-          {
-            onSuccess: () => {
-              router.back();
-              updateToast.showSuccess("forms.product.update_toast.success");
-            },
-            onError: (e) => {
-              updateToast.showError(
-                "forms.product.update_toast.error",
-                e.message as TranslationKey,
-              );
-            },
-          },
-        );
-      },
-    },
-    action.type === "update"
-      ? {
-          allowNegativeStock: action.product.allowNegativeStock,
-          categoryId: action.product.categoryId ?? "",
-          description: action.product.description,
-          name: action.product.name,
-          stock: action.product.stock,
-          status: action.product.status,
-          minStock: action.product.minStock,
-          presentations: action.product.presentations.map((p) => ({
-            barcode: p.barcode ?? "",
-            conversionFactor: p.conversionFactor,
-            id: p.id,
-            name: p.name,
-            pricePurchase: p.pricePurchase ?? 0,
-            priceSale: p.priceSale,
-            priceWholesale: p.priceWholesale ?? 0,
-            status: p.status,
-          })),
-        }
-      : undefined,
-  );
-
-  return {
-    form,
-  };
-}
-
-export function ProductFormScreen({ action }: Props) {
-  const [selectedPresentation, setSelectedPresentation] = useState<
-    ProductFormSchema["presentations"][number] | null
-  >(null);
+export function ProductFormScreen({ action }: ProductFormScreenProps) {
   const colors = useThemeColor();
   const { t } = useTranslation();
 
-  const { form } = useUpsertProductForm(action);
+  const { actions, state, texts } = useProductFormScreen({ action });
 
   return (
     <ThemedView style={styles.container}>
       <ThemedScrollView
         contentContainerStyle={styles.contentContainer}
-
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
@@ -175,86 +39,81 @@ export function ProductFormScreen({ action }: Props) {
               spacedBy: SPACING.md,
             }}
           >
-            <SectionCard title="forms.product.sections.basic_information">
-              <form.Field name="name">
+            <SectionCard title={texts.sections.basic_information}>
+              <state.form.Field name="name">
                 {(field) => <ProductFormInputs.NameInput field={field} />}
-              </form.Field>
-              <form.Field name="description">
+              </state.form.Field>
+              <state.form.Field name="description">
                 {(field) => <ProductFormInputs.DescriptionInput field={field} />}
-              </form.Field>
-              <form.Field name="categoryId">
+              </state.form.Field>
+              <state.form.Field name="categoryId">
                 {(field) => <ProductFormInputs.CategorySelectInput field={field} />}
-              </form.Field>
+              </state.form.Field>
             </SectionCard>
 
-            <SectionCard title="forms.product.sections.stock">
+            <SectionCard title={texts.sections.stock}>
               <Row
                 horizontalArrangement={{
                   spacedBy: SPACING.sm,
                 }}
               >
                 <Box modifiers={[weight(1)]}>
-                  <form.Field name="stock">
+                  <state.form.Field name="stock">
                     {(field) => <ProductFormInputs.StockInput field={field} />}
-                  </form.Field>
+                  </state.form.Field>
                 </Box>
                 <Box modifiers={[weight(1)]}>
-                  <form.Field name="minStock">
+                  <state.form.Field name="minStock">
                     {(field) => <ProductFormInputs.MinStockInput field={field} />}
-                  </form.Field>
+                  </state.form.Field>
                 </Box>
               </Row>
-              <form.Field name="allowNegativeStock">
+              <state.form.Field name="allowNegativeStock">
                 {(field) => <ProductFormInputs.AllowNegativeStockInput field={field} />}
-              </form.Field>
-            </SectionCard>
-
-            <SectionCard
-              title="forms.product.sections.presentations.title"
-              action={
-                <form.AppField name="presentations">
-                  {(field) => (
-                    <field.Presentations>
-                      {(props) => <CreateProductPresentationForm onSubmit={props.add} />}
-                    </field.Presentations>
-                  )}
-                </form.AppField>
-              }
-            >
-              <form.Subscribe selector={(s) => s.values.presentations}>
-                {(p) => {
-                  if (p.length > 0) return null;
-                  return (
-                    <Column
-                      horizontalAlignment="center"
-                      verticalAlignment="center"
-                      modifiers={[fillMaxWidth()]}
-                    >
-                      <ThemedNativeText variant="muted">
-                        {t("forms.product.sections.presentations.empty")}
-                      </ThemedNativeText>
-                    </Column>
-                  );
-                }}
-              </form.Subscribe>
-
-              <form.AppField name="presentations">
-                {(field) => (
-                  <field.Presentations>
-                    {({ field, remove, restore }) => (
-                      <ProductFormInputs.PresentationCards
-                        field={field}
-                        remove={remove}
-                        restore={restore}
-                        onSelect={setSelectedPresentation}
-                      />
-                    )}
-                  </field.Presentations>
-                )}
-              </form.AppField>
+              </state.form.Field>
             </SectionCard>
           </Column>
         </Host>
+        <View style={styles.sectionContainer}>
+          <View style={styles.presentationHeader}>
+            <ThemedText variant="h5">{t(texts.sections.presentations.title)}</ThemedText>
+
+            <Host matchContents>
+              <state.form.AppField name="presentations">
+                {(field) => (
+                  <field.Presentations>
+                    {(props) => <CreateProductPresentationForm onSubmit={props.add} />}
+                  </field.Presentations>
+                )}
+              </state.form.AppField>
+            </Host>
+          </View>
+          <state.form.Subscribe selector={(s) => s.values.presentations}>
+            {(p) => {
+              if (p.length > 0) return null;
+              return (
+                <View style={styles.emptyContainer}>
+                  <ThemedText variant="muted">{t(texts.sections.presentations.empty)}</ThemedText>
+                </View>
+              );
+            }}
+          </state.form.Subscribe>
+
+          <state.form.AppField name="presentations">
+            {(field) => (
+              <field.Presentations>
+                {({ field, remove, restore }) => (
+                  <ProductFormInputs.PresentationCards
+                    field={field}
+                    remove={remove}
+                    restore={restore}
+                    onSelect={actions.setSelectedPresentation}
+                  />
+                )}
+              </field.Presentations>
+            )}
+          </state.form.AppField>
+        </View>
       </ThemedScrollView>
       <View style={styles.footer}>
         <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
@@ -262,31 +121,29 @@ export function ProductFormScreen({ action }: Props) {
             colors={{
               containerColor: colors.primary,
             }}
-            onClick={form.handleSubmit}
+            onClick={actions.submit}
           >
             <Icon name="add" size={SPACING.lg} color={colors.onPrimary} />
             <Spacer modifiers={[width(SPACING.sm)]} />
-            <ThemedNativeText color={colors.onPrimary}>
-              {t("forms.product.submit")}
-            </ThemedNativeText>
+            <ThemedNativeText color={colors.onPrimary}>{t(texts.submit)}</ThemedNativeText>
           </Button>
         </Host>
         <KeyboardSpacerView />
       </View>
       <Host matchContents>
-        <form.AppField name="presentations">
+        <state.form.AppField name="presentations">
           {(field) => (
             <field.Presentations>
               {({ update }) => (
                 <UpdateProductPresentationForm
-                  selectedPresentation={selectedPresentation}
-                  close={() => setSelectedPresentation(null)}
+                  selectedPresentation={state.selectedPresentation}
+                  close={() => actions.setSelectedPresentation(null)}
                   onSubmit={(v) => update(v.id, v)}
                 />
               )}
             </field.Presentations>
           )}
-        </form.AppField>
+        </state.form.AppField>
       </Host>
     </ThemedView>
   );
@@ -310,5 +167,18 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingBottom: SPACING.md,
+  },
+  sectionContainer: {
+    paddingHorizontal: SPACING.sm,
+    rowGap: SPACING.md,
+  },
+  presentationHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

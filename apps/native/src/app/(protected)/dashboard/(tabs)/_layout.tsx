@@ -9,6 +9,7 @@ import { TabsDropdownMenu } from "@/core/shared/components/tabs-dropdown-menu";
 import { ThemedView } from "@/core/shared/components/themed-view";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { GeistFonts } from "@/integrations/fonts";
+import { SPACING } from "@/lib/sp";
 
 const isIos = Platform.OS === "ios";
 const isAndroid = Platform.OS === "android";
@@ -69,10 +70,6 @@ function StackHeaderContent({ selectedTab }: { selectedTab: (typeof tabs)[number
       />
       {isIos && (
         <>
-          <Stack.Toolbar placement="right">
-            <Stack.Toolbar.Button icon="plus" onPress={navigateTo} />
-          </Stack.Toolbar>
-
           <Stack.Toolbar placement="left">
             <Stack.Toolbar.Menu icon="gear">
               <Stack.Toolbar.MenuAction
@@ -90,6 +87,19 @@ function StackHeaderContent({ selectedTab }: { selectedTab: (typeof tabs)[number
                 {t("screens.iam.groups.label")}
               </Stack.Toolbar.MenuAction>
             </Stack.Toolbar.Menu>
+          </Stack.Toolbar>
+
+          <Stack.Toolbar placement="right">
+            <Stack.Toolbar.Button icon="plus" onPress={navigateTo} />
+
+            <Stack.Toolbar.Spacer width={SPACING.md} />
+
+            <Stack.Toolbar.Button
+              hidden={selectedTab.name !== "catalog"}
+              onPress={() => router.push("/dashboard/categories")}
+            >
+              <Stack.Toolbar.Label>{t("screens.catalog.categories.label")}</Stack.Toolbar.Label>
+            </Stack.Toolbar.Button>
           </Stack.Toolbar>
         </>
       )}

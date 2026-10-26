@@ -14,9 +14,9 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native";
 
-import { useThemeColor } from "../hooks/use-theme-color";
-import { Icon } from "./icon";
-import { ThemedNativeText } from "./themed-text";
+import { Icon } from "@/core/shared/components/icon";
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 
 interface Props {
   setBarcode: (barcode: string) => void;

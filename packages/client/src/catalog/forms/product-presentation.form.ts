@@ -29,7 +29,7 @@ export function productPresentationFormOptions(
   return formOptions({
     defaultValues: initialValues ?? defaultProductPresentationValues,
     validators: {
-      onChange: productPresentationFormSchema,
+      onSubmit: productPresentationFormSchema,
     },
     onSubmit: ({ value, formApi }) => {
       options.onSubmit({ value, resetForm: formApi.reset });

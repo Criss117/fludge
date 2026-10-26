@@ -9,12 +9,7 @@ import {
   Spacer,
 } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, paddingAll, weight } from "@expo/ui/jetpack-compose/modifiers";
-import type { ProductFormSchema } from "@fludge/client/catalog/forms/product.form";
-import {
-  type ProductPresentationFormSchema,
-  useProductPresentationForm,
-} from "@fludge/client/catalog/forms/product-presentation.form";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Icon } from "@/core/shared/components/icon";
@@ -23,86 +18,48 @@ import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
 import { ProductPresentationFormInputs } from "../product-presentation-form-inputs";
+import type {
+  CreateProductPresentationFormProps,
+  ProductPresentationFormContentProps,
+  UpdateProductPresentationFormProps,
+} from "./types";
+import {
+  useCreateProductPresentationForm,
+  useUpdateProductPresentationForm,
+} from "./use-product-presentation-form";
 
-interface Props {
-  onSubmit: (value: ProductPresentationFormSchema) => void;
-}
-
-export function CreateProductPresentationForm({ onSubmit }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+export function CreateProductPresentationForm(props: CreateProductPresentationFormProps) {
   const colors = useThemeColor();
-
-  const open = () => setIsOpen(true);
-  const close = () => setIsOpen(false);
-
-  const form = useProductPresentationForm({
-    onSubmit: ({ value, resetForm }) => {
-      onSubmit(value);
-      resetForm();
-      close();
-    },
-  });
+  const { actions, state } = useCreateProductPresentationForm(props);
 
   return (
     <>
-      <IconButton onClick={open}>
+      <IconButton onClick={actions.open}>
         <Icon name="add-circle" color={colors.primary} />
       </IconButton>
-      <ProductPresentationForm close={close} isOpen={isOpen} form={form} />
+      <ProductPresentationForm close={actions.close} isOpen={state.isOpen} form={state.form} />
     </>
   );
 }
 
-interface UpdateProps {
-  onSubmit: (value: ProductFormSchema["presentations"][number]) => void;
-  close: () => void;
-  selectedPresentation: ProductFormSchema["presentations"][number] | null;
-}
-
-export function UpdateProductPresentationForm({
-  onSubmit,
-  close,
-  selectedPresentation,
-}: UpdateProps) {
-  const form = useProductPresentationForm({
-    onSubmit: ({ value, resetForm }) => {
-      if (selectedPresentation === null) return;
-
-      onSubmit({
-        ...value,
-        id: selectedPresentation.id,
-      });
-      resetForm();
-      close();
-    },
-  });
-
-  useEffect(() => {
-    if (selectedPresentation === null) return;
-
-    form.reset({
-      name: selectedPresentation.name,
-      barcode: selectedPresentation.barcode,
-      conversionFactor: selectedPresentation.conversionFactor,
-      priceSale: selectedPresentation.priceSale,
-      pricePurchase: selectedPresentation.pricePurchase,
-      priceWholesale: selectedPresentation.priceWholesale,
-      status: selectedPresentation.status,
-    });
-  }, [form, selectedPresentation]);
+export function UpdateProductPresentationForm(props: UpdateProductPresentationFormProps) {
+  const { state, actions } = useUpdateProductPresentationForm(props);
 
   return (
-    <ProductPresentationForm close={close} isOpen={selectedPresentation !== null} form={form} />
+    <ProductPresentationForm
+      close={actions.close}
+      isOpen={state.selectedPresentation !== null}
+      form={state.form}
+      key={state.selectedPresentation?.id}
+    />
   );
 }
 
-interface ContentProps {
-  isOpen: boolean;
-  form: ReturnType<typeof useProductPresentationForm>;
-  close: () => void;
-}
-
-function ProductPresentationForm({ close, isOpen, form }: ContentProps) {
+export function ProductPresentationForm({
+  close,
+  isOpen,
+  form,
+}: ProductPresentationFormContentProps) {
   const sheetRef = useRef<ModalBottomSheetRef>(null);
 
   const colors = useThemeColor();

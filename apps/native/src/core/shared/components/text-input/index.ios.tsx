@@ -19,7 +19,7 @@ import {
   padding,
   tint,
 } from "@expo/ui/swift-ui/modifiers";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { KeyboardController } from "react-native-keyboard-controller";
 
 import { Icon } from "@/core/shared/components/icon";
@@ -84,8 +84,26 @@ export function TextInput(props: TextInputProps) {
     }
   }, [textFieldNode]);
 
+  const modifiers = useMemo(() => {
+    const keyboardModifiers = keyboardTypeModifiers(state.resolvedKeyboardOptions);
+    const extraModifiers = props.modifiers as ModifierConfig[] | undefined;
+
+    if (!extraModifiers) return keyboardModifiers;
+
+    return [...keyboardModifiers, ...extraModifiers];
+  }, [state.resolvedKeyboardOptions, props.modifiers]);
+
   return (
-    <VStack alignment="leading">
+    <VStack alignment="leading" spacing={0}>
+      <HStack
+        modifiers={[
+          padding({
+            horizontal: SPACING.sm,
+          }),
+        ]}
+      >
+        <ThemedNativeText variant="muted">{text.label}</ThemedNativeText>
+      </HStack>
       <HStack
         modifiers={[
           padding({
@@ -106,11 +124,8 @@ export function TextInput(props: TextInputProps) {
             ref={refCallback}
             text={state.value as ObservableState<string>}
             onTextChange={actions.onValueChange}
-            placeholder={text.label}
-            modifiers={[
-              ...keyboardTypeModifiers(state.resolvedKeyboardOptions),
-              frame({ maxWidth: Infinity }),
-            ]}
+            placeholder={text.placeholder}
+            modifiers={modifiers}
           />
         ) : (
           <TextField
@@ -118,19 +133,14 @@ export function TextInput(props: TextInputProps) {
             ref={refCallback}
             text={state.value as ObservableState<string>}
             onTextChange={actions.onValueChange}
-            placeholder={text.label}
-            modifiers={[
-              ...keyboardTypeModifiers(state.resolvedKeyboardOptions),
-              frame({ maxWidth: Infinity }),
-            ]}
+            placeholder={text.placeholder}
+            modifiers={modifiers}
           />
         )}
 
-        {state.hasText && (
-          <Button modifiers={[labelStyle("iconOnly")]} onPress={actions.clearInput}>
-            <Icon name="close" size={14} color={themeColors.outline} />
-          </Button>
-        )}
+        <Button modifiers={[labelStyle("iconOnly")]} onPress={actions.clearInput}>
+          <Icon name="close" size={14} color={themeColors.outline} />
+        </Button>
       </HStack>
 
       {props.isError && <NativeFieldError errors={props.errors} />}

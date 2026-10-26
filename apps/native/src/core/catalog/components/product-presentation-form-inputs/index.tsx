@@ -1,21 +1,17 @@
 import { Box, Row } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, weight } from "@expo/ui/jetpack-compose/modifiers";
-import type { MinimalField } from "@fludge/client/shared/field-api";
+import { useState } from "react";
 
 import { BarcodeReader } from "@/core/shared/components/barcode-reader";
 import { TextInput } from "@/core/shared/components/text-input";
+import type { InputProps } from "@/core/shared/components/text-input/types";
 import { SPACING } from "@/lib/sp";
 
-interface FieldProps<T> {
-  field: MinimalField<T>;
-}
-
-function NameInput({ field }: FieldProps<string>) {
+function NameInput({ field }: InputProps<string>) {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.product_presentation.name.label"
       placeholder="forms.product_presentation.name.placeholder"
       iconName="badge"
@@ -27,8 +23,15 @@ function NameInput({ field }: FieldProps<string>) {
   );
 }
 
-function BarcodeInput({ field }: FieldProps<string>) {
+function BarcodeInput({ field }: InputProps<string>) {
+  const [barcodeReaderIndex, setBarcodeReaderIndex] = useState(0);
+
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+
+  const handleBarcodeChange = (barcode: string) => {
+    field.handleChange(barcode);
+    setBarcodeReaderIndex((p) => p + 1);
+  };
 
   return (
     <Row
@@ -41,7 +44,6 @@ function BarcodeInput({ field }: FieldProps<string>) {
     >
       <Box modifiers={[weight(1)]}>
         <TextInput
-          value={field.state.value}
           label="forms.product_presentation.barcode.label"
           placeholder="forms.product_presentation.barcode.placeholder"
           iconName="barcode"
@@ -49,21 +51,22 @@ function BarcodeInput({ field }: FieldProps<string>) {
           isError={isInvalid}
           onValueChange={field.handleChange}
           errors={field.state.meta.errors}
+          defaultValue={field.state.value}
+          key={barcodeReaderIndex}
         />
       </Box>
 
-      <BarcodeReader setBarcode={field.handleChange} />
+      <BarcodeReader setBarcode={handleBarcodeChange} />
     </Row>
   );
 }
 
-function ConversionFactorInput({ field }: FieldProps<number>) {
+function ConversionFactorInput({ field }: InputProps<number>) {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
     <TextInput
       type="number"
-      value={field.state.value}
       label="forms.product_presentation.conversion_factor.label"
       placeholder="forms.product_presentation.conversion_factor.placeholder"
       modifiers={[fillMaxWidth()]}
@@ -74,13 +77,12 @@ function ConversionFactorInput({ field }: FieldProps<number>) {
   );
 }
 
-function PriceSaleInput({ field }: FieldProps<number>) {
+function PriceSaleInput({ field }: InputProps<number>) {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
     <TextInput
       type="number"
-      value={field.state.value}
       label="forms.product_presentation.price_sale.label"
       placeholder="forms.product_presentation.price_sale.placeholder"
       modifiers={[fillMaxWidth()]}
@@ -91,13 +93,12 @@ function PriceSaleInput({ field }: FieldProps<number>) {
   );
 }
 
-function PricePurchaseInput({ field }: FieldProps<number>) {
+function PricePurchaseInput({ field }: InputProps<number>) {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
     <TextInput
       type="number"
-      value={field.state.value}
       label="forms.product_presentation.price_purchase.label"
       placeholder="forms.product_presentation.price_purchase.placeholder"
       modifiers={[fillMaxWidth()]}
@@ -108,13 +109,12 @@ function PricePurchaseInput({ field }: FieldProps<number>) {
   );
 }
 
-function PriceWholesaleInput({ field }: FieldProps<number>) {
+function PriceWholesaleInput({ field }: InputProps<number>) {
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
     <TextInput
       type="number"
-      value={field.state.value}
       label="forms.product_presentation.price_wholesale.label"
       placeholder="forms.product_presentation.price_wholesale.placeholder"
       modifiers={[fillMaxWidth()]}

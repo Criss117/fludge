@@ -1,11 +1,9 @@
 import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { Stack } from "expo-router";
-import { useTranslation } from "react-i18next";
 
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 
 export default function ProtectedLayout() {
-  const { t } = useTranslation();
   const colors = useThemeColor();
   const {
     data: { activeOrganization },
@@ -26,7 +24,7 @@ export default function ProtectedLayout() {
         headerShown: false,
       }}
     >
-      <Stack.Protected guard={!hasActiveOrganization} redirectTo="/dashboard/(tabs)">
+      <Stack.Protected guard={!hasActiveOrganization} redirectTo="/dashboard">
         <Stack.Screen name="organization" />
       </Stack.Protected>
 
