@@ -1,5 +1,5 @@
 import { useNativeState } from "@expo/ui";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { KeyboardController } from "react-native-keyboard-controller";
 import { scheduleOnRN } from "react-native-worklets";
 
@@ -28,6 +28,12 @@ export function useNativeField({ initialText, onChangeText, dismissKeyboardOnCle
     if (dismissKeyboardOnClear) KeyboardController.dismiss();
     setText("");
   }, [dismissKeyboardOnClear, setText]);
+
+  useEffect(() => {
+    if (initialText === value.get()) return;
+
+    setText(initialText);
+  }, [initialText, setText, value]);
 
   return { value, hasText, setText, clear };
 }

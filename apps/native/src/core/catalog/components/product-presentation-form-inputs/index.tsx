@@ -1,6 +1,5 @@
 import { Box, Row } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, weight } from "@expo/ui/jetpack-compose/modifiers";
-import { useState } from "react";
 
 import { BarcodeReader } from "@/core/shared/components/barcode-reader";
 import { TextInput } from "@/core/shared/components/text-input";
@@ -19,19 +18,13 @@ function NameInput({ field }: InputProps<string>) {
       isError={isInvalid}
       onValueChange={field.handleChange}
       errors={field.state.meta.errors}
+      defaultValue={field.state.value}
     />
   );
 }
 
 function BarcodeInput({ field }: InputProps<string>) {
-  const [barcodeReaderIndex, setBarcodeReaderIndex] = useState(0);
-
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-
-  const handleBarcodeChange = (barcode: string) => {
-    field.handleChange(barcode);
-    setBarcodeReaderIndex((p) => p + 1);
-  };
 
   return (
     <Row
@@ -52,11 +45,10 @@ function BarcodeInput({ field }: InputProps<string>) {
           onValueChange={field.handleChange}
           errors={field.state.meta.errors}
           defaultValue={field.state.value}
-          key={barcodeReaderIndex}
         />
       </Box>
 
-      <BarcodeReader setBarcode={handleBarcodeChange} />
+      <BarcodeReader setBarcode={field.handleChange} />
     </Row>
   );
 }
@@ -73,6 +65,7 @@ function ConversionFactorInput({ field }: InputProps<number>) {
       isError={isInvalid}
       onValueChange={field.handleChange}
       errors={field.state.meta.errors}
+      defaultValue={field.state.value}
     />
   );
 }
@@ -89,6 +82,7 @@ function PriceSaleInput({ field }: InputProps<number>) {
       isError={isInvalid}
       onValueChange={field.handleChange}
       errors={field.state.meta.errors}
+      defaultValue={field.state.value}
     />
   );
 }
@@ -105,6 +99,7 @@ function PricePurchaseInput({ field }: InputProps<number>) {
       isError={isInvalid}
       onValueChange={field.handleChange}
       errors={field.state.meta.errors}
+      defaultValue={field.state.value}
     />
   );
 }
@@ -121,6 +116,7 @@ function PriceWholesaleInput({ field }: InputProps<number>) {
       isError={isInvalid}
       onValueChange={field.handleChange}
       errors={field.state.meta.errors}
+      defaultValue={field.state.value}
     />
   );
 }

@@ -21,14 +21,13 @@ export function ProductsHeader() {
             spacedBy: SPACING.sm,
           }}
         >
-          <BarcodeReader setBarcode={actions.setBarcode} />
+          <BarcodeReader setBarcode={actions.setSearchQuery} />
           <Box modifiers={[weight(1)]}>
             <SearchInput
               onValueChange={actions.setSearchQuery}
               label={texts.searchBar.label}
               placeholder={texts.searchBar.placeholder}
               defaultValue={state.filters.searchQuery}
-              key={state.barcodeSearchIndex}
             />
           </Box>
         </Row>

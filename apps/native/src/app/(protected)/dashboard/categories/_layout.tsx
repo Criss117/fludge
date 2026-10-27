@@ -27,7 +27,7 @@ export default function CategoriesLayout() {
           headerShown: false,
         }}
       >
-        <Stack.Screen name="categories" />
+        <Stack.Screen name="index" />
       </Stack>
     </>
   );

@@ -127,6 +127,8 @@ function Card({ presentation, onSelect, remove }: CardProps) {
 export function PresentationCards({ field, remove, onSelect }: PresentationCardProps) {
   const colors = useThemeColor();
 
+  if (field.state.value.length === 0) return null;
+
   return (
     <View
       style={[
@@ -148,6 +150,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: SPACING.md,
     borderRadius: SPACING.xl,
+    rowGap: SPACING.sm,
   },
   presentationContainer: {
     padding: SPACING.md,

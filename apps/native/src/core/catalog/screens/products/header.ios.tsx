@@ -21,13 +21,12 @@ export function ProductsHeader() {
             }),
           ]}
         >
-          <BarcodeReader setBarcode={actions.setBarcode} />
+          <BarcodeReader setBarcode={actions.setSearchQuery} />
           <SearchInput
             onValueChange={actions.setSearchQuery}
             label={texts.searchBar.label}
             placeholder={texts.searchBar.placeholder}
             defaultValue={state.filters.searchQuery}
-            key={state.barcodeSearchIndex}
           />
         </HStack>
       </Host>

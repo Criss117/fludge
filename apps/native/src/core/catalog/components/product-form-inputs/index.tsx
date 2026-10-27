@@ -39,6 +39,7 @@ function NameInput({ field }: InputProps<string>) {
       isError={isInvalid}
       onValueChange={field.handleChange}
       errors={field.state.meta.errors}
+      defaultValue={field.state.value}
     />
   );
 }
@@ -55,6 +56,7 @@ function DescriptionInput({ field }: InputProps<string>) {
       onValueChange={field.handleChange}
       errors={field.state.meta.errors}
       minLines={5}
+      defaultValue={field.state.value}
     />
   );
 }
@@ -74,6 +76,7 @@ function StockInput({ field }: InputProps<number>) {
       keyboardOptions={{
         keyboardType: "number",
       }}
+      defaultValue={field.state.value}
     />
   );
 }
@@ -93,6 +96,7 @@ function MinStockInput({ field }: InputProps<number>) {
       keyboardOptions={{
         keyboardType: "number",
       }}
+      defaultValue={field.state.value}
     />
   );
 }

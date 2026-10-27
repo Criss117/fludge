@@ -159,13 +159,15 @@ export function SearchInput(props: SearchInputProps) {
     setIsFocused(false);
   }, [actions]);
 
+  const showCancelButton = isFocused || state.hasText;
+
   return (
     <HStack
       spacing={0}
       modifiers={[
         frame({ width: Infinity }),
         // anima todo lo que cambie dentro de este HStack cuando cambia isFocused
-        animation(Animation.spring({ duration: 0.35, bounce: 0.1 }), isFocused),
+        animation(Animation.spring({ duration: 0.35, bounce: 0.1 }), showCancelButton),
       ]}
     >
       <HStack
@@ -177,7 +179,7 @@ export function SearchInput(props: SearchInputProps) {
           cornerRadius(SPACING.xl),
           glassEffect({
             glass: {
-              variant: isFocused ? "clear" : "identity",
+              variant: showCancelButton ? "clear" : "identity",
             },
           }),
         ]}
@@ -220,10 +222,10 @@ export function SearchInput(props: SearchInputProps) {
           clipShape("circle"),
           background("transparent"),
           // 0 de ancho cuando no hay foco: el search bar ocupa todo
-          frame({ width: isFocused ? SPACING.xl : 0, height: SPACING.xl }),
-          padding({ leading: isFocused ? SPACING.sm : 0 }),
-          opacity(isFocused ? 1 : 0),
-          offset({ x: isFocused ? 0 : SPACING.xl }), // entra desde la derecha
+          frame({ width: showCancelButton ? SPACING.xl : 0, height: SPACING.xl }),
+          padding({ leading: showCancelButton ? SPACING.sm : 0 }),
+          opacity(showCancelButton ? 1 : 0),
+          offset({ x: showCancelButton ? 0 : SPACING.xl }), // entra desde la derecha
         ]}
       >
         <Icon name="close" size={22} color={colors.onPrimaryContainer} />
