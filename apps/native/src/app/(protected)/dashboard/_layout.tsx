@@ -52,11 +52,12 @@ function StackScreen() {
       />
 
       <Stack.Screen
-        name="memberss"
+        name="groups"
         options={{
           title: t("screens.iam.groups.label"),
         }}
       />
+
       <Stack.Screen
         name="products"
         options={{

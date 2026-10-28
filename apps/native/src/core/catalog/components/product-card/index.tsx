@@ -42,9 +42,11 @@ export function ProductCard({ product }: ProductCardProps) {
               <ThemedText numberOfLines={1} variant="h4">
                 {product.name}
               </ThemedText>
-              <ThemedText numberOfLines={1} variant="muted">
-                {product.description}
-              </ThemedText>
+              {product.description.length > 0 && (
+                <ThemedText numberOfLines={1} variant="muted">
+                  {product.description}
+                </ThemedText>
+              )}
             </View>
           </View>
           <ScrollView
