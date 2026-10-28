@@ -4,7 +4,17 @@ import { ProductsScreen } from "@/core/catalog/screens/products";
 
 export default function Catalog() {
   return (
-    <FiltersProvider>
+    <FiltersProvider
+      initialState={{
+        status: "all",
+        orderBy: [
+          {
+            direction: "desc",
+            field: "createdAt",
+          },
+        ],
+      }}
+    >
       <ProductsScreen />
     </FiltersProvider>
   );

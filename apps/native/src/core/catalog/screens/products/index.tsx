@@ -3,11 +3,11 @@ import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
 import { ProductCard } from "@/core/catalog/components/product-card";
+import { ProductsHeader } from "@/core/catalog/sections/products-header";
 import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
 import { ThemedText } from "@/core/shared/components/themed-text";
 import { SPACING } from "@/lib/sp";
 
-import { ProductsHeader } from "./header";
 import { useProductsScreen } from "./use-products";
 
 export function ProductsScreen() {

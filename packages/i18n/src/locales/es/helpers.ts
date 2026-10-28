@@ -9,6 +9,8 @@ export const helpers = {
   },
 
   order_by: {
+    label: "Ordenar",
+    title: "Ordenar por",
     created_at: "Por fecha de creación",
     stock: "Por stock",
     min_stock: "Por stock mínimo",

@@ -6,7 +6,11 @@ import { BarcodeReader } from "@/core/shared/components/barcode-reader";
 import { SearchInput } from "@/core/shared/components/text-input";
 import { SPACING } from "@/lib/sp";
 
-import { useProductsHeader } from "./use-products";
+import { useProductsHeader } from "./use-products-header";
+
+function ProductsOrderBySheet() {
+  return null;
+}
 
 export function ProductsHeader() {
   const { actions, state, texts } = useProductsHeader();
