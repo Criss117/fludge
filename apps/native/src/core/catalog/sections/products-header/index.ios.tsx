@@ -9,75 +9,29 @@ import {
   VStack,
 } from "@expo/ui/swift-ui";
 import { buttonStyle, frame, padding, tint } from "@expo/ui/swift-ui/modifiers";
-import { useFilters } from "@fludge/client/providers/filters.provider";
-import type { OrderByField } from "@fludge/client/shared/use-filters";
-import type { TranslationKey } from "@fludge/i18n/index";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
 import { BarcodeReader } from "@/core/shared/components/barcode-reader";
-import type { iconName } from "@/core/shared/components/icon";
 import { Icon } from "@/core/shared/components/icon";
 import { SearchInput } from "@/core/shared/components/text-input";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
-import { useProductsHeader } from "./use-products-header";
-
-const orderByItems: { key: OrderByField; label: TranslationKey }[] = [
-  {
-    key: "createdAt",
-    label: "helpers.order_by.created_at",
-  },
-  {
-    key: "stock",
-    label: "helpers.order_by.stock",
-  },
-  {
-    key: "minStock",
-    label: "helpers.order_by.min_stock",
-  },
-];
+import { useProductsHeader, useProductsOrderBySheet } from "./use-products-header";
 
 function ProductsOrderBySheet() {
-  const { filters, setNextOrderBy } = useFilters();
-  const [isPresented, setIsPresented] = useState(false);
+  const { state, actions } = useProductsOrderBySheet();
   const colors = useThemeColor();
   const { t } = useTranslation();
-
-  const open = () => setIsPresented(true);
-
-  const orderByButons = useMemo(() => {
-    return orderByItems.map((i) => {
-      const exists = filters.orderBy?.find((o) => o.field === i.key);
-
-      let iconName: iconName = "remove";
-
-      if (exists !== undefined) {
-        switch (exists.direction) {
-          case "asc":
-            iconName = "keyboard-arrow-up";
-            break;
-          case "desc":
-            iconName = "keyboard-arrow-down";
-            break;
-        }
-      }
-
-      return {
-        ...i,
-        icon: iconName,
-      };
-    });
-  }, [filters.orderBy]);
 
   return (
     <VStack>
       <BottomSheet
-        isPresented={isPresented}
-        onIsPresentedChange={setIsPresented}
+        isPresented={state.isPresented}
+        onIsPresentedChange={actions.setIsPresented}
         fitToContents
         anchor={
           <Button
@@ -100,9 +54,9 @@ function ProductsOrderBySheet() {
           <ThemedNativeText variant="h5">{t("helpers.order_by.title")}</ThemedNativeText>
 
           <VStack spacing={SPACING.md}>
-            {orderByButons.map((b) => (
-              <Fragment key={b.key}>
-                <Button onPress={() => setNextOrderBy(b.key)}>
+            {state.orderByButtons.map((b) => (
+              <Fragment key={b.value}>
+                <Button onPress={() => actions.setNextOrderBy(b.value)}>
                   <HStack
                     modifiers={[
                       frame({

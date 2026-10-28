@@ -1,8 +1,6 @@
-import type {
-  CustomerRepository,
-  FindAllCustomersFilters,
-} from "@fludge/client/commerce/domain/customer.repository";
+import type { CustomerRepository } from "@fludge/client/commerce/domain/customer.repository";
 import type { CustomerDetail, CustomerSummary } from "@fludge/client/commerce/domain/entities";
+import type { Filters } from "@fludge/client/shared/use-filters";
 import {
   type LocalCustomer,
   localCustomer,
@@ -36,7 +34,7 @@ export class NativeCustomerRepository implements CustomerRepository {
   public async findAll(
     organizationId: string,
     cursor: Cursor,
-    filters?: FindAllCustomersFilters,
+    filters?: Filters,
   ): Promise<Result<PaginatedResponse<CustomerSummary>, RepositoryError>> {
     return tryCatch(
       () => {

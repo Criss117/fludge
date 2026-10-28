@@ -255,10 +255,10 @@ export const ICONS = {
   }),
 } as const;
 
-export type iconName = keyof typeof ICONS;
+export type IconName = keyof typeof ICONS;
 
 type Props = Omit<ExpoIconProps, "name"> & {
-  name: iconName;
+  name: IconName;
 };
 
 export function Icon({ name, ...rest }: Props) {

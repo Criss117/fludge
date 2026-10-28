@@ -10,7 +10,7 @@ import { ThemedText } from "./themed-text";
 
 interface Props {
   status: "active" | "inactive" | "discontinued";
-  icon?: iconName;
+  icon?: IconName;
 }
 
 const stylesConfig = {
@@ -32,7 +32,7 @@ interface ChipProps {
   label: string;
   color?: string;
   textColor?: string;
-  icon?: iconName;
+  icon?: IconName;
 }
 
 export function Chip({ label, color, textColor, icon }: ChipProps) {

@@ -4,7 +4,7 @@ import type { ModifierConfig as SwiftUIModifierConfig } from "@expo/ui/swift-ui/
 import type { MinimalField } from "@fludge/client/shared/field-api";
 import type { TranslationKey } from "@fludge/i18n/index";
 
-import type { iconName } from "../icon";
+import type { IconName } from "../icon";
 
 export interface InputProps<T> {
   field: MinimalField<T>;
@@ -23,7 +23,7 @@ type NumberMode = {
 };
 
 export type TextInputProps = (TextMode | NumberMode) & {
-  iconName?: iconName;
+  iconName?: IconName;
   label: TranslationKey;
   placeholder: TranslationKey;
   isError?: boolean;

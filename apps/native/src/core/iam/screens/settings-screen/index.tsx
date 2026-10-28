@@ -74,7 +74,7 @@ function PreferencesSection() {
 interface Props {
   syncHook: UseSuspenseQueryResult<SyncData, Error>;
   module: "iam" | "catalog" | "commerce";
-  icon: iconName;
+  icon: IconName;
 }
 
 function SyncItem(props: Props) {

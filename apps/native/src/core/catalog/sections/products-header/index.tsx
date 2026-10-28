@@ -10,75 +10,27 @@ import {
   Spacer,
 } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, padding, weight } from "@expo/ui/jetpack-compose/modifiers";
-import { useFilters } from "@fludge/client/providers/filters.provider";
-import type { OrderByField } from "@fludge/client/shared/use-filters";
-import type { TranslationKey } from "@fludge/i18n/index";
-import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
 import { BarcodeReader } from "@/core/shared/components/barcode-reader";
-import type { iconName } from "@/core/shared/components/icon";
 import { Icon } from "@/core/shared/components/icon";
 import { SearchInput } from "@/core/shared/components/text-input";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
-import { useProductsHeader } from "./use-products-header";
-
-const orderByItems: { key: OrderByField; label: TranslationKey }[] = [
-  {
-    key: "createdAt",
-    label: "helpers.order_by.created_at",
-  },
-  {
-    key: "stock",
-    label: "helpers.order_by.stock",
-  },
-  {
-    key: "minStock",
-    label: "helpers.order_by.min_stock",
-  },
-];
+import { useProductsHeader, useProductsOrderBySheet } from "./use-products-header";
 
 function ProductsOrderBySheet() {
-  const { filters, setNextOrderBy } = useFilters();
-  const [isPresented, setIsPresented] = useState(false);
   const colors = useThemeColor();
   const { t } = useTranslation();
-
-  const open = () => setIsPresented(true);
-  const close = () => setIsPresented(false);
-
-  const orderByButtons = useMemo(() => {
-    return orderByItems.map((i) => {
-      const exists = filters.orderBy?.find((o) => o.field === i.key);
-
-      let iconName: iconName = "remove";
-
-      if (exists !== undefined) {
-        switch (exists.direction) {
-          case "asc":
-            iconName = "keyboard-arrow-up";
-            break;
-          case "desc":
-            iconName = "keyboard-arrow-down";
-            break;
-        }
-      }
-
-      return {
-        ...i,
-        icon: iconName,
-      };
-    });
-  }, [filters.orderBy]);
+  const { actions, state } = useProductsOrderBySheet();
 
   return (
     <>
       <Button
-        onClick={open}
+        onClick={actions.open}
         colors={{
           containerColor: colors.surfaceVariant,
           contentColor: colors.onSurfaceVariant,
@@ -89,9 +41,9 @@ function ProductsOrderBySheet() {
         </ThemedNativeText>
       </Button>
 
-      {isPresented && (
+      {state.isPresented && (
         <ModalBottomSheet
-          onDismissRequest={close}
+          onDismissRequest={actions.close}
           skipPartiallyExpanded
           containerColor={colors.background}
           contentColor={colors.onBackground}
@@ -103,11 +55,11 @@ function ProductsOrderBySheet() {
             <ThemedNativeText variant="h5">{t("helpers.order_by.title")}</ThemedNativeText>
 
             <Column verticalArrangement={{ spacedBy: SPACING.md }}>
-              {orderByButtons.map((b) => (
+              {state.orderByButtons.map((b) => (
                 <Button
-                  key={b.key}
+                  key={b.value}
                   onClick={() => {
-                    setNextOrderBy(b.key);
+                    actions.setNextOrderBy(b.value);
                   }}
                   colors={{
                     containerColor: "transparent",

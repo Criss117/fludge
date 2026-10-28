@@ -67,6 +67,19 @@ export const initialFilters: Filters = {
   orderBy: [],
 };
 
+export interface PickOrderBy {
+  orderBy: OrderByFilter[] | undefined;
+  fields: OrderByField[];
+}
+
+export function pickOrderBy({ fields, orderBy }: PickOrderBy): OrderByFilter[] {
+  if (!orderBy?.length || fields.length === 0) return [];
+
+  const allowed = new Set<OrderByField>(fields);
+
+  return orderBy.filter((o) => allowed.has(o.field) && o.direction !== "none");
+}
+
 export type FiltersAction =
   | { type: "SET_SEARCH_QUERY"; payload: SearchQueryFilter }
   | { type: "SET_STATUS"; payload: StatusFilter }

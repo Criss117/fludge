@@ -4,7 +4,7 @@ import type { ModifierConfig } from "@expo/ui/jetpack-compose/modifiers";
 import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
 
 import { NativeFieldError } from "@/core/shared/components/field-error";
-import type { iconName } from "@/core/shared/components/icon";
+import type { IconName } from "@/core/shared/components/icon";
 import { Icon } from "@/core/shared/components/icon";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
@@ -28,7 +28,7 @@ export const TEXT_INPUT_HEIGHT = 64;
 
 type FieldProps = {
   model: InputModel;
-  iconName?: iconName;
+  iconName?: IconName;
   minLines?: number;
   maxLines?: number;
   modifiers?: ModifierConfig[];

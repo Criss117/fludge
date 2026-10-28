@@ -11,7 +11,7 @@ import type { OrderByDirection } from "@fludge/client/shared/use-filters";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { iconName } from "@/core/shared/components/icon";
+import type { IconName } from "@/core/shared/components/icon";
 import { Icon } from "@/core/shared/components/icon";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
@@ -25,7 +25,7 @@ export function ProductsFiltersSheet() {
   const { actions, state, texts } = useProductsFiltersSheet();
   const sheetRef = useRef<ModalBottomSheetRef>(null);
 
-  const iconName = (status: OrderByDirection): iconName => {
+  const iconName = (status: OrderByDirection): IconName => {
     switch (status) {
       case "asc":
         return "keyboard-arrow-up";

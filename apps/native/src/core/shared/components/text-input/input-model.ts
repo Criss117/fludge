@@ -2,10 +2,10 @@ import type { TextFieldKeyboardOptions } from "@expo/ui/jetpack-compose";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useTranslation } from "react-i18next";
 
-import type { iconName } from "../icon";
+import type { IconName } from "../icon";
 import type { useNativeField } from "./use-native-field";
 
-type CopyProps = { label?: TranslationKey; placeholder?: TranslationKey; iconName?: iconName };
+type CopyProps = { label?: TranslationKey; placeholder?: TranslationKey; iconName?: IconName };
 
 export function useInputCopy({ label, placeholder, iconName }: CopyProps) {
   const { t } = useTranslation();
