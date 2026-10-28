@@ -132,50 +132,50 @@ export function ProductsHeader() {
 
   return (
     <View style={styles.headerContainer}>
-      <Host matchContents={{ vertical: true }} style={styles.host}>
-        <HStack
-          modifiers={[
-            frame({
-              width: Infinity,
-            }),
-          ]}
-        >
-          <BarcodeReader setBarcode={actions.setSearchQuery} />
-          <SearchInput
-            onValueChange={actions.setSearchQuery}
-            label={texts.searchBar.label}
-            placeholder={texts.searchBar.placeholder}
-            defaultValue={state.filters.searchQuery}
-          />
-        </HStack>
-      </Host>
-      <Host matchContents={{ vertical: true }} style={styles.host}>
-        <HStack>
-          <ProductsOrderBySheet />
-          <Divider />
-          <ScrollView axes="horizontal" showsIndicators={false}>
-            <HStack>
-              {state.statusOptions.map((sp) => (
-                <Button
-                  key={sp.value}
-                  onPress={() => actions.setStatus(sp.value)}
-                  modifiers={[
-                    buttonStyle(
-                      actions.isStatusSelected(sp.value) ? "borderedProminent" : "bordered",
-                    ),
-                    tint(colors.surfaceVariant),
-                  ]}
-                >
-                  <ThemedNativeText
-                    color={actions.isStatusSelected(sp.value) ? colors.primary : colors.outline}
+      <Host matchContents={{ vertical: true }} style={styles.host} ignoreSafeArea="container">
+        <VStack spacing={SPACING.md}>
+          <HStack
+            modifiers={[
+              frame({
+                width: Infinity,
+              }),
+            ]}
+          >
+            <BarcodeReader setBarcode={actions.setSearchQuery} />
+            <SearchInput
+              onValueChange={actions.setSearchQuery}
+              label={texts.searchBar.label}
+              placeholder={texts.searchBar.placeholder}
+              defaultValue={state.filters.searchQuery}
+            />
+          </HStack>
+          <HStack>
+            <ProductsOrderBySheet />
+            <Divider />
+            <ScrollView axes="horizontal" showsIndicators={false}>
+              <HStack>
+                {state.statusOptions.map((sp) => (
+                  <Button
+                    key={sp.value}
+                    onPress={() => actions.setStatus(sp.value)}
+                    modifiers={[
+                      buttonStyle(
+                        actions.isStatusSelected(sp.value) ? "borderedProminent" : "bordered",
+                      ),
+                      tint(colors.surfaceVariant),
+                    ]}
                   >
-                    {t(sp.label)}
-                  </ThemedNativeText>
-                </Button>
-              ))}
-            </HStack>
-          </ScrollView>
-        </HStack>
+                    <ThemedNativeText
+                      color={actions.isStatusSelected(sp.value) ? colors.primary : colors.outline}
+                    >
+                      {t(sp.label)}
+                    </ThemedNativeText>
+                  </Button>
+                ))}
+              </HStack>
+            </ScrollView>
+          </HStack>
+        </VStack>
       </Host>
     </View>
   );

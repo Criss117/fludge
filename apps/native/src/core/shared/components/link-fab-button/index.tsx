@@ -1,26 +1,16 @@
 import { FloatingActionButton, Host } from "@expo/ui/jetpack-compose";
-import { type Href, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import Animated from "react-native-reanimated";
 
+import { Icon } from "@/core/shared/components/icon";
+import { useKeyboardSpacer } from "@/core/shared/hooks/use-keyboard-spacer";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
-import { useKeyboardSpacer } from "../hooks/use-keyboard-spacer";
-import { useThemeColor } from "../hooks/use-theme-color";
-import { Icon } from "./icon";
+import type { LinkFabButtonProps } from "./types";
 
-interface Props {
-  action:
-    | {
-        href: Href;
-        type: "push" | "replace";
-      }
-    | {
-        type: "back";
-      };
-}
-
-export function LinkFabButton({ action }: Props) {
+export function LinkFabButton({ action }: LinkFabButtonProps) {
   const spacer = useKeyboardSpacer();
   const colors = useThemeColor();
   const router = useRouter();

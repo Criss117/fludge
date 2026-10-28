@@ -1,132 +1,113 @@
 import type { ModalBottomSheetRef } from "@expo/ui/jetpack-compose";
-import { Button, Column, Host, ModalBottomSheet, Row, Spacer } from "@expo/ui/jetpack-compose";
+import {
+  Button,
+  Column,
+  Host,
+  ModalBottomSheet,
+  OutlinedButton,
+  Row,
+  Spacer,
+} from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, paddingAll, weight, width } from "@expo/ui/jetpack-compose/modifiers";
-import type { CustomerSummary } from "@fludge/client/commerce/domain/entities";
-import { useCreateCustomerPaymentForm } from "@fludge/client/commerce/forms/customer-payment.form";
-import { useCreateCustomerPaymentMutation } from "@fludge/client/commerce/mutations/use-customer.mutations";
-import type { TranslationKey } from "@fludge/i18n/index";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Keyboard } from "react-native";
 
+import { Icon } from "@/core/shared/components/icon";
 import { TextInput } from "@/core/shared/components/text-input";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { useMutationToast } from "@/integrations/toast";
 import { SPACING } from "@/lib/sp";
 
-interface Props {
-  customer: CustomerSummary;
-  isOpen: boolean;
-  onClose: () => void;
-}
+import type { CustomerPaymentSheetProps } from "./types";
+import { useCustomerPaymentSheet } from "./use-customer-payment-sheet";
 
-export function CustomerPaymentSheet({ customer, isOpen, onClose }: Props) {
+export function CustomerPaymentSheet({ customer }: CustomerPaymentSheetProps) {
   const { t } = useTranslation();
   const colors = useThemeColor();
-  const mutationToast = useMutationToast();
-  const mutation = useCreateCustomerPaymentMutation();
   const sheetRef = useRef<ModalBottomSheetRef>(null);
+  const { state, actions } = useCustomerPaymentSheet({ customer });
 
-  const form = useCreateCustomerPaymentForm({
-    onSubmit: ({ value, resetForm }) => {
-      mutationToast.showPending("mutations.customer_payment.create.is_pending");
-
-      mutation.mutate(
-        {
-          customerId: customer.id,
-          amount: value.amount,
-          method: "cash",
-          notes: "",
-        },
-        {
-          onSuccess: async () => {
-            mutationToast.showSuccess("mutations.customer_payment.create.success.title");
-            Keyboard.dismiss();
-            await sheetRef.current?.hide();
-            onClose();
-            resetForm();
-          },
-          onError: (error) => {
-            mutationToast.showError(
-              "mutations.customer_payment.create.error",
-              error.message as TranslationKey,
-            );
-          },
-        },
-      );
-    },
-  });
-
-  const closeSheet = async () => {
-    Keyboard.dismiss();
+  const onClose = async () => {
     await sheetRef.current?.hide();
-    onClose();
+    actions.close();
   };
-
-  if (!isOpen) return null;
 
   return (
     <Host matchContents>
-      <ModalBottomSheet
-        ref={sheetRef}
-        onDismissRequest={onClose}
-        skipPartiallyExpanded
-        containerColor={colors.background}
-        contentColor={colors.onBackground}
+      <OutlinedButton
+        onClick={actions.open}
+        colors={{
+          containerColor: colors.onPrimary,
+        }}
+        enabled={!state.isDisabled}
       >
-        <Column
-          verticalArrangement={{ spacedBy: SPACING.md }}
-          modifiers={[paddingAll(SPACING.md), fillMaxWidth()]}
+        <Icon name="dollar" size={18} color={state.isDisabled ? colors.outline : colors.primary} />
+        <ThemedNativeText variant="sm" color={state.isDisabled ? colors.outline : colors.primary}>
+          {t("screens.customers.card.pay")}
+        </ThemedNativeText>
+      </OutlinedButton>
+
+      {state.isOpen && (
+        <ModalBottomSheet
+          ref={sheetRef}
+          onDismissRequest={actions.close}
+          skipPartiallyExpanded
+          containerColor={colors.background}
+          contentColor={colors.onBackground}
         >
-          <ThemedNativeText variant="h5">{t("forms.customer_payment.title")}</ThemedNativeText>
+          <Column
+            verticalArrangement={{ spacedBy: SPACING.md }}
+            modifiers={[paddingAll(SPACING.md), fillMaxWidth()]}
+          >
+            <ThemedNativeText variant="h5">{t("forms.customer_payment.title")}</ThemedNativeText>
 
-          <form.Field name="amount">
-            {(field) => (
-              <TextInput
-                type="number"
-                label="forms.customer_payment.amount.label"
-                placeholder="forms.customer_payment.amount.placeholder"
-                iconName="dollar"
-                modifiers={[fillMaxWidth()]}
-                isError={field.state.meta.isTouched && !field.state.meta.isValid}
-                onValueChange={field.handleChange}
-                errors={field.state.meta.errors}
-                keyboardOptions={{
-                  keyboardType: "number",
+            <state.form.Field name="amount">
+              {(field) => (
+                <TextInput
+                  type="number"
+                  label="forms.customer_payment.amount.label"
+                  placeholder="forms.customer_payment.amount.placeholder"
+                  iconName="dollar"
+                  modifiers={[fillMaxWidth()]}
+                  isError={field.state.meta.isTouched && !field.state.meta.isValid}
+                  onValueChange={field.handleChange}
+                  errors={field.state.meta.errors}
+                  keyboardOptions={{
+                    keyboardType: "number",
+                  }}
+                />
+              )}
+            </state.form.Field>
+
+            <Spacer modifiers={[width(SPACING.sm)]} />
+
+            <Row horizontalArrangement={{ spacedBy: SPACING.sm }}>
+              <OutlinedButton
+                modifiers={[weight(1)]}
+                colors={{
+                  containerColor: colors.surface,
+                  contentColor: colors.onSurface,
                 }}
-              />
-            )}
-          </form.Field>
-
-          <Spacer modifiers={[width(SPACING.sm)]} />
-
-          <Row horizontalArrangement={{ spacedBy: SPACING.sm }}>
-            <Button
-              modifiers={[weight(1)]}
-              colors={{
-                containerColor: colors.surface,
-                contentColor: colors.onSurface,
-              }}
-              onClick={closeSheet}
-            >
-              <ThemedNativeText color={colors.onSurface}>{t("helpers.cancel")}</ThemedNativeText>
-            </Button>
-            <Button
-              modifiers={[weight(1)]}
-              colors={{
-                containerColor: colors.primary,
-                contentColor: colors.onPrimary,
-              }}
-              onClick={form.handleSubmit}
-            >
-              <ThemedNativeText color={colors.onPrimary}>
-                {t("forms.customer_payment.submit")}
-              </ThemedNativeText>
-            </Button>
-          </Row>
-        </Column>
-      </ModalBottomSheet>
+                onClick={onClose}
+              >
+                <ThemedNativeText color={colors.onSurface}>{t("helpers.cancel")}</ThemedNativeText>
+              </OutlinedButton>
+              <Button
+                modifiers={[weight(1)]}
+                colors={{
+                  containerColor: colors.primary,
+                  contentColor: colors.onPrimary,
+                }}
+                onClick={actions.submit}
+              >
+                <ThemedNativeText color={colors.onPrimary}>
+                  {t("forms.customer_payment.submit")}
+                </ThemedNativeText>
+              </Button>
+            </Row>
+          </Column>
+        </ModalBottomSheet>
+      )}
     </Host>
   );
 }

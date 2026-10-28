@@ -1,12 +1,11 @@
+import type { FindAllCustomersFilters } from "@fludge/client/commerce/domain/customer.repository";
 import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { useContainer } from "@fludge/client/providers/container.provider";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import { SearchBlob } from "@fludge/utils/search-blob";
 import { unwrapResult } from "@fludge/utils/trycatch";
-import { useSuspenseInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
-
-import type { FindAllCustomersFilters } from "../domain/customer.repository";
+import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 
 function normalizeFilters(filters?: FindAllCustomersFilters) {
   return {
@@ -30,7 +29,7 @@ export function useFindCustomers(filters?: FindAllCustomersFilters) {
 
   const normalizedQuery = SearchBlob.normalize(filters?.searchQuery ?? "");
 
-  return useSuspenseInfiniteQuery({
+  return useInfiniteQuery({
     queryKey: customerKeys.filteredList(activeOrganization.id, filters),
     initialPageParam: DEFAULT_CURSOR,
     queryFn: async ({ pageParam }) =>
