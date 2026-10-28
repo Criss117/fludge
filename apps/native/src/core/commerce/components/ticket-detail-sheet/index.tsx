@@ -141,7 +141,7 @@ export function TicketDetailSheet({ isOpen, onClose }: Props) {
                   onClick={async () => {
                     await sheetRef.current?.hide();
                     onClose();
-                    router.push("/dashboard/pos/charge");
+                    router.push("/pos/charge");
                   }}
                 >
                   <ThemedNativeText color={colors.onPrimary}>

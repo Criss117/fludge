@@ -54,7 +54,7 @@ export function ProductCard({ product }: ProductCardProps) {
             showsHorizontalScrollIndicator={false}
           >
             {chips.map((c) => (
-              <Chip key={c.label.key} label={t(c.label.key, c.label.args)} icon={c.icon} />
+              <Chip key={c.label.key} label={t(c.label.key, c.label.args)} />
             ))}
           </ScrollView>
         </View>

@@ -40,7 +40,7 @@ function NameInput({ field }: InputProps<string>) {
     <TextInput
       label="forms.product.name.label"
       placeholder="forms.product.name.placeholder"
-      iconName="badge"
+      iconName="user-name"
       isError={isInvalid}
       onValueChange={field.handleChange}
       errors={field.state.meta.errors}

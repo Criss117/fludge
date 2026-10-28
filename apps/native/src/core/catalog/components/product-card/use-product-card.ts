@@ -3,7 +3,6 @@ import type { TranslationKey } from "@fludge/i18n/index";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
 
-import type { IconName } from "@/core/shared/components/icon";
 import type { MenuOptionItem } from "@/core/shared/components/menu-options/types";
 
 import type { ProductCardProps } from "./types";
@@ -13,7 +12,6 @@ type Chip = {
     key: TranslationKey;
     args?: Record<string, unknown>;
   };
-  icon: IconName;
 };
 
 export function generateChips(product: ProductSummary): Chip[] {
@@ -23,14 +21,12 @@ export function generateChips(product: ProductSummary): Chip[] {
         key: "screens.catalog.products.stock",
         args: { quantity: product.stock },
       },
-      icon: "conveyor-belt",
     },
     {
       label: {
         key: "screens.catalog.products.min_stock",
         args: { quantity: product.minStock },
       },
-      icon: "conveyor-belt",
     },
     {
       label: {
@@ -38,7 +34,6 @@ export function generateChips(product: ProductSummary): Chip[] {
           ? "screens.catalog.products.allow_negative_stock"
           : "screens.catalog.products.not_allow_negative_stock",
       },
-      icon: "do-not-disturb-on",
     },
   ];
 }
@@ -72,7 +67,7 @@ export function useProductCard({ product }: ProductCardProps) {
             },
           });
         },
-        icon: "visibility",
+        icon: "eye",
       },
       {
         label: "helpers.navigation.update",

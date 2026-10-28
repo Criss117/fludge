@@ -2,7 +2,7 @@ import type { GroupSummary } from "@fludge/client/iam/domain/entities";
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 
-import type { MenuOptionItem } from "@/core/shared/components/menu-options";
+import type { MenuOptionItem } from "@/core/shared/components/menu-options/types";
 
 import type { MenuOptionsType } from "./index";
 
@@ -25,7 +25,7 @@ export function useGroupCard({ group, menuOptions }: Props) {
             params: { groupid: group.id },
           });
         },
-        icon: "visibility",
+        icon: "eye",
       },
       {
         label: "helpers.navigation.update",

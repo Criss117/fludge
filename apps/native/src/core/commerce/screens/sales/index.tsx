@@ -68,7 +68,7 @@ export function SalesScreen() {
       <LinkFabButton
         action={{
           type: "push",
-          href: "/dashboard/pos",
+          href: "/pos",
         }}
       />
     </ThemedView>

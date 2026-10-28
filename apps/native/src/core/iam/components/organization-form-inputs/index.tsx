@@ -12,10 +12,9 @@ function NameInput({ field }: FieldProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.organization.name.label"
       placeholder="forms.organization.name.placeholder"
-      iconName="add-business"
+      iconName="add"
       modifiers={[fillMaxWidth()]}
       isError={isInvalid}
       onValueChange={field.handleChange}
@@ -29,10 +28,9 @@ function PhoneInput({ field }: FieldProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.organization.phone.label"
       placeholder="forms.organization.phone.placeholder"
-      iconName="call"
+      iconName="phone"
       modifiers={[fillMaxWidth()]}
       isError={isInvalid}
       onValueChange={field.handleChange}
@@ -49,10 +47,9 @@ function LegalNameInput({ field }: FieldProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.organization.legal_name.label"
       placeholder="forms.organization.legal_name.placeholder"
-      iconName="apartment"
+      iconName="label"
       modifiers={[fillMaxWidth()]}
       isError={isInvalid}
       onValueChange={field.handleChange}
@@ -66,10 +63,9 @@ function TaxIdInput({ field }: FieldProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.organization.tax_id.label"
       placeholder="forms.organization.tax_id.placeholder"
-      iconName="badge"
+      iconName="user-name"
       modifiers={[fillMaxWidth()]}
       isError={isInvalid}
       onValueChange={field.handleChange}
@@ -83,10 +79,9 @@ function AddressInput({ field }: FieldProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.organization.address.label"
       placeholder="forms.organization.address.placeholder"
-      iconName="apartment"
+      iconName="location"
       modifiers={[fillMaxWidth()]}
       isError={isInvalid}
       onValueChange={field.handleChange}

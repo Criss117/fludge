@@ -101,7 +101,7 @@ export function CustomerCard({ customer }: Props) {
                 }}
               >
                 <AssistChip.LeadingIcon>
-                  <Icon name="badge" size={16} color={colors.onSurfaceVariant} />
+                  <Icon name="user-name" size={16} color={colors.onSurfaceVariant} />
                 </AssistChip.LeadingIcon>
                 <AssistChip.Label>
                   <ThemedNativeText color={colors.onSurfaceVariant} variant="sm">
@@ -116,7 +116,7 @@ export function CustomerCard({ customer }: Props) {
               verticalAlignment="center"
               horizontalArrangement={{ spacedBy: SPACING.sm }}
             >
-              <Icon name="call" size={18} color={colors.outline} />
+              <Icon name="phone" size={18} color={colors.outline} />
               <ThemedNativeText variant="muted">{customer.phone}</ThemedNativeText>
               <Spacer modifiers={[weight(1)]} />
             </Row>
@@ -184,7 +184,7 @@ export function CustomerCard({ customer }: Props) {
                 }}
                 onClick={() => setIsPaymentSheetOpen(true)}
               >
-                <Icon name="attach-money" size={18} color={colors.onPrimary} />
+                <Icon name="dollar" size={18} color={colors.onPrimary} />
                 <Spacer modifiers={[width(SPACING.sm)]} />
                 <ThemedNativeText color={colors.onPrimary} variant="sm">
                   {t("screens.customers.card.pay")}
@@ -197,7 +197,7 @@ export function CustomerCard({ customer }: Props) {
                     action: () => {
                       // TODO: navigate to customer detail
                     },
-                    icon: "visibility",
+                    icon: "eye",
                   },
                   {
                     label: "helpers.navigation.update",

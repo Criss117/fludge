@@ -127,8 +127,8 @@ function SyncSection() {
       modifiers={[listRowBackground(colors.onSecondary)]}
     >
       <SyncItem syncHook={iamSync} module="iam" icon="security" />
-      <SyncItem syncHook={catalogSync} module="catalog" icon="inventory_2" />
-      <SyncItem syncHook={commerceSync} module="commerce" icon="group" />
+      <SyncItem syncHook={catalogSync} module="catalog" icon="inventory" />
+      <SyncItem syncHook={commerceSync} module="commerce" icon="inventory" />
     </Section>
   );
 }

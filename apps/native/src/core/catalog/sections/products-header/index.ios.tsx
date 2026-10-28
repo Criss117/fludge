@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
 import { BarcodeReader } from "@/core/shared/components/barcode-reader";
-import type { IconName } from "@/core/shared/components/icon";
+import type { iconName } from "@/core/shared/components/icon";
 import { Icon } from "@/core/shared/components/icon";
 import { SearchInput } from "@/core/shared/components/text-input";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
@@ -53,7 +53,7 @@ function ProductsOrderBySheet() {
     return orderByItems.map((i) => {
       const exists = filters.orderBy?.find((o) => o.field === i.key);
 
-      let iconName: IconName = "remove";
+      let iconName: iconName = "remove";
 
       if (exists !== undefined) {
         switch (exists.direction) {

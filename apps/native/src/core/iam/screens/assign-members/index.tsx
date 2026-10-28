@@ -115,7 +115,7 @@ export function AssignMembersScreen({ group }: Props) {
       <View style={styles.headerContainer}>
         <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
           <TextInput
-            value={searchQuery}
+            defaultValue={searchQuery}
             onValueChange={setSearchQuery}
             iconName="search"
             modifiers={[fillMaxWidth()]}

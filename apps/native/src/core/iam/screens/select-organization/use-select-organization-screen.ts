@@ -39,7 +39,7 @@ export function useSelectOrganizationScreen() {
 
     if (organizationId === activeOrganization?.id) {
       router.replace({
-        pathname: "/dashboard/home",
+        pathname: "/dashboard",
       });
 
       return;

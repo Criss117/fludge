@@ -85,12 +85,11 @@ export function CustomersScreen() {
             <Box modifiers={[weight(1)]}>
               <TextInput
                 onValueChange={setSearchQuery}
-                value={searchQuery}
+                defaultValue={searchQuery}
                 modifiers={[fillMaxWidth()]}
                 iconName="search"
                 label="screens.customers.search.label"
                 placeholder="helpers.placeholder.search_customers"
-                withDebounce={400}
               />
             </Box>
           </Row>

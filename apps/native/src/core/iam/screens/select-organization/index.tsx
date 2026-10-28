@@ -79,12 +79,12 @@ export function SelectOrganizationScreen() {
                     </Column>
 
                     <Row horizontalAlignment="center" verticalAlignment="center">
-                      <Icon name="location-on" size={18} />
+                      <Icon name="location" size={18} />
                       <Spacer modifiers={[width(SPACING.xs)]} />
                       <ThemedNativeText variant="base">{org.address}</ThemedNativeText>
                     </Row>
                     <Row horizontalAlignment="center" verticalAlignment="center">
-                      <Icon name="call" size={18} />
+                      <Icon name="phone" size={18} />
                       <Spacer modifiers={[width(SPACING.xs)]} />
                       <ThemedNativeText variant="base">{org.phone}</ThemedNativeText>
                     </Row>
@@ -105,10 +105,10 @@ export function SelectOrganizationScreen() {
               modifiers={[fillMaxWidth()]}
               action={{
                 type: "replace",
-                href: "/dashboard/organization/register",
+                href: "/organization/register",
               }}
             >
-              <Icon name="add-business" size={20} />
+              <Icon name="save" size={20} />
               <Spacer modifiers={[width(SPACING.sm)]} />
               <ThemedNativeText color={colors.primaryContainer}>
                 {texts.toRegister}

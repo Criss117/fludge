@@ -80,13 +80,13 @@ function UpdatePrice({ presentations }: Props) {
               }}
             >
               <TextInput
-                value={newPriceSale}
+                defaultValue={newPriceSale}
                 onValueChange={setNewPriceSale}
                 type="number"
                 label="forms.product_presentation.price_sale.label"
                 placeholder="forms.product_presentation.price_sale.placeholder"
                 modifiers={[fillMaxWidth()]}
-                iconName="attach-money"
+                iconName="dollar"
               />
 
               <Row

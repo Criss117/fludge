@@ -63,13 +63,13 @@ function CustomerListItem({
           {customer.name}
         </ThemedNativeText>
         <Row horizontalArrangement={{ spacedBy: SPACING.xs }}>
-          <Icon name="badge" size={14} color={colors.outline} />
+          <Icon name="user-name" size={14} color={colors.outline} />
           <ThemedNativeText variant="muted">{identification}</ThemedNativeText>
         </Row>
       </Column>
 
       <Row horizontalArrangement={{ spacedBy: SPACING.xs }}>
-        <Icon name="call" size={14} color={colors.outline} />
+        <Icon name="phone" size={14} color={colors.outline} />
         <ThemedNativeText variant="muted">{contact}</ThemedNativeText>
       </Row>
     </Row>
@@ -177,7 +177,7 @@ function CustomerSelectorSheet({
           </Row>
 
           <TextInput
-            value={query}
+            defaultValue={query}
             onValueChange={setQuery}
             label="screens.catalog.products.search.label"
             placeholder="helpers.placeholder.search_customers"

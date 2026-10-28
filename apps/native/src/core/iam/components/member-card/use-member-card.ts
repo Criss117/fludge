@@ -23,7 +23,7 @@ export function useMemberCard(props: MemberCardProps) {
             params: { memberid: props.member.id },
           });
         },
-        icon: "visibility",
+        icon: "eye",
       },
       ...(props.menuOptions?.items ?? []),
     ];

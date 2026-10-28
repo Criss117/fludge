@@ -132,7 +132,7 @@ export function RegisterOrganizationScreen() {
               containerColor: colors.onPrimaryContainer,
             }}
           >
-            <Icon name="add-business" color={colors.primaryContainer} />
+            <Icon name="save" color={colors.primaryContainer} />
             <Spacer modifiers={[width(SPACING.sm)]} />
             <ThemedNativeText color={colors.primaryContainer}>
               {t("forms.organization.submit")}
@@ -140,7 +140,7 @@ export function RegisterOrganizationScreen() {
           </Button>
         </Host>
         {hasOrganizations && (
-          <Link href={{ pathname: "/dashboard/organization" }} asChild replace>
+          <Link href={{ pathname: "/organization" }} asChild replace>
             <ThemedText variant="muted">{t("screens.organization.register.to_select")}</ThemedText>
           </Link>
         )}

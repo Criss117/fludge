@@ -35,7 +35,7 @@ export function CreateProductPresentationForm(props: CreateProductPresentationFo
   return (
     <>
       <IconButton onClick={actions.open}>
-        <Icon name="add-circle" color={colors.primary} />
+        <Icon name="add" color={colors.primary} />
       </IconButton>
       <ProductPresentationForm close={actions.close} isOpen={state.isOpen} form={state.form} />
     </>

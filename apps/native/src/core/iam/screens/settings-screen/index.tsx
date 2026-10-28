@@ -23,7 +23,7 @@ import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Icon, type IconName } from "@/core/shared/components/icon";
+import { Icon, type iconName } from "@/core/shared/components/icon";
 import { SectionCard } from "@/core/shared/components/section-card";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
@@ -74,7 +74,7 @@ function PreferencesSection() {
 interface Props {
   syncHook: UseSuspenseQueryResult<SyncData, Error>;
   module: "iam" | "catalog" | "commerce";
-  icon: IconName;
+  icon: iconName;
 }
 
 function SyncItem(props: Props) {
@@ -114,8 +114,8 @@ function SyncSection() {
   return (
     <SectionCard title="screens.settings.sections.sync.title">
       <SyncItem syncHook={iamSync} module="iam" icon="security" />
-      <SyncItem syncHook={catalogSync} module="catalog" icon="inventory_2" />
-      <SyncItem syncHook={commerceSync} module="commerce" icon="group" />
+      <SyncItem syncHook={catalogSync} module="catalog" icon="inventory" />
+      <SyncItem syncHook={commerceSync} module="commerce" icon="inventory" />
     </SectionCard>
   );
 }

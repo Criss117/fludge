@@ -35,11 +35,11 @@ export function AmountReceivedSection({ total }: Props) {
         <Column verticalArrangement={{ spacedBy: SPACING.md }} modifiers={[fillMaxWidth()]}>
           <TextInput
             type="number"
-            value={amount}
+            defaultValue={amount}
             onValueChange={setAmount}
             label="screens.charge.sections.amount_received.label"
             placeholder="screens.charge.sections.amount_received.placeholder"
-            iconName="attach-money"
+            iconName="dollar"
             modifiers={[fillMaxWidth()]}
           />
 

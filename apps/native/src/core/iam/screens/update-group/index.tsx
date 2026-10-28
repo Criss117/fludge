@@ -106,7 +106,7 @@ export function UpdateGroupScreen({ group }: Props) {
             }}
             onClick={form.handleSubmit}
           >
-            <Icon name="group-add" size={SPACING.lg} color={colors.onPrimary} />
+            <Icon name="add" size={SPACING.lg} color={colors.onPrimary} />
             <Spacer modifiers={[width(SPACING.sm)]} />
             <ThemedNativeText color={colors.onPrimary}>
               {t("forms.group.update.submit")}

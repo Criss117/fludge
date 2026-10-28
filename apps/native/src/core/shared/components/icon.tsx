@@ -1,10 +1,8 @@
-import AccountBalanceWalletIcon from "@expo/material-symbols/account_balance_wallet.xml";
 import AddIcon from "@expo/material-symbols/add.xml";
-import AddBusinessIcon from "@expo/material-symbols/add_business.xml";
-import AddCircleIcon from "@expo/material-symbols/add_circle.xml";
 import ApartmentIcon from "@expo/material-symbols/apartment.xml";
 import ArrowDownwardIcon from "@expo/material-symbols/arrow_downward.xml";
 import ArrowDropDownIcon from "@expo/material-symbols/arrow_drop_down.xml";
+import ArrowDropUpIcon from "@expo/material-symbols/arrow_drop_up.xml";
 import ArrowForwardIcon from "@expo/material-symbols/arrow_forward.xml";
 import AssignMentReturnIcon from "@expo/material-symbols/assignment_return.xml";
 import AttachMoneyIcon from "@expo/material-symbols/attach_money.xml";
@@ -14,23 +12,19 @@ import BarcodeScannerIcon from "@expo/material-symbols/barcode_scanner.xml";
 import BlockIcon from "@expo/material-symbols/block.xml";
 import CallIcon from "@expo/material-symbols/call.xml";
 import CheckIcon from "@expo/material-symbols/check.xml";
-import CheckCircleIcon from "@expo/material-symbols/check_circle.xml";
 import ChevronRightIcon from "@expo/material-symbols/chevron_right.xml";
 import CloseIcon from "@expo/material-symbols/close.xml";
-import ConveyorBeltIcon from "@expo/material-symbols/conveyor_belt.xml";
 import CreditCardIcon from "@expo/material-symbols/credit_card.xml";
 import DeleteIcon from "@expo/material-symbols/delete.xml";
 import DescriptionIcon from "@expo/material-symbols/description.xml";
-import DoNotDisturbOnIcon from "@expo/material-symbols/do_not_disturb_on.xml";
+import DomainAddIcon from "@expo/material-symbols/domain_add.xml";
 import EditIcon from "@expo/material-symbols/edit.xml";
 import ErrorIcon from "@expo/material-symbols/error.xml";
-import EventIcon from "@expo/material-symbols/event.xml";
 import ExpandIcon from "@expo/material-symbols/expand.xml";
 import FilterListIcon from "@expo/material-symbols/filter_list.xml";
 import GroupIcon from "@expo/material-symbols/group.xml";
 import GroupAddIcon from "@expo/material-symbols/group_add.xml";
 import InventoryIcon from "@expo/material-symbols/inventory.xml";
-import Inventory2Icon from "@expo/material-symbols/inventory_2.xml";
 import KeyboardArrowDownIcon from "@expo/material-symbols/keyboard_arrow_down.xml";
 import KeyboardArrowUpIcon from "@expo/material-symbols/keyboard_arrow_up.xml";
 import LabelIcon from "@expo/material-symbols/label.xml";
@@ -45,12 +39,12 @@ import PersonAddIcon from "@expo/material-symbols/person_add.xml";
 import PointOfSaleIcon from "@expo/material-symbols/point_of_sale.xml";
 import ReceiptLongIcon from "@expo/material-symbols/receipt_long.xml";
 import RemoveIcon from "@expo/material-symbols/remove.xml";
+import SaveIcon from "@expo/material-symbols/save.xml";
 import SearchIcon from "@expo/material-symbols/search.xml";
 import SecurityIcon from "@expo/material-symbols/security.xml";
 import SettingsIcon from "@expo/material-symbols/settings.xml";
 import SwitchLeftIcon from "@expo/material-symbols/switch_left.xml";
 import SyncIcon from "@expo/material-symbols/sync.xml";
-import ViewListIcon from "@expo/material-symbols/view_list.xml";
 import VisibilityIcon from "@expo/material-symbols/visibility.xml";
 import { Icon as ExpoIcon, type IconProps as ExpoIconProps } from "@expo/ui";
 
@@ -59,27 +53,16 @@ export const ICONS = {
     android: ErrorIcon,
     ios: "exclamationmark.circle.fill",
   }),
-  event: ExpoIcon.select({
-    android: EventIcon,
-    ios: "calendar",
+  save: ExpoIcon.select({
+    android: SaveIcon,
+    ios: "exclamationmark.circle.fill",
   }),
-  "add-business": ExpoIcon.select({
-    android: AddBusinessIcon,
-    ios: "storefront",
-  }),
-  apartment: ExpoIcon.select({
-    android: ApartmentIcon,
-    ios: "building.2",
-  }),
-  "account-balance-wallet": ExpoIcon.select({
-    android: AccountBalanceWalletIcon,
-    ios: "wallet.pass",
-  }),
-  badge: ExpoIcon.select({
+
+  "user-name": ExpoIcon.select({
     android: BadgeIcon,
     ios: "person.text.rectangle",
   }),
-  call: ExpoIcon.select({
+  phone: ExpoIcon.select({
     android: CallIcon,
     ios: "phone",
   }),
@@ -99,7 +82,7 @@ export const ICONS = {
     android: SearchIcon,
     ios: "magnifyingglass",
   }),
-  "location-on": ExpoIcon.select({
+  location: ExpoIcon.select({
     android: LocationOnIcon,
     ios: "mappin",
   }),
@@ -123,21 +106,17 @@ export const ICONS = {
     android: CheckIcon,
     ios: "checkmark",
   }),
-  "check-circle": ExpoIcon.select({
-    android: CheckCircleIcon,
-    ios: "checkmark.circle",
+  eye: ExpoIcon.select({
+    android: VisibilityIcon,
+    ios: "eye",
   }),
-  visibility: ExpoIcon.select({
+  "eye-off": ExpoIcon.select({
     android: VisibilityIcon,
     ios: "eye",
   }),
   edit: ExpoIcon.select({
     android: EditIcon,
     ios: "pencil",
-  }),
-  "group-add": ExpoIcon.select({
-    android: GroupAddIcon,
-    ios: "plus",
   }),
   label: ExpoIcon.select({
     android: LabelIcon,
@@ -149,6 +128,10 @@ export const ICONS = {
   }),
   "arrow-drop-down": ExpoIcon.select({
     android: ArrowDropDownIcon,
+    ios: "arrowtriangle.down.fill",
+  }),
+  "arrow-drop-up": ExpoIcon.select({
+    android: ArrowDropUpIcon,
     ios: "arrowtriangle.down.fill",
   }),
   "arrow-forward": ExpoIcon.select({
@@ -167,21 +150,9 @@ export const ICONS = {
     android: BarcodeScannerIcon,
     ios: "barcode.viewfinder",
   }),
-  "conveyor-belt": ExpoIcon.select({
-    android: ConveyorBeltIcon,
-    ios: "eraser",
-  }),
-  "do-not-disturb-on": ExpoIcon.select({
-    android: DoNotDisturbOnIcon,
-    ios: "minus.circle.fill",
-  }),
   inventory: ExpoIcon.select({
     android: InventoryIcon,
     ios: "shippingbox",
-  }),
-  "add-circle": ExpoIcon.select({
-    android: AddCircleIcon,
-    ios: "plus.circle",
   }),
   barcode: ExpoIcon.select({
     android: BarcodeIcon,
@@ -195,21 +166,9 @@ export const ICONS = {
     android: SecurityIcon,
     ios: "lock.shield",
   }),
-  "view-list": ExpoIcon.select({
-    android: ViewListIcon,
-    ios: "list.bullet",
-  }),
-  group: ExpoIcon.select({
-    android: GroupIcon,
-    ios: "person.2",
-  }),
   sync: ExpoIcon.select({
     android: SyncIcon,
     ios: "arrow.triangle.2.circlepath",
-  }),
-  inventory_2: ExpoIcon.select({
-    android: Inventory2Icon,
-    ios: "archivebox",
   }),
   logout: ExpoIcon.select({
     android: LogoutIcon,
@@ -223,7 +182,7 @@ export const ICONS = {
     android: RemoveIcon,
     ios: "minus",
   }),
-  "attach-money": ExpoIcon.select({
+  dollar: ExpoIcon.select({
     android: AttachMoneyIcon,
     ios: "dollarsign",
   }),
@@ -271,12 +230,35 @@ export const ICONS = {
     android: SettingsIcon,
     ios: "gear",
   }),
+
+  organization: ExpoIcon.select({
+    android: ApartmentIcon,
+    ios: "building.2",
+  }),
+  "add-organization": ExpoIcon.select({
+    android: DomainAddIcon,
+    ios: "building.2",
+  }),
+
+  customers: ExpoIcon.select({
+    android: GroupIcon,
+    ios: "plus",
+  }),
+  "add-customer": ExpoIcon.select({
+    android: GroupAddIcon,
+    ios: "plus",
+  }),
+
+  members: ExpoIcon.select({
+    android: GroupIcon,
+    ios: "person.2",
+  }),
 } as const;
 
-export type IconName = keyof typeof ICONS;
+export type iconName = keyof typeof ICONS;
 
 type Props = Omit<ExpoIconProps, "name"> & {
-  name: IconName;
+  name: iconName;
 };
 
 export function Icon({ name, ...rest }: Props) {

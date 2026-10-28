@@ -75,7 +75,7 @@ export function TabsDropdownMenu() {
                 </ThemedNativeText>
               </DropdownMenuItem.Text>
               <DropdownMenuItem.LeadingIcon>
-                <Icon name="group" />
+                <Icon name="members" />
               </DropdownMenuItem.LeadingIcon>
             </DropdownMenuItem>
           </DropdownMenu.Items>

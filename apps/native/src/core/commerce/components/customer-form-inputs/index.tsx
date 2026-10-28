@@ -33,7 +33,6 @@ export function NameInput({ field }: FieldProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.customer.name.label"
       placeholder="forms.customer.name.placeholder"
       iconName="person"
@@ -115,10 +114,9 @@ export function DocumentNumberInput({ field }: FieldProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.customer.document_number.label"
       placeholder="forms.customer.document_number.placeholder"
-      iconName="badge"
+      iconName="user-name"
       modifiers={[fillMaxWidth()]}
       isError={isInvalid}
       onValueChange={field.handleChange}
@@ -132,10 +130,9 @@ export function PhoneInput({ field }: FieldProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.customer.phone.label"
       placeholder="forms.customer.phone.placeholder"
-      iconName="call"
+      iconName="phone"
       modifiers={[fillMaxWidth()]}
       isError={isInvalid}
       onValueChange={field.handleChange}
@@ -152,7 +149,6 @@ export function EmailInput({ field }: FieldProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.customer.email.label"
       placeholder="forms.customer.email.placeholder"
       iconName="mail"
@@ -173,10 +169,9 @@ export function CreditLimitInput({ field }: FieldProps<number>) {
   return (
     <TextInput
       type="number"
-      value={field.state.value}
       label="forms.customer.credit_limit.label"
       placeholder="forms.customer.credit_limit.placeholder"
-      iconName="attach-money"
+      iconName="dollar"
       modifiers={[fillMaxWidth()]}
       isError={isInvalid}
       onValueChange={field.handleChange}

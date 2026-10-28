@@ -52,7 +52,7 @@ export function MemberGroupsSection({ member }: Props) {
     <View style={styles.container}>
       <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
         <TextInput
-          value={searchQuery}
+          defaultValue={searchQuery}
           onValueChange={setSearchQuery}
           modifiers={[fillMaxWidth()]}
           iconName="search"

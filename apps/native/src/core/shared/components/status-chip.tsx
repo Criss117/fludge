@@ -5,12 +5,12 @@ import { StyleSheet, View } from "react-native";
 import { SPACING } from "@/lib/sp";
 
 import { useThemeColor } from "../hooks/use-theme-color";
-import { Icon, type IconName } from "./icon";
+import { Icon, type iconName } from "./icon";
 import { ThemedText } from "./themed-text";
 
 interface Props {
   status: "active" | "inactive" | "discontinued";
-  icon?: IconName;
+  icon?: iconName;
 }
 
 const stylesConfig = {
@@ -32,7 +32,7 @@ interface ChipProps {
   label: string;
   color?: string;
   textColor?: string;
-  icon?: IconName;
+  icon?: iconName;
 }
 
 export function Chip({ label, color, textColor, icon }: ChipProps) {

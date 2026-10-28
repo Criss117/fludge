@@ -13,7 +13,7 @@ function NameInput({ field }: InputProps<string>) {
     <TextInput
       label="forms.product_presentation.name.label"
       placeholder="forms.product_presentation.name.placeholder"
-      iconName="badge"
+      iconName="user-name"
       modifiers={[fillMaxWidth()]}
       isError={isInvalid}
       onValueChange={field.handleChange}

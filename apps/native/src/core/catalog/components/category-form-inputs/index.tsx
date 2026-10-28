@@ -12,7 +12,6 @@ export function NameInput({ field }: InputProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.category.name.label"
       placeholder="forms.category.name.placeholder"
       iconName="label"
@@ -29,7 +28,6 @@ export function DescriptionInput({ field }: InputProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.category.description.label"
       placeholder="forms.category.description.placeholder"
       modifiers={[fillMaxWidth()]}

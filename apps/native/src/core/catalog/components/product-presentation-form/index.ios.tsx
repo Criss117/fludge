@@ -31,7 +31,7 @@ export function CreateProductPresentationForm(props: CreateProductPresentationFo
   return (
     <>
       <Button onPress={actions.open}>
-        <Icon name="add-circle" color={colors.primary} />
+        <Icon name="add" color={colors.primary} />
       </Button>
       <ProductPresentationForm close={actions.close} isOpen={state.isOpen} form={state.form} />
     </>

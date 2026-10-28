@@ -58,13 +58,12 @@ export function GroupsScreen() {
       <View style={styles.headerContainer}>
         <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
           <TextInput
-            value={searchQuery}
+            defaultValue={searchQuery}
             onValueChange={setSearchQuery}
             label="screens.iam.groups.search.label"
             placeholder="screens.iam.groups.search.placeholder"
             modifiers={[fillMaxWidth()]}
             iconName="search"
-            withDebounce={800}
           />
         </Host>
       </View>

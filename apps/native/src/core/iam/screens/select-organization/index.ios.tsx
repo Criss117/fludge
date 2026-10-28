@@ -96,11 +96,11 @@ export function SelectOrganizationScreen() {
                   </VStack>
 
                   <HStack>
-                    <Icon name="location-on" size={18} />
+                    <Icon name="location" size={18} />
                     <ThemedNativeText variant="base">{org.address}</ThemedNativeText>
                   </HStack>
                   <HStack>
-                    <Icon name="call" size={18} />
+                    <Icon name="phone" size={18} />
                     <ThemedNativeText variant="base">{org.phone}</ThemedNativeText>
                   </HStack>
                 </VStack>
@@ -117,7 +117,7 @@ export function SelectOrganizationScreen() {
               modifiers={[buttonStyle("borderedProminent"), tint(colors.onPrimaryContainer)]}
               action={{
                 type: "replace",
-                href: "/dashboard/organization/register",
+                href: "/organization/register",
               }}
             >
               <HStack
@@ -127,7 +127,7 @@ export function SelectOrganizationScreen() {
                   }),
                 ]}
               >
-                <Icon name="add-business" size={18} color={colors.primaryContainer} />
+                <Icon name="save" size={18} color={colors.primaryContainer} />
                 <ThemedNativeText color={colors.primaryContainer}>
                   {texts.toRegister}
                 </ThemedNativeText>

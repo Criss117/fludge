@@ -12,10 +12,9 @@ function NameInput({ field }: FieldProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.auth.name.label"
       placeholder="forms.auth.name.placeholder"
-      iconName="badge"
+      iconName="user-name"
       modifiers={[fillMaxWidth()]}
       isError={isInvalid}
       onValueChange={field.handleChange}
@@ -29,7 +28,6 @@ function PasswordInput({ field }: FieldProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       label="forms.auth.password.label"
       placeholder="forms.auth.password.placeholder"
       iconName="password"
@@ -51,7 +49,6 @@ function EmailInput({ field }: FieldProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       keyboardOptions={{
         keyboardType: "email",
       }}
@@ -71,11 +68,10 @@ function PhoneInput({ field }: FieldProps<string>) {
 
   return (
     <TextInput
-      value={field.state.value}
       keyboardOptions={{
         keyboardType: "phone",
       }}
-      iconName="call"
+      iconName="phone"
       label="forms.auth.phone.label"
       placeholder="forms.auth.phone.placeholder"
       modifiers={[fillMaxWidth()]}

@@ -40,7 +40,7 @@ function ProductList({
     ],
   });
 
-  const items = useMemo(() => data.pages.flatMap((page) => page.items), [data.pages]);
+  const items = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data?.pages]);
 
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
@@ -162,12 +162,11 @@ export function POSScreen() {
             <Box modifiers={[weight(1)]}>
               <TextInput
                 onValueChange={setSearchQuery}
-                value={searchQuery}
+                defaultValue={searchQuery}
                 modifiers={[fillMaxWidth()]}
                 iconName="search"
                 label="screens.catalog.products.search.label"
                 placeholder="screens.catalog.products.search.placeholder"
-                withDebounce={400}
               />
             </Box>
             <BarcodeReader setBarcode={setSearchQuery} />

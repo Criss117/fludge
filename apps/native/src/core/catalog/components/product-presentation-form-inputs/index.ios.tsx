@@ -12,7 +12,7 @@ function NameInput({ field }: InputProps<string>) {
       label="forms.product_presentation.name.label"
       placeholder="forms.product_presentation.name.placeholder"
       defaultValue={field.state.value}
-      iconName="badge"
+      iconName="user-name"
       isError={isInvalid}
       onValueChange={field.handleChange}
       errors={field.state.meta.errors}

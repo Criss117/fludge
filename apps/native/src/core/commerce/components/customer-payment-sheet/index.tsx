@@ -85,10 +85,9 @@ export function CustomerPaymentSheet({ customer, isOpen, onClose }: Props) {
             {(field) => (
               <TextInput
                 type="number"
-                value={field.state.value}
                 label="forms.customer_payment.amount.label"
                 placeholder="forms.customer_payment.amount.placeholder"
-                iconName="attach-money"
+                iconName="dollar"
                 modifiers={[fillMaxWidth()]}
                 isError={field.state.meta.isTouched && !field.state.meta.isValid}
                 onValueChange={field.handleChange}
