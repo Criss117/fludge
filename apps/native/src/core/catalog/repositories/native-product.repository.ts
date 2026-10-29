@@ -1,6 +1,10 @@
 import type { ProductDetail } from "@fludge/client/catalog/domain/entities";
 import type { ProductRepository } from "@fludge/client/catalog/domain/product.repository";
-import { type Filters, pickOrderBy } from "@fludge/client/shared/use-filters";
+import {
+  type Filters,
+  pickOrderBy,
+  type ProductOrderByField,
+} from "@fludge/client/shared/use-filters";
 import type { LocalProduct } from "@fludge/db/local-schemas/shared.schema";
 import { localProduct, localProductPresentation } from "@fludge/db/local-schemas/shared.schema";
 import { buildConflictUpdateColumn, jsonObject } from "@fludge/db/utils/build-queries";
@@ -39,10 +43,12 @@ export class NativeProductRepository implements ProductRepository {
           orderBy: filters.orderBy,
           fields: ["createdAt", "stock", "minStock"],
         }).map((orderBy) => {
-          const column = localProduct[orderBy.field];
+          const column = localProduct[orderBy.field as ProductOrderByField];
 
           return orderBy.direction === "asc" ? asc(column) : desc(column);
         });
+
+        const orderBy = [...orderByFilters, desc(localProduct.id)];
 
         const rows = this.db
           .select({
@@ -71,7 +77,7 @@ export class NativeProductRepository implements ProductRepository {
           .limit(cursor.limit + 1)
           .offset(cursor.limit * cursor.page)
           .groupBy(localProduct.id)
-          .orderBy(...orderByFilters)
+          .orderBy(...orderBy)
           .all();
 
         return paginate(

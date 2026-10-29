@@ -1,15 +1,17 @@
-import type { FindAllCustomersFilters } from "@fludge/client/commerce/domain/customer.repository";
 import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { useContainer } from "@fludge/client/providers/container.provider";
+import type { Filters } from "@fludge/client/shared/use-filters";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import { SearchBlob } from "@fludge/utils/search-blob";
 import { unwrapResult } from "@fludge/utils/trycatch";
 import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 
-function normalizeFilters(filters?: FindAllCustomersFilters) {
+function normalizeFilters(filters: Filters) {
   return {
-    searchQuery: filters?.searchQuery ? SearchBlob.normalize(filters.searchQuery) : undefined,
+    searchQuery: filters.searchQuery ? SearchBlob.normalize(filters.searchQuery) : undefined,
+    status: filters.status,
+    orderBy: filters.orderBy,
   };
 }
 
@@ -19,7 +21,7 @@ export const { keys: customerKeys, useInvalidateQueries: useInvalidateCustomers 
   normalizeFilters,
 });
 
-export function useFindCustomers(filters?: FindAllCustomersFilters) {
+export function useFindCustomers(filters: Filters) {
   const { commerceContainer } = useContainer();
   const {
     data: { activeOrganization },
@@ -39,6 +41,8 @@ export function useFindCustomers(filters?: FindAllCustomersFilters) {
           pageParam,
           {
             searchQuery: normalizedQuery,
+            status: filters.status,
+            orderBy: filters.orderBy,
           },
         ),
       ),

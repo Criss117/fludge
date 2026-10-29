@@ -1,26 +1,77 @@
-import { Box, Host, Row } from "@expo/ui/jetpack-compose";
+import { Box, Column, FilterChip, Host, LazyRow, Row } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, weight } from "@expo/ui/jetpack-compose/modifiers";
+import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
 import { SearchInput } from "@/core/shared/components/text-input";
+import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
-import type { CustomersHeaderProps } from "./types";
+import { useCustomersHeader } from "./use-customers-header";
 
-export function CustomersHeader({ searchQuery, onSearchChange }: CustomersHeaderProps) {
+export function CustomersHeader() {
+  const { actions, state, texts } = useCustomersHeader();
+  const colors = useThemeColor();
+  const { t } = useTranslation();
+
   return (
     <View style={styles.headerContainer}>
       <Host matchContents={{ vertical: true }} style={styles.host}>
-        <Row modifiers={[fillMaxWidth()]} verticalAlignment="center">
-          <Box modifiers={[weight(1)]}>
-            <SearchInput
-              onValueChange={onSearchChange}
-              defaultValue={searchQuery}
-              label="screens.customers.search.label"
-              placeholder="helpers.placeholder.search_customers"
-            />
-          </Box>
-        </Row>
+        <Column modifiers={[fillMaxWidth()]} verticalArrangement={{ spacedBy: SPACING.md }}>
+          <Row
+            modifiers={[fillMaxWidth()]}
+            verticalAlignment="center"
+            horizontalArrangement={{ spacedBy: SPACING.sm }}
+          >
+            <Box modifiers={[weight(1)]}>
+              <SearchInput
+                onValueChange={actions.setSearchQuery}
+                label={texts.searchBar.label}
+                placeholder={texts.searchBar.placeholder}
+                defaultValue={state.filters.searchQuery}
+              />
+            </Box>
+          </Row>
+
+          <Row
+            modifiers={[fillMaxWidth()]}
+            verticalAlignment="center"
+            horizontalArrangement={{ spacedBy: SPACING.sm }}
+          >
+            {/* <ProductsOrderBySheet /> */}
+
+            <Box modifiers={[weight(1)]}>
+              <LazyRow horizontalArrangement={{ spacedBy: SPACING.sm }} verticalAlignment="center">
+                {state.statusOptions.map((sp) => (
+                  <FilterChip
+                    key={sp.value}
+                    selected={actions.isStatusSelected(sp.value)}
+                    onClick={() => actions.setStatus(sp.value)}
+                    colors={{
+                      containerColor: colors.surfaceVariant,
+                      labelColor: colors.outline,
+                      selectedContainerColor: colors.primaryContainer,
+                      selectedLabelColor: colors.onPrimaryContainer,
+                    }}
+                  >
+                    <FilterChip.Label>
+                      <ThemedNativeText
+                        color={
+                          actions.isStatusSelected(sp.value)
+                            ? colors.onPrimaryContainer
+                            : colors.outline
+                        }
+                      >
+                        {t(sp.label)}
+                      </ThemedNativeText>
+                    </FilterChip.Label>
+                  </FilterChip>
+                ))}
+              </LazyRow>
+            </Box>
+          </Row>
+        </Column>
       </Host>
     </View>
   );

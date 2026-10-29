@@ -1,6 +1,11 @@
 import type { CustomerRepository } from "@fludge/client/commerce/domain/customer.repository";
 import type { CustomerDetail, CustomerSummary } from "@fludge/client/commerce/domain/entities";
-import type { Filters } from "@fludge/client/shared/use-filters";
+import {
+  type CustomerOrderByField,
+  type Filters,
+  pickOrderBy,
+  toColumnStatus,
+} from "@fludge/client/shared/use-filters";
 import {
   type LocalCustomer,
   localCustomer,
@@ -10,7 +15,7 @@ import { buildConflictUpdateColumn, jsonObject } from "@fludge/db/utils/build-qu
 import { type RepositoryError, toRepositoryError } from "@fludge/utils/errors/repository.error";
 import { type Cursor, paginate, type PaginatedResponse } from "@fludge/utils/pagination";
 import { type Result, tryCatch } from "@fludge/utils/trycatch";
-import { and, desc, eq, getColumns, inArray, like, sql } from "drizzle-orm";
+import { and, asc, desc, eq, getColumns, inArray, like, sql } from "drizzle-orm";
 
 import type { DatabaseService } from "@/integrations/db";
 
@@ -34,10 +39,25 @@ export class NativeCustomerRepository implements CustomerRepository {
   public async findAll(
     organizationId: string,
     cursor: Cursor,
-    filters?: Filters,
+    filters: Filters,
   ): Promise<Result<PaginatedResponse<CustomerSummary>, RepositoryError>> {
     return tryCatch(
       () => {
+        const orderByFilters = pickOrderBy({
+          orderBy: filters.orderBy,
+          fields: ["balance", "createdAt"],
+        }).map((orderBy) => {
+          const column = localCustomer[orderBy.field as CustomerOrderByField];
+          return orderBy.direction === "asc" ? asc(column) : desc(column);
+        });
+
+        const orderBy = [...orderByFilters, desc(localCustomer.id)];
+
+        const status = toColumnStatus({
+          status: filters.status,
+          omit: ["discontinued"],
+        });
+
         const rows = this.db
           .select()
           .from(localCustomer)
@@ -47,11 +67,12 @@ export class NativeCustomerRepository implements CustomerRepository {
               filters?.searchQuery
                 ? like(localCustomer.name, `%${filters.searchQuery}%`)
                 : undefined,
+              status ? eq(localCustomer.status, status) : undefined,
             ),
           )
           .limit(cursor.limit + 1)
           .offset(cursor.limit * cursor.page)
-          .orderBy(desc(localCustomer.createdAt))
+          .orderBy(...orderBy)
           .all();
 
         return paginate(rows, cursor);

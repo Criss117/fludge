@@ -20,11 +20,7 @@ export const STATUES = {
   },
 } as const;
 
-export const ORDER_BY_FIELDS = {
-  CREATED_AT: {
-    label: getI18nKey("helpers.order_by.created_at"),
-    value: "createdAt",
-  },
+export const PRODUCT_ORDER_BY_FIELDS = {
   STOCK: {
     label: getI18nKey("helpers.order_by.stock"),
     value: "stock",
@@ -33,6 +29,28 @@ export const ORDER_BY_FIELDS = {
     label: getI18nKey("helpers.order_by.min_stock"),
     value: "minStock",
   },
+} as const;
+
+export type ProductOrderByField =
+  (typeof PRODUCT_ORDER_BY_FIELDS)[keyof typeof PRODUCT_ORDER_BY_FIELDS]["value"];
+
+export const CUSTOMER_ORDER_BY_FIELDS = {
+  BALANCE: {
+    label: getI18nKey("helpers.order_by.min_stock"),
+    value: "balance",
+  },
+} as const;
+
+export type CustomerOrderByField =
+  (typeof CUSTOMER_ORDER_BY_FIELDS)[keyof typeof CUSTOMER_ORDER_BY_FIELDS]["value"];
+
+export const ORDER_BY_FIELDS = {
+  CREATED_AT: {
+    label: getI18nKey("helpers.order_by.created_at"),
+    value: "createdAt",
+  },
+  ...CUSTOMER_ORDER_BY_FIELDS,
+  ...PRODUCT_ORDER_BY_FIELDS,
 } as const;
 
 export const ORDER_BY_DIRECTIONS = ["asc", "desc", "none"] as const;
@@ -80,6 +98,29 @@ export function pickOrderBy({ fields, orderBy }: PickOrderBy): OrderByFilter[] {
   return orderBy.filter((o) => allowed.has(o.field) && o.direction !== "none");
 }
 
+export interface OmitStatus<O extends StatusFilter> {
+  status: StatusFilter;
+  omit: O[];
+}
+
+export function omitStatus<O extends StatusFilter>({
+  status,
+  omit,
+}: OmitStatus<O>): Exclude<StatusFilter, O> | undefined {
+  if ((omit as StatusFilter[]).includes(status)) return undefined;
+
+  return status as Exclude<StatusFilter, O>;
+}
+
+export function toColumnStatus<O extends StatusFilter = never>({
+  omit,
+  status,
+}: OmitStatus<O>): Exclude<StatusFilter, "all" | O> | undefined {
+  return omitStatus<"all" | O>({
+    status,
+    omit: ["all", ...omit],
+  }) as Exclude<StatusFilter, "all" | O> | undefined;
+}
 export type FiltersAction =
   | { type: "SET_SEARCH_QUERY"; payload: SearchQueryFilter }
   | { type: "SET_STATUS"; payload: StatusFilter }

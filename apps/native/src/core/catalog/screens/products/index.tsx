@@ -10,7 +10,7 @@ import { ThemedText } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
 import { SPACING } from "@/lib/sp";
 
-import { useProductsScreen } from "./use-products";
+import { useProductsScreen } from "./use-products-screen";
 
 export function ProductsScreen() {
   const { state, actions, texts } = useProductsScreen();
