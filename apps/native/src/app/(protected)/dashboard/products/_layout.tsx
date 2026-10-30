@@ -30,9 +30,7 @@ export default function ProductsLayout() {
         contentStyle: {
           backgroundColor: colors.background,
         },
-        headerStyle: {
-          backgroundColor: colors.background,
-        },
+
         headerTitleStyle: {
           color: colors.onBackground,
           fontFamily: GeistFonts.SemiBold,

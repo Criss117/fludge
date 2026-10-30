@@ -5,8 +5,8 @@ import { useTranslation } from "react-i18next";
 
 import { SPACING } from "@/lib/sp";
 
-import { useThemeColor } from "../hooks/use-theme-color";
-import { ThemedNativeText } from "./themed-text";
+import { useThemeColor } from "../../hooks/use-theme-color";
+import { ThemedNativeText } from "../themed-text";
 
 interface Props {
   title: TranslationKey;

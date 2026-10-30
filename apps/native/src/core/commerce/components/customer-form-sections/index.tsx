@@ -1,3 +1,5 @@
+import { HStack, VStack } from "@expo/ui/swift-ui";
+import { frame } from "@expo/ui/swift-ui/modifiers";
 import type {
   useCreateCustomerForm,
   useUpdateCustomerForm,
@@ -22,13 +24,23 @@ export function GeneralInformationSection({ form }: Props) {
         {(field) => <CustomerFormInputs.NameInput field={field} />}
       </form.Field>
 
-      <form.Field name="documentType">
-        {(field) => <CustomerFormInputs.DocumentTypeInput field={field} />}
-      </form.Field>
+      <HStack alignment="bottom">
+        <form.Field name="documentType">
+          {(field) => <CustomerFormInputs.DocumentTypeInput field={field} />}
+        </form.Field>
 
-      <form.Field name="documentNumber">
-        {(field) => <CustomerFormInputs.DocumentNumberInput field={field} />}
-      </form.Field>
+        <VStack
+          modifiers={[
+            frame({
+              width: Infinity,
+            }),
+          ]}
+        >
+          <form.Field name="documentNumber">
+            {(field) => <CustomerFormInputs.DocumentNumberInput field={field} />}
+          </form.Field>
+        </VStack>
+      </HStack>
     </SectionCard>
   );
 }

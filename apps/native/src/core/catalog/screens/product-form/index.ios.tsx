@@ -47,10 +47,11 @@ export function ProductFormScreen(props: ProductFormScreenProps) {
           contentContainerStyle={styles.contentContainer}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          contentInsetAdjustmentBehavior="automatic"
         >
           <View style={styles.sectionContainer}>
             <ThemedText variant="h5">{t(texts.sections.basic_information)}</ThemedText>
-            <Host matchContents={{ vertical: true }} style={styles.host}>
+            <Host matchContents={{ vertical: true }} style={styles.host} ignoreSafeArea="container">
               <VStack spacing={SPACING.md}>
                 <state.form.Field name="name">
                   {(field) => <ProductFormInputs.NameInput field={field} />}
@@ -69,7 +70,7 @@ export function ProductFormScreen(props: ProductFormScreenProps) {
 
           <View style={styles.sectionContainer}>
             <ThemedText variant="h5">{t(texts.sections.basic_information)}</ThemedText>
-            <Host matchContents={{ vertical: true }} style={styles.host}>
+            <Host matchContents={{ vertical: true }} style={styles.host} ignoreSafeArea="container">
               <VStack spacing={SPACING.md}>
                 <HStack spacing={SPACING.sm} alignment="top">
                   <state.form.Field name="stock">
@@ -92,7 +93,7 @@ export function ProductFormScreen(props: ProductFormScreenProps) {
             <View style={styles.presentationHeader}>
               <ThemedText variant="h5">{t(texts.sections.presentations.title)}</ThemedText>
 
-              <Host matchContents>
+              <Host matchContents ignoreSafeArea="container">
                 <state.form.AppField name="presentations">
                   {(field) => (
                     <field.Presentations>
@@ -130,7 +131,7 @@ export function ProductFormScreen(props: ProductFormScreenProps) {
           </View>
         </ThemedScrollView>
         <KeyboardSpacerView />
-        <Host matchContents>
+        <Host matchContents ignoreSafeArea="container">
           <state.form.AppField name="presentations">
             {(field) => (
               <field.Presentations>
@@ -154,12 +155,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: SPACING.sm,
-    paddingTop: SPACING.xl,
   },
   basicInfoContainer: {
     width: "100%",
   },
   contentContainer: {
+    paddingTop: SPACING.md,
     paddingHorizontal: SPACING.sm,
     paddingBottom: SPACING.xl,
     rowGap: SPACING["xl"],

@@ -1,14 +1,5 @@
 import { Button, Host, Spacer } from "@expo/ui/jetpack-compose";
 import { width } from "@expo/ui/jetpack-compose/modifiers";
-import type { CustomerDetail } from "@fludge/client/commerce/domain/entities";
-import { customerFormOptions } from "@fludge/client/commerce/forms/customer.form";
-import {
-  useCreateCustomerMutation,
-  useUpdateCustomerMutation,
-} from "@fludge/client/commerce/mutations/use-customer.mutations";
-import type { TranslationKey } from "@fludge/i18n/index";
-import { useForm } from "@tanstack/react-form";
-import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
 
@@ -22,90 +13,16 @@ import { KeyboardSpacerView } from "@/core/shared/components/keyboard-spacer-vie
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { useMutationToast } from "@/integrations/toast";
 import { SPACING } from "@/lib/sp";
 
-type Action = { type: "create" } | { type: "update"; customer: CustomerDetail };
+import type { CustomerFormScreenProps } from "./types";
+import { useCustomerFormScreen } from "./use-customer-form";
 
-interface Props {
-  action: Action;
-}
-
-function getDefaultValues(action: Action) {
-  if (action.type === "create") return undefined;
-
-  return {
-    name: action.customer.name,
-    phone: action.customer.phone,
-    email: action.customer.email ?? "",
-    creditLimit: action.customer.creditLimit,
-    documentType: action.customer.documentType,
-    documentNumber: action.customer.documentNumber,
-  };
-}
-
-export function CustomerFormScreen({ action }: Props) {
+export function CustomerFormScreen(props: CustomerFormScreenProps) {
   const { t } = useTranslation();
   const colors = useThemeColor();
-  const router = useRouter();
-  const mutationToast = useMutationToast();
-  const createMutation = useCreateCustomerMutation();
-  const updateMutation = useUpdateCustomerMutation();
 
-  const mode = action.type;
-
-  const form = useForm(
-    customerFormOptions(
-      {
-        onSubmit: ({ value }) => {
-          if (mode === "create") {
-            mutationToast.showPending("mutations.customers.create.is_pending");
-
-            createMutation.mutate(value, {
-              onSuccess: () => {
-                router.back();
-                mutationToast.showSuccess("mutations.customers.create.success.title");
-              },
-              onError: (error) => {
-                mutationToast.showError(
-                  "mutations.customers.create.error",
-                  error.message as TranslationKey,
-                );
-              },
-            });
-
-            return;
-          }
-
-          mutationToast.showPending("mutations.customers.update.is_pending");
-
-          updateMutation.mutate(
-            {
-              id: action.customer.id,
-              ...value,
-            },
-            {
-              onSuccess: () => {
-                router.back();
-                mutationToast.showSuccess("mutations.customers.update.success.title");
-              },
-              onError: (error) => {
-                mutationToast.showError(
-                  "mutations.customers.update.error",
-                  error.message as TranslationKey,
-                );
-              },
-            },
-          );
-        },
-      },
-      getDefaultValues(action),
-    ),
-  );
-
-  const submitKey =
-    mode === "create" ? "forms.customer.create.submit" : "forms.customer.update.submit";
-  const iconName = mode === "create" ? "person-add" : "edit";
+  const { actions, state, texts } = useCustomerFormScreen(props);
 
   return (
     <ThemedView style={styles.container}>
@@ -116,13 +33,13 @@ export function CustomerFormScreen({ action }: Props) {
         showsVerticalScrollIndicator={false}
       >
         <Host matchContents={{ vertical: true }} style={styles.sectionsContainer}>
-          <GeneralInformationSection form={form} />
+          <GeneralInformationSection form={state.form} />
         </Host>
         <Host matchContents={{ vertical: true }} style={styles.sectionsContainer}>
-          <ContactSection form={form} />
+          <ContactSection form={state.form} />
         </Host>
         <Host matchContents={{ vertical: true }} style={styles.sectionsContainer}>
-          <CreditSection form={form} />
+          <CreditSection form={state.form} />
         </Host>
       </ScrollView>
       <View style={styles.footer}>
@@ -131,11 +48,11 @@ export function CustomerFormScreen({ action }: Props) {
             colors={{
               containerColor: colors.primary,
             }}
-            onClick={form.handleSubmit}
+            onClick={actions.submit}
           >
-            <Icon name={iconName} size={SPACING.lg} color={colors.onPrimary} />
+            <Icon name={texts.iconName} size={SPACING.lg} color={colors.onPrimary} />
             <Spacer modifiers={[width(SPACING.sm)]} />
-            <ThemedNativeText color={colors.onPrimary}>{t(submitKey)}</ThemedNativeText>
+            <ThemedNativeText color={colors.onPrimary}>{t(texts.submit)}</ThemedNativeText>
           </Button>
         </Host>
         <KeyboardSpacerView />
