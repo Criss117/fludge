@@ -44,9 +44,18 @@ export default function DashboardLayout() {
       />
 
       <Stack.Screen
-        name="members"
+        name="categories"
         options={{
-          title: t("screens.iam.members.label"),
+          title: t("screens.catalog.categories.label"),
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="customers"
+        options={{
+          title: t("screens.customers.label"),
+          headerShown: false,
         }}
       />
 
@@ -54,6 +63,13 @@ export default function DashboardLayout() {
         name="groups"
         options={{
           title: t("screens.iam.groups.label"),
+        }}
+      />
+
+      <Stack.Screen
+        name="members"
+        options={{
+          title: t("screens.iam.members.label"),
         }}
       />
 
@@ -66,17 +82,8 @@ export default function DashboardLayout() {
       />
 
       <Stack.Screen
-        name="categories"
-        options={{
-          title: t("screens.catalog.categories.label"),
-          headerShown: false,
-        }}
-      />
-
-      <Stack.Screen
         name="settings"
         options={{
-          headerShown: true,
           headerTitle: t("screens.settings.label"),
         }}
       />
