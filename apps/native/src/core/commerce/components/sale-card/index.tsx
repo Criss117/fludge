@@ -1,11 +1,12 @@
-import { BottomSheet, Column, Host, Row, Spacer } from "@expo/ui";
+import { BottomSheet, Host, RNHostView } from "@expo/ui";
 import { formatCurrency } from "@fludge/utils/format-currency";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
+import { SaleReceipt } from "@/core/commerce/components/sale-receipt";
 import { Icon } from "@/core/shared/components/icon";
-import { ThemedNativeText, ThemedText } from "@/core/shared/components/themed-text";
+import { ThemedText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
@@ -113,18 +114,13 @@ export function SaleCard({ sale }: SaleCardProps) {
           showDragIndicator
           containerColor={colors.onSecondary}
         >
-          <Column spacing={SPACING.md} style={{ padding: SPACING.md }}>
-            <ThemedNativeText variant="h5">{t("screens.sales.list.see_products")}</ThemedNativeText>
-            {sale.items.map((item) => (
-              <Row key={item.id} spacing={SPACING.sm} alignment="center">
-                <ThemedNativeText variant="base">{item.name}</ThemedNativeText>
-                <Spacer />
-                <ThemedNativeText variant="muted">
-                  {item.quantity} x {formatCurrency(item.unitPrice)}
-                </ThemedNativeText>
-              </Row>
-            ))}
-          </Column>
+          <RNHostView>
+            <View style={styles.receiptContainer}>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <SaleReceipt sale={sale} />
+              </ScrollView>
+            </View>
+          </RNHostView>
         </BottomSheet>
       </Host>
     </View>
@@ -178,5 +174,8 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.sm,
     paddingHorizontal: SPACING.md,
     borderRadius: SPACING.xl,
+  },
+  receiptContainer: {
+    padding: SPACING.md,
   },
 });

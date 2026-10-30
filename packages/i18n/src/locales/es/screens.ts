@@ -124,6 +124,13 @@ export const screens = {
       items_count: "{{count}} productos",
       cancellation_reason: "Motivo de Anulación",
       walk_in: "Consumidor Final (Mostrador)",
+      ticket: {
+        title: "Ticket de Venta",
+        customer: "Cliente",
+        payment: "Pago",
+        status: "Estado",
+        total: "Total",
+      },
       due_info: "Vence en {{days}} días ({{date}})",
       available_credit: "Cupo disponible restante: {{amount}}",
       reissued: "Reemitida en ticket {{ticket}}",
