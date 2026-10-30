@@ -2,6 +2,7 @@ import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { Stack } from "expo-router";
 
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { SyncDatabase } from "@/integrations/db/sync";
 
 export default function ProtectedLayout() {
   const colors = useThemeColor();
@@ -12,26 +13,28 @@ export default function ProtectedLayout() {
   const hasActiveOrganization = activeOrganization !== null;
 
   return (
-    <Stack
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: colors.background,
-        },
-        contentStyle: {
-          backgroundColor: colors.background,
-        },
-        headerShadowVisible: false,
-        headerShown: false,
-      }}
-    >
-      <Stack.Protected guard={!hasActiveOrganization} redirectTo="/dashboard">
-        <Stack.Screen name="organization" />
-      </Stack.Protected>
+    <SyncDatabase>
+      <Stack
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: colors.background,
+          },
+          contentStyle: {
+            backgroundColor: colors.background,
+          },
+          headerShadowVisible: false,
+          headerShown: false,
+        }}
+      >
+        <Stack.Protected guard={!hasActiveOrganization} redirectTo="/dashboard">
+          <Stack.Screen name="organization" />
+        </Stack.Protected>
 
-      <Stack.Protected guard={hasActiveOrganization} redirectTo="/organization">
-        <Stack.Screen name="dashboard" />
-        <Stack.Screen name="pos" />
-      </Stack.Protected>
-    </Stack>
+        <Stack.Protected guard={hasActiveOrganization} redirectTo="/organization">
+          <Stack.Screen name="dashboard" />
+          <Stack.Screen name="pos" />
+        </Stack.Protected>
+      </Stack>
+    </SyncDatabase>
   );
 }

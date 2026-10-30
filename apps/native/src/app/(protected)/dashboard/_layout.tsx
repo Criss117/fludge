@@ -3,13 +3,12 @@ import { Stack } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
-import { SyncDatabase } from "@/integrations/db/sync";
 import { GeistFonts } from "@/integrations/fonts";
 
 const isIos = Platform.OS === "ios";
 const isAndroid = Platform.OS === "android";
 
-function StackScreen() {
+export default function DashboardLayout() {
   const { t } = useTranslation();
   const colors = useThemeColor();
 
@@ -82,13 +81,5 @@ function StackScreen() {
         }}
       />
     </Stack>
-  );
-}
-
-export default function DashboardLayout() {
-  return (
-    <SyncDatabase>
-      <StackScreen />
-    </SyncDatabase>
   );
 }

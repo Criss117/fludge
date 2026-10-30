@@ -35,7 +35,7 @@ function ProductsOrderBySheet() {
         fitToContents
         anchor={
           <Button
-            onPress={open}
+            onPress={actions.open}
             modifiers={[buttonStyle("borderedProminent"), tint(colors.surfaceVariant)]}
           >
             <ThemedNativeText>{t("helpers.order_by.label")}</ThemedNativeText>
