@@ -3,7 +3,6 @@ import { FlashList } from "@shopify/flash-list";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { SaleCard } from "@/core/commerce/components/sale-card";
 import { BaseLoadingIndicator } from "@/core/shared/components/base-loading-indicator";
@@ -13,7 +12,6 @@ import { ThemedView } from "@/core/shared/components/themed-view";
 import { SPACING } from "@/lib/sp";
 
 export function SalesScreen() {
-  const { top } = useSafeAreaInsets();
   const { t } = useTranslation();
   const { data, hasNextPage, isFetchingNextPage, fetchNextPage, isFetching } = useFindSales();
 
@@ -24,7 +22,7 @@ export function SalesScreen() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <ThemedView style={[styles.container, { paddingTop: top }]}>
+    <ThemedView style={styles.container}>
       <FlashList
         data={items}
         contentContainerStyle={styles.listContentContainer}

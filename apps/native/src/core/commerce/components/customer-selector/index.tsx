@@ -111,12 +111,13 @@ function CustomerSelectorSheet({
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useFindCustomers({
     searchQuery: query,
+    status: "all",
   });
 
   const items = useMemo(() => {
-    const customers = data.pages.flatMap((page) => page.items);
+    const customers = data?.pages.flatMap((page) => page.items) ?? [];
     return hasNextPage
-      ? customers.concat({ ...onReachedItem, id: `${END_PREFIX}-${customers.length}` })
+      ? customers?.concat({ ...onReachedItem, id: `${END_PREFIX}-${customers.length}` })
       : customers;
   }, [hasNextPage, data]);
 

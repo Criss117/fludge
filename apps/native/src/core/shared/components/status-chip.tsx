@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { SPACING } from "@/lib/sp";
 
 import { useThemeColor } from "../hooks/use-theme-color";
-import { Icon, type iconName } from "./icon";
+import { Icon, type IconName } from "./icon";
 import { ThemedText } from "./themed-text";
 
 interface Props {

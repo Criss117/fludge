@@ -21,9 +21,9 @@ import { useSyncIam } from "@fludge/client/sync/use-sync-iam";
 import type { UseSuspenseQueryResult } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Icon, type iconName } from "@/core/shared/components/icon";
+import type { IconName } from "@/core/shared/components/icon";
+import { Icon } from "@/core/shared/components/icon";
 import { SectionCard } from "@/core/shared/components/section-card";
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
@@ -153,17 +153,8 @@ function SessionSection() {
 }
 
 export function SettingsScreen() {
-  const { top } = useSafeAreaInsets();
-
   return (
-    <ThemedView
-      style={[
-        styles.container,
-        {
-          paddingTop: top,
-        },
-      ]}
-    >
+    <ThemedView style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
