@@ -3,6 +3,7 @@ import { formatCurrency } from "@fludge/utils/format-currency";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform, StyleSheet, Text, View } from "react-native";
+import { BarcodeCreatorView, BarcodeFormat } from "react-native-barcode-creator";
 
 import { SPACING } from "@/lib/sp";
 
@@ -18,26 +19,6 @@ const ZIGZAG_TOOTH_HEIGHT = 6;
 
 export interface SaleReceiptProps {
   sale: SaleSummary;
-}
-
-function hashString(input: string): number {
-  let hash = 0;
-
-  for (let i = 0; i < input.length; i++) {
-    hash = (hash * 31 + input.charCodeAt(i)) | 0;
-  }
-
-  return Math.abs(hash);
-}
-
-function createRng(seed: number) {
-  let state = seed || 1;
-
-  return () => {
-    state = (state * 1103515245 + 12345) & 0x7fffffff;
-
-    return state / 0x7fffffff;
-  };
 }
 
 function DashedSeparator() {
@@ -61,19 +42,18 @@ function ZigzagEdge({ color }: { color: string }) {
   );
 }
 
-function FakeBarcode({ value }: { value: string }) {
-  const rng = createRng(hashString(value));
-  const bars = Array.from({ length: 40 }, () => ({
-    width: 1 + Math.floor(rng() * 3),
-    gap: 1 + Math.floor(rng() * 2),
-  }));
-
+function SaleBarcode({ value }: { value: string }) {
   return (
-    <View style={styles.barcodeRow}>
-      {bars.map((bar, index) => (
-        <View key={index} style={[styles.barcodeBar, { width: bar.width, marginRight: bar.gap }]} />
-      ))}
-    </View>
+    <BarcodeCreatorView
+      value={value}
+      background={PAPER}
+      foregroundColor={"#000000"}
+      format={BarcodeFormat.CODE128}
+      style={{
+        width: "100%",
+        height: SPACING.xl,
+      }}
+    />
   );
 }
 
@@ -171,7 +151,7 @@ export function SaleReceipt({ sale }: SaleReceiptProps) {
           </>
         )}
 
-        <FakeBarcode value={sale.saleNumber} />
+        <SaleBarcode value={sale.saleNumber} />
         <Text style={styles.barcodeNumber}>#{sale.saleNumber}</Text>
       </View>
 

@@ -46,6 +46,7 @@
     "react-dom": "19.3.0",
     "react-i18next": "catalog:",
     "react-native": "0.88.0",
+    "react-native-barcode-creator": "^0.2.1",
     "react-native-gesture-handler": "~3.3.0",
     "react-native-keyboard-controller": "1.22.7",
     "react-native-pager-view": "9.0.7",
