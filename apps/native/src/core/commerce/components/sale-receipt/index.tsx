@@ -1,9 +1,9 @@
+import Barcode from "@aramir/react-native-barcode";
 import type { SaleSummary } from "@fludge/client/commerce/domain/entities";
 import { formatCurrency } from "@fludge/utils/format-currency";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform, StyleSheet, Text, View } from "react-native";
-import { BarcodeCreatorView, BarcodeFormat } from "react-native-barcode-creator";
 
 import { SPACING } from "@/lib/sp";
 
@@ -44,14 +44,14 @@ function ZigzagEdge({ color }: { color: string }) {
 
 function SaleBarcode({ value }: { value: string }) {
   return (
-    <BarcodeCreatorView
+    <Barcode
+      format="CODE128"
       value={value}
-      background={PAPER}
-      foregroundColor={"#000000"}
-      format={BarcodeFormat.CODE128}
+      maxWidth={300}
+      height={SPACING.xl}
       style={{
-        width: "100%",
-        height: SPACING.xl,
+        paddingHorizontal: SPACING.xl,
+        backgroundColor: PAPER,
       }}
     />
   );
