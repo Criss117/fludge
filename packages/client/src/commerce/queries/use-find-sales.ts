@@ -3,7 +3,7 @@ import { useContainer } from "@fludge/client/providers/container.provider";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import { unwrapResult } from "@fludge/utils/trycatch";
-import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 import type { FindAllSalesFilters } from "../domain/sale.repository";
 
@@ -27,7 +27,7 @@ export function useFindSales(filters?: FindAllSalesFilters) {
 
   if (!activeOrganization) throw new Error("Active organization not found");
 
-  return useSuspenseInfiniteQuery({
+  return useInfiniteQuery({
     queryKey: salesKeys.filteredList(activeOrganization.id, filters),
     initialPageParam: DEFAULT_CURSOR,
     queryFn: async ({ pageParam }) =>

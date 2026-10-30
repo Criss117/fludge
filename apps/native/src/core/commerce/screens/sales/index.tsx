@@ -1,6 +1,6 @@
 import { useFindSales } from "@fludge/client/commerce/queries/use-find-sales";
 import { FlashList } from "@shopify/flash-list";
-import { Suspense, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -12,58 +12,37 @@ import { ThemedText } from "@/core/shared/components/themed-text";
 import { ThemedView } from "@/core/shared/components/themed-view";
 import { SPACING } from "@/lib/sp";
 
-interface ListFooterProps {
-  hasNextPage: boolean;
-}
-function ListFooterComponent({ hasNextPage }: ListFooterProps) {
+export function SalesScreen() {
+  const { top } = useSafeAreaInsets();
   const { t } = useTranslation();
+  const { data, hasNextPage, isFetchingNextPage, fetchNextPage, isFetching } = useFindSales();
 
-  if (!hasNextPage)
-    return (
-      <View style={styles.listEmptyContainer}>
-        <ThemedText>{t("screens.catalog.products.no_more")}</ThemedText>
-      </View>
-    );
-
-  return null;
-}
-
-const ItemSeparator = () => <View style={{ height: SPACING.sm }} />;
-
-function SaleList() {
-  const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useFindSales();
-
-  const items = useMemo(() => data.pages.flatMap((page) => page.items), [data.pages]);
+  const items = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data?.pages]);
 
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <FlashList
-      data={items}
-      contentContainerStyle={styles.listContentContainer}
-      keyExtractor={(i) => i.id}
-      renderItem={({ item }) => <SaleCard sale={item} />}
-      showsVerticalScrollIndicator={false}
-      ListFooterComponent={() => <ListFooterComponent hasNextPage={hasNextPage} />}
-      ItemSeparatorComponent={ItemSeparator}
-      onEndReachedThreshold={0.3}
-      onEndReached={handleEndReached}
-    />
-  );
-}
-
-export function SalesScreen() {
-  const { top } = useSafeAreaInsets();
-
-  return (
     <ThemedView style={[styles.container, { paddingTop: top }]}>
-      <View style={styles.listContainer}>
-        <Suspense fallback={<BaseLoadingIndicator />}>
-          <SaleList />
-        </Suspense>
-      </View>
+      <FlashList
+        data={items}
+        contentContainerStyle={styles.listContentContainer}
+        keyExtractor={(i) => i.id}
+        renderItem={({ item }) => <SaleCard sale={item} />}
+        showsVerticalScrollIndicator={false}
+        ListFooterComponent={() => (
+          <View style={styles.footer}>
+            {!hasNextPage && <ThemedText>{t("screens.sales.list.no_more")}</ThemedText>}
+
+            {(isFetching || isFetchingNextPage) && <BaseLoadingIndicator />}
+          </View>
+        )}
+        ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+        onEndReachedThreshold={0.3}
+        onEndReached={handleEndReached}
+        contentInsetAdjustmentBehavior="automatic"
+      />
 
       <LinkFabButton
         action={{
@@ -88,12 +67,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContentContainer: {
-    paddingHorizontal: SPACING.sm,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING["3xl"],
+    paddingHorizontal: SPACING.md,
   },
   listEmptyContainer: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  itemSeparator: {
+    height: SPACING.md,
+  },
+  host: {
+    width: "100%",
+  },
+  headerContainer: {
+    flexDirection: "row",
+    columnGap: SPACING.sm,
+    alignItems: "center",
+    paddingBottom: SPACING.md,
+  },
+  footer: {
+    paddingVertical: SPACING.md,
+    paddingBottom: SPACING.xl,
     justifyContent: "center",
     alignItems: "center",
   },
