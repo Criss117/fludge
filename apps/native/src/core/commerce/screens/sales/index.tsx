@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import { SaleCard } from "@/core/commerce/components/sale-card";
 import { SalesHeader } from "@/core/commerce/sections/sales-header";
 import { LinkFabButton } from "@/core/shared/components/link-fab-button";
-import { TabsListContainer } from "@/core/shared/components/tabs-list-container";
+import { ListContainer } from "@/core/shared/components/list-container";
 import { ThemedView } from "@/core/shared/components/themed-view";
 
 import { useSalesScreen } from "./use-sales-screen";
@@ -13,7 +13,7 @@ export function SalesScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <TabsListContainer
+      <ListContainer
         isFetching={state.isFetching}
         hasNextPage={state.hasNextPage}
         isFetchingNextPage={state.isFetchingNextPage}

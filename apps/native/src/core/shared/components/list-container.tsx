@@ -20,7 +20,7 @@ interface Props<T extends { id: string }> {
   onEndReached: () => void;
 }
 
-export function TabsListContainer<T extends { id: string }>({
+export function ListContainer<T extends { id: string }>({
   items,
   onEndReached,
   ListHeaderComponent,
