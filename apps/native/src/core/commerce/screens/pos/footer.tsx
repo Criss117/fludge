@@ -12,8 +12,6 @@ import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
-import { TicketDetailSheet } from "../../components/ticket-detail-sheet";
-
 export function POSScreenFooter() {
   const router = useRouter();
   const { t } = useTranslation();
@@ -52,7 +50,6 @@ export function POSScreenFooter() {
       </Host>
 
       <KeyboardSpacerView />
-      <TicketDetailSheet isOpen={true} onClose={() => {}} />
     </View>
   );
 }

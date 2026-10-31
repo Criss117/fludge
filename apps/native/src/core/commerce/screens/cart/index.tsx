@@ -93,6 +93,7 @@ export function CartScreen() {
           </PressableOpacity>
 
           <PressableOpacity
+            onPress={() => router.push("/pos/charge")}
             style={[
               styles.button,
               {

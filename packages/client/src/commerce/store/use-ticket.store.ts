@@ -1,4 +1,3 @@
-import type { TranslationKey } from "@fludge/i18n/index";
 import { unwrapResult } from "@fludge/utils/trycatch";
 import { createStore } from "zustand";
 import { persist, type PersistStorage, type StorageValue } from "zustand/middleware";
@@ -10,33 +9,6 @@ import type {
   Ticket,
   TicketProduct,
 } from "../domain/local-ticket.repository";
-
-/* -------------------------------------------------------------------------- */
-/*                                   Errores                                  */
-/* -------------------------------------------------------------------------- */
-
-export type TicketErrorCode =
-  | "insufficient_stock"
-  | "product_not_found"
-  | "presentation_not_found"
-  | "invalid_quantity"
-  | "invalid_price";
-
-/**
- * El mensaje conserva la clave i18n original para no romper la UI existente,
- * pero ahora también puedes discriminar por `error.code`.
- */
-export class TicketError extends Error {
-  readonly code: TicketErrorCode;
-
-  constructor(code: TicketErrorCode) {
-    const key = `mutations.tickets.errors.${code}` satisfies TranslationKey;
-
-    super(key);
-    this.name = "TicketError";
-    this.code = code;
-  }
-}
 
 /* -------------------------------------------------------------------------- */
 /*                                    Tipos                                   */
@@ -51,14 +23,14 @@ export type TicketState = {
   /** Devuelve `true` si el nombre se aplicó. */
   renameTicket: (ticketId: string, name: string) => boolean;
   clearTicket: (ticketId: string) => void;
-  /** Lanza `TicketError` si no hay stock suficiente. */
-  addTicketProduct: (product: AddTicketProduct) => void;
-  removeTicketProduct: (ticketProductId: string) => void;
-  removeTicketProductPresentations: (presentationIds: string[]) => void;
-  /** Lanza `TicketError` si los datos son inválidos o no hay stock. */
-  updateTicketProductPresentation: (v: {
-    ticketProductId: string;
-    ticketProductPresentationId: string;
+  /** No hace nada si los datos son inválidos o no hay stock suficiente. */
+  addProduct: (product: AddTicketProduct) => void;
+  removeProduct: (ticketProductId: string) => void;
+  removePresentations: (presentationIds: string[]) => void;
+  /** No hace nada si los datos son inválidos o no hay stock suficiente. */
+  updatePresentation: (v: {
+    ticketItemId: string;
+    ticketPresentationId: string;
     quantity: number;
     priceSale: number;
   }) => void;
@@ -75,10 +47,11 @@ function generateId(): string {
 }
 
 function nextTicketName(tickets: Ticket[]): string {
-  const names = new Set(tickets.map((ticket) => ticket.name));
+  // Comparación sin distinguir mayúsculas, igual que `renameTicket`.
+  const names = new Set(tickets.map((ticket) => ticket.name.toLowerCase()));
 
   let number = 1;
-  while (names.has(`Ticket-${number}`)) number++;
+  while (names.has(`ticket-${number}`)) number++;
 
   return `Ticket-${number}`;
 }
@@ -101,6 +74,34 @@ function normalizeTicket(ticket: Ticket): Ticket {
   return { ...rest, items: rest.items ?? [] };
 }
 
+/* ------------------------------- Validación -------------------------------- */
+
+function isValidQuantity(quantity: number): boolean {
+  return Number.isFinite(quantity) && quantity > 0;
+}
+
+function isValidPrice(price: number): boolean {
+  return Number.isFinite(price) && price >= 0;
+}
+
+function hasValidPresentations(
+  presentations: ReadonlyArray<{
+    quantity: number;
+    priceSale: number;
+    conversionFactor: number;
+  }>,
+): boolean {
+  return (
+    presentations.length > 0 &&
+    presentations.every(
+      (presentation) =>
+        isValidQuantity(presentation.quantity) &&
+        isValidPrice(presentation.priceSale) &&
+        isValidQuantity(presentation.conversionFactor),
+    )
+  );
+}
+
 /* ------------------------------- Stock/total ------------------------------- */
 
 function getTicketProductStockQuantity(product: TicketProduct): number {
@@ -110,12 +111,8 @@ function getTicketProductStockQuantity(product: TicketProduct): number {
   );
 }
 
-function assertStockAvailable(product: TicketProduct): void {
-  if (product.allowNegativeStock) return;
-
-  if (getTicketProductStockQuantity(product) > product.stock) {
-    throw new TicketError("insufficient_stock");
-  }
+function hasStockAvailable(product: TicketProduct): boolean {
+  return product.allowNegativeStock || getTicketProductStockQuantity(product) <= product.stock;
 }
 
 export function computeTicketTotal(ticket: Ticket | undefined): number {
@@ -163,7 +160,10 @@ function mergeTicketProduct(
   return { ...current, presentations };
 }
 
-function buildNextItems(activeTicket: Ticket, product: AddTicketProduct): TicketProduct[] {
+/** Devuelve los nuevos items o `null` si la operación no es válida. */
+function buildNextItems(activeTicket: Ticket, product: AddTicketProduct): TicketProduct[] | null {
+  if (!hasValidPresentations(product.presentations)) return null;
+
   if (product.type === "adHoc") {
     const newProduct: TicketProduct = {
       ...product,
@@ -196,15 +196,12 @@ function buildNextItems(activeTicket: Ticket, product: AddTicketProduct): Ticket
       })),
     };
 
-    // Antes no se validaba el stock en la primera adición.
-    assertStockAvailable(newProduct);
-
-    return [...activeTicket.items, newProduct];
+    return hasStockAvailable(newProduct) ? [...activeTicket.items, newProduct] : null;
   }
 
   const mergedProduct = mergeTicketProduct(existingProduct, product);
 
-  assertStockAvailable(mergedProduct);
+  if (!hasStockAvailable(mergedProduct)) return null;
 
   return activeTicket.items.map((item) => (item.id === existingProduct.id ? mergedProduct : item));
 }
@@ -236,10 +233,18 @@ export function createTicketStore(organizationId: string, repository: LocalTicke
       }
     },
     setItem: async (_name: string, value: StorageValue<Ticket[]>) => {
-      unwrapResult(await repository.save(organizationId, value.state));
+      try {
+        unwrapResult(await repository.save(organizationId, value.state));
+      } catch (error) {
+        console.error("No se pudieron guardar los tickets locales", error);
+      }
     },
     removeItem: async () => {
-      unwrapResult(await repository.clear(organizationId));
+      try {
+        unwrapResult(await repository.clear(organizationId));
+      } catch (error) {
+        console.error("No se pudieron borrar los tickets locales", error);
+      }
     },
   };
 
@@ -351,17 +356,15 @@ export function createTicketStore(organizationId: string, repository: LocalTicke
             });
           },
 
-          addTicketProduct: (product) => {
-            const active = selectActiveTicket(get());
-            if (!active) return;
+          addProduct: (product) => {
+            updateActiveTicket((ticket) => {
+              const items = buildNextItems(ticket, product);
 
-            // Valida y calcula FUERA de `set` para que el reducer sea puro.
-            const nextItems = buildNextItems(active, product);
-
-            updateActiveTicket((ticket) => ({ ...ticket, items: nextItems }));
+              return items ? { ...ticket, items } : null;
+            });
           },
 
-          removeTicketProduct: (ticketProductId) => {
+          removeProduct: (ticketProductId) => {
             updateActiveTicket((ticket) => {
               if (!ticket.items.some((item) => item.id === ticketProductId)) {
                 return null;
@@ -374,7 +377,7 @@ export function createTicketStore(organizationId: string, repository: LocalTicke
             });
           },
 
-          removeTicketProductPresentations: (presentationIds) => {
+          removePresentations: (presentationIds) => {
             if (presentationIds.length === 0) return;
 
             const idsToRemove = new Set(presentationIds);
@@ -392,50 +395,44 @@ export function createTicketStore(organizationId: string, repository: LocalTicke
             }));
           },
 
-          updateTicketProductPresentation: ({
-            ticketProductId,
-            ticketProductPresentationId,
-            quantity,
-            priceSale,
-          }) => {
-            if (!Number.isFinite(quantity) || quantity <= 0) {
-              throw new TicketError("invalid_quantity");
-            }
+          updatePresentation: ({ ticketItemId, ticketPresentationId, quantity, priceSale }) => {
+            if (!isValidQuantity(quantity) || !isValidPrice(priceSale)) return;
 
-            if (!Number.isFinite(priceSale) || priceSale < 0) {
-              throw new TicketError("invalid_price");
-            }
+            updateActiveTicket((ticket) => {
+              const product = ticket.items.find((item) => item.id === ticketItemId);
+              if (!product) return null;
 
-            const active = selectActiveTicket(get());
-            if (!active) return;
+              if (
+                !product.presentations.some(
+                  (presentation) => presentation.id === ticketPresentationId,
+                )
+              ) {
+                return null;
+              }
 
-            const product = active.items.find((item) => item.id === ticketProductId);
+              const nextProduct: TicketProduct = {
+                ...product,
+                presentations: product.presentations.map((presentation) =>
+                  presentation.id === ticketPresentationId
+                    ? { ...presentation, quantity, priceSale }
+                    : presentation,
+                ),
+              };
 
-            if (!product) throw new TicketError("product_not_found");
+              // Si el stock cambió y el ticket ya excedía, permite al menos
+              // reducir o mantener la cantidad (solo bloquea si aumenta).
+              const increases =
+                getTicketProductStockQuantity(nextProduct) > getTicketProductStockQuantity(product);
 
-            if (
-              !product.presentations.some(
-                (presentation) => presentation.id === ticketProductPresentationId,
-              )
-            ) {
-              throw new TicketError("presentation_not_found");
-            }
+              if (increases && !hasStockAvailable(nextProduct)) return null;
 
-            const nextProduct: TicketProduct = {
-              ...product,
-              presentations: product.presentations.map((presentation) =>
-                presentation.id === ticketProductPresentationId
-                  ? { ...presentation, quantity, priceSale }
-                  : presentation,
-              ),
-            };
-
-            assertStockAvailable(nextProduct);
-
-            updateActiveTicket((ticket) => ({
-              ...ticket,
-              items: ticket.items.map((item) => (item.id === nextProduct.id ? nextProduct : item)),
-            }));
+              return {
+                ...ticket,
+                items: ticket.items.map((item) =>
+                  item.id === nextProduct.id ? nextProduct : item,
+                ),
+              };
+            });
           },
         };
       },

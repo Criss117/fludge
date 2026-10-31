@@ -1,5 +1,6 @@
 import { Host } from "@expo/ui";
 import type { TicketProduct } from "@fludge/client/commerce/domain/local-ticket.repository";
+import { useTicketStore } from "@fludge/client/providers/ticket-store.provider";
 import { formatCurrency } from "@fludge/utils/format-currency";
 import { PressableOpacity } from "pressto";
 import { StyleSheet, View } from "react-native";
@@ -11,10 +12,39 @@ import { SPACING } from "@/lib/sp";
 
 function TicketDetailItem({
   presentation,
+  itemId,
 }: {
   presentation: TicketProduct["presentations"][number];
+  itemId: string;
 }) {
+  const updatePresentation = useTicketStore((s) => s.updatePresentation);
+  const removePresentations = useTicketStore((s) => s.removePresentations);
+
   const colors = useThemeColor();
+
+  const handleUpdateQuantity = (quantity: number) => {
+    updatePresentation({
+      priceSale: presentation.priceSale,
+      quantity,
+      ticketItemId: itemId,
+      ticketPresentationId: presentation.id,
+    });
+  };
+
+  const increaseQuantity = () => {
+    handleUpdateQuantity(presentation.quantity + 1);
+  };
+
+  const decreaseQuantity = () => {
+    const nextQuantity = presentation.quantity - 1;
+
+    if (nextQuantity <= 0) {
+      removePresentations([presentation.id]);
+      return;
+    }
+
+    handleUpdateQuantity(nextQuantity);
+  };
 
   return (
     <View key={presentation.id} style={itemStyles.container}>
@@ -47,6 +77,7 @@ function TicketDetailItem({
                 borderColor: colors.primary,
               },
             ]}
+            onPress={decreaseQuantity}
           >
             <Host matchContents>
               <Icon name="remove" size={18} />
@@ -64,6 +95,7 @@ function TicketDetailItem({
                 borderColor: colors.primary,
               },
             ]}
+            onPress={increaseQuantity}
           >
             <Host matchContents>
               <Icon name="add" size={18} />
@@ -112,7 +144,7 @@ export function TicketDetail({ item }: { item: TicketProduct }) {
 
       <View style={styles.presentationList}>
         {item.presentations.map((p) => (
-          <TicketDetailItem presentation={p} key={p.id} />
+          <TicketDetailItem presentation={p} key={p.id} itemId={item.id} />
         ))}
       </View>
 

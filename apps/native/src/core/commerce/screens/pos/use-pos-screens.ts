@@ -7,7 +7,7 @@ import { useTicketStore } from "@fludge/client/providers/ticket-store.provider";
 import { useCallback, useMemo, useState } from "react";
 
 function useAddProductToTicket() {
-  const addTicketProduct = useTicketStore((s) => s.addTicketProduct);
+  const addTicketProduct = useTicketStore((s) => s.addProduct);
 
   return (product: ProductSummary, presentations: ProductSummary["presentations"]) => {
     const ticketProduct: AddCatalogTicketProduct = {
