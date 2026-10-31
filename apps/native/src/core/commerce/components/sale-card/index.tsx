@@ -115,11 +115,12 @@ export function SaleCard({ sale }: SaleCardProps) {
           containerColor={colors.onSecondary}
         >
           <RNHostView>
-            <View style={styles.receiptContainer}>
-              <ScrollView showsVerticalScrollIndicator={false}>
-                <SaleReceipt sale={sale} />
-              </ScrollView>
-            </View>
+            <ScrollView
+              contentContainerStyle={styles.receiptContainer}
+              showsVerticalScrollIndicator={false}
+            >
+              <SaleReceipt sale={sale} />
+            </ScrollView>
           </RNHostView>
         </BottomSheet>
       </Host>

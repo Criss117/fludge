@@ -20,6 +20,25 @@ export const STATUES = {
   },
 } as const;
 
+export const SALE_STATUSES = {
+  OPEN: {
+    label: getI18nKey("screens.sales.status.open"),
+    value: "open",
+  },
+  PARTIAL: {
+    label: getI18nKey("screens.sales.status.partial"),
+    value: "partial",
+  },
+  COMPLETED: {
+    label: getI18nKey("screens.sales.status.completed"),
+    value: "completed",
+  },
+  CANCELLED: {
+    label: getI18nKey("screens.sales.status.cancelled"),
+    value: "cancelled",
+  },
+} as const;
+
 export const PRODUCT_ORDER_BY_FIELDS = {
   STOCK: {
     label: getI18nKey("helpers.order_by.stock"),
@@ -63,7 +82,8 @@ export function nextOrderByDirection(direction: OrderByDirection) {
   );
 }
 
-export type StatusFilter = (typeof STATUES)[keyof typeof STATUES]["value"];
+export type SaleStatusFilter = (typeof SALE_STATUSES)[keyof typeof SALE_STATUSES]["value"];
+export type StatusFilter = (typeof STATUES)[keyof typeof STATUES]["value"] | SaleStatusFilter;
 export type OrderByField = (typeof ORDER_BY_FIELDS)[keyof typeof ORDER_BY_FIELDS]["value"];
 export type OrderByDirection = "asc" | "desc" | "none";
 export type SearchQueryFilter = string;
@@ -120,6 +140,23 @@ export function toColumnStatus<O extends StatusFilter = never>({
     status,
     omit: ["all", ...omit],
   }) as Exclude<StatusFilter, "all" | O> | undefined;
+}
+
+export interface PickStatus<S extends StatusFilter> {
+  status: StatusFilter;
+  allowed: readonly S[];
+}
+
+/**
+ * Narrows the shared filter status to the values a column supports.
+ * Returns undefined when the active status belongs to another module
+ * (or is "all"), so the repository skips the status filter.
+ */
+export function pickStatus<S extends StatusFilter>({
+  status,
+  allowed,
+}: PickStatus<S>): S | undefined {
+  return (allowed as readonly StatusFilter[]).includes(status) ? (status as S) : undefined;
 }
 export type FiltersAction =
   | { type: "SET_SEARCH_QUERY"; payload: SearchQueryFilter }

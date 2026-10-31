@@ -1,3 +1,4 @@
+import type { Filters } from "@fludge/client/shared/use-filters";
 import type { LocalSale } from "@fludge/db/local-schemas/shared.schema";
 import type { RepositoryError } from "@fludge/utils/errors/repository.error";
 import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
@@ -13,7 +14,9 @@ export interface SaleRepository {
   findAll(
     organizationId: string,
     cursor: Cursor,
-    filters?: FindAllSalesFilters,
+    filters?: Filters & {
+      customerId: string | null;
+    },
   ): Promise<Result<PaginatedResponse<SaleSummary>, RepositoryError>>;
 
   save(sale: LocalSale | LocalSale[]): Promise<Result<void, RepositoryError>>;

@@ -1,8 +1,6 @@
 import type { SaleSummary } from "@fludge/client/commerce/domain/entities";
-import type {
-  FindAllSalesFilters,
-  SaleRepository,
-} from "@fludge/client/commerce/domain/sale.repository";
+import type { SaleRepository } from "@fludge/client/commerce/domain/sale.repository";
+import { type Filters, pickStatus } from "@fludge/client/shared/use-filters";
 import type { LocalSale } from "@fludge/db/local-schemas/shared.schema";
 import {
   localCustomer,
@@ -11,10 +9,11 @@ import {
   localSalePayment,
 } from "@fludge/db/local-schemas/shared.schema";
 import { buildConflictUpdateColumn, jsonObject } from "@fludge/db/utils/build-queries";
+import { saleStatusEnum } from "@fludge/utils/enums/db-enums";
 import { type RepositoryError, toRepositoryError } from "@fludge/utils/errors/repository.error";
 import { type Cursor, paginate, type PaginatedResponse } from "@fludge/utils/pagination";
 import { type Result, tryCatch } from "@fludge/utils/trycatch";
-import { and, desc, eq, getColumns, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, getColumns, inArray, like, or, sql } from "drizzle-orm";
 
 import type { DatabaseService } from "@/integrations/db";
 
@@ -39,10 +38,14 @@ export class NativeSaleRepository implements SaleRepository {
   public async findAll(
     organizationId: string,
     cursor: Cursor,
-    filters?: FindAllSalesFilters,
+    filters: Filters & {
+      customerId: string | null;
+    },
   ): Promise<Result<PaginatedResponse<SaleSummary>, RepositoryError>> {
     return tryCatch(
       () => {
+        const status = pickStatus({ status: filters.status, allowed: saleStatusEnum });
+
         const rows = this.db
           .select({
             ...getColumns(localSale),
@@ -64,8 +67,15 @@ export class NativeSaleRepository implements SaleRepository {
           .leftJoin(localCustomer, eq(localCustomer.id, localSale.customerId))
           .where(
             and(
+              filters.customerId !== null
+                ? eq(localSale.customerId, filters.customerId)
+                : undefined,
               eq(localSale.organizationId, organizationId),
-              filters?.customerId ? eq(localSale.customerId, filters.customerId) : undefined,
+              or(
+                like(localSale.saleNumber, `%${filters.searchQuery}%`),
+                like(localCustomer.name, `%${filters.searchQuery}%`),
+              ),
+              status ? eq(localSale.status, status) : undefined,
             ),
           )
           .groupBy(localSale.id)

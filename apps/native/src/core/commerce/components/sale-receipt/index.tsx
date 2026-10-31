@@ -6,11 +6,12 @@ import { useTranslation } from "react-i18next";
 import { Platform, StyleSheet, Text, View } from "react-native";
 
 import { SPACING } from "@/lib/sp";
+import { APP_COLORS } from "@/lib/theme";
 
 // A thermal receipt is a physical object: it keeps its paper look in dark mode.
-const PAPER = "#FBF5E9";
-const INK = "#1C1B17";
-const INK_FADED = "#6E6759";
+const PAPER = APP_COLORS.dark.primary;
+const INK = APP_COLORS.light.primary;
+const INK_FADED = APP_COLORS.light.outline;
 
 const MONO_FONT = Platform.select({ ios: "Menlo", default: "monospace" });
 

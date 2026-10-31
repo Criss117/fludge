@@ -4,7 +4,7 @@ import {
   type CustomerOrderByField,
   type Filters,
   pickOrderBy,
-  toColumnStatus,
+  pickStatus,
 } from "@fludge/client/shared/use-filters";
 import {
   type LocalCustomer,
@@ -12,6 +12,7 @@ import {
   localCustomerPayment,
 } from "@fludge/db/local-schemas/shared.schema";
 import { buildConflictUpdateColumn, jsonObject } from "@fludge/db/utils/build-queries";
+import { statusEnum } from "@fludge/utils/enums/db-enums";
 import { type RepositoryError, toRepositoryError } from "@fludge/utils/errors/repository.error";
 import { type Cursor, paginate, type PaginatedResponse } from "@fludge/utils/pagination";
 import { type Result, tryCatch } from "@fludge/utils/trycatch";
@@ -53,10 +54,7 @@ export class NativeCustomerRepository implements CustomerRepository {
 
         const orderBy = [...orderByFilters, desc(localCustomer.id)];
 
-        const status = toColumnStatus({
-          status: filters.status,
-          omit: ["discontinued"],
-        });
+        const status = pickStatus({ status: filters.status, allowed: statusEnum });
 
         const rows = this.db
           .select()

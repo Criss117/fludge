@@ -113,6 +113,10 @@ export const screens = {
   },
   sales: {
     label: "Ventas",
+    search: {
+      label: "Buscar ventas",
+      placeholder: "Ej: 0001, Juan Perez",
+    },
     list: {
       empty: "No hay ventas disponibles",
       no_more: "No hay más ventas disponibles",

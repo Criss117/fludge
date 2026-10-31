@@ -3,11 +3,13 @@ import type { ProductRepository } from "@fludge/client/catalog/domain/product.re
 import {
   type Filters,
   pickOrderBy,
+  pickStatus,
   type ProductOrderByField,
 } from "@fludge/client/shared/use-filters";
 import type { LocalProduct } from "@fludge/db/local-schemas/shared.schema";
 import { localProduct, localProductPresentation } from "@fludge/db/local-schemas/shared.schema";
 import { buildConflictUpdateColumn, jsonObject } from "@fludge/db/utils/build-queries";
+import { productStatusEnum } from "@fludge/utils/enums/db-enums";
 import { type RepositoryError, toRepositoryError } from "@fludge/utils/errors/repository.error";
 import { type Cursor, paginate, type PaginatedResponse } from "@fludge/utils/pagination";
 import { type Result, tryCatch } from "@fludge/utils/trycatch";
@@ -50,6 +52,8 @@ export class NativeProductRepository implements ProductRepository {
 
         const orderBy = [...orderByFilters, desc(localProduct.id)];
 
+        const status = pickStatus({ status: filters.status, allowed: productStatusEnum });
+
         const rows = this.db
           .select({
             ...getColumns(localProduct),
@@ -71,7 +75,7 @@ export class NativeProductRepository implements ProductRepository {
                 like(localProduct.name, `%${filters.searchQuery}%`),
                 like(localProduct.searchBlob, `%${filters.searchQuery}%`),
               ),
-              filters.status !== "all" ? eq(localProduct.status, filters.status) : undefined,
+              status ? eq(localProduct.status, status) : undefined,
             ),
           )
           .limit(cursor.limit + 1)
