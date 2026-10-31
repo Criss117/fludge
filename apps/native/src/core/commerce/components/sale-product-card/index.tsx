@@ -1,5 +1,6 @@
 import type { ProductDetail } from "@fludge/client/catalog/domain/entities";
 import { formatCurrency } from "@fludge/utils/format-currency";
+import * as Haptics from "expo-haptics";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, View, type ViewStyle } from "react-native";
@@ -40,7 +41,11 @@ export function SaleProductCard({ product, onPress, style }: Props) {
     [product.presentations],
   );
 
-  const handlePress = useCallback(() => onPress?.(product), [onPress, product]);
+  const handlePress = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    onPress?.(product);
+  }, [onPress, product]);
 
   const themedStyles = useMemo(
     () =>

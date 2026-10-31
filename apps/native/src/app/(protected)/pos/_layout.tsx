@@ -20,9 +20,6 @@ function Screen() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: {
-          backgroundColor: colors.background,
-        },
         headerTitleStyle: {
           color: colors.onPrimaryContainer,
           fontFamily: GeistFonts.Bold,
@@ -31,7 +28,8 @@ function Screen() {
         contentStyle: {
           backgroundColor: colors.background,
         },
-        animation: "fade",
+        animation: "slide_from_right",
+        headerBackButtonDisplayMode: "minimal",
       }}
     >
       <Stack.Screen
@@ -40,10 +38,23 @@ function Screen() {
           title: t("screens.pos.label"),
         }}
       />
+
       <Stack.Screen
         name="charge"
         options={{
           title: t("screens.charge.title"),
+        }}
+      />
+
+      <Stack.Screen
+        name="cart"
+        options={{
+          title: t("screens.pos.ticket_summary.title"),
+          presentation: "formSheet",
+          headerShown: false,
+          headerStyle: {
+            backgroundColor: colors.background,
+          },
         }}
       />
     </Stack>

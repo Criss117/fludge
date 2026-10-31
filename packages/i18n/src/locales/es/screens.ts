@@ -202,7 +202,7 @@ export const screens = {
   },
   pos: {
     label: "Nueva venta",
-    see_cart: "Ver carrito / Cobrar",
+    see_cart: "Ver carrito",
     current_sale: "Venta actual",
     ticket_summary: {
       title: "Resumen de la Venta",
@@ -210,6 +210,10 @@ export const screens = {
       total: "Total a Cobrar",
       clear: "Limpiar",
       charge: "Cobrar",
+    },
+    product_picker: {
+      title: "Selecciona las Presentaciones",
+      submit: "Agregar al Ticket",
     },
   },
   charge: {
@@ -267,5 +271,8 @@ export const screens = {
       pay: "Abonar",
       deselect: "Quitar cliente",
     },
+  },
+  cart: {
+    title: "Listado",
   },
 };

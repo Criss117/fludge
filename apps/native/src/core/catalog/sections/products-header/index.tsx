@@ -20,6 +20,7 @@ import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
+import type { ProductsHeaderProps } from "./types";
 import { useProductsHeader, useProductsOrderBySheet } from "./use-products-header";
 
 function ProductsOrderBySheet() {
@@ -85,7 +86,7 @@ function ProductsOrderBySheet() {
   );
 }
 
-export function ProductsHeader() {
+export function ProductsHeader({ variant }: ProductsHeaderProps) {
   const { actions, state, texts } = useProductsHeader();
   const colors = useThemeColor();
   const { t } = useTranslation();
@@ -110,43 +111,48 @@ export function ProductsHeader() {
             </Box>
           </Row>
 
-          <Row
-            modifiers={[fillMaxWidth()]}
-            verticalAlignment="center"
-            horizontalArrangement={{ spacedBy: SPACING.sm }}
-          >
-            <ProductsOrderBySheet />
+          {variant === "catalog" && (
+            <Row
+              modifiers={[fillMaxWidth()]}
+              verticalAlignment="center"
+              horizontalArrangement={{ spacedBy: SPACING.sm }}
+            >
+              <ProductsOrderBySheet />
 
-            <Box modifiers={[weight(1)]}>
-              <LazyRow horizontalArrangement={{ spacedBy: SPACING.sm }} verticalAlignment="center">
-                {state.statusOptions.map((sp) => (
-                  <FilterChip
-                    key={sp.value}
-                    selected={actions.isStatusSelected(sp.value)}
-                    onClick={() => actions.setStatus(sp.value)}
-                    colors={{
-                      containerColor: colors.surfaceVariant,
-                      labelColor: colors.outline,
-                      selectedContainerColor: colors.primaryContainer,
-                      selectedLabelColor: colors.onPrimaryContainer,
-                    }}
-                  >
-                    <FilterChip.Label>
-                      <ThemedNativeText
-                        color={
-                          actions.isStatusSelected(sp.value)
-                            ? colors.onPrimaryContainer
-                            : colors.outline
-                        }
-                      >
-                        {t(sp.label)}
-                      </ThemedNativeText>
-                    </FilterChip.Label>
-                  </FilterChip>
-                ))}
-              </LazyRow>
-            </Box>
-          </Row>
+              <Box modifiers={[weight(1)]}>
+                <LazyRow
+                  horizontalArrangement={{ spacedBy: SPACING.sm }}
+                  verticalAlignment="center"
+                >
+                  {state.statusOptions.map((sp) => (
+                    <FilterChip
+                      key={sp.value}
+                      selected={actions.isStatusSelected(sp.value)}
+                      onClick={() => actions.setStatus(sp.value)}
+                      colors={{
+                        containerColor: colors.surfaceVariant,
+                        labelColor: colors.outline,
+                        selectedContainerColor: colors.primaryContainer,
+                        selectedLabelColor: colors.onPrimaryContainer,
+                      }}
+                    >
+                      <FilterChip.Label>
+                        <ThemedNativeText
+                          color={
+                            actions.isStatusSelected(sp.value)
+                              ? colors.onPrimaryContainer
+                              : colors.outline
+                          }
+                        >
+                          {t(sp.label)}
+                        </ThemedNativeText>
+                      </FilterChip.Label>
+                    </FilterChip>
+                  ))}
+                </LazyRow>
+              </Box>
+            </Row>
+          )}
         </Column>
       </Host>
     </View>

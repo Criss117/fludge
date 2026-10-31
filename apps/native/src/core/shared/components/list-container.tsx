@@ -18,6 +18,7 @@ interface Props<T extends { id: string }> {
   ListHeaderComponent?: () => React.ReactNode;
   renderItem: ListRenderItem<T>;
   onEndReached: () => void;
+  numColumns?: number;
 }
 
 export function ListContainer<T extends { id: string }>({
@@ -29,11 +30,13 @@ export function ListContainer<T extends { id: string }>({
   isFetching,
   isFetchingNextPage,
   noMoreText,
+  numColumns,
 }: Props<T>) {
   const { t } = useTranslation();
 
   return (
     <FlashList
+      numColumns={numColumns}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.listContentContainer}
       showsVerticalScrollIndicator={false}
@@ -64,6 +67,7 @@ const styles = StyleSheet.create({
   },
   listContentContainer: {
     paddingHorizontal: SPACING.md,
+    paddingTop: SPACING.md,
   },
   itemSeparator: {
     height: SPACING.md,

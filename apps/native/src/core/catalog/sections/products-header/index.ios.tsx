@@ -20,6 +20,7 @@ import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
+import type { ProductsHeaderProps } from "./types";
 import { useProductsHeader, useProductsOrderBySheet } from "./use-products-header";
 
 function ProductsOrderBySheet() {
@@ -79,7 +80,7 @@ function ProductsOrderBySheet() {
   );
 }
 
-export function ProductsHeader() {
+export function ProductsHeader({ variant }: ProductsHeaderProps) {
   const { actions, state, texts } = useProductsHeader();
   const colors = useThemeColor();
   const { t } = useTranslation();
@@ -103,32 +104,34 @@ export function ProductsHeader() {
               defaultValue={state.filters.searchQuery}
             />
           </HStack>
-          <HStack>
-            <ProductsOrderBySheet />
-            <Divider />
-            <ScrollView axes="horizontal" showsIndicators={false}>
-              <HStack>
-                {state.statusOptions.map((sp) => (
-                  <Button
-                    key={sp.value}
-                    onPress={() => actions.setStatus(sp.value)}
-                    modifiers={[
-                      buttonStyle(
-                        actions.isStatusSelected(sp.value) ? "borderedProminent" : "bordered",
-                      ),
-                      tint(colors.surfaceVariant),
-                    ]}
-                  >
-                    <ThemedNativeText
-                      color={actions.isStatusSelected(sp.value) ? colors.primary : colors.outline}
+          {variant === "catalog" && (
+            <HStack>
+              <ProductsOrderBySheet />
+              <Divider />
+              <ScrollView axes="horizontal" showsIndicators={false}>
+                <HStack>
+                  {state.statusOptions.map((sp) => (
+                    <Button
+                      key={sp.value}
+                      onPress={() => actions.setStatus(sp.value)}
+                      modifiers={[
+                        buttonStyle(
+                          actions.isStatusSelected(sp.value) ? "borderedProminent" : "bordered",
+                        ),
+                        tint(colors.surfaceVariant),
+                      ]}
                     >
-                      {t(sp.label)}
-                    </ThemedNativeText>
-                  </Button>
-                ))}
-              </HStack>
-            </ScrollView>
-          </HStack>
+                      <ThemedNativeText
+                        color={actions.isStatusSelected(sp.value) ? colors.primary : colors.outline}
+                      >
+                        {t(sp.label)}
+                      </ThemedNativeText>
+                    </Button>
+                  ))}
+                </HStack>
+              </ScrollView>
+            </HStack>
+          )}
         </VStack>
       </Host>
     </View>

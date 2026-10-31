@@ -2,12 +2,12 @@ import {
   Button,
   Checkbox,
   Column,
+  HorizontalDivider,
   Host,
   LazyColumn,
   ModalBottomSheet,
   type ModalBottomSheetRef,
   Row,
-  Spacer,
 } from "@expo/ui/jetpack-compose";
 import {
   clickable,
@@ -17,58 +17,38 @@ import {
   paddingAll,
   weight,
 } from "@expo/ui/jetpack-compose/modifiers";
-import type { ProductDetail } from "@fludge/client/catalog/domain/entities";
 import { formatCurrency } from "@fludge/utils/format-currency";
-import { useRef, useState } from "react";
+import { Fragment, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { Dimensions } from "react-native";
 
 import { ThemedNativeText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
-interface Props {
-  product: ProductDetail | null;
-  isOpen: boolean;
-  onClose: () => void;
-  onAdd: (product: ProductDetail, presentations: ProductDetail["presentations"]) => void;
-}
+import type { ProductPickerProps } from "./types";
+import { useProductPicker } from "./use-product-picker";
 
-export function ProductPickerSheet({ product, isOpen, onClose, onAdd }: Props) {
+const windowHeight = Dimensions.get("window").height / 2;
+
+export function ProductPicker(props: ProductPickerProps) {
   const sheetRef = useRef<ModalBottomSheetRef>(null);
   const colors = useThemeColor();
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const { t } = useTranslation();
+  const { actions, state, texts } = useProductPicker(props);
 
-  if (!isOpen || !product) return null;
+  if (!state.isPresented) return null;
 
-  const togglePresentation = (id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  };
-
-  const selectedPresentations = product.presentations.filter((presentation) =>
-    selectedIds.has(presentation.id),
-  );
-
-  const handleAdd = async () => {
-    if (selectedPresentations.length === 0) return;
-
-    onAdd(product, selectedPresentations);
+  const onSubmit = async () => {
+    actions.submit();
     await sheetRef.current?.hide();
-    setSelectedIds(new Set());
-    onClose();
   };
 
   return (
     <Host matchContents>
       <ModalBottomSheet
         ref={sheetRef}
-        onDismissRequest={onClose}
+        onDismissRequest={actions.close}
         skipPartiallyExpanded
         containerColor={colors.background}
       >
@@ -77,44 +57,47 @@ export function ProductPickerSheet({ product, isOpen, onClose, onAdd }: Props) {
           modifiers={[fillMaxWidth(), paddingAll(SPACING.md)]}
         >
           <Column verticalArrangement={{ spacedBy: SPACING.xs }}>
-            <ThemedNativeText variant="h5">{product.name}</ThemedNativeText>
-            <ThemedNativeText variant="muted">Seleccioná las presentaciones</ThemedNativeText>
+            <ThemedNativeText variant="h5">{props.selectedProduct?.name}</ThemedNativeText>
+            <ThemedNativeText variant="muted">{t(texts.title)}</ThemedNativeText>
           </Column>
 
           <LazyColumn
             verticalArrangement={{ spacedBy: SPACING.xs }}
-            modifiers={[fillMaxWidth(), height(320)]}
+            modifiers={[fillMaxWidth(), height(windowHeight)]}
           >
-            {product.presentations.map((presentation) => {
-              const isSelected = selectedIds.has(presentation.id);
+            {props.selectedProduct?.presentations.map((presentation, index) => {
+              const isSelected = actions.isPresentationSelected(presentation.id);
+              const isLast = index + 1 === props.selectedProduct?.description.length;
+
+              const onPress = () => actions.togglePresentation(presentation.id);
 
               return (
-                <Row
-                  key={presentation.id}
-                  modifiers={[
-                    clickable(() => togglePresentation(presentation.id)),
-                    fillMaxWidth(),
-                    padding(SPACING.sm, SPACING.md, SPACING.sm, SPACING.md),
-                  ]}
-                  verticalAlignment="center"
-                >
-                  <Column verticalArrangement={{ spacedBy: SPACING.xs }}>
-                    <ThemedNativeText>{presentation.name}</ThemedNativeText>
-                    <ThemedNativeText variant="muted">
-                      {presentation.conversionFactor === 1
-                        ? "1 unidad"
-                        : `${presentation.conversionFactor} unidades`}
-                    </ThemedNativeText>
-                  </Column>
-                  <Spacer modifiers={[weight(1)]} />
-                  <ThemedNativeText>{formatCurrency(presentation.priceSale)}</ThemedNativeText>
-                  <Checkbox
-                    value={isSelected}
-                    colors={{
-                      checkedColor: colors.primary,
-                    }}
-                  />
-                </Row>
+                <Fragment key={presentation.id}>
+                  <Row
+                    modifiers={[
+                      clickable(onPress),
+                      fillMaxWidth(),
+                      padding(SPACING.sm, SPACING.md, SPACING.sm, SPACING.md),
+                    ]}
+                    verticalAlignment="center"
+                  >
+                    <Column verticalArrangement={{ spacedBy: SPACING.xs }} modifiers={[weight(1)]}>
+                      <ThemedNativeText>{presentation.name}</ThemedNativeText>
+                      <ThemedNativeText variant="muted">
+                        x{presentation.conversionFactor}
+                      </ThemedNativeText>
+                      <ThemedNativeText>{formatCurrency(presentation.priceSale)}</ThemedNativeText>
+                    </Column>
+                    <Checkbox
+                      value={isSelected}
+                      onCheckedChange={onPress}
+                      colors={{
+                        checkedColor: colors.primary,
+                      }}
+                    />
+                  </Row>
+                  {!isLast && <HorizontalDivider />}
+                </Fragment>
               );
             })}
           </LazyColumn>
@@ -124,7 +107,7 @@ export function ProductPickerSheet({ product, isOpen, onClose, onAdd }: Props) {
             colors={{
               containerColor: colors.primary,
             }}
-            onClick={handleAdd}
+            onClick={onSubmit}
           >
             <ThemedNativeText color={colors.onPrimary}>Agregar al ticket</ThemedNativeText>
           </Button>

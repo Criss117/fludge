@@ -8,6 +8,7 @@ import { useMemo, useState } from "react";
 import type { IconName } from "@/core/shared/components/icon";
 
 const statusOptions = [STATUES.ALL, STATUES.ACTIVE, STATUES.INACTIVE, STATUES.DISCONTINUED];
+
 const orderByItems = [ORDER_BY_FIELDS.CREATED_AT, ORDER_BY_FIELDS.STOCK, ORDER_BY_FIELDS.MIN_STOCK];
 
 export function useProductsHeader() {

@@ -21,7 +21,7 @@ export function ProductsScreen() {
         onEndReached={actions.handleEndReached}
         items={state.items}
         renderItem={({ item }) => <ProductCard product={item} />}
-        ListHeaderComponent={ProductsHeader}
+        ListHeaderComponent={() => <ProductsHeader variant="catalog" />}
       />
       <LinkFabButton
         action={{

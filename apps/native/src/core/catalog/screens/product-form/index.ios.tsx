@@ -154,14 +154,13 @@ export function ProductFormScreen(props: ProductFormScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: SPACING.sm,
   },
   basicInfoContainer: {
     width: "100%",
   },
   contentContainer: {
+    paddingHorizontal: SPACING.md,
     paddingTop: SPACING.md,
-    paddingHorizontal: SPACING.sm,
     paddingBottom: SPACING.xl,
     rowGap: SPACING["xl"],
   },

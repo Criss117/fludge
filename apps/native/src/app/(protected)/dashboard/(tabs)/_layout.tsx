@@ -65,7 +65,8 @@ function StackHeaderContent({ selectedTab }: { selectedTab: (typeof tabs)[number
       <Stack.Screen
         options={{
           title: t(selectedTab.label),
-          headerRight: isAndroid ? () => <TabsDropdownMenu /> : undefined,
+          headerRight:
+            isAndroid && selectedTab.name === "catalog" ? () => <TabsDropdownMenu /> : undefined,
         }}
       />
       {isIos && (
