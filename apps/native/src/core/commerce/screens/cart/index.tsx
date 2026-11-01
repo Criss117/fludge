@@ -7,13 +7,12 @@ import { PressableOpacity } from "pressto";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
+import { TicketDetail } from "@/core/commerce/components/ticket-detail";
 import { Icon } from "@/core/shared/components/icon";
 import { ThemedText } from "@/core/shared/components/themed-text";
 import { ThemedScrollView, ThemedView } from "@/core/shared/components/themed-view";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
-
-import { TicketDetail } from "./ticket-detail";
 
 export function CartScreen() {
   const colors = useThemeColor();
@@ -34,6 +33,13 @@ export function CartScreen() {
   const back = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     router.back();
+  };
+
+  const charge = () => {
+    if (!activeTicket || activeTicket.items.length === 0) return;
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    router.push("/pos/charge");
   };
 
   return (
@@ -93,13 +99,14 @@ export function CartScreen() {
           </PressableOpacity>
 
           <PressableOpacity
-            onPress={() => router.push("/pos/charge")}
+            onPress={charge}
             style={[
               styles.button,
               {
                 backgroundColor: colors.primary,
               },
             ]}
+            disabled={activeTicket?.items.length === 0}
           >
             <ThemedText
               style={{

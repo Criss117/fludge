@@ -204,6 +204,8 @@ export const screens = {
     label: "Nueva venta",
     see_cart: "Ver carrito",
     current_sale: "Venta actual",
+    apply_new_price: "Aplicar nuevo precio",
+    keep_original_price: "Mantener precio original",
     ticket_summary: {
       title: "Resumen de la Venta",
       items_count: "{{count}} productos",

@@ -2,25 +2,22 @@ import { Host } from "@expo/ui";
 import type { TicketProduct } from "@fludge/client/commerce/domain/local-ticket.repository";
 import { useTicketStore } from "@fludge/client/providers/ticket-store.provider";
 import { formatCurrency } from "@fludge/utils/format-currency";
-import { PressableOpacity } from "pressto";
 import { StyleSheet, View } from "react-native";
 
-import { Icon } from "@/core/shared/components/icon";
 import { ThemedText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
-function TicketDetailItem({
-  presentation,
-  itemId,
-}: {
-  presentation: TicketProduct["presentations"][number];
-  itemId: string;
-}) {
+import { DeleteButton, EditPresentation, PresentationQuantity } from "./actions";
+import type { TicketDetailItemProps } from "./types";
+
+function TicketDetailItem({ presentation, itemId }: TicketDetailItemProps) {
   const updatePresentation = useTicketStore((s) => s.updatePresentation);
   const removePresentations = useTicketStore((s) => s.removePresentations);
 
-  const colors = useThemeColor();
+  const handleRemovePresentation = () => {
+    removePresentations([presentation.id]);
+  };
 
   const handleUpdateQuantity = (quantity: number) => {
     updatePresentation({
@@ -39,7 +36,7 @@ function TicketDetailItem({
     const nextQuantity = presentation.quantity - 1;
 
     if (nextQuantity <= 0) {
-      removePresentations([presentation.id]);
+      handleRemovePresentation();
       return;
     }
 
@@ -47,60 +44,30 @@ function TicketDetailItem({
   };
 
   return (
-    <View key={presentation.id} style={itemStyles.container}>
+    <View style={itemStyles.container}>
       <View style={itemStyles.header}>
-        <ThemedText numberOfLines={1}>{presentation.name}</ThemedText>
-        <ThemedText variant="muted">{presentation.priceSale} c/u</ThemedText>
-        <ThemedText>
-          x{presentation.quantity} {formatCurrency(presentation.priceSale * presentation.quantity)}
-        </ThemedText>
+        <View>
+          <ThemedText numberOfLines={1}>{presentation.name}</ThemedText>
+          <EditPresentation presentation={presentation} itemId={itemId} />
+        </View>
+        <Host matchContents>
+          <DeleteButton onPress={handleRemovePresentation} />
+        </Host>
       </View>
-      <View style={itemStyles.actions}>
-        <PressableOpacity
-          style={[
-            itemStyles.button,
-            {
-              borderColor: "transparent",
-            },
-          ]}
-        >
-          <Host matchContents>
-            <Icon name="delete" size={18} color={colors.error} />
-          </Host>
-        </PressableOpacity>
 
-        <View style={itemStyles.quantity}>
-          <PressableOpacity
-            style={[
-              itemStyles.button,
-              {
-                borderColor: colors.primary,
-              },
-            ]}
-            onPress={decreaseQuantity}
-          >
-            <Host matchContents>
-              <Icon name="remove" size={18} />
-            </Host>
-          </PressableOpacity>
-
-          <View style={itemStyles.stockLabel}>
-            <ThemedText variant="h5">{presentation.quantity}</ThemedText>
-          </View>
-
-          <PressableOpacity
-            style={[
-              itemStyles.button,
-              {
-                borderColor: colors.primary,
-              },
-            ]}
-            onPress={increaseQuantity}
-          >
-            <Host matchContents>
-              <Icon name="add" size={18} />
-            </Host>
-          </PressableOpacity>
+      <View style={itemStyles.footer}>
+        <Host matchContents>
+          <PresentationQuantity
+            decrease={decreaseQuantity}
+            increase={increaseQuantity}
+            quantity={presentation.quantity}
+          />
+        </Host>
+        <View>
+          <ThemedText variant="h6">
+            <ThemedText variant="muted">total </ThemedText>
+            {formatCurrency(presentation.priceSale * presentation.quantity)}
+          </ThemedText>
         </View>
       </View>
     </View>
@@ -109,13 +76,21 @@ function TicketDetailItem({
 
 const itemStyles = StyleSheet.create({
   container: {
-    flexDirection: "row",
     marginLeft: SPACING.sm,
+    rowGap: SPACING.md,
   },
   header: {
     flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "stretch",
   },
-  actions: {},
+  footer: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    rowGap: SPACING.sm,
+  },
   button: {
     height: SPACING["2xl"],
     width: SPACING["2xl"],
