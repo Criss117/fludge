@@ -1,5 +1,4 @@
 import Barcode from "@aramir/react-native-barcode";
-import type { SaleSummary } from "@fludge/client/commerce/domain/entities";
 import { formatCurrency } from "@fludge/utils/format-currency";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,6 +6,8 @@ import { Platform, StyleSheet, Text, View } from "react-native";
 
 import { SPACING } from "@/lib/sp";
 import { APP_COLORS } from "@/lib/theme";
+
+import type { SaleReceiptProps } from "./types";
 
 // A thermal receipt is a physical object: it keeps its paper look in dark mode.
 const PAPER = APP_COLORS.dark.primary;
@@ -17,10 +18,6 @@ const MONO_FONT = Platform.select({ ios: "Menlo", default: "monospace" });
 
 const ZIGZAG_TOOTH_WIDTH = 10;
 const ZIGZAG_TOOTH_HEIGHT = 6;
-
-export interface SaleReceiptProps {
-  sale: SaleSummary;
-}
 
 function DashedSeparator() {
   return (
@@ -58,7 +55,7 @@ function SaleBarcode({ value }: { value: string }) {
   );
 }
 
-export function SaleReceipt({ sale }: SaleReceiptProps) {
+export function SaleReceipt({ receipt }: SaleReceiptProps) {
   const { t } = useTranslation();
 
   const statusLabels: Record<string, string> = {
@@ -73,18 +70,22 @@ export function SaleReceipt({ sale }: SaleReceiptProps) {
     credit: t("screens.sales.payment_type.credit"),
   };
 
-  const statusLabel = statusLabels[sale.status] ?? sale.status;
-  const paymentLabel = paymentTypeLabels[sale.paymentType] ?? sale.paymentType;
-  const isCancelled = sale.status === "cancelled";
-
-  const customer = sale.customer;
+  const statusLabel = receipt.status ? (statusLabels[receipt.status] ?? receipt.status) : null;
+  const paymentLabel = receipt.paymentType
+    ? (paymentTypeLabels[receipt.paymentType] ?? receipt.paymentType)
+    : null;
+  const isCancelled = receipt.status === "cancelled";
+  const customer = receipt.customer;
+  const reference = receipt.saleNumber ?? receipt.name;
 
   return (
     <View style={styles.wrapper}>
       <View style={styles.paper}>
         <Text style={styles.ticketTitle}>{t("screens.sales.list.ticket.title").toUpperCase()}</Text>
-        <Text style={styles.centerLine}>#{sale.saleNumber}</Text>
-        <Text style={styles.centerLine}>{sale.createdAt.toLocaleString()}</Text>
+        {reference && <Text style={styles.centerLine}>#{reference}</Text>}
+        {receipt.createdAt && (
+          <Text style={styles.centerLine}>{receipt.createdAt.toLocaleString()}</Text>
+        )}
 
         <DashedSeparator />
 
@@ -100,7 +101,7 @@ export function SaleReceipt({ sale }: SaleReceiptProps) {
 
         <DashedSeparator />
 
-        {sale.items.map((item) => (
+        {receipt.items.map((item) => (
           <View key={item.id} style={styles.item}>
             {item.productSnapshot === null ? (
               <Text style={styles.line} numberOfLines={1}>
@@ -109,10 +110,10 @@ export function SaleReceipt({ sale }: SaleReceiptProps) {
             ) : (
               <>
                 <Text style={styles.line} numberOfLines={1}>
-                  {item.productSnapshot?.product.name}
+                  {item.productSnapshot.product.name}
                 </Text>
                 <Text style={styles.mutedLine} numberOfLines={1}>
-                  {"-"} {item.productSnapshot?.presentation.name}
+                  {"-"} {item.productSnapshot.presentation.name}
                 </Text>
               </>
             )}
@@ -131,29 +132,37 @@ export function SaleReceipt({ sale }: SaleReceiptProps) {
           <Text style={styles.totalLabel}>
             {t("screens.sales.list.ticket.total").toUpperCase()}
           </Text>
-          <Text style={styles.totalAmount}>{formatCurrency(sale.total)}</Text>
+          <Text style={styles.totalAmount}>{formatCurrency(receipt.total)}</Text>
         </View>
 
-        <Text style={styles.line}>
-          {t("screens.sales.list.ticket.payment").toUpperCase()}: {paymentLabel.toUpperCase()}
-        </Text>
-        <Text style={styles.line}>
-          {t("screens.sales.list.ticket.status").toUpperCase()}: {statusLabel.toUpperCase()}
-        </Text>
+        {paymentLabel && (
+          <Text style={styles.line}>
+            {t("screens.sales.list.ticket.payment").toUpperCase()}: {paymentLabel.toUpperCase()}
+          </Text>
+        )}
+        {statusLabel && (
+          <Text style={styles.line}>
+            {t("screens.sales.list.ticket.status").toUpperCase()}: {statusLabel.toUpperCase()}
+          </Text>
+        )}
 
-        {isCancelled && (
+        {isCancelled && statusLabel && (
           <>
             <Text style={styles.cancelledStamp}>*** {statusLabel.toUpperCase()} ***</Text>
-            {sale.cancelReason && (
+            {receipt.cancelReason && (
               <Text style={styles.centerLine}>
-                {t("screens.sales.list.cancellation_reason").toUpperCase()}: {sale.cancelReason}
+                {t("screens.sales.list.cancellation_reason").toUpperCase()}: {receipt.cancelReason}
               </Text>
             )}
           </>
         )}
 
-        <SaleBarcode value={sale.saleNumber} />
-        <Text style={styles.barcodeNumber}>#{sale.saleNumber}</Text>
+        {receipt.saleNumber && (
+          <>
+            <SaleBarcode value={receipt.saleNumber} />
+            <Text style={styles.barcodeNumber}>#{receipt.saleNumber}</Text>
+          </>
+        )}
       </View>
 
       <ZigzagEdge color={PAPER} />

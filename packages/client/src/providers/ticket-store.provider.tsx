@@ -112,3 +112,5 @@ export function useActiveTicket() {
 
   return ticket ? { ...ticket, total } : null;
 }
+
+export type ActiveTicket = NonNullable<ReturnType<typeof useActiveTicket>>;

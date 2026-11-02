@@ -3,7 +3,7 @@ import { useReducer } from "react";
 
 type State = {
   selectedCustomer: CustomerSummary | null;
-  customerTab: "walk-in" | "customer";
+  saleVariant: "walk-in" | "customer";
   paymentType: "cash" | "credit";
 };
 
@@ -30,24 +30,24 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         paymentType: action.payload === "customer" ? "credit" : "cash",
-        customerTab: action.payload,
+        saleVariant: action.payload,
       };
 
     case "set-payment-type":
       return {
         ...state,
-        paymentType: state.customerTab === "walk-in" ? "cash" : action.payload,
+        paymentType: state.saleVariant === "walk-in" ? "cash" : action.payload,
       };
 
     case "set-selected-customer":
       return {
         ...state,
-        selectedCustomer: state.customerTab === "customer" ? action.payload : null,
+        selectedCustomer: state.saleVariant === "customer" ? action.payload : null,
       };
     case "reset":
       return {
         selectedCustomer: null,
-        customerTab: "walk-in",
+        saleVariant: "walk-in",
         paymentType: "cash",
       };
     default:
@@ -58,19 +58,19 @@ function reducer(state: State, action: Action): State {
 export function useChargeSale() {
   const [state, dispatch] = useReducer(reducer, {
     selectedCustomer: null,
-    customerTab: "walk-in",
+    saleVariant: "walk-in",
     paymentType: "cash",
   });
 
   function getEffectiveState() {
     return {
       paymentType:
-        state.customerTab === "walk-in"
+        state.saleVariant === "walk-in"
           ? "cash"
           : state.selectedCustomer
             ? state.paymentType
             : "cash",
-      selectedCustomer: state.customerTab === "customer" ? state.selectedCustomer : null,
+      selectedCustomer: state.saleVariant === "customer" ? state.selectedCustomer : null,
     };
   }
 

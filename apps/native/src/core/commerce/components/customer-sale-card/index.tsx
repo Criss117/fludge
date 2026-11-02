@@ -1,20 +1,11 @@
-import { Box, Column, ElevatedCard, Host, IconButton, Row, Spacer } from "@expo/ui/jetpack-compose";
-import {
-  background,
-  clip,
-  fillMaxHeight,
-  fillMaxWidth,
-  height,
-  paddingAll,
-  Shapes,
-  weight,
-} from "@expo/ui/jetpack-compose/modifiers";
+import { Button, Host } from "@expo/ui";
 import type { CustomerSummary } from "@fludge/client/commerce/domain/entities";
 import { formatCurrency } from "@fludge/utils/format-currency";
 import { useTranslation } from "react-i18next";
+import { StyleSheet, View } from "react-native";
 
 import { Icon } from "@/core/shared/components/icon";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { ThemedText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
@@ -48,70 +39,79 @@ export function CustomerSaleCard({ customer, onDeselect }: Props) {
         : colors.onSuccess;
 
   return (
-    <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
-      <ElevatedCard
-        modifiers={[fillMaxWidth()]}
-        colors={{
-          containerColor: colors.onSecondary,
-        }}
-      >
-        <Column
-          modifiers={[paddingAll(SPACING.md), fillMaxWidth()]}
-          verticalArrangement={{
-            spacedBy: SPACING.md,
+    <View style={[styles.card, { backgroundColor: colors.onSecondary }]}>
+      <View style={styles.row}>
+        <ThemedText variant="h5">{customer.name}</ThemedText>
+        <Host matchContents>
+          <Button onPress={onDeselect} variant="text">
+            <Icon name="close" size={18} color={colors.outline} />
+          </Button>
+        </Host>
+      </View>
+
+      <View style={styles.row}>
+        <ThemedText variant="muted">{t("screens.customers.card.debt")}</ThemedText>
+        <ThemedText variant="h6">{formatCurrency(customer.balance)}</ThemedText>
+      </View>
+
+      <View style={styles.row}>
+        <ThemedText variant="muted">{t("screens.customers.card.credit_limit")}</ThemedText>
+        <ThemedText variant="h6">{formatCurrency(customer.creditLimit)}</ThemedText>
+      </View>
+
+      <View style={[styles.track, { backgroundColor: colors.surfaceContainerHigh }]}>
+        {percentage > 0 && (
+          <View style={[styles.fill, { width: `${percentage}%`, backgroundColor: barColor }]} />
+        )}
+      </View>
+
+      <View style={styles.rowEnd}>
+        <ThemedText
+          variant="muted"
+          style={{
+            color: textColor,
           }}
         >
-          <Row modifiers={[fillMaxWidth()]} verticalAlignment="center">
-            <ThemedNativeText variant="h5">{customer.name}</ThemedNativeText>
-            <Spacer modifiers={[weight(1)]} />
-            <IconButton onClick={onDeselect}>
-              <Icon name="close" size={18} color={colors.outline} />
-            </IconButton>
-          </Row>
-
-          <Row modifiers={[fillMaxWidth()]} verticalAlignment="center">
-            <ThemedNativeText variant="muted">{t("screens.customers.card.debt")}</ThemedNativeText>
-            <Spacer modifiers={[weight(1)]} />
-            <ThemedNativeText variant="h6">{formatCurrency(customer.balance)}</ThemedNativeText>
-          </Row>
-
-          <Row modifiers={[fillMaxWidth()]} verticalAlignment="center">
-            <ThemedNativeText variant="muted">
-              {t("screens.customers.card.credit_limit")}
-            </ThemedNativeText>
-            <Spacer modifiers={[weight(1)]} />
-            <ThemedNativeText variant="h6">{formatCurrency(customer.creditLimit)}</ThemedNativeText>
-          </Row>
-
-          <Row
-            modifiers={[
-              fillMaxWidth(),
-              height(10),
-              background(colors.surfaceContainerHigh),
-              clip(Shapes.RoundedCorner(5)),
-            ]}
-          >
-            {percentage > 0 && (
-              <Box
-                modifiers={[
-                  fillMaxHeight(),
-                  weight(percentage),
-                  background(barColor),
-                  clip(Shapes.RoundedCorner(5)),
-                ]}
-              />
-            )}
-            {percentage < 100 && <Spacer modifiers={[weight(100 - percentage)]} />}
-          </Row>
-
-          <Row modifiers={[fillMaxWidth()]}>
-            <Spacer modifiers={[weight(1)]} />
-            <ThemedNativeText variant="muted" color={textColor}>
-              {percentage}% {t("screens.customers.card.debt")}
-            </ThemedNativeText>
-          </Row>
-        </Column>
-      </ElevatedCard>
-    </Host>
+          {Math.round(percentage)}% {t("screens.customers.card.debt")}
+        </ThemedText>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    width: "100%",
+    padding: SPACING.md,
+    gap: SPACING.md,
+    borderRadius: 12,
+    // Equivalente a ElevatedCard
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  rowEnd: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  closeButton: {
+    padding: SPACING.xs,
+  },
+  track: {
+    width: "100%",
+    height: 10,
+    borderRadius: 5,
+    overflow: "hidden",
+  },
+  fill: {
+    height: "100%",
+    borderRadius: 5,
+  },
+});

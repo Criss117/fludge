@@ -39,7 +39,11 @@ export function CartScreen() {
     if (!activeTicket || activeTicket.items.length === 0) return;
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    router.push("/pos/charge");
+    router.dismiss(); // cierra el formSheet
+    // pequeño delay para que termine la animación del sheet en iOS
+    setTimeout(() => {
+      router.push("/pos/charge");
+    }, 50);
   };
 
   return (

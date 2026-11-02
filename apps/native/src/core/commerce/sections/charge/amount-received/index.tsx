@@ -1,21 +1,13 @@
-import { Column, Host, Row } from "@expo/ui/jetpack-compose";
-import {
-  background,
-  clip,
-  fillMaxWidth,
-  paddingAll,
-  Shapes,
-} from "@expo/ui/jetpack-compose/modifiers";
 import { formatCurrency } from "@fludge/utils/format-currency";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { StyleSheet, View } from "react-native";
 
-import { Icon } from "@/core/shared/components/icon";
-import { SectionCard } from "@/core/shared/components/section-card";
-import { TextInput } from "@/core/shared/components/text-input";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { ThemedText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
+
+import { AmountInput } from "./amount-input";
 
 interface Props {
   total: number;
@@ -30,63 +22,58 @@ export function AmountReceivedSection({ total }: Props) {
   const isEnough = change >= 0;
 
   return (
-    <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
-      <SectionCard title="screens.charge.sections.amount_received.title">
-        <Column verticalArrangement={{ spacedBy: SPACING.md }} modifiers={[fillMaxWidth()]}>
-          <TextInput
-            type="number"
-            defaultValue={amount}
-            onValueChange={setAmount}
-            label="screens.charge.sections.amount_received.label"
-            placeholder="screens.charge.sections.amount_received.placeholder"
-            iconName="dollar"
-            modifiers={[fillMaxWidth()]}
-          />
+    <View style={styles.container}>
+      <AmountInput amount={amount} setAmount={setAmount} />
 
-          <Column
-            verticalArrangement={{ spacedBy: SPACING.md }}
-            modifiers={[
-              fillMaxWidth(),
-              background(isEnough ? colors.success : colors.errorContainer),
-              paddingAll(SPACING.md),
-              clip(Shapes.RoundedCorner(SPACING.md)),
-            ]}
+      <View
+        style={[
+          styles.resubmittedContent,
+          {
+            backgroundColor: isEnough ? colors.success : colors.errorContainer,
+          },
+        ]}
+      >
+        <View>
+          <ThemedText
+            style={{
+              color: isEnough ? colors.onSuccess : colors.onErrorContainer,
+            }}
           >
-            <Row
-              modifiers={[fillMaxWidth()]}
-              verticalAlignment="center"
-              horizontalArrangement={{ spacedBy: SPACING.md }}
-            >
-              <Icon
-                name="assignment-return"
-                size={20}
-                color={isEnough ? colors.onSuccess : colors.onErrorContainer}
-              />
-              <Column>
-                <ThemedNativeText
-                  color={isEnough ? colors.onSuccess : colors.onErrorContainer}
-                  variant="h6"
-                >
-                  {t("screens.charge.sections.amount_received.resubmitted.title")}
-                </ThemedNativeText>
-                <ThemedNativeText
-                  color={isEnough ? colors.onSuccess : colors.onErrorContainer}
-                  variant="muted"
-                >
-                  {t("screens.charge.sections.amount_received.resubmitted.description")}
-                </ThemedNativeText>
-              </Column>
-            </Row>
-          </Column>
-
-          <ThemedNativeText
-            variant="h3"
-            color={isEnough ? colors.onSuccess : colors.onErrorContainer}
+            {t("screens.charge.sections.amount_received.resubmitted.title")}
+          </ThemedText>
+          <ThemedText
+            style={{
+              color: isEnough ? colors.onSuccess : colors.onErrorContainer,
+            }}
+            variant="muted"
           >
-            {formatCurrency(change)}
-          </ThemedNativeText>
-        </Column>
-      </SectionCard>
-    </Host>
+            {t("screens.charge.sections.amount_received.resubmitted.description")}
+          </ThemedText>
+        </View>
+        <ThemedText
+          variant="h3"
+          style={{
+            color: isEnough ? colors.onSuccess : colors.onErrorContainer,
+          }}
+        >
+          {formatCurrency(change)}
+        </ThemedText>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: SPACING.md,
+    rowGap: SPACING.md,
+  },
+  host: {
+    width: "100%",
+  },
+  resubmittedContent: {
+    justifyContent: "space-between",
+    padding: SPACING.md,
+    borderRadius: SPACING.xl,
+  },
+});

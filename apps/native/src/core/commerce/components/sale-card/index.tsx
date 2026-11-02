@@ -1,21 +1,19 @@
-import { BottomSheet, Host, RNHostView } from "@expo/ui";
+import { Host } from "@expo/ui";
 import { formatCurrency } from "@fludge/utils/format-currency";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
-import { SaleReceipt } from "@/core/commerce/components/sale-receipt";
 import { Icon } from "@/core/shared/components/icon";
 import { ThemedText } from "@/core/shared/components/themed-text";
 import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { SPACING } from "@/lib/sp";
 
+import { SaleReceiptSheet } from "../sale-receipt/sheet";
 import type { SaleCardProps } from "./types";
 
 export function SaleCard({ sale }: SaleCardProps) {
   const { t } = useTranslation();
   const colors = useThemeColor();
-  const [showProducts, setShowProducts] = useState(false);
 
   const statusLabels: Record<string, string> = {
     open: t("screens.sales.status.open"),
@@ -90,40 +88,12 @@ export function SaleCard({ sale }: SaleCardProps) {
         </View>
 
         <View style={styles.actionsRow}>
-          <Pressable
-            style={[styles.receiptButton, { backgroundColor: colors.secondaryContainer }]}
-            onPress={() => setShowProducts(true)}
-          >
-            <Host matchContents ignoreSafeArea="all">
-              <Icon name="receipt" size={18} color={colors.onSecondaryContainer} />
-            </Host>
-            <ThemedText style={{ color: colors.onSecondaryContainer }}>
-              {t("screens.sales.list.receipt")}
-            </ThemedText>
-          </Pressable>
+          <SaleReceiptSheet receipt={sale} />
           <Host matchContents ignoreSafeArea="all">
             <Icon name="more-vert" size={24} color={colors.onSurface} />
           </Host>
         </View>
       </View>
-
-      <Host matchContents ignoreSafeArea="all">
-        <BottomSheet
-          isPresented={showProducts}
-          onDismiss={() => setShowProducts(false)}
-          showDragIndicator
-          containerColor={colors.onSecondary}
-        >
-          <RNHostView>
-            <ScrollView
-              contentContainerStyle={styles.receiptContainer}
-              showsVerticalScrollIndicator={false}
-            >
-              <SaleReceipt sale={sale} />
-            </ScrollView>
-          </RNHostView>
-        </BottomSheet>
-      </Host>
     </View>
   );
 }

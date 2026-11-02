@@ -1,100 +1,77 @@
-import { Column, HorizontalDivider, Host, IconButton, Row, Spacer } from "@expo/ui/jetpack-compose";
-import { fillMaxWidth, weight } from "@expo/ui/jetpack-compose/modifiers";
+import type { CustomerSummary } from "@fludge/client/commerce/domain/entities";
 import type { Ticket } from "@fludge/client/commerce/domain/local-ticket.repository";
+import type { ActiveTicket } from "@fludge/client/providers/ticket-store.provider";
+import { useActiveTicket } from "@fludge/client/providers/ticket-store.provider";
 import { formatCurrency } from "@fludge/utils/format-currency";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { StyleSheet, View } from "react-native";
 
-import { Icon } from "@/core/shared/components/icon";
-import { SectionCard } from "@/core/shared/components/section-card";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
-import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
+import { SaleReceiptSheet } from "@/core/commerce/components/sale-receipt/sheet";
+import type { ReceiptData, ReceiptItem } from "@/core/commerce/components/sale-receipt/types";
+import { ThemedText } from "@/core/shared/components/themed-text";
 import { SPACING } from "@/lib/sp";
 
 interface Props {
-  ticket: Ticket & { total: number };
+  ticket: Ticket & { total: number; customer: CustomerSummary | null };
+}
+
+export function ticketToReceipt(
+  ticket: ActiveTicket & {
+    customer: CustomerSummary | null;
+  },
+): ReceiptData {
+  const items = ticket.items.flatMap((product): ReceiptItem[] =>
+    product.presentations
+      .filter((presentation) => presentation.quantity > 0)
+      .map((presentation) => ({
+        id: `${product.id}-${presentation.id}`,
+        name: product.name,
+        quantity: presentation.quantity,
+        unitPrice: presentation.priceSale,
+        subtotal: presentation.priceSale * presentation.quantity,
+        productSnapshot:
+          product.type === "catalog"
+            ? {
+                product: { name: product.name },
+                presentation: { name: presentation.name },
+              }
+            : null,
+      })),
+  );
+
+  return {
+    id: ticket.id,
+    name: ticket.name,
+    total: ticket.total,
+    customer: ticket.customer,
+    items,
+  };
 }
 
 export function ChargeSummarySection({ ticket }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
-  const colors = useThemeColor();
+  const activeTicket = useActiveTicket();
+
+  if (!activeTicket) return null;
 
   return (
-    <Host matchContents={{ vertical: true }} style={{ width: "100%" }}>
-      <SectionCard
-        title="screens.charge.sections.summary.title"
-        action={
-          <IconButton onClick={() => setIsOpen((prev) => !prev)}>
-            <Icon name={isOpen ? "expand" : "chevron-right"} size={20} color={colors.outline} />
-          </IconButton>
-        }
-      >
-        <Column verticalArrangement={{ spacedBy: SPACING.md }} modifiers={[fillMaxWidth()]}>
-          <Row modifiers={[fillMaxWidth()]} verticalAlignment="center">
-            <ThemedNativeText variant="muted">
-              {t("screens.charge.sections.summary.see_details")}
-            </ThemedNativeText>
-            <Spacer modifiers={[weight(1)]} />
-            <ThemedNativeText variant="h5">{formatCurrency(ticket.total)}</ThemedNativeText>
-          </Row>
-
-          {isOpen && (
-            <Column verticalArrangement={{ spacedBy: SPACING.md }}>
-              {ticket.items.map((item, index) => (
-                <Column key={item.id} verticalArrangement={{ spacedBy: SPACING.xs }}>
-                  <Column
-                    verticalArrangement={{ spacedBy: SPACING.xs }}
-                    modifiers={[fillMaxWidth()]}
-                  >
-                    <ThemedNativeText variant="h6">{item.name}</ThemedNativeText>
-
-                    {item.presentations.map((presentation) => (
-                      <Row
-                        key={presentation.id}
-                        modifiers={[fillMaxWidth()]}
-                        horizontalArrangement={{ spacedBy: SPACING.sm }}
-                      >
-                        <ThemedNativeText variant="muted">{presentation.name}</ThemedNativeText>
-                        <Spacer modifiers={[weight(1)]} />
-                        <ThemedNativeText variant="muted">
-                          x{presentation.quantity}
-                        </ThemedNativeText>
-                        <ThemedNativeText>
-                          {formatCurrency(presentation.priceSale * presentation.quantity)}
-                        </ThemedNativeText>
-                      </Row>
-                    ))}
-
-                    <Row modifiers={[fillMaxWidth()]}>
-                      <ThemedNativeText variant="muted">
-                        {item.presentations.reduce((sum, p) => sum + p.quantity, 0)}{" "}
-                        {t("helpers.items")}
-                      </ThemedNativeText>
-                      <Spacer modifiers={[weight(1)]} />
-                      <ThemedNativeText variant="h6">
-                        {formatCurrency(
-                          item.presentations.reduce((sum, p) => sum + p.priceSale * p.quantity, 0),
-                        )}
-                      </ThemedNativeText>
-                    </Row>
-                  </Column>
-
-                  {index < ticket.items.length - 1 && (
-                    <HorizontalDivider color={colors.outlineVariant} modifiers={[fillMaxWidth()]} />
-                  )}
-                </Column>
-              ))}
-
-              <Row modifiers={[fillMaxWidth()]} verticalAlignment="center">
-                <ThemedNativeText variant="h5">{t("helpers.total")}</ThemedNativeText>
-                <Spacer modifiers={[weight(1)]} />
-                <ThemedNativeText variant="h3">{formatCurrency(ticket.total)}</ThemedNativeText>
-              </Row>
-            </Column>
-          )}
-        </Column>
-      </SectionCard>
-    </Host>
+    <View style={styles.container}>
+      <View>
+        <ThemedText>{t("screens.pos.ticket_summary.total")}</ThemedText>
+        <ThemedText variant="h2">{formatCurrency(ticket.total)}</ThemedText>
+      </View>
+      <View>
+        <SaleReceiptSheet buttonVarian="onlyIcon" receipt={ticketToReceipt(ticket)} />
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: SPACING.md,
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+  },
+});
