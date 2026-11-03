@@ -1,5 +1,11 @@
-import type { CustomerRepository } from "@fludge/client/commerce/domain/customer.repository";
-import type { CustomerDetail, CustomerSummary } from "@fludge/client/commerce/domain/entities";
+import type {
+  CustomerRepository,
+  FindCustomerPaymentsFilters,
+} from "@fludge/client/commerce/domain/customer.repository";
+import type {
+  CustomerPaymentSummary,
+  CustomerSummary,
+} from "@fludge/client/commerce/domain/entities";
 import {
   type CustomerOrderByField,
   type Filters,
@@ -11,17 +17,48 @@ import {
   localCustomer,
   localCustomerPayment,
 } from "@fludge/db/local-schemas/shared.schema";
-import { buildConflictUpdateColumn, jsonObject } from "@fludge/db/utils/build-queries";
+import { buildConflictUpdateColumn } from "@fludge/db/utils/build-queries";
 import { statusEnum } from "@fludge/utils/enums/db-enums";
 import { type RepositoryError, toRepositoryError } from "@fludge/utils/errors/repository.error";
 import { type Cursor, paginate, type PaginatedResponse } from "@fludge/utils/pagination";
 import { type Result, tryCatch } from "@fludge/utils/trycatch";
-import { and, asc, desc, eq, getColumns, inArray, like, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, like } from "drizzle-orm";
 
 import type { DatabaseService } from "@/integrations/db";
 
 export class NativeCustomerRepository implements CustomerRepository {
   constructor(private readonly db: DatabaseService) {}
+
+  public async findCustomerPayments(
+    organizationId: string,
+    cursor: Cursor,
+    filters: FindCustomerPaymentsFilters,
+  ): Promise<Result<PaginatedResponse<CustomerPaymentSummary>, RepositoryError>> {
+    return tryCatch(
+      () => {
+        const orderBy = [desc(localCustomerPayment.id)];
+
+        const payments = this.db
+          .select()
+          .from(localCustomerPayment)
+          .where(
+            and(
+              eq(localCustomerPayment.organizationId, organizationId),
+              eq(localCustomerPayment.customerId, filters.customerId),
+            ),
+          )
+          .limit(cursor.limit + 1)
+          .offset(cursor.limit * cursor.page)
+          .orderBy(...orderBy)
+          .all();
+
+        return paginate(payments, cursor);
+      },
+      {
+        parseError: (raw) => toRepositoryError("api_errors.customers.isr_on_find", raw),
+      },
+    );
+  }
 
   public async clearAll(): Promise<Result<void, RepositoryError>> {
     return tryCatch(
@@ -84,20 +121,12 @@ export class NativeCustomerRepository implements CustomerRepository {
   public async findOneById(
     organizationId: string,
     customerId: string,
-  ): Promise<Result<CustomerDetail | null, RepositoryError>> {
+  ): Promise<Result<CustomerSummary | null, RepositoryError>> {
     return tryCatch(
       () => {
         const customer = this.db
-          .select({
-            ...getColumns(localCustomer),
-            payments: sql<string>`
-            json_group_array(
-              DISTINCT ${jsonObject(localCustomerPayment)}
-            ) FILTER (WHERE ${localCustomerPayment.customerId} IS NOT NULL)
-          `.as("payments"),
-          })
+          .select()
           .from(localCustomer)
-          .leftJoin(localCustomerPayment, eq(localCustomerPayment.customerId, localCustomer.id))
           .where(
             and(eq(localCustomer.organizationId, organizationId), eq(localCustomer.id, customerId)),
           )
@@ -106,14 +135,7 @@ export class NativeCustomerRepository implements CustomerRepository {
 
         if (!customer) return null;
 
-        return {
-          ...customer,
-          payments: (JSON.parse(customer.payments) as CustomerDetail["payments"]).map((p) => ({
-            ...p,
-            createdAt: new Date(p.createdAt),
-            updatedAt: new Date(p.updatedAt),
-          })),
-        };
+        return customer;
       },
       {
         parseError: (raw) => toRepositoryError("api_errors.customers.isr_on_find", raw),

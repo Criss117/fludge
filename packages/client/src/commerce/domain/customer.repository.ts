@@ -4,7 +4,11 @@ import type { RepositoryError } from "@fludge/utils/errors/repository.error";
 import type { Cursor, PaginatedResponse } from "@fludge/utils/pagination";
 import type { Result } from "@fludge/utils/trycatch";
 
-import type { CustomerDetail, CustomerSummary } from "./entities";
+import type { CustomerPaymentSummary, CustomerSummary } from "./entities";
+
+export interface FindCustomerPaymentsFilters {
+  customerId: string;
+}
 
 export interface CustomerRepository {
   findAll(
@@ -16,7 +20,13 @@ export interface CustomerRepository {
   findOneById(
     organizationId: string,
     customerId: string,
-  ): Promise<Result<CustomerDetail | null, RepositoryError>>;
+  ): Promise<Result<CustomerSummary | null, RepositoryError>>;
+
+  findCustomerPayments(
+    organizationId: string,
+    cursor: Cursor,
+    filters: FindCustomerPaymentsFilters,
+  ): Promise<Result<PaginatedResponse<CustomerPaymentSummary>, RepositoryError>>;
 
   save(customer: LocalCustomer | LocalCustomer[]): Promise<Result<void, RepositoryError>>;
 

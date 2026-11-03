@@ -6,7 +6,7 @@ import type { Result } from "@fludge/utils/trycatch";
 
 import type { SaleSummary } from "./entities";
 
-export type FindAllSalesFilters = {
+export type FindAllSalesFilters = Filters & {
   customerId?: string;
 };
 
@@ -14,9 +14,7 @@ export interface SaleRepository {
   findAll(
     organizationId: string,
     cursor: Cursor,
-    filters?: Filters & {
-      customerId: string | null;
-    },
+    filters?: FindAllSalesFilters,
   ): Promise<Result<PaginatedResponse<SaleSummary>, RepositoryError>>;
 
   save(sale: LocalSale | LocalSale[]): Promise<Result<void, RepositoryError>>;

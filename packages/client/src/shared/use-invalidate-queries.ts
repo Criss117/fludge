@@ -3,7 +3,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAppState } from "../iam/hooks/use-app-state";
 
 type Module = "catalog" | "iam" | "commerce";
-type Resource = "products" | "groups" | "members" | "categories" | "customers" | "sales";
+type Resource =
+  "products" | "groups" | "members" | "categories" | "customers" | "sales" | "customer-payments";
 
 interface QueryKeysGeneratorProps<T, TNormalizedFilters> {
   module: Module;
@@ -12,17 +13,21 @@ interface QueryKeysGeneratorProps<T, TNormalizedFilters> {
 }
 
 type QueryKeysReturn<T, TNormalizedFilters> = {
-  all: (orgId: string) => readonly [Module, "organizations", string, Resource];
-  list: (orgId: string) => readonly [Module, "organizations", string, Resource, "list"];
+  all: (orgId: string) => readonly ["organizations", string, Module, Resource];
+
+  list: (orgId: string) => readonly ["organizations", string, Module, Resource, "list"];
+
   filteredList: (
     orgId: string,
     filters: T,
-  ) => readonly [Module, "organizations", string, Resource, "list", TNormalizedFilters];
-  allDetails: (orgId: string) => readonly [Module, "organizations", string, Resource, "detail"];
+  ) => readonly ["organizations", string, Module, Resource, "list", TNormalizedFilters];
+
+  allDetails: (orgId: string) => readonly ["organizations", string, Module, Resource, "detail"];
+
   detail: (
     orgId: string,
     resourceId: string,
-  ) => readonly [Module, "organizations", string, Resource, "detail", string];
+  ) => readonly ["organizations", string, Module, Resource, "detail", string];
 };
 
 function queriesKeysGenerator<T, TNormalizedFilters>({
@@ -30,12 +35,12 @@ function queriesKeysGenerator<T, TNormalizedFilters>({
   resource,
   normalizeFilters,
 }: QueryKeysGeneratorProps<T, TNormalizedFilters>): QueryKeysReturn<T, TNormalizedFilters> {
-  const all = (orgId: string) => [module, "organizations", orgId, resource] as const;
+  const all = (orgId: string) => ["organizations", orgId, module, resource] as const;
 
   const list = (orgId: string) => [...all(orgId), "list"] as const;
 
   const filteredList = (orgId: string, filters: T) =>
-    [...list(orgId), normalizeFilters(filters)] as const;
+    [...list(orgId), normalizeFilters?.(filters)] as const;
 
   const allDetails = (orgId: string) => [...all(orgId), "detail"] as const;
 
@@ -59,9 +64,7 @@ function genearteInvalidateQueries<T, TNormalizedFilters>(
       data: { activeOrganization },
     } = useAppState();
 
-    if (!activeOrganization) {
-      throw new Error("Active organization not found");
-    }
+    if (!activeOrganization) throw new Error("Active organization not found");
 
     const orgId = activeOrganization.id;
 

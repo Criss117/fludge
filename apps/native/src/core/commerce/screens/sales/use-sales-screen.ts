@@ -6,7 +6,6 @@ import { useCallback, useMemo } from "react";
 export function useSalesScreen() {
   const { filters } = useFilters();
   const { data, hasNextPage, isFetchingNextPage, isFetching, fetchNextPage } = useFindSales({
-    customerId: null,
     ...filters,
   });
 

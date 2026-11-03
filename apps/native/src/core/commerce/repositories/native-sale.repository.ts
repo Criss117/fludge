@@ -1,6 +1,9 @@
 import type { SaleSummary } from "@fludge/client/commerce/domain/entities";
-import type { SaleRepository } from "@fludge/client/commerce/domain/sale.repository";
-import { type Filters, pickStatus } from "@fludge/client/shared/use-filters";
+import type {
+  FindAllSalesFilters,
+  SaleRepository,
+} from "@fludge/client/commerce/domain/sale.repository";
+import { pickStatus } from "@fludge/client/shared/use-filters";
 import type { LocalSale } from "@fludge/db/local-schemas/shared.schema";
 import {
   localCustomer,
@@ -38,9 +41,7 @@ export class NativeSaleRepository implements SaleRepository {
   public async findAll(
     organizationId: string,
     cursor: Cursor,
-    filters: Filters & {
-      customerId: string | null;
-    },
+    filters: FindAllSalesFilters,
   ): Promise<Result<PaginatedResponse<SaleSummary>, RepositoryError>> {
     return tryCatch(
       () => {
@@ -67,7 +68,7 @@ export class NativeSaleRepository implements SaleRepository {
           .leftJoin(localCustomer, eq(localCustomer.id, localSale.customerId))
           .where(
             and(
-              filters.customerId !== null
+              filters.customerId !== undefined
                 ? eq(localSale.customerId, filters.customerId)
                 : undefined,
               eq(localSale.organizationId, organizationId),

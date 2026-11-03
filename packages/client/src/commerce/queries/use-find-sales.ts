@@ -1,17 +1,13 @@
+import type { FindAllSalesFilters } from "@fludge/client/commerce/domain/sale.repository";
 import { useAppState } from "@fludge/client/iam/hooks/use-app-state";
 import { useContainer } from "@fludge/client/providers/container.provider";
-import type { Filters } from "@fludge/client/shared/use-filters";
 import { keysGenerator } from "@fludge/client/shared/use-invalidate-queries";
 import { DEFAULT_CURSOR } from "@fludge/utils/pagination";
 import { SearchBlob } from "@fludge/utils/search-blob";
 import { unwrapResult } from "@fludge/utils/trycatch";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
-type SaleFilters = Filters & {
-  customerId: string | null;
-};
-
-function normalizeFilters(filters: SaleFilters) {
+function normalizeFilters(filters: FindAllSalesFilters) {
   return {
     searchQuery: filters.searchQuery ? SearchBlob.normalize(filters.searchQuery) : undefined,
     status: filters.status,
@@ -26,7 +22,7 @@ export const { keys: salesKeys, useInvalidateQueries: useInvalidateSales } = key
   normalizeFilters,
 });
 
-export function useFindSales(filters: SaleFilters) {
+export function useFindSales(filters: FindAllSalesFilters) {
   const { commerceContainer } = useContainer();
   const {
     data: { activeOrganization },
