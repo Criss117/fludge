@@ -1,0 +1,77 @@
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+@import "@craf-pos/ui/globals.css";
+
+/* Tailwind discovers classes in the desktop app and in the shared UI package.
+   @craf-pos/ui/globals.css already scans packages/ui/src for its components.
+   Geist replaces the shared Inter default for every font-sans/mono utility. */
+@source "../index.html";
+@source "../../../../packages/ui/src";
+
+@theme inline {
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular", monospace;
+}
+
+@layer base {
+  html {
+    /* Wails renders with WebKitGTK, which falls back to grayscale
+       antialiasing; on light backgrounds that washes out Geist's thin strokes.
+       `auto` keeps the platform's subpixel rendering. */
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    /* The shared palette never declares it, so native controls and scrollbars
+       would stay light even under the .dark variant. */
+    color-scheme: light;
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+
+  /* The Wails mount node is a plain div: without the height chain every
+     `h-full` / `min-h-screen` page collapses. */
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    /* Half a step above regular: small UI text keeps density on white without
+       darkening the palette (--foreground stays neutral-950). */
+    font-weight: 450;
+    overflow-x: hidden;
+    /* An app window, not a document: chrome text is not selectable and the
+       background drags the window (Wails reads --wails-draggable). */
+    -webkit-user-select: none;
+    user-select: none;
+    --wails-draggable: drag;
+  }
+
+  input,
+  textarea,
+  select,
+  pre,
+  code,
+  [contenteditable="true"] {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  /* Interactive controls must not start a window drag. Divs acting as buttons
+     (menu items, list rows) opt out with `[--wails-draggable:no-drag]` or the
+     `no-drag` rule below. */
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  label,
+  [role="button"],
+  [role="menuitem"],
+  [role="option"],
+  [contenteditable="true"] {
+    --wails-draggable: no-drag;
+  }
+}

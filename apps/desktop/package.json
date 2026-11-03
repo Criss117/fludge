@@ -1,0 +1,11 @@
+{
+  "name": "@fludge/desktop",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "task dev",
+    "build": "task build",
+    "package": "task package",
+    "run": "task run"
+  }
+}

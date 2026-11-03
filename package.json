@@ -67,7 +67,9 @@
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "db:generate:native": "turbo run db:generate -F native --",
+    "db:sql:desktop": "bun scripts/generate-desktop-sql.ts"
   },
   "dependencies": {
     "@fludge/env": "workspace:*",

@@ -1,0 +1,13 @@
+{
+  "extends": "@craf-pos/config/tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    /* The Wails template code predates this tsconfig; keep it compiling. */
+    "noUncheckedIndexedAccess": false,
+    "noUnusedParameters": false
+  },
+  "include": ["src", "bindings", "vite.config.ts"]
+}
