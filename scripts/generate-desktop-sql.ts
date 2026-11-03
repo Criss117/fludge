@@ -10,7 +10,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join, relative } from "node:path";
 
 const root = join(import.meta.dirname, "..");
-const schemaGlob = "./packages/db/src/schema/*.schema.ts";
+const schemaGlob = "./packages/db/src/local-schemas/*.schema.ts";
 const outDir = join(root, "apps/desktop/sql");
 const outFile = join(outDir, "schema.sql");
 

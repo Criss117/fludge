@@ -1,4 +1,6 @@
+import { auth } from "@fludge/auth";
 import { env } from "@fludge/env/server";
+import { ORGANIZATION_HEADER_KEY } from "@fludge/utils/constants";
 import type { PermissionsRecord } from "@fludge/utils/permissions/data";
 import { tryCatch } from "@fludge/utils/trycatch";
 import { os } from "@orpc/server";
@@ -16,11 +18,21 @@ export const o = os.$context<Context>();
 export const publicProcedure = o;
 
 const requireAuth = o.middleware(async ({ context, next }) => {
-  if (!context.session) throw new UnauthorizedError("api_errors.auth.sessions.unauthorized");
+  const session = await auth.api.getSession({
+    headers: context.headers,
+  });
+
+  const activeOrganizationId = context.headers.get(ORGANIZATION_HEADER_KEY);
+
+  if (!session) throw new UnauthorizedError("api_errors.auth.sessions.unauthorized");
 
   return next({
     context: {
-      session: context.session,
+      session: {
+        ...session.session,
+        activeOrganizationId: activeOrganizationId ?? null,
+        user: session.user,
+      },
     },
   });
 });
