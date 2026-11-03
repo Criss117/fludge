@@ -1,4 +1,4 @@
-import { Button } from "@craf-pos/ui/components/button";
+import { Button } from "@fludge/ui/components/button";
 import {
   Card,
   CardContent,
@@ -6,9 +6,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@craf-pos/ui/components/card";
-import { Input } from "@craf-pos/ui/components/input";
-import { Label } from "@craf-pos/ui/components/label";
+} from "@fludge/ui/components/card";
+import { Input } from "@fludge/ui/components/input";
+import { Label } from "@fludge/ui/components/label";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -31,7 +31,7 @@ function UiShowcase() {
       <header className="flex flex-col gap-1">
         <h1 className="text-lg font-medium">Design system</h1>
         <p className="text-muted-foreground text-xs">
-          Tailwind CSS v4 and shadcn components served from <code>@craf-pos/ui</code>.
+          Tailwind CSS v4 and shadcn components served from <code>@fludge/ui</code>.
         </p>
       </header>
 

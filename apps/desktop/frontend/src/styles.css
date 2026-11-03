@@ -1,9 +1,9 @@
 @import "@fontsource-variable/geist";
 @import "@fontsource-variable/geist-mono";
-@import "@craf-pos/ui/globals.css";
+@import "@fludge/ui/globals.css";
 
 /* Tailwind discovers classes in the desktop app and in the shared UI package.
-   @craf-pos/ui/globals.css already scans packages/ui/src for its components.
+   @fludge/ui/globals.css already scans packages/ui/src for its components.
    Geist replaces the shared Inter default for every font-sans/mono utility. */
 @source "../index.html";
 @source "../../../../packages/ui/src";

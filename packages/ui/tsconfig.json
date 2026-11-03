@@ -1,11 +1,11 @@
 {
-  "extends": "@craf-pos/config/tsconfig.base.json",
+  "extends": "@fludge/config/tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": [],
     "paths": {
-      "@craf-pos/ui/*": ["./src/*"]
+      "@fludge/ui/*": ["./src/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],

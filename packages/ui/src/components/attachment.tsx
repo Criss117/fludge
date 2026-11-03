@@ -1,7 +1,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { Button } from "@craf-pos/ui/components/button";
-import { cn } from "@craf-pos/ui/lib/utils";
+import { Button } from "@fludge/ui/components/button";
+import { cn } from "@fludge/ui/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 

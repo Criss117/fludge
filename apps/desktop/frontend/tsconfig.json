@@ -1,5 +1,5 @@
 {
-  "extends": "@craf-pos/config/tsconfig.base.json",
+  "extends": "@fludge/config/tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],

@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@craf-pos/ui/components/button";
-import { Input } from "@craf-pos/ui/components/input";
-import { Textarea } from "@craf-pos/ui/components/textarea";
-import { cn } from "@craf-pos/ui/lib/utils";
+import { Button } from "@fludge/ui/components/button";
+import { Input } from "@fludge/ui/components/input";
+import { Textarea } from "@fludge/ui/components/textarea";
+import { cn } from "@fludge/ui/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 

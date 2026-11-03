@@ -13,11 +13,11 @@
   "iconLibrary": "lucide",
   "rtl": false,
   "aliases": {
-    "components": "@craf-pos/ui/components",
-    "utils": "@craf-pos/ui/lib/utils",
-    "hooks": "@craf-pos/ui/hooks",
-    "lib": "@craf-pos/ui/lib",
-    "ui": "@craf-pos/ui/components"
+    "components": "@fludge/ui/components",
+    "utils": "@fludge/ui/lib/utils",
+    "hooks": "@fludge/ui/hooks",
+    "lib": "@fludge/ui/lib",
+    "ui": "@fludge/ui/components"
   },
   "menuColor": "default",
   "menuAccent": "subtle",

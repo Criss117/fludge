@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@craf-pos/ui/components/button";
-import { cn } from "@craf-pos/ui/lib/utils";
+import { Button } from "@fludge/ui/components/button";
+import { cn } from "@fludge/ui/lib/utils";
 import {
   MessageScroller as MessageScrollerPrimitive,
   useMessageScroller,

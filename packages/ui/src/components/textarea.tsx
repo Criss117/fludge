@@ -1,4 +1,4 @@
-import { cn } from "@craf-pos/ui/lib/utils";
+import { cn } from "@fludge/ui/lib/utils";
 import * as React from "react";
 
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {

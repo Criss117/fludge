@@ -1,4 +1,4 @@
-import reactConfig from "@craf-pos/config/eslint/react";
+import reactConfig from "@fludge/config/eslint/react";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
