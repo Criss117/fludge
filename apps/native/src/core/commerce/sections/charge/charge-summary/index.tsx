@@ -9,7 +9,6 @@ import { StyleSheet, View } from "react-native";
 import { SaleReceiptSheet } from "@/core/commerce/components/sale-receipt/sheet";
 import type { ReceiptData, ReceiptItem } from "@/core/commerce/components/sale-receipt/types";
 import { ThemedText } from "@/core/shared/components/themed-text";
-import { SPACING } from "@/lib/sp";
 
 interface Props {
   ticket: Ticket & { total: number; customer: CustomerSummary | null };
@@ -69,7 +68,6 @@ export function ChargeSummarySection({ ticket }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: SPACING.md,
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "space-between",

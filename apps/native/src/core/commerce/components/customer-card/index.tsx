@@ -69,13 +69,13 @@ export function CustomerCard({ customer }: Props) {
 
         <View style={styles.contactList}>
           <View style={styles.contactItem}>
-            <Host matchContents>
+            <Host matchContents ignoreSafeArea="all">
               <Icon name="phone" size={18} color={colors.outline} />
             </Host>
             <ThemedText variant="muted">{customer.phone}</ThemedText>
           </View>
           <View style={styles.contactItem}>
-            <Host matchContents>
+            <Host matchContents ignoreSafeArea="all">
               <Icon name="mail" size={18} color={colors.outline} />
             </Host>
             <ThemedText variant="muted">{customer.email ?? "-"}</ThemedText>

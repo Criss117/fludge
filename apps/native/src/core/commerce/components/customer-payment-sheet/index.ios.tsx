@@ -24,7 +24,7 @@ export function CustomerPaymentSheet({ customer }: CustomerPaymentSheetProps) {
   const { state, actions } = useCustomerPaymentSheet({ customer });
 
   return (
-    <Host matchContents>
+    <Host matchContents ignoreSafeArea="container">
       <VStack>
         <BottomSheet
           isPresented={state.isOpen}
@@ -36,7 +36,7 @@ export function CustomerPaymentSheet({ customer }: CustomerPaymentSheetProps) {
               onPress={actions.open}
               modifiers={[
                 buttonStyle(state.isDisabled ? "bordered" : "borderedProminent"),
-                tint(colors.primary),
+                tint(colors.onPrimary),
               ]}
             >
               <HStack spacing={SPACING.sm} modifiers={[frame({ maxWidth: Infinity })]}>

@@ -1,16 +1,18 @@
-import { Button, Host } from "@expo/ui";
 import { useChargeSale } from "@fludge/client/commerce/hooks/use-charge-sale";
 import { useCreateSaleMutation } from "@fludge/client/commerce/mutations/use-sale.mutations";
 import { useActiveTicket, useTicketStore } from "@fludge/client/providers/ticket-store.provider";
 import type { TranslationKey } from "@fludge/i18n/index";
 import { useRouter } from "expo-router";
-import { StyleSheet } from "react-native";
+import { PressableOpacity } from "pressto";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, View } from "react-native";
 
 import { CustomerSelectorSection } from "@/core/commerce/components/customer-selector";
 import { ChargeSummarySection } from "@/core/commerce/sections/charge/charge-summary";
 import { PaymentTypeSection } from "@/core/commerce/sections/charge/payment-type";
-import { ThemedNativeText } from "@/core/shared/components/themed-text";
+import { ThemedText } from "@/core/shared/components/themed-text";
 import { ThemedScrollView, ThemedView } from "@/core/shared/components/themed-view";
+import { useThemeColor } from "@/core/shared/hooks/use-theme-color";
 import { useMutationToast } from "@/integrations/toast";
 import { SPACING } from "@/lib/sp";
 
@@ -21,6 +23,8 @@ export function ChargeSaleScreen() {
   const removeTicket = useTicketStore((s) => s.removeTicket);
   const mutationToast = useMutationToast("SALES_CHARGE");
   const router = useRouter();
+  const { t } = useTranslation();
+  const colors = useThemeColor();
 
   if (!activeTicket) return null;
 
@@ -105,12 +109,28 @@ export function ChargeSaleScreen() {
           <AmountReceivedSection total={activeTicket.total} />
         )} */}
       </ThemedScrollView>
-      <Host matchContents>
-        <Button onPress={handleSubmit}>
-          <ThemedNativeText>Cobrar</ThemedNativeText>
-        </Button>
-      </Host>
-      <ChargeSummarySection ticket={{ ...activeTicket, customer: state.selectedCustomer }} />
+      <View style={styles.footer}>
+        <ChargeSummarySection ticket={{ ...activeTicket, customer: state.selectedCustomer }} />
+        <PressableOpacity
+          style={[
+            styles.button,
+            {
+              backgroundColor: colors.primary,
+              opacity: canSubmit ? 1 : 0.5,
+            },
+          ]}
+          disabled={!canSubmit}
+          onPress={handleSubmit}
+        >
+          <ThemedText
+            style={{
+              color: colors.onPrimary,
+            }}
+          >
+            {t("screens.charge.title")}
+          </ThemedText>
+        </PressableOpacity>
+      </View>
     </ThemedView>
   );
 }
@@ -121,5 +141,17 @@ const styles = StyleSheet.create({
   },
   content: {
     rowGap: SPACING.xl,
+  },
+  footer: {
+    paddingHorizontal: SPACING.md,
+    paddingBottom: SPACING.xl,
+    rowGap: SPACING.sm,
+  },
+  button: {
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.sm,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: SPACING.xl,
   },
 });
