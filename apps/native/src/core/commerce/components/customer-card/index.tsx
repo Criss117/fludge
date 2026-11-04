@@ -131,7 +131,10 @@ export function CustomerCard({ customer }: Props) {
                 {
                   label: "helpers.navigation.see_details",
                   action: () => {
-                    // TODO: navigate to customer detail
+                    router.push({
+                      pathname: "/dashboard/customers/[customerid]",
+                      params: { customerid: customer.id },
+                    });
                   },
                   icon: "eye",
                 },

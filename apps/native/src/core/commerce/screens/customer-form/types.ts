@@ -1,4 +1,4 @@
-import type { CustomerDetail } from "@fludge/client/commerce/domain/entities";
+import type { CustomerSummary } from "@fludge/client/commerce/domain/entities";
 
 type Action =
   | {
@@ -6,7 +6,7 @@ type Action =
     }
   | {
       type: "update";
-      customer: CustomerDetail;
+      customer: CustomerSummary;
     };
 
 export interface CustomerFormScreenProps {

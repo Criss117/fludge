@@ -1,6 +1,7 @@
 import type { TranslationKey } from "@fludge/i18n/index";
-import type { ListRenderItem } from "@shopify/flash-list";
+import type { FlashListRef, ListRenderItem } from "@shopify/flash-list";
 import { FlashList } from "@shopify/flash-list";
+import type { Ref } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
@@ -19,6 +20,7 @@ interface Props<T extends { id: string }> {
   renderItem: ListRenderItem<T>;
   onEndReached: () => void;
   numColumns?: number;
+  ref?: Ref<FlashListRef<T>>;
 }
 
 export function ListContainer<T extends { id: string }>({
@@ -31,11 +33,13 @@ export function ListContainer<T extends { id: string }>({
   isFetchingNextPage,
   noMoreText,
   numColumns,
+  ref,
 }: Props<T>) {
   const { t } = useTranslation();
 
   return (
     <FlashList
+      ref={ref}
       numColumns={numColumns}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.listContentContainer}

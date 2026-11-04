@@ -252,7 +252,7 @@ export const forms = {
     },
     update: {
       title: "Editar Cliente",
-      submit: "Editar Cliente",
+      submit: "Guardar Cambios",
     },
     sections: {
       general: "Información general",

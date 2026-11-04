@@ -273,6 +273,9 @@ export const screens = {
       pay: "Abonar",
       deselect: "Quitar cliente",
     },
+    detail: {
+      loading: "Cargando Cliente",
+    },
   },
   cart: {
     title: "Listado",
