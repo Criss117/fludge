@@ -1,5 +1,6 @@
 import type { CustomerSummary } from "@fludge/client/commerce/domain/entities";
 import { useFindCustomer } from "@fludge/client/commerce/queries/use-find-customers";
+import { FiltersProvider } from "@fludge/client/providers/filters.provider";
 import { Redirect, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Suspense } from "react";
 import { useTranslation } from "react-i18next";
@@ -52,7 +53,9 @@ function Screen({ customerId }: { customerId: string }) {
   return (
     <>
       <StackConfig customer={data} />
-      <CustomerScreen customer={data} />
+      <FiltersProvider>
+        <CustomerScreen customer={data} />
+      </FiltersProvider>
     </>
   );
 }
